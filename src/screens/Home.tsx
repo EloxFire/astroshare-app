@@ -1,10 +1,12 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Text, View } from 'react-native'
+import { globalStyles } from '../styles/global'
+import LocationHeader from '../components/LocationHeader';
 
-export default function Home({navigation}: any) {
+export default function Home({ navigation }: any) {
   return (
-    <View>
-      <Text>Home screen</Text>
+    <View style={globalStyles.body}>
+      <LocationHeader/>
     </View>
   )
 }

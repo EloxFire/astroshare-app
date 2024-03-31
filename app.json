@@ -31,6 +31,15 @@
         "projectId": "d66b5c83-1f63-4749-8eaf-68ebaeea3859"
       }
     },
-    "owner": "Enzo Avagliano"
+    "owner": "Enzo Avagliano",
+    "plugins": [
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Autoriser ASTROSHARE à utiliser votre position.",
+          "isAndroidBackgroundLocationEnabled": true
+        }
+      ]
+    ]
   }
 }
