@@ -2,6 +2,7 @@ import { app_colors } from "../../helpers/constants";
 
 export const locationHeaderStyles = {
   container: {
+    marginTop: 10,
     display: 'flex' as 'flex',
     flexDirection: 'row' as 'row',
     justifyContent: 'space-between' as 'space-between',

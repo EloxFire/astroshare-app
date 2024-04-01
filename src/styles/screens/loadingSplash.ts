@@ -8,6 +8,11 @@ export const loadingSplashStyles = {
     alignItems: "center" as "center",
     justifyContent: "center" as "center",
     height: Dimensions.get('screen').height,
-    backgroundColor: app_colors.black
+    backgroundColor: app_colors.black,
+
+    text: {
+      color: app_colors.white,
+      fontSize: 20,
+    }
   }
 }

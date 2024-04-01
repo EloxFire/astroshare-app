@@ -1,10 +1,13 @@
-export const homeStyles = {
-  toolsSuggestions: {
+export const appHeaderStyles = {
+  container: {
     display: 'flex' as 'flex',
     flexDirection: 'row' as 'row',
-    justifyContent: 'space-between' as 'space-between',
+    justifyContent: 'center' as 'center',
     alignItems: 'center' as 'center',
-    marginTop: 10,
     marginBottom: 10,
+
+    logo: {
+      maxHeight: 35,
+    }
   }
 }

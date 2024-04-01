@@ -17,9 +17,11 @@ export default function App() {
     async function prepare() {
       try {
         await useFonts()
+        console.log('Fonts loaded');
       } catch (e) {
         console.warn(e);
       } finally {
+        console.log('App is ready');
         setAppIsReady(true);
       }
     }
@@ -30,7 +32,7 @@ export default function App() {
   if (!appIsReady) {
     return (
       <View style={loadingSplashStyles.container}>
-        <Text style={{ color: app_colors.white }}>Chargement...</Text>
+        <Text style={loadingSplashStyles.container.text}>Chargement...</Text>
       </View>);
   }
 

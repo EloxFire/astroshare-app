@@ -1,12 +1,30 @@
-import React, { useEffect, useState } from 'react'
-import { Text, View } from 'react-native'
+import React, { useState } from 'react'
+import { Keyboard, Text, TouchableWithoutFeedback, View } from 'react-native'
 import { globalStyles } from '../styles/global'
 import LocationHeader from '../components/LocationHeader';
+import InputWithIcon from '../components/forms/InputWithIcon';
+import AppHeader from '../components/commons/AppHeader';
+import { homeStyles } from '../styles/screens/home';
 
 export default function Home({ navigation }: any) {
+
+  const [searchString, setSearchString] = useState('')
+
   return (
-    <View style={globalStyles.body}>
-      <LocationHeader/>
-    </View>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+      <View style={globalStyles.body}>
+        <AppHeader/>
+        <LocationHeader />
+        <InputWithIcon
+          placeholder="Rechercher un objet céleste"
+          changeEvent={(searchString: string) => { console.log(searchString) }}
+          icon={require('../../assets/icons/FiSearch.png')}
+          search={() => { console.log('Search pressed') }}
+        />
+        <View style={homeStyles.toolsSuggestions}>
+          <Text style={globalStyles.sections.title}>Vos outils</Text>
+        </View>
+      </View>
+    </TouchableWithoutFeedback>
   )
 }
