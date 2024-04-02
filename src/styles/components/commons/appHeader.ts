@@ -1,13 +1,16 @@
+import { Dimensions } from "react-native";
+
 export const appHeaderStyles = {
   container: {
     display: 'flex' as 'flex',
     flexDirection: 'row' as 'row',
-    justifyContent: 'center' as 'center',
+    justifyContent: 'space-between' as 'space-between',
     alignItems: 'center' as 'center',
-    marginBottom: 10,
+    marginBottom: 50,
 
     logo: {
       maxHeight: 35,
+      maxWidth: 116,
     }
   }
 }

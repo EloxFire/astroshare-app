@@ -11,30 +11,75 @@ export const locationHeaderStyles = {
 
     location: {
       display: 'flex' as 'flex',
-      flexDirection: 'column' as 'column',
+      flexDirection: 'row' as 'row',
+      alignItems: 'center' as 'center',
+
+      text: {
+        display: 'flex' as 'flex',
+        flexDirection: 'column' as 'column',
+        marginRight: 5
+      },
     
       title: {
         color: app_colors.white,
         opacity: .6,
         textTransform: 'uppercase' as 'uppercase',
       },
-
+      
       value: {
         color: app_colors.white,
         textTransform: 'uppercase' as 'uppercase',
+        fontFamily: 'AuxMono'
       }
     }
   },
   modal: {
-    width: Dimensions.get('window').width - 200,
+    width: Dimensions.get('window').width,
     borderWidth: 1,
-    borderColor: app_colors.white,
-    backgroundColor: app_colors.black,
-    padding: 20,
-    borderRadius: 10,
+    borderTopColor: app_colors.white_no_opacity,
+    backgroundColor: app_colors.grey,
+    padding: 10,
     position: 'absolute' as 'absolute',
-    top: Dimensions.get('window').height / 2,
-    left: Dimensions.get('window').width / 2,
-    transform: [{translateX: -Dimensions.get('window').width / 2 + 100}, {translateY: -Dimensions.get('window').height / 2 + 100}]
+    bottom: 0,
+    height: 200,
+    
+    header: {
+      display: 'flex' as 'flex',
+      flexDirection: 'row' as 'row',
+      justifyContent: 'space-between' as 'space-between',
+      alignItems: 'center' as 'center',
+      marginBottom: 20,
+
+      title: {
+        color: app_colors.white,
+        textTransform: 'uppercase' as 'uppercase',
+        fontSize: 18,
+        fontFamily: 'AuxMono'
+      },
+
+      close: {
+        color: app_colors.white,
+        fontSize: 20,
+      }
+    },
+
+    body: {
+      display: 'flex' as 'flex',
+      flexDirection: 'row' as 'row',
+      justifyContent: 'space-between' as 'space-between',
+
+      column: {
+        display: 'flex' as 'flex',
+        flexDirection: 'column' as 'column',
+        alignItems: 'flex-start' as 'flex-start',
+        justifyContent: 'center' as 'center',
+      },
+
+      text: {
+        color: app_colors.white,
+        fontSize: 16,
+        marginBottom: 5,
+      }
+    }
   }
 }

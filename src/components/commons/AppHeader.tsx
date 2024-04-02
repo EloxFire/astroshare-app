@@ -1,5 +1,5 @@
 import React from 'react'
-import { Image, View } from 'react-native'
+import { Image, TouchableOpacity, View } from 'react-native'
 import { appHeaderStyles } from '../../styles/components/commons/appHeader'
 
 export default function AppHeader() {
@@ -9,6 +9,9 @@ export default function AppHeader() {
         source={require('../../../assets/logos/astroshare_logo_white.png')}
         resizeMode='contain'
       />
+      <TouchableOpacity onPress={() => {console.log('Settings pressed')}}>
+        <Image source={require('../../../assets/icons/FiSettings.png')}/>
+      </TouchableOpacity>
     </View>
   )
 }

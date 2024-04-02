@@ -9,9 +9,10 @@ interface InputWithIconProps {
   changeEvent: (searchString: string) => void
   search: () => void
   icon: ImageSourcePropType
+  value: string
 }
 
-export default function InputWithIcon({ placeholder, changeEvent, icon, search }: InputWithIconProps) {
+export default function InputWithIcon({ placeholder, changeEvent, icon, search, value }: InputWithIconProps) {
   return (
     <View style={inputWithIconStyles.inputContainer}>
       <TextInput
@@ -19,10 +20,11 @@ export default function InputWithIcon({ placeholder, changeEvent, icon, search }
         placeholder={placeholder}
         onChangeText={(searchString) => {changeEvent(searchString)}}
         underlineColorAndroid="transparent"
-        placeholderTextColor={app_colors.white}
+        placeholderTextColor="#FFFFFF25"
+        value={value}
       />
       <TouchableOpacity onPress={() => search()}>
-        <Image style={inputWithIconStyles.inputContainer.inputIcon} source={icon} resizeMode='contain' />
+        <Image style={[inputWithIconStyles.inputContainer.inputIcon, {tintColor: value !== '' ? app_colors.white : '#FFFFFF25'}]} source={icon} resizeMode='contain' />
       </TouchableOpacity>
     </View>
   )

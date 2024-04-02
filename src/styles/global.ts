@@ -5,7 +5,6 @@ export const globalStyles = {
   body: {
     backgroundColor: app_colors.black,
     color: app_colors.white,
-    fontFamily: 'GilroyRegular',
     paddingHorizontal: 20,
     paddingTop: StatusBar.currentHeight,
     height: '100%' as '100%',
@@ -25,8 +24,7 @@ export const globalStyles = {
     title: {
       color: app_colors.white,
       fontSize: 25,
-      fontFamily: 'GilroyBlack',
-      fontWeight: 'bold' as 'bold',
+      fontFamily: 'AuxMono',
       textTransform: 'uppercase' as 'uppercase',
     }
   }

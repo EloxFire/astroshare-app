@@ -17,9 +17,10 @@ export default function Home({ navigation }: any) {
         <LocationHeader />
         <InputWithIcon
           placeholder="Rechercher un objet céleste"
-          changeEvent={(searchString: string) => { console.log(searchString) }}
+          changeEvent={(string: string) => setSearchString(string)}
           icon={require('../../assets/icons/FiSearch.png')}
           search={() => { console.log('Search pressed') }}
+          value={searchString}
         />
         <View style={homeStyles.toolsSuggestions}>
           <Text style={globalStyles.sections.title}>Vos outils</Text>
