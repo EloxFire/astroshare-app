@@ -1,6 +1,6 @@
 import React from 'react'
 import { Text, View } from 'react-native'
-import { bigValueStyles } from '../../styles/components/bigValue'
+import { bigValueStyles } from '../../styles/components/commons/bigValue'
 
 interface BigValueProps {
   value: string

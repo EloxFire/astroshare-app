@@ -26,6 +26,7 @@ export const globalStyles = {
       fontSize: 25,
       fontFamily: 'AuxMono',
       textTransform: 'uppercase' as 'uppercase',
+      marginBottom: 10,
     }
   }
 }
