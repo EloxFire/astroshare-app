@@ -19,7 +19,7 @@ export default function App() {
         await useFonts()
         console.log('Fonts loaded');
       } catch (e) {
-        console.warn(e);
+        console.warn('Something went wrong : ', e);
       } finally {
         console.log('App is ready');
         setAppIsReady(true);
