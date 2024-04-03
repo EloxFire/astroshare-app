@@ -28,5 +28,13 @@ export const globalStyles = {
       textTransform: 'uppercase' as 'uppercase',
       marginBottom: 10,
     }
+  },
+  screens: {
+    title: {
+      color: app_colors.white,
+      fontSize: 35,
+      fontFamily: 'AuxMono',
+      textTransform: 'uppercase' as 'uppercase',
+    }
   }
 }

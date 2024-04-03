@@ -6,7 +6,7 @@ export const bigButtonStyles = {
     display: 'flex' as 'flex',
     flexDirection: 'column' as 'column',
     alignItems: 'center' as 'center',
-    justifyContent: 'space-between' as 'space-between',
+    justifyContent: 'center' as 'center',
     backgroundColor: app_colors.white_no_opacity,
     borderWidth: 1,
     borderColor: app_colors.white_no_opacity,
@@ -18,7 +18,7 @@ export const bigButtonStyles = {
     icon: {
       width: 40,
       height: 40,
-      marginBottom: 10,
+      marginBottom: 20,
     },
 
     text: {
