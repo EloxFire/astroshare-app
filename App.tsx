@@ -7,6 +7,7 @@ import { StatusBar } from "expo-status-bar";
 import useFonts from "./src/hooks/useFonts";
 import Home from "./src/screens/Home";
 import Compass from "./src/screens/Compass";
+import Settings from "./src/screens/Settings";
 
 const Stack = createNativeStackNavigator();
 
@@ -42,6 +43,7 @@ export default function App() {
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Home" component={Home} />
         <Stack.Screen name="CompassScreen" component={Compass} />
+        <Stack.Screen name="Settings" component={Settings} />
       </Stack.Navigator>
     </NavigationContainer>
   );

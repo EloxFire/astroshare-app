@@ -1,15 +1,16 @@
 import React from 'react'
 import { Image, TouchableOpacity, View } from 'react-native'
 import { appHeaderStyles } from '../../styles/components/commons/appHeader'
+import { routes } from '../../helpers/routes'
 
-export default function AppHeader() {
+export default function AppHeader({navigation}: any) {
   return (
     <View style={appHeaderStyles.container}>
       <Image style={appHeaderStyles.container.logo}
         source={require('../../../assets/logos/astroshare_logo_white.png')}
         resizeMode='contain'
       />
-      <TouchableOpacity onPress={() => {console.log('Settings pressed')}}>
+      <TouchableOpacity onPress={() => navigation.navigate(routes.settings)}>
         <Image source={require('../../../assets/icons/FiSettings.png')}/>
       </TouchableOpacity>
     </View>
