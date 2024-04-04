@@ -3,4 +3,5 @@ export const app_colors = {
   white: '#FFFFFF',
   white_no_opacity: '#FFFFFF0D',
   grey: '#0F0F0F',
+  red: '#FF0000',
 }
