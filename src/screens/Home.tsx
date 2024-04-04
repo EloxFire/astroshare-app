@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
 import { Keyboard, Text, TouchableWithoutFeedback, View } from 'react-native'
 import { globalStyles } from '../styles/global'
+import { homeStyles } from '../styles/screens/home';
 import LocationHeader from '../components/LocationHeader';
 import InputWithIcon from '../components/forms/InputWithIcon';
 import AppHeader from '../components/commons/AppHeader';
-import { homeStyles } from '../styles/screens/home';
 import BigButton from '../components/commons/BigButton';
 
 export default function Home({ navigation }: any) {
@@ -25,10 +25,11 @@ export default function Home({ navigation }: any) {
         />
         <View style={homeStyles.toolsSuggestions}>
           <Text style={globalStyles.sections.title}>Vos outils</Text>
+          <Text style={globalStyles.sections.subtitle}>Votre caisse à outils personnalisée</Text>
           <View style={homeStyles.toolsSuggestions.buttons}>
-            <BigButton navigation={navigation} targetScreen='CompassScreen' text="Boussole" icon={require('../../assets/icons/FiCompass.png')} />
-            <BigButton navigation={navigation} targetScreen='MoonScreen' text="Lune" icon={require('../../assets/icons/FiMoon.png')} additionalStyles={{marginHorizontal: 5}} />
-            <BigButton navigation={navigation} targetScreen='WeatherScreen' text="Météo" icon={require('../../assets/icons/FiSun.png')} />
+            <BigButton navigation={navigation} targetScreen='CompassScreen' text="Boussole & Niveau" subtitle='// Pour une mise en station précise' icon={require('../../assets/icons/FiCompass.png')} />
+            <BigButton navigation={navigation} targetScreen='MoonScreen' text="Phases de la Lune" subtitle='// Calculez les phases de la Lune' icon={require('../../assets/icons/FiMoon.png')} />
+            <BigButton navigation={navigation} targetScreen='WeatherScreen' text="Météo en direct" subtitle="// C'est le moment de sortir le téléscope !" icon={require('../../assets/icons/FiSun.png')} />
           </View>
         </View>
       </View>

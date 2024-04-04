@@ -1,16 +1,16 @@
 import React from 'react'
-import { Image, ImageSourcePropType, Text, TouchableOpacity } from 'react-native'
+import { Image, ImageSourcePropType, Text, TouchableOpacity, View } from 'react-native'
 import { bigButtonStyles } from '../../styles/components/commons/bigButton'
 
 interface BigButtonProps {
   text: string
+  subtitle?: string
   icon: ImageSourcePropType
-  additionalStyles?: any
   navigation?: any
   targetScreen?: string
 }
 
-export default function BigButton({ text, icon, additionalStyles = {}, navigation, targetScreen }: BigButtonProps) {
+export default function BigButton({ text, icon, navigation, targetScreen, subtitle }: BigButtonProps) {
 
   const handleNaviggation = () => {
     if (!navigation || !targetScreen) return;
@@ -18,9 +18,12 @@ export default function BigButton({ text, icon, additionalStyles = {}, navigatio
   }
 
   return (
-    <TouchableOpacity style={[bigButtonStyles.button, additionalStyles]} onPress={() => handleNaviggation()}>
+    <TouchableOpacity style={bigButtonStyles.button} onPress={() => handleNaviggation()}>
       <Image source={icon} style={bigButtonStyles.button.icon} />
-      <Text style={bigButtonStyles.button.text}>{text}</Text>
+      <View>
+        <Text style={bigButtonStyles.button.text}>{text}</Text>
+        {subtitle &&<Text style={bigButtonStyles.button.subtitle}>{subtitle}</Text>}
+      </View>
     </TouchableOpacity>
   )
 }

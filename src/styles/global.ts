@@ -24,9 +24,17 @@ export const globalStyles = {
     title: {
       color: app_colors.white,
       fontSize: 25,
-      fontFamily: 'AuxMono',
+      fontFamily: 'GilroyBlack',
       textTransform: 'uppercase' as 'uppercase',
+    },
+
+    subtitle: {
+      color: app_colors.white,
+      fontSize: 12,
       marginBottom: 10,
+      fontFamily: 'AuxMono',
+      opacity: .6,
+      textTransform: 'uppercase' as 'uppercase',
     }
   },
   screens: {
