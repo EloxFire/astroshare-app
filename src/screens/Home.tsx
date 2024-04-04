@@ -15,7 +15,7 @@ export default function Home({ navigation }: any) {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <View style={globalStyles.body}>
-        <AppHeader/>
+        <AppHeader navigation={navigation} />
         <LocationHeader />
         <InputWithIcon
           placeholder="Rechercher un objet céleste"
