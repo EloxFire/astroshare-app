@@ -2,8 +2,8 @@ import { app_colors } from "../../helpers/constants";
 
 export const searchResultCardStyles = {
   card: {
-    display: 'flex' as 'flex',
-    flexDirection: 'column' as 'column',
+    // display: 'flex' as 'flex',
+    // flexDirection: 'column' as 'column',
     padding: 10,
     marginRight: 10,
     backgroundColor: app_colors.white_no_opacity,

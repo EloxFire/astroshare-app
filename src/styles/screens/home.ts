@@ -11,11 +11,8 @@ export const homeStyles = {
     }
   },
   searchResults: {
-    display: 'flex' as 'flex',
-    flexDirection: 'row' as 'row',
-    height: 200,
     marginBottom: 25,
     marginTop: 10,
-    // backgroundColor: 'red'
+    height: 200,
   }
 }
