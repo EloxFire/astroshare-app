@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { FlatList, Keyboard, SafeAreaView, Text, View } from 'react-native'
+import { FlatList, Keyboard, SafeAreaView, Text, TouchableWithoutFeedback, View } from 'react-native'
 import { globalStyles } from '../styles/global'
 import { homeStyles } from '../styles/screens/home';
 import LocationHeader from '../components/LocationHeader';
@@ -9,7 +9,7 @@ import BigButton from '../components/commons/BigButton';
 import { routes } from '../helpers/routes';
 import { DSO } from '../helpers/types/DSO';
 import SearchResultCard from '../components/SearchResultCard';
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import HomeSearchResults from '../components/HomeSearchResults';
 
 export default function Home({ navigation }: any) {
 
@@ -120,42 +120,35 @@ export default function Home({ navigation }: any) {
     }
   ]
 
+  const handleSearch = () => {
+    Keyboard.dismiss()
+    console.log('Search pressed')
+  }
+
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-      <View style={globalStyles.body}>
-        <AppHeader navigation={navigation} />
-        <LocationHeader />
-        <InputWithIcon
-          placeholder="Rechercher un objet céleste"
-          changeEvent={(string: string) => setSearchString(string)}
-          icon={require('../../assets/icons/FiSearch.png')}
-          search={() => { console.log('Search pressed') }}
-          value={searchString}
-        />
-        {
-          fixtures.length > 0 &&
-          <View>
-            <Text style={globalStyles.sections.title}>Objets trouvés</Text>
-            <SafeAreaView style={homeStyles.searchResults}>
-                <FlatList
-                  horizontal
-                  data={fixtures}
-                  renderItem={({ item }) => <SearchResultCard title={item.name} />}
-                  keyExtractor={item => item.name + item.ra}
-                />
-              </SafeAreaView>
-          </View>
-        }
-        <View style={homeStyles.toolsSuggestions}>
-          <Text style={globalStyles.sections.title}>Vos outils</Text>
-          <Text style={globalStyles.sections.subtitle}>Votre caisse à outils personnalisée</Text>
-          <View style={homeStyles.toolsSuggestions.buttons}>
-            <BigButton navigation={navigation} targetScreen={routes.compass} text="Boussole & Niveau" subtitle='// Pour une mise en station précise' icon={require('../../assets/icons/FiCompass.png')} />
-            <BigButton navigation={navigation} targetScreen='MoonScreen' text="Phases de la Lune" subtitle='// Calculez les phases de la Lune' icon={require('../../assets/icons/FiMoon.png')} />
-            <BigButton navigation={navigation} targetScreen='WeatherScreen' text="Météo en direct" subtitle="// C'est le moment de sortir le téléscope !" icon={require('../../assets/icons/FiSun.png')} />
-          </View>
+    <View style={globalStyles.body}>
+      <AppHeader navigation={navigation} />
+      <LocationHeader />
+      <InputWithIcon
+        placeholder="Rechercher un objet céleste"
+        changeEvent={(string: string) => setSearchString(string)}
+        icon={require('../../assets/icons/FiSearch.png')}
+        search={() => handleSearch()}
+        value={searchString}
+      />
+      {
+        fixtures.length > 0 &&
+        <HomeSearchResults results={fixtures}/>
+      }
+      <View style={homeStyles.toolsSuggestions}>
+        <Text style={globalStyles.sections.title}>Vos outils</Text>
+        <Text style={globalStyles.sections.subtitle}>Votre caisse à outils personnalisée</Text>
+        <View style={homeStyles.toolsSuggestions.buttons}>
+          <BigButton navigation={navigation} targetScreen={routes.compass} text="Boussole & Niveau" subtitle='// Pour une mise en station précise' icon={require('../../assets/icons/FiCompass.png')} />
+          <BigButton navigation={navigation} targetScreen='MoonScreen' text="Phases de la Lune" subtitle='// Calculez les phases de la Lune' icon={require('../../assets/icons/FiMoon.png')} />
+          <BigButton navigation={navigation} targetScreen='WeatherScreen' text="Météo en direct" subtitle="// C'est le moment de sortir le téléscope !" icon={require('../../assets/icons/FiSun.png')} />
         </View>
       </View>
-    </TouchableWithoutFeedback>
+    </View>
   )
 }

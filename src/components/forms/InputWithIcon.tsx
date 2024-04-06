@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, TextInput, Image, ImageSourcePropType, TouchableOpacity } from 'react-native'
+import { View, TextInput, Image, ImageSourcePropType, TouchableOpacity, Keyboard } from 'react-native'
 import { inputWithIconStyles } from '../../styles/components/forms/inputWithIcon'
 import { app_colors } from '../../helpers/constants'
 

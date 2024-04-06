@@ -8,6 +8,7 @@ import useFonts from "./src/hooks/useFonts";
 import Home from "./src/screens/Home";
 import Compass from "./src/screens/Compass";
 import Settings from "./src/screens/Settings";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 const Stack = createNativeStackNavigator();
 
