@@ -17,7 +17,7 @@ export default function HomeSearchResults({ results }: HomeSearchResultsProps) {
           <FlatList
             horizontal
             data={results}
-            renderItem={({ item }) => <SearchResultCard title={item.name} />}
+            renderItem={({ item }) => <SearchResultCard object={item} />}
             keyExtractor={item => item.name + item.ra}
           />
         </SafeAreaView>

@@ -13,10 +13,17 @@ export const searchResultCardStyles = {
     width: 250,
     height: 200,
 
-    title: {
-      fontSize: 20,
-      color: app_colors.white,
-      marginBottom: 5
+    header: {
+      display: 'flex' as 'flex',
+      flexDirection: 'row' as 'row',
+      justifyContent: 'space-between' as 'space-between',
+
+      title: {
+        fontSize: 20,
+        color: app_colors.white,
+        marginBottom: 5,
+        fontFamily: 'GilroyBlack'
+      }
     }
   },
 }
