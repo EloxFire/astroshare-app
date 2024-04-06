@@ -7,7 +7,7 @@ export const globalStyles = {
     color: app_colors.white,
     paddingHorizontal: 20,
     paddingTop: StatusBar.currentHeight,
-    height: '100%' as '100%',
+    height: "100%" as "100%",
   },
   input: {
     backgroundColor: app_colors.white_no_opacity,
@@ -24,34 +24,40 @@ export const globalStyles = {
     title: {
       color: app_colors.white,
       fontSize: 25,
-      fontFamily: 'GilroyBlack',
-      textTransform: 'uppercase' as 'uppercase',
+      fontFamily: "GilroyBlack",
+      textTransform: "uppercase" as "uppercase",
     },
 
     subtitle: {
       color: app_colors.white,
       fontSize: 12,
       marginBottom: 10,
-      fontFamily: 'AuxMono',
-      opacity: .6,
-      textTransform: 'uppercase' as 'uppercase',
-    }
+      fontFamily: "AuxMono",
+      opacity: 0.6,
+      textTransform: "uppercase" as "uppercase",
+    },
   },
   screens: {
     title: {
       color: app_colors.white,
       fontSize: 30,
-      fontFamily: 'GilroyBlack',
-      textTransform: 'uppercase' as 'uppercase',
+      fontFamily: "GilroyBlack",
+      textTransform: "uppercase" as "uppercase",
     },
 
     subtitle: {
       color: app_colors.white,
       fontSize: 12,
       marginBottom: 10,
-      fontFamily: 'AuxMono',
-      opacity: .6,
-      textTransform: 'uppercase' as 'uppercase',
-    }
-  }
-}
+      fontFamily: "AuxMono",
+      opacity: 0.6,
+      textTransform: "uppercase" as "uppercase",
+    },
+
+    separator: {
+      height: 1,
+      backgroundColor: app_colors.white_sixty,
+      marginVertical: 10,
+    },
+  },
+};

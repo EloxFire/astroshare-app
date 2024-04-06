@@ -6,7 +6,7 @@ export const bigButtonStyles = {
     display: 'flex' as 'flex',
     flexDirection: 'row' as 'row',
     alignItems: 'center' as 'center',
-    justifyContent: 'flex-start' as 'flex-start',
+    justifyContent: 'space-between' as 'space-between',
     backgroundColor: app_colors.white_no_opacity,
     borderWidth: 1,
     borderColor: app_colors.white_no_opacity,

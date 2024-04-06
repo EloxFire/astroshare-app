@@ -9,6 +9,9 @@ import Home from "./src/screens/Home";
 import Compass from "./src/screens/Compass";
 import Settings from "./src/screens/Settings";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { AppSettingsProvider, useSettings } from "./src/contexts/AppSettingsContext";
+import { globalStyles } from "./src/styles/global";
+import { app_colors } from "./src/helpers/constants";
 
 const Stack = createNativeStackNavigator();
 
@@ -39,13 +42,15 @@ export default function App() {
   }
 
   return (
-    <NavigationContainer>
-      <StatusBar animated style="light"/>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="Home" component={Home} />
-        <Stack.Screen name="CompassScreen" component={Compass} />
-        <Stack.Screen name="Settings" component={Settings} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <AppSettingsProvider>
+      <NavigationContainer>
+        <StatusBar animated style="light"/>
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="Home" component={Home} />
+          <Stack.Screen name="CompassScreen" component={Compass} />
+          <Stack.Screen name="Settings" component={Settings} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </AppSettingsProvider>
   );
 }

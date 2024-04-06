@@ -23,14 +23,10 @@ export const compassStyles = {
       width: 300,
       borderRadius: 300,
 
-      mainNeedle: {
-        position: 'absolute' as 'absolute',
-        top: 150,
-        left: 145,
-        width: 150,
-        height: 1,
-        backgroundColor: app_colors.red,
-        transformOrigin: '0 0'
+      dialImage: {
+        position: "absolute" as "absolute",
+        height: 300,
+        width: 300,
       }
     },
 
