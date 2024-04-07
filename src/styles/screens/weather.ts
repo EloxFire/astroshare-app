@@ -72,6 +72,34 @@ export const weatherStyles = {
       borderWidth: 1,
       borderColor: app_colors.white_no_opacity,
       padding: 10,
+      marginBottom: 15,
+    },
+
+    ephemerisBar: {
+      display: 'flex' as 'flex',
+      flexDirection: 'row' as 'row',
+      justifyContent: 'space-between' as 'space-between',
+      alignItems: 'center' as 'center',
+      borderRadius: 10,
+      marginTop: 10,
+      position: 'relative' as 'relative',
+      
+      container: {
+        position: 'absolute' as 'absolute',
+        width: '85%' as '85%',
+        left: '7.5%' as '7.5%',
+        backgroundColor: app_colors.white_no_opacity,
+        height: 10,
+        borderRadius: 10,
+      },
+
+      progress: {
+        height: 10,
+        backgroundColor: app_colors.white,
+        borderRadius: 10,
+        position: 'absolute' as 'absolute',
+        left: '7.5%' as '7.5%',
+      }
     }
   }
 }
