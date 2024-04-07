@@ -42,7 +42,7 @@ export default function App() {
   return (
     <AppSettingsProvider>
       <NavigationContainer>
-        <StatusBar animated style="light"/>
+        <StatusBar animated style="light" translucent/>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           <Stack.Screen name="Home" component={Home} />
           <Stack.Screen name="CompassScreen" component={Compass} />
