@@ -30,6 +30,7 @@ export default function Weather({ navigation }: any) {
       const weather = await getWeather(currentUserLocation.lat, currentUserLocation.lon)
       setWeather(weather)
       setSearchedCity(null)
+      setSearchString('')
     }
   }
 
@@ -42,6 +43,9 @@ export default function Weather({ navigation }: any) {
     
     const cityCoords = await getCityCoords(searchString)
     if (cityCoords.length === 0) return;
+
+    console.log(cityCoords[0].state);
+    
 
     const city: LocationObject = {
       lat: cityCoords[0].lat,
@@ -80,13 +84,13 @@ export default function Weather({ navigation }: any) {
 
       <View style={[weatherStyles.content.weatherContainer, weatherStyles.content.weather]}>
         <Text style={weatherStyles.content.weather.header.title}>{!searchedCity ? currentUserLocation.common_name || '--' : searchedCity.common_name || '--'}</Text>
-        <Text style={weatherStyles.content.weather.header.subtitle}>{!searchedCity ? `${getUnicodeFlagIcon(currentUserLocation.country)}, ${currentUserLocation.state}` || '--' : getUnicodeFlagIcon(searchedCity.country || '') || '--'}</Text>
+        <Text style={weatherStyles.content.weather.header.subtitle}>{!searchedCity ? `${getUnicodeFlagIcon(currentUserLocation.country)}, ${currentUserLocation.state}` || '--' : `${getUnicodeFlagIcon(searchedCity.country || 'ZZ')}, ${searchedCity.state}` || '--'}</Text>
         <View style={weatherStyles.content.weather.header}>
           <View>
-            <Image source={weather ? weatherImages[weather.current.weather[0].icon] : weatherImages.default} style={{ width: 100, height: 100}}/>
+            <Image source={weather ? weatherImages[weather.current.weather[0].icon] : weatherImages.default} style={{ width: 100, height: 100, marginBottom: 8}}/>
             {
               weather ?
-                weather.current.weather[0].description.split(' ').length > 1 ?
+                (weather.current.weather[0].description.split(' ').length > 1 && weather.current.weather[0].description.length > 13) ?
                   <View>
                     <Text style={[weatherStyles.content.weather.header.title, weatherStyles.content.weather.header.description]}>{weather.current.weather[0].description.split(' ')[0]}</Text>
                     <Text style={[weatherStyles.content.weather.header.title, weatherStyles.content.weather.header.description]}>{weather.current.weather[0].description.split(' ')[1]}</Text>

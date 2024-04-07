@@ -11,7 +11,7 @@ export const weatherStyles = {
       borderWidth: 1,
       borderColor: app_colors.white_no_opacity,
       padding: 10,
-      marginBottom: 20,
+      marginBottom: 15,
       display: 'flex' as 'flex',
       flexDirection: 'row' as 'row',
       alignItems: 'center' as 'center',
