@@ -5,5 +5,6 @@ export type LocationObject = {
   lon: number;
   dms?: DMSCoords;
   common_name?: string;
+  state?: string;
   country?: string;
 }

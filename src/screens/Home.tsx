@@ -136,10 +136,10 @@ export default function Home({ navigation }: any) {
         search={() => handleSearch()}
         value={searchString}
       />
-      {
+      {/* {
         fixtures.length > 0 &&
         <HomeSearchResults results={fixtures}/>
-      }
+      } */}
       <View style={homeStyles.toolsSuggestions}>
         <Text style={globalStyles.sections.title}>Vos outils</Text>
         <Text style={globalStyles.sections.subtitle}>Votre caisse à outils personnalisée</Text>

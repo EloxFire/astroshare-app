@@ -4,7 +4,7 @@ import { locationHeaderStyles } from '../styles/components/locationHeader'
 import { askLocationPermission } from '../helpers/scripts/permissions/askLocationPermission';
 import * as Location from 'expo-location';
 import { LocationObject } from '../helpers/types/LocationObject';
-import { getLocationName } from '../helpers/api/convertCityName';
+import { getLocationName } from '../helpers/api/getLocationFromCoords';
 import { app_colors } from '../helpers/constants';
 import LocationModal from './LocationModal';
 import { convertDDtoDMS } from '../helpers/scripts/convertDDtoDMSCoords';
@@ -29,13 +29,14 @@ export default function LocationHeader({navigation}: any) {
 
       let location = await Location.getCurrentPositionAsync({});
       const coords: LocationObject = {lat: location.coords.latitude, lon: location.coords.longitude}
-      let name = await getLocationName(coords);
+      let name = await getLocationName(coords);      
 
       const userCoords: LocationObject = {
         lat: location.coords.latitude,
         lon: location.coords.longitude,
         common_name: name[0].local_names.fr,
         country: name[0].country,
+        state: name[0].state,
         dms: convertDDtoDMS(location.coords.latitude, location.coords.longitude)
       }
       
