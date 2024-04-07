@@ -1,5 +1,6 @@
 import React, { ReactNode, createContext, useContext, useState } from 'react'
 import { Dimensions, View } from 'react-native'
+import { LocationObject } from '../helpers/types/LocationObject'
 
 const AppSettingsContext = createContext<any>({})
 
@@ -14,16 +15,18 @@ interface AppSettingsProviderProps {
 export function AppSettingsProvider({ children }: AppSettingsProviderProps) {
 
   const [isNightMode, setIsNightMode] = useState<boolean>(false)
+  const [currentUserLocation, setCurrentUserLocation] = useState<LocationObject | null>(null)
 
   const values = {
     isNightMode,
     setIsNightMode,
+    currentUserLocation,
+    setCurrentUserLocation,
   }
 
   return (
     <AppSettingsContext.Provider value={values}>
-        {children}
-      <View style={{position: 'absolute', backgroundColor: 'red', height: Dimensions.get('screen').height, width: Dimensions.get('screen').width, opacity: isNightMode ? .6 : 0}}/>
+      {children}
     </AppSettingsContext.Provider>
   )
 }

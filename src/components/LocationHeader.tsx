@@ -8,15 +8,14 @@ import { getLocationName } from '../helpers/api/convertCityName';
 import { app_colors } from '../helpers/constants';
 import LocationModal from './LocationModal';
 import { convertDDtoDMS } from '../helpers/scripts/convertDDtoDMSCoords';
+import { useSettings } from '../contexts/AppSettingsContext';
 
 export default function LocationHeader({navigation}: any) {
 
-  const [location, setLocation] = useState<Location.LocationObject | null>(null);
-  const [locationName, setLocationName] = useState<string | null>(null);
-  const [locationCoords, setLocationCoords] = useState<LocationObject | null>(null);
   const [locationLoading, setLocationLoading] = useState<boolean>(true);
 
   const [isModalShown, setIsModalShown] = useState<boolean>(false);
+  const {currentUserLocation, setCurrentUserLocation} = useSettings();
 
   useEffect(() => {
     (async () => {
@@ -31,16 +30,16 @@ export default function LocationHeader({navigation}: any) {
       let location = await Location.getCurrentPositionAsync({});
       const coords: LocationObject = {lat: location.coords.latitude, lon: location.coords.longitude}
       let name = await getLocationName(coords);
-      
-      setLocationCoords({
+
+      const userCoords: LocationObject = {
         lat: location.coords.latitude,
         lon: location.coords.longitude,
         common_name: name[0].local_names.fr,
         country: name[0].country,
         dms: convertDDtoDMS(location.coords.latitude, location.coords.longitude)
-      });
-      setLocationName(name[0].local_names.fr);
-      setLocation(location);
+      }
+      
+      setCurrentUserLocation(userCoords);
       setLocationLoading(false);
     })();
   }, []);
@@ -72,14 +71,14 @@ export default function LocationHeader({navigation}: any) {
   });
 
   const handleModal = () => {
-    if(!locationCoords) return;
+    if(!currentUserLocation) return;
     setIsModalShown(!isModalShown);
   }
 
   return (
     <TouchableWithoutFeedback onPress={() => handleModal()}>
       <View style={locationHeaderStyles.container}>
-        <LocationModal visible={isModalShown} onClose={handleModal} coords={locationCoords!} />
+        <LocationModal visible={isModalShown} onClose={handleModal} coords={currentUserLocation!} />
         <TouchableOpacity style={locationHeaderStyles.container.location} onPress={() => handleModal()}>
           <View style={locationHeaderStyles.container.location.text}>
             <Text style={locationHeaderStyles.container.location.title}>Votre position</Text>
@@ -87,7 +86,7 @@ export default function LocationHeader({navigation}: any) {
               locationLoading ?
                 <Animated.Text style={[locationHeaderStyles.container.location.value, {opacity: interpolated}]}>Acquisition GPS...</Animated.Text>
                 :
-                <Text style={locationHeaderStyles.container.location.value}>{locationName}</Text>
+                <Text style={locationHeaderStyles.container.location.value}>{currentUserLocation.common_name}</Text>
             }
           </View>
           <Image source={require('../../assets/icons/FiChevronDown.png')} />
