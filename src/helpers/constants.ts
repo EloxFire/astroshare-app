@@ -1,5 +1,6 @@
 export const app_colors = {
   black: '#000000',
+  black_forty: '#00000099',
   white: '#FFFFFF',
   white_no_opacity: '#FFFFFF0D',
   white_forty: '#FFFFFF40',

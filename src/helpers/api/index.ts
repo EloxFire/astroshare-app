@@ -12,6 +12,14 @@ export const weatherApi = axios.create({
   baseURL: 'https://api.openweathermap.org/data/3.0/onecall',
 });
 
+export const moonApi = axios.create({
+  baseURL: 'https://moon-phase.p.rapidapi.com',
+  headers: {
+    'x-rapidapi-key': process.env.EXPO_PUBLIC_MOON_API_KEY,
+    'x-rapidapi-host': 'moon-phase.p.rapidapi.com',
+  }
+})
+
 reverseGeocodingApi.defaults.params = {
   appid: process.env.EXPO_PUBLIC_OPEN_WEATHER_API_KEY
 }

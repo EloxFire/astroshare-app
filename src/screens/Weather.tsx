@@ -14,6 +14,7 @@ import dayjs from 'dayjs'
 import { calculateDayPercentage } from '../helpers/scripts/astro/calculateDayPercentage'
 import WeatherOverview from '../components/weather/WeatherOverview'
 import Ephemeris from '../components/weather/Ephemeris'
+import { getMoon } from '../helpers/api/getMoon'
 
 export default function Weather({ navigation }: any) {
   
@@ -21,6 +22,7 @@ export default function Weather({ navigation }: any) {
   const [searchString, setSearchString] = useState<string>('')
   const [searchedCity, setSearchedCity] = useState<LocationObject | null>(null)
   const [weather, setWeather] = useState<any>(null)
+  const [moonInfos, setMoonInfos] = useState<any>(null)
 
   useEffect(() => {
     getCurrent()
@@ -29,7 +31,9 @@ export default function Weather({ navigation }: any) {
   const getCurrent = async () => {
     if (currentUserLocation) {
       const weather = await getWeather(currentUserLocation.lat, currentUserLocation.lon)
+      const moon = await getMoon(currentUserLocation.lat, currentUserLocation.lon)
       setWeather(weather)
+      setMoonInfos(moon)
       setSearchedCity(null)
       setSearchString('')
     }
@@ -74,7 +78,7 @@ export default function Weather({ navigation }: any) {
         </TouchableOpacity>
       }
       <WeatherOverview weather={weather} currentUserLocation={currentUserLocation} searchedCity={searchedCity} refresh={() => getCurrent()} />
-      <Ephemeris weather={weather} />
+      <Ephemeris weather={weather} moonInfos={moonInfos} />
     </View>
   )
 }
