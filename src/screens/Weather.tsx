@@ -4,17 +4,16 @@ import { globalStyles } from '../styles/global'
 import { weatherStyles } from '../styles/screens/weather'
 import { useSettings } from '../contexts/AppSettingsContext'
 import { getWeather } from '../helpers/api/getWeather'
-import { weatherImages } from '../helpers/scripts/loadImages'
-import { getWindDir } from '../helpers/scripts/getWindDir'
 import { LocationObject } from '../helpers/types/LocationObject'
 import PageTitle from '../components/commons/PageTitle'
 import InputWithIcon from '../components/forms/InputWithIcon'
 import SingleValue from '../components/weather/SingleValue'
-import getUnicodeFlagIcon from 'country-flag-icons/unicode'
 import { getCityCoords } from '../helpers/api/getCityCoords'
 import { convertDDtoDMS } from '../helpers/scripts/convertDDtoDMSCoords'
 import dayjs from 'dayjs'
 import { calculateDayPercentage } from '../helpers/scripts/astro/calculateDayPercentage'
+import WeatherOverview from '../components/weather/WeatherOverview'
+import Ephemeris from '../components/weather/Ephemeris'
 
 export default function Weather({ navigation }: any) {
   
@@ -46,17 +45,14 @@ export default function Weather({ navigation }: any) {
     const cityCoords = await getCityCoords(searchString)
     if (cityCoords.length === 0) return;
 
-    console.log(cityCoords[0].state);
-    
-
     const city: LocationObject = {
       lat: cityCoords[0].lat,
       lon: cityCoords[0].lon,
       common_name: cityCoords[0].local_names.fr,
       country: cityCoords[0].country,
-      state: cityCoords[0].state,
+      state: cityCoords[0].state || '',
       dms: convertDDtoDMS(cityCoords[0].lat, cityCoords[0].lon)
-    }    
+    }
    
     const searchedWeather = await getWeather(city.lat, city.lon)
     setSearchedCity(city)    
@@ -68,13 +64,7 @@ export default function Weather({ navigation }: any) {
       <PageTitle navigation={navigation} title="Météo en direct" subtitle="// C'est l'heure de sortir le télescope !" />
       <View style={globalStyles.screens.separator} />
       <View style={weatherStyles.content}>
-        <InputWithIcon
-          icon={require('../../assets/icons/FiSearch.png')}
-          placeholder="Rechercher une ville"
-          changeEvent={(text: string) => setSearchString(text)}
-          search={() => searchWeather()}
-          value={searchString}
-        />
+        <InputWithIcon icon={require('../../assets/icons/FiSearch.png')} placeholder="Rechercher une ville" changeEvent={(text: string) => setSearchString(text)} search={() => searchWeather()} value={searchString} />
       </View>
       {
         searchedCity &&
@@ -83,70 +73,8 @@ export default function Weather({ navigation }: any) {
           <Text style={weatherStyles.content.text}>Retour à {currentUserLocation.common_name}</Text>
         </TouchableOpacity>
       }
-
-      <View style={[weatherStyles.content.weatherContainer, weatherStyles.content.weather]}>
-        <Text style={weatherStyles.content.weather.header.title}>{!searchedCity ? currentUserLocation.common_name || '--' : searchedCity.common_name || '--'}</Text>
-        <Text style={weatherStyles.content.weather.header.subtitle}>{!searchedCity ? `${getUnicodeFlagIcon(currentUserLocation.country)}, ${currentUserLocation.state}` || '--' : `${getUnicodeFlagIcon(searchedCity.country || 'ZZ')}, ${searchedCity.state}` || '--'}</Text>
-        <View style={weatherStyles.content.weather.header}>
-          <View>
-            <Image source={weather ? weatherImages[weather.current.weather[0].icon] : weatherImages.default} style={{ width: 100, height: 100, marginBottom: 8}}/>
-            {
-              weather ?
-                (weather.current.weather[0].description.split(' ').length > 1 && weather.current.weather[0].description.length > 13) ?
-                  <View>
-                    <Text style={[weatherStyles.content.weather.header.title, weatherStyles.content.weather.header.description]}>{weather.current.weather[0].description.split(' ')[0]}</Text>
-                    <Text style={[weatherStyles.content.weather.header.title, weatherStyles.content.weather.header.description]}>{weather.current.weather[0].description.split(' ')[1]}</Text>
-                  </View>
-                  :
-                  <Text style={[weatherStyles.content.weather.header.title, weatherStyles.content.weather.header.description]}>{weather.current.weather[0].description}</Text>
-                  :
-                  <Text style={[weatherStyles.content.weather.header.title, weatherStyles.content.weather.header.description]}>--</Text>
-                }
-          </View>
-          <View style={{display: 'flex', flexDirection: 'column' ,alignItems: 'flex-end'}}>
-            <Text style={[weatherStyles.content.weather.header.title, weatherStyles.content.weather.header.temp]}>{weather ? `${Math.floor(weather.current.temp)}°C` : '--'}</Text>
-            <View>
-              <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 5}}>
-                <SingleValue value={weather ? Math.floor(weather.current.feels_like) : '--'} unit="°C" icon={require('../../assets/icons/FiUser.png')} />
-                <SingleValue value={weather ? Math.floor(weather.daily[0].temp.min) : '--'} unit="°C" icon={require('../../assets/icons/FiTrendingDown.png')} />
-                <SingleValue value={weather ? Math.floor(weather.daily[0].temp.max) : '--'} unit="°C" icon={require('../../assets/icons/FiTrendingUp.png')} />
-              </View>
-              <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 20}}>
-                <SingleValue value={weather ? weather.current.humidity : '--'} unit="%" icon={require('../../assets/icons/FiDroplet.png')} />
-                <SingleValue value={weather ? weather.current.wind_speed : '--'} unit="km/h" icon={require('../../assets/icons/FiWind.png')} />
-                <SingleValue value={weather ? getWindDir(weather.current.wind_deg) : '--'} icon={require('../../assets/icons/FiCompass.png')} />
-              </View>
-            </View>
-          </View>
-        </View>
-      </View>
-      <View style={weatherStyles.content.weatherContainer}>
-        <Text style={weatherStyles.content.weather.header.title}>Éphéméride</Text>
-        
-        <View style={weatherStyles.content.ephemerisBar}>
-          {weather && dayjs.unix(weather.current.sunset).isBefore(dayjs()) ? <Image source={require('../../assets/icons/weather/01n.png')} style={{ width: 20, height: 20, marginBottom: 3}}/> : <Image source={require('../../assets/icons/weather/01d.png')} style={{ width: 20, height: 20, marginBottom: 3}}/>}
-          <View style={weatherStyles.content.ephemerisBar.container} />
-          {
-            (weather && dayjs.unix(weather.current.sunset).isBefore(dayjs())) ?
-            <View style={[weatherStyles.content.ephemerisBar.progress, {width: weather ? calculateDayPercentage(dayjs.unix(weather.current.sunset), dayjs.unix(weather.daily[1].sunrise)) : 0}]}/>
-              :
-              <View style={[weatherStyles.content.ephemerisBar.progress, {width: weather ? calculateDayPercentage(dayjs.unix(weather.current.sunrise), dayjs.unix(weather.current.sunset)) : 0}]}/>
-          }
-          {weather && dayjs.unix(weather.current.sunset).isBefore(dayjs()) ? <Image source={require('../../assets/icons/weather/01d.png')} style={{ width: 20, height: 20, marginBottom: 3}}/> : <Image source={require('../../assets/icons/weather/01n.png')} style={{ width: 20, height: 20, marginBottom: 3}}/>}
-        </View>
-        {
-          (weather && dayjs.unix(weather.current.sunset).isBefore(dayjs())) ?
-          <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 5 }}>
-            <SingleValue value={weather ? dayjs.unix(weather.current.sunset).format('HH:mm') : '--'} icon={require('../../assets/icons/FiSunset.png')} />
-            <SingleValue value={weather ? dayjs.unix(weather.daily[1].sunrise).format('HH:mm') : '--'} icon={require('../../assets/icons/FiSunrise.png')} />
-          </View>
-          :
-          <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 5 }}>
-            <SingleValue value={weather ? dayjs.unix(weather.current.sunrise).format('HH:mm') : '--'} icon={require('../../assets/icons/FiSunrise.png')} />
-            <SingleValue value={weather ? dayjs.unix(weather.current.sunset).format('HH:mm') : '--'} icon={require('../../assets/icons/FiSunset.png')} />
-          </View>
-        }
-      </View>
+      <WeatherOverview weather={weather} currentUserLocation={currentUserLocation} searchedCity={searchedCity} refresh={() => getCurrent()} />
+      <Ephemeris weather={weather} />
     </View>
   )
 }
