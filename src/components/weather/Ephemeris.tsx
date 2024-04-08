@@ -1,42 +1,40 @@
 import dayjs from 'dayjs'
-import React from 'react'
-import { Image, Text, View } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import { Text, View } from 'react-native'
 import { calculateDayPercentage } from '../../helpers/scripts/astro/calculateDayPercentage'
 import { weatherStyles } from '../../styles/screens/weather'
-import SingleValue from './SingleValue'
+import EphemerisBar from './EphemerisBar'
+import MoonInfos from './MoonInfos'
 
 interface EphemerisProps {
   weather: any
 }
 
 export default function Ephemeris({ weather }: EphemerisProps) {
+
+  const [mode, setMode] = useState<'day' | 'night'>('day')
+
+  useEffect(() => {
+    if (weather && dayjs.unix(weather.current.sunset).isBefore(dayjs())) {
+      setMode('night')
+    } else {
+      setMode('day')
+    }
+  }, [weather])
+
   return (
-    <View style={weatherStyles.content.weatherContainer}>
-        <Text style={weatherStyles.content.weather.header.title}>Éphéméride</Text>
-        
-        <View style={weatherStyles.content.ephemerisBar}>
-          {weather && dayjs.unix(weather.current.sunset).isBefore(dayjs()) ? <Image source={require('../../../assets/icons/weather/01n.png')} style={{ width: 20, height: 20, marginBottom: 3}}/> : <Image source={require('../../../assets/icons/weather/01d.png')} style={{ width: 20, height: 20, marginBottom: 3}}/>}
-          <View style={weatherStyles.content.ephemerisBar.container} />
-          {
-            (weather && dayjs.unix(weather.current.sunset).isBefore(dayjs())) ?
-            <View style={[weatherStyles.content.ephemerisBar.progress, {width: weather ? calculateDayPercentage(dayjs.unix(weather.current.sunset), dayjs.unix(weather.daily[1].sunrise)) : 0}]}/>
-              :
-              <View style={[weatherStyles.content.ephemerisBar.progress, {width: weather ? calculateDayPercentage(dayjs.unix(weather.current.sunrise), dayjs.unix(weather.current.sunset)) : 0}]}/>
-          }
-          {weather && dayjs.unix(weather.current.sunset).isBefore(dayjs()) ? <Image source={require('../../../assets/icons/weather/01d.png')} style={{ width: 20, height: 20, marginBottom: 3}}/> : <Image source={require('../../../assets/icons/weather/01n.png')} style={{ width: 20, height: 20, marginBottom: 3}}/>}
-        </View>
-        {
-          (weather && dayjs.unix(weather.current.sunset).isBefore(dayjs())) ?
-          <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 5 }}>
-            <SingleValue value={weather ? dayjs.unix(weather.current.sunset).format('HH:mm') : '--'} icon={require('../../../assets/icons/FiSunset.png')} />
-            <SingleValue value={weather ? dayjs.unix(weather.daily[1].sunrise).format('HH:mm') : '--'} icon={require('../../../assets/icons/FiSunrise.png')} />
-          </View>
-          :
-          <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 5 }}>
-            <SingleValue value={weather ? dayjs.unix(weather.current.sunrise).format('HH:mm') : '--'} icon={require('../../../assets/icons/FiSunrise.png')} />
-            <SingleValue value={weather ? dayjs.unix(weather.current.sunset).format('HH:mm') : '--'} icon={require('../../../assets/icons/FiSunset.png')} />
-          </View>
-        }
-      </View>
+    <View style={weatherStyles.weatherContainer}>
+      <Text style={[weatherStyles.weatherContainer.title, {marginBottom: 20}]}>Éphéméride</Text>
+      {
+        weather &&
+          <EphemerisBar
+            mode={(weather && dayjs.unix(weather.current.sunset).isBefore(dayjs())) ? 'night' : 'day'}
+            percentage={weather ? calculateDayPercentage(dayjs.unix(weather.current.sunrise), dayjs.unix(weather.current.sunset), mode === 'day' ? 0 : 1) : 0}
+            sunrise={mode === 'night' ? dayjs.unix(weather.daily[1].sunrise).format('HH:mm') : dayjs.unix(weather.current.sunrise).format('HH:mm')}
+            sunset={mode === 'night' ? dayjs.unix(weather.current.sunset).format('HH:mm') : dayjs.unix(weather.daily[1].sunset).format('HH:mm')}
+          />
+      }
+      <MoonInfos/>
+    </View>
   )
 }

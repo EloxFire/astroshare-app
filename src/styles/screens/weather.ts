@@ -5,18 +5,7 @@ export const weatherStyles = {
     display: 'flex' as 'flex',
     flexDirection: 'column' as 'column',
 
-    resetButton: {
-      backgroundColor: app_colors.white_no_opacity,
-      borderRadius: 10,
-      borderWidth: 1,
-      borderColor: app_colors.white_no_opacity,
-      padding: 10,
-      marginBottom: 15,
-      display: 'flex' as 'flex',
-      flexDirection: 'row' as 'row',
-      alignItems: 'center' as 'center',
-      justifyContent: 'center' as 'center'
-    },
+    
 
     text: {
       fontSize: 15,
@@ -41,12 +30,7 @@ export const weatherStyles = {
           justifyContent: 'center' as 'center',
         },
 
-        title: {
-          fontSize: 25,
-          fontFamily: 'GilroyBlack',
-          textTransform: 'uppercase' as 'uppercase',
-          color: app_colors.white
-        },
+        
 
         subtitle: {
           fontSize: 12,
@@ -64,15 +48,6 @@ export const weatherStyles = {
           textAlign: 'center' as 'center',
         }
       }
-    },
-
-    weatherContainer: {
-      backgroundColor: app_colors.white_no_opacity,
-      borderRadius: 10,
-      borderWidth: 1,
-      borderColor: app_colors.white_no_opacity,
-      padding: 10,
-      marginBottom: 15,
     },
 
     ephemerisBar: {
@@ -98,8 +73,49 @@ export const weatherStyles = {
         backgroundColor: app_colors.white,
         borderRadius: 10,
         position: 'absolute' as 'absolute',
+        maxWidth: '85%' as '85%',
         left: '7.5%' as '7.5%',
       }
+    },
+
+    moonContent: {
+      marginTop: 20,
     }
-  }
+  },
+
+  weatherContainer: {
+    backgroundColor: app_colors.white_no_opacity,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: app_colors.white_no_opacity,
+    padding: 10,
+    marginBottom: 15,
+
+    title: {
+      fontSize: 25,
+      fontFamily: 'GilroyBlack',
+      textTransform: 'uppercase' as 'uppercase',
+      color: app_colors.white,
+    },
+
+    subtitle: {
+      fontSize: 18,
+      fontFamily: 'GilroyMedium',
+      textTransform: 'uppercase' as 'uppercase',
+      color: app_colors.white
+    },
+
+    resetButton: {
+      backgroundColor: app_colors.white_no_opacity,
+      borderRadius: 10,
+      borderWidth: 1,
+      borderColor: app_colors.white_no_opacity,
+      padding: 10,
+      marginBottom: 15,
+      display: 'flex' as 'flex',
+      flexDirection: 'row' as 'row',
+      alignItems: 'center' as 'center',
+      justifyContent: 'center' as 'center'
+    },
+  },
 }

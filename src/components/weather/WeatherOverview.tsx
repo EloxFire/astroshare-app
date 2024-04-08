@@ -17,10 +17,10 @@ interface WeatherOverviewProps {
 
 export default function WeatherOverview({ weather, currentUserLocation, searchedCity, refresh }: WeatherOverviewProps) {
   return (
-    <View style={[weatherStyles.content.weatherContainer, weatherStyles.content.weather]}>
+    <View style={[weatherStyles.weatherContainer, weatherStyles.content.weather]}>
       <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
         <View>
-          <Text style={weatherStyles.content.weather.header.title}>{!searchedCity ? currentUserLocation.common_name || '--' : searchedCity.common_name || '--'}</Text>
+          <Text style={weatherStyles.weatherContainer.title}>{!searchedCity ? currentUserLocation.common_name || '--' : searchedCity.common_name || '--'}</Text>
         <Text style={weatherStyles.content.weather.header.subtitle}>{!searchedCity ? `${getUnicodeFlagIcon(currentUserLocation.country || 'ZZ')}, ${currentUserLocation.state}` || '--' : `${getUnicodeFlagIcon(searchedCity.country || 'ZZ')}, ${searchedCity.state}` || '--'}</Text>
         </View>
         <TouchableOpacity style={{backgroundColor: app_colors.white_no_opacity, padding: 5, justifyContent: 'center', alignItems: 'center', borderRadius: 10, display: 'flex', width: 30, height: 30}} onPress={() => refresh()}>
@@ -34,17 +34,17 @@ export default function WeatherOverview({ weather, currentUserLocation, searched
               weather ?
                 (weather.current.weather[0].description.split(' ').length > 1 && weather.current.weather[0].description.length > 13) ?
                   <View>
-                    <Text style={[weatherStyles.content.weather.header.title, weatherStyles.content.weather.header.description]}>{weather.current.weather[0].description.split(' ')[0]}</Text>
-                    <Text style={[weatherStyles.content.weather.header.title, weatherStyles.content.weather.header.description]}>{weather.current.weather[0].description.split(' ')[1]}</Text>
+                    <Text style={[weatherStyles.weatherContainer.title, weatherStyles.content.weather.header.description]}>{weather.current.weather[0].description.split(' ')[0]}</Text>
+                    <Text style={[weatherStyles.weatherContainer.title, weatherStyles.content.weather.header.description]}>{weather.current.weather[0].description.split(' ')[1]}</Text>
                   </View>
                   :
-                  <Text style={[weatherStyles.content.weather.header.title, weatherStyles.content.weather.header.description]}>{weather.current.weather[0].description}</Text>
+                  <Text style={[weatherStyles.weatherContainer.title, weatherStyles.content.weather.header.description]}>{weather.current.weather[0].description}</Text>
                   :
-                  <Text style={[weatherStyles.content.weather.header.title, weatherStyles.content.weather.header.description]}>--</Text>
+                  <Text style={[weatherStyles.weatherContainer.title, weatherStyles.content.weather.header.description]}>--</Text>
                 }
           </View>
           <View style={{display: 'flex', flexDirection: 'column' ,alignItems: 'flex-end'}}>
-            <Text style={[weatherStyles.content.weather.header.title, weatherStyles.content.weather.header.temp]}>{weather ? `${Math.floor(weather.current.temp)}°C` : '--'}</Text>
+            <Text style={[weatherStyles.weatherContainer.title, weatherStyles.content.weather.header.temp]}>{weather ? `${Math.floor(weather.current.temp)}°C` : '--'}</Text>
             <View>
               <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 5}}>
                 <SingleValue value={weather ? Math.floor(weather.current.feels_like) : '--'} unit="°C" icon={require('../../../assets/icons/FiUser.png')} />
