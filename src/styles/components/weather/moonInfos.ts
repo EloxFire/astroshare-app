@@ -23,20 +23,7 @@ export const moonInfosStyles = {
       display: 'flex' as 'flex',
       flexDirection: 'row' as 'row',
       marginTop: 10,
-      marginLeft: 15,
-
-      label: {
-        color: app_colors.white,
-        fontSize: 16,
-        fontFamily: 'GilroyBlack',
-      },
-
-      value: {
-        color: app_colors.white,
-        fontSize: 16,
-        marginLeft: 5,
-        fontFamily: 'GilroyMedium',
-      }
+      marginLeft: 5,
     },
   }
 }

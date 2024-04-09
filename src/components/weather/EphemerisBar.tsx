@@ -11,11 +11,6 @@ interface EphemerisBarProps {
 }
 
 export default function EphemerisBar({ mode, percentage, sunrise, sunset }: EphemerisBarProps) {
-
-  console.log('mode', mode);
-  console.log('percentage', percentage);
-  
-
   return (
     <View style={ephemerisBarStyles.container}>
       <View style={ephemerisBarStyles.container.sideColumn}>
