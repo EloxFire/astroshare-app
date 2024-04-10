@@ -1,15 +1,10 @@
-import React, { useEffect, useState } from 'react'
-import { Image, ImageBackground, Text, View } from 'react-native'
+import React from 'react'
+import { ImageBackground, Text, View } from 'react-native'
 import { moonInfosStyles } from '../../styles/components/weather/moonInfos'
-import { getMoon } from '../../helpers/api/getMoon'
-import { useSettings } from '../../contexts/AppSettingsContext'
 import dayjs from 'dayjs'
 import SingleValue from './SingleValue'
 
 export default function MoonInfos({moonInfos}: any) {
-
-  const { currentUserLocation } = useSettings()
-
   return (
     <View style={moonInfosStyles.container}>
       <ImageBackground source={require('../../../assets/icons/astro/moon/Full Moon.png')} style={moonInfosStyles.container.illustration} />

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Image, Keyboard, Text, TouchableOpacity, View } from 'react-native'
+import { Image, Keyboard, ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import { globalStyles } from '../styles/global'
 import { weatherStyles } from '../styles/screens/weather'
 import { useSettings } from '../contexts/AppSettingsContext'
@@ -15,6 +15,7 @@ import { calculateDayPercentage } from '../helpers/scripts/astro/calculateDayPer
 import WeatherOverview from '../components/weather/WeatherOverview'
 import Ephemeris from '../components/weather/Ephemeris'
 import { getMoon } from '../helpers/api/getMoon'
+import Hourly from '../components/weather/Hourly'
 
 export default function Weather({ navigation }: any) {
   
@@ -43,6 +44,8 @@ export default function Weather({ navigation }: any) {
     if (searchString === '') {
       return
     }
+
+    setWeather(null)
 
     Keyboard.dismiss();
     
@@ -77,8 +80,22 @@ export default function Weather({ navigation }: any) {
           <Text style={weatherStyles.content.text}>Retour à {currentUserLocation.common_name}</Text>
         </TouchableOpacity>
       }
-      <WeatherOverview weather={weather} currentUserLocation={currentUserLocation} searchedCity={searchedCity} refresh={() => getCurrent()} />
-      <Ephemeris weather={weather} moonInfos={moonInfos} />
+      <ScrollView>
+        <WeatherOverview weather={weather} currentUserLocation={currentUserLocation} searchedCity={searchedCity} refresh={() => getCurrent()} />
+        <Hourly weather={weather}/>
+        <Ephemeris weather={weather} moonInfos={moonInfos} />
+        <Text style={weatherStyles.weatherContainer.title}>Légende</Text>
+        <View style={weatherStyles.legend}>
+          <SingleValue icon={require('../../assets/icons/FiThermometer.png')} value="Température" />
+          <SingleValue icon={require('../../assets/icons/FiUser.png')} value="Ressenti" />
+          <SingleValue icon={require('../../assets/icons/FiDroplet.png')} value="Humidité" />
+          <SingleValue icon={require('../../assets/icons/FiAlignCenter.png')} value="Nuages" />
+          <SingleValue icon={require('../../assets/icons/FiWind.png')} value="Vent" />
+          <SingleValue icon={require('../../assets/icons/FiCompass.png')} value="Direction vent" />
+          <SingleValue icon={require('../../assets/icons/FiTrendingUp.png')} value="T max" />
+          <SingleValue icon={require('../../assets/icons/FiTrendingDown.png')} value="T mini" />
+        </View>
+      </ScrollView>
     </View>
   )
 }

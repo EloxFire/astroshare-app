@@ -24,7 +24,7 @@ export default function Ephemeris({ weather, moonInfos }: EphemerisProps) {
   }, [weather])
 
   return (
-    <View style={weatherStyles.weatherContainer}>
+    <View style={[weatherStyles.weatherContainer, {marginBottom: 50}]}>
       <Text style={[weatherStyles.weatherContainer.title, {marginBottom: 20}]}>Éphéméride</Text>
       {
         weather &&

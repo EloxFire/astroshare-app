@@ -9,7 +9,6 @@ export const getMoon = async (lat: number, lon: number) => {
 
   try {
     const moonInfos = await moonApi.get('/advanced', { params: params });
-    console.log(moonInfos.data);
     return moonInfos.data;
   } catch (error) {
     console.log(error);
