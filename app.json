@@ -6,6 +6,7 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
+    "owner": "eloxfire",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
@@ -26,7 +27,8 @@
         "ACCESS_COARSE_LOCATION",
         "ACCESS_FINE_LOCATION",
         "ACCESS_BACKGROUND_LOCATION"
-      ]
+      ],
+      "package": "fr.eavagliano.astroshare"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -36,7 +38,6 @@
         "projectId": "d66b5c83-1f63-4749-8eaf-68ebaeea3859"
       }
     },
-    "owner": "Enzo Avagliano",
     "plugins": [
       [
         "expo-location",
