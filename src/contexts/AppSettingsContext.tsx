@@ -1,5 +1,4 @@
 import React, { ReactNode, createContext, useContext, useState } from 'react'
-import { Dimensions, View } from 'react-native'
 import { LocationObject } from '../helpers/types/LocationObject'
 
 const AppSettingsContext = createContext<any>({})
