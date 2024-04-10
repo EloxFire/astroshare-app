@@ -5,20 +5,21 @@ import { Text, View } from "react-native";
 import { loadingSplashStyles } from "./src/styles/screens/loadingSplash";
 import { StatusBar } from "expo-status-bar";
 import { AppSettingsProvider } from "./src/contexts/AppSettingsContext";
+import { routes } from "./src/helpers/routes";
 import useFonts from "./src/hooks/useFonts";
 import Home from "./src/screens/Home";
 import Compass from "./src/screens/Compass";
 import Settings from "./src/screens/Settings";
 import Weather from "./src/screens/Weather";
 import dayjs from "dayjs";
-
 import 'dayjs/locale/fr';
-import { routes } from "./src/helpers/routes";
+import ComingSoon from "./src/screens/ComingSoon";
 dayjs.locale('fr');
+
 
 const Stack = createNativeStackNavigator();
 
-export default function App() {
+export default function App({ navigation}: any) {
   const [appIsReady, setAppIsReady] = useState(false);
 
   useEffect(() => {
@@ -52,7 +53,9 @@ export default function App() {
           <Stack.Screen name={routes.home} component={Home} />
           <Stack.Screen name={routes.compass} component={Compass} />
           <Stack.Screen name={routes.weather} component={Weather} />
-          <Stack.Screen name={routes.moonPhases} component={Home} />
+          <Stack.Screen name={routes.moonPhases} component={ComingSoon}
+            initialParams={{ pageTitle: 'Phases de la Lune', pageSubtitle: '// Calculez les phases de la Lune', disclaimer: '// Cette fonctionnalité sera bientôt disponible dans votre application Astroshare. Vous pourrez ici calculer la phase de la Lune pour une date donnée et ainsi mieux prévoir vos sessions d\'observation du ciel !' }}
+          />
           <Stack.Screen name={routes.settings} component={Settings} />
         </Stack.Navigator>
       </NavigationContainer>
