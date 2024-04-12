@@ -19,3 +19,23 @@ export const weatherImages: any = {
   '50d': require('../../../assets/icons/weather/50d.png'),
   '50n': require('../../../assets/icons/weather/50n.png'),
 }
+
+export const astroImages: any = {
+  'CL+N': require('../../../assets/icons/astro/CL+N.png'),
+  'DRKN': require('../../../assets/icons/astro/DRKN.png'),
+  'G': require('../../../assets/icons/astro/G.png'),
+  'GCL': require('../../../assets/icons/astro/GCL.png'),
+  'GGROUP': require('../../../assets/icons/astro/GGROUP.png'),
+  'GPAIR': require('../../../assets/icons/astro/GPAIR.png'),
+  'GTRPL': require('../../../assets/icons/astro/GTRPL.png'),
+  'HII': require('../../../assets/icons/astro/HII.png'),
+  'NEB': require('../../../assets/icons/astro/NEB.png'),
+  'OCL': require('../../../assets/icons/astro/OCL.png'),
+  'OTHER': require('../../../assets/icons/astro/OTHER.png'),
+  'PN': require('../../../assets/icons/astro/PN.png'),
+  'RFN': require('../../../assets/icons/astro/RFN.png'),
+  'SNR': require('../../../assets/icons/astro/SNR.png'),
+  '*': require('../../../assets/icons/astro/STAR.png'),
+  '*ASS': require('../../../assets/icons/astro/STARASS.png'),
+  '**': require('../../../assets/icons/astro/STARSTAR.png'),
+}
