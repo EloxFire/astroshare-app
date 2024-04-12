@@ -18,7 +18,7 @@ interface WeatherOverviewProps {
 export default function WeatherOverview({ weather, currentUserLocation, searchedCity, refresh }: WeatherOverviewProps) {
   return (
     <View style={[weatherStyles.weatherContainer, weatherStyles.content.weather]}>
-      <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
+      <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginBottom: 15}}>
         <View>
           <Text style={weatherStyles.weatherContainer.title}>{!searchedCity ? currentUserLocation.common_name || '--' : searchedCity.common_name || '--'}</Text>
         <Text style={weatherStyles.content.weather.header.subtitle}>{!searchedCity ? `${getUnicodeFlagIcon(currentUserLocation.country || 'ZZ')}, ${currentUserLocation.state}` || '--' : `${getUnicodeFlagIcon(searchedCity.country || 'ZZ')}, ${searchedCity.state}` || '--'}</Text>
