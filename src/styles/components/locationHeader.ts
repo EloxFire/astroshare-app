@@ -30,6 +30,23 @@ export const locationHeaderStyles = {
         color: app_colors.white,
         textTransform: 'uppercase' as 'uppercase',
         fontFamily: 'AuxMono'
+      },
+
+      settingsButton: {
+        display: 'flex' as 'flex',
+        flexDirection: 'row' as 'row',
+        alignItems: 'center' as 'center',
+        justifyContent: 'center' as 'center',
+        backgroundColor: app_colors.white_no_opacity,
+        padding: 5,
+        borderRadius: 5,
+
+        value: {
+          color: app_colors.white,
+          textTransform: 'uppercase' as 'uppercase',
+          fontFamily: 'AuxMono',
+          // fontSize: 12,
+        },
       }
     }
   },

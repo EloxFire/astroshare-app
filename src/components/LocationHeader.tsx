@@ -1,33 +1,30 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { Animated, Easing, Image, Modal, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native'
 import { locationHeaderStyles } from '../styles/components/locationHeader'
-import { askLocationPermission } from '../helpers/scripts/permissions/askLocationPermission';
-import * as Location from 'expo-location';
 import { LocationObject } from '../helpers/types/LocationObject';
 import { getLocationName } from '../helpers/api/getLocationFromCoords';
-import { app_colors } from '../helpers/constants';
-import LocationModal from './LocationModal';
 import { convertDDtoDMS } from '../helpers/scripts/convertDDtoDMSCoords';
 import { useSettings } from '../contexts/AppSettingsContext';
+import LocationModal from './LocationModal';
+import * as Location from 'expo-location';
+import * as Linking from 'expo-linking';
 
 export default function LocationHeader({navigation}: any) {
 
+  const { currentUserLocation, setCurrentUserLocation, locationPermissions } = useSettings();
+  
   const [locationLoading, setLocationLoading] = useState<boolean>(true);
-
   const [isModalShown, setIsModalShown] = useState<boolean>(false);
-  const {currentUserLocation, setCurrentUserLocation} = useSettings();
+
 
   useEffect(() => {
+    if (!locationPermissions) {
+      setLocationLoading(false);
+      return;
+    };
+
     (async () => {
-      const hasLocationPermission = await askLocationPermission();
-      if (!hasLocationPermission) {
-        console.log("No location permission");
-        return;
-      }
-
-      console.log("Location permission granted");
-
-      let location = await Location.getCurrentPositionAsync({});
+      let location = await Location.getCurrentPositionAsync({accuracy: Location.Accuracy.Highest});
       const coords: LocationObject = {lat: location.coords.latitude, lon: location.coords.longitude}
       let name = await getLocationName(coords);      
 
@@ -43,7 +40,7 @@ export default function LocationHeader({navigation}: any) {
       setCurrentUserLocation(userCoords);
       setLocationLoading(false);
     })();
-  }, []);
+  }, [locationPermissions]);
 
   const blinkAnim = useRef(new Animated.Value(0)).current;
 
@@ -87,7 +84,12 @@ export default function LocationHeader({navigation}: any) {
               locationLoading ?
                 <Animated.Text style={[locationHeaderStyles.container.location.value, {opacity: interpolated}]}>Acquisition GPS...</Animated.Text>
                 :
-                <Text style={locationHeaderStyles.container.location.value}>{currentUserLocation.common_name}</Text>
+                locationPermissions ?
+                  <Text style={locationHeaderStyles.container.location.value}>{currentUserLocation?.common_name}</Text>
+                  :
+                  <TouchableOpacity style={locationHeaderStyles.container.location.settingsButton} onPress={() => Linking.openSettings()}>
+                    <Text style={locationHeaderStyles.container.location.settingsButton.value}>Paramètres de localisation</Text>
+                  </TouchableOpacity>
             }
           </View>
           <Image source={require('../../assets/icons/FiChevronDown.png')} />
