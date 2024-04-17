@@ -1,46 +1,16 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { Animated, Easing, Image, Modal, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native'
 import { locationHeaderStyles } from '../styles/components/locationHeader'
-import { LocationObject } from '../helpers/types/LocationObject';
-import { getLocationName } from '../helpers/api/getLocationFromCoords';
-import { convertDDtoDMS } from '../helpers/scripts/convertDDtoDMSCoords';
 import { useSettings } from '../contexts/AppSettingsContext';
 import LocationModal from './LocationModal';
-import * as Location from 'expo-location';
+import RefreshButton from './commons/buttons/RefreshButton';
 import * as Linking from 'expo-linking';
 
-export default function LocationHeader({navigation}: any) {
+export default function LocationHeader() {
 
-  const { currentUserLocation, setCurrentUserLocation, locationPermissions } = useSettings();
+  const { currentUserLocation, locationPermissions, locationLoading, getUserCurrentPosition } = useSettings();
   
-  const [locationLoading, setLocationLoading] = useState<boolean>(true);
   const [isModalShown, setIsModalShown] = useState<boolean>(false);
-
-
-  useEffect(() => {
-    if (!locationPermissions) {
-      setLocationLoading(false);
-      return;
-    };
-
-    (async () => {
-      let location = await Location.getCurrentPositionAsync({accuracy: Location.Accuracy.Highest});
-      const coords: LocationObject = {lat: location.coords.latitude, lon: location.coords.longitude}
-      let name = await getLocationName(coords);      
-
-      const userCoords: LocationObject = {
-        lat: location.coords.latitude,
-        lon: location.coords.longitude,
-        common_name: name[0].local_names.fr,
-        country: name[0].country,
-        state: name[0].state,
-        dms: convertDDtoDMS(location.coords.latitude, location.coords.longitude)
-      }
-      
-      setCurrentUserLocation(userCoords);
-      setLocationLoading(false);
-    })();
-  }, [locationPermissions]);
 
   const blinkAnim = useRef(new Animated.Value(0)).current;
 
@@ -94,6 +64,7 @@ export default function LocationHeader({navigation}: any) {
           </View>
           <Image source={require('../../assets/icons/FiChevronDown.png')} />
         </TouchableOpacity>
+        <RefreshButton action={() => getUserCurrentPosition()} />
       </View>
     </TouchableWithoutFeedback>
   )

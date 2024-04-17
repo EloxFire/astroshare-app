@@ -5,8 +5,6 @@ export const weatherStyles = {
     display: 'flex' as 'flex',
     flexDirection: 'column' as 'column',
 
-    
-
     text: {
       fontSize: 15,
       fontFamily: 'GilroyRegular',
@@ -29,8 +27,6 @@ export const weatherStyles = {
           alignItems: 'flex-end' as 'flex-end',
           justifyContent: 'center' as 'center',
         },
-
-        
 
         subtitle: {
           fontSize: 12,

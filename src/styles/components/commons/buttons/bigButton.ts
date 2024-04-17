@@ -1,5 +1,5 @@
-import { app_colors } from "../../../helpers/constants";
-import { RPH, RPW } from "../../../helpers/scripts/getScreenPercentage";
+import { app_colors } from "../../../../helpers/constants";
+import { RPH, RPW } from "../../../../helpers/scripts/getScreenPercentage";
 
 export const bigButtonStyles = {
   button: {

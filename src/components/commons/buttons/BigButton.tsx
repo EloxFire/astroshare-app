@@ -1,6 +1,6 @@
 import React from 'react'
 import { Image, ImageSourcePropType, Text, TouchableOpacity, View } from 'react-native'
-import { bigButtonStyles } from '../../styles/components/commons/bigButton'
+import { bigButtonStyles } from '../../../styles/components/commons/buttons/bigButton'
 
 interface BigButtonProps {
   text: string
@@ -40,7 +40,7 @@ export default function BigButton({ text, icon, navigation, targetScreen, subtit
       {
         hasCheckbox && (
           <Image
-            source={isChecked ? require('../../../assets/icons/FiToggleFilled.png') : require('../../../assets/icons/FiToggleEmpty.png')}
+            source={isChecked ? require('../../../../assets/icons/FiToggleFilled.png') : require('../../../../assets/icons/FiToggleEmpty.png')}
             style={bigButtonStyles.button.icon}
           />
         )

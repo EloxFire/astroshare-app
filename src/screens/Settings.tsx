@@ -4,7 +4,7 @@ import { globalStyles } from "../styles/global";
 import PageTitle from "../components/commons/PageTitle";
 import { settingsStyles } from "../styles/screens/settings";
 import { useSettings } from "../contexts/AppSettingsContext";
-import BigButton from "../components/commons/BigButton";
+import BigButton from "../components/commons/buttons/BigButton";
 
 export default function Settings({ navigation }: any) {
 

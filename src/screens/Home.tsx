@@ -7,7 +7,7 @@ import { DSO } from '../helpers/types/DSO';
 import LocationHeader from '../components/LocationHeader';
 import InputWithIcon from '../components/forms/InputWithIcon';
 import AppHeader from '../components/commons/AppHeader';
-import BigButton from '../components/commons/BigButton';
+import BigButton from '../components/commons/buttons/BigButton';
 import axios from 'axios';
 import HomeSearchResults from '../components/HomeSearchResults';
 

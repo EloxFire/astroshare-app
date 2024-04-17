@@ -6,6 +6,7 @@ import { loadingSplashStyles } from "./src/styles/screens/loadingSplash";
 import { StatusBar } from "expo-status-bar";
 import { AppSettingsProvider } from "./src/contexts/AppSettingsContext";
 import { routes } from "./src/helpers/routes";
+import { RootSiblingParent } from 'react-native-root-siblings';
 import useFonts from "./src/hooks/useFonts";
 import Home from "./src/screens/Home";
 import Compass from "./src/screens/Compass";
@@ -46,19 +47,21 @@ export default function App({ navigation}: any) {
   }
 
   return (
-    <AppSettingsProvider>
-        <NavigationContainer>
-          <StatusBar animated style="light" translucent/>
-          <Stack.Navigator screenOptions={{ headerShown: false }}>
-            <Stack.Screen name={routes.home} component={Home} />
-            <Stack.Screen name={routes.compass} component={Compass} />
-            <Stack.Screen name={routes.weather} component={Weather} />
-            <Stack.Screen name={routes.moonPhases} component={ComingSoon}
-              initialParams={{ pageTitle: 'Phases de la Lune', pageSubtitle: '// Calculez les phases de la Lune', disclaimer: '// Cette fonctionnalité sera bientôt disponible dans votre application Astroshare. Vous pourrez ici calculer la phase de la Lune pour une date donnée et ainsi mieux prévoir vos sessions d\'observation du ciel !' }}
-            />
-            <Stack.Screen name={routes.settings} component={Settings} />
-          </Stack.Navigator>
-        </NavigationContainer>
-    </AppSettingsProvider>
+    <RootSiblingParent>
+      <AppSettingsProvider>
+          <NavigationContainer>
+            <StatusBar animated style="light" translucent/>
+            <Stack.Navigator screenOptions={{ headerShown: false }}>
+              <Stack.Screen name={routes.home} component={Home} />
+              <Stack.Screen name={routes.compass} component={Compass} />
+              <Stack.Screen name={routes.weather} component={Weather} />
+              <Stack.Screen name={routes.moonPhases} component={ComingSoon}
+                initialParams={{ pageTitle: 'Phases de la Lune', pageSubtitle: '// Calculez les phases de la Lune', disclaimer: '// Cette fonctionnalité sera bientôt disponible dans votre application Astroshare. Vous pourrez ici calculer la phase de la Lune pour une date donnée et ainsi mieux prévoir vos sessions d\'observation du ciel !' }}
+              />
+              <Stack.Screen name={routes.settings} component={Settings} />
+            </Stack.Navigator>
+          </NavigationContainer>
+      </AppSettingsProvider>
+    </RootSiblingParent>
   );
 }
