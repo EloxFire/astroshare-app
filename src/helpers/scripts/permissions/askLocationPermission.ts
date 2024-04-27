@@ -6,5 +6,5 @@ export const askLocationPermission = async () => {
   if (status !== 'granted') {
     return false;
   }
-  return false;
+  return true;
 }
