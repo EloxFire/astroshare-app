@@ -42,8 +42,9 @@
       [
         "expo-location",
         {
-          "locationAlwaysAndWhenInUsePermission": "Autoriser ASTROSHARE à utiliser votre position.",
-          "isAndroidBackgroundLocationEnabled": true
+          "locationAlwaysAndWhenInUsePermission": "Autoriser ${PRODUCT_NAME} à utiliser votre position.",
+          "isAndroidBackgroundLocationEnabled": true,
+          "isAndroidForegroundServiceEnabled": true
         }
       ]
     ]
