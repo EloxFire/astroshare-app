@@ -56,21 +56,34 @@ export function AppSettingsProvider({ children }: AppSettingsProviderProps) {
       Toast.hide(toast);
     }, 3000)
 
-    let location = await Location.getCurrentPositionAsync({accuracy: Location.Accuracy.Highest});
-    const coords: LocationObject = {lat: location.coords.latitude, lon: location.coords.longitude}
-    let name = await getLocationName(coords);      
+    try {
+      let location = await Location.getCurrentPositionAsync({accuracy: Location.Accuracy.Highest});
+      const coords: LocationObject = {lat: location.coords.latitude, lon: location.coords.longitude}
+      let name = await getLocationName(coords);      
+  
+      const userCoords: LocationObject = {
+        lat: location.coords.latitude,
+        lon: location.coords.longitude,
+        common_name: name[0].local_names.fr,
+        country: name[0].country,
+        state: name[0].state,
+        dms: convertDDtoDMS(location.coords.latitude, location.coords.longitude)
+      }
 
-    const userCoords: LocationObject = {
-      lat: location.coords.latitude,
-      lon: location.coords.longitude,
-      common_name: name[0].local_names.fr,
-      country: name[0].country,
-      state: name[0].state,
-      dms: convertDDtoDMS(location.coords.latitude, location.coords.longitude)
+      let toast = Toast.show('Signal trouvé : ' + name[0].local_names.fr, { duration: Toast.durations.LONG, position: Toast.positions.BOTTOM });
+      setTimeout(() => {
+        Toast.hide(toast);
+      }, 3000)
+  
+      setCurrentUserLocation(userCoords);
+      setLocationLoading(false);
+    } catch (error) {
+      let toast = Toast.show('Erreur GPS...', { duration: Toast.durations.LONG, position: Toast.positions.BOTTOM });
+      setTimeout(() => {
+        Toast.hide(toast);
+      }, 3000)
+      setLocationLoading(false);
     }
-
-    setCurrentUserLocation(userCoords);
-    setLocationLoading(false);
   }
 
   const values = {
