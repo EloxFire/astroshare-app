@@ -1,13 +1,14 @@
+import axios from "axios";
 import { reverseGeocodingApi } from "."
 import { LocationObject } from "../types/LocationObject"
 
 export const getLocationName = async (coords: LocationObject) => {
   try {
-    const response = await reverseGeocodingApi.get(``, { params: { lat: coords.lat, lon: coords.lon, limit: 1 } })
-    console.log("City found :", response.data[0].local_names.fr);
-    return response.data
+    const response = await axios.get(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/location/name`, {params: {lat: coords.lat, lon: coords.lon}})
+    console.log("City found :", response.data.data.local_names.fr);
+    return response.data.data
   } catch (error: any) {
-    console.log("Error while retreiving the city : ", error.message)
+    console.log("Error while retreiving the city : ", error)
     return error
   }
 }

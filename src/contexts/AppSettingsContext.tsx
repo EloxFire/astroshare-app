@@ -56,42 +56,29 @@ export function AppSettingsProvider({ children }: AppSettingsProviderProps) {
       Toast.hide(toast);
     }, 3000)
 
-    let location: any;
     try {
-      location = await Location.getCurrentPositionAsync({accuracy: Location.Accuracy.Highest});
-      let toast = Toast.show('Location found ', { duration: Toast.durations.LONG, position: Toast.positions.BOTTOM });
-      setTimeout(() => {
-        Toast.hide(toast);
-      }, 3000)
-      setLocationLoading(false);
-    } catch (error) {
-      let toast = Toast.show('Cant get location native', { duration: Toast.durations.LONG, position: Toast.positions.BOTTOM });
-      setTimeout(() => {
-        Toast.hide(toast);
-      }, 3000)
-      setLocationLoading(false);
-    }
-    try {
+      let location = await Location.getCurrentPositionAsync({accuracy: Location.Accuracy.Highest});
       const coords: LocationObject = {lat: location.coords.latitude, lon: location.coords.longitude}
       let name = await getLocationName(coords);
-  
+
       const userCoords: LocationObject = {
         lat: location.coords.latitude,
         lon: location.coords.longitude,
-        common_name: name[0].local_names.fr,
-        country: name[0].country,
-        state: name[0].state,
+        common_name: name.local_names.fr,
+        country: name.country,
+        state: name.state,
         dms: convertDDtoDMS(location.coords.latitude, location.coords.longitude)
       }
-
-      let toast = Toast.show('Common name : ' + name[0].local_names.fr, { duration: Toast.durations.LONG, position: Toast.positions.BOTTOM });
-      setTimeout(() => {
-        Toast.hide(toast);
-      }, 3000)
   
       setCurrentUserLocation(userCoords);
       setLocationLoading(false);
+      let toast = Toast.show('Signal trouvé : ' + name.local_names.fr, { duration: Toast.durations.LONG, position: Toast.positions.BOTTOM });
+      setTimeout(() => {
+        Toast.hide(toast);
+      }, 3000)
     } catch (error) {
+      console.log("Error while getting location name : ", error);
+      
       let toast = Toast.show('Erreur name...', { duration: Toast.durations.LONG, position: Toast.positions.BOTTOM });
       setTimeout(() => {
         Toast.hide(toast);
