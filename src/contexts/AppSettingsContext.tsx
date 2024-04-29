@@ -58,7 +58,11 @@ export function AppSettingsProvider({ children }: AppSettingsProviderProps) {
 
     try {
       let location = await Location.getCurrentPositionAsync({accuracy: Location.Accuracy.Highest});
-      const coords: LocationObject = {lat: location.coords.latitude, lon: location.coords.longitude}
+      const coords: LocationObject = { lat: location.coords.latitude, lon: location.coords.longitude }
+      let toast1 = Toast.show(`${location.coords.latitude} ${location.coords.longitude}`, { duration: Toast.durations.LONG, position: Toast.positions.BOTTOM });
+      setTimeout(() => {
+        Toast.hide(toast1);
+      }, 8000)
       let name = await getLocationName(coords);
 
       const userCoords: LocationObject = {
