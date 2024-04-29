@@ -14,7 +14,8 @@
       "distribution": "internal",
       "env": {
         "EXPO_PUBLIC_OPEN_WEATHER_API_KEY":"5c17dcbf88a092a87a994409fa0900b0",
-        "EXPO_PUBLIC_MOON_API_KEY":"fc929daed2msh1a8d33a685feeb5p197eb7jsn4da6ba77f271"
+        "EXPO_PUBLIC_MOON_API_KEY":"fc929daed2msh1a8d33a685feeb5p197eb7jsn4da6ba77f271",
+        "EXPO_PUBLIC_ASTROSHARE_API_URL":"http://api.astroshare.fr"
       }
     },
     "production": {}
