@@ -79,7 +79,7 @@ export function AppSettingsProvider({ children }: AppSettingsProviderProps) {
     } catch (error) {
       console.log("Error while getting location name : ", error);
       
-      let toast = Toast.show('Erreur name...', { duration: Toast.durations.LONG, position: Toast.positions.BOTTOM });
+      let toast = Toast.show('Erreur name...' + error, { duration: Toast.durations.LONG, position: Toast.positions.BOTTOM });
       setTimeout(() => {
         Toast.hide(toast);
       }, 3000)

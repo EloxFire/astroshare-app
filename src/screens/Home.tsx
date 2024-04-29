@@ -50,8 +50,6 @@ export default function Home({ navigation }: any) {
         <HomeSearchResults results={searchResults} onReset={handleRestSearch}/>
       }
       <View style={homeStyles.toolsSuggestions}>
-        <Text style={globalStyles.sections.subtitle}>{process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}</Text>
-        <Text style={globalStyles.sections.subtitle}>{process.env.EXPO_PUBLIC_OPEN_WEATHER_API_KEY}</Text>
         <Text style={globalStyles.sections.title}>Vos outils</Text>
         <Text style={globalStyles.sections.subtitle}>Votre caisse à outils personnalisée</Text>
         <View style={homeStyles.toolsSuggestions.buttons}>
