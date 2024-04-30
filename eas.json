@@ -9,8 +9,7 @@
     },
     "preview": {
       "android": {
-        "buildType": "apk",
-        "usesClearTextTraffic": true
+        "buildType": "apk"
       },
       "distribution": "internal",
       "env": {
