@@ -1,4 +1,4 @@
-import { moonApi } from ".";
+import axios from "axios";
 
 export const getMoon = async (lat: number, lon: number) => {
 
@@ -8,8 +8,8 @@ export const getMoon = async (lat: number, lon: number) => {
   }
 
   try {
-    const moonInfos = await moonApi.get('/advanced', { params: params });
-    return moonInfos.data;
+    const moonInfos = await axios.get(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/moon`, { params: params });
+    return moonInfos.data.data;
   } catch (error) {
     console.log(error);
     return error;
