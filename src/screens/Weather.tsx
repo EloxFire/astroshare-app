@@ -5,17 +5,16 @@ import { weatherStyles } from '../styles/screens/weather'
 import { useSettings } from '../contexts/AppSettingsContext'
 import { getWeather } from '../helpers/api/getWeather'
 import { LocationObject } from '../helpers/types/LocationObject'
+import { getCityCoords } from '../helpers/api/getCityCoords'
+import { getMoon } from '../helpers/api/getMoon'
+import { convertDDtoDMS } from '../helpers/scripts/convertDDtoDMSCoords'
 import PageTitle from '../components/commons/PageTitle'
 import InputWithIcon from '../components/forms/InputWithIcon'
 import SingleValue from '../components/weather/SingleValue'
-import { getCityCoords } from '../helpers/api/getCityCoords'
-import { convertDDtoDMS } from '../helpers/scripts/convertDDtoDMSCoords'
-import dayjs from 'dayjs'
-import { calculateDayPercentage } from '../helpers/scripts/astro/calculateDayPercentage'
 import WeatherOverview from '../components/weather/WeatherOverview'
 import Ephemeris from '../components/weather/Ephemeris'
-import { getMoon } from '../helpers/api/getMoon'
 import Hourly from '../components/weather/Hourly'
+import Toast from 'react-native-root-toast'
 
 export default function Weather({ navigation }: any) {
   
@@ -31,12 +30,20 @@ export default function Weather({ navigation }: any) {
 
   const getCurrent = async () => {
     if (currentUserLocation) {
+      let toast = Toast.show('Aquisition de la météo', { duration: Toast.durations.LONG, position: Toast.positions.BOTTOM });
+      setTimeout(() => {
+        Toast.hide(toast);
+      }, 2000)
       const weather = await getWeather(currentUserLocation.lat, currentUserLocation.lon)
       const moon = await getMoon(currentUserLocation.lat, currentUserLocation.lon)
       setWeather(weather)
       setMoonInfos(moon)
       setSearchedCity(null)
       setSearchString('')
+      let toast2 = Toast.show('Succès', { duration: Toast.durations.LONG, position: Toast.positions.BOTTOM });
+      setTimeout(() => {
+        Toast.hide(toast2);
+      }, 3000)
     }
   }
 
@@ -44,6 +51,11 @@ export default function Weather({ navigation }: any) {
     if (searchString === '') {
       return
     }
+
+    let toast = Toast.show('Aquisition de la météo', { duration: Toast.durations.LONG, position: Toast.positions.BOTTOM });
+    setTimeout(() => {
+      Toast.hide(toast);
+    }, 3000)
 
     setWeather(null)
 
@@ -64,6 +76,10 @@ export default function Weather({ navigation }: any) {
     const searchedWeather = await getWeather(city.lat, city.lon)
     setSearchedCity(city)    
     setWeather(searchedWeather)
+    let toast2 = Toast.show('Succès', { duration: Toast.durations.LONG, position: Toast.positions.BOTTOM });
+    setTimeout(() => {
+      Toast.hide(toast2);
+    }, 3000)
   }
 
   return (
