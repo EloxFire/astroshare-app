@@ -1,5 +1,4 @@
 import axios from "axios";
-import { reverseGeocodingApi } from "."
 import { LocationObject } from "../types/LocationObject"
 
 export const getLocationName = async (coords: LocationObject) => {

@@ -93,7 +93,7 @@ export default function Weather({ navigation }: any) {
         searchedCity &&
         <TouchableOpacity style={weatherStyles.weatherContainer.resetButton} onPress={() => getCurrent()}>
           <Image source={require('../../assets/icons/FiRepeat.png')} style={{ width: 20, height: 20, marginRight: 10}}/>
-          <Text style={weatherStyles.content.text}>Retour à {currentUserLocation.common_name}</Text>
+          <Text style={weatherStyles.content.text}>Retour à {currentUserLocation.common_name || ""}</Text>
         </TouchableOpacity>
       }
       <ScrollView>

@@ -1,5 +1,4 @@
 import axios from "axios"
-import { geocodingApi } from "."
 
 export const getCityCoords = async (cityName: string) => {
   try {
