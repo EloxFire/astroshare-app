@@ -7,6 +7,7 @@ import { getLocationName } from '../helpers/api/getLocationFromCoords'
 import * as Location from 'expo-location'
 import Toast from 'react-native-root-toast';
 import { hideToast } from '../helpers/scripts/hideToast'
+import { showToast } from '../helpers/scripts/showToast'
 
 const AppSettingsContext = createContext<any>({})
 
@@ -34,35 +35,27 @@ export function AppSettingsProvider({ children }: AppSettingsProviderProps) {
       const hasLocationPermission = await askLocationPermission();
       if (!hasLocationPermission) {
         setLocationLoading(false);
-        locationToast = Toast.show('Vous devez autoriser l\'accès à la localisation pour utiliser l\'application', { duration: Toast.durations.LONG, position: Toast.positions.BOTTOM });
-        hideToast(locationToast);
+        showToast({ message: 'Vous devez autoriser l\'accès à la localisation pour utiliser l\'application', duration: Toast.durations.LONG, type: 'error' });
         return;
       }
 
       setLocationPermissions(true);
-      locationToast = Toast.show('Acquisition de votre position', { duration: Toast.durations.LONG, position: Toast.positions.BOTTOM });
-      hideToast(locationToast);
-
+      // locationToast = Toast.show('Acquisition de votre position', { duration: Toast.durations.LONG, position: Toast.positions.BOTTOM });
+      // hideToast(locationToast);
+      showToast({ message: 'Acquisition de votre position', duration: Toast.durations.SHORT, type: 'success' });
+      
       // Get user current position
       await getUserCurrentPosition();
     })();
   }, []);
-
+  
   const getUserCurrentPosition = async () => {
     setLocationLoading(true);
-
-    let toast = Toast.show('Acquisition de votre position', { duration: Toast.durations.LONG, position: Toast.positions.BOTTOM });
-    setTimeout(() => {
-      Toast.hide(toast);
-    }, 3000)
+    showToast({ message: 'Acquisition de votre position', duration: Toast.durations.SHORT, type: 'success' });
 
     try {
       let location = await Location.getCurrentPositionAsync({accuracy: Location.Accuracy.Highest});
       const coords: LocationObject = { lat: location.coords.latitude, lon: location.coords.longitude }
-      let toast1 = Toast.show(`${location.coords.latitude} ${location.coords.longitude}`, { duration: Toast.durations.LONG, position: Toast.positions.BOTTOM });
-      setTimeout(() => {
-        Toast.hide(toast1);
-      }, 8000)
       let name = await getLocationName(coords);
 
       const userCoords: LocationObject = {
@@ -76,17 +69,11 @@ export function AppSettingsProvider({ children }: AppSettingsProviderProps) {
   
       setCurrentUserLocation(userCoords);
       setLocationLoading(false);
-      let toast = Toast.show('Signal trouvé : ' + name.local_names.fr, { duration: Toast.durations.LONG, position: Toast.positions.BOTTOM });
-      setTimeout(() => {
-        Toast.hide(toast);
-      }, 3000)
+      showToast({ message: 'Signal trouvé : ' + userCoords.common_name, duration: Toast.durations.LONG, type: 'success' });
     } catch (error) {
       console.log("Error while getting location name : ", error);
       
-      let toast = Toast.show('Erreur name...' + error, { duration: Toast.durations.LONG, position: Toast.positions.BOTTOM });
-      setTimeout(() => {
-        Toast.hide(toast);
-      }, 3000)
+      showToast({ message: 'Erreur lors de l\'acquisition de votre position', duration: Toast.durations.LONG, type: 'error' });
       setLocationLoading(false);
     }
   }

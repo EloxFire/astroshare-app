@@ -55,7 +55,7 @@ export const getConstellationName = (constellation: string) => {
     case 'Crt':
       return 'Coupe';
     case 'Cru':
-      return 'Coffre';
+      return 'Croix du Sud';
     case 'Crv':
       return 'Corbeau';
     case 'CVn':

@@ -5,14 +5,27 @@ import { DSO } from '../helpers/types/DSO'
 import { getObjectName } from '../helpers/scripts/astro/getObjectName'
 import { astroImages } from '../helpers/scripts/loadImages'
 import { getConstellationName } from '../helpers/scripts/getConstellationName'
+import { isBodyVisible } from '@observerly/astrometry'
+import { useSettings } from '../contexts/AppSettingsContext'
+import { getRaAngleFromRaHour } from '../helpers/scripts/astro/getRaAngle'
+import { getDecAngleDromDecHour } from '../helpers/scripts/astro/getDecAngleDromDecHour'
 
 interface SearchResultCardProps {
   object: DSO
 }
 
 export default function SearchResultCard({ object }: SearchResultCardProps) {
+  const {currentUserLocation} = useSettings()
+  const [isVisible, setIsVisible] = useState(false)
 
-  console.log(object.type);
+  useEffect(() => {
+    const degreeRa = getRaAngleFromRaHour(object.ra)
+    const degreeDec = getDecAngleDromDecHour(object.dec)
+    
+    let visible = isBodyVisible({ latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }, { ra: degreeRa, dec: degreeDec })
+    console.log(visible);
+    
+  })
   
 
   return (

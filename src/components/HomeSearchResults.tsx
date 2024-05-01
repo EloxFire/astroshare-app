@@ -24,7 +24,8 @@ export default function HomeSearchResults({ results, onReset }: HomeSearchResult
         }
       </View>
       <SafeAreaView style={homeStyles.searchResults}>
-          <FlatList
+        <FlatList
+          scrollEnabled={results.length > 1}
             horizontal
             data={results}
             renderItem={({ item }) => <SearchResultCard object={item} />}

@@ -18,10 +18,11 @@ export default function Home({ navigation }: any) {
 
   const handleSearch = async () => {
     Keyboard.dismiss()
-    console.log('Search pressed')
+    console.log('Search pressed', searchString)
+    if (searchString === '') return;
 
     try {
-      const response = await axios.get('http://192.168.1.67:3001/search?search=' + searchString)
+      const response = await axios.get(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/search?search=` + searchString)
       console.log(response.data)
       setSearchResults(response.data.data)
     } catch (error) {
