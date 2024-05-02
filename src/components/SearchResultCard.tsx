@@ -7,8 +7,8 @@ import { astroImages } from '../helpers/scripts/loadImages'
 import { getConstellationName } from '../helpers/scripts/getConstellationName'
 import { isBodyVisible } from '@observerly/astrometry'
 import { useSettings } from '../contexts/AppSettingsContext'
-import { getRaAngleFromRaHour } from '../helpers/scripts/astro/getRaAngle'
-import { getDecAngleDromDecHour } from '../helpers/scripts/astro/getDecAngleDromDecHour'
+import { HmsToDegree } from '../helpers/scripts/astro/HmsToDegree'
+import { app_colors } from '../helpers/constants'
 
 interface SearchResultCardProps {
   object: DSO
@@ -16,15 +16,13 @@ interface SearchResultCardProps {
 
 export default function SearchResultCard({ object }: SearchResultCardProps) {
   const {currentUserLocation} = useSettings()
-  const [isVisible, setIsVisible] = useState(false)
+  const [isVisible, setIsVisible] = useState(false) 
 
   useEffect(() => {
-    const degreeRa = getRaAngleFromRaHour(object.ra)
-    const degreeDec = getDecAngleDromDecHour(object.dec)
-    
-    let visible = isBodyVisible({ latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }, { ra: degreeRa, dec: degreeDec })
-    console.log(visible);
-    
+    const degRa = HmsToDegree(object.ra, 'ra')
+    const degDec = HmsToDegree(object.dec, 'dec')   
+    let visible = isBodyVisible({ latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }, { ra: degRa, dec: degDec }, (90 - currentUserLocation.lat))
+    setIsVisible(visible)
   })
   
 
@@ -55,6 +53,7 @@ export default function SearchResultCard({ object }: SearchResultCardProps) {
           <Text style={searchResultCardStyles.card.body.info.value}>{object.dec}</Text>
         </View>
       </View>
+      <Text style={[searchResultCardStyles.card.chip, {backgroundColor: isVisible ? app_colors.green_eighty : app_colors.red_eighty}]}>{isVisible ? "Visible" : "Non visible"}</Text>
     </View>
   )
 }

@@ -79,7 +79,7 @@ export const getConstellationName = (constellation: string) => {
     case 'Gru':
       return 'Grue';
     case 'Her':
-      return 'Héraut';
+      return 'Hercule';
     case 'Hor':
       return 'Horloge';
     case 'Hya':

@@ -11,4 +11,9 @@ export const app_colors = {
   red_forty: '#FF000040',
   red_sixty: '#FF000060',
   red_eighty: '#FF000080',
+  green: '#00FF00',
+  green_forty: '#00FF0040',
+  green_sixty: '#00FF0060',
+  green_eighty: '#00FF0080',
+  
 }

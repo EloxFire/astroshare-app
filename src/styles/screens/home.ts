@@ -13,6 +13,6 @@ export const homeStyles = {
   searchResults: {
     marginBottom: 25,
     marginTop: 10,
-    height: 200,
+    height: 210,
   }
 }

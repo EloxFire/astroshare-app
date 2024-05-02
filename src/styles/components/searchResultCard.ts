@@ -2,8 +2,6 @@ import { app_colors } from "../../helpers/constants";
 
 export const searchResultCardStyles = {
   card: {
-    // display: 'flex' as 'flex',
-    // flexDirection: 'column' as 'column',
     padding: 10,
     marginRight: 10,
     backgroundColor: app_colors.white_no_opacity,
@@ -11,7 +9,10 @@ export const searchResultCardStyles = {
     borderWidth: 1,
     borderColor: app_colors.white_no_opacity,
     width: 250,
-    height: 200,
+    height: 210,
+    display: 'flex' as 'flex',
+    flexDirection: 'column' as 'column',
+    justifyContent: 'space-between' as 'space-between',
 
     header: {
       display: 'flex' as 'flex',
@@ -60,6 +61,16 @@ export const searchResultCardStyles = {
           fontFamily: 'GilroyMedium'
         }
       }
+    },
+    
+    chip:{
+      paddingVertical: 2,
+      paddingHorizontal: 10,
+      fontSize: 16,
+      fontFamily: 'GilroyMedium',
+      color: app_colors.white,
+      alignSelf: 'flex-start' as 'flex-start',
+      borderRadius: 10,
     }
   },
 }
