@@ -9,9 +9,10 @@ import { app_colors } from '../helpers/constants'
 interface HomeSearchResultsProps {
   results: DSO[]
   onReset: () => void
+  navigation: any
 }
 
-export default function HomeSearchResults({ results, onReset }: HomeSearchResultsProps) {
+export default function HomeSearchResults({ results, onReset, navigation }: HomeSearchResultsProps) {
   return (
     <View>
       <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 10}}>
@@ -28,7 +29,7 @@ export default function HomeSearchResults({ results, onReset }: HomeSearchResult
           scrollEnabled={results.length > 1}
             horizontal
             data={results}
-            renderItem={({ item }) => <SearchResultCard object={item} />}
+            renderItem={({ item }) => <SearchResultCard object={item} navigation={navigation} />}
             keyExtractor={item => item.name + item.ra}
           />
         </SafeAreaView>

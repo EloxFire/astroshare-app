@@ -48,7 +48,7 @@ export default function Home({ navigation }: any) {
       />
       {
         searchResults.length > 0 &&
-        <HomeSearchResults results={searchResults} onReset={handleRestSearch}/>
+        <HomeSearchResults results={searchResults} onReset={handleRestSearch} navigation={navigation}/>
       }
       <View style={homeStyles.toolsSuggestions}>
         <Text style={globalStyles.sections.title}>Vos outils</Text>

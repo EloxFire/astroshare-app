@@ -16,6 +16,7 @@ import dayjs from "dayjs";
 import ComingSoon from "./src/screens/ComingSoon";
 import 'dayjs/locale/fr';
 import About from "./src/screens/About";
+import ObjectDetails from "./src/screens/ObjectDetails";
 dayjs.locale('fr');
 
 
@@ -54,6 +55,7 @@ export default function App({ navigation}: any) {
             <StatusBar animated style="light" translucent/>
             <Stack.Navigator screenOptions={{ headerShown: false }}>
               <Stack.Screen name={routes.home} component={Home} />
+              <Stack.Screen name={routes.objectDetails} component={ObjectDetails} />
               <Stack.Screen name={routes.compass} component={Compass} />
               <Stack.Screen name={routes.weather} component={Weather} />
               <Stack.Screen name={routes.moonPhases} component={ComingSoon}
