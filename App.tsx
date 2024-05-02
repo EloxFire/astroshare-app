@@ -15,6 +15,7 @@ import Weather from "./src/screens/Weather";
 import dayjs from "dayjs";
 import ComingSoon from "./src/screens/ComingSoon";
 import 'dayjs/locale/fr';
+import About from "./src/screens/About";
 dayjs.locale('fr');
 
 
@@ -59,6 +60,7 @@ export default function App({ navigation}: any) {
                 initialParams={{ pageTitle: 'Phases de la Lune', pageSubtitle: '// Calculez les phases de la Lune', disclaimer: '// Cette fonctionnalité sera bientôt disponible dans votre application Astroshare. Vous pourrez ici calculer la phase de la Lune pour une date donnée et ainsi mieux prévoir vos sessions d\'observation du ciel !' }}
               />
               <Stack.Screen name={routes.settings} component={Settings} />
+              <Stack.Screen name={routes.about} component={About} />
             </Stack.Navigator>
           </NavigationContainer>
       </AppSettingsProvider>
