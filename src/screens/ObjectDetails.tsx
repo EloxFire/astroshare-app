@@ -1,14 +1,14 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Image, ScrollView, Text, View } from "react-native";
 import { globalStyles } from "../styles/global";
 import { useSettings } from "../contexts/AppSettingsContext";
 import { getObjectName } from "../helpers/scripts/astro/getObjectName";
-import PageTitle from "../components/commons/PageTitle";
 import { objectDetailsStyles } from "../styles/screens/objectDetails";
 import { astroImages } from "../helpers/scripts/loadImages";
 import { getConstellationName } from "../helpers/scripts/getConstellationName";
 import { app_colors } from "../helpers/constants";
 import { searchResultCardStyles } from "../styles/components/searchResultCard";
+import PageTitle from "../components/commons/PageTitle";
 
 export default function ObjectDetails({ route, navigation }: any) {
 

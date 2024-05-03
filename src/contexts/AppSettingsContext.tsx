@@ -1,13 +1,14 @@
 import React, { ReactNode, createContext, useContext, useEffect, useState } from 'react'
 import { LocationObject } from '../helpers/types/LocationObject'
 import { askLocationPermission } from '../helpers/scripts/permissions/askLocationPermission'
-import { Alert } from 'react-native'
+import { Alert, Dimensions, View } from 'react-native'
 import { convertDDtoDMS } from '../helpers/scripts/convertDDtoDMSCoords'
 import { getLocationName } from '../helpers/api/getLocationFromCoords'
 import * as Location from 'expo-location'
 import Toast from 'react-native-root-toast';
 import { hideToast } from '../helpers/scripts/hideToast'
 import { showToast } from '../helpers/scripts/showToast'
+import { app_colors } from '../helpers/constants'
 
 const AppSettingsContext = createContext<any>({})
 
@@ -27,9 +28,9 @@ export function AppSettingsProvider({ children }: AppSettingsProviderProps) {
   const [locationPermissions, setLocationPermissions] = useState<boolean>(false)
   const [currentUserLocation, setCurrentUserLocation] = useState<LocationObject | null>(null)
   const [locationLoading, setLocationLoading] = useState<boolean>(true)
+  const [currentUserHorizon, setCurrentUserHorizon] = useState<number>(0)
 
   useEffect(() => {
-    let locationToast;
     (async () => {
       // Check if location permission is granted
       const hasLocationPermission = await askLocationPermission();
@@ -40,8 +41,6 @@ export function AppSettingsProvider({ children }: AppSettingsProviderProps) {
       }
 
       setLocationPermissions(true);
-      // locationToast = Toast.show('Acquisition de votre position', { duration: Toast.durations.LONG, position: Toast.positions.BOTTOM });
-      // hideToast(locationToast);
       showToast({ message: 'Acquisition de votre position', duration: Toast.durations.SHORT, type: 'success' });
       
       // Get user current position
@@ -68,6 +67,7 @@ export function AppSettingsProvider({ children }: AppSettingsProviderProps) {
       }
   
       setCurrentUserLocation(userCoords);
+      setCurrentUserHorizon(90 - userCoords.lat)
       setLocationLoading(false);
       showToast({ message: 'Signal trouvé : ' + userCoords.common_name, duration: Toast.durations.LONG, type: 'success' });
     } catch (error) {
@@ -85,12 +85,27 @@ export function AppSettingsProvider({ children }: AppSettingsProviderProps) {
     currentUserLocation,
     setCurrentUserLocation,
     locationPermissions,
-    locationLoading
+    locationLoading,
+    currentUserHorizon,
   }
 
   return (
     <AppSettingsContext.Provider value={values}>
       {children}
+      {
+        isNightMode && (
+          <View
+            pointerEvents='none'
+            style={{
+              backgroundColor: app_colors.red_twenty,
+              height: Dimensions.get('screen').height,
+              width: Dimensions.get('screen').width,
+              position: 'absolute',
+              zIndex: 999,
+            }}
+          />
+        )
+      }
     </AppSettingsContext.Provider>
   )
 }
