@@ -52,6 +52,17 @@
         {
           "usesClearTextTraffic": true
         }
+      ],
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "../assets/fonts/Aux_mono.ttf",
+            "../assets/fonts/Gilroy-Black.ttf",
+            "../assets/fonts/Gilroy-Medium.ttf",
+            "../assets/fonts/Gilroy-Regular.ttf"
+          ]
+        }
       ]
     ]
   }

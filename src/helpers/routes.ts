@@ -5,5 +5,6 @@ export const routes = {
   compass: 'CompassScreen',
   weather: 'WeatherScreen',
   moonPhases: 'MoonPhasesScreen',
-  objectDetails: 'ObjectDetails'
+  objectDetails: 'ObjectDetails',
+  solarWeather: 'SolarWeatherScreen',
 }

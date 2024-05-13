@@ -7,7 +7,7 @@ import { StatusBar } from "expo-status-bar";
 import { AppSettingsProvider } from "./src/contexts/AppSettingsContext";
 import { routes } from "./src/helpers/routes";
 import { RootSiblingParent } from 'react-native-root-siblings';
-import useFonts from "./src/hooks/useFonts";
+import { useFonts } from "expo-font";
 import Home from "./src/screens/Home";
 import Compass from "./src/screens/Compass";
 import Settings from "./src/screens/Settings";
@@ -24,22 +24,29 @@ const Stack = createNativeStackNavigator();
 
 export default function App({ navigation}: any) {
   const [appIsReady, setAppIsReady] = useState(false);
+  const [fontsLoaded, fontsError] = useFonts({
+    'AuxMono': require('./assets/fonts/Aux_mono.ttf'),
+    'GilroyBlack': require('./assets/fonts/Gilroy-Black.ttf'),
+    'GilroyMedium': require('./assets/fonts/Gilroy-Medium.ttf'),
+    'GilroyRegular': require('./assets/fonts/Gilroy-Regular.ttf'),
+  })
 
   useEffect(() => {
     async function prepare() {
-      try {
-        await useFonts()
-        console.log('Fonts loaded');
-      } catch (e) {
-        console.warn('Something went wrong : ', e);
-      } finally {
+      if (fontsError) {
+        console.log('Error while loading fonts', fontsError);
+        return;
+      }else if (!fontsLoaded) {
+        console.log('Loading fonts...');
+        return;
+      } else {
         console.log('App is ready');
         setAppIsReady(true);
       }
     }
 
     prepare();
-  }, []);
+  }, [fontsLoaded, fontsError]);
 
   if (!appIsReady) {
     return (
