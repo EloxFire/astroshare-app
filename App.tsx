@@ -14,9 +14,9 @@ import Settings from "./src/screens/Settings";
 import Weather from "./src/screens/Weather";
 import dayjs from "dayjs";
 import ComingSoon from "./src/screens/ComingSoon";
-import 'dayjs/locale/fr';
 import About from "./src/screens/About";
 import ObjectDetails from "./src/screens/ObjectDetails";
+import 'dayjs/locale/fr';
 dayjs.locale('fr');
 
 
