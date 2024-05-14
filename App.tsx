@@ -60,6 +60,9 @@ export default function App({ navigation}: any) {
               <Stack.Screen name={routes.weather} component={Weather} />
               <Stack.Screen name={routes.moonPhases} component={ComingSoon}
                 initialParams={{ pageTitle: 'Phases de la Lune', pageSubtitle: '// Calculez les phases de la Lune', disclaimer: '// Cette fonctionnalité sera bientôt disponible dans votre application Astroshare. Vous pourrez ici calculer la phase de la Lune pour une date donnée et ainsi mieux prévoir vos sessions d\'observation du ciel !' }}
+            />
+            <Stack.Screen name={routes.solarWeather} component={ComingSoon}
+                initialParams={{ pageTitle: 'Météo solaire et aurores', pageSubtitle: '// La météo de notre étoile', disclaimer: '// Cette fonctionnalité sera bientôt disponible dans votre application Astroshare. Vous pourrez ici consulter les dernières informations sur le vent solaire les EMC et toutes les prévisions d\'aurores boréales.' }}
               />
               <Stack.Screen name={routes.settings} component={Settings} />
               <Stack.Screen name={routes.about} component={About} />
