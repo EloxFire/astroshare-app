@@ -9,7 +9,7 @@ import BigButton from "../components/commons/buttons/BigButton";
 
 export default function Settings({ navigation }: any) {
 
-  const { isNightMode, setIsNightMode } = useSettings()
+  const { isNightMode, setIsNightMode, isCellularDataEnabled, handleCellularData } = useSettings()
 
   return (
     <View style={globalStyles.body}>
@@ -21,6 +21,7 @@ export default function Settings({ navigation }: any) {
       <View style={globalStyles.screens.separator} />
       <View style={settingsStyles.content}>
         <BigButton icon={require('../../assets/icons/FiEye.png')} text="Mode nuit" subtitle="// Filtre nocturne (Expérimental)" hasCheckbox isChecked={isNightMode} onPress={() => setIsNightMode(!isNightMode)} />
+        <BigButton icon={require('../../assets/icons/FiEye.png')} text="Données cellulaires" subtitle="// Utiliser internet même hors wifi" hasCheckbox isChecked={isCellularDataEnabled} onPress={() => handleCellularData()} />
         <BigButton icon={require('../../assets/icons/FiInfo.png')} text="Permissions" subtitle="// Gerez les accès de l'application" onPress={() => Linking.openSettings()} />
         <BigButton icon={require('../../assets/icons/FiInfo.png')} text="À propos" subtitle="// Version, contact, legal" navigation={navigation} targetScreen="About" />
       </View>

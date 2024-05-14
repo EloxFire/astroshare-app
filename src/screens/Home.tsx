@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { Keyboard, Text, View } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import { Keyboard, ScrollView, Text, View } from 'react-native'
 import { globalStyles } from '../styles/global'
 import { homeStyles } from '../styles/screens/home';
 import { routes } from '../helpers/routes';
@@ -10,6 +10,7 @@ import AppHeader from '../components/commons/AppHeader';
 import BigButton from '../components/commons/buttons/BigButton';
 import axios from 'axios';
 import HomeSearchResults from '../components/HomeSearchResults';
+import SquareButton from '../components/commons/buttons/SquareButton';
 
 export default function Home({ navigation }: any) {
 
@@ -50,16 +51,25 @@ export default function Home({ navigation }: any) {
         searchResults.length > 0 &&
         <HomeSearchResults results={searchResults} onReset={handleRestSearch} navigation={navigation}/>
       }
-      <View style={homeStyles.toolsSuggestions}>
-        <Text style={globalStyles.sections.title}>Vos outils</Text>
-        <Text style={globalStyles.sections.subtitle}>Votre caisse à outils personnalisée</Text>
-        <View style={homeStyles.toolsSuggestions.buttons}>
-          <BigButton navigation={navigation} targetScreen={routes.weather} text="Météo en direct" subtitle="// C'est le moment de sortir le téléscope !" icon={require('../../assets/icons/FiSun.png')} />
-          <BigButton navigation={navigation} targetScreen={routes.compass} text="Boussole & Niveau" subtitle='// Pour une mise en station précise' icon={require('../../assets/icons/FiCompass.png')} />
-          <BigButton navigation={navigation} targetScreen={routes.moonPhases} text="Phases de la Lune" subtitle='// Calculez les phases de la Lune' icon={require('../../assets/icons/FiMoon.png')} />
-          <BigButton navigation={navigation} targetScreen={routes.solarWeather} text="Météo solaire et aurores" subtitle="// La météo de notre étoile" icon={require('../../assets/icons/SolarWind.png')} />
+      <ScrollView>
+        <View style={homeStyles.toolsSuggestions}>
+          <Text style={globalStyles.sections.title}>Vos outils</Text>
+          <Text style={globalStyles.sections.subtitle}>Votre caisse à outils personnalisée</Text>
+          <View style={homeStyles.toolsSuggestions.buttons}>
+            <BigButton navigation={navigation} targetScreen={routes.weather} text="Météo en direct" subtitle="// C'est le moment de sortir le téléscope !" icon={require('../../assets/icons/FiSun.png')} />
+            <BigButton navigation={navigation} targetScreen={routes.compass} text="Boussole & Niveau" subtitle='// Pour une mise en station précise' icon={require('../../assets/icons/FiCompass.png')} />
+            <BigButton navigation={navigation} targetScreen={routes.moonPhases} text="Phases de la Lune" subtitle='// Calculez les phases de la Lune' icon={require('../../assets/icons/FiMoon.png')} />
+            <BigButton disabled navigation={navigation} targetScreen={routes.solarWeather} text="Météo solaire et aurores" subtitle="// La météo de notre étoile" icon={require('../../assets/icons/SolarWind.png')} />
+          </View>
         </View>
-      </View>
+        <View style={homeStyles.nasaTools}>
+          <Text style={globalStyles.sections.title}>Autres outils</Text>
+          <Text style={globalStyles.sections.subtitle}>Explorez toujours plus !</Text>
+          <View style={homeStyles.nasaTools.buttons}>
+            <SquareButton navigation={navigation} targetScreen={routes.apod} text="APOD" subtitle="// Image du jour de la NASA" image={require('../../assets/images/apod.png')} />
+          </View>
+        </View>
+      </ScrollView>
     </View>
   )
 }

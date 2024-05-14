@@ -1,14 +1,14 @@
 import React, { ReactNode, createContext, useContext, useEffect, useState } from 'react'
 import { LocationObject } from '../helpers/types/LocationObject'
 import { askLocationPermission } from '../helpers/scripts/permissions/askLocationPermission'
-import { Alert, Dimensions, View } from 'react-native'
+import { Dimensions, View } from 'react-native'
 import { convertDDtoDMS } from '../helpers/scripts/convertDDtoDMSCoords'
 import { getLocationName } from '../helpers/api/getLocationFromCoords'
-import * as Location from 'expo-location'
-import Toast from 'react-native-root-toast';
-import { hideToast } from '../helpers/scripts/hideToast'
 import { showToast } from '../helpers/scripts/showToast'
 import { app_colors } from '../helpers/constants'
+import * as Location from 'expo-location'
+import Toast from 'react-native-root-toast';
+import NetInfo from '@react-native-community/netinfo';
 
 const AppSettingsContext = createContext<any>({})
 
@@ -29,6 +29,8 @@ export function AppSettingsProvider({ children }: AppSettingsProviderProps) {
   const [currentUserLocation, setCurrentUserLocation] = useState<LocationObject | null>(null)
   const [locationLoading, setLocationLoading] = useState<boolean>(true)
   const [currentUserHorizon, setCurrentUserHorizon] = useState<number>(0)
+  const [isCellularDataEnabled, setIsCellularDataEnabled] = useState<boolean>(false)
+  const [hasInternetConnection, setHasInternetConnection] = useState<boolean>(false)
 
   useEffect(() => {
     (async () => {
@@ -47,6 +49,16 @@ export function AppSettingsProvider({ children }: AppSettingsProviderProps) {
       await getUserCurrentPosition();
     })();
   }, []);
+
+  useEffect(() => {
+    const unsubscribe = NetInfo.addEventListener(state => {
+      setHasInternetConnection(state.isConnected ? true : false);
+    });
+
+    return () => {
+      unsubscribe()
+    }
+  }, [])
   
   const getUserCurrentPosition = async () => {
     setLocationLoading(true);
@@ -78,6 +90,10 @@ export function AppSettingsProvider({ children }: AppSettingsProviderProps) {
     }
   }
 
+  const handleCellularData = () => {
+    setIsCellularDataEnabled(!isCellularDataEnabled);
+  }
+
   const values = {
     isNightMode,
     setIsNightMode,
@@ -87,6 +103,8 @@ export function AppSettingsProvider({ children }: AppSettingsProviderProps) {
     locationPermissions,
     locationLoading,
     currentUserHorizon,
+    isCellularDataEnabled,
+    handleCellularData,
   }
 
   return (

@@ -10,10 +10,11 @@ interface BigButtonProps {
   targetScreen?: string
   hasCheckbox?: boolean
   isChecked?: boolean
+  disabled?: boolean
   onPress?: () => void
 }
 
-export default function BigButton({ text, icon, navigation, targetScreen, subtitle, hasCheckbox, isChecked, onPress }: BigButtonProps) {
+export default function BigButton({ text, icon, navigation, targetScreen, subtitle, hasCheckbox, isChecked, onPress, disabled }: BigButtonProps) {
 
   const handleNavigation = () => {
     if (!navigation || !targetScreen) return;
@@ -21,6 +22,7 @@ export default function BigButton({ text, icon, navigation, targetScreen, subtit
   }
 
   const handleButtonPress = () => {
+    if(disabled) return;
     if (onPress) {
       onPress()
     } else {
@@ -29,7 +31,7 @@ export default function BigButton({ text, icon, navigation, targetScreen, subtit
   }
 
   return (
-    <TouchableOpacity style={bigButtonStyles.button} onPress={() => handleButtonPress()}>
+    <TouchableOpacity activeOpacity={.5} style={[bigButtonStyles.button, {opacity: disabled ? .5 : 1}]} onPress={() => handleButtonPress()}>
       <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
         {icon && <Image source={icon} style={bigButtonStyles.button.icon} />}
         <View>

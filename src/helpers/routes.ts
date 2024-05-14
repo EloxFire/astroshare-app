@@ -7,4 +7,5 @@ export const routes = {
   moonPhases: 'MoonPhasesScreen',
   objectDetails: 'ObjectDetails',
   solarWeather: 'SolarWeatherScreen',
+  apod: 'ApodScreen',
 }
