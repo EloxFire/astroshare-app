@@ -39,3 +39,14 @@ export const astroImages: any = {
   '*ASS': require('../../../assets/icons/astro/STARASS.png'),
   '**': require('../../../assets/icons/astro/STARSTAR.png'),
 }
+
+export const moonIcons: any = {
+  'New': require('../../../assets/icons/astro/moon/New Moon.png'),
+  'Waxing Crescent': require('../../../assets/icons/astro/moon/Waxing Crescent.png'),
+  'First Quarter': require('../../../assets/icons/astro/moon/First Quarter.png'),
+  'Waxing Gibbous': require('../../../assets/icons/astro/moon/Waxing Gibbous.png'),
+  'Full': require('../../../assets/icons/astro/moon/Full Moon.png'),
+  'Waning Gibbous': require('../../../assets/icons/astro/moon/Waning Gibbous.png'),
+  'Last Quarter': require('../../../assets/icons/astro/moon/Last Quarter.png'),
+  'Waning Crescent': require('../../../assets/icons/astro/moon/Waning Crescent.png'),
+}

@@ -18,6 +18,7 @@ import About from "./src/screens/About";
 import ObjectDetails from "./src/screens/ObjectDetails";
 import 'dayjs/locale/fr';
 import Apod from "./src/screens/Apod";
+import MoonPhases from "./src/screens/MoonPhases";
 dayjs.locale('fr');
 
 
@@ -59,9 +60,7 @@ export default function App({ navigation}: any) {
               <Stack.Screen name={routes.objectDetails} component={ObjectDetails} />
               <Stack.Screen name={routes.compass} component={Compass} />
               <Stack.Screen name={routes.weather} component={Weather} />
-              <Stack.Screen name={routes.moonPhases} component={ComingSoon}
-                initialParams={{ pageTitle: 'Phases de la Lune', pageSubtitle: '// Calculez les phases de la Lune', disclaimer: '// Cette fonctionnalité sera bientôt disponible dans votre application Astroshare. Vous pourrez ici calculer la phase de la Lune pour une date donnée et ainsi mieux prévoir vos sessions d\'observation du ciel !' }}
-              />
+              <Stack.Screen name={routes.moonPhases} component={MoonPhases}/>
               <Stack.Screen name={routes.solarWeather} component={ComingSoon}
                 initialParams={{ pageTitle: 'Météo solaire et aurores', pageSubtitle: '// La météo de notre étoile', disclaimer: '// Cette fonctionnalité sera bientôt disponible dans votre application Astroshare. Vous pourrez ici consulter les dernières informations sur le vent solaire les EMC et toutes les prévisions d\'aurores boréales.' }}
               />
