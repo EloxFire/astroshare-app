@@ -11,6 +11,7 @@ import BigButton from '../components/commons/buttons/BigButton';
 import axios from 'axios';
 import HomeSearchResults from '../components/HomeSearchResults';
 import SquareButton from '../components/commons/buttons/SquareButton';
+import { app_colors } from '../helpers/constants';
 
 export default function Home({ navigation }: any) {
 
@@ -51,7 +52,7 @@ export default function Home({ navigation }: any) {
         searchResults.length > 0 &&
         <HomeSearchResults results={searchResults} onReset={handleRestSearch} navigation={navigation}/>
       }
-      <ScrollView>
+      <ScrollView style={{borderTopWidth: 1, borderTopColor: app_colors.white_forty}}>
         <View style={homeStyles.toolsSuggestions}>
           <Text style={globalStyles.sections.title}>Vos outils</Text>
           <Text style={globalStyles.sections.subtitle}>Votre caisse à outils personnalisée</Text>

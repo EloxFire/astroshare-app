@@ -1,3 +1,5 @@
+import { app_colors } from "../../helpers/constants";
+
 export const homeStyles = {
   toolsSuggestions: {
     display: 'flex' as 'flex',
