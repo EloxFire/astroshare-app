@@ -58,9 +58,9 @@ export default function Home({ navigation }: any) {
           <Text style={globalStyles.sections.subtitle}>Votre caisse à outils personnalisée</Text>
           <View style={homeStyles.toolsSuggestions.buttons}>
             <BigButton navigation={navigation} targetScreen={routes.weather} text="Météo en direct" subtitle="// C'est le moment de sortir le téléscope !" icon={require('../../assets/icons/FiSun.png')} />
-            <BigButton navigation={navigation} targetScreen={routes.compass} text="Boussole & Niveau" subtitle='// Pour une mise en station précise' icon={require('../../assets/icons/FiCompass.png')} />
+            <BigButton navigation={navigation} targetScreen={routes.compass} text="Boussole" subtitle='// Pour une mise en station précise' icon={require('../../assets/icons/FiCompass.png')} />
             <BigButton navigation={navigation} targetScreen={routes.moonPhases} text="Phases de la Lune" subtitle='// Calculez les phases de la Lune' icon={require('../../assets/icons/FiMoon.png')} />
-            <BigButton disabled navigation={navigation} targetScreen={routes.solarWeather} text="Météo solaire et aurores" subtitle="// La météo de notre étoile" icon={require('../../assets/icons/SolarWind.png')} />
+            <BigButton disabled navigation={navigation} targetScreen={routes.solarWeather} text="Météo solaire et aurores" subtitle="// Bientôt disponible !" icon={require('../../assets/icons/SolarWind.png')} />
           </View>
         </View>
         <View style={homeStyles.nasaTools}>
