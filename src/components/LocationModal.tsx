@@ -18,7 +18,7 @@ export default function LocationModal({visible, onClose, coords}: LocationModalP
         <View style={locationHeaderStyles.modal.header}>
           <Text style={locationHeaderStyles.modal.header.title}>Votre position</Text>
           <TouchableOpacity onPress={() => onClose()}>
-            <Image source={require('../../assets/icons/FiXCircle.png')}/>
+            <Image source={require('../../assets/icons/FiXCircle.png')} style={{width: 24, height: 24}}/>
           </TouchableOpacity>
         </View>
         <View style={locationHeaderStyles.modal.body}>

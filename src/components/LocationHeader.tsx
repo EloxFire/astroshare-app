@@ -62,7 +62,7 @@ export default function LocationHeader() {
                   </TouchableOpacity>
             }
           </View>
-          <Image source={require('../../assets/icons/FiChevronDown.png')} />
+          <Image source={require('../../assets/icons/FiChevronDown.png')} style={{width: 24, height: 24}} />
         </TouchableOpacity>
         <RefreshButton action={() => getUserCurrentPosition()} />
       </View>
