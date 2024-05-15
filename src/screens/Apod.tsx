@@ -35,12 +35,12 @@ export default function Apod({ navigation }: any) {
       <View style={globalStyles.screens.separator} />
       <ScrollView>
         <View style={apodStyles.content}>
-          <Text style={apodStyles.content.title}>The 37 Cluster</Text>
-          <Text style={[apodStyles.content.text, {color: app_colors.white_eighty}]}>Copyright : {apod?.copyright || "Chargement"}</Text>
+          <Text style={apodStyles.content.title}>{ apod?.title.replace(/(\r\n|\n|\r)/gm, "") || "Chargement"}</Text>
+          <Text style={[apodStyles.content.text, {color: app_colors.white_eighty}]}>Copyright : {apod?.copyright.replace(/(\r\n|\n|\r)/gm, "") || "Chargement"}</Text>
           <Text style={[apodStyles.content.text, {color: app_colors.white_eighty, marginTop: 5}]}>Date : {apod?.date ? dayjs(apod?.date).format('DD/MM/YYYY') : "Chargement"}</Text>
           {
             apod?.media_type === 'image' && (
-              <Image source={{ uri: apod?.url }} style={{ width: Dimensions.get('screen').width, height: Dimensions.get('screen').width }} resizeMode='contain'/>
+              <Image source={{ uri: apod?.url }} style={{ width: Dimensions.get('screen').width, height: Dimensions.get('screen').width, marginVertical: 10 }} resizeMode='contain'/>
             )
           }
           {
