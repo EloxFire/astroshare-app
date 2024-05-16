@@ -94,9 +94,13 @@ export function AppSettingsProvider({ children }: AppSettingsProviderProps) {
     setIsCellularDataEnabled(!isCellularDataEnabled);
   }
 
+  const handleNightMode = () => {
+    setIsNightMode(!isNightMode);
+  }
+
   const values = {
     isNightMode,
-    setIsNightMode,
+    handleNightMode,
     getUserCurrentPosition,
     currentUserLocation,
     setCurrentUserLocation,
