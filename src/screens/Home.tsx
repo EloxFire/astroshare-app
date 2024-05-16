@@ -12,27 +12,36 @@ import axios from 'axios';
 import HomeSearchResults from '../components/HomeSearchResults';
 import SquareButton from '../components/commons/buttons/SquareButton';
 import { app_colors } from '../helpers/constants';
+import DisclaimerBar from '../components/DisclaimerBar';
+import { useSettings } from '../contexts/AppSettingsContext';
+import { showToast } from '../helpers/scripts/showToast';
 
 export default function Home({ navigation }: any) {
 
   const [searchString, setSearchString] = useState('')
   const [searchResults, setSearchResults] = useState<DSO[]>([])
+  const {hasInternetConnection} = useSettings()
 
   const handleSearch = async () => {
+    if (!hasInternetConnection) {
+      showToast({message: 'Aucune connexion à internet', type: 'error'})
+      return;
+    }
     Keyboard.dismiss()
     console.log('Search pressed', searchString)
     if (searchString === '') return;
 
     try {
-      const response = await axios.get(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/search?search=` + searchString)
+      const response = await axios.get(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/search?search=` + searchString);
       console.log(response.data)
       setSearchResults(response.data.data)
     } catch (error) {
       console.log(error)
+      showToast({message: 'Une erreur est survenue...', type: 'error'})
     }
   }
 
-  const handleRestSearch = () => {
+  const handleResetSearch = () => {
     setSearchResults([])
     setSearchString('')
   }
@@ -40,6 +49,10 @@ export default function Home({ navigation }: any) {
   return (
     <View style={globalStyles.body}>
       <AppHeader navigation={navigation} />
+      {
+        !hasInternetConnection &&
+        <DisclaimerBar message="Aucune connexion à internet. Fonctionnalités réduites." type='error' />
+      }
       <LocationHeader />
       <InputWithIcon
         placeholder="Rechercher un objet céleste"
@@ -50,16 +63,16 @@ export default function Home({ navigation }: any) {
       />
       {
         searchResults.length > 0 &&
-        <HomeSearchResults results={searchResults} onReset={handleRestSearch} navigation={navigation}/>
+        <HomeSearchResults results={searchResults} onReset={handleResetSearch} navigation={navigation}/>
       }
       <ScrollView style={{borderTopWidth: 1, borderTopColor: app_colors.white_forty}}>
         <View style={homeStyles.toolsSuggestions}>
           <Text style={globalStyles.sections.title}>Vos outils</Text>
           <Text style={globalStyles.sections.subtitle}>Votre caisse à outils personnalisée</Text>
           <View style={homeStyles.toolsSuggestions.buttons}>
-            <BigButton navigation={navigation} targetScreen={routes.weather} text="Météo en direct" subtitle="// C'est le moment de sortir le téléscope !" icon={require('../../assets/icons/FiSun.png')} />
+            <BigButton disabled={!hasInternetConnection} navigation={navigation} targetScreen={routes.weather} text="Météo en direct" subtitle="// C'est le moment de sortir le téléscope !" icon={require('../../assets/icons/FiSun.png')} />
             <BigButton navigation={navigation} targetScreen={routes.compass} text="Boussole" subtitle='// Pour une mise en station précise' icon={require('../../assets/icons/FiCompass.png')} />
-            <BigButton navigation={navigation} targetScreen={routes.moonPhases} text="Phases de la Lune" subtitle='// Calculez les phases de la Lune' icon={require('../../assets/icons/FiMoon.png')} />
+            <BigButton disabled={!hasInternetConnection} navigation={navigation} targetScreen={routes.moonPhases} text="Phases de la Lune" subtitle='// Calculez les phases de la Lune' icon={require('../../assets/icons/FiMoon.png')} />
             <BigButton disabled navigation={navigation} targetScreen={routes.solarWeather} text="Météo solaire et aurores" subtitle="// Bientôt disponible !" icon={require('../../assets/icons/SolarWind.png')} />
           </View>
         </View>
@@ -67,7 +80,7 @@ export default function Home({ navigation }: any) {
           <Text style={globalStyles.sections.title}>Autres outils</Text>
           <Text style={globalStyles.sections.subtitle}>Explorez toujours plus !</Text>
           <View style={homeStyles.nasaTools.buttons}>
-            <SquareButton navigation={navigation} targetScreen={routes.apod} text="APOD" subtitle="// Image du jour de la NASA" image={require('../../assets/images/apod.png')} />
+            <SquareButton disabled={!hasInternetConnection} navigation={navigation} targetScreen={routes.apod} text="APOD" subtitle="// Image du jour de la NASA" image={require('../../assets/images/apod.png')} />
           </View>
         </View>
       </ScrollView>

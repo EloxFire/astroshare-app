@@ -121,6 +121,7 @@ export function AppSettingsProvider({ children }: AppSettingsProviderProps) {
     currentUserHorizon,
     isCellularDataEnabled,
     handleCellularData,
+    hasInternetConnection,
   }
 
   return (
