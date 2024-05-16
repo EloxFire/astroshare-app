@@ -9,6 +9,7 @@ import { app_colors } from '../helpers/constants'
 import * as Location from 'expo-location'
 import Toast from 'react-native-root-toast';
 import NetInfo from '@react-native-community/netinfo';
+import { getData, storeData } from '../helpers/storage'
 
 const AppSettingsContext = createContext<any>({})
 
@@ -31,6 +32,15 @@ export function AppSettingsProvider({ children }: AppSettingsProviderProps) {
   const [currentUserHorizon, setCurrentUserHorizon] = useState<number>(0)
   const [isCellularDataEnabled, setIsCellularDataEnabled] = useState<boolean>(false)
   const [hasInternetConnection, setHasInternetConnection] = useState<boolean>(false)
+
+  useEffect(() => {
+    (async () => {
+      const cellularData = await getData('cellularData');
+      setIsCellularDataEnabled(cellularData === 'true' ? true : false);
+      const nightMode = await getData('nightMode');
+      setIsNightMode(nightMode === 'true' ? true : false);
+    })()
+  })
 
   useEffect(() => {
     (async () => {
@@ -92,10 +102,12 @@ export function AppSettingsProvider({ children }: AppSettingsProviderProps) {
 
   const handleCellularData = () => {
     setIsCellularDataEnabled(!isCellularDataEnabled);
+    storeData('cellularData', !isCellularDataEnabled ? 'true' : 'false');
   }
 
   const handleNightMode = () => {
     setIsNightMode(!isNightMode);
+    storeData('nightMode', !isNightMode ? 'true' : 'false');
   }
 
   const values = {
