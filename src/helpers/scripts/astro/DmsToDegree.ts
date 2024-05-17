@@ -1,6 +1,6 @@
 import { showToast } from "../showToast";
 
-export const convertHMSToDegreeFromString = (decString: string) => {
+export const convertDMSToDegreeFromString = (decString: string) => {
   // Expression régulière pour extraire les parties de la chaîne
   const regex = /([+-]?\d+):(\d+):([\d.]+)/;
   const match = decString.match(regex);

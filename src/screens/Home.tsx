@@ -33,7 +33,6 @@ export default function Home({ navigation }: any) {
 
     try {
       const response = await axios.get(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/search?search=` + searchString);
-      console.log(response.data)
       setSearchResults(response.data.data)
     } catch (error) {
       console.log(error)

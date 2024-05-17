@@ -7,9 +7,10 @@ import { astroImages } from '../helpers/scripts/loadImages'
 import { getConstellationName } from '../helpers/scripts/getConstellationName'
 import { isBodyVisible } from '@observerly/astrometry'
 import { useSettings } from '../contexts/AppSettingsContext'
-import { HmsToDegree } from '../helpers/scripts/astro/HmsToDegree'
 import { app_colors } from '../helpers/constants'
 import { routes } from '../helpers/routes'
+import { convertDMSToDegreeFromString } from '../helpers/scripts/astro/DmsToDegree'
+import { convertHMSToDegreeFromString } from '../helpers/scripts/astro/HmsToDegree'
 
 interface SearchResultCardProps {
   object: DSO
@@ -21,8 +22,15 @@ export default function SearchResultCard({ object, navigation }: SearchResultCar
   const [isVisible, setIsVisible] = useState(false) 
 
   useEffect(() => {
-    const degRa = HmsToDegree(object.ra, 'ra')
-    const degDec = HmsToDegree(object.dec, 'dec')   
+
+    
+    const degRa = convertHMSToDegreeFromString(object.ra)
+    const degDec = convertDMSToDegreeFromString(object.dec) 
+    
+    console.log("RA :", getObjectName(object, 'all', true), object.ra, degRa);
+    console.log("Dec :", getObjectName(object, 'all', true), object.dec, degDec);
+
+    if(!degRa || !degDec) return;
     let visible = isBodyVisible({ latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }, { ra: degRa, dec: degDec }, (90 - currentUserLocation.lat))
     setIsVisible(visible)
   })
