@@ -20,6 +20,7 @@ import ObjectDetails from "./src/screens/ObjectDetails";
 import Apod from "./src/screens/Apod";
 import MoonPhases from "./src/screens/MoonPhases";
 import 'dayjs/locale/fr';
+import ViewPointsManager from "./src/screens/ViewPointsManager";
 dayjs.locale('fr');
 
 
@@ -68,6 +69,7 @@ export default function App({ navigation}: any) {
               />
               <Stack.Screen name={routes.apod} component={Apod} />
               <Stack.Screen name={routes.settings} component={Settings} />
+              <Stack.Screen name={routes.favoritesViewPoints} component={ViewPointsManager} />
               <Stack.Screen name={routes.about} component={About} />
             </Stack.Navigator>
           </NavigationContainer>
