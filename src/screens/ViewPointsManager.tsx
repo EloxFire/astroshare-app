@@ -6,10 +6,12 @@ import { globalStyles } from '../styles/global'
 import { getObject } from '../helpers/storage'
 import SimpleButton from '../components/commons/buttons/SimpleButton'
 import PageTitle from '../components/commons/PageTitle'
+import ViewPoint from '../components/ViewPoint'
+import { TViewPoint } from '../helpers/types/ViewPoint'
 
 export default function ViewPointsManager({ navigation }: any) {
 
-  const [viewPoints, setViewPoints] = useState<any>([])
+  const [viewPoints, setViewPoints] = useState<TViewPoint[]>([{ title: 'Point de vue 1', elevation: 100 }, { title: 'Point de vue 2', elevation: 200 }])
 
   const getCurrentViewPoints = async () => {
     const points = await getObject('viewPoints')
@@ -31,19 +33,15 @@ export default function ViewPointsManager({ navigation }: any) {
       <View style={viewPointsManagerStyles.content}>
         <SimpleButton text="Ajouter un lieu" icon={require('../../assets/icons/FiPlus.png')} onPress={() => { }} />
         <Text style={viewPointsManagerStyles.content.title}>Vos lieux</Text>
-        <ScrollView style={{backgroundColor: 'red'}}>
+        <ScrollView>
           <View style={viewPointsManagerStyles.content.viewPoints}>
             {
               viewPoints.length <= 0 ?
                 <Text style={viewPointsManagerStyles.content.noViewPoints}>Aucun lieu d'observation enregistré</Text>
                 :
-                viewPoints.map((point: any, index: number) => {
+                viewPoints.map((viewPoint: TViewPoint) => {
                   return (
-                    <View key={index} style={viewPointsManagerStyles.content.viewPoints.viewPoint}>
-                      <Text style={viewPointsManagerStyles.content.viewPoints.viewPoint.name}>{point.name}</Text>
-                      <SimpleButton text="Modifier" icon={require('../../assets/icons/FiEdit.png')} onPress={() => { }} />
-                      <SimpleButton text="Supprimer" icon={require('../../assets/icons/FiTrash.png')} onPress={() => { }} />
-                    </View>
+                    <ViewPoint key={`viewpoint-${viewPoint.title}`} title={viewPoint.title} />
                   )
                 })
             }

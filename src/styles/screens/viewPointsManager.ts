@@ -13,12 +13,17 @@ export const viewPointsManagerStyles = {
       marginTop: 25,
       textTransform: 'uppercase' as 'uppercase',
     },
-
+    
     noViewPoints: {
       color: app_colors.white,
       fontSize: 18,
       fontFamily: 'GilroyMedium',
       textAlign: 'center' as 'center',
+      backgroundColor: app_colors.white_no_opacity,
+      padding: 10,
+      borderRadius: 10,
+      borderWidth: 1,
+      borderColor: app_colors.white_no_opacity,
     },
 
     viewPoints: {
@@ -27,6 +32,9 @@ export const viewPointsManagerStyles = {
 
       viewPoint: {
         display: 'flex' as 'flex',
+        flexDirection: 'row' as 'row',
+        justifyContent: 'space-between' as 'space-between',
+        alignItems: 'center' as 'center',
         backgroundColor: app_colors.white_no_opacity,
         padding: 10,
         borderRadius: 10,
@@ -37,8 +45,30 @@ export const viewPointsManagerStyles = {
         name: {
           color: app_colors.white,
           fontSize: 18,
-          fontFamily: 'GilroyMedium',
+          fontFamily: 'GilroyBlack',
+          textTransform: 'uppercase' as 'uppercase',
           marginBottom: 10,
+        },
+
+        infos: {
+          display: 'flex' as 'flex',
+          flexDirection: 'row' as 'row',
+          justifyContent: 'space-between' as 'space-between',
+          gap: 5,
+        },
+
+        text: {
+          color: app_colors.white,
+          fontSize: 16,
+          fontFamily: 'GilroyMedium',
+          marginBottom: 5,
+        },
+
+        buttons: {
+          display: 'flex' as 'flex',
+          flexDirection: 'row' as 'row',
+          justifyContent: 'flex-end' as 'flex-end',
+          gap: 10,
         }
       }
     }

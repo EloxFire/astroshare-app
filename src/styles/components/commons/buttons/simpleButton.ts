@@ -14,19 +14,12 @@ export const simpleButtonStyles = {
     marginBottom: 10,
     height: 40,
     alignSelf: 'center' as 'center',
-    paddingRight: 10,
-
-    icon: {
-      width: 24,
-      height: 24,
-      marginRight: 10,
-    },
+    paddingHorizontal: 10,
 
     text: {
       color: app_colors.white,
       fontSize: 18,
       fontFamily: 'GilroyMedium',
-      // textTransform: 'uppercase' as 'uppercase',
     },
   }
 }
