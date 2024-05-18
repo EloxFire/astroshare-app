@@ -8,4 +8,5 @@ export const routes = {
   objectDetails: 'ObjectDetails',
   solarWeather: 'SolarWeatherScreen',
   apod: 'ApodScreen',
+  favoritesViewPoints: 'FavoritesViewPoints',
 }
