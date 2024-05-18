@@ -1,34 +1,32 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Image, Text, View } from 'react-native'
-import SimpleButton from './commons/buttons/SimpleButton'
 import { viewPointsManagerStyles } from '../styles/screens/viewPointsManager'
-import BigValue from './commons/BigValue'
 import { Equipment, TViewPoint } from '../helpers/types/ViewPoint'
 import { app_colors } from '../helpers/constants'
+import SimpleButton from './commons/buttons/SimpleButton'
+import DeleteSpotConfirmationModal from './modals/DeleteSpotModal'
 
 interface ViewPointProps {
   spot: TViewPoint
+  onDelete: () => void
 }
 
-export default function ViewPoint({ spot }: ViewPointProps) {
+export default function ViewPoint({ spot, onDelete }: ViewPointProps) {
+
   return (
-    <View style={viewPointsManagerStyles.content.viewPoints.viewPoint}>
-      <View style={viewPointsManagerStyles.content.viewPoints.viewPoint.header}>
-        <Text style={viewPointsManagerStyles.content.viewPoints.viewPoint.header.title}>{spot.title}</Text>
-        <View style={{display: 'flex', flexDirection: 'row', gap: 8}}>
-          <SimpleButton small icon={require('../../assets/icons/FiEdit.png')} onPress={() => { }} />
-          <SimpleButton color={app_colors.red_eighty} small icon={require('../../assets/icons/FiTrash.png')} onPress={() => { }} />
+    <View>
+      <View style={viewPointsManagerStyles.content.viewPoints.viewPoint}>
+          <Text style={viewPointsManagerStyles.content.viewPoints.viewPoint.header.title}>{spot.title}</Text>
+        <View style={[viewPointsManagerStyles.content.viewPoints.viewPoint.equipment.row, {justifyContent: 'space-between'}]}>
+          <EquipmentComponent icon='electricity' title='Électricité' value={spot.equipments.electricity} />
+          <EquipmentComponent icon='parking' title='Parking' value={spot.equipments.parking} />
+          <EquipmentComponent icon='shelter' title='Intérieur' value={spot.equipments.shelter} />
+          <EquipmentComponent icon='tools' title='Outils' value={spot.equipments.tools} />
         </View>
-      </View>
-      <View style={[viewPointsManagerStyles.content.viewPoints.viewPoint.equipment.row, {justifyContent: 'space-between'}]}>
-        <EquipmentComponent icon='electricity' title='Électricité' value={spot.equipments.electricity} />
-        <EquipmentComponent icon='parking' title='Parking' value={spot.equipments.parking} />
-        <EquipmentComponent icon='shelter' title='Intérieur' value={spot.equipments.shelter} />
-        <EquipmentComponent icon='tools' title='Outils' value={spot.equipments.tools} />
-      </View>
-      <View style={[viewPointsManagerStyles.content.viewPoints.viewPoint.equipment.row, {justifyContent: 'flex-start', marginTop: 15}]}>
-        <EquipmentComponent icon='altitude' title='Altitude' value={spot.equipments.altitude} />
-        <EquipmentComponent icon='polarView' title='Étoile polaire' value={spot.equipments.polarView} />
+        <View style={[viewPointsManagerStyles.content.viewPoints.viewPoint.equipment.row, {justifyContent: 'flex-start', marginTop: 15}]}>
+          <EquipmentComponent icon='altitude' title='Altitude' value={spot.equipments.altitude} />
+          <EquipmentComponent icon='polarView' title='Étoile polaire' value={spot.equipments.polarView} />
+        </View>
       </View>
     </View>
   )
