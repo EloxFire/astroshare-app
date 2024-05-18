@@ -1,4 +1,4 @@
-import { app_colors } from "../../helpers/constants";
+import { app_colors } from "../../../helpers/constants";
 
 export const disclaimerBarStyles = {
   bar: {
@@ -6,12 +6,13 @@ export const disclaimerBarStyles = {
     flexDirection: 'row' as 'row',
     justifyContent: 'flex-start' as 'flex-start',
     alignItems: 'center' as 'center',
-    padding: 4,
+    padding: 10,
     borderRadius: 5,
-    marginTop: -15,
+    // marginTop: -15,
 
     text: {
       color: app_colors.white,
+      opacity: .5,
       fontSize: 14,
       fontFamily: 'GilroyRegular',
       flex: 1
@@ -20,7 +21,8 @@ export const disclaimerBarStyles = {
     icon: {
       width: 20,
       height: 20,
-      marginRight: 10
+      marginRight: 10,
+      opacity: .5
     }
   }
 }

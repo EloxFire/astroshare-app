@@ -12,9 +12,11 @@ import axios from 'axios';
 import HomeSearchResults from '../components/HomeSearchResults';
 import SquareButton from '../components/commons/buttons/SquareButton';
 import { app_colors } from '../helpers/constants';
-import DisclaimerBar from '../components/DisclaimerBar';
+import DisclaimerBar from '../components/banners/DisclaimerBar';
 import { useSettings } from '../contexts/AppSettingsContext';
 import { showToast } from '../helpers/scripts/showToast';
+import SkyInfosBar from '../components/banners/SkyInfosBar';
+import BannerHandler from '../components/banners/BannerHandler';
 
 export default function Home({ navigation }: any) {
 
@@ -48,10 +50,7 @@ export default function Home({ navigation }: any) {
   return (
     <View style={globalStyles.body}>
       <AppHeader navigation={navigation} />
-      {
-        !hasInternetConnection &&
-        <DisclaimerBar message="Aucune connexion à internet. Fonctionnalités réduites." type='error' />
-      }
+      <BannerHandler />
       <LocationHeader />
       <InputWithIcon
         placeholder="Rechercher un objet céleste"

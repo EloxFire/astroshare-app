@@ -7,6 +7,7 @@ import { StatusBar } from "expo-status-bar";
 import { AppSettingsProvider } from "./src/contexts/AppSettingsContext";
 import { routes } from "./src/helpers/routes";
 import { RootSiblingParent } from 'react-native-root-siblings';
+import { ObservationSpotProvider } from "./src/contexts/ObservationSpotContext";
 import useFonts from "./src/hooks/useFonts";
 import Home from "./src/screens/Home";
 import Compass from "./src/screens/Compass";
@@ -16,9 +17,9 @@ import dayjs from "dayjs";
 import ComingSoon from "./src/screens/ComingSoon";
 import About from "./src/screens/About";
 import ObjectDetails from "./src/screens/ObjectDetails";
-import 'dayjs/locale/fr';
 import Apod from "./src/screens/Apod";
 import MoonPhases from "./src/screens/MoonPhases";
+import 'dayjs/locale/fr';
 dayjs.locale('fr');
 
 
@@ -53,6 +54,7 @@ export default function App({ navigation}: any) {
   return (
     <RootSiblingParent>
       <AppSettingsProvider>
+        <ObservationSpotProvider>
           <NavigationContainer>
             <StatusBar animated style="light" translucent/>
             <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -69,6 +71,7 @@ export default function App({ navigation}: any) {
               <Stack.Screen name={routes.about} component={About} />
             </Stack.Navigator>
           </NavigationContainer>
+        </ObservationSpotProvider>
       </AppSettingsProvider>
     </RootSiblingParent>
   );
