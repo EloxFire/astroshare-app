@@ -8,17 +8,18 @@ import SimpleButton from '../components/commons/buttons/SimpleButton'
 import PageTitle from '../components/commons/PageTitle'
 import ViewPoint from '../components/ViewPoint'
 import { TViewPoint } from '../helpers/types/ViewPoint'
+import AddSpotModal from '../components/modals/AddSpotModal'
 
 export default function ViewPointsManager({ navigation }: any) {
 
-  const [viewPoints, setViewPoints] = useState<TViewPoint[]>([
-    { title: 'La SINNE', equipments: { electricity: true, parking: true, shelter: true, tools: false, altitude: '+651m', polarView: true } },
-  ])
+  const [viewPoints, setViewPoints] = useState<TViewPoint[]>([])
+  const [isModalVisible, setIsModalVisible] = useState<boolean>(false)
 
   const getCurrentViewPoints = async () => {
     const points = await getObject('viewPoints')
     if (points) {
       console.log(points);
+      setViewPoints(points)
     } else {
       showToast({ message: 'Aucun lieu d\'observation enregistré', type: 'error' })
     }
@@ -30,10 +31,11 @@ export default function ViewPointsManager({ navigation }: any) {
 
   return (
     <View style={globalStyles.body}>
+      {isModalVisible && <AddSpotModal onClose={() => setIsModalVisible(false)} />}
       <PageTitle navigation={navigation} title="Lieux d'observation" subtitle="// Gérez vos lieux d'observation favoris" />
       <View style={globalStyles.screens.separator} />
       <View style={viewPointsManagerStyles.content}>
-        <SimpleButton text="Ajouter un lieu" icon={require('../../assets/icons/FiPlus.png')} onPress={() => { }} />
+        <SimpleButton text="Ajouter un lieu" icon={require('../../assets/icons/FiPlus.png')} onPress={() => setIsModalVisible(true)} />
         <Text style={viewPointsManagerStyles.content.title}>Vos lieux</Text>
         <ScrollView>
           <View style={viewPointsManagerStyles.content.viewPoints}>
