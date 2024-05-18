@@ -32,37 +32,58 @@ export const viewPointsManagerStyles = {
 
       viewPoint: {
         display: 'flex' as 'flex',
-        flexDirection: 'row' as 'row',
-        justifyContent: 'space-between' as 'space-between',
-        alignItems: 'center' as 'center',
+        flexDirection: 'column' as 'column',
         backgroundColor: app_colors.white_no_opacity,
         padding: 10,
-        borderRadius: 10,
         marginBottom: 10,
+        borderRadius: 10,
         borderWidth: 1,
         borderColor: app_colors.white_no_opacity,
 
-        name: {
-          color: app_colors.white,
-          fontSize: 18,
-          fontFamily: 'GilroyBlack',
-          textTransform: 'uppercase' as 'uppercase',
-          marginBottom: 10,
-        },
-
-        infos: {
+        header: {
           display: 'flex' as 'flex',
           flexDirection: 'row' as 'row',
           justifyContent: 'space-between' as 'space-between',
-          gap: 5,
+          marginBottom: 10,
+
+          title: {
+            color: app_colors.white,
+            fontSize: 25,
+            fontFamily: 'GilroyBlack',
+            textTransform: 'uppercase' as 'uppercase',
+          }
         },
 
-        text: {
-          color: app_colors.white,
-          fontSize: 16,
-          fontFamily: 'GilroyMedium',
-          marginBottom: 5,
+        equipment: {
+          display: 'flex' as 'flex',
+          flexDirection: 'column' as 'column',
+
+          row: {
+            display: 'flex' as 'flex',
+            flexDirection: 'row' as 'row',
+            gap: 30,
+          },
+
+          icon: {
+            width: 15,
+            height: 15,
+          },
+
+          text: {
+            color: app_colors.white,
+            fontSize: 16,
+            fontFamily: 'GilroyMedium',
+            marginBottom: 3,
+          },
+
+          value: {
+            color: app_colors.white,
+            fontSize: 16,
+            fontFamily: 'GilroyBlack',
+            textTransform: 'uppercase' as 'uppercase',          
+          }
         },
+
 
         buttons: {
           display: 'flex' as 'flex',

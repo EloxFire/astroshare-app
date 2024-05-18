@@ -11,7 +11,9 @@ import { TViewPoint } from '../helpers/types/ViewPoint'
 
 export default function ViewPointsManager({ navigation }: any) {
 
-  const [viewPoints, setViewPoints] = useState<TViewPoint[]>([{ title: 'Point de vue 1', elevation: 100 }, { title: 'Point de vue 2', elevation: 200 }])
+  const [viewPoints, setViewPoints] = useState<TViewPoint[]>([
+    { title: 'La SINNE', equipments: { electricity: true, parking: true, shelter: true, tools: false, altitude: '+651m', polarView: true } },
+  ])
 
   const getCurrentViewPoints = async () => {
     const points = await getObject('viewPoints')
@@ -41,7 +43,7 @@ export default function ViewPointsManager({ navigation }: any) {
                 :
                 viewPoints.map((viewPoint: TViewPoint) => {
                   return (
-                    <ViewPoint key={`viewpoint-${viewPoint.title}`} title={viewPoint.title} />
+                    <ViewPoint key={`viewpoint-${viewPoint.title}`} spot={viewPoint} />
                   )
                 })
             }
