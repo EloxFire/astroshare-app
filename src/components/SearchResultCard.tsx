@@ -27,10 +27,6 @@ export default function SearchResultCard({ object, navigation }: SearchResultCar
     const degDec = convertDMSToDegreeFromString(object.dec)
     const horizonAngle = calculateHorizonDepression(651)
     
-    console.log("RA :", getObjectName(object, 'all', true), object.ra, degRa);
-    console.log("Dec :", getObjectName(object, 'all', true), object.dec, degDec);
-    console.log("Horizon angle :", horizonAngle);
-
     if(!degRa || !degDec) return;
     let visible = isBodyAboveHorizon(new Date(), {latitude: currentUserLocation.lat, longitude: currentUserLocation.lon}, {ra: degRa, dec: degDec}, horizonAngle)
     setIsVisible(visible)

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Image, ScrollView, Text, View } from "react-native";
 import { globalStyles } from "../styles/global";
 import { useSettings } from "../contexts/AppSettingsContext";
@@ -7,13 +7,25 @@ import { objectDetailsStyles } from "../styles/screens/objectDetails";
 import { astroImages } from "../helpers/scripts/loadImages";
 import { getConstellationName } from "../helpers/scripts/getConstellationName";
 import { app_colors } from "../helpers/constants";
+import { getObjectType } from "../helpers/scripts/astro/getObjectType";
+import { convertHMSToDegreeFromString } from "../helpers/scripts/astro/HmsToDegree";
+import { convertDMSToDegreeFromString } from "../helpers/scripts/astro/DmsToDegree";
+import { calculateHorizonDepression } from "../helpers/scripts/astro/calculateHorizonAngle";
 import PageTitle from "../components/commons/PageTitle";
 import DSOValues from "../components/commons/DSOValues";
-import { getObjectType } from "../helpers/scripts/astro/getObjectType";
 
 export default function ObjectDetails({ route, navigation }: any) {
 
   const { object, isVisible } = route.params;
+
+  useEffect(() => {
+    const degRa = convertHMSToDegreeFromString(object.ra)
+    const degDec = convertDMSToDegreeFromString(object.dec)
+    const horizonAngle = calculateHorizonDepression(651)
+
+    if (!degRa || !degDec || !horizonAngle) return;
+    // TODO : Calculate rise and set time
+  }, [])
 
   return (
     <View style={globalStyles.body}>
@@ -30,15 +42,16 @@ export default function ObjectDetails({ route, navigation }: any) {
         <DSOValues title="Magnitude" value={object.b_mag || object.v_mag} />
         <DSOValues title="Constellation" value={getConstellationName(object.const)} />
         <DSOValues title="Type" value={getObjectType(object)} />
-        <DSOValues title="Ascension droite" value={object.ra.replace(':', 'h ').replace(':', 'm ')} />
-        <DSOValues title="Déclinaison" value={object.dec.replace(':', '° ').replace(':', 'm ')} />
+        <DSOValues title="Ascension droite" value={object.ra.replace(':', 'h ').replace(':', 'm ') + 's'} />
+        <DSOValues title="Déclinaison" value={object.dec.replace(':', '° ').replace(':', 'm ') + 's'} />
       </View>
       <View>
         <Text style={objectDetailsStyles.content.sectionTitle}>Observation</Text>
         <DSOValues chipValue chipColor={isVisible ? app_colors.green_eighty : app_colors.red_eighty} title="Visibilité" value={isVisible ? "Visible" : "Non visible"} />
+        
         <DSOValues chipValue chipColor={(object.v_mag || object.b_mag) > 6 ? app_colors.red_eighty : app_colors.green_eighty} title="Oeil nu" value={(object.v_mag || object.b_mag) > 6 ? "Non visible" : "Visible"} />
         <DSOValues chipValue chipColor={(object.v_mag || object.b_mag) > 8.5 ? app_colors.red_eighty : app_colors.green_eighty} title="Jumelles" value={(object.v_mag || object.b_mag) > 8.5 ? "Non visible" : "Visible"} />
-        <DSOValues chipValue chipColor={app_colors.green_eighty} title={object.type} value="Visible" />
+        <DSOValues chipValue chipColor={app_colors.green_eighty} title="Télescope" value="Visible" />
       </View>
 
       {/* <ScrollView>

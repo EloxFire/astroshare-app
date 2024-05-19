@@ -19,6 +19,7 @@ export const objectDetailsStyles = {
       color: app_colors.white,
       textTransform: 'uppercase' as 'uppercase',
       marginTop: 20,
+      marginBottom: 10,
     },
 
     subtitle: {

@@ -11,8 +11,6 @@ interface DSOValuesProps {
 }
 
 export default function DSOValues({ title, value, chipValue, chipColor }: DSOValuesProps) {
-  console.log(typeof value);
-  
   return (
     <View style={objectDetailsStyles.dsoValues}>
       <Text style={objectDetailsStyles.dsoValues.title}>{title}</Text>
