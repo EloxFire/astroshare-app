@@ -6,64 +6,66 @@ export const objectDetailsStyles = {
     flexDirection: 'column' as 'column',
     gap: 20,
 
-    header:{
-      display: 'flex' as 'flex',
-      flexDirection: 'row' as 'row',
-      justifyContent: 'space-between' as 'space-between',
-      gap: 10,
-
-      title: {
-        fontSize: 25,
-        fontFamily: 'GilroyBlack',
-        color: app_colors.white,
-      },
-
-      subtitle: {
-        fontSize: 15,
-        color: app_colors.white,
-        fontFamily: 'GilroyRegular',
-      },
-
-      image: {
-        width: 125,
-        height: 125,
-        borderRadius: 10
-      }
+    title: {
+      fontSize: 35,
+      fontFamily: 'GilroyBlack',
+      color: app_colors.white,
+      textAlign: 'center' as 'center',
+    },
+    
+    sectionTitle: {
+      fontSize: 20,
+      fontFamily: 'GilroyBlack',
+      color: app_colors.white,
+      textTransform: 'uppercase' as 'uppercase',
+      marginTop: 20,
     },
 
-    body: {
-      display: 'flex' as 'flex',
-      flexDirection: 'column' as 'column',
-      gap: 10,
+    subtitle: {
+      fontSize: 20,
+      fontFamily: 'GilroyRegular',
+      color: app_colors.white,
+      textAlign: 'center' as 'center',
+    },
 
-      info: {
-        display: 'flex' as 'flex',
-        flexDirection: 'row' as 'row',
-        justifyContent: 'space-between' as 'space-between',
-        gap: 10,
+    image: {
+      width: 150,
+      height: 150,
+      alignSelf: 'center' as 'center',
+    },
 
-        title: {
-          fontSize: 12,
-          color: app_colors.white,
-          fontFamily: 'GilroyRegular',
-        },
+    dsoInfos: {
+    }
+  },
 
-        value: {
-          fontSize: 15,
-          color: app_colors.white,
-          fontFamily: 'GilroyMedium',
-        }
-      },
+  dsoValues: {
+    marginBottom: 5,
+    display: 'flex' as 'flex',
+    flexDirection: 'row' as 'row',
+    justifyContent: 'space-between' as 'space-between',
 
-      title: {
-        fontSize: 20,
-        color: app_colors.white,
-        fontFamily: 'GilroyBlack',
-        textTransform: 'uppercase' as 'uppercase',
-        borderTopWidth: 1,
-        borderTopColor: app_colors.white,
-        paddingTop: 8,
-      }
+    title: {
+      fontSize: 12,
+      fontFamily: 'AuxMono',
+      color: app_colors.white,
+      opacity: .5,
+    },
+
+    value: {
+      fontSize: 15,
+      fontFamily: 'GilroyRegular',
+      color: app_colors.white,
+    },
+
+    chip: {
+      fontSize: 15,
+      fontFamily: 'GilroyRegular',
+      color: app_colors.white,
+      paddingVertical: 2,
+      paddingHorizontal: 5,
+      borderRadius: 20,
+      width: 110,
+      textAlign: 'center' as 'center',
     }
   }
 }
