@@ -3,39 +3,41 @@ import { DSOCatalog } from "../../types/DSOCatalogs"
 
 export const getObjectType = (object: DSO) => {
   switch (object.type) {
-    case "CL+N":
+    case "Cl+N":
       return "Amas ouvert + Nébuleuse"
     case "DRKN":
       return "Nébuleuse sombre"
     case "G":
       return "Galaxie"
-    case "GCL":
+    case "GCl":
       return "Amas globulaire"
-    case "GGROUP":
+    case "GGroup":
       return "Groupe de galaxies"
-    case "GPAIR":
+    case "GPair":
       return "Paire de galaxies"
-    case "GTRPL":
+    case "GTrpl":
       return "Trio de galaxies"
     case "HII":
       return "Région HII"
-    case "NEB":
+    case "Neb":
       return "Nébuleuse"
-    case "OCL":
+    case "OCl":
       return "Amas ouvert"
     case "PN":
       return "Nébuleuse planétaire"
     case "SNR":
       return "Reste de supernova"
-    case "STAR":
+    case "RfN":
+      return "Nébuleuse en réflexion"
+    case "*":
       return "Étoile"
-    case "STARASS":
+    case "*Ass":
       return "Astérisme"
-    case "STARSTAR":
+    case "**":
       return "Étoile double"
-    case "OTHER":
+    case "Other":
       return "Autre"
     default:
-      return "Inconnu"
+      return "Autre"
   }
 }
