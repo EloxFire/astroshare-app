@@ -22,4 +22,5 @@ export const storageKeys = {
   viewPoints: 'viewPoints',
   hasChangedCurrentSpotElevation: 'hasChangedCurrentSpotElevation',
   hasAddedSpot: 'hasAddedSpot',
+  selectedSpot: 'selectedSpot',
 }

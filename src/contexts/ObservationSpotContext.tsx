@@ -16,13 +16,14 @@ export function ObservationSpotProvider({ children }: ObservationSpotProviderPro
 
   const [currentSpotElevation, setCurrentSpotElevation] = useState<number>(0)
   const [viewPoints, setViewPoints] = useState<TViewPoint[]>([])
+  const [selectedSpot, setSelectedSpot] = useState<TViewPoint | null>(null)
 
   useEffect(() => {
     (async () => {
-      const temp = await getObject(storageKeys.viewPoints)
-      if (temp) {
-        setViewPoints(temp)
-      }
+      const spots = await getObject(storageKeys.viewPoints)
+      const spot = await getObject(storageKeys.selectedSpot)
+      if (spots) setViewPoints(spots)
+      if (spot) setSelectedSpot(spot)
     })()
   }, [])
 
@@ -64,6 +65,11 @@ export function ObservationSpotProvider({ children }: ObservationSpotProviderPro
     refreshViewPoints()
   }
 
+  const changeSelectedSpot = (spot: TViewPoint) => {
+    setSelectedSpot(spot)
+    storeObject(storageKeys.selectedSpot, spot)
+  }
+
   const values = {
     currentSpotElevation,
     handleCurrentSpotElevation,
@@ -71,6 +77,8 @@ export function ObservationSpotProvider({ children }: ObservationSpotProviderPro
     deleteSpot,
     viewPoints,
     refreshViewPoints,
+    changeSelectedSpot,
+    selectedSpot,
   }
 
   return (

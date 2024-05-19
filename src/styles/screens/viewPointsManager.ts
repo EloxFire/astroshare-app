@@ -9,9 +9,16 @@ export const viewPointsManagerStyles = {
       color: app_colors.white,
       fontSize: 18,
       fontFamily: 'GilroyBlack',
-      marginBottom: 20,
+      marginBottom: 8,
       marginTop: 25,
       textTransform: 'uppercase' as 'uppercase',
+    },
+
+    text: {
+      color: app_colors.white,
+      fontSize: 12,
+      fontFamily: 'GilroyMedium',
+      marginBottom: 20,
     },
     
     noViewPoints: {

@@ -1,21 +1,23 @@
 import React, { useState } from 'react'
-import { Image, Text, View } from 'react-native'
+import { Image, Text, TouchableOpacity, View } from 'react-native'
 import { viewPointsManagerStyles } from '../styles/screens/viewPointsManager'
 import { Equipment, TViewPoint } from '../helpers/types/ViewPoint'
 import { app_colors } from '../helpers/constants'
 import SimpleButton from './commons/buttons/SimpleButton'
 import DeleteSpotConfirmationModal from './modals/DeleteSpotModal'
+import { useSpot } from '../contexts/ObservationSpotContext'
 
 interface ViewPointProps {
   spot: TViewPoint
-  onDelete: () => void
 }
 
-export default function ViewPoint({ spot, onDelete }: ViewPointProps) {
+export default function ViewPoint({ spot }: ViewPointProps) {
+
+  const { changeSelectedSpot, selectedSpot } = useSpot()
 
   return (
-    <View>
-      <View style={viewPointsManagerStyles.content.viewPoints.viewPoint}>
+    <TouchableOpacity onPress={() => changeSelectedSpot(spot)}>
+      <View style={[viewPointsManagerStyles.content.viewPoints.viewPoint, {borderColor: selectedSpot ? selectedSpot.title === spot.title ? app_colors.white : app_colors.white_no_opacity : app_colors.white_no_opacity}]}>
         <Text style={viewPointsManagerStyles.content.viewPoints.viewPoint.header.title}>{spot.title}</Text>
         <View style={[viewPointsManagerStyles.content.viewPoints.viewPoint.equipment.row, {justifyContent: 'space-between'}]}>
           <EquipmentComponent icon='electricity' title='Électricité' value={spot.equipments.electricity} />
@@ -28,7 +30,7 @@ export default function ViewPoint({ spot, onDelete }: ViewPointProps) {
           <EquipmentComponent icon='polarView' title='Étoile polaire' value={spot.equipments.polarView} />
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   )
 }
 

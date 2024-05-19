@@ -10,10 +10,11 @@ import PageTitle from '../components/commons/PageTitle'
 import ViewPoint from '../components/ViewPoint'
 import AddSpotModal from '../components/modals/AddSpotModal'
 import DeleteSpotModal from '../components/modals/DeleteSpotModal'
+import InputWithIcon from '../components/forms/InputWithIcon'
 
 export default function ViewPointsManager({ navigation }: any) {
 
-  const { deleteSpot, viewPoints } = useSpot()
+  const { deleteSpot, viewPoints, selectedSpot } = useSpot()
 
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false)
   const [isDeleteModalVisible, setDeleteModalVisible] = useState<boolean>(false)
@@ -42,6 +43,7 @@ export default function ViewPointsManager({ navigation }: any) {
           <SimpleButton text="Supprimer un lieu" icon={require('../../assets/icons/FiTrash.png')} onPress={() => setDeleteModalVisible(true)} />
         </View>
         <Text style={viewPointsManagerStyles.content.title}>Vos lieux</Text>
+        <Text style={viewPointsManagerStyles.content.text}>Lieu actuel : {selectedSpot ? selectedSpot.title : 'Aucun'}</Text>
         <ScrollView>
           <View style={viewPointsManagerStyles.content.viewPoints}>
             {
@@ -50,7 +52,7 @@ export default function ViewPointsManager({ navigation }: any) {
                 :
                 viewPoints.map((viewPoint: TViewPoint) => {
                   return (
-                    <ViewPoint key={`viewpoint-${viewPoint.title}`} spot={viewPoint} onDelete={() => handleSpotDeletion(viewPoint.title)} />
+                    <ViewPoint key={`viewpoint-${viewPoint.title}`} spot={viewPoint}/>
                   )
                 })
             }
