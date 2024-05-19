@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Image, ScrollView, Text, View } from "react-native";
 import { globalStyles } from "../styles/global";
-import { useSettings } from "../contexts/AppSettingsContext";
 import { getObjectName } from "../helpers/scripts/astro/getObjectName";
 import { objectDetailsStyles } from "../styles/screens/objectDetails";
 import { astroImages } from "../helpers/scripts/loadImages";

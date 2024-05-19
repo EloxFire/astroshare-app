@@ -12,6 +12,8 @@ import { routes } from '../helpers/routes'
 import { convertDMSToDegreeFromString } from '../helpers/scripts/astro/DmsToDegree'
 import { convertHMSToDegreeFromString } from '../helpers/scripts/astro/HmsToDegree'
 import { calculateHorizonDepression } from '../helpers/scripts/astro/calculateHorizonAngle'
+import { useSpot } from '../contexts/ObservationSpotContext'
+import { extractNumbers } from '../helpers/scripts/extractNumbers'
 
 interface SearchResultCardProps {
   object: DSO
@@ -19,13 +21,16 @@ interface SearchResultCardProps {
 }
 
 export default function SearchResultCard({ object, navigation }: SearchResultCardProps) {
+
+  const {selectedSpot} = useSpot()
   const {currentUserLocation} = useSettings()
   const [isVisible, setIsVisible] = useState(false) 
 
   useEffect(() => {    
     const degRa = convertHMSToDegreeFromString(object.ra)
     const degDec = convertDMSToDegreeFromString(object.dec)
-    const horizonAngle = calculateHorizonDepression(651)
+    
+    const horizonAngle = calculateHorizonDepression(extractNumbers(selectedSpot.equipments.altitude))
     
     if(!degRa || !degDec) return;
     let visible = isBodyAboveHorizon(new Date(), {latitude: currentUserLocation.lat, longitude: currentUserLocation.lon}, {ra: degRa, dec: degDec}, horizonAngle)
