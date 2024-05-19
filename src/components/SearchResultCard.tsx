@@ -22,9 +22,7 @@ export default function SearchResultCard({ object, navigation }: SearchResultCar
   const {currentUserLocation} = useSettings()
   const [isVisible, setIsVisible] = useState(false) 
 
-  useEffect(() => {
-
-    
+  useEffect(() => {    
     const degRa = convertHMSToDegreeFromString(object.ra)
     const degDec = convertDMSToDegreeFromString(object.dec)
     const horizonAngle = calculateHorizonDepression(651)

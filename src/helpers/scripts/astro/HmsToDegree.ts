@@ -2,7 +2,7 @@ import { showToast } from "../showToast";
 
 export const convertHMSToDegreeFromString = (decString: string) => {
   // Expression régulière pour extraire les parties de la chaîne
-  const regex = /([+-]?\d+):(\d+):([\d.]+)/;
+  const regex = /(\d+):(\d+):([\d.]+)/;
   const match = decString.match(regex);
 
   if (!match) {
@@ -11,13 +11,13 @@ export const convertHMSToDegreeFromString = (decString: string) => {
   }
 
   // Extraction des degrés, minutes et secondes à partir de la chaîne
-  const degrees = parseInt(match[1], 10);
+  const hour = parseInt(match[1], 10);
   const minutes = parseInt(match[2], 10);
   const seconds = parseFloat(match[3]);
 
   // Conversion des minutes et secondes en degrés décimaux
-  const decimalDegree = Math.abs(degrees) + minutes / 60 + seconds / 3600;
+  const decimalDegree = 15 * (hour + (minutes / 60) + (seconds / 3600));
 
   // Retourner la valeur positive ou négative en fonction de l'input
-  return degrees < 0 ? -decimalDegree : decimalDegree;
+  return decimalDegree;
 };

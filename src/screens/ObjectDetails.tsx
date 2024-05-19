@@ -35,7 +35,7 @@ export default function ObjectDetails({ route, navigation }: any) {
       </View>
       <View>
         <Text style={objectDetailsStyles.content.sectionTitle}>Observation</Text>
-        <DSOValues chipValue title="Visibilité" value={isVisible ? "Visible" : "Non visible"} />
+        <DSOValues chipValue chipColor={isVisible ? app_colors.green_eighty : app_colors.red_eighty} title="Visibilité" value={isVisible ? "Visible" : "Non visible"} />
         <DSOValues chipValue chipColor={(object.v_mag || object.b_mag) > 6 ? app_colors.red_eighty : app_colors.green_eighty} title="Oeil nu" value={(object.v_mag || object.b_mag) > 6 ? "Non visible" : "Visible"} />
         <DSOValues chipValue chipColor={(object.v_mag || object.b_mag) > 8.5 ? app_colors.red_eighty : app_colors.green_eighty} title="Jumelles" value={(object.v_mag || object.b_mag) > 8.5 ? "Non visible" : "Visible"} />
         <DSOValues chipValue chipColor={app_colors.green_eighty} title={object.type} value="Visible" />
