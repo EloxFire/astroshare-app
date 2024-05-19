@@ -51,6 +51,7 @@ export const viewPointsManagerStyles = {
             fontSize: 25,
             fontFamily: 'GilroyBlack',
             textTransform: 'uppercase' as 'uppercase',
+            marginBottom: 10,
           }
         },
 

@@ -16,7 +16,7 @@ export default function ViewPoint({ spot, onDelete }: ViewPointProps) {
   return (
     <View>
       <View style={viewPointsManagerStyles.content.viewPoints.viewPoint}>
-          <Text style={viewPointsManagerStyles.content.viewPoints.viewPoint.header.title}>{spot.title}</Text>
+        <Text style={viewPointsManagerStyles.content.viewPoints.viewPoint.header.title}>{spot.title}</Text>
         <View style={[viewPointsManagerStyles.content.viewPoints.viewPoint.equipment.row, {justifyContent: 'space-between'}]}>
           <EquipmentComponent icon='electricity' title='Électricité' value={spot.equipments.electricity} />
           <EquipmentComponent icon='parking' title='Parking' value={spot.equipments.parking} />
