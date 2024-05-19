@@ -30,12 +30,15 @@ export function AppSettingsProvider({ children }: AppSettingsProviderProps) {
   const [currentUserLocation, setCurrentUserLocation] = useState<LocationObject | null>(null)
   const [locationLoading, setLocationLoading] = useState<boolean>(true)
   const [currentUserHorizon, setCurrentUserHorizon] = useState<number>(0)
-  const [isCellularDataEnabled, setIsCellularDataEnabled] = useState<boolean>(false)
+  const [isCellularDataEnabled, setIsCellularDataEnabled] = useState<boolean>(true)
   const [hasInternetConnection, setHasInternetConnection] = useState<boolean>(false)
 
   useEffect(() => {
     (async () => {
       const cellularData = await getData('cellularData');
+      if (!cellularData) {
+        await storeData('cellularData', 'true');
+      }
       setIsCellularDataEnabled(cellularData === 'true' ? true : false);
       const nightMode = await getData('nightMode');
       setIsNightMode(nightMode === 'true' ? true : false);
