@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { ScrollView, Text, View } from 'react-native'
 import { viewPointsManagerStyles } from '../styles/screens/viewPointsManager'
 import { showToast } from '../helpers/scripts/showToast'
 import { globalStyles } from '../styles/global'
-import { getObject } from '../helpers/storage'
 import { TViewPoint } from '../helpers/types/ViewPoint'
 import { useSpot } from '../contexts/ObservationSpotContext'
 import SimpleButton from '../components/commons/buttons/SimpleButton'
@@ -11,25 +10,15 @@ import PageTitle from '../components/commons/PageTitle'
 import ViewPoint from '../components/ViewPoint'
 import AddSpotModal from '../components/modals/AddSpotModal'
 import DeleteSpotModal from '../components/modals/DeleteSpotModal'
-import { app_colors } from '../helpers/constants'
 
 export default function ViewPointsManager({ navigation }: any) {
 
-  const { deleteSpot } = useSpot()
+  const { deleteSpot, viewPoints } = useSpot()
 
-  const [viewPoints, setViewPoints] = useState<TViewPoint[]>([])
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false)
   const [isDeleteModalVisible, setDeleteModalVisible] = useState<boolean>(false)
   
 
-  const getCurrentViewPoints = async () => {
-    const points = await getObject('viewPoints')
-    if (points) {
-      setViewPoints(points)
-    } else {
-      showToast({ message: 'Aucun lieu d\'observation enregistré', type: 'error' })
-    }
-  }
 
   const handleSpotDeletion = (spotTitle: string) => {
     try {
@@ -40,10 +29,6 @@ export default function ViewPointsManager({ navigation }: any) {
       showToast({ message: 'Erreur lors de la suppression du lieu d\'observation', type: 'error' })
     }
   }
-
-  useEffect(() => {
-    getCurrentViewPoints()
-  }, [])
 
   return (
     <View style={globalStyles.body}>

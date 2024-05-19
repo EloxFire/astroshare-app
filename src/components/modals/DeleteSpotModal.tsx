@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { Image, Text, TouchableOpacity, View } from 'react-native'
 import { addSpotModalStyles } from '../../styles/components/modals/addSpotModal'
-import { app_colors } from '../../helpers/constants'
-import SimpleButton from '../commons/buttons/SimpleButton'
-import DisclaimerBar from '../banners/DisclaimerBar'
+import { app_colors, storageKeys } from '../../helpers/constants'
 import { getObject } from '../../helpers/storage'
 import { useSpot } from '../../contexts/ObservationSpotContext'
+import SimpleButton from '../commons/buttons/SimpleButton'
+import DisclaimerBar from '../banners/DisclaimerBar'
 
 interface AddSpotModalProps {
   onClose: () => void
@@ -21,7 +21,7 @@ export default function DeleteSpotModal({ onClose }: AddSpotModalProps) {
   })
 
   const getSpots = async () => {
-    const spots = await getObject('viewPoints')
+    const spots = await getObject(storageKeys.viewPoints)
     const titles = spots.map((spot: any) => spot.title)
 
     setSpotTitles(titles)

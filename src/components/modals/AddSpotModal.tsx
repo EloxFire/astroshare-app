@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
 import { Image, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import { addSpotModalStyles } from '../../styles/components/modals/addSpotModal'
-import SimpleButton from '../commons/buttons/SimpleButton'
 import { useSpot } from '../../contexts/ObservationSpotContext'
 import { showToast } from '../../helpers/scripts/showToast'
+import SimpleButton from '../commons/buttons/SimpleButton'
 
 interface AddSpotModalProps {
   onClose: () => void
@@ -11,7 +11,7 @@ interface AddSpotModalProps {
 
 export default function AddSpotModal({ onClose }: AddSpotModalProps) {
 
-  const { addNewSpot } = useSpot()
+  const { addNewSpot, viewPoints } = useSpot()
   
   const [name, setName] = useState<string>('')
   const [electricity, setElectricity] = useState<boolean>(false)
@@ -19,18 +19,18 @@ export default function AddSpotModal({ onClose }: AddSpotModalProps) {
   const [shelter, setShelter] = useState<boolean>(false)
   const [tools, setTools] = useState<boolean>(false)
   const [polarView, setPolarView] = useState<boolean>(false)
-  const [altitude, setAltitude] = useState<number>(0)
+  const [altitude, setAltitude] = useState<number>(-1)
 
   const handleAddSpot = () => {
     try {
       addNewSpot({
-        title: name,
+        title: name !== '' ? name : `Lieu d'observation ${viewPoints.length + 1}`,
         equipments: {
           electricity: electricity,
           parking: parking,
           shelter: shelter,
           tools :tools,
-          altitude: `+${altitude}m`,
+          altitude: altitude === -1 ? '+0m' : `+${altitude}m`,
           polarView: polarView,
         }
       })
