@@ -26,10 +26,10 @@ export default function BannerHandler() {
         <DisclaimerBar message="Aucune connexion à internet. Fonctionnalités réduites." type='error' />
       }
       {/* <SkyInfosBar /> */}
-      {/* {
+      {
         !hasChangedSpotElevation &&
         <DisclaimerBar message="Précisez votre lieu d'observation en renseigant une altitude dans les paramètres !" type='info' />
-      } */}
+      }
       {
         !hasAddedSpot &&
         <DisclaimerBar message="Ajoutez vos lieux d'observation favoris depuis les paramètres ! Paramètres > Lieux d'observation > Ajouter un lieu." type='info' />

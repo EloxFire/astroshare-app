@@ -72,7 +72,7 @@ export default function Apod({ navigation }: any) {
                 />
           }
           <Text style={apodStyles.content.subtitle}>Description :</Text>
-          <Text style={[apodStyles.content.text, {fontSize: 20, alignSelf: 'flex-start', lineHeight: 28}]}>{apod?.explanation || 'Chargement'}</Text>
+          <Text style={[apodStyles.content.text, {fontSize: 16, alignSelf: 'flex-start', lineHeight: 25}]}>{apod?.explanation || 'Chargement'}</Text>
         </View>
       </ScrollView>
     </View>

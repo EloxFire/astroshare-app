@@ -2,10 +2,10 @@ import React from 'react'
 import { Image, ScrollView, Text, View } from 'react-native'
 import { weatherStyles } from '../../styles/screens/weather'
 import { hourlyStyles } from '../../styles/components/weather/hourly'
+import { getWindDir } from '../../helpers/scripts/getWindDir'
+import { weatherImages } from '../../helpers/scripts/loadImages'
 import dayjs from 'dayjs'
 import SingleValue from './SingleValue'
-import { weatherImages } from '../../helpers/scripts/loadImages'
-import { getWindDir } from '../../helpers/scripts/getWindDir'
 
 interface HourlyProps {
   weather: any
@@ -22,8 +22,8 @@ export default function Hourly({ weather }: HourlyProps) {
             return (
               <View key={index} style={hourlyStyles.content.hour}>
                 <View style={[hourlyStyles.content.hour.row, {alignItems: 'flex-start'}]}>
-                  <Text style={{ color: 'white', fontSize: 16, fontFamily: 'GilroyBlack' }}>{dayjs.unix(hour.dt).format('HH')}H</Text>
-                  <Text style={{ color: 'white', fontSize: 16, fontFamily: 'GilroyBlack' }}>{hour.weather[0].description.toUpperCase()}</Text>
+                  <Text style={{ color: 'white', fontSize: 14, fontFamily: 'GilroyBlack' }}>{dayjs.unix(hour.dt).format('HH')}H</Text>
+                  <Text style={{ color: 'white', fontSize: 14, fontFamily: 'GilroyBlack' }}>{hour.weather[0].description.toUpperCase()}</Text>
                 </View>
                 <View style={[hourlyStyles.content.hour.row, {alignItems: 'flex-end'}]}>
                   <Image style={{height: 30, width: 30}} source={weatherImages[hour.weather[0].icon]} />

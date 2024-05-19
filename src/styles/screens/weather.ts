@@ -6,7 +6,7 @@ export const weatherStyles = {
     flexDirection: 'column' as 'column',
 
     text: {
-      fontSize: 15,
+      fontSize: 12,
       fontFamily: 'GilroyRegular',
       color: app_colors.white
     },
@@ -29,18 +29,18 @@ export const weatherStyles = {
         },
 
         subtitle: {
-          fontSize: 12,
+          fontSize: 10,
           fontFamily: 'GilroyRegular',
           textTransform: 'uppercase' as 'uppercase',
           color: app_colors.white
         },
 
         temp: {
-          fontSize: 60,
+          fontSize: 45,
         },
 
         description: {
-          fontSize: 20,
+          fontSize: 15,
           textAlign: 'center' as 'center',
         }
       }
@@ -98,14 +98,14 @@ export const weatherStyles = {
     marginBottom: 15,
 
     title: {
-      fontSize: 25,
+      fontSize: 20,
       fontFamily: 'GilroyBlack',
       textTransform: 'uppercase' as 'uppercase',
       color: app_colors.white,
     },
 
     subtitle: {
-      fontSize: 18,
+      fontSize: 12,
       fontFamily: 'GilroyMedium',
       textTransform: 'uppercase' as 'uppercase',
       color: app_colors.white

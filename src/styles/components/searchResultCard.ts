@@ -20,13 +20,13 @@ export const searchResultCardStyles = {
       justifyContent: 'space-between' as 'space-between',
 
       title: {
-        fontSize: 25,
+        fontSize: 20,
         color: app_colors.white,
         fontFamily: 'GilroyBlack'
       },
 
       subtitle: {
-        fontSize: 16,
+        fontSize: 12,
         color: app_colors.white,
         marginBottom: 5,
         fontFamily: 'GilroyMedium'
@@ -50,13 +50,13 @@ export const searchResultCardStyles = {
         marginTop: 5,
 
         title: {
-          fontSize: 16,
+          fontSize: 12,
           color: app_colors.white,
           fontFamily: 'GilroyBlack'
         },
 
         value: {
-          fontSize: 16,
+          fontSize: 12,
           color: app_colors.white,
           fontFamily: 'GilroyMedium'
         }
@@ -66,7 +66,7 @@ export const searchResultCardStyles = {
     chip:{
       paddingVertical: 2,
       paddingHorizontal: 10,
-      fontSize: 16,
+      fontSize: 12,
       fontFamily: 'GilroyMedium',
       color: app_colors.white,
       alignSelf: 'flex-start' as 'flex-start',

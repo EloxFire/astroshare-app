@@ -5,8 +5,8 @@ export const globalStyles = {
   body: {
     backgroundColor: app_colors.black,
     color: app_colors.white,
-    paddingHorizontal: 20,
-    paddingTop: StatusBar.currentHeight,
+    paddingHorizontal: 10,
+    paddingTop: StatusBar.currentHeight ? StatusBar.currentHeight + 20 : 20,
     height: "100%" as "100%",
   },
   input: {
@@ -23,14 +23,14 @@ export const globalStyles = {
 
     title: {
       color: app_colors.white,
-      fontSize: 25,
+      fontSize: 20,
       fontFamily: "GilroyBlack",
       textTransform: "uppercase" as "uppercase",
     },
 
     subtitle: {
       color: app_colors.white,
-      fontSize: 12,
+      fontSize: 10,
       marginBottom: 10,
       fontFamily: "AuxMono",
       opacity: 0.6,
@@ -40,14 +40,14 @@ export const globalStyles = {
   screens: {
     title: {
       color: app_colors.white,
-      fontSize: 30,
+      fontSize: 24,
       fontFamily: "GilroyBlack",
       textTransform: "uppercase" as "uppercase",
     },
 
     subtitle: {
       color: app_colors.white,
-      fontSize: 12,
+      fontSize: 9,
       marginBottom: 10,
       fontFamily: "AuxMono",
       opacity: 0.6,

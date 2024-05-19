@@ -11,7 +11,7 @@ export default function AppHeader({navigation}: any) {
         resizeMode='contain'
       />
       <TouchableOpacity onPress={() => navigation.navigate(routes.settings)}>
-        <Image source={require('../../../assets/icons/FiSettings.png')} style={{width: 24, height: 24}} />
+        <Image source={require('../../../assets/icons/FiSettings.png')} style={{width: 20, height: 20}} />
       </TouchableOpacity>
     </View>
   )

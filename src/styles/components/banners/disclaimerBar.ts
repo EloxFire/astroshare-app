@@ -8,12 +8,11 @@ export const disclaimerBarStyles = {
     alignItems: 'center' as 'center',
     padding: 10,
     borderRadius: 5,
-    // marginTop: -15,
 
     text: {
       color: app_colors.white,
       opacity: .5,
-      fontSize: 14,
+      fontSize: 12,
       fontFamily: 'GilroyRegular',
       flex: 1
     },

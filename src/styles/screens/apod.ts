@@ -8,7 +8,7 @@ export const apodStyles = {
     alignItems: 'center' as 'center',
 
     title: {
-      fontSize: 38,
+      fontSize: 25,
       textTransform: 'uppercase' as 'uppercase',
       fontFamily: 'GilroyBlack',
       textAlign: 'center' as 'center',
@@ -19,7 +19,7 @@ export const apodStyles = {
     subtitle: {
       color: app_colors.white,
       fontFamily: 'GilroyBlack',
-      fontSize: 25,
+      fontSize: 20,
       textAlign: 'left' as 'left',
       alignSelf: 'flex-start' as 'flex-start',
       marginBottom: 10
@@ -28,7 +28,7 @@ export const apodStyles = {
     text: {
       color: app_colors.white,
       fontFamily: 'GilroyRegular',
-      fontSize: 16,
+      fontSize: 12,
       textAlign: 'justify' as 'justify',
     }
   }

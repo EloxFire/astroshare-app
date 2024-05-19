@@ -24,12 +24,12 @@ export default function WeatherOverview({ weather, currentUserLocation, searched
         <Text style={weatherStyles.content.weather.header.subtitle}>{!searchedCity ? `${getUnicodeFlagIcon(currentUserLocation?.country || 'ZZ')}, ${currentUserLocation?.state}` || '--' : `${getUnicodeFlagIcon(searchedCity.country || 'ZZ')}, ${searchedCity.state}` || '--'}</Text>
         </View>
         <TouchableOpacity style={{backgroundColor: app_colors.white_no_opacity, padding: 5, justifyContent: 'center', alignItems: 'center', borderRadius: 10, display: 'flex', width: 30, height: 30}} onPress={() => refresh()}>
-          <Image source={require('../../../assets/icons/FiRepeat.png')} style={{ width: 15, height: 15}}/>
+          <Image source={require('../../../assets/icons/FiRepeat.png')} style={{ width: 12, height: 12}}/>
         </TouchableOpacity>
         </View>
         <View style={weatherStyles.content.weather.header}>
           <View>
-            <Image source={weather ? weatherImages[weather.current.weather[0].icon] : weatherImages.default} style={{ width: 100, height: 100, marginBottom: 8}}/>
+            <Image source={weather ? weatherImages[weather.current.weather[0].icon] : weatherImages.default} style={{ width: 85, height: 85, marginBottom: 8}}/>
             {
               weather ?
                 (weather.current.weather[0].description.split(' ').length > 1 && weather.current.weather[0].description.length > 13) ?

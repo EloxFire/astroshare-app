@@ -15,7 +15,7 @@ interface ObservationSpotProviderProps {
 export function ObservationSpotProvider({ children }: ObservationSpotProviderProps) {
 
   const [currentSpotElevation, setCurrentSpotElevation] = useState<number>(0)
-  const [viewPoints, setViewPoints] = useState<TViewPoint[] | null>(null)
+  const [viewPoints, setViewPoints] = useState<TViewPoint[]>([])
 
   useEffect(() => {
     (async () => {

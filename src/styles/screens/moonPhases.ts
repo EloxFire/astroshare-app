@@ -8,7 +8,7 @@ export const moonPhasesStyles = {
 
     title: {
       fontFamily: 'GilroyBlack',
-      fontSize: 28,
+      fontSize: 22,
       color: app_colors.white,
       marginBottom: 5,
       textTransform: 'uppercase' as 'uppercase'

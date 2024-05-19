@@ -13,20 +13,20 @@ export const objectDetailsStyles = {
       gap: 10,
 
       title: {
-        fontSize: 35,
+        fontSize: 25,
         fontFamily: 'GilroyBlack',
         color: app_colors.white,
       },
 
       subtitle: {
-        fontSize: 20,
+        fontSize: 15,
         color: app_colors.white,
         fontFamily: 'GilroyRegular',
       },
 
       image: {
-        width: 150,
-        height: 150,
+        width: 125,
+        height: 125,
         borderRadius: 10
       }
     },
@@ -43,20 +43,20 @@ export const objectDetailsStyles = {
         gap: 10,
 
         title: {
-          fontSize: 20,
+          fontSize: 12,
           color: app_colors.white,
           fontFamily: 'GilroyRegular',
         },
 
         value: {
-          fontSize: 20,
+          fontSize: 15,
           color: app_colors.white,
           fontFamily: 'GilroyMedium',
         }
       },
 
       title: {
-        fontSize: 25,
+        fontSize: 20,
         color: app_colors.white,
         fontFamily: 'GilroyBlack',
         textTransform: 'uppercase' as 'uppercase',

@@ -15,7 +15,7 @@ export const simpleButtonStyles = {
 
     text: {
       color: app_colors.white,
-      fontSize: 18,
+      fontSize: 14,
       fontFamily: 'GilroyMedium',
     },
   }

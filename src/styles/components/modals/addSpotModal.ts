@@ -4,8 +4,8 @@ import { app_colors } from "../../../helpers/constants";
 export const addSpotModalStyles = {
   modal: {
     position: 'absolute' as 'absolute',
-    height: Dimensions.get('screen').height,
-    width: Dimensions.get('screen').width,
+    height: Dimensions.get('window').height,
+    width: Dimensions.get('window').width,
     backgroundColor: 'rgba(0, 0, 0, 0.98)',
     display: 'flex' as 'flex',
     justifyContent: 'center' as 'center',
@@ -18,7 +18,7 @@ export const addSpotModalStyles = {
       borderRadius: 10,
       borderWidth: 1,
       borderColor: app_colors.white_no_opacity,
-      width: '90%' as '90%',
+      width: Dimensions.get('window').width * .9,
       display: 'flex' as 'flex',
       flexDirection: 'column' as 'column',
 
@@ -31,21 +31,21 @@ export const addSpotModalStyles = {
         
         title: {
           color: app_colors.white,
-          fontSize: 20,
+          fontSize: 15,
           fontFamily: 'GilroyBlack',
           textTransform: 'uppercase' as 'uppercase',
           marginBottom: 10,
         },
         
         icon: {
-          width: 30,
-          height: 30,
+          width: 25,
+          height: 25,
         }
       },
       
       text: {
         color: app_colors.white,
-        fontSize: 18,
+        fontSize: 15,
         fontFamily: 'GilroyMedium',
         marginBottom: 30,
         borderBottomWidth: 1,
@@ -68,23 +68,22 @@ export const addSpotModalStyles = {
 
         text: {
           color: app_colors.white,
-          fontSize: 22,
+          fontSize: 15,
           fontFamily: 'GilroyMedium',
           marginBottom: 10,
         },
         
         icon: {
-          width: 40,
-          height: 40,
+          width: 30,
+          height: 30,
         },
 
         illustration: {
-          width: 22,
-          height: 22,
+          width: 18,
+          height: 18,
         },
 
         input: {
-          paddingVertical: 5,
           paddingHorizontal: 10,
           color: app_colors.white,
           fontSize: 15,
@@ -93,7 +92,7 @@ export const addSpotModalStyles = {
           borderRadius: 10,
           borderWidth: 1,
           borderColor: app_colors.white_no_opacity,
-          height: 35,
+          // height: 25,
         }
       }
 

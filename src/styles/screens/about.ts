@@ -2,7 +2,7 @@ import { app_colors } from "../../helpers/constants";
 
 export const aboutStyles = {
   title: {
-    fontSize: 25,
+    fontSize: 20,
     marginBottom: 10,
     color: app_colors.white,
     fontFamily: 'GilroyBlack',
@@ -16,7 +16,7 @@ export const aboutStyles = {
     textTransform: 'uppercase' as 'uppercase',
   },
   text: {
-    fontSize: 16,
+    fontSize: 12,
     color: app_colors.white,
     fontFamily: 'GilroyRegular'
   },
@@ -25,7 +25,7 @@ export const aboutStyles = {
     alignItems: 'center' as 'center',
   },
   chip: {
-    fontSize: 16,
+    fontSize: 10,
     paddingVertical: 2,
     paddingHorizontal: 8,
     backgroundColor: app_colors.white_forty,

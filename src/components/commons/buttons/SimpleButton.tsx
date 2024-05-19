@@ -36,7 +36,7 @@ export default function SimpleButton({ text, icon, onPress, disabled, small, ico
   return (
     <TouchableOpacity activeOpacity={.5} style={[simpleButtonStyles.button, {opacity: disabled ? .5 : 1, padding: small ? 8 : 10}]} onPress={() => handleButtonPress()}>
       <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
-        {icon && <Image source={icon} style={{width: small ? 15 : 22, height: small ? 15 : 22, marginRight: text ? 10 : 0, tintColor: iconColor ? iconColor : app_colors.white}} />}
+        {icon && <Image source={icon} style={{width: small ? 12 : 18, height: small ? 12 : 18, marginRight: text ? 10 : 0, tintColor: iconColor ? iconColor : app_colors.white}} />}
         {text && <Text style={[simpleButtonStyles.button.text, {color: textColor ? textColor : app_colors.white}]}>{text}</Text>}
       </View>
     </TouchableOpacity>

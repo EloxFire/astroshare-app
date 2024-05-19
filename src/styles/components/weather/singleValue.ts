@@ -8,13 +8,13 @@ export const singleValueStyles = {
     marginHorizontal: 8,
 
     value: {
-      fontSize: 20,
+      fontSize: 15,
       fontFamily: 'GilroyMedium',
       color: app_colors.white
     },
 
     unit: {
-      fontSize: 20,
+      fontSize: 15,
       fontFamily: 'GilroyMedium',
       color: app_colors.white
     }

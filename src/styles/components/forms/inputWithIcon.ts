@@ -10,11 +10,11 @@ export const inputWithIconStyles = {
     borderColor: app_colors.white_no_opacity,
     borderRadius: 10,
     marginVertical: 15,
-    height: 50,
+    height: 40,
     
     inputIcon: {
       marginRight: 5,
-      maxHeight: 25,
+      maxHeight: 20,
     },
 
     input: {
@@ -22,7 +22,7 @@ export const inputWithIconStyles = {
       paddingVertical: 5,
       paddingHorizontal: 10,
       color: app_colors.white,
-      fontSize: 16
+      fontSize: 12
     },
   },
 }

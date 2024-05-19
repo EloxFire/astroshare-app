@@ -12,7 +12,7 @@ export const compassStyles = {
       height: '100%' as '100%',
 
       title: {
-        fontSize: 30,
+        fontSize: 20,
         color: app_colors.white,
         fontFamily: 'GilroyBlack',
       }

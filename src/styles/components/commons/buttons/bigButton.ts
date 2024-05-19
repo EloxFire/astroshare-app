@@ -1,5 +1,4 @@
 import { app_colors } from "../../../../helpers/constants";
-import { RPH, RPW } from "../../../../helpers/scripts/getScreenPercentage";
 
 export const bigButtonStyles = {
   button: {
@@ -11,20 +10,20 @@ export const bigButtonStyles = {
     borderWidth: 1,
     borderColor: app_colors.white_no_opacity,
     borderRadius: 10,
-    padding: 10,
+    padding: 8,
     width: '100%' as '100%',
     marginBottom: 10,
-    height: 65,
+    height: 55,
 
     icon: {
-      width: 35,
-      height: 35,
+      width: 30,
+      height: 30,
       marginRight: 10,
     },
 
     text: {
       color: app_colors.white,
-      fontSize: 18,
+      fontSize: 15,
       fontFamily: 'GilroyMedium',
       textTransform: 'uppercase' as 'uppercase',
     },
@@ -32,7 +31,7 @@ export const bigButtonStyles = {
     subtitle: {
       color: app_colors.white,
       opacity: .6,
-      fontSize: 12,
+      fontSize: 9,
       fontFamily: 'AuxMono',
     }
   }

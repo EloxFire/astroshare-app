@@ -9,11 +9,11 @@ export const bigValueStyles = {
     marginVertical: 5,
     
     value: {
-      fontSize: 18,
+      fontSize: 15,
       color: app_colors.white,
     },
     label: {
-      fontSize: 18,
+      fontSize: 15,
       fontFamily: 'AuxMono',
       color: app_colors.white,
     },

@@ -35,7 +35,7 @@ export default function BigButton({ text, icon, navigation, targetScreen, subtit
       <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
         {icon && <Image source={icon} style={bigButtonStyles.button.icon} />}
         <View>
-          <Text style={bigButtonStyles.button.text}>{text}</Text>
+          <Text maxFontSizeMultiplier={0} style={bigButtonStyles.button.text}>{text}</Text>
           {subtitle &&<Text style={bigButtonStyles.button.subtitle}>{subtitle}</Text>}
         </View>
       </View>

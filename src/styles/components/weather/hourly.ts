@@ -6,7 +6,7 @@ export const hourlyStyles = {
     height: 300,
 
     title: {
-      fontSize: 16,
+      fontSize: 12,
       color: app_colors.white,
       marginBottom: 10,
       fontFamily: 'GilroyBlack',

@@ -7,7 +7,7 @@ export const viewPointsManagerStyles = {
     
     title: {
       color: app_colors.white,
-      fontSize: 24,
+      fontSize: 18,
       fontFamily: 'GilroyBlack',
       marginBottom: 20,
       marginTop: 25,
@@ -16,7 +16,7 @@ export const viewPointsManagerStyles = {
     
     noViewPoints: {
       color: app_colors.white,
-      fontSize: 18,
+      fontSize: 12,
       fontFamily: 'GilroyMedium',
       textAlign: 'center' as 'center',
       backgroundColor: app_colors.white_no_opacity,
@@ -48,7 +48,7 @@ export const viewPointsManagerStyles = {
 
           title: {
             color: app_colors.white,
-            fontSize: 25,
+            fontSize: 18,
             fontFamily: 'GilroyBlack',
             textTransform: 'uppercase' as 'uppercase',
             marginBottom: 10,
@@ -72,14 +72,14 @@ export const viewPointsManagerStyles = {
 
           text: {
             color: app_colors.white,
-            fontSize: 16,
+            fontSize: 12,
             fontFamily: 'GilroyMedium',
             marginBottom: 3,
           },
 
           value: {
             color: app_colors.white,
-            fontSize: 16,
+            fontSize: 12,
             fontFamily: 'GilroyBlack',
             textTransform: 'uppercase' as 'uppercase',          
           }

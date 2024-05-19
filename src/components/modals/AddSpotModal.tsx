@@ -50,7 +50,7 @@ export default function AddSpotModal({ onClose }: AddSpotModalProps) {
             <Image style={addSpotModalStyles.modal.content.header.icon} source={require('../../../assets/icons/FiXCircle.png')} />
           </TouchableOpacity>
         </View>
-        <Text style={addSpotModalStyles.modal.content.text}>Quels sont les équipements présents sur ce lieu ainsi que ses détails ?</Text>
+        {/* <Text style={addSpotModalStyles.modal.content.text}>Quels sont les équipements présents sur ce lieu ainsi que ses détails ?</Text> */}
         
         <View>
           <View style={addSpotModalStyles.modal.content.property}>
