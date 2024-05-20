@@ -23,6 +23,7 @@ import ViewPointsManager from "./src/screens/ViewPointsManager";
 import 'dayjs/locale/fr'
 import utc from 'dayjs/plugin/utc'
 import tz from 'dayjs/plugin/timezone'
+import SolarWeather from "./src/screens/SolarWeather";
 
 dayjs.locale('fr');
 dayjs.extend(utc)
@@ -71,9 +72,7 @@ export default function App({ navigation}: any) {
               <Stack.Screen name={routes.compass} component={Compass} />
               <Stack.Screen name={routes.weather} component={Weather} />
               <Stack.Screen name={routes.moonPhases} component={MoonPhases}/>
-              <Stack.Screen name={routes.solarWeather} component={ComingSoon}
-                initialParams={{ pageTitle: 'Météo solaire et aurores', pageSubtitle: '// La météo de notre étoile', disclaimer: '// Cette fonctionnalité sera bientôt disponible dans votre application Astroshare. Vous pourrez ici consulter les dernières informations sur le vent solaire les EMC et toutes les prévisions d\'aurores boréales.' }}
-              />
+              <Stack.Screen name={routes.solarWeather} component={SolarWeather} />
               <Stack.Screen name={routes.apod} component={Apod} />
               <Stack.Screen name={routes.settings} component={Settings} />
               <Stack.Screen name={routes.favoritesViewPoints} component={ViewPointsManager} />
