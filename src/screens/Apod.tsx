@@ -48,12 +48,7 @@ export default function Apod({ navigation }: any) {
           {apod?.copyright && <Text style={[apodStyles.content.text, {color: app_colors.white_eighty}]}>Copyright : {apod?.copyright.replace(/(\r\n|\n|\r)/gm, "") || "Chargement"}</Text>}
           <Text style={[apodStyles.content.text, {color: app_colors.white_eighty, marginTop: 5}]}>Date : {apod?.date ? dayjs(apod?.date).format('DD/MM/YYYY') : "Chargement"}</Text>
           {
-            apod?.media_type === 'image' && (
-              <Image source={{ uri: apod?.url }} style={{ width: Dimensions.get('screen').width, height: Dimensions.get('screen').width, marginVertical: 10 }} resizeMode='contain'/>
-            )
-          }
-          {
-            apod?.media_type === 'video' &&
+            apod?.media_type === 'video' ?
               apod?.url.includes('youtube') ?
                 <View style={{display: 'flex', flexDirection:'column', gap: 10, marginVertical: 30, width: '100%'}}>
                   <DisclaimerBar message='Les vidéos provenant de Youtube ne sont pas encore supportées. Cliquez sur le lien ci-dessous pour copier le lien de la vidéo.' type='error' />
@@ -70,6 +65,10 @@ export default function Apod({ navigation }: any) {
                   resizeMode={ResizeMode.CONTAIN}
                   style={{ width: Dimensions.get('screen').width, height: Dimensions.get('screen').width, marginVertical: 10}}
                 />
+              :
+              apod?.media_type === 'image' && (
+                <Image source={{ uri: apod?.url }} style={{ width: Dimensions.get('screen').width, height: Dimensions.get('screen').width, marginVertical: 10 }} resizeMode='contain'/>
+              )
           }
           <Text style={apodStyles.content.subtitle}>Description :</Text>
           <Text style={[apodStyles.content.text, {fontSize: 16, alignSelf: 'flex-start', lineHeight: 25}]}>{apod?.explanation || 'Chargement'}</Text>
