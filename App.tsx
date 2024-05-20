@@ -19,9 +19,16 @@ import About from "./src/screens/About";
 import ObjectDetails from "./src/screens/ObjectDetails";
 import Apod from "./src/screens/Apod";
 import MoonPhases from "./src/screens/MoonPhases";
-import 'dayjs/locale/fr';
 import ViewPointsManager from "./src/screens/ViewPointsManager";
+import 'dayjs/locale/fr'
+import utc from 'dayjs/plugin/utc'
+import tz from 'dayjs/plugin/timezone'
+
 dayjs.locale('fr');
+dayjs.extend(utc)
+dayjs.extend(tz)
+dayjs.tz.setDefault('Europe/Paris');
+
 
 
 const Stack = createNativeStackNavigator();

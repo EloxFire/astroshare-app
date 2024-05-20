@@ -1,4 +1,4 @@
-export const calculateHorizonDepression = (altitudeMeters: number): number => {
+export const calculateHorizonAngle = (altitudeMeters: number): number => {
   const R = 6371; // Rayon de la Terre en kilomètres
   const h = altitudeMeters / 1000; // Convertir l'altitude de mètres en kilomètres
 

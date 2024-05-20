@@ -17,6 +17,7 @@ export function ObservationSpotProvider({ children }: ObservationSpotProviderPro
   const [currentSpotElevation, setCurrentSpotElevation] = useState<number>(0)
   const [viewPoints, setViewPoints] = useState<TViewPoint[]>([])
   const [selectedSpot, setSelectedSpot] = useState<TViewPoint | null>(null)
+  const defaultAltitude: string = "+341m"
 
   useEffect(() => {
     (async () => {
@@ -79,6 +80,7 @@ export function ObservationSpotProvider({ children }: ObservationSpotProviderPro
     refreshViewPoints,
     changeSelectedSpot,
     selectedSpot,
+    defaultAltitude,
   }
 
   return (

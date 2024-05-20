@@ -9,18 +9,25 @@ import { app_colors } from "../helpers/constants";
 import { getObjectType } from "../helpers/scripts/astro/getObjectType";
 import { convertHMSToDegreeFromString } from "../helpers/scripts/astro/HmsToDegree";
 import { convertDMSToDegreeFromString } from "../helpers/scripts/astro/DmsToDegree";
-import { calculateHorizonDepression } from "../helpers/scripts/astro/calculateHorizonAngle";
 import PageTitle from "../components/commons/PageTitle";
 import DSOValues from "../components/commons/DSOValues";
+import { ephemerisBarStyles } from "../styles/components/weather/ephemerisBar";
+import SingleValue from "../components/weather/SingleValue";
+import { calculateHorizonAngle } from "../helpers/scripts/astro/calculateHorizonAngle";
+import dayjs from "dayjs";
+import { useSpot } from "../contexts/ObservationSpotContext";
+import { extractNumbers } from "../helpers/scripts/extractNumbers";
 
 export default function ObjectDetails({ route, navigation }: any) {
 
-  const { object, isVisible } = route.params;
+  const { object, isVisible, riseTime, willRise } = route.params;
+  const { selectedSpot, defaultAltitude } = useSpot()
 
   useEffect(() => {
+    const altitude = selectedSpot ? selectedSpot.equipments.altitude : defaultAltitude;
     const degRa = convertHMSToDegreeFromString(object.ra)
     const degDec = convertDMSToDegreeFromString(object.dec)
-    const horizonAngle = calculateHorizonDepression(651)
+    const horizonAngle = calculateHorizonAngle(extractNumbers(altitude))
 
     if (!degRa || !degDec || !horizonAngle) return;
     // TODO : Calculate rise and set time
@@ -34,72 +41,58 @@ export default function ObjectDetails({ route, navigation }: any) {
         subtitle="// Toutes les infos que vous devez connaître !"
       />
       <View style={globalStyles.screens.separator} />
-      <Text style={objectDetailsStyles.content.title}>{getObjectName(object, 'all', true).toUpperCase()}</Text>
-      <Text style={objectDetailsStyles.content.subtitle}>{object.common_names.split(',')[0]}</Text>
-      <Image style={objectDetailsStyles.content.image} source={astroImages[object.type.toUpperCase()]} />
-      <View style={objectDetailsStyles.content.dsoInfos}>
-        <DSOValues title="Magnitude" value={object.b_mag || object.v_mag} />
-        <DSOValues title="Constellation" value={getConstellationName(object.const)} />
-        <DSOValues title="Type" value={getObjectType(object)} />
-        <DSOValues title="Ascension droite" value={object.ra.replace(':', 'h ').replace(':', 'm ') + 's'} />
-        <DSOValues title="Déclinaison" value={object.dec.replace(':', '° ').replace(':', 'm ') + 's'} />
-      </View>
-      <View>
-        <Text style={objectDetailsStyles.content.sectionTitle}>Observation</Text>
-        <DSOValues chipValue chipColor={isVisible ? app_colors.green_eighty : app_colors.red_eighty} title="Visibilité" value={isVisible ? "Visible" : "Non visible"} />
-        
-        <DSOValues chipValue chipColor={(object.v_mag || object.b_mag) > 6 ? app_colors.red_eighty : app_colors.green_eighty} title="Oeil nu" value={(object.v_mag || object.b_mag) > 6 ? "Non visible" : "Visible"} />
-        <DSOValues chipValue chipColor={(object.v_mag || object.b_mag) > 8.5 ? app_colors.red_eighty : app_colors.green_eighty} title="Jumelles" value={(object.v_mag || object.b_mag) > 8.5 ? "Non visible" : "Visible"} />
-        <DSOValues chipValue chipColor={app_colors.green_eighty} title="Télescope" value="Visible" />
-      </View>
-
-      {/* <ScrollView>
-        <View style={objectDetailsStyles.content}>
-          <View style={objectDetailsStyles.content.header}>
-            <View>
-              <Text style={objectDetailsStyles.content.header.title}>{getObjectName(object, 'all', true).toUpperCase()}</Text>
-              <Text style={objectDetailsStyles.content.header.subtitle}>{object.common_names.split(',')[0]}</Text>
-            </View>
-            <Image style={objectDetailsStyles.content.header.image} source={astroImages[object.type.toUpperCase()]} />
-          </View>
-          <View style={objectDetailsStyles.content.body}>
-            <Text style={objectDetailsStyles.content.body.title}>Infos générales</Text>
-            <View style={objectDetailsStyles.content.body.info}>
-              <Text style={objectDetailsStyles.content.body.info.title}>Magnitude :</Text>
-              <Text style={objectDetailsStyles.content.body.info.value}>{object.b_mag || object.v_mag}</Text>
-            </View>
-            <View style={objectDetailsStyles.content.body.info}>
-              <Text style={objectDetailsStyles.content.body.info.title}>Constellation :</Text>
-              <Text style={objectDetailsStyles.content.body.info.value}>{getConstellationName(object.const)}</Text>
-            </View>
-            <View style={objectDetailsStyles.content.body.info}>
-              <Text style={objectDetailsStyles.content.body.info.title}>Ascension droite :</Text>
-              <Text style={objectDetailsStyles.content.body.info.value}>{object.ra.replace(':', 'h ').replace(':', 'm ')}s</Text>
-            </View>
-            <View style={objectDetailsStyles.content.body.info}>
-              <Text style={objectDetailsStyles.content.body.info.title}>Déclinaison :</Text>
-              <Text style={objectDetailsStyles.content.body.info.value}>{object.dec.replace(':', '° ').replace(':', 'm ')}s</Text>
-            </View>
-            <Text style={[objectDetailsStyles.content.body.title, { marginTop: 40 }]}>Observation</Text>
-            <View style={objectDetailsStyles.content.body.info}>
-              <Text style={objectDetailsStyles.content.body.info.title}>Visibilité :</Text>
-              <Text style={[searchResultCardStyles.card.chip, {backgroundColor: isVisible ? app_colors.green_eighty : app_colors.red_eighty}]}>{isVisible ? "Visible" : "Non visible"}</Text>
-            </View>
-            <View style={objectDetailsStyles.content.body.info}>
-              <Text style={objectDetailsStyles.content.body.info.title}>Oeil nu :</Text>
-              <Text style={[searchResultCardStyles.card.chip, {backgroundColor: (object.v_mag || object.b_mag) > 6 ? app_colors.red_eighty : app_colors.green_eighty}]}>{(object.v_mag || object.b_mag) > 6 ? "Non visible" : "Visible"}</Text>
-            </View>
-            <View style={objectDetailsStyles.content.body.info}>
-              <Text style={objectDetailsStyles.content.body.info.title}>Jumelles :</Text>
-              <Text style={[searchResultCardStyles.card.chip, {backgroundColor: (object.v_mag || object.b_mag) > 8.5 ? app_colors.red_eighty : app_colors.green_eighty}]}>{(object.v_mag || object.b_mag) > 8.5 ? "Non visible" : "Visible"}</Text>
-            </View>
-            <View style={objectDetailsStyles.content.body.info}>
-              <Text style={objectDetailsStyles.content.body.info.title}>Télescope :</Text>
-              <Text style={[searchResultCardStyles.card.chip, {backgroundColor: app_colors.green_eighty}]}>Visible</Text>
-            </View>
-          </View>
+      <ScrollView>
+        <Text style={objectDetailsStyles.content.title}>{getObjectName(object, 'all', true).toUpperCase()}</Text>
+        <Text style={objectDetailsStyles.content.subtitle}>{object.common_names.split(',')[0]}</Text>
+        <Image style={objectDetailsStyles.content.image} source={astroImages[object.type.toUpperCase()]} />
+        <View style={objectDetailsStyles.content.dsoInfos}>
+          <DSOValues title="Magnitude" value={object.b_mag || object.v_mag} />
+          <DSOValues title="Constellation" value={getConstellationName(object.const)} />
+          <DSOValues title="Type" value={getObjectType(object)} />
+          <DSOValues title="Ascension droite" value={object.ra.replace(':', 'h ').replace(':', 'm ') + 's'} />
+          <DSOValues title="Déclinaison" value={object.dec.replace(':', '° ').replace(':', 'm ') + 's'} />
         </View>
-      </ScrollView> */}
+        <View>
+          <Text style={objectDetailsStyles.content.sectionTitle}>Observation</Text>
+          <DSOValues chipValue chipColor={(object.v_mag || object.b_mag) > 6 ? app_colors.red_eighty : app_colors.green_eighty} title="Oeil nu" value={(object.v_mag || object.b_mag) > 6 ? "Non visible" : "Visible"} />
+          <DSOValues chipValue chipColor={(object.v_mag || object.b_mag) > 8.5 ? app_colors.red_eighty : app_colors.green_eighty} title="Jumelles" value={(object.v_mag || object.b_mag) > 8.5 ? "Non visible" : "Visible"} />
+          <DSOValues chipValue chipColor={app_colors.green_eighty} title="Télescope" value="Visible" />
+        </View>
+        <View>
+          <Text style={objectDetailsStyles.content.sectionTitle}>Visibilité</Text>
+          <DSOValues chipValue chipColor={isVisible ? app_colors.green_eighty : app_colors.red_eighty} title="Maintenant" value={isVisible ? "Visible" : "Non visible"} />
+          <DSOValues chipValue chipColor={willRise ? app_colors.green_eighty : app_colors.red_eighty} title="Cette nuit" value={willRise ? "Oui" : "Non"} />
+          
+          
+          <DSOValues chipValue chipColor={app_colors.white_forty} title="Heure de lever" value="TDB" />
+          <DSOValues chipValue chipColor={app_colors.white_forty} title="Heure de coucher" value="TDB" />
+          {/* {
+            typeof riseTime === 'string' && <DSOValues chipValue chipColor={app_colors.white_forty} title="Heure de lever" value={riseTime.replace(':', 'h')} />
+          }
+          {
+            typeof riseTime === 'boolean' && <DSOValues chipValue chipColor={riseTime === true ? app_colors.green_eighty : app_colors.red_eighty} title="Heure de lever" value={riseTime ? 'Toute la nuit' : 'Jamais'} />
+          }
+          {
+            typeof riseTime === 'string' && <DSOValues chipValue chipColor={app_colors.white_forty} title="Heure de coucher" value={riseTime.replace(':', 'h')} />
+          }
+          {
+            typeof riseTime === 'boolean' && <DSOValues chipValue chipColor={riseTime === true ? app_colors.green_eighty : app_colors.red_eighty} title="Heure de lever" value={riseTime ? 'Toute la nuit' : 'Jamais'} />
+          } */}
+          {/* <View style={[ephemerisBarStyles.container, {marginTop: 20}]}>
+            <View style={ephemerisBarStyles.container.sideColumn}>
+              <Image style={ephemerisBarStyles.container.sideColumn.icon} source={require('../../assets/icons/FiSunrise.png')} />
+              <SingleValue value="12h23" />
+            </View>
+            <View style={ephemerisBarStyles.container.bar}>
+              <View style={[ephemerisBarStyles.container.bar.progress, {width: `50%`}]}/>
+            </View>
+            <View style={ephemerisBarStyles.container.sideColumn}>
+              <Image style={ephemerisBarStyles.container.sideColumn.icon} source={require('../../assets/icons/FiSunset.png')} />
+              <SingleValue value="23h32" />
+            </View>
+          </View> */}
+        </View>
+      </ScrollView>
     </View>
   );
 }

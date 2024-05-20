@@ -1,19 +1,20 @@
 import React, { useEffect, useState } from 'react'
-import { Image, Text, Touchable, TouchableOpacity, View } from 'react-native'
+import { Image, Text, TouchableOpacity, View } from 'react-native'
 import { searchResultCardStyles } from '../styles/components/searchResultCard'
 import { DSO } from '../helpers/types/DSO'
 import { getObjectName } from '../helpers/scripts/astro/getObjectName'
 import { astroImages } from '../helpers/scripts/loadImages'
 import { getConstellationName } from '../helpers/scripts/getConstellationName'
-import { isBodyAboveHorizon, isBodyVisible } from '@observerly/astrometry'
+import { EquatorialCoordinate, GeographicCoordinate, TransitInstance, getBodyNextRise, getBodyNextSet, isBodyAboveHorizon, isBodyVisibleForNight, isTransitInstance } from '@observerly/astrometry'
 import { useSettings } from '../contexts/AppSettingsContext'
 import { app_colors } from '../helpers/constants'
 import { routes } from '../helpers/routes'
 import { convertDMSToDegreeFromString } from '../helpers/scripts/astro/DmsToDegree'
 import { convertHMSToDegreeFromString } from '../helpers/scripts/astro/HmsToDegree'
-import { calculateHorizonDepression } from '../helpers/scripts/astro/calculateHorizonAngle'
+import { calculateHorizonAngle } from '../helpers/scripts/astro/calculateHorizonAngle'
 import { useSpot } from '../contexts/ObservationSpotContext'
 import { extractNumbers } from '../helpers/scripts/extractNumbers'
+import dayjs, { Dayjs } from 'dayjs'
 
 interface SearchResultCardProps {
   object: DSO
@@ -22,24 +23,39 @@ interface SearchResultCardProps {
 
 export default function SearchResultCard({ object, navigation }: SearchResultCardProps) {
 
-  const {selectedSpot} = useSpot()
+  const {selectedSpot, defaultAltitude} = useSpot()
   const {currentUserLocation} = useSettings()
-  const [isVisible, setIsVisible] = useState(false) 
+  const [isVisible, setIsVisible] = useState(false)
+  const [nextRiseTime, setNextRiseTime] = useState<string | boolean>(false)
+  // const [nextSetTime, setNextSetTime] = useState<string | boolean>(false)
+  const [willRise, setWillRise] = useState<boolean>(false)
 
-  useEffect(() => {    
+  useEffect(() => {
+    const altitude = selectedSpot ? selectedSpot.equipments.altitude : defaultAltitude; // 342m est l'altitude moyenne en France métropolitaine
     const degRa = convertHMSToDegreeFromString(object.ra)
     const degDec = convertDMSToDegreeFromString(object.dec)
+    const horizonAngle = calculateHorizonAngle(extractNumbers(altitude))    
     
-    const horizonAngle = calculateHorizonDepression(extractNumbers(selectedSpot.equipments.altitude))
-    
-    if(!degRa || !degDec) return;
-    let visible = isBodyAboveHorizon(new Date(), {latitude: currentUserLocation.lat, longitude: currentUserLocation.lon}, {ra: degRa, dec: degDec}, horizonAngle)
-    setIsVisible(visible)
+    if (degRa && degDec) {
+      const observer: GeographicCoordinate = { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }
+      const target: EquatorialCoordinate = { ra: degRa, dec: degDec }
+      
+      let visible = isBodyAboveHorizon(new Date(), observer, target, horizonAngle)
+      // let rise = getBodyNextRise(new Date(), observer, target, horizonAngle)
+      let nightVisibility = isBodyVisibleForNight(new Date(), observer, target, horizonAngle)
+      
+      // if (isTransitInstance(rise)) {
+      //   console.log(rise);
+      //   setNextRiseTime(dayjs(rise.datetime).add(2, 'h').format('HH:mm'));
+      // }
+      setIsVisible(visible)
+      setWillRise(nightVisibility)
+    }
   })
   
 
   return (
-    <TouchableOpacity onPress={() => navigation.navigate(routes.objectDetails, {object: object, isVisible: isVisible})}>
+    <TouchableOpacity onPress={() => navigation.navigate(routes.objectDetails, {object: object, isVisible: isVisible, riseTime: nextRiseTime, willRise: willRise})}>
       <View style={searchResultCardStyles.card}>
         <View style={searchResultCardStyles.card.header}>
           <View>
