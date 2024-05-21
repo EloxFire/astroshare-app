@@ -26,7 +26,7 @@ export const storageKeys = {
 }
 
 export const sunImagesSrcWavelengths = {
-  'HMIIC': 'https://sdo.gsfc.nasa.gov/assets/img/latest/latest_1024_HMIIC.jpg',
+  'HMI_IC': 'https://sdo.gsfc.nasa.gov/assets/img/latest/latest_1024_HMIIC.jpg',
   'AIA_193': 'https://sdo.gsfc.nasa.gov/assets/img/latest/latest_1024_0193.jpg',
   'AIA_304': 'https://sdo.gsfc.nasa.gov/assets/img/latest/latest_1024_0304.jpg',
   'AIA_171': 'https://sdo.gsfc.nasa.gov/assets/img/latest/latest_1024_0171.jpg',
@@ -35,8 +35,18 @@ export const sunImagesSrcWavelengths = {
   'AIA_1600': 'https://sdo.gsfc.nasa.gov/assets/img/latest/latest_1024_1600.jpg',
 }
 
+export const sunVideoSrcWavelengths = {
+  'HMI_IC': 'https://sdo.gsfc.nasa.gov/assets/img/latest/mpeg/latest_1024_HMIIC.mp4',
+  'AIA_193': 'https://sdo.gsfc.nasa.gov/assets/img/latest/mpeg/latest_1024_0193.mp4',
+  'AIA_304': 'https://sdo.gsfc.nasa.gov/assets/img/latest/mpeg/latest_1024_0304.mp4',
+  'AIA_171': 'https://sdo.gsfc.nasa.gov/assets/img/latest/mpeg/latest_1024_0171.mp4',
+  'AIA_131': 'https://sdo.gsfc.nasa.gov/assets/img/latest/mpeg/latest_1024_0131.mp4',
+  'AIA_335': 'https://sdo.gsfc.nasa.gov/assets/img/latest/mpeg/latest_1024_0335.mp4',
+  'AIA_1600': 'https://sdo.gsfc.nasa.gov/assets/img/latest/mpeg/latest_1024_1600.mp4',
+}
+
 export const sunIMageFiltersDescription = {
-  'HMIIC': 'Soleil en lumière visible',
+  'HMI_IC': 'Soleil en lumière visible',
   'AIA_193': 'Couronne solaire',
   'AIA_304': 'Filaments solaires',
   'AIA_171': 'Boucles coronales',
