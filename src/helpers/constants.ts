@@ -61,8 +61,8 @@ export const cmeImageSrc = {
 }
 
 export const cmeVideoSrc = {
-  'C2': 'https://soho.nascom.nasa.gov/data/LATEST/current_c2.mp4',
-  'C3': 'https://soho.nascom.nasa.gov/data/LATEST/current_c3.mp4',
+  'C2': 'https://soho.nascom.nasa.gov/data/LATEST/current_c2small.mp4',
+  'C3': 'https://soho.nascom.nasa.gov/data/LATEST/current_c3small.mp4',
 }
 
 export const cmeImageDescription = {
