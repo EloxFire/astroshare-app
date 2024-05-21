@@ -71,7 +71,7 @@ export default function Home({ navigation }: any) {
             <BigButton disabled={!hasInternetConnection} navigation={navigation} targetScreen={routes.weather} text="Météo en direct" subtitle="// C'est le moment de sortir le téléscope !" icon={require('../../assets/icons/FiSun.png')} />
             <BigButton navigation={navigation} targetScreen={routes.compass} text="Boussole" subtitle='// Pour une mise en station précise' icon={require('../../assets/icons/FiCompass.png')} />
             <BigButton disabled={!hasInternetConnection} navigation={navigation} targetScreen={routes.moonPhases} text="Phases de la Lune" subtitle='// Calculez les phases de la Lune' icon={require('../../assets/icons/FiMoon.png')} />
-            <BigButton navigation={navigation} targetScreen={routes.solarWeather} text="Météo solaire et aurores" subtitle="// Bientôt disponible !" icon={require('../../assets/icons/SolarWind.png')} />
+            <BigButton navigation={navigation} targetScreen={routes.solarWeather} text="Météo solaire" subtitle="// Bientôt disponible !" icon={require('../../assets/icons/SolarWind.png')} />
           </View>
         </View>
         <View style={homeStyles.nasaTools}>

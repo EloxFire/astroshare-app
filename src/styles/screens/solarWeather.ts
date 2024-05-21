@@ -22,6 +22,14 @@ export const solarWeatherStyles = {
       fontSize: 10,
       fontFamily: 'GilroyMedium',
       // marginBottom: 15,
+    },
+
+    buttons: {
+      marginTop: 10,
+      flexDirection: 'row' as 'row',
+      justifyContent: 'flex-start' as 'flex-start',
+      flexWrap: 'wrap' as 'wrap',
+      gap: 5,
     }
   },
 
