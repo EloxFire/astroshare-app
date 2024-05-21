@@ -36,7 +36,7 @@ export const sunImagesSrcWavelengths = {
 }
 
 export const sunIMageFiltersDescription = {
-  'HMIIC': 'Visibilité des taches solaires en lumiere visible',
+  'HMIIC': 'Soleil en lumière visible',
   'AIA_193': 'Couronne solaire',
   'AIA_304': 'Filaments solaires',
   'AIA_171': 'Boucles coronales',
