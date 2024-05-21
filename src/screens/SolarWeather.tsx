@@ -21,8 +21,8 @@ export default function SolarWeather({ navigation }: any) {
     (async () => {
       setLoadingImage(true)
       const response = await axios.get(sunImagesSrcWavelengths[currentImageFilter])
-      console.log('Response:', dayjs(response.request.responseHeaders['Date']).format('DD/MM/YYYY HH:mm:ss'));
-      setCurrentImageDate(dayjs(response.request.responseHeaders['Date']).format('DD/MM/YYYY HH:mm:ss'))
+      console.log('Response:', response.request.responseHeaders);
+      setCurrentImageDate(dayjs(response.request.responseHeaders['Last-Modified']).format('DD/MM/YYYY HH:mm:ss'))
       setCurrentImageUri(sunImagesSrcWavelengths[currentImageFilter])
       setLoadingImage(false)
     })()
