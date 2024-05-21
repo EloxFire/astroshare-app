@@ -54,3 +54,18 @@ export const sunIMageFiltersDescription = {
   'AIA_335': 'Régions actives',
   'AIA_1600': 'Champs magnétiques',
 }
+
+export const cmeImageSrc = {
+  'C2': 'https://soho.nascom.nasa.gov/data/realtime/c2/1024/latest.jpg',
+  'C3': 'https://soho.nascom.nasa.gov/data/realtime/c3/1024/latest.jpg',
+}
+
+export const cmeVideoSrc = {
+  'C2': 'https://soho.nascom.nasa.gov/data/LATEST/current_c2.mp4',
+  'C3': 'https://soho.nascom.nasa.gov/data/LATEST/current_c3.mp4',
+}
+
+export const cmeImageDescription = {
+  'C2': 'Courone intérieure',
+  'C3': 'Champ large (32 diamètres solaires)',
+}

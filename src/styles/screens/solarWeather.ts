@@ -8,6 +8,7 @@ export const solarWeatherStyles = {
     borderRadius: 10,
     borderWidth: 1,
     borderColor: app_colors.white_no_opacity,
+    marginBottom: 15,
 
     title: {
       color: app_colors.white,
