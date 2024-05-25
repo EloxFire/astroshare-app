@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { app_colors, cmeImageDescription, cmeImageSrc, cmeVideoSrc, sunIMageFiltersDescription, sunImagesSrcWavelengths, sunVideoSrcWavelengths } from '../helpers/constants'
-import { Dimensions, Image, ScrollView, Text, TouchableOpacity, View } from 'react-native'
+import { Dimensions, ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import { globalStyles } from '../styles/global'
 import { moonPhasesStyles } from '../styles/screens/moonPhases'
 import { solarWeatherStyles } from '../styles/screens/solarWeather'
@@ -11,6 +11,7 @@ import axios from 'axios'
 import dayjs from 'dayjs'
 import PageTitle from '../components/commons/PageTitle'
 import SimpleButton from '../components/commons/buttons/SimpleButton'
+import { Image } from 'expo-image'
 
 export default function SolarWeather({ navigation }: any) {
 
@@ -36,6 +37,8 @@ export default function SolarWeather({ navigation }: any) {
       setLoadingImage(true)
       const finalUri = isImageMode ? sunImagesSrcWavelengths[currentImageFilter] : sunVideoSrcWavelengths[currentImageFilter]
       const response = await axios.get(finalUri)
+      
+      
       setCurrentImageDate(dayjs(response.request.responseHeaders['Last-Modified']).format('DD/MM/YYYY HH:mm:ss'))
       setCurrentImageUri(finalUri)
       setLoadingImage(false)
