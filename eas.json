@@ -18,9 +18,20 @@
         "EXPO_PUBLIC_LAST_UPDATE":"2024-05-20"
       }
     },
-    "production": {}
+    "production": {
+      "env": {
+        "EXPO_PUBLIC_ASTROSHARE_API_URL":"https://api.astroshare.fr",
+        "EXPO_PUBLIC_APP_VERSION":"b_v0.0.5",
+        "EXPO_PUBLIC_LAST_UPDATE":"2024-05-20"
+      }
+    }
   },
   "submit": {
-    "production": {}
+    "production": {
+      "android": {
+        "track": "internal"
+
+      }
+    }
   }
 }
