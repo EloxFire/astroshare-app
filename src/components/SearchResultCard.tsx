@@ -39,17 +39,8 @@ export default function SearchResultCard({ object, navigation }: SearchResultCar
     if (degRa && degDec) {
       const observer: GeographicCoordinate = { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }
       const target: EquatorialCoordinate = { ra: degRa, dec: degDec }
-      
       let visible = isBodyAboveHorizon(new Date(), observer, target, horizonAngle)
-      // let rise = getBodyNextRise(new Date(), observer, target, horizonAngle)
-      let nightVisibility = isBodyVisibleForNight(new Date(), observer, target, horizonAngle)
-      
-      // if (isTransitInstance(rise)) {
-      //   console.log(rise);
-      //   setNextRiseTime(dayjs(rise.datetime).add(2, 'h').format('HH:mm'));
-      // }
       setIsVisible(visible)
-      setWillRise(nightVisibility)
     }
   })
   

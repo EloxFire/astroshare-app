@@ -17,20 +17,49 @@ import { calculateHorizonAngle } from "../helpers/scripts/astro/calculateHorizon
 import dayjs from "dayjs";
 import { useSpot } from "../contexts/ObservationSpotContext";
 import { extractNumbers } from "../helpers/scripts/extractNumbers";
+import { EquatorialCoordinate, GeographicCoordinate, doesBodyRiseOrSet, getBodyNextRise, getBodyNextSet, isBodyAboveHorizon, isBodyVisibleForNight, isTransitInstance } from "@observerly/astrometry";
+import { useSettings } from "../contexts/AppSettingsContext";
 
 export default function ObjectDetails({ route, navigation }: any) {
 
-  const { object, isVisible, riseTime, willRise } = route.params;
+  const {currentUserLocation} = useSettings()
+  const { object, isVisible } = route.params;
   const { selectedSpot, defaultAltitude } = useSpot()
+
+  const [riseTime, setRiseTime] = useState<string | boolean>(false)
+  const [setTime, setSetTime] = useState<string | boolean>(false)
+  const [willRise, setWillRise] = useState<boolean>(false)
 
   useEffect(() => {
     const altitude = selectedSpot ? selectedSpot.equipments.altitude : defaultAltitude;
     const degRa = convertHMSToDegreeFromString(object.ra)
     const degDec = convertDMSToDegreeFromString(object.dec)
     const horizonAngle = calculateHorizonAngle(extractNumbers(altitude))
-
+    
+    
     if (!degRa || !degDec || !horizonAngle) return;
-    // TODO : Calculate rise and set time
+    const target: EquatorialCoordinate = { ra: degRa, dec: degDec }
+    const observer: GeographicCoordinate = { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }
+    
+    setWillRise(isBodyVisibleForNight(new Date(), observer, target, horizonAngle))
+    
+    
+    let set = getBodyNextSet(new Date(), observer, target, horizonAngle)
+    console.log(set);
+    
+    console.log(getBodyNextRise(new Date(), observer, target, horizonAngle));
+    
+    // let rise = 
+    // console.log(rise);
+    
+    
+    if (isTransitInstance(set)) {
+      setSetTime(dayjs(set.datetime).format('HH:mm'))
+    }
+    // if(isTransitInstance(rise)) {
+    //   setRiseTime(dayjs(rise.datetime).format('HH:mm'))
+    // }
+      
   }, [])
 
   return (
@@ -61,23 +90,21 @@ export default function ObjectDetails({ route, navigation }: any) {
         <View>
           <Text style={objectDetailsStyles.content.sectionTitle}>Visibilité</Text>
           <DSOValues chipValue chipColor={isVisible ? app_colors.green_eighty : app_colors.red_eighty} title="Maintenant" value={isVisible ? "Visible" : "Non visible"} />
-          <DSOValues chipValue chipColor={willRise ? app_colors.green_eighty : app_colors.red_eighty} title="Cette nuit" value={willRise ? "Oui" : "Non"} />
-          
-          
-          <DSOValues chipValue chipColor={app_colors.white_forty} title="Heure de lever" value="TDB" />
-          <DSOValues chipValue chipColor={app_colors.white_forty} title="Heure de coucher" value="TDB" />
-          {/* {
-            typeof riseTime === 'string' && <DSOValues chipValue chipColor={app_colors.white_forty} title="Heure de lever" value={riseTime.replace(':', 'h')} />
+          <DSOValues chipValue chipColor={willRise ? app_colors.green_eighty : app_colors.red_eighty} title="Cette nuit" value={willRise ? "Oui" : "Non"} />          
+          {/* <DSOValues chipValue chipColor={app_colors.white_forty} title="Heure de lever" value="TDB" />
+          <DSOValues chipValue chipColor={app_colors.white_forty} title="Heure de coucher" value="TDB" /> */}
+          {
+            typeof riseTime === 'string' && <DSOValues chipValue chipColor={app_colors.white_forty} title="Heure de lever" value={riseTime} />
           }
           {
             typeof riseTime === 'boolean' && <DSOValues chipValue chipColor={riseTime === true ? app_colors.green_eighty : app_colors.red_eighty} title="Heure de lever" value={riseTime ? 'Toute la nuit' : 'Jamais'} />
           }
           {
-            typeof riseTime === 'string' && <DSOValues chipValue chipColor={app_colors.white_forty} title="Heure de coucher" value={riseTime.replace(':', 'h')} />
+            typeof setTime === 'string' && <DSOValues chipValue chipColor={app_colors.white_forty} title="Heure de coucher" value={setTime} />
           }
           {
-            typeof riseTime === 'boolean' && <DSOValues chipValue chipColor={riseTime === true ? app_colors.green_eighty : app_colors.red_eighty} title="Heure de lever" value={riseTime ? 'Toute la nuit' : 'Jamais'} />
-          } */}
+            typeof setTime === 'boolean' && <DSOValues chipValue chipColor={riseTime === true ? app_colors.green_eighty : app_colors.red_eighty} title="Heure de lever" value={riseTime ? 'Toute la nuit' : 'Jamais'} />
+          }
           {/* <View style={[ephemerisBarStyles.container, {marginTop: 20}]}>
             <View style={ephemerisBarStyles.container.sideColumn}>
               <Image style={ephemerisBarStyles.container.sideColumn.icon} source={require('../../assets/icons/FiSunrise.png')} />
