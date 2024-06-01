@@ -17,9 +17,8 @@ import { calculateHorizonAngle } from "../helpers/scripts/astro/calculateHorizon
 import dayjs from "dayjs";
 import { useSpot } from "../contexts/ObservationSpotContext";
 import { extractNumbers } from "../helpers/scripts/extractNumbers";
-import { EquatorialCoordinate, GeographicCoordinate, doesBodyRiseOrSet, getBodyNextSet, isBodyAboveHorizon, isBodyVisibleForNight, isTransitInstance } from "@observerly/astrometry";
+import { EquatorialCoordinate, GeographicCoordinate, getBodyNextRise, getBodyNextSet, isBodyVisibleForNight, isTransitInstance } from "@observerly/astrometry";
 import { useSettings } from "../contexts/AppSettingsContext";
-import { getBodyNextRise } from "../helpers/scripts/astro/getBodyRise";
 
 export default function ObjectDetails({ route, navigation }: any) {
 
@@ -48,7 +47,7 @@ export default function ObjectDetails({ route, navigation }: any) {
     // let set = getBodyNextSet(new Date(), observer, target, horizonAngle)
     // console.log(set);
     
-    console.log(getBodyNextRise(new Date(), observer, target, horizonAngle));
+    // console.log(getBodyNextRise(new Date(), observer, target, horizonAngle));
     
     // let rise = 
     // console.log(rise);

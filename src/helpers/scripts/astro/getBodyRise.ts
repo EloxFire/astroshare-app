@@ -62,7 +62,7 @@ export const getBodyNextRise = (
     const GSTr = convertLocalSiderealTimeToGreenwhichSiderealTime(LSTr, observer);
     const rise = convertGreenwhichSiderealTimeToUniversalTime(GSTr, datetime);
 
-    if (rise < datetime) {      
+    if (rise.getTime() < datetime.getTime()) {      
       console.log(`Rise time ${rise} is before current time, checking the next day: ${tomorrow}`);
       datetime = tomorrow;
       attempts++;
