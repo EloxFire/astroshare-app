@@ -37,6 +37,8 @@ export default function SolarWeather({ navigation }: any) {
       setLoadingImage(true)
       const finalUri = isImageMode ? sunImagesSrcWavelengths[currentImageFilter] : sunVideoSrcWavelengths[currentImageFilter]
       const response = await axios.get(finalUri)
+      console.log(finalUri);
+      
       
       
       setCurrentImageDate(dayjs(response.request.responseHeaders['Last-Modified']).format('DD/MM/YYYY HH:mm:ss'))
@@ -80,11 +82,11 @@ export default function SolarWeather({ navigation }: any) {
             <Text style={solarWeatherStyles.container.subtitle}>Source : NASA / SDO (Solar Dynamics Observatory)</Text>
             {
               isImageMode ?
-              <Image source={{ uri: currentImageUri }} style={[solarWeatherStyles.sunImage, { opacity: loadingImage ? .1 : 1, borderWidth: loadingImage ? 1 : 0, borderColor: app_colors.white_eighty }]} />
+              <Image source={{ uri: currentImageUri + '?' + new Date() }} style={[solarWeatherStyles.sunImage, { opacity: loadingImage ? .1 : 1, borderWidth: loadingImage ? 1 : 0, borderColor: app_colors.white_eighty }]} />
               :
               <Video
               ref={videoRef}
-              source={{uri: currentImageUri}}
+              source={{uri: currentImageUri + '?' + new Date()}}
               isMuted={true}
               shouldPlay={loadingImage ? false : true}
               rate={2.0}
@@ -122,11 +124,11 @@ export default function SolarWeather({ navigation }: any) {
             <Text style={solarWeatherStyles.container.subtitle}>Source : NASA / SoHO (Solar and Heliospheric Observatory)</Text>
             {
               isCmeImageMode ?
-                <Image source={{ uri: currentCmeImageUri }} style={[solarWeatherStyles.sunImage, { opacity: loadingCME ? .1 : 1, borderWidth: loadingCME ? 1 : 0, borderColor: app_colors.white_eighty }]} />
+                <Image source={{ uri: currentCmeImageUri + '?' + new Date() }} style={[solarWeatherStyles.sunImage, { opacity: loadingCME ? .1 : 1, borderWidth: loadingCME ? 1 : 0, borderColor: app_colors.white_eighty }]} />
               :
               <Video
                 ref={videoRef}
-                source={{uri: currentCmeImageUri}}
+                source={{uri: currentCmeImageUri + '?' + new Date()}}
                 isMuted={true}
                 shouldPlay={loadingCME ? false : true}
                 rate={1.0}
