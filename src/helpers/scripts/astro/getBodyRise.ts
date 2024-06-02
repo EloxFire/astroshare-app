@@ -1,4 +1,15 @@
-import { EquatorialCoordinate, GeographicCoordinate, TransitInstance, convertGreenwhichSiderealTimeToUniversalTime, convertLocalSiderealTimeToGreenwhichSiderealTime, getBodyTransit, isBodyCircumpolar, isBodyVisible } from "@observerly/astrometry"
+import {
+  EquatorialCoordinate,
+  GeographicCoordinate,
+  TransitInstance,
+  convertGreenwhichSiderealTimeToUniversalTime,
+  convertLocalSiderealTimeToGreenwhichSiderealTime,
+  getBodyTransit,
+  isBodyCircumpolar,
+  isBodyVisible,
+  isBodyVisibleForNight
+} from "@observerly/astrometry"
+import { Dayjs } from "dayjs"
 
 /**
  *
@@ -12,72 +23,59 @@ import { EquatorialCoordinate, GeographicCoordinate, TransitInstance, convertGre
  * @param horizon - The observer's horizon (in degrees).
  * @returns The next rise time or False if the object never rises, or True if the object is always above the horizon (circumpolar) for the observer.
  */
-export const getBodyNextRise = (
+export const getBodyNextRiseTime = (
   datetime: Date,
   observer: GeographicCoordinate,
   target: EquatorialCoordinate,
   horizon: number = 0
-): TransitInstance | false => {
-  const maxAttempts = 365; // Limit the number of attempts to prevent infinite recursion
-  let attempts = 0;
+): TransitInstance | boolean => {
 
-  console.log({
-    datetime,
-    observer,
-    target,
-    horizon
-  });
+  console.log("Searching rise time for :", datetime);
   
-  
-  while (attempts < maxAttempts) {
-    console.log(`Attempt ${attempts}: Checking rise time for: ${datetime}`);
 
-    const tomorrow = new Date(
-      datetime.getFullYear(),
-      datetime.getMonth(),
-      datetime.getDate() + 1,
-      0,
-      0,
-      0,
-      0
-    );
+  const tomorrow = new Date(
+    datetime.getFullYear(),
+    datetime.getMonth(),
+    datetime.getDate() + 1,
+    2,
+    0,
+    0,
+    1
+  )
 
-    if (isBodyCircumpolar(observer, target, horizon) || !isBodyVisible(observer, target, horizon)) {
-      console.log(`Object is circumpolar or not visible from the observer's location.`);
-      return false;
-    }
-
-    const transit = getBodyTransit(observer, target);
-
-    
-
-    if (!transit) {
-      console.log(`No transit found, checking the next day: ${tomorrow}`);
-      datetime = tomorrow;
-      attempts++;
-      continue;
-    }
-
-    const LSTr = transit.LSTr;
-    const GSTr = convertLocalSiderealTimeToGreenwhichSiderealTime(LSTr, observer);
-    const rise = convertGreenwhichSiderealTimeToUniversalTime(GSTr, datetime);
-
-    if (rise.getTime() < datetime.getTime()) {      
-      console.log(`Rise time ${rise} is before current time, checking the next day: ${tomorrow}`);
-      datetime = tomorrow;
-      attempts++;
-      continue;
-    }
-
-    console.log(`Next rise time found: ${rise}`);
-    return {
-      datetime: rise,
-      LST: transit.LSTr,
-      GST: GSTr,
-      az: transit.R
-    };
+  if (isBodyCircumpolar(observer, target, horizon)) {
+    return true
   }
 
-  console.log(`Exceeded maximum attempts (${maxAttempts}) to find the next rise time.`);
-  return false;
-};
+  if (!isBodyVisible(observer, target, horizon)) {
+    return false
+  }
+
+  // Here we know the object is visible and not circumpolar, so we can find the next transit
+  const transit = getBodyTransit(observer, target)
+
+  if (!transit) {
+    // Get the next rise time for the next day:
+    return getBodyNextRiseTime(tomorrow, observer, target, horizon)
+  }
+
+  const LSTr = transit.LSTr
+
+  // Convert the local sidereal time of rise to Greenwhich sidereal time:
+  const GSTr = convertLocalSiderealTimeToGreenwhichSiderealTime(LSTr, observer)
+  // Convert the Greenwhich sidereal time to universal coordinate time for the date specified:
+  const rise = convertGreenwhichSiderealTimeToUniversalTime(GSTr, datetime)
+  
+
+  // If the rise is before the current time, then we know the next rise is tomorrow:
+  // if (rise < datetime) {
+  //   return getBodyNextRiseTime(tomorrow, observer, target, horizon)
+  // }
+
+  return {
+    datetime: rise,
+    LST: transit.LSTr,
+    GST: GSTr,
+    az: transit.R
+  }
+}

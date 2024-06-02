@@ -11,14 +11,14 @@ import { convertHMSToDegreeFromString } from "../helpers/scripts/astro/HmsToDegr
 import { convertDMSToDegreeFromString } from "../helpers/scripts/astro/DmsToDegree";
 import PageTitle from "../components/commons/PageTitle";
 import DSOValues from "../components/commons/DSOValues";
-import { ephemerisBarStyles } from "../styles/components/weather/ephemerisBar";
-import SingleValue from "../components/weather/SingleValue";
 import { calculateHorizonAngle } from "../helpers/scripts/astro/calculateHorizonAngle";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import { useSpot } from "../contexts/ObservationSpotContext";
 import { extractNumbers } from "../helpers/scripts/extractNumbers";
-import { EquatorialCoordinate, GeographicCoordinate, getBodyNextRise, getBodyNextSet, isBodyVisibleForNight, isTransitInstance } from "@observerly/astrometry";
+import { EquatorialCoordinate, GeographicCoordinate, getBodyNextSet, isBodyVisibleForNight, isTransitInstance } from "@observerly/astrometry";
 import { useSettings } from "../contexts/AppSettingsContext";
+import { getBodyNextRiseTime } from "../helpers/scripts/astro/getBodyRise";
+import { getBodyNextSetTime } from "../helpers/scripts/astro/getBodySet";
 
 export default function ObjectDetails({ route, navigation }: any) {
 
@@ -26,8 +26,8 @@ export default function ObjectDetails({ route, navigation }: any) {
   const { object, isVisible } = route.params;
   const { selectedSpot, defaultAltitude } = useSpot()
 
-  const [riseTime, setRiseTime] = useState<string | boolean>(false)
-  const [setTime, setSetTime] = useState<string | boolean>(false)
+  const [riseTime, setRiseTime] = useState<Dayjs | boolean>(false)
+  const [setTime, setSetTime] = useState<Dayjs | boolean>(false)
   const [willRise, setWillRise] = useState<boolean>(false)
 
   useEffect(() => {
@@ -42,23 +42,20 @@ export default function ObjectDetails({ route, navigation }: any) {
     const observer: GeographicCoordinate = { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }
     
     setWillRise(isBodyVisibleForNight(new Date(), observer, target, horizonAngle))
+
+    let rise = getBodyNextRiseTime(new Date(), observer, target, horizonAngle)
+    let set = getBodyNextSetTime(new Date(), observer, target, horizonAngle)
     
-    
-    // let set = getBodyNextSet(new Date(), observer, target, horizonAngle)
-    // console.log(set);
-    
-    // console.log(getBodyNextRise(new Date(), observer, target, horizonAngle));
-    
-    // let rise = 
-    // console.log(rise);
-    
-    
-    // if (isTransitInstance(set)) {
-    //   setSetTime(dayjs(set.datetime).format('HH:mm'))
-    // }
-    // if(isTransitInstance(rise)) {
-    //   setRiseTime(dayjs(rise.datetime).format('HH:mm'))
-    // }
+    if (isTransitInstance(rise)) {
+      console.log(dayjs(rise.datetime).add(2, 'h'));
+      
+      setRiseTime(dayjs(rise.datetime).add(2, 'h'))
+    }
+    if (isTransitInstance(set)) {
+      console.log(dayjs(set.datetime).add(2, 'h'));
+      
+      setSetTime(dayjs(set.datetime).add(2, 'h'))
+    }
       
   }, [])
 
@@ -94,13 +91,13 @@ export default function ObjectDetails({ route, navigation }: any) {
           {/* <DSOValues chipValue chipColor={app_colors.white_forty} title="Heure de lever" value="TDB" />
           <DSOValues chipValue chipColor={app_colors.white_forty} title="Heure de coucher" value="TDB" /> */}
           {
-            typeof riseTime === 'string' && <DSOValues chipValue chipColor={app_colors.white_forty} title="Heure de lever" value={riseTime} />
+            typeof riseTime === 'object' && <DSOValues chipValue chipColor={app_colors.white_forty} title="Prochain lever" value={riseTime.format('DD MMMM à HH:mm').replace(':', 'h')} />
           }
           {
             typeof riseTime === 'boolean' && <DSOValues chipValue chipColor={riseTime === true ? app_colors.green_eighty : app_colors.red_eighty} title="Heure de lever" value={riseTime ? 'Toute la nuit' : '#Erreur'} />
           }
           {
-            typeof setTime === 'string' && <DSOValues chipValue chipColor={app_colors.white_forty} title="Heure de coucher" value={setTime} />
+            typeof setTime === 'object' && <DSOValues chipValue chipColor={app_colors.white_forty} title="Prochain coucher" value={setTime.format('DD MMMM à HH:mm').replace(':', 'h')} />
           }
           {
             typeof setTime === 'boolean' && <DSOValues chipValue chipColor={riseTime === true ? app_colors.green_eighty : app_colors.red_eighty} title="Heure de lever" value={riseTime ? 'Toute la nuit' : '#Erreur'} />
