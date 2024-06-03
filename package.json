@@ -10,7 +10,7 @@
     "web": "expo start --web"
   },
   "dependencies": {
-    "@observerly/astrometry": "^0.38.0",
+    "@observerly/astrometry": "^0.38.1",
     "@react-native-async-storage/async-storage": "1.23.1",
     "@react-native-community/netinfo": "11.3.1",
     "@react-native-masked-view/masked-view": "0.3.1",

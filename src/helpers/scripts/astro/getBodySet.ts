@@ -1,4 +1,4 @@
-import { EquatorialCoordinate, GeographicCoordinate, TransitInstance, convertGreenwhichSiderealTimeToUniversalTime, convertLocalSiderealTimeToGreenwhichSiderealTime, getBodyTransit, isBodyCircumpolar, isBodyVisible } from "@observerly/astrometry"
+import { EquatorialCoordinate, GeographicCoordinate, TransitInstance, convertGreenwhichSiderealTimeToUniversalTime, convertLocalSiderealTimeToGreenwhichSiderealTime, getBodyNextSet, getBodyTransit, isBodyCircumpolar, isBodyVisible } from "@observerly/astrometry"
 
 /**
  *
@@ -19,17 +19,19 @@ export const getBodyNextSetTime = (
   horizon: number = 0
 ): TransitInstance | boolean => {
 
-  // console.log("Searching set time for :", datetime);
+  // console.log("Getting next set time...");
   
 
   const tomorrow = new Date(
-    datetime.getFullYear(),
-    datetime.getMonth(),
-    datetime.getDate() + 1,
-    2,
-    0,
-    0,
-    1
+    Date.UTC(
+      datetime.getUTCFullYear(),
+      datetime.getUTCMonth(),
+      datetime.getUTCDate() + 1,
+      0,
+      0,
+      0,
+      0
+    )
   )
 
   // If the object is circumpolar, it never sets:
@@ -46,7 +48,7 @@ export const getBodyNextSetTime = (
 
   if (!transit) {
     // Get the next set time for the next day:
-    return getBodyNextSetTime(tomorrow, observer, target, horizon)
+    return getBodyNextSet(tomorrow, observer, target, horizon)
   }
 
   const LSTs = transit.LSTs
@@ -57,9 +59,11 @@ export const getBodyNextSetTime = (
   // Convert the Greenwhich sidereal time to universal coordinate time for the date specified:
   const set = convertGreenwhichSiderealTimeToUniversalTime(GSTs, datetime)
 
-  // If the set is before the current time, then we know the next rise is tomorrow:
-  if (set < datetime) {   
-    return getBodyNextSetTime(tomorrow, observer, target, horizon)
+  // If the set is before the current time, then we know the next set is tomorrow:
+  if (set < datetime) {
+    console.log("Set is before current time, getting next set time...");
+    
+    return getBodyNextSet(tomorrow, observer, target, horizon)
   }
 
   return {
