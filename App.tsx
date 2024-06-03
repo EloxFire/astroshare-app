@@ -10,7 +10,6 @@ import { RootSiblingParent } from 'react-native-root-siblings';
 import { ObservationSpotProvider } from "./src/contexts/ObservationSpotContext";
 import useFonts from "./src/hooks/useFonts";
 import Home from "./src/screens/Home";
-import Compass from "./src/screens/Compass";
 import Settings from "./src/screens/Settings";
 import Weather from "./src/screens/Weather";
 import dayjs from "dayjs";
@@ -20,10 +19,11 @@ import ObjectDetails from "./src/screens/ObjectDetails";
 import Apod from "./src/screens/Apod";
 import MoonPhases from "./src/screens/MoonPhases";
 import ViewPointsManager from "./src/screens/ViewPointsManager";
-import 'dayjs/locale/fr'
 import utc from 'dayjs/plugin/utc'
 import tz from 'dayjs/plugin/timezone'
 import SolarWeather from "./src/screens/SolarWeather";
+import ScopeAlignment from "./src/screens/ScopeAlignment";
+import 'dayjs/locale/fr'
 
 dayjs.locale('fr');
 dayjs.extend(utc)
@@ -69,7 +69,7 @@ export default function App({ navigation}: any) {
             <Stack.Navigator screenOptions={{ headerShown: false }}>
               <Stack.Screen name={routes.home} component={Home} />
               <Stack.Screen name={routes.objectDetails} component={ObjectDetails} />
-              <Stack.Screen name={routes.compass} component={Compass} />
+              <Stack.Screen name={routes.scopeAlignment} component={ScopeAlignment} />
               <Stack.Screen name={routes.weather} component={Weather} />
               <Stack.Screen name={routes.moonPhases} component={MoonPhases}/>
               <Stack.Screen name={routes.solarWeather} component={SolarWeather} />

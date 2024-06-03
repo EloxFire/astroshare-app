@@ -2,7 +2,7 @@ export const routes = {
   home: 'Home',
   settings: 'Settings',
   about: 'About',
-  compass: 'CompassScreen',
+  scopeAlignment: 'ScopeAlignmentScreen',
   weather: 'WeatherScreen',
   moonPhases: 'MoonPhasesScreen',
   objectDetails: 'ObjectDetails',
