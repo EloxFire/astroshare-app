@@ -12,13 +12,11 @@ import { convertDMSToDegreeFromString } from "../helpers/scripts/astro/DmsToDegr
 import PageTitle from "../components/commons/PageTitle";
 import DSOValues from "../components/commons/DSOValues";
 import { calculateHorizonAngle } from "../helpers/scripts/astro/calculateHorizonAngle";
-import dayjs, { Dayjs } from "dayjs";
+import dayjs from "dayjs";
 import { useSpot } from "../contexts/ObservationSpotContext";
 import { extractNumbers } from "../helpers/scripts/extractNumbers";
-import { EquatorialCoordinate, GeographicCoordinate, getBodyNextSet, isBodyVisibleForNight, isTransitInstance } from "@observerly/astrometry";
+import { EquatorialCoordinate, GeographicCoordinate, getBodyNextRise, getBodyNextSet, isBodyCircumpolar, isBodyVisibleForNight, isTransitInstance } from "@observerly/astrometry";
 import { useSettings } from "../contexts/AppSettingsContext";
-import { getBodyNextRiseTime } from "../helpers/scripts/astro/getBodyRise";
-import { getBodyNextSetTime } from "../helpers/scripts/astro/getBodySet";
 
 export default function ObjectDetails({ route, navigation }: any) {
 
@@ -26,9 +24,10 @@ export default function ObjectDetails({ route, navigation }: any) {
   const { object, isVisible } = route.params;
   const { selectedSpot, defaultAltitude } = useSpot()
 
-  const [riseTime, setRiseTime] = useState<Dayjs | boolean>(false)
-  const [setTime, setSetTime] = useState<Dayjs | boolean>(false)
+  const [riseTime, setRiseTime] = useState<string | boolean>(false)
+  const [setTime, setSetTime] = useState<string | boolean>(false)
   const [willRise, setWillRise] = useState<boolean>(false)
+  const [isCircumpolar, setIsCircumpolar] = useState<boolean>(false)
 
   useEffect(() => {
     const altitude = selectedSpot ? selectedSpot.equipments.altitude : defaultAltitude;
@@ -42,21 +41,19 @@ export default function ObjectDetails({ route, navigation }: any) {
     const observer: GeographicCoordinate = { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }
     
     setWillRise(isBodyVisibleForNight(new Date(), observer, target, horizonAngle))
+    setIsCircumpolar(isBodyCircumpolar(observer, target, horizonAngle))
 
-    let rise = getBodyNextRiseTime(new Date(), observer, target, horizonAngle)
-    let set = getBodyNextSetTime(new Date(), observer, target, horizonAngle)
-    
-    if (isTransitInstance(rise)) {
-      console.log(dayjs(rise.datetime).add(2, 'h'));
+    if (!isCircumpolar) {
+      let rise = getBodyNextRise(new Date(), observer, target, horizonAngle)
+      let set = getBodyNextSet(new Date(), observer, target, horizonAngle)
       
-      setRiseTime(dayjs(rise.datetime).add(2, 'h'))
+      if (isTransitInstance(rise)) {      
+        setRiseTime(dayjs(rise.datetime).format('DD MMMM à HH:mm').replace(':', 'h'))
+      }
+      if (isTransitInstance(set)) {
+        setSetTime(dayjs(set.datetime).format('DD MMMM à HH:mm').replace(':', 'h'))
+      }
     }
-    if (isTransitInstance(set)) {
-      console.log(dayjs(set.datetime).add(2, 'h'));
-      
-      setSetTime(dayjs(set.datetime).add(2, 'h'))
-    }
-      
   }, [])
 
   return (
@@ -88,33 +85,18 @@ export default function ObjectDetails({ route, navigation }: any) {
           <Text style={objectDetailsStyles.content.sectionTitle}>Visibilité</Text>
           <DSOValues chipValue chipColor={isVisible ? app_colors.green_eighty : app_colors.red_eighty} title="Maintenant" value={isVisible ? "Visible" : "Non visible"} />
           <DSOValues chipValue chipColor={willRise ? app_colors.green_eighty : app_colors.red_eighty} title="Cette nuit" value={willRise ? "Oui" : "Non"} />          
-          {/* <DSOValues chipValue chipColor={app_colors.white_forty} title="Heure de lever" value="TDB" />
-          <DSOValues chipValue chipColor={app_colors.white_forty} title="Heure de coucher" value="TDB" /> */}
           {
-            typeof riseTime === 'object' && <DSOValues chipValue chipColor={app_colors.white_forty} title="Prochain lever" value={riseTime.format('DD MMMM à HH:mm').replace(':', 'h')} />
+            typeof riseTime === 'string' && <DSOValues chipValue chipColor={app_colors.white_forty} title="Prochain lever" value={riseTime} />
           }
           {
-            typeof riseTime === 'boolean' && <DSOValues chipValue chipColor={riseTime === true ? app_colors.green_eighty : app_colors.red_eighty} title="Heure de lever" value={riseTime ? 'Toute la nuit' : '#Erreur'} />
+            typeof riseTime === 'boolean' && <DSOValues chipValue chipColor={app_colors.white_forty} title="Heure de lever" value={isCircumpolar ? 'Toute la nuit' : 'Jamais'} />
           }
           {
-            typeof setTime === 'object' && <DSOValues chipValue chipColor={app_colors.white_forty} title="Prochain coucher" value={setTime.format('DD MMMM à HH:mm').replace(':', 'h')} />
+            typeof setTime === 'string' && <DSOValues chipValue chipColor={app_colors.white_forty} title="Prochain coucher" value={setTime} />
           }
           {
-            typeof setTime === 'boolean' && <DSOValues chipValue chipColor={riseTime === true ? app_colors.green_eighty : app_colors.red_eighty} title="Heure de lever" value={riseTime ? 'Toute la nuit' : '#Erreur'} />
+            typeof setTime === 'boolean' && <DSOValues chipValue chipColor={app_colors.white_forty} title="Heure de lever" value={isCircumpolar ? 'Toute la nuit' : 'Jamais'} />
           }
-          {/* <View style={[ephemerisBarStyles.container, {marginTop: 20}]}>
-            <View style={ephemerisBarStyles.container.sideColumn}>
-              <Image style={ephemerisBarStyles.container.sideColumn.icon} source={require('../../assets/icons/FiSunrise.png')} />
-              <SingleValue value="12h23" />
-            </View>
-            <View style={ephemerisBarStyles.container.bar}>
-              <View style={[ephemerisBarStyles.container.bar.progress, {width: `50%`}]}/>
-            </View>
-            <View style={ephemerisBarStyles.container.sideColumn}>
-              <Image style={ephemerisBarStyles.container.sideColumn.icon} source={require('../../assets/icons/FiSunset.png')} />
-              <SingleValue value="23h32" />
-            </View>
-          </View> */}
         </View>
       </ScrollView>
     </View>

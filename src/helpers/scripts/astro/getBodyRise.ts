@@ -4,12 +4,12 @@ import {
   TransitInstance,
   convertGreenwhichSiderealTimeToUniversalTime,
   convertLocalSiderealTimeToGreenwhichSiderealTime,
+  getBodyNextRise,
   getBodyTransit,
   isBodyCircumpolar,
   isBodyVisible,
   isBodyVisibleForNight
 } from "@observerly/astrometry"
-import { Dayjs } from "dayjs"
 
 /**
  *
@@ -29,48 +29,47 @@ export const getBodyNextRiseTime = (
   target: EquatorialCoordinate,
   horizon: number = 0
 ): TransitInstance | boolean => {
-
-  console.log("Searching rise time for :", datetime);
   
-
+  // console.log("Getting next rise time...");
+  
   const tomorrow = new Date(
-    datetime.getFullYear(),
-    datetime.getMonth(),
-    datetime.getDate() + 1,
-    2,
-    0,
-    0,
-    1
+    Date.UTC(
+      datetime.getUTCFullYear(),
+      datetime.getUTCMonth(),
+      datetime.getUTCDate() + 1,
+      0,
+      0,
+      0,
+      0
+    )
   )
 
-  if (isBodyCircumpolar(observer, target, horizon)) {
-    return true
-  }
-
-  if (!isBodyVisible(observer, target, horizon)) {
+  // If the object is circumpolar, or it is not visible from the observer's location, it never rises:
+  if (isBodyCircumpolar(observer, target, horizon) || !isBodyVisible(observer, target, horizon)) {
     return false
   }
 
-  // Here we know the object is visible and not circumpolar, so we can find the next transit
   const transit = getBodyTransit(observer, target)
 
   if (!transit) {
     // Get the next rise time for the next day:
-    return getBodyNextRiseTime(tomorrow, observer, target, horizon)
+    return getBodyNextRise(tomorrow, observer, target, horizon)
   }
 
   const LSTr = transit.LSTr
 
   // Convert the local sidereal time of rise to Greenwhich sidereal time:
   const GSTr = convertLocalSiderealTimeToGreenwhichSiderealTime(LSTr, observer)
+
   // Convert the Greenwhich sidereal time to universal coordinate time for the date specified:
   const rise = convertGreenwhichSiderealTimeToUniversalTime(GSTr, datetime)
-  
 
   // If the rise is before the current time, then we know the next rise is tomorrow:
-  // if (rise < datetime) {
-  //   return getBodyNextRiseTime(tomorrow, observer, target, horizon)
-  // }
+  if (rise.getTime() < datetime.getTime()) {
+    console.log('Rise is before current time, checking tomorrow...');
+    
+    return getBodyNextRise(tomorrow, observer, target, horizon)
+  }
 
   return {
     datetime: rise,
