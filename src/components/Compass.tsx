@@ -4,7 +4,7 @@ import {
   Text,
   View,
 } from "react-native";
-import { compassStyles } from "../styles/screens/compass";
+import { compassStyles } from "../styles/components/compass";
 import { Magnetometer, Gyroscope } from "expo-sensors";
 import { getAngle } from "../helpers/scripts/compass/getAngle";
 import { getDirection } from "../helpers/scripts/compass/getDirection";
