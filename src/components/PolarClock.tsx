@@ -7,6 +7,7 @@ import { useSettings } from '../contexts/AppSettingsContext';
 import { polarClockStyles } from '../styles/components/polarClock';
 import { app_colors } from '../helpers/constants';
 import { scopeAlignmentStyles } from '../styles/screens/scopeAlignment';
+import dayjs from 'dayjs';
 
 export default function PolarClock() {
 
@@ -21,7 +22,7 @@ export default function PolarClock() {
 
   // console.log(convertHMSToDegreeFromString(polaris.ra));
     
-  // const LST = getLocalSiderealTime(new Date(), currentUserLocation.lon)
+  const LST = getLocalSiderealTime(new Date(), currentUserLocation.lon)
   // const HA = LST - 2.9667 // 2.9667 = 3h 01m 03.6s
   const HA = getHourAngle(new Date(), currentUserLocation.lon, polaris.degRa)
 
@@ -61,9 +62,10 @@ export default function PolarClock() {
   // Voici une précision pour le calcul de la position du point. Le quadrant que nous avons déssiné plus haut exprime sur 360° des heures au format decimal, peut tu ajuster le calcul de la position du point ?
 
   return (
-    <>
+    <View>
       <Text style={scopeAlignmentStyles.content.infoText}>Longitude : {currentUserLocation.lon}</Text>
-      <Text style={scopeAlignmentStyles.content.infoText}>LST : {currentUserLocation.lon}</Text>
+      <Text style={scopeAlignmentStyles.content.infoText}>LST : {LST}</Text>
+      <Text style={scopeAlignmentStyles.content.infoText}>Heure locale : {dayjs().format('HH:mm').replace(':', 'h')}</Text>
       <View style={polarClockStyles.container}>
         <Svg width={width} height={width}>
           <Circle cx={centerX} cy={centerY} r={outerRadius} fill="none" stroke={app_colors.red_eighty} strokeWidth={1} />
@@ -147,6 +149,6 @@ export default function PolarClock() {
           <Circle cx={x} cy={y} r={pointRadius} fill={app_colors.white_eighty} />
         </Svg>
       </View>
-    </>
+    </View>
   )
 }

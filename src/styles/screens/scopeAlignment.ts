@@ -4,6 +4,7 @@ export const scopeAlignmentStyles = {
   content: {
     display: "flex" as "flex",
     flexDirection: "column" as "column",
+    // backgroundColor: 'red' as 'red',
 
     title: {
       color: app_colors.white,

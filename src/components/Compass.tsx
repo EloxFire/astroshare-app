@@ -13,10 +13,8 @@ import { getDegree } from "../helpers/scripts/compass/getDegrees";
 export default function Compass({ navigation }: any) {
   const [magnetometerSubscription, setMagnetometerSubscription] =
     useState<any>(null);
-  const [gyroscopeSubscription, setGyroscopeSubscription] = useState<any>(null);
+  
   const [magnetometer, setMagnetometer] = useState<any>(0);
-  const [gyroscope, setGyroscope] = useState<any>(0);
-  const degrees = Array(360).fill(null);
 
   const _subscribe = () => {
     setMagnetometerSubscription(
@@ -25,20 +23,13 @@ export default function Compass({ navigation }: any) {
       })
     );
 
-    setGyroscopeSubscription(
-      Gyroscope.addListener((result) => {
-        setGyroscope(result);
-      })
-    );
     Magnetometer.setUpdateInterval(500);
     Gyroscope.setUpdateInterval(1000);
   };
 
   const _unsubscribe = () => {
     magnetometerSubscription && magnetometerSubscription.remove();
-    gyroscopeSubscription && gyroscopeSubscription.remove();
     setMagnetometerSubscription(null);
-    setGyroscopeSubscription(null);
   };
 
   useEffect(() => {

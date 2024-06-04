@@ -26,6 +26,10 @@ export default function ScopeAlignment({ navigation }: any) {
     currentStep === 3 ? navigation.navigate(routes.home) : setCurrentStep(currentStep + 1);
   }
 
+  const handlePreviousStep = () => {
+    currentStep === 1 ? navigation.navigate(routes.home) : setCurrentStep(currentStep - 1);
+  }
+
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <View style={globalStyles.body}>
@@ -48,6 +52,14 @@ export default function ScopeAlignment({ navigation }: any) {
                 <Text style={scopeAlignmentStyles.content.button.text}>{currentStep === 3 ? "Retour à l'accueil" : "Étape suivante"}</Text>
               </View>
             </TouchableOpacity>
+            {
+              currentStep !== 1 &&
+              <TouchableOpacity activeOpacity={.5} style={[scopeAlignmentStyles.content.button, {marginTop: 10}]} onPress={() => handlePreviousStep()}>
+                <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+                  <Text style={scopeAlignmentStyles.content.button.text}>{currentStep === 1 ? "Retour à l'accueil" : "Retour"}</Text>
+                </View>
+              </TouchableOpacity>
+            }
           </View>
         </ScrollView>
       </View>
