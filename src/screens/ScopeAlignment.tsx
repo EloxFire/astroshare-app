@@ -16,6 +16,7 @@ import Compass from "../components/Compass";
 import SimpleButton from "../components/commons/buttons/SimpleButton";
 import { routes } from "../helpers/routes";
 import PolarClock from "../components/PolarClock";
+import SpiritLevel from "../components/SpiritLevel";
 
 export default function ScopeAlignment({ navigation }: any) {
 
@@ -38,6 +39,7 @@ export default function ScopeAlignment({ navigation }: any) {
 
             <View style={scopeAlignmentStyles.content.toolContainer}>
               {currentStep === 1 && <Compass/>}
+              {currentStep === 2 && <SpiritLevel/>}
               {currentStep === 3 && <PolarClock/>}
             </View>
             

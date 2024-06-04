@@ -3,7 +3,10 @@ import { app_colors } from "../../helpers/constants";
 export const polarClockStyles = {
   container: {
     marginTop: 25,
-    backgroundColor: '#FF22FF20'
+    // backgroundColor: '#FF22FF20',
+    display: "flex" as "flex",
+    justifyContent: "center" as "center",
+    alignItems: "center" as "center",
   },
 
   text: {
