@@ -78,7 +78,7 @@ export default function PolarClock() {
           {Array.from({ length: 4 }).map((_, i) => {
             const angleOffset = i * 90;
             return (
-              <>
+              <View key={`${i}_angle_${angleOffset}`}>
                 {/* Add two separating lines of 50 units for each tier */}
                 {[30, 60].map((angle) => {
                   const { startX, startY, endX, endY } = calculateLinePoints(angle + angleOffset, outerRadius - 5, longLineLength);
@@ -140,7 +140,7 @@ export default function PolarClock() {
                     />
                   );
                 })}
-              </>
+              </View>
             );
           })}
           <Circle cx={centerX} cy={centerY} r={outerRadius - 5} fill="none" stroke={app_colors.black} strokeWidth={10} />
