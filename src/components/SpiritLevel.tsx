@@ -13,12 +13,19 @@ export default function SpiritLevel() {
       const motionSensorAvailable = await DeviceMotion.isAvailableAsync();
 
       if (status === 'granted' && motionSensorAvailable) {
-        // DeviceMotion.setUpdateInterval(500);
-        DeviceMotion.addListener((data) => {          
-          setDotPosition({ x: data.rotation.beta * 100, y: data.rotation.gamma * 100 });
+        console.log('DeviceMotion available');
+        
+        // DeviceMotion.setUpdateInterval(5000);
+        DeviceMotion.addListener((data) => {  
+          console.log({ x: data.rotation.beta * 100, y: data.rotation.gamma * 100 });
+          const x = data.rotation.beta * 70;
+          const y = data.rotation.gamma * 70;
+
+          const max = 135;
+          
+          setDotPosition({ x: x >= max ? 135 : x , y: y >= max ? 135 : y});
         });
       }
-      
     })()
 
     return () => {

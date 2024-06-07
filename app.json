@@ -46,7 +46,6 @@
       [
         "expo-sensors",
         {
-          "sensors": ["Gyroscope", "Magnetometer"],
           "motionPermission": "Autoriser Astroshare à utiliser les capteurs de mouvement."
         }
       ],
