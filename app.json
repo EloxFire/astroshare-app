@@ -44,6 +44,13 @@
     },
     "plugins": [
       [
+        "expo-sensors",
+        {
+          "sensors": ["Gyroscope", "Magnetometer"],
+          "motionPermission": "Autoriser Astroshare à utiliser les capteurs de mouvement."
+        }
+      ],
+      [
         "expo-location",
         {
           "locationAlwaysAndWhenInUsePermission": "Autoriser ${PRODUCT_NAME} à utiliser votre position.",

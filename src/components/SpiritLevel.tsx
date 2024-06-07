@@ -1,49 +1,35 @@
 import React, { useEffect, useState } from 'react'
 import { View } from 'react-native'
 import { spiritLevelStyles } from '../styles/components/spiritLevel'
-import { Gyroscope } from 'expo-sensors';
+import { DeviceMotion } from 'expo-sensors';
 
 export default function SpiritLevel() {
 
-  const [gyroscopeSubscription, setGyroscopeSubscription] = useState<any>(null);
-  const [gyroscope, setGyroscope] = useState<any>({ x: 0, y: 0, z: 0 });
-  const [dotPosition, setDotPosition] = useState<any>({ x: 0, y: 0 });
-
-  const _subscribe = () => {
-    setGyroscopeSubscription(
-      Gyroscope.addListener((result) => {
-        
-        setGyroscope(result);
-        setDotPosition((prevPosition: any) => (
-          {
-            x: prevPosition.x - result.y * 10,
-            y: prevPosition.y + result.x * 10,
-          }
-        ));
-      })
-    );
-    Gyroscope.setUpdateInterval(200);
-  };
-
-  const _unsubscribe = () => {
-    gyroscopeSubscription && gyroscopeSubscription.remove();
-    setGyroscopeSubscription(null);
-  };
+  const [dotPosition, setDotPosition] = useState({x: 0, y: 0});
 
   useEffect(() => {
-    _subscribe();
+    (async () => {
+      const { status } = await DeviceMotion.requestPermissionsAsync();
+      const motionSensorAvailable = await DeviceMotion.isAvailableAsync();
 
-    setDotPosition({
-      x: gyroscope.y * 20,
-      y: gyroscope.x * 20,
-    })
-    return () => _unsubscribe();
-  }, []);
+      if (status === 'granted' && motionSensorAvailable) {
+        // DeviceMotion.setUpdateInterval(500);
+        DeviceMotion.addListener((data) => {          
+          setDotPosition({ x: data.rotation.beta * 100, y: data.rotation.gamma * 100 });
+        });
+      }
+      
+    })()
+
+    return () => {
+      DeviceMotion.removeAllListeners();
+    }
+  }, [])
 
   return (
     <View style={spiritLevelStyles.container}>
       <View style={spiritLevelStyles.container.gyroDotFixed}></View>
-      <View style={[spiritLevelStyles.container.gyroDot, {transform: [{translateX: dotPosition.x}, {translateY: dotPosition.y}]}]}></View>
+      <View style={[spiritLevelStyles.container.gyroDot, {transform: [{translateX: dotPosition.y}, {translateY: dotPosition.x}]}]}></View>
     </View>
   )
 }
