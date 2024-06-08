@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { app_colors, cmeImageDescription, cmeImageSrc, cmeVideoSrc, sunIMageFiltersDescription, sunImagesSrcWavelengths, sunVideoSrcWavelengths } from '../helpers/constants'
+import React, { useRef, useState } from 'react'
+import { app_colors, cmeImageSrc, cmeVideoSrc, sunIMageFiltersDescription, sunImagesSrcWavelengths, sunVideoSrcWavelengths } from '../helpers/constants'
 import { Dimensions, ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import { globalStyles } from '../styles/global'
 import { moonPhasesStyles } from '../styles/screens/moonPhases'
@@ -7,11 +7,9 @@ import { solarWeatherStyles } from '../styles/screens/solarWeather'
 import { ESunFilter } from '../helpers/types/SunFilter'
 import { ResizeMode, Video } from 'expo-av'
 import { ECmeFilters } from '../helpers/types/CmeFilters'
-import axios from 'axios'
-import dayjs from 'dayjs'
+import { Image } from 'expo-image'
 import PageTitle from '../components/commons/PageTitle'
 import SimpleButton from '../components/commons/buttons/SimpleButton'
-import { Image } from 'expo-image'
 
 export default function SolarWeather({ navigation }: any) {
 
@@ -48,7 +46,7 @@ export default function SolarWeather({ navigation }: any) {
             <Text style={solarWeatherStyles.container.subtitle}>Source : NASA / SDO (Solar Dynamics Observatory)</Text>
             {
               isImageMode ?
-              <Image onLoadStart={() => setLoadingImage(true)} onLoadEnd={() => setLoadingImage(false)} source={{ uri: sunImagesSrcWavelengths[currentImageFilter] + '?' + new Date() }} style={solarWeatherStyles.sunImage} />
+              <Image source={{ uri: sunImagesSrcWavelengths[currentImageFilter] + '?' + new Date() }} style={solarWeatherStyles.sunImage} />
               :
               <Video
               ref={videoRef}
