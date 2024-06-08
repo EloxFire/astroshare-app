@@ -62,15 +62,20 @@ export const searchResultCardStyles = {
         }
       }
     },
-    
-    chip:{
-      paddingVertical: 2,
-      paddingHorizontal: 10,
-      fontSize: 12,
-      fontFamily: 'GilroyMedium',
-      color: app_colors.white,
-      alignSelf: 'flex-start' as 'flex-start',
-      borderRadius: 10,
+
+    footer: {
+      display: 'flex' as 'flex',
+      flexDirection: 'row' as 'row',
+
+      chip:{
+        paddingVertical: 2,
+        paddingHorizontal: 10,
+        fontSize: 12,
+        fontFamily: 'GilroyMedium',
+        color: app_colors.white,
+        alignSelf: 'flex-start' as 'flex-start',
+        borderRadius: 10,
+      }
     }
   },
 }

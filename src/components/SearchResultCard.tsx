@@ -5,7 +5,7 @@ import { DSO } from '../helpers/types/DSO'
 import { getObjectName } from '../helpers/scripts/astro/getObjectName'
 import { astroImages } from '../helpers/scripts/loadImages'
 import { getConstellationName } from '../helpers/scripts/getConstellationName'
-import { EquatorialCoordinate, GeographicCoordinate, TransitInstance, getBodyNextRise, getBodyNextSet, isBodyAboveHorizon, isBodyVisibleForNight, isTransitInstance } from '@observerly/astrometry'
+import { EquatorialCoordinate, GeographicCoordinate, TransitInstance, getBodyNextRise, getBodyNextSet, isBodyAboveHorizon, isBodyCircumpolar, isBodyVisibleForNight, isTransitInstance } from '@observerly/astrometry'
 import { useSettings } from '../contexts/AppSettingsContext'
 import { app_colors } from '../helpers/constants'
 import { routes } from '../helpers/routes'
@@ -15,6 +15,7 @@ import { calculateHorizonAngle } from '../helpers/scripts/astro/calculateHorizon
 import { useSpot } from '../contexts/ObservationSpotContext'
 import { extractNumbers } from '../helpers/scripts/extractNumbers'
 import dayjs, { Dayjs } from 'dayjs'
+import { prettyDec, prettyRa } from '../helpers/scripts/astro/prettyCoords'
 
 interface SearchResultCardProps {
   object: DSO
@@ -26,9 +27,10 @@ export default function SearchResultCard({ object, navigation }: SearchResultCar
   const {selectedSpot, defaultAltitude} = useSpot()
   const {currentUserLocation} = useSettings()
   const [isVisible, setIsVisible] = useState(false)
-  const [nextRiseTime, setNextRiseTime] = useState<string | boolean>(false)
-  // const [nextSetTime, setNextSetTime] = useState<string | boolean>(false)
+  const [riseTime, setRiseTime] = useState<Dayjs | boolean>(false)
+  const [setTime, setSetTime] = useState<Dayjs | boolean>(false)
   const [willRise, setWillRise] = useState<boolean>(false)
+  const [isCircumpolar, setIsCircumpolar] = useState<boolean>(false)
 
   useEffect(() => {
     const altitude = selectedSpot ? selectedSpot.equipments.altitude : defaultAltitude; // 342m est l'altitude moyenne en France métropolitaine
@@ -41,12 +43,28 @@ export default function SearchResultCard({ object, navigation }: SearchResultCar
       const target: EquatorialCoordinate = { ra: degRa, dec: degDec }
       let visible = isBodyAboveHorizon(new Date(), observer, target, horizonAngle)
       setIsVisible(visible)
+
+    
+      setWillRise(isBodyVisibleForNight(new Date(), observer, target, horizonAngle))
+      setIsCircumpolar(isBodyCircumpolar(observer, target, horizonAngle))
+
+      if (!isCircumpolar) {
+        let rise = getBodyNextRise(new Date(), observer, target, horizonAngle)
+        let set = getBodyNextSet(new Date(), observer, target, horizonAngle)
+        
+        if (isTransitInstance(rise)) {      
+          setRiseTime(dayjs(rise.datetime))
+        }
+        if (isTransitInstance(set)) {
+          setSetTime(dayjs(set.datetime))
+        }
+      }
     }
-  })
+  }, [])
   
 
   return (
-    <TouchableOpacity onPress={() => navigation.navigate(routes.objectDetails, {object: object, isVisible: isVisible, riseTime: nextRiseTime, willRise: willRise})}>
+    <TouchableOpacity onPress={() => navigation.navigate(routes.objectDetails, {object: object})}>
       <View style={searchResultCardStyles.card}>
         <View style={searchResultCardStyles.card.header}>
           <View>
@@ -66,14 +84,16 @@ export default function SearchResultCard({ object, navigation }: SearchResultCar
           </View>
           <View style={searchResultCardStyles.card.body.info}>
             <Text style={searchResultCardStyles.card.body.info.title}>Ascension droite :</Text>
-            <Text style={searchResultCardStyles.card.body.info.value}>{object.ra}</Text>
+            <Text style={searchResultCardStyles.card.body.info.value}>{prettyRa(object.ra)}</Text>
           </View>
           <View style={searchResultCardStyles.card.body.info}>
             <Text style={searchResultCardStyles.card.body.info.title}>Déclinaison :</Text>
-            <Text style={searchResultCardStyles.card.body.info.value}>{object.dec}</Text>
+            <Text style={searchResultCardStyles.card.body.info.value}>{prettyDec(object.dec)}</Text>
           </View>
         </View>
-        <Text style={[searchResultCardStyles.card.chip, {backgroundColor: isVisible ? app_colors.green_eighty : app_colors.red_eighty}]}>{isVisible ? "Visible" : "Non visible"}</Text>
+        <View style={searchResultCardStyles.card.footer}>
+          <Text style={[searchResultCardStyles.card.footer.chip, {backgroundColor: isVisible ? app_colors.green_eighty : app_colors.red_eighty}]}>{isVisible ? `Visible` : "Non visible"}</Text>
+        </View>
       </View>
     </TouchableOpacity>
   )

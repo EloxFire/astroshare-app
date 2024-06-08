@@ -21,14 +21,19 @@ import MoonPhases from "./src/screens/MoonPhases";
 import ViewPointsManager from "./src/screens/ViewPointsManager";
 import utc from 'dayjs/plugin/utc'
 import tz from 'dayjs/plugin/timezone'
+import relativeTime from 'dayjs/plugin/relativeTime'
+import LocalizedFormat from 'dayjs/plugin/localizedFormat'
 import SolarWeather from "./src/screens/SolarWeather";
 import ScopeAlignment from "./src/screens/ScopeAlignment";
 import 'dayjs/locale/fr'
 
 dayjs.locale('fr');
+dayjs.extend(LocalizedFormat)
 dayjs.extend(utc)
 dayjs.extend(tz)
+dayjs.extend(relativeTime)
 dayjs.tz.setDefault('Europe/Paris');
+dayjs().format('L LT')
 
 
 

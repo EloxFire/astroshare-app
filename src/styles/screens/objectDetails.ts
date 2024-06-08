@@ -45,6 +45,22 @@ export const objectDetailsStyles = {
     flexDirection: 'row' as 'row',
     justifyContent: 'space-between' as 'space-between',
 
+    select: {
+      display: 'flex' as 'flex',
+      flexDirection: 'row' as 'row',
+      alignItems: 'center' as 'center',
+      justifyContent: 'center' as 'center',
+
+
+      text: {
+        fontSize: 10,
+        fontFamily: 'GilroyRegular',
+        color: app_colors.white,
+        padding: 5,
+        borderRadius: 5,
+      }
+    },
+
     title: {
       fontSize: 12,
       fontFamily: 'AuxMono',
@@ -65,7 +81,7 @@ export const objectDetailsStyles = {
       paddingVertical: 2,
       paddingHorizontal: 5,
       borderRadius: 20,
-      width: 110,
+      width: 130,
       textAlign: 'center' as 'center',
     }
   }

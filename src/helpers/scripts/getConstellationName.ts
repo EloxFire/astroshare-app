@@ -117,7 +117,7 @@ export const getConstellationName = (constellation: string) => {
     case 'Oct':
       return 'Octant';
     case 'Oph':
-      return 'Serpentaire';
+      return 'Ophiuchus';
     case 'Ori':
       return 'Orion';
     case 'Pav':
@@ -146,7 +146,7 @@ export const getConstellationName = (constellation: string) => {
       return 'Scorpion';
     case 'Sct':
       return 'Écu de Sobieski';
-    case 'Ser':
+    case 'Ser' || 'Se1' || 'Se2':
       return 'Serpent';
     case 'Sex':
       return 'Sextant';

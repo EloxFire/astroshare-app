@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Image, ScrollView, Text, View } from "react-native";
+import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { globalStyles } from "../styles/global";
 import { getObjectName } from "../helpers/scripts/astro/getObjectName";
 import { objectDetailsStyles } from "../styles/screens/objectDetails";
@@ -9,14 +9,15 @@ import { app_colors } from "../helpers/constants";
 import { getObjectType } from "../helpers/scripts/astro/getObjectType";
 import { convertHMSToDegreeFromString } from "../helpers/scripts/astro/HmsToDegree";
 import { convertDMSToDegreeFromString } from "../helpers/scripts/astro/DmsToDegree";
-import PageTitle from "../components/commons/PageTitle";
-import DSOValues from "../components/commons/DSOValues";
 import { calculateHorizonAngle } from "../helpers/scripts/astro/calculateHorizonAngle";
-import dayjs from "dayjs";
 import { useSpot } from "../contexts/ObservationSpotContext";
 import { extractNumbers } from "../helpers/scripts/extractNumbers";
 import { EquatorialCoordinate, GeographicCoordinate, getBodyNextRise, getBodyNextSet, isBodyCircumpolar, isBodyVisibleForNight, isTransitInstance } from "@observerly/astrometry";
 import { useSettings } from "../contexts/AppSettingsContext";
+import { prettyDec, prettyRa } from "../helpers/scripts/astro/prettyCoords";
+import dayjs, { Dayjs } from "dayjs";
+import PageTitle from "../components/commons/PageTitle";
+import DSOValues from "../components/commons/DSOValues";
 
 export default function ObjectDetails({ route, navigation }: any) {
 
@@ -24,10 +25,12 @@ export default function ObjectDetails({ route, navigation }: any) {
   const { object, isVisible } = route.params;
   const { selectedSpot, defaultAltitude } = useSpot()
 
-  const [riseTime, setRiseTime] = useState<string | boolean>(false)
-  const [setTime, setSetTime] = useState<string | boolean>(false)
+  const [riseTime, setRiseTime] = useState<Dayjs | boolean>(false)
+  const [setTime, setSetTime] = useState<Dayjs | boolean>(false)
   const [willRise, setWillRise] = useState<boolean>(false)
   const [isCircumpolar, setIsCircumpolar] = useState<boolean>(false)
+
+  const [selectedTimeBase, setSelectedTimeBase] = useState<'relative' | 'absolute'>('relative')  
 
   useEffect(() => {
     const altitude = selectedSpot ? selectedSpot.equipments.altitude : defaultAltitude;
@@ -48,10 +51,10 @@ export default function ObjectDetails({ route, navigation }: any) {
       let set = getBodyNextSet(new Date(), observer, target, horizonAngle)
       
       if (isTransitInstance(rise)) {      
-        setRiseTime(dayjs(rise.datetime).format('DD MMMM à HH:mm').replace(':', 'h'))
+        setRiseTime(dayjs(rise.datetime))
       }
       if (isTransitInstance(set)) {
-        setSetTime(dayjs(set.datetime).format('DD MMMM à HH:mm').replace(':', 'h'))
+        setSetTime(dayjs(set.datetime))
       }
     }
   }, [])
@@ -72,8 +75,8 @@ export default function ObjectDetails({ route, navigation }: any) {
           <DSOValues title="Magnitude" value={object.b_mag || object.v_mag} />
           <DSOValues title="Constellation" value={getConstellationName(object.const)} />
           <DSOValues title="Type" value={getObjectType(object)} />
-          <DSOValues title="Ascension droite" value={object.ra.replace(':', 'h ').replace(':', 'm ') + 's'} />
-          <DSOValues title="Déclinaison" value={object.dec.replace(':', '° ').replace(':', 'm ') + 's'} />
+          <DSOValues title="Ascension droite" value={prettyRa(object.ra)} />
+          <DSOValues title="Déclinaison" value={prettyDec(object.dec)} />
         </View>
         <View>
           <Text style={objectDetailsStyles.content.sectionTitle}>Observation</Text>
@@ -82,17 +85,29 @@ export default function ObjectDetails({ route, navigation }: any) {
           <DSOValues chipValue chipColor={app_colors.green_eighty} title="Télescope" value="Visible" />
         </View>
         <View>
-          <Text style={objectDetailsStyles.content.sectionTitle}>Visibilité</Text>
+          <View style={{display: 'flex', flexDirection: 'row', alignItems: "center", justifyContent: 'space-between'}}>
+            <Text style={objectDetailsStyles.content.sectionTitle}>Visibilité</Text>
+            <View style={{display: 'flex', flexDirection: 'row', alignItems: "center", justifyContent: 'flex-end'}}>
+              <Text style={objectDetailsStyles.dsoValues.select.text}>Temps : </Text>
+              <TouchableOpacity style={objectDetailsStyles.dsoValues.select} onPress={() => setSelectedTimeBase('relative')}>
+                <Text style={[objectDetailsStyles.dsoValues.select.text, {backgroundColor: selectedTimeBase === 'relative' ? app_colors.white_forty : 'transparent'}]}>relatif</Text>
+              </TouchableOpacity>
+              <Text style={objectDetailsStyles.dsoValues.select.text}>/</Text>
+              <TouchableOpacity style={objectDetailsStyles.dsoValues.select} onPress={() => setSelectedTimeBase('absolute')}>
+                <Text style={[objectDetailsStyles.dsoValues.select.text, {backgroundColor: selectedTimeBase === 'absolute' ? app_colors.white_forty : 'transparent'}]}>absolu</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
           <DSOValues chipValue chipColor={isVisible ? app_colors.green_eighty : app_colors.red_eighty} title="Maintenant" value={isVisible ? "Visible" : "Non visible"} />
           <DSOValues chipValue chipColor={willRise ? app_colors.green_eighty : app_colors.red_eighty} title="Cette nuit" value={willRise ? "Oui" : "Non"} />          
           {
-            typeof riseTime === 'string' && <DSOValues chipValue chipColor={app_colors.white_forty} title="Prochain lever" value={riseTime} />
+            typeof riseTime === 'object' && <DSOValues chipValue chipColor={app_colors.white_forty} title="Prochain lever" value={selectedTimeBase === 'relative' ? dayjs().to(riseTime) : riseTime.format('DD MMM à HH:mm').replace(':', 'h')} />
           }
           {
             typeof riseTime === 'boolean' && <DSOValues chipValue chipColor={app_colors.white_forty} title="Heure de lever" value={isCircumpolar ? 'Toute la nuit' : 'Jamais'} />
           }
           {
-            typeof setTime === 'string' && <DSOValues chipValue chipColor={app_colors.white_forty} title="Prochain coucher" value={setTime} />
+            typeof setTime === 'object' && <DSOValues chipValue chipColor={app_colors.white_forty} title="Prochain coucher" value={selectedTimeBase === 'relative' ? dayjs().to(setTime) : setTime.format('DD MMM à HH:mm').replace(':', 'h')} />
           }
           {
             typeof setTime === 'boolean' && <DSOValues chipValue chipColor={app_colors.white_forty} title="Heure de lever" value={isCircumpolar ? 'Toute la nuit' : 'Jamais'} />
