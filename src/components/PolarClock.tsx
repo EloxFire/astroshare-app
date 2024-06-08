@@ -57,7 +57,7 @@ export default function PolarClock() {
   };
 
 
-  const { x, y } = calculatePointPosition(81, 0, outerRadius - 5);
+  const { x, y } = calculatePointPosition(parseInt(HA.toString().split('.')[0]), parseInt(HA.toString().split('.')[1][0]), outerRadius - 5);
 
   // Prompt GPT
   // Voici une précision pour le calcul de la position du point. Le quadrant que nous avons déssiné plus haut exprime sur 360° des heures au format decimal, peut tu ajuster le calcul de la position du point ?
