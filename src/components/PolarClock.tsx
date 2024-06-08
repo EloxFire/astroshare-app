@@ -56,6 +56,7 @@ export default function PolarClock() {
     return { x, y };
   };
 
+
   const { x, y } = calculatePointPosition(81, 0, outerRadius - 5);
 
   // Prompt GPT

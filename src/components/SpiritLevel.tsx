@@ -10,6 +10,11 @@ export default function SpiritLevel() {
   useEffect(() => {
     (async () => {
       const { status } = await DeviceMotion.requestPermissionsAsync();
+
+      if (status !== 'granted') {
+        console.log('DeviceMotion permission denied');
+        return;
+      }
       const motionSensorAvailable = await DeviceMotion.isAvailableAsync();
 
       if (status === 'granted' && motionSensorAvailable) {
@@ -17,7 +22,6 @@ export default function SpiritLevel() {
         
         // DeviceMotion.setUpdateInterval(5000);
         DeviceMotion.addListener((data) => {  
-          console.log({ x: data.rotation.beta * 100, y: data.rotation.gamma * 100 });
           const x = data.rotation.beta * 70;
           const y = data.rotation.gamma * 70;
 

@@ -18,47 +18,14 @@ export default function SolarWeather({ navigation }: any) {
   const videoRef = useRef(null);
 
   // SUN
-  const [loadingImage, setLoadingImage] = useState<boolean>(true)
+  const [loadingImage, setLoadingImage] = useState<boolean>(false)
   const [isImageMode, setIsImageMode] = useState<boolean>(true)
   const [currentImageFilter, setCurrentImageFilter] = useState<ESunFilter>('HMI_IC' as ESunFilter)
-  const [currentImageUri, setCurrentImageUri] = useState<string>(sunImagesSrcWavelengths[currentImageFilter] as string)
-  const [currentImageDate, setCurrentImageDate] = useState<string>('')
 
   // CME
-  const [loadingCME, setLoadingCME] = useState<boolean>(true)
+  const [loadingCME, setLoadingCME] = useState<boolean>(false)
   const [isCmeImageMode, setIsCmeImageMode] = useState<boolean>(true)
   const [currentCmeImageFilter, setCurrentCmeImageFilter] = useState<ECmeFilters>('C2' as ECmeFilters)
-  const [currentCmeImageUri, setCurrentCmeImageUri] = useState<string>(cmeImageSrc[currentCmeImageFilter] as string)
-  const [currentCmeImageDate, setCurrentCmeImageDate] = useState<string>('')
-
-  useEffect(() => {
-    (async () => {
-      console.log("Fetching sun image");
-      setLoadingImage(true)
-      const finalUri = isImageMode ? sunImagesSrcWavelengths[currentImageFilter] : sunVideoSrcWavelengths[currentImageFilter]
-      const response = await axios.get(finalUri)
-      console.log(finalUri);
-      
-      
-      
-      setCurrentImageDate(dayjs(response.request.responseHeaders['Last-Modified']).format('DD/MM/YYYY HH:mm:ss'))
-      setCurrentImageUri(finalUri)
-      setLoadingImage(false)
-    })()
-  }, [currentImageFilter, isImageMode])
-
-  useEffect(() => {
-    (async () => {
-      console.log("Fetching CME image");
-      setLoadingCME(true)
-      const finalUri = isCmeImageMode ? cmeImageSrc[currentCmeImageFilter] : cmeVideoSrc[currentCmeImageFilter]
-      const response = await axios.get(finalUri)
-      
-      setCurrentCmeImageDate(dayjs(response.request.responseHeaders['Last-Modified']).format('DD/MM/YYYY HH:mm:ss'))
-      setCurrentCmeImageUri(finalUri)
-      setLoadingCME(false)
-    })()
-  }, [currentCmeImageFilter, isCmeImageMode])
   
   return (
     <View style={globalStyles.body}>
@@ -78,20 +45,18 @@ export default function SolarWeather({ navigation }: any) {
             </View>
             <Text style={solarWeatherStyles.container.title}>Instrument : {currentImageFilter}</Text>
             <Text style={[solarWeatherStyles.container.subtitle, { opacity: 1}]}>Zone d'étude : {loadingImage ? "Chargement" : sunIMageFiltersDescription[currentImageFilter]}</Text>
-            <Text style={[solarWeatherStyles.container.subtitle, {marginTop: 8}]}>Image capturée le : {loadingImage ? "Chargement" : currentImageDate}</Text>
             <Text style={solarWeatherStyles.container.subtitle}>Source : NASA / SDO (Solar Dynamics Observatory)</Text>
             {
               isImageMode ?
-              <Image source={{ uri: currentImageUri + '?' + new Date() }} style={[solarWeatherStyles.sunImage, { opacity: loadingImage ? .1 : 1, borderWidth: loadingImage ? 1 : 0, borderColor: app_colors.white_eighty }]} />
+              <Image onLoadStart={() => setLoadingImage(true)} onLoadEnd={() => setLoadingImage(false)} source={{ uri: sunImagesSrcWavelengths[currentImageFilter] + '?' + new Date() }} style={solarWeatherStyles.sunImage} />
               :
               <Video
               ref={videoRef}
-              source={{uri: currentImageUri + '?' + new Date()}}
+              source={{uri: sunVideoSrcWavelengths[currentImageFilter] + '?' + new Date()}}
               isMuted={true}
-              shouldPlay={loadingImage ? false : true}
+              shouldPlay={true}
               rate={2.0}
-              onLoadStart={() => setLoadingImage(true)}
-              onLoad={() => setLoadingImage(false)}
+              // onLoadStart={() => setLoadingImage(true)}
               isLooping={true}
               resizeMode={ResizeMode.CONTAIN}
               style={{ width: Dimensions.get('window').width - 40, height: Dimensions.get('window').width - 40, marginVertical: 10, borderRadius: 10, opacity: loadingImage ? .1 : 1, borderWidth: loadingImage ? 1 : 0, borderColor: app_colors.white_eighty}}
@@ -119,21 +84,18 @@ export default function SolarWeather({ navigation }: any) {
               </TouchableOpacity>
             </View>
             <Text style={solarWeatherStyles.container.title}>Ejections de Masse Coronale (EMC)</Text>
-              <Text style={[solarWeatherStyles.container.subtitle, { opacity: 1}]}>Zone d'étude : {loadingCME ? "Chargement" : cmeImageDescription[currentCmeImageFilter]}</Text>
-              <Text style={[solarWeatherStyles.container.subtitle, {marginTop: 8}]}>Image capturée le : {loadingCME ? "Chargement" : currentCmeImageDate}</Text>
             <Text style={solarWeatherStyles.container.subtitle}>Source : NASA / SoHO (Solar and Heliospheric Observatory)</Text>
             {
               isCmeImageMode ?
-                <Image source={{ uri: currentCmeImageUri + '?' + new Date() }} style={[solarWeatherStyles.sunImage, { opacity: loadingCME ? .1 : 1, borderWidth: loadingCME ? 1 : 0, borderColor: app_colors.white_eighty }]} />
+                <Image source={{ uri: cmeImageSrc[currentCmeImageFilter] + '?' + new Date() }} style={solarWeatherStyles.sunImage} />
               :
               <Video
                 ref={videoRef}
-                source={{uri: currentCmeImageUri + '?' + new Date()}}
+                source={{uri: cmeVideoSrc[currentCmeImageFilter] + '?' + new Date()}}
                 isMuted={true}
-                shouldPlay={loadingCME ? false : true}
+                shouldPlay={true}
                 rate={1.0}
-                onLoadStart={() => setLoadingCME(true)}
-                onLoad={() => setLoadingCME(false)}
+                // onLoadStart={() => setLoadingCME(true)}
                 isLooping={true}
                 resizeMode={ResizeMode.CONTAIN}
                 style={{ width: Dimensions.get('window').width - 40, height: Dimensions.get('window').width - 40, marginVertical: 10, borderRadius: 10, opacity: loadingCME ? .1 : 1, borderWidth: loadingCME ? 1 : 0, borderColor: app_colors.white_eighty}}
@@ -148,6 +110,13 @@ export default function SolarWeather({ navigation }: any) {
                 })
               }
             </View>
+          </View>
+
+          {/* SUNSPOTS CONTAINER */}
+          <View style={solarWeatherStyles.container}>
+            <Text style={solarWeatherStyles.container.title}>Tâches solaires (Active Regions)</Text>
+            <Text style={solarWeatherStyles.container.subtitle}>Source : NASA / SoHO (Solar and Heliospheric Observatory)</Text>
+            <Image source={{ uri: "https://soho.nascom.nasa.gov/data/synoptic/sunspots_earth/mdi_sunspots_1024.jpg" + '?' + new Date() }} style={solarWeatherStyles.sunImage} />
           </View>
         </View>
       </ScrollView>
