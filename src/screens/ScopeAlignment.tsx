@@ -42,20 +42,20 @@ export default function ScopeAlignment({ navigation }: any) {
             <Text style={scopeAlignmentStyles.content.infoText}>{scopeAlignmentSteps[currentStep - 1].description}</Text>
 
             <View style={scopeAlignmentStyles.content.toolContainer}>
-              {currentStep === 1 && <Compass/>}
-              {currentStep === 2 && <SpiritLevel/>}
-              {currentStep === 3 && <PolarClock/>}
+              {currentStep === 1 && <Compass />}
+              {currentStep === 2 && <SpiritLevel />}
+              {currentStep === 3 && <PolarClock />}
             </View>
-            
+
             <TouchableOpacity activeOpacity={.5} style={scopeAlignmentStyles.content.button} onPress={() => handleNextStep()}>
-              <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+              <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                 <Text style={scopeAlignmentStyles.content.button.text}>{currentStep === 3 ? "Retour à l'accueil" : "Étape suivante"}</Text>
               </View>
             </TouchableOpacity>
             {
               currentStep !== 1 &&
-              <TouchableOpacity activeOpacity={.5} style={[scopeAlignmentStyles.content.button, {marginTop: 10}]} onPress={() => handlePreviousStep()}>
-                <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+              <TouchableOpacity activeOpacity={.5} style={[scopeAlignmentStyles.content.button, { marginTop: 10 }]} onPress={() => handlePreviousStep()}>
+                <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                   <Text style={scopeAlignmentStyles.content.button.text}>{currentStep === 1 ? "Retour à l'accueil" : "Retour"}</Text>
                 </View>
               </TouchableOpacity>
