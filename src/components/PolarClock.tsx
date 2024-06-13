@@ -1,43 +1,53 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Dimensions, Image, StyleSheet, Text, View } from 'react-native'
 import { Circle, Line, Svg, Text as SvgText } from 'react-native-svg';
 import { convertHMSToDegreeFromString } from '../helpers/scripts/astro/HmsToDegree';
 import { getHourAngle, getLocalSiderealTime } from '@observerly/astrometry';
 import { useSettings } from '../contexts/AppSettingsContext';
 import { polarClockStyles } from '../styles/components/polarClock';
-import { app_colors } from '../helpers/constants';
+import { Polaris, app_colors } from '../helpers/constants';
 import { scopeAlignmentStyles } from '../styles/screens/scopeAlignment';
 import dayjs from 'dayjs';
 import { shortDmsCoord } from '../helpers/scripts/shortenDmsCoord';
+import { convertNumericLSTtoTime } from '../helpers/scripts/astro/convertNumericLSTtoTime';
 
 export default function PolarClock() {
 
   const { currentUserLocation } = useSettings()
-  const polaris = {
-    ra: "03:01:03.6",
-    dec: "+89:21:50.4",
+
+  const degRa: number | undefined = convertHMSToDegreeFromString(Polaris.ra);
+  const [numericLST, setNumericLST] = useState<number>(0);
+  const [timeLST, setTimeLST] = useState<string>('');
+  const [HA, setHA] = useState<number>(0);
+  const [timeHA, setTimeHA] = useState<string>('');
+  const [polarisX, setPolarisX] = useState<number>(0);
+  const [polarisY, setPolarisY] = useState<number>(0);
+
+  useEffect(() => {
+    updatePosition();
+    const update = setInterval(() => {
+      updatePosition();
+    }, 1000)
+
+    return () => clearInterval(update);
+  }, [])
+
+  const updatePosition = () => {
+    // console.log('Updating polaris position');
+    const nlst = getLocalSiderealTime(new Date(), currentUserLocation.lon);
+    const tlst = convertNumericLSTtoTime(nlst);
+    const polarisPos = calculatePolarisPosition(nlst);
+
+    setNumericLST(nlst);
+    setTimeLST(tlst);
+    setPolarisX(polarisPos.polarisX);
+    setPolarisY(polarisPos.polarisY);
+
+    if (degRa) {
+      setHA(getHourAngle(new Date(), currentUserLocation.lon, degRa) / 15);
+      setTimeHA(convertNumericLSTtoTime(HA));
+    }
   }
-
-
-  const degRa = convertHMSToDegreeFromString(polaris.ra);
-
-  console.log('degRa', degRa);
-  console.log("lon", currentUserLocation.lon);
-
-
-
-
-  let HA = 0;
-  let LST = 0;
-  if (degRa) {
-    HA = getHourAngle(new Date(), currentUserLocation.lon, degRa) / 15;
-  }
-
-  console.log("HA", HA);
-  console.log("INFOS :", parseInt(HA.toString().split('.')[0]), parseInt(HA.toString().split('.')[1]));
-
-
-
 
   const { width } = Dimensions.get('screen');
   const centerX = width / 2;
@@ -56,27 +66,39 @@ export default function PolarClock() {
     return { startX, startY, endX, endY };
   };
 
-  const calculatePointPosition = (hours: number, minutes: number, radius: number) => {
-    const anglePerHour = 360 / 12; // 360 degrees / 12 hours
-    const anglePerMinute = anglePerHour / 60; // Degrees per minute
-    const totalAngle = (hours % 12) * anglePerHour + minutes * anglePerMinute;
-    const angleInRadians = (totalAngle + 90) * Math.PI / 180; // Adding 90 degrees to adjust for SVG coordinate system
-    const x = centerX + radius * Math.cos(angleInRadians);
-    const y = centerY + radius * Math.sin(angleInRadians);
-    return { x, y };
+  const calculatePolarisPosition = (LST: number) => {
+    const angle = (LST % 24);
+
+    const radius = (outerRadius + (outerRadius - 10)) / 2;
+
+    const polarisX = centerX + radius * Math.cos(angle * Math.PI / 180);
+    const polarisY = centerY + radius * Math.sin(angle * Math.PI / 180);
+
+    return { polarisX, polarisY };
   };
-
-
-  const { x, y } = calculatePointPosition(parseInt(HA.toString().split('.')[0]), parseInt(HA.toString().split('.')[1]), outerRadius - 5);
-
-  // Prompt GPT
-  // Voici une précision pour le calcul de la position du point. Le quadrant que nous avons déssiné plus haut exprime sur 360° des heures au format decimal, peut tu ajuster le calcul de la position du point ?
 
   return (
     <View>
-      <Text style={scopeAlignmentStyles.content.infoText}>Longitude : {shortDmsCoord(currentUserLocation.dms?.dms_lon)}</Text>
-      <Text style={scopeAlignmentStyles.content.infoText}>Heure locale : {dayjs().format('HH:mm').replace(':', 'h')}</Text>
-      <Text style={scopeAlignmentStyles.content.infoText}>Position polaire : {HA}</Text>
+      <View style={scopeAlignmentStyles.content.dataContainer}>
+        <Text style={scopeAlignmentStyles.content.dataContainer.title}>Longitude :</Text>
+        <Text style={scopeAlignmentStyles.content.dataContainer.value}>{shortDmsCoord(currentUserLocation.dms?.dms_lon)}</Text>
+      </View>
+
+      <View style={scopeAlignmentStyles.content.dataContainer}>
+        <Text style={scopeAlignmentStyles.content.dataContainer.title}>Heure locale :</Text>
+        <Text style={scopeAlignmentStyles.content.dataContainer.value}>{dayjs().format('HH:mm').replace(':', 'h')}</Text>
+      </View>
+
+      <View style={scopeAlignmentStyles.content.dataContainer}>
+        <Text style={scopeAlignmentStyles.content.dataContainer.title}>Temps local sidéral (LST) :</Text>
+        <Text style={scopeAlignmentStyles.content.dataContainer.value}>{timeLST}</Text>
+      </View>
+
+      <View style={scopeAlignmentStyles.content.dataContainer}>
+        <Text style={scopeAlignmentStyles.content.dataContainer.title}>Position polaire :</Text>
+        <Text style={scopeAlignmentStyles.content.dataContainer.value}>{timeHA.substring(0, 5)}</Text>
+      </View>
+
       <View style={polarClockStyles.container}>
         <Svg width={width} height={width}>
           <Circle cx={centerX} cy={centerY} r={outerRadius} fill="none" stroke={app_colors.red_eighty} strokeWidth={1} />
@@ -157,7 +179,7 @@ export default function PolarClock() {
           <Circle cx={centerX} cy={centerY} r={outerRadius - 5} fill="none" stroke={app_colors.black} strokeWidth={10} />
           <Line x1={centerX} y1={30} x2={centerX} y2={width - 30} stroke={app_colors.red_eighty} strokeWidth={2} />
           <Line x1={30} y1={centerY} x2={width - 30} y2={centerY} stroke={app_colors.red_eighty} strokeWidth={2} />
-          <Circle cx={x} cy={y} r={pointRadius} fill={app_colors.white_eighty} />
+          <Circle cx={polarisX} cy={polarisY} r={pointRadius} fill={app_colors.white_eighty} />
         </Svg>
       </View>
     </View>

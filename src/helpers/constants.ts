@@ -19,6 +19,11 @@ export const app_colors = {
   green_eighty: '#00FF0080',
 }
 
+export const Polaris = {
+  ra: "03:01:03.6",
+  dec: "+89:21:50.4",
+}
+
 export const storageKeys = {
   viewPoints: 'viewPoints',
   hasChangedCurrentSpotElevation: 'hasChangedCurrentSpotElevation',
