@@ -15,9 +15,10 @@ import WeatherOverview from '../components/weather/WeatherOverview'
 import Ephemeris from '../components/weather/Ephemeris'
 import Hourly from '../components/weather/Hourly'
 import Toast from 'react-native-root-toast'
+import { showToast } from '../helpers/scripts/showToast'
 
 export default function Weather({ navigation }: any) {
-  
+
   const { currentUserLocation } = useSettings();
   const [searchString, setSearchString] = useState<string>('')
   const [searchedCity, setSearchedCity] = useState<LocationObject | null>(null)
@@ -30,20 +31,24 @@ export default function Weather({ navigation }: any) {
 
   const getCurrent = async () => {
     if (currentUserLocation) {
-      let toast = Toast.show('Aquisition de la météo', { duration: Toast.durations.LONG, position: Toast.positions.BOTTOM });
-      setTimeout(() => {
-        Toast.hide(toast);
-      }, 2000)
-      const weather = await getWeather(currentUserLocation.lat, currentUserLocation.lon)
-      const moon = await getMoon(currentUserLocation.lat, currentUserLocation.lon)
-      setWeather(weather)
-      setMoonInfos(moon)
+      showToast({ message: 'Récupération des informations', type: 'success' })
+
+      try {
+        const weather = await getWeather(currentUserLocation.lat, currentUserLocation.lon)
+        setWeather(weather)
+      } catch (error) {
+        showToast({ message: 'Erreur lors de la récupération de la météo', type: 'error' })
+      }
+
+      try {
+        const moon = await getMoon(currentUserLocation.lat, currentUserLocation.lon)
+        setMoonInfos(moon)
+      } catch (error) {
+        showToast({ message: 'Erreur lors de la récupération des informations lunaires', type: 'error' })
+      }
       setSearchedCity(null)
       setSearchString('')
-      let toast2 = Toast.show('Succès', { duration: Toast.durations.LONG, position: Toast.positions.BOTTOM });
-      setTimeout(() => {
-        Toast.hide(toast2);
-      }, 3000)
+      showToast({ message: 'Succès', type: 'success' })
     }
   }
 
@@ -52,15 +57,12 @@ export default function Weather({ navigation }: any) {
       return
     }
 
-    let toast = Toast.show('Aquisition de la météo', { duration: Toast.durations.LONG, position: Toast.positions.BOTTOM });
-    setTimeout(() => {
-      Toast.hide(toast);
-    }, 3000)
+    showToast({ message: 'Récupération des informations', type: 'success' })
 
     setWeather(null)
 
     Keyboard.dismiss();
-    
+
     const cityCoords = await getCityCoords(searchString)
     if (cityCoords.length === 0) return;
 
@@ -72,14 +74,11 @@ export default function Weather({ navigation }: any) {
       state: cityCoords[0].state || '',
       dms: convertDDtoDMS(cityCoords[0].lat, cityCoords[0].lon)
     }
-   
+
     const searchedWeather = await getWeather(city.lat, city.lon)
-    setSearchedCity(city)    
+    setSearchedCity(city)
     setWeather(searchedWeather)
-    let toast2 = Toast.show('Succès', { duration: Toast.durations.LONG, position: Toast.positions.BOTTOM });
-    setTimeout(() => {
-      Toast.hide(toast2);
-    }, 3000)
+    showToast({ message: 'Succès', type: 'success' })
   }
 
   return (
@@ -92,13 +91,13 @@ export default function Weather({ navigation }: any) {
       {
         searchedCity &&
         <TouchableOpacity style={weatherStyles.weatherContainer.resetButton} onPress={() => getCurrent()}>
-          <Image source={require('../../assets/icons/FiRepeat.png')} style={{ width: 15, height: 15, marginRight: 10}}/>
+          <Image source={require('../../assets/icons/FiRepeat.png')} style={{ width: 15, height: 15, marginRight: 10 }} />
           <Text style={weatherStyles.content.text}>Retour à {currentUserLocation.common_name || ""}</Text>
         </TouchableOpacity>
       }
       <ScrollView>
         <WeatherOverview weather={weather} currentUserLocation={currentUserLocation} searchedCity={searchedCity} refresh={() => getCurrent()} />
-        <Hourly weather={weather}/>
+        <Hourly weather={weather} />
         <Ephemeris weather={weather} moonInfos={moonInfos} />
         <Text style={weatherStyles.weatherContainer.title}>Légende</Text>
         <View style={weatherStyles.legend}>

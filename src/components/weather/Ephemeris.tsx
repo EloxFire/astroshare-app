@@ -24,18 +24,18 @@ export default function Ephemeris({ weather, moonInfos }: EphemerisProps) {
   }, [weather])
 
   return (
-    <View style={[weatherStyles.weatherContainer, {marginBottom: 50}]}>
-      <Text style={[weatherStyles.weatherContainer.title, {marginBottom: 20}]}>Éphéméride</Text>
+    <View style={[weatherStyles.weatherContainer, { marginBottom: 50 }]}>
+      <Text style={[weatherStyles.weatherContainer.title, { marginBottom: 20 }]}>Éphéméride</Text>
       {
         weather &&
-          <EphemerisBar
-            mode={(weather && dayjs.unix(weather.current.sunset).isBefore(dayjs())) ? 'night' : 'day'}
-            percentage={weather ? calculateDayPercentage(dayjs.unix(weather.current.sunrise), dayjs.unix(weather.current.sunset), mode === 'day' ? 0 : 1) : 0}
-            sunrise={mode === 'night' ? dayjs.unix(weather.daily[1].sunrise).format('HH:mm') : dayjs.unix(weather.current.sunrise).format('HH:mm')}
-            sunset={mode === 'night' ? dayjs.unix(weather.current.sunset).format('HH:mm') : dayjs.unix(weather.daily[1].sunset).format('HH:mm')}
-          />
+        <EphemerisBar
+          mode={(weather && dayjs.unix(weather.current.sunset).isBefore(dayjs())) ? 'night' : 'day'}
+          percentage={weather ? calculateDayPercentage(dayjs.unix(weather.current.sunrise), dayjs.unix(weather.current.sunset), mode === 'day' ? 0 : 1) : 0}
+          sunrise={mode === 'night' ? dayjs.unix(weather.daily[1].sunrise).format('HH:mm') : dayjs.unix(weather.current.sunrise).format('HH:mm')}
+          sunset={mode === 'night' ? dayjs.unix(weather.current.sunset).format('HH:mm') : dayjs.unix(weather.daily[1].sunset).format('HH:mm')}
+        />
       }
-      <MoonInfos moonInfos={ moonInfos} />
+      <MoonInfos moonInfos={moonInfos} />
     </View>
   )
 }
