@@ -96,7 +96,7 @@ export default function PolarClock() {
 
       <View style={scopeAlignmentStyles.content.dataContainer}>
         <Text style={scopeAlignmentStyles.content.dataContainer.title}>Position polaire :</Text>
-        <Text style={scopeAlignmentStyles.content.dataContainer.value}>{timeHA.substring(0, 5)}</Text>
+        <Text style={scopeAlignmentStyles.content.dataContainer.value}>{timeHA}</Text>
       </View>
 
       <View style={polarClockStyles.container}>
