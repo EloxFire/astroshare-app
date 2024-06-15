@@ -39,3 +39,11 @@ export const getObject = async (key: string) => {
     return null;
   }
 };
+
+export const removeData = async (key: string) => {
+  try {
+    await AsyncStorage.removeItem(key);
+  } catch (e) {
+    showToast({ message: 'Une erreur est survenue, veuillez réessayer...', type: 'error' });
+  }
+}

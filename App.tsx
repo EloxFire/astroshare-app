@@ -26,6 +26,7 @@ import LocalizedFormat from 'dayjs/plugin/localizedFormat'
 import SolarWeather from "./src/screens/SolarWeather";
 import ScopeAlignment from "./src/screens/ScopeAlignment";
 import 'dayjs/locale/fr'
+import Onboarding from "./src/screens/Onboarding";
 
 dayjs.locale('fr');
 dayjs.extend(LocalizedFormat)
@@ -67,11 +68,12 @@ export default function App({ navigation }: any) {
 
   return (
     <RootSiblingParent>
-      <AppSettingsProvider>
-        <ObservationSpotProvider>
-          <NavigationContainer>
+      <NavigationContainer>
+        <AppSettingsProvider navigation={navigation}>
+          <ObservationSpotProvider>
             <StatusBar animated style="light" translucent />
             <Stack.Navigator screenOptions={{ headerShown: false }}>
+              <Stack.Screen name={routes.onboarding.path} component={Onboarding} />
               <Stack.Screen name={routes.home.path} component={Home} />
               <Stack.Screen name={routes.objectDetails.path} component={ObjectDetails} />
               <Stack.Screen name={routes.scopeAlignment.path} component={ScopeAlignment} />
@@ -83,9 +85,9 @@ export default function App({ navigation }: any) {
               <Stack.Screen name={routes.favoritesViewPoints.path} component={ViewPointsManager} />
               <Stack.Screen name={routes.about.path} component={About} />
             </Stack.Navigator>
-          </NavigationContainer>
-        </ObservationSpotProvider>
-      </AppSettingsProvider>
+          </ObservationSpotProvider>
+        </AppSettingsProvider>
+      </NavigationContainer>
     </RootSiblingParent>
   );
 }

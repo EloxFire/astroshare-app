@@ -19,9 +19,10 @@ export const useSettings = () => {
 
 interface AppSettingsProviderProps {
   children: ReactNode
+  navigation: any
 }
 
-export function AppSettingsProvider({ children }: AppSettingsProviderProps) {
+export function AppSettingsProvider({ children, navigation }: AppSettingsProviderProps) {
 
   const [isNightMode, setIsNightMode] = useState<boolean>(false)
 
@@ -32,6 +33,20 @@ export function AppSettingsProvider({ children }: AppSettingsProviderProps) {
   const [currentUserHorizon, setCurrentUserHorizon] = useState<number>(0)
   const [isCellularDataEnabled, setIsCellularDataEnabled] = useState<boolean>(true)
   const [hasInternetConnection, setHasInternetConnection] = useState<boolean>(false)
+
+  useEffect(() => {
+    (async () => {
+      const firstLaunch = await getData('firstLaunch');
+      if (!firstLaunch) {
+        await storeData('firstLaunch', 'true');
+        navigation.navigate('Onboarding')
+      }
+
+      if (firstLaunch === 'true') {
+        await storeData('firstLaunch', 'false');
+      }
+    })()
+  }, [])
 
   useEffect(() => {
     (async () => {
@@ -91,7 +106,7 @@ export function AppSettingsProvider({ children }: AppSettingsProviderProps) {
         dms: convertDDtoDMS(location.coords.latitude, location.coords.longitude)
       }
 
-      // setCurrentUserLocation(userCoords);
+      setCurrentUserLocation(userCoords);
       setCurrentUserHorizon(90 - userCoords.lat)
       setLocationLoading(false);
       showToast({ message: 'Signal trouvé : ' + userCoords.common_name, duration: Toast.durations.LONG, type: 'success' });
