@@ -23,11 +23,11 @@ export default function ScopeAlignment({ navigation }: any) {
   const [currentStep, setCurrentStep] = useState(3);
 
   const handleNextStep = () => {
-    currentStep === 3 ? navigation.navigate(routes.home) : setCurrentStep(currentStep + 1);
+    currentStep === 3 ? navigation.navigate(routes.home.path) : setCurrentStep(currentStep + 1);
   }
 
   const handlePreviousStep = () => {
-    currentStep === 1 ? navigation.navigate(routes.home) : setCurrentStep(currentStep - 1);
+    currentStep === 1 ? navigation.navigate(routes.home.path) : setCurrentStep(currentStep - 1);
   }
 
   return (

@@ -57,7 +57,7 @@ export function AppSettingsProvider({ children }: AppSettingsProviderProps) {
 
       setLocationPermissions(true);
       showToast({ message: 'Acquisition de votre position', duration: Toast.durations.SHORT, type: 'success' });
-      
+
       // Get user current position
       await getUserCurrentPosition();
     })();
@@ -72,13 +72,13 @@ export function AppSettingsProvider({ children }: AppSettingsProviderProps) {
       unsubscribe()
     }
   }, [])
-  
+
   const getUserCurrentPosition = async () => {
     setLocationLoading(true);
     showToast({ message: 'Acquisition de votre position', duration: Toast.durations.SHORT, type: 'success' });
 
     try {
-      let location = await Location.getCurrentPositionAsync({accuracy: Location.Accuracy.Highest});
+      let location = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Highest });
       const coords: LocationObject = { lat: location.coords.latitude, lon: location.coords.longitude }
       let name = await getLocationName(coords);
 
@@ -90,14 +90,14 @@ export function AppSettingsProvider({ children }: AppSettingsProviderProps) {
         state: name.state,
         dms: convertDDtoDMS(location.coords.latitude, location.coords.longitude)
       }
-  
-      setCurrentUserLocation(userCoords);
+
+      // setCurrentUserLocation(userCoords);
       setCurrentUserHorizon(90 - userCoords.lat)
       setLocationLoading(false);
       showToast({ message: 'Signal trouvé : ' + userCoords.common_name, duration: Toast.durations.LONG, type: 'success' });
     } catch (error) {
       console.log("Error while getting location name : ", error);
-      
+
       showToast({ message: 'Erreur lors de l\'acquisition de votre position', duration: Toast.durations.LONG, type: 'error' });
       setLocationLoading(false);
     }

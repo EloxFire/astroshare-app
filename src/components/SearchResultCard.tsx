@@ -24,8 +24,8 @@ interface SearchResultCardProps {
 
 export default function SearchResultCard({ object, navigation }: SearchResultCardProps) {
 
-  const {selectedSpot, defaultAltitude} = useSpot()
-  const {currentUserLocation} = useSettings()
+  const { selectedSpot, defaultAltitude } = useSpot()
+  const { currentUserLocation } = useSettings()
   const [isVisible, setIsVisible] = useState(false)
   const [riseTime, setRiseTime] = useState<Dayjs | boolean>(false)
   const [setTime, setSetTime] = useState<Dayjs | boolean>(false)
@@ -36,23 +36,23 @@ export default function SearchResultCard({ object, navigation }: SearchResultCar
     const altitude = selectedSpot ? selectedSpot.equipments.altitude : defaultAltitude; // 342m est l'altitude moyenne en France métropolitaine
     const degRa = convertHMSToDegreeFromString(object.ra)
     const degDec = convertDMSToDegreeFromString(object.dec)
-    const horizonAngle = calculateHorizonAngle(extractNumbers(altitude))    
-    
+    const horizonAngle = calculateHorizonAngle(extractNumbers(altitude))
+
     if (degRa && degDec) {
       const observer: GeographicCoordinate = { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }
       const target: EquatorialCoordinate = { ra: degRa, dec: degDec }
       let visible = isBodyAboveHorizon(new Date(), observer, target, horizonAngle)
       setIsVisible(visible)
 
-    
+
       setWillRise(isBodyVisibleForNight(new Date(), observer, target, horizonAngle))
       setIsCircumpolar(isBodyCircumpolar(observer, target, horizonAngle))
 
       if (!isCircumpolar) {
         let rise = getBodyNextRise(new Date(), observer, target, horizonAngle)
         let set = getBodyNextSet(new Date(), observer, target, horizonAngle)
-        
-        if (isTransitInstance(rise)) {      
+
+        if (isTransitInstance(rise)) {
           setRiseTime(dayjs(rise.datetime))
         }
         if (isTransitInstance(set)) {
@@ -61,10 +61,10 @@ export default function SearchResultCard({ object, navigation }: SearchResultCar
       }
     }
   }, [])
-  
+
 
   return (
-    <TouchableOpacity onPress={() => navigation.navigate(routes.objectDetails, {object: object})}>
+    <TouchableOpacity onPress={() => navigation.navigate(routes.objectDetails.path, { object: object })}>
       <View style={searchResultCardStyles.card}>
         <View style={searchResultCardStyles.card.header}>
           <View>
@@ -92,7 +92,7 @@ export default function SearchResultCard({ object, navigation }: SearchResultCar
           </View>
         </View>
         <View style={searchResultCardStyles.card.footer}>
-          <Text style={[searchResultCardStyles.card.footer.chip, {backgroundColor: isVisible ? app_colors.green_eighty : app_colors.red_eighty}]}>{isVisible ? `Visible` : "Non visible"}</Text>
+          <Text style={[searchResultCardStyles.card.footer.chip, { backgroundColor: isVisible ? app_colors.green_eighty : app_colors.red_eighty }]}>{isVisible ? `Visible` : "Non visible"}</Text>
         </View>
       </View>
     </TouchableOpacity>

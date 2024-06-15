@@ -39,7 +39,7 @@ dayjs().format('L LT')
 
 const Stack = createNativeStackNavigator();
 
-export default function App({ navigation}: any) {
+export default function App({ navigation }: any) {
   const [appIsReady, setAppIsReady] = useState(false);
 
   useEffect(() => {
@@ -70,18 +70,18 @@ export default function App({ navigation}: any) {
       <AppSettingsProvider>
         <ObservationSpotProvider>
           <NavigationContainer>
-            <StatusBar animated style="light" translucent/>
+            <StatusBar animated style="light" translucent />
             <Stack.Navigator screenOptions={{ headerShown: false }}>
-              <Stack.Screen name={routes.home} component={Home} />
-              <Stack.Screen name={routes.objectDetails} component={ObjectDetails} />
-              <Stack.Screen name={routes.scopeAlignment} component={ScopeAlignment} />
-              <Stack.Screen name={routes.weather} component={Weather} />
-              <Stack.Screen name={routes.moonPhases} component={MoonPhases}/>
-              <Stack.Screen name={routes.solarWeather} component={SolarWeather} />
-              <Stack.Screen name={routes.apod} component={Apod} />
-              <Stack.Screen name={routes.settings} component={Settings} />
-              <Stack.Screen name={routes.favoritesViewPoints} component={ViewPointsManager} />
-              <Stack.Screen name={routes.about} component={About} />
+              <Stack.Screen name={routes.home.path} component={Home} />
+              <Stack.Screen name={routes.objectDetails.path} component={ObjectDetails} />
+              <Stack.Screen name={routes.scopeAlignment.path} component={ScopeAlignment} />
+              <Stack.Screen name={routes.weather.path} component={Weather} />
+              <Stack.Screen name={routes.moonPhases.path} component={MoonPhases} />
+              <Stack.Screen name={routes.solarWeather.path} component={SolarWeather} />
+              <Stack.Screen name={routes.apod.path} component={Apod} />
+              <Stack.Screen name={routes.settings.path} component={Settings} />
+              <Stack.Screen name={routes.favoritesViewPoints.path} component={ViewPointsManager} />
+              <Stack.Screen name={routes.about.path} component={About} />
             </Stack.Navigator>
           </NavigationContainer>
         </ObservationSpotProvider>

@@ -17,16 +17,17 @@ import { useSettings } from '../contexts/AppSettingsContext';
 import { showToast } from '../helpers/scripts/showToast';
 import SkyInfosBar from '../components/banners/SkyInfosBar';
 import BannerHandler from '../components/banners/BannerHandler';
+import { EFeatureRequirements } from '../helpers/types/FeatureRequirements';
 
 export default function Home({ navigation }: any) {
 
   const [searchString, setSearchString] = useState('')
   const [searchResults, setSearchResults] = useState<DSO[]>([])
-  const {hasInternetConnection} = useSettings()
+  const { hasInternetConnection } = useSettings()
 
   const handleSearch = async () => {
     if (!hasInternetConnection) {
-      showToast({message: 'Aucune connexion à internet', type: 'error'})
+      showToast({ message: 'Aucune connexion à internet', type: 'error' })
       return;
     }
     Keyboard.dismiss()
@@ -38,7 +39,7 @@ export default function Home({ navigation }: any) {
       setSearchResults(response.data.data)
     } catch (error) {
       console.log(error)
-      showToast({message: 'Une erreur est survenue...', type: 'error'})
+      showToast({ message: 'Une erreur est survenue...', type: 'error' })
     }
   }
 
@@ -61,24 +62,24 @@ export default function Home({ navigation }: any) {
       />
       {
         searchResults.length > 0 &&
-        <HomeSearchResults results={searchResults} onReset={handleResetSearch} navigation={navigation}/>
+        <HomeSearchResults results={searchResults} onReset={handleResetSearch} navigation={navigation} />
       }
-      <ScrollView style={{borderTopWidth: 1, borderTopColor: app_colors.white_forty}}>
+      <ScrollView style={{ borderTopWidth: 1, borderTopColor: app_colors.white_forty }}>
         <View style={homeStyles.toolsSuggestions}>
           <Text style={globalStyles.sections.title}>Vos outils</Text>
           <Text style={globalStyles.sections.subtitle}>Votre caisse à outils personnalisée</Text>
           <View style={homeStyles.toolsSuggestions.buttons}>
-            <BigButton disabled={!hasInternetConnection} navigation={navigation} targetScreen={routes.weather} text="Météo en direct" subtitle="// C'est le moment de sortir le téléscope !" icon={require('../../assets/icons/FiSun.png')} />
-            <BigButton navigation={navigation} targetScreen={routes.scopeAlignment} text="Mise en station" subtitle='// Votre assistant de mise en station' icon={require('../../assets/icons/FiCompass.png')} />
-            <BigButton disabled={!hasInternetConnection} navigation={navigation} targetScreen={routes.moonPhases} text="Phases de la Lune" subtitle='// Calculez les phases de la Lune' icon={require('../../assets/icons/FiMoon.png')} />
-            <BigButton navigation={navigation} targetScreen={routes.solarWeather} text="Météo solaire" subtitle="// Bientôt disponible !" icon={require('../../assets/icons/SolarWind.png')} />
+            <BigButton disabled={!hasInternetConnection} navigation={navigation} targetScreen={routes.weather.path} text="Météo en direct" subtitle="// C'est le moment de sortir le téléscope !" icon={require('../../assets/icons/FiSun.png')} />
+            <BigButton navigation={navigation} targetScreen={routes.scopeAlignment.path} text="Mise en station" subtitle='// Votre assistant de mise en station' icon={require('../../assets/icons/FiCompass.png')} />
+            <BigButton disabled={!hasInternetConnection} navigation={navigation} targetScreen={routes.moonPhases.path} text="Phases de la Lune" subtitle='// Calculez les phases de la Lune' icon={require('../../assets/icons/FiMoon.png')} />
+            <BigButton navigation={navigation} targetScreen={routes.solarWeather.path} text="Météo solaire" subtitle="// Bientôt disponible !" icon={require('../../assets/icons/SolarWind.png')} />
           </View>
         </View>
         <View style={homeStyles.nasaTools}>
           <Text style={globalStyles.sections.title}>Autres outils</Text>
           <Text style={globalStyles.sections.subtitle}>Explorez toujours plus !</Text>
           <View style={homeStyles.nasaTools.buttons}>
-            <SquareButton disabled={!hasInternetConnection} navigation={navigation} targetScreen={routes.apod} text="APOD" subtitle="// Image du jour de la NASA" image={require('../../assets/images/apod.png')} />
+            <SquareButton disabled={!hasInternetConnection} navigation={navigation} targetScreen={routes.apod.path} text="APOD" subtitle="// Image du jour de la NASA" image={require('../../assets/images/apod.png')} />
           </View>
         </View>
       </ScrollView>
