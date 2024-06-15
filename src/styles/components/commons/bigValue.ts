@@ -16,6 +16,7 @@ export const bigValueStyles = {
       fontSize: 15,
       fontFamily: 'AuxMono',
       color: app_colors.white,
+      opacity: .5,
     },
   },
 }

@@ -18,10 +18,6 @@ interface BigButtonProps {
 
 export default function BigButton({ text, icon, navigation, targetScreen, subtitle, hasCheckbox, isChecked, onPress, disabled }: BigButtonProps) {
 
-
-  const { currentUserLocation } = useSettings()
-  const [hasAllFeatureRequirements, setHasAllFeatureRequirements] = useState<boolean>(false)
-
   const handleNavigation = () => {
     if (!navigation || !targetScreen) return;
     navigation.navigate(targetScreen)

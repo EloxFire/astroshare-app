@@ -9,7 +9,7 @@ import * as Linking from 'expo-linking';
 export default function LocationHeader() {
 
   const { currentUserLocation, locationPermissions, locationLoading, getUserCurrentPosition } = useSettings();
-  
+
   const [isModalShown, setIsModalShown] = useState<boolean>(false);
 
   const blinkAnim = useRef(new Animated.Value(0)).current;
@@ -39,7 +39,7 @@ export default function LocationHeader() {
   });
 
   const handleModal = () => {
-    if(!currentUserLocation) return;
+    if (!currentUserLocation) return;
     setIsModalShown(!isModalShown);
   }
 
@@ -52,17 +52,20 @@ export default function LocationHeader() {
             <Text style={locationHeaderStyles.container.location.title}>Votre position</Text>
             {
               locationLoading ?
-                <Animated.Text style={[locationHeaderStyles.container.location.value, {opacity: interpolated}]}>Acquisition GPS...</Animated.Text>
+                <Animated.Text style={[locationHeaderStyles.container.location.value, { opacity: interpolated }]}>Acquisition GPS...</Animated.Text>
                 :
                 locationPermissions ?
-                  <Text style={locationHeaderStyles.container.location.value}>{currentUserLocation?.common_name}</Text>
+                  currentUserLocation ?
+                    <Text style={locationHeaderStyles.container.location.value}>{currentUserLocation?.common_name}</Text>
+                    :
+                    <Text style={locationHeaderStyles.container.location.value}>##Erreur##</Text>
                   :
                   <TouchableOpacity style={locationHeaderStyles.container.location.settingsButton} onPress={() => Linking.openSettings()}>
                     <Text style={locationHeaderStyles.container.location.settingsButton.value}>Paramètres de localisation</Text>
                   </TouchableOpacity>
             }
           </View>
-          <Image source={require('../../assets/icons/FiChevronDown.png')} style={{width: 20, height: 20}} />
+          <Image source={require('../../assets/icons/FiChevronDown.png')} style={{ width: 20, height: 20 }} />
         </TouchableOpacity>
         <RefreshButton action={() => getUserCurrentPosition()} />
       </View>
