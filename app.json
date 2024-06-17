@@ -52,7 +52,7 @@
         "expo-location",
         {
           "locationAlwaysAndWhenInUsePermission": "Autoriser ${PRODUCT_NAME} à utiliser votre position.",
-          "isAndroidBackgroundLocationEnabled": true,
+          "isAndroidBackgroundLocationEnabled": false,
           "isAndroidForegroundServiceEnabled": true
         }
       ],
