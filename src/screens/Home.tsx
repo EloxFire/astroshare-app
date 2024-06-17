@@ -10,20 +10,21 @@ import AppHeader from '../components/commons/AppHeader';
 import BigButton from '../components/commons/buttons/BigButton';
 import axios from 'axios';
 import HomeSearchResults from '../components/HomeSearchResults';
+import BannerHandler from '../components/banners/BannerHandler';
 import SquareButton from '../components/commons/buttons/SquareButton';
 import { app_colors } from '../helpers/constants';
-import DisclaimerBar from '../components/banners/DisclaimerBar';
 import { useSettings } from '../contexts/AppSettingsContext';
 import { showToast } from '../helpers/scripts/showToast';
-import SkyInfosBar from '../components/banners/SkyInfosBar';
-import BannerHandler from '../components/banners/BannerHandler';
-import { EFeatureRequirements } from '../helpers/types/FeatureRequirements';
 
 export default function Home({ navigation }: any) {
 
   const [searchString, setSearchString] = useState('')
   const [searchResults, setSearchResults] = useState<DSO[]>([])
-  const { hasInternetConnection } = useSettings()
+  const { hasInternetConnection, checkFirstLaunch } = useSettings()
+
+  useEffect(() => {
+    checkFirstLaunch(navigation)
+  }, [])
 
   const handleSearch = async () => {
     if (!hasInternetConnection) {

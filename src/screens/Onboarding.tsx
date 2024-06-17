@@ -7,13 +7,17 @@ import { comingSoonStyles } from '../styles/screens/cominSoon'
 import { routes } from '../helpers/routes'
 import { removeData, storeData } from '../helpers/storage'
 import { onboardingStyles } from '../styles/screens/onboarding'
+import { useSettings } from '../contexts/AppSettingsContext'
 
 
 export default function Onboarding({ navigation }: any) {
 
+  const { checkFirstLaunch } = useSettings()
+
   const handleAccept = async () => {
     await storeData('firstLaunch', 'false');
     navigation.navigate(routes.home.path)
+    checkFirstLaunch(navigation)
   }
 
   return (
@@ -24,9 +28,10 @@ export default function Onboarding({ navigation }: any) {
       <Text style={[onboardingStyles.subtitle, { marginBottom: 40 }]}>Voici quelques informations importantes :</Text>
       <Text style={onboardingStyles.text}>Pour que l'application Astroshare soit fonctionnelle et la plus pertinante possible, cette dernière à accès aux informations suivantes :</Text>
       <View style={{ marginTop: 30 }}>
-        <Text style={onboardingStyles.listText}>- Votre position géographique lorsque l\'application est en cours d'utilisation</Text>
-        <Text style={onboardingStyles.listText}>- Votre position géographique lorsque l\'application est en tâche de fond</Text>
-        <Text style={onboardingStyles.listText}>- Les différents capteurs de votre téléphone (Gyroscope, Accéléromètre)</Text>
+        <Text style={onboardingStyles.listText}>- Position géographique lors de l'utilisation</Text>
+        <Text style={onboardingStyles.listText}>- Position géographique en tâche de fond</Text>
+        <Text style={onboardingStyles.listText}>- Gyroscope</Text>
+        <Text style={onboardingStyles.listText}>- Accéléromètre</Text>
       </View>
       <TouchableOpacity style={comingSoonStyles.button} onPress={() => handleAccept()}>
         <Text style={comingSoonStyles.buttonText}>Accepter</Text>

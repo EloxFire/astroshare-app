@@ -10,6 +10,7 @@ import * as Location from 'expo-location'
 import Toast from 'react-native-root-toast';
 import NetInfo from '@react-native-community/netinfo';
 import { getData, storeData } from '../helpers/storage'
+import { routes } from '../helpers/routes'
 
 const AppSettingsContext = createContext<any>({})
 
@@ -33,20 +34,7 @@ export function AppSettingsProvider({ children, navigation }: AppSettingsProvide
   const [currentUserHorizon, setCurrentUserHorizon] = useState<number>(0)
   const [isCellularDataEnabled, setIsCellularDataEnabled] = useState<boolean>(true)
   const [hasInternetConnection, setHasInternetConnection] = useState<boolean>(false)
-
-  useEffect(() => {
-    (async () => {
-      const firstLaunch = await getData('firstLaunch');
-      if (!firstLaunch) {
-        await storeData('firstLaunch', 'true');
-        navigation.navigate('Onboarding')
-      }
-
-      if (firstLaunch === 'true') {
-        await storeData('firstLaunch', 'false');
-      }
-    })()
-  }, [])
+  const [isFirstLaunch, setIsFirstLaunch] = useState<boolean>(true)
 
   useEffect(() => {
     (async () => {
@@ -58,10 +46,11 @@ export function AppSettingsProvider({ children, navigation }: AppSettingsProvide
       const nightMode = await getData('nightMode');
       setIsNightMode(nightMode === 'true' ? true : false);
     })()
-  })
+  }, [])
 
   useEffect(() => {
     (async () => {
+      if (isFirstLaunch) return;
       // Check if location permission is granted
       const hasLocationPermission = await askLocationPermission();
       if (!hasLocationPermission) {
@@ -76,7 +65,7 @@ export function AppSettingsProvider({ children, navigation }: AppSettingsProvide
       // Get user current position
       await getUserCurrentPosition();
     })();
-  }, []);
+  }, [isFirstLaunch]);
 
   useEffect(() => {
     const unsubscribe = NetInfo.addEventListener(state => {
@@ -87,6 +76,19 @@ export function AppSettingsProvider({ children, navigation }: AppSettingsProvide
       unsubscribe()
     }
   }, [])
+
+  const checkFirstLaunch = async (navigation: any) => {
+    const launchStatus = await getData('firstLaunch');
+    console.log("First launch status : ", launchStatus);
+
+    if (!launchStatus || launchStatus === 'true') {
+      navigation.navigate(routes.onboarding.path);
+    }
+    if (launchStatus === 'false') {
+      navigation.navigate(routes.home.path);
+      setIsFirstLaunch(false);
+    }
+  }
 
   const getUserCurrentPosition = async () => {
     setLocationLoading(true);
@@ -140,6 +142,7 @@ export function AppSettingsProvider({ children, navigation }: AppSettingsProvide
     isCellularDataEnabled,
     handleCellularData,
     hasInternetConnection,
+    checkFirstLaunch
   }
 
   return (
