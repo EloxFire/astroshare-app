@@ -21,25 +21,31 @@ export default function About({ navigation }: any) {
         <View style={settingsStyles.content}>
           <Text style={aboutStyles.title}>Application</Text>
           <View style={aboutStyles.row}>
-            <Text style={[aboutStyles.text, {marginRight: 10}]}>Version :</Text>
+            <Text style={[aboutStyles.text, { marginRight: 10 }]}>Version :</Text>
             <Text style={aboutStyles.chip}>{process.env.EXPO_PUBLIC_APP_VERSION}</Text>
           </View>
           <View style={aboutStyles.row}>
-            <Text style={[aboutStyles.text, {marginRight: 10}]}>Dernière mise à jour :</Text>
+            <Text style={[aboutStyles.text, { marginRight: 10 }]}>Dernière mise à jour :</Text>
             <Text style={aboutStyles.chip}>{dayjs(process.env.EXPO_PUBLIC_LAST_UPDATE).format('DD MMMM YYYY')}</Text>
           </View>
 
-          <Text style={[aboutStyles.title, {marginTop: 30}]}>Contact</Text>
-          <Text style={[aboutStyles.text, {marginBottom: 10}]}>Pour tout renseignement, ou afin de reporter un bug, merci de me contacter directement par mail à l'adresse suivante :</Text>
+          <Text style={[aboutStyles.title, { marginTop: 30 }]}>Contact</Text>
+          <Text style={[aboutStyles.text, { marginBottom: 10 }]}>Pour tout renseignement, ou afin de reporter un bug, merci de me contacter directement par mail à l'adresse suivante :</Text>
           <TouchableOpacity onPress={() => Linking.openURL('mailto:contact@enzoavagliano.fr')}>
-            <Text style={[aboutStyles.text, {marginBottom: 10, textDecorationLine: "underline"}]}>contact@enzoavagliano.fr</Text>
+            <Text style={[aboutStyles.text, { marginBottom: 10, textDecorationLine: "underline" }]}>contact@enzoavagliano.fr</Text>
           </TouchableOpacity>
 
-          <Text style={[aboutStyles.title, {marginTop: 30}]}>Mentions légales</Text>
+          <Text style={[aboutStyles.title, { marginTop: 30 }]}>Mentions légales</Text>
           <Text style={[aboutStyles.text, { marginBottom: 10 }]}>Éditeur : Enzo Avagliano</Text>
           <Text style={[aboutStyles.text, { marginBottom: 10 }]}>Siège social : 36 rue Mignet, 13100 Aix-en-Provence, France</Text>
           <Text style={[aboutStyles.text, { marginBottom: 10 }]}>Téléphone : 06.69.07.42.59</Text>
           <Text style={[aboutStyles.text, { marginBottom: 10 }]}>SIRET : 89122657300014</Text>
+
+          <Text style={[aboutStyles.title, { marginTop: 30 }]}>Politique de confidentialité</Text>
+          <Text style={[aboutStyles.text, { marginBottom: 10 }]}>La politique de confidentialité est accessible via le lien suivant :</Text>
+          <TouchableOpacity onPress={() => Linking.openURL('https://www.astroshare.fr/application-mobile/politique-de-confidentialite')}>
+            <Text style={[aboutStyles.text, { marginBottom: 10, textDecorationLine: "underline" }]}>Politique de confidentialité</Text>
+          </TouchableOpacity>
 
           {/* <Text style={[aboutStyles.title, {marginTop: 30}]}>Conditions d'utilisation</Text>
           <Text style={[aboutStyles.text, {marginBottom: 10}]}>Les CGU sont disponible en téléchargement</Text>
@@ -47,10 +53,10 @@ export default function About({ navigation }: any) {
             <Text style={[aboutStyles.text, {textAlign: 'center'}]}>Télécharger le document</Text>
           </TouchableOpacity> */}
 
-          <Text style={[aboutStyles.title, {marginTop: 30}]}>License</Text>
+          <Text style={[aboutStyles.title, { marginTop: 30 }]}>License</Text>
           <Text style={aboutStyles.subtitle}>MIT License</Text>
-          <Text style={[aboutStyles.text, {marginBottom: 10}]}>Copyright (©) {dayjs().year()} Enzo Avagliano</Text>
-          <Text style={[aboutStyles.text, {marginBottom: 10}]}>
+          <Text style={[aboutStyles.text, { marginBottom: 10 }]}>Copyright (©) {dayjs().year()} Enzo Avagliano</Text>
+          <Text style={[aboutStyles.text, { marginBottom: 10 }]}>
             Permission is hereby granted, free of charge, to any person obtaining a copy
             of this software and associated documentation files (the "Software"), to deal
             in the Software without restriction, including without limitation the rights
@@ -71,7 +77,7 @@ export default function About({ navigation }: any) {
             OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
             SOFTWARE.
           </Text>
-          <Image source={require('../../assets/logos/astroshare_logo_white.png')} resizeMode="contain" style={{width: '50%', alignSelf: "center"}} />
+          <Image source={require('../../assets/logos/astroshare_logo_white.png')} resizeMode="contain" style={{ width: '50%', alignSelf: "center" }} />
         </View>
       </ScrollView>
     </View>
