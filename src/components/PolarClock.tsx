@@ -36,16 +36,20 @@ export default function PolarClock() {
     // console.log('Updating polaris position');
     const nlst = getLocalSiderealTime(new Date(), currentUserLocation.lon);
     const tlst = convertNumericLSTtoTime(nlst);
-    const polarisPos = calculatePolarisPosition(nlst);
 
     setNumericLST(nlst);
     setTimeLST(tlst);
-    setPolarisX(polarisPos.polarisX);
-    setPolarisY(polarisPos.polarisY);
 
     if (degRa) {
-      setHA(getHourAngle(new Date(), currentUserLocation.lon, degRa) / 15);
-      setTimeHA(convertNumericLSTtoTime(HA));
+      const ha = getHourAngle(new Date(), currentUserLocation.lon, degRa) / 15;
+      const tha = convertNumericLSTtoTime(ha);
+      setHA(ha);
+      setTimeHA(tha);
+      console.log(convertNumericLSTtoTime(HA));
+      const polarisPos = calculatePolarisPosition(nlst, ha);
+
+      setPolarisX(polarisPos.polarisX);
+      setPolarisY(polarisPos.polarisY);
     }
   }
 
@@ -66,13 +70,13 @@ export default function PolarClock() {
     return { startX, startY, endX, endY };
   };
 
-  const calculatePolarisPosition = (LST: number) => {
-    const angle = (LST % 24);
+  const calculatePolarisPosition = (LST: number, hourAngleOfPolaris: number) => {
+    const lstInDegrees = LST * 15;
+    const polarisAngle = (lstInDegrees - hourAngleOfPolaris * 15) % 360; // In degrees
+    const radius = (outerRadius + (outerRadius - 10)) / 2; // Position between the two concentric circles
 
-    const radius = (outerRadius + (outerRadius - 10)) / 2;
-
-    const polarisX = centerX + radius * Math.cos(angle * Math.PI / 180);
-    const polarisY = centerY + radius * Math.sin(angle * Math.PI / 180);
+    const polarisX = centerX + radius * Math.cos((polarisAngle - 90) * Math.PI / 180);
+    const polarisY = centerY + radius * Math.sin((polarisAngle - 90) * Math.PI / 180);
 
     return { polarisX, polarisY };
   };
