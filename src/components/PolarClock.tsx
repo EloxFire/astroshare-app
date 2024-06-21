@@ -45,9 +45,8 @@ export default function PolarClock() {
       const tha = convertNumericLSTtoTime(ha);
       setHA(ha);
       setTimeHA(tha);
-      console.log(convertNumericLSTtoTime(HA));
-      const polarisPos = calculatePolarisPosition(nlst, ha);
 
+      const polarisPos = calculatePolarisPosition(nlst, ha);
       setPolarisX(polarisPos.polarisX);
       setPolarisY(polarisPos.polarisY);
     }
