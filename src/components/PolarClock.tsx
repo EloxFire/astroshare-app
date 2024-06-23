@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Dimensions, Image, StyleSheet, Text, View } from 'react-native'
+import { Dimensions, Text, View } from 'react-native'
 import { Circle, Line, Svg, Text as SvgText } from 'react-native-svg';
 import { convertHMSToDegreeFromString } from '../helpers/scripts/astro/HmsToDegree';
 import { getHourAngle, getLocalSiderealTime } from '@observerly/astrometry';
@@ -7,9 +7,10 @@ import { useSettings } from '../contexts/AppSettingsContext';
 import { polarClockStyles } from '../styles/components/polarClock';
 import { Polaris, app_colors } from '../helpers/constants';
 import { scopeAlignmentStyles } from '../styles/screens/scopeAlignment';
-import dayjs from 'dayjs';
 import { shortDmsCoord } from '../helpers/scripts/shortenDmsCoord';
 import { convertNumericLSTtoTime } from '../helpers/scripts/astro/convertNumericLSTtoTime';
+import dayjs from 'dayjs';
+
 
 export default function PolarClock() {
 

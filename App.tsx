@@ -40,7 +40,7 @@ dayjs().format('L LT')
 
 const Stack = createNativeStackNavigator();
 
-export default function App({ navigation }: any) {
+export default function App() {
   const [appIsReady, setAppIsReady] = useState(false);
 
   useEffect(() => {
@@ -69,7 +69,7 @@ export default function App({ navigation }: any) {
   return (
     <RootSiblingParent>
       <NavigationContainer>
-        <AppSettingsProvider navigation={navigation}>
+        <AppSettingsProvider>
           <ObservationSpotProvider>
             <StatusBar animated style="light" translucent />
             <Stack.Navigator screenOptions={{ headerShown: false }}>

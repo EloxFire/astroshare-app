@@ -20,10 +20,9 @@ export const useSettings = () => {
 
 interface AppSettingsProviderProps {
   children: ReactNode
-  navigation: any
 }
 
-export function AppSettingsProvider({ children, navigation }: AppSettingsProviderProps) {
+export function AppSettingsProvider({ children }: AppSettingsProviderProps) {
 
   const [isNightMode, setIsNightMode] = useState<boolean>(false)
 
@@ -34,7 +33,6 @@ export function AppSettingsProvider({ children, navigation }: AppSettingsProvide
   const [currentUserHorizon, setCurrentUserHorizon] = useState<number>(0)
   const [isCellularDataEnabled, setIsCellularDataEnabled] = useState<boolean>(true)
   const [hasInternetConnection, setHasInternetConnection] = useState<boolean>(false)
-  const [isFirstLaunch, setIsFirstLaunch] = useState<boolean>(true)
 
   useEffect(() => {
     (async () => {
@@ -50,7 +48,8 @@ export function AppSettingsProvider({ children, navigation }: AppSettingsProvide
 
   useEffect(() => {
     (async () => {
-      if (isFirstLaunch) return;
+      const launchStatus = await getData('firstLaunch');
+      if (!launchStatus || launchStatus === 'true') return;
       // Check if location permission is granted
       const hasLocationPermission = await askLocationPermission();
       if (!hasLocationPermission) {
@@ -63,9 +62,9 @@ export function AppSettingsProvider({ children, navigation }: AppSettingsProvide
       showToast({ message: 'Acquisition de votre position', duration: Toast.durations.SHORT, type: 'success' });
 
       // Get user current position
-      await getUserCurrentPosition();
+      await refreshCurrentUserLocation();
     })();
-  }, [isFirstLaunch]);
+  }, []);
 
   useEffect(() => {
     const unsubscribe = NetInfo.addEventListener(state => {
@@ -77,20 +76,9 @@ export function AppSettingsProvider({ children, navigation }: AppSettingsProvide
     }
   }, [])
 
-  const checkFirstLaunch = async (navigation: any) => {
+  const refreshCurrentUserLocation = async () => {
     const launchStatus = await getData('firstLaunch');
-    console.log("First launch status : ", launchStatus);
-
-    if (!launchStatus || launchStatus === 'true') {
-      navigation.navigate(routes.onboarding.path);
-    }
-    if (launchStatus === 'false') {
-      navigation.navigate(routes.home.path);
-      setIsFirstLaunch(false);
-    }
-  }
-
-  const getUserCurrentPosition = async () => {
+    if (!launchStatus || launchStatus === 'true') return;
     setLocationLoading(true);
     showToast({ message: 'Acquisition de votre position', duration: Toast.durations.SHORT, type: 'success' });
 
@@ -133,8 +121,8 @@ export function AppSettingsProvider({ children, navigation }: AppSettingsProvide
   const values = {
     isNightMode,
     handleNightMode,
-    getUserCurrentPosition,
     currentUserLocation,
+    refreshCurrentUserLocation,
     setCurrentUserLocation,
     locationPermissions,
     locationLoading,
@@ -142,7 +130,6 @@ export function AppSettingsProvider({ children, navigation }: AppSettingsProvide
     isCellularDataEnabled,
     handleCellularData,
     hasInternetConnection,
-    checkFirstLaunch
   }
 
   return (

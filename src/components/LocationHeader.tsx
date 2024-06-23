@@ -8,7 +8,7 @@ import * as Linking from 'expo-linking';
 
 export default function LocationHeader() {
 
-  const { currentUserLocation, locationPermissions, locationLoading, getUserCurrentPosition } = useSettings();
+  const { currentUserLocation, locationPermissions, locationLoading, refreshCurrentUserLocation } = useSettings();
 
   const [isModalShown, setIsModalShown] = useState<boolean>(false);
 
@@ -67,7 +67,7 @@ export default function LocationHeader() {
           </View>
           <Image source={require('../../assets/icons/FiChevronDown.png')} style={{ width: 20, height: 20 }} />
         </TouchableOpacity>
-        <RefreshButton action={() => getUserCurrentPosition()} />
+        <RefreshButton action={() => refreshCurrentUserLocation()} />
       </View>
     </TouchableWithoutFeedback>
   )

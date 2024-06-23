@@ -4,6 +4,10 @@ import { globalStyles } from '../styles/global'
 import { homeStyles } from '../styles/screens/home';
 import { routes } from '../helpers/routes';
 import { DSO } from '../helpers/types/DSO';
+import { app_colors } from '../helpers/constants';
+import { useSettings } from '../contexts/AppSettingsContext';
+import { showToast } from '../helpers/scripts/showToast';
+import { checkFirstLaunch } from '../helpers/scripts/checkFirstLaunch';
 import LocationHeader from '../components/LocationHeader';
 import InputWithIcon from '../components/forms/InputWithIcon';
 import AppHeader from '../components/commons/AppHeader';
@@ -12,15 +16,13 @@ import axios from 'axios';
 import HomeSearchResults from '../components/HomeSearchResults';
 import BannerHandler from '../components/banners/BannerHandler';
 import SquareButton from '../components/commons/buttons/SquareButton';
-import { app_colors } from '../helpers/constants';
-import { useSettings } from '../contexts/AppSettingsContext';
-import { showToast } from '../helpers/scripts/showToast';
+import DisclaimerBar from '../components/banners/DisclaimerBar';
 
 export default function Home({ navigation }: any) {
 
   const [searchString, setSearchString] = useState('')
   const [searchResults, setSearchResults] = useState<DSO[]>([])
-  const { hasInternetConnection, checkFirstLaunch } = useSettings()
+  const { hasInternetConnection, currentUserLocation } = useSettings()
 
   useEffect(() => {
     checkFirstLaunch(navigation)
@@ -31,6 +33,12 @@ export default function Home({ navigation }: any) {
       showToast({ message: 'Aucune connexion à internet', type: 'error' })
       return;
     }
+
+    if (!currentUserLocation) {
+      showToast({ message: 'Localisation requise pour effectuer une recherche', type: 'error' })
+      return;
+    }
+
     Keyboard.dismiss()
     console.log('Search pressed', searchString)
     if (searchString === '') return;
@@ -70,10 +78,10 @@ export default function Home({ navigation }: any) {
           <Text style={globalStyles.sections.title}>Vos outils</Text>
           <Text style={globalStyles.sections.subtitle}>Votre caisse à outils personnalisée</Text>
           <View style={homeStyles.toolsSuggestions.buttons}>
-            <BigButton disabled={!hasInternetConnection} navigation={navigation} targetScreen={routes.weather.path} text="Météo en direct" subtitle="// C'est le moment de sortir le téléscope !" icon={require('../../assets/icons/FiSun.png')} />
-            <BigButton navigation={navigation} targetScreen={routes.scopeAlignment.path} text="Mise en station" subtitle='// Votre assistant de mise en station' icon={require('../../assets/icons/FiCompass.png')} />
+            <BigButton disabled={!hasInternetConnection || !currentUserLocation} navigation={navigation} targetScreen={routes.weather.path} text="Météo en direct" subtitle="// C'est le moment de sortir le téléscope !" icon={require('../../assets/icons/FiSun.png')} />
+            <BigButton disabled={!currentUserLocation} navigation={navigation} targetScreen={routes.scopeAlignment.path} text="Mise en station" subtitle='// Votre assistant de mise en station' icon={require('../../assets/icons/FiCompass.png')} />
             <BigButton disabled={!hasInternetConnection} navigation={navigation} targetScreen={routes.moonPhases.path} text="Phases de la Lune" subtitle='// Calculez les phases de la Lune' icon={require('../../assets/icons/FiMoon.png')} />
-            <BigButton navigation={navigation} targetScreen={routes.solarWeather.path} text="Météo solaire" subtitle="// Bientôt disponible !" icon={require('../../assets/icons/SolarWind.png')} />
+            <BigButton disabled={!hasInternetConnection} navigation={navigation} targetScreen={routes.solarWeather.path} text="Météo solaire" subtitle="// Bientôt disponible !" icon={require('../../assets/icons/SolarWind.png')} />
           </View>
         </View>
         <View style={homeStyles.nasaTools}>

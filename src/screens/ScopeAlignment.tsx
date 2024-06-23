@@ -3,18 +3,14 @@ import {
   Keyboard,
   ScrollView,
   Text,
-  TouchableOpacity,
   TouchableWithoutFeedback,
   View,
 } from "react-native";
 import { globalStyles } from "../styles/global";
-import { compassStyles } from "../styles/components/compass";
-import PageTitle from "../components/commons/PageTitle";
 import { scopeAlignmentStyles } from "../styles/screens/scopeAlignment";
-import { app_colors, scopeAlignmentSteps } from "../helpers/constants";
-import Compass from "../components/Compass";
-import SimpleButton from "../components/commons/buttons/SimpleButton";
 import { routes } from "../helpers/routes";
+import PageTitle from "../components/commons/PageTitle";
+import Compass from "../components/Compass";
 import PolarClock from "../components/PolarClock";
 import SpiritLevel from "../components/SpiritLevel";
 

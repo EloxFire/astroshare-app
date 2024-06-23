@@ -8,14 +8,13 @@ import { LocationObject } from '../helpers/types/LocationObject'
 import { getCityCoords } from '../helpers/api/getCityCoords'
 import { getMoon } from '../helpers/api/getMoon'
 import { convertDDtoDMS } from '../helpers/scripts/convertDDtoDMSCoords'
+import { showToast } from '../helpers/scripts/showToast'
 import PageTitle from '../components/commons/PageTitle'
 import InputWithIcon from '../components/forms/InputWithIcon'
 import SingleValue from '../components/weather/SingleValue'
 import WeatherOverview from '../components/weather/WeatherOverview'
 import Ephemeris from '../components/weather/Ephemeris'
 import Hourly from '../components/weather/Hourly'
-import Toast from 'react-native-root-toast'
-import { showToast } from '../helpers/scripts/showToast'
 
 export default function Weather({ navigation }: any) {
 

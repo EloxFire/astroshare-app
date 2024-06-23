@@ -1,23 +1,18 @@
 import React from 'react'
-import { FlatList, Image, Text, TouchableOpacity, View } from 'react-native'
+import { Image, Text, TouchableOpacity, View } from 'react-native'
 import { globalStyles } from '../styles/global'
-import { app_colors } from '../helpers/constants'
-import PageTitle from '../components/commons/PageTitle'
 import { comingSoonStyles } from '../styles/screens/cominSoon'
 import { routes } from '../helpers/routes'
-import { removeData, storeData } from '../helpers/storage'
+import { storeData } from '../helpers/storage'
 import { onboardingStyles } from '../styles/screens/onboarding'
-import { useSettings } from '../contexts/AppSettingsContext'
+import { checkFirstLaunch } from '../helpers/scripts/checkFirstLaunch'
 
 
 export default function Onboarding({ navigation }: any) {
 
-  const { checkFirstLaunch } = useSettings()
-
   const handleAccept = async () => {
     await storeData('firstLaunch', 'false');
     navigation.navigate(routes.home.path)
-    checkFirstLaunch(navigation)
   }
 
   return (
@@ -33,6 +28,7 @@ export default function Onboarding({ navigation }: any) {
         <Text style={onboardingStyles.listText}>- Gyroscope</Text>
         <Text style={onboardingStyles.listText}>- Accéléromètre</Text>
       </View>
+      <Text style={[onboardingStyles.text, { marginTop: 30 }]}>Ce message n'est affiché que <Text style={{ textDecorationLine: 'underline' }}>lors du premier démarrage</Text> de l'application</Text>
       <TouchableOpacity style={comingSoonStyles.button} onPress={() => handleAccept()}>
         <Text style={comingSoonStyles.buttonText}>Accepter</Text>
       </TouchableOpacity>
