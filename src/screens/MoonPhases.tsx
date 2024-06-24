@@ -70,8 +70,6 @@ export default function MoonPhases({ navigation }: any) {
             mode='date'
             display='default'
             onChange={(event, selectedDate) => {
-              console.log(selectedDate);
-
               if (event.type === 'dismissed') {
                 setIsDateModalVisible(false)
               }
