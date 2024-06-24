@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Image, Keyboard, Text, View } from 'react-native'
+import { Image, Keyboard, Text, TouchableOpacity, View } from 'react-native'
 import PageTitle from '../components/commons/PageTitle'
 import { globalStyles } from '../styles/global'
 import { moonPhasesStyles } from '../styles/screens/moonPhases'
@@ -10,12 +10,14 @@ import Toast from 'react-native-root-toast'
 import dayjs from 'dayjs'
 import BigValue from '../components/commons/BigValue'
 import { moonIcons } from '../helpers/scripts/loadImages'
+import DateTimePicker from '@react-native-community/datetimepicker';
+import SimpleButton from '../components/commons/buttons/SimpleButton'
 
 export default function MoonPhases({ navigation }: any) {
-  
-  const [dateString, setDateString] = useState("")
+
   const [date, setDate] = useState<Date>(new Date())
   const [moonData, setMoonData] = useState<any>(null)
+  const [isDateModalVisible, setIsDateModalVisible] = useState(false)
 
   const formatter = new Intl.NumberFormat("fr-FR", {
     style: 'unit',
@@ -27,7 +29,7 @@ export default function MoonPhases({ navigation }: any) {
   useEffect(() => {
     getMoonData()
   }, [date])
-  
+
   const getMoonData = () => {
     const phase = getLunarPhase(date)
     const illumination = Math.floor(getLunarIllumination(date))
@@ -36,7 +38,7 @@ export default function MoonPhases({ navigation }: any) {
     const newMoon = isNewMoon(date)
     const fullMoon = isFullMoon(date)
     const age = Math.floor(getLunarAge(date).age)
-  
+
     setMoonData({
       phase,
       illumination,
@@ -48,35 +50,40 @@ export default function MoonPhases({ navigation }: any) {
     })
   }
 
-  const handleDateChange = () => {
-    const dateRegex = /^(0?[1-9]|[1-2][0-9]|3[0-1])-(0?[1-9]|1[0-2])-(?:(?:19|20)\d{2})$/;
-    if (!dateRegex.test(dateString)) {
-      showToast({ message: 'Format de date invalide',duration: Toast.durations.LONG, type: 'error' })
-      return
-    }
-    Keyboard.dismiss()
-
-    const day = parseInt(dateString.split('-')[0])
-    const month = parseInt(dateString.split('-')[1]) - 1
-    const year = parseInt(dateString.split('-')[2])
-    setDate(new Date(year, month, day))
-  }
-
   return (
     <View style={globalStyles.body}>
       <PageTitle navigation={navigation} title="Phases de la lune" subtitle="// Calculez les phases de la Lune" />
       <View style={globalStyles.screens.separator} />
       <View style={moonPhasesStyles.content}>
-        <InputWithIcon
-          placeholder="Date (JJ-MM-AAAA)"
-          changeEvent={(string: string) => setDateString(string.replaceAll(' ', '-').replaceAll('/', '-'))}
-          icon={require('../../assets/icons/FiSearch.png')}
-          search={() => handleDateChange()}
-          value={dateString}
-        />
         <Text style={moonPhasesStyles.content.title}>Lune du {dayjs(date).format('DD MMMM YYYY')}</Text>
+        <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10 }}>
+          <TouchableOpacity onPress={() => setIsDateModalVisible(true)} style={moonPhasesStyles.content.selectButton}>
+            <Text style={moonPhasesStyles.content.selectButton.text}>Sélectioner une date</Text>
+          </TouchableOpacity>
+          <SimpleButton icon={require('../../assets/icons/FiRepeat.png')} small onPress={() => setDate(new Date())} />
+        </View>
 
-        <Image source={moonData?.phase ? moonIcons[moonData?.phase] : moonIcons["Full"]} style={{height: 200, width: 200, alignSelf: 'center', marginVertical: 20}} resizeMode='contain' />
+        {
+          isDateModalVisible &&
+          <DateTimePicker
+            value={date}
+            mode='date'
+            display='default'
+            onChange={(event, selectedDate) => {
+              console.log(selectedDate);
+
+              if (event.type === 'dismissed') {
+                setIsDateModalVisible(false)
+              }
+              if (event.type === 'set' && selectedDate) {
+                setIsDateModalVisible(false)
+                setDate(selectedDate)
+              }
+            }}
+          />
+        }
+
+        <Image source={moonData?.phase ? moonIcons[moonData?.phase] : moonIcons["Full"]} style={{ height: 200, width: 200, alignSelf: 'center', marginVertical: 20 }} resizeMode='contain' />
 
         <View style={moonPhasesStyles.content.values}>
           <BigValue label="Phase" value={moonData?.phase} />
