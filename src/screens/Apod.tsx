@@ -17,7 +17,7 @@ export default function Apod({ navigation }: any) {
 
   const [apod, setApod] = useState<APODPicture | null>(null)
   const videoRef = useRef(null);
-  
+
   useEffect(() => {
     getApod()
   }, [])
@@ -25,7 +25,7 @@ export default function Apod({ navigation }: any) {
   const getApod = async () => {
     try {
       const picture = await axios.get(process.env.EXPO_PUBLIC_ASTROSHARE_API_URL + '/apod');
-      setApod(picture.data.data);   
+      setApod(picture.data.data);
       showToast({ message: 'Image récupérée', duration: Toast.durations.SHORT, type: 'success' });
     } catch (error) {
       console.log(error)
@@ -44,34 +44,34 @@ export default function Apod({ navigation }: any) {
       <View style={globalStyles.screens.separator} />
       <ScrollView>
         <View style={apodStyles.content}>
-          <Text style={apodStyles.content.title}>{ apod?.title.replace(/(\r\n|\n|\r)/gm, "") || "Chargement"}</Text>
-          {apod?.copyright && <Text style={[apodStyles.content.text, {color: app_colors.white_eighty}]}>Copyright : {apod?.copyright.replace(/(\r\n|\n|\r)/gm, "") || "Chargement"}</Text>}
-          <Text style={[apodStyles.content.text, {color: app_colors.white_eighty, marginTop: 5}]}>Date : {apod?.date ? dayjs(apod?.date).format('DD/MM/YYYY') : "Chargement"}</Text>
+          <Text style={apodStyles.content.title}>{apod?.title.replace(/(\r\n|\n|\r)/gm, "") || "Chargement"}</Text>
+          {apod?.copyright && <Text style={[apodStyles.content.text, { color: app_colors.white_eighty }]}>Copyright : {apod?.copyright.replace(/(\r\n|\n|\r)/gm, "") || "Chargement"}</Text>}
+          <Text style={[apodStyles.content.text, { color: app_colors.white_eighty, marginTop: 5 }]}>Date : {apod?.date ? dayjs(apod?.date).format('DD/MM/YYYY') : "Chargement"}</Text>
           {
             apod?.media_type === 'video' ?
               apod?.url.includes('youtube') ?
-                <View style={{display: 'flex', flexDirection:'column', gap: 10, marginVertical: 30, width: '100%'}}>
+                <View style={{ display: 'flex', flexDirection: 'column', gap: 10, marginVertical: 30, width: '100%' }}>
                   <DisclaimerBar message='Les vidéos provenant de Youtube ne sont pas encore supportées. Cliquez sur le lien ci-dessous pour copier le lien de la vidéo.' type='error' />
                   <DisclaimerBar message={apod?.url} type='info' onPress={() => clickLink()} />
                 </View>
                 :
                 <Video
                   ref={videoRef}
-                  source={{uri: apod?.url || ''}}
+                  source={{ uri: apod?.url || '' }}
                   isMuted={true}
                   rate={1.0}
                   shouldPlay={true}
                   isLooping={true}
                   resizeMode={ResizeMode.CONTAIN}
-                  style={{ width: Dimensions.get('screen').width, height: Dimensions.get('screen').width, marginVertical: 10}}
+                  style={{ width: Dimensions.get('screen').width, height: Dimensions.get('screen').width, marginVertical: 10 }}
                 />
               :
               apod?.media_type === 'image' && (
-                <Image source={{ uri: apod?.url }} style={{ width: Dimensions.get('screen').width, height: Dimensions.get('screen').width, marginVertical: 10 }} resizeMode='contain'/>
+                <Image source={{ uri: apod?.url }} style={{ width: Dimensions.get('screen').width, height: Dimensions.get('screen').width, marginVertical: 10 }} resizeMode='contain' />
               )
           }
           <Text style={apodStyles.content.subtitle}>Description :</Text>
-          <Text style={[apodStyles.content.text, {fontSize: 16, alignSelf: 'flex-start', lineHeight: 25}]}>{apod?.explanation || 'Chargement'}</Text>
+          <Text style={[apodStyles.content.text, { fontSize: 16, alignSelf: 'flex-start', lineHeight: 25 }]}>{apod?.explanation || 'Chargement'}</Text>
         </View>
       </ScrollView>
     </View>

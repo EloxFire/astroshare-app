@@ -1,13 +1,23 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Image, Text, TouchableOpacity, View } from 'react-native'
 import { globalStyles } from '../styles/global'
 import { comingSoonStyles } from '../styles/screens/cominSoon'
 import { routes } from '../helpers/routes'
 import { storeData } from '../helpers/storage'
 import { onboardingStyles } from '../styles/screens/onboarding'
+import { isFirstLaunch } from '../helpers/scripts/checkFirstLaunch'
 
 
 export default function Onboarding({ navigation }: any) {
+
+  useEffect(() => {
+    (async () => {
+      const firstTime = await isFirstLaunch();
+      if (!firstTime) {
+        navigation.navigate(routes.home.path)
+      }
+    })()
+  }, [])
 
   const handleAccept = async () => {
     await storeData('firstLaunch', 'false');

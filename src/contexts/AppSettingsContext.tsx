@@ -50,6 +50,8 @@ export function AppSettingsProvider({ children }: AppSettingsProviderProps) {
   useEffect(() => {
     (async () => {
       const launchStatus = await isFirstLaunch();
+      console.log('First launch : ', launchStatus);
+
       if (launchStatus) {
         return;
       }
@@ -80,8 +82,6 @@ export function AppSettingsProvider({ children }: AppSettingsProviderProps) {
   }, [])
 
   const refreshCurrentUserLocation = async () => {
-    const launchStatus = await getData('firstLaunch');
-    if (!launchStatus || launchStatus === 'true') return;
     setLocationLoading(true);
     showToast({ message: 'Acquisition de votre position', duration: Toast.durations.SHORT, type: 'success' });
 

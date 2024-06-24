@@ -6,6 +6,7 @@ export const apodStyles = {
     display: 'flex' as 'flex',
     flecDirection: 'column' as 'column',
     alignItems: 'center' as 'center',
+    paddingBottom: 60,
 
     title: {
       fontSize: 25,

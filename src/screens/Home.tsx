@@ -7,7 +7,7 @@ import { DSO } from '../helpers/types/DSO';
 import { app_colors } from '../helpers/constants';
 import { useSettings } from '../contexts/AppSettingsContext';
 import { showToast } from '../helpers/scripts/showToast';
-import { checkFirstLaunch } from '../helpers/scripts/checkFirstLaunch';
+import { isFirstLaunch } from '../helpers/scripts/checkFirstLaunch';
 import LocationHeader from '../components/LocationHeader';
 import InputWithIcon from '../components/forms/InputWithIcon';
 import AppHeader from '../components/commons/AppHeader';
@@ -16,7 +16,6 @@ import axios from 'axios';
 import HomeSearchResults from '../components/HomeSearchResults';
 import BannerHandler from '../components/banners/BannerHandler';
 import SquareButton from '../components/commons/buttons/SquareButton';
-import DisclaimerBar from '../components/banners/DisclaimerBar';
 
 export default function Home({ navigation }: any) {
 
@@ -25,7 +24,12 @@ export default function Home({ navigation }: any) {
   const { hasInternetConnection, currentUserLocation } = useSettings()
 
   useEffect(() => {
-    checkFirstLaunch(navigation)
+    (async () => {
+      const firstLaunch = await isFirstLaunch();
+      if (firstLaunch) {
+        navigation.navigate(routes.onboarding.path)
+      }
+    })()
   }, [])
 
   const handleSearch = async () => {
@@ -81,7 +85,7 @@ export default function Home({ navigation }: any) {
             <BigButton disabled={!hasInternetConnection || !currentUserLocation} navigation={navigation} targetScreen={routes.weather.path} text="Météo en direct" subtitle="// C'est le moment de sortir le téléscope !" icon={require('../../assets/icons/FiSun.png')} />
             <BigButton disabled={!currentUserLocation} navigation={navigation} targetScreen={routes.scopeAlignment.path} text="Mise en station" subtitle='// Votre assistant de mise en station' icon={require('../../assets/icons/FiCompass.png')} />
             <BigButton disabled={!hasInternetConnection} navigation={navigation} targetScreen={routes.moonPhases.path} text="Phases de la Lune" subtitle='// Calculez les phases de la Lune' icon={require('../../assets/icons/FiMoon.png')} />
-            <BigButton disabled={!hasInternetConnection} navigation={navigation} targetScreen={routes.solarWeather.path} text="Météo solaire" subtitle="// Bientôt disponible !" icon={require('../../assets/icons/SolarWind.png')} />
+            <BigButton disabled={!hasInternetConnection} navigation={navigation} targetScreen={routes.solarWeather.path} text="Météo solaire" subtitle="// Situation de nôtre étoile en temps réel !" icon={require('../../assets/icons/SolarWind.png')} />
           </View>
         </View>
         <View style={homeStyles.nasaTools}>

@@ -8,7 +8,6 @@ export const globalStyles = {
     paddingHorizontal: 10,
     paddingTop: StatusBar.currentHeight ? StatusBar.currentHeight + 20 : 20,
     height: "100%" as "100%",
-    paddingBottom: 50,
   },
   input: {
     backgroundColor: app_colors.white_no_opacity,
