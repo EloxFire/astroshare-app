@@ -10,13 +10,14 @@ import { scopeAlignmentStyles } from '../styles/screens/scopeAlignment';
 import { shortDmsCoord } from '../helpers/scripts/shortenDmsCoord';
 import { convertNumericLSTtoTime } from '../helpers/scripts/astro/convertNumericLSTtoTime';
 import dayjs from 'dayjs';
+import { convertAngleToTime } from '../helpers/scripts/astro/convertHAtoTimeString';
 
 
 export default function PolarClock() {
 
   const { currentUserLocation } = useSettings()
 
-  const degRa: number | undefined = convertHMSToDegreeFromString(Polaris.ra);
+
   const [numericLST, setNumericLST] = useState<number>(0);
   const [timeLST, setTimeLST] = useState<string>('');
   const [HA, setHA] = useState<number>(0);
@@ -35,21 +36,25 @@ export default function PolarClock() {
 
   const updatePosition = () => {
     // console.log('Updating polaris position');
-    const nlst = getLocalSiderealTime(new Date(), currentUserLocation.lon);
+    const degRa: number | undefined = convertHMSToDegreeFromString(Polaris.ra);
+    const radLon = currentUserLocation.lon * Math.PI / 180;
+    const nlst = getLocalSiderealTime(new Date(), radLon);
     const tlst = convertNumericLSTtoTime(nlst);
 
     setNumericLST(nlst);
     setTimeLST(tlst);
 
     if (degRa) {
-      const ha = getHourAngle(new Date(), currentUserLocation.lon, degRa) / 15;
-      const tha = convertNumericLSTtoTime(ha);
+      const ha = getHourAngle(new Date(), radLon, degRa) / 15;
+      const tha = convertAngleToTime(ha);
       setHA(ha);
       setTimeHA(tha);
 
       const polarisPos = calculatePolarisPosition(nlst, ha);
       setPolarisX(polarisPos.polarisX);
       setPolarisY(polarisPos.polarisY);
+      console.log('Polaris position updated to : ', polarisPos);
+
     }
   }
 
@@ -72,7 +77,7 @@ export default function PolarClock() {
 
   const calculatePolarisPosition = (LST: number, hourAngleOfPolaris: number) => {
     const lstInDegrees = LST * 15;
-    const polarisAngle = (lstInDegrees - hourAngleOfPolaris * 15) % 360; // In degrees
+    const polarisAngle = (lstInDegrees + (360 - hourAngleOfPolaris * 15)) % 360;
     const radius = (outerRadius + (outerRadius - 10)) / 2; // Position between the two concentric circles
 
     const polarisX = centerX + radius * Math.cos((polarisAngle - 90) * Math.PI / 180);
@@ -102,6 +107,11 @@ export default function PolarClock() {
         <Text style={scopeAlignmentStyles.content.dataContainer.title}>Position polaire :</Text>
         <Text style={scopeAlignmentStyles.content.dataContainer.value}>{timeHA}</Text>
       </View>
+
+      {/* <View style={scopeAlignmentStyles.content.dataContainer}>
+        <Text style={scopeAlignmentStyles.content.dataContainer.title}>Position polaire :</Text>
+        <Text style={scopeAlignmentStyles.content.dataContainer.value}>{polarisX} {polarisY}</Text>
+      </View> */}
 
       <View style={polarClockStyles.container}>
         <Svg width={width} height={width}>
