@@ -5,7 +5,6 @@ import { comingSoonStyles } from '../styles/screens/cominSoon'
 import { routes } from '../helpers/routes'
 import { storeData } from '../helpers/storage'
 import { onboardingStyles } from '../styles/screens/onboarding'
-import { checkFirstLaunch } from '../helpers/scripts/checkFirstLaunch'
 
 
 export default function Onboarding({ navigation }: any) {

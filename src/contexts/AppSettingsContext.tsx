@@ -6,11 +6,12 @@ import { convertDDtoDMS } from '../helpers/scripts/convertDDtoDMSCoords'
 import { getLocationName } from '../helpers/api/getLocationFromCoords'
 import { showToast } from '../helpers/scripts/showToast'
 import { app_colors } from '../helpers/constants'
+import { getData, storeData } from '../helpers/storage'
+import { routes } from '../helpers/routes'
+import { isFirstLaunch } from '../helpers/scripts/checkFirstLaunch'
 import * as Location from 'expo-location'
 import Toast from 'react-native-root-toast';
 import NetInfo from '@react-native-community/netinfo';
-import { getData, storeData } from '../helpers/storage'
-import { routes } from '../helpers/routes'
 
 const AppSettingsContext = createContext<any>({})
 
@@ -48,8 +49,10 @@ export function AppSettingsProvider({ children }: AppSettingsProviderProps) {
 
   useEffect(() => {
     (async () => {
-      const launchStatus = await getData('firstLaunch');
-      if (!launchStatus || launchStatus === 'true') return;
+      const launchStatus = await isFirstLaunch();
+      if (launchStatus) {
+        return;
+      }
       // Check if location permission is granted
       const hasLocationPermission = await askLocationPermission();
       if (!hasLocationPermission) {

@@ -13,7 +13,6 @@ import Home from "./src/screens/Home";
 import Settings from "./src/screens/Settings";
 import Weather from "./src/screens/Weather";
 import dayjs from "dayjs";
-import ComingSoon from "./src/screens/ComingSoon";
 import About from "./src/screens/About";
 import ObjectDetails from "./src/screens/ObjectDetails";
 import Apod from "./src/screens/Apod";
