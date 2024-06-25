@@ -24,6 +24,17 @@ export const Polaris = {
   dec: "+89:40:50.4",
 }
 
+export const moonPhases: any = {
+  "New": 'Nouvelle Lune',
+  "Waxing Crescent": 'Premier Croissant',
+  "First Quarter": 'Premier Quartier',
+  "Waxing Gibbous": 'Gibbeuse Croissante',
+  "Full": 'Pleine Lune',
+  "Waning Gibbous": 'Gibbeuse Décroissante',
+  "Last Quarter": 'Dernier Quartier',
+  "Waning Crescent": 'Dernier Croissant',
+}
+
 export const storageKeys = {
   viewPoints: 'viewPoints',
   hasChangedCurrentSpotElevation: 'hasChangedCurrentSpotElevation',

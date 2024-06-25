@@ -12,6 +12,7 @@ import BigValue from '../components/commons/BigValue'
 import { moonIcons } from '../helpers/scripts/loadImages'
 import DateTimePicker from '@react-native-community/datetimepicker';
 import SimpleButton from '../components/commons/buttons/SimpleButton'
+import { moonPhases } from '../helpers/constants'
 
 export default function MoonPhases({ navigation }: any) {
 
@@ -32,7 +33,7 @@ export default function MoonPhases({ navigation }: any) {
 
   const getMoonData = () => {
     const phase = getLunarPhase(date)
-    const illumination = Math.floor(getLunarIllumination(date))
+    const illumination = getLunarIllumination(date).toFixed(2)
     const distance = Math.floor(getLunarDistance(date))
     const elongation = Math.floor(getLunarElongation(date))
     const newMoon = isNewMoon(date)
@@ -84,7 +85,7 @@ export default function MoonPhases({ navigation }: any) {
         <Image source={moonData?.phase ? moonIcons[moonData?.phase] : moonIcons["Full"]} style={{ height: 200, width: 200, alignSelf: 'center', marginVertical: 20 }} resizeMode='contain' />
 
         <View style={moonPhasesStyles.content.values}>
-          <BigValue label="Phase" value={moonData?.phase} />
+          <BigValue label="Phase" value={moonPhases[moonData?.phase]} />
           <BigValue right label="Illumination" value={moonData?.illumination + '%'} />
         </View>
         <View style={moonPhasesStyles.content.values}>
