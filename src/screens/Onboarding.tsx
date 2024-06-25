@@ -33,7 +33,6 @@ export default function Onboarding({ navigation }: any) {
       <Text style={onboardingStyles.text}>Pour que l'application Astroshare soit fonctionnelle et la plus pertinante possible, cette dernière à accès aux informations suivantes :</Text>
       <View style={{ marginTop: 30 }}>
         <Text style={onboardingStyles.listText}>- Position géographique lors de l'utilisation</Text>
-        <Text style={onboardingStyles.listText}>- Position géographique en tâche de fond</Text>
         <Text style={onboardingStyles.listText}>- Gyroscope</Text>
         <Text style={onboardingStyles.listText}>- Accéléromètre</Text>
       </View>
