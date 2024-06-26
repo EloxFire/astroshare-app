@@ -89,7 +89,7 @@ export default function MoonPhases({ navigation }: any) {
           <BigValue right label="Illumination" value={moonData?.illumination + '%'} />
         </View>
         <View style={moonPhasesStyles.content.values}>
-          <BigValue label="Distance" value={formatter.format(moonData?.distance)} />
+          <BigValue label="Distance" value={formatter.format(moonData?.distance / 1000)} />
           <BigValue right label="Élongation" value={moonData?.elongation + '°'} />
         </View>
         <View style={moonPhasesStyles.content.values}>

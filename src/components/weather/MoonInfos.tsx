@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import { ImageBackground, Text, View } from 'react-native'
 import { moonInfosStyles } from '../../styles/components/weather/moonInfos'
-import SingleValue from './SingleValue'
 import { getBodyNextRise, getBodyNextSet, getLunarAge, getLunarDistance, getLunarElongation, getLunarEquatorialCoordinate, getLunarIllumination, getLunarPhase, isTransitInstance } from '@observerly/astrometry';
 import { moonPhases } from '../../helpers/constants';
 import { moonIcons } from '../../helpers/scripts/loadImages';
 import { useSettings } from '../../contexts/AppSettingsContext';
-import dayjs from 'dayjs';
 import { useSpot } from '../../contexts/ObservationSpotContext';
 import { extractNumbers } from '../../helpers/scripts/extractNumbers';
 import { calculateHorizonAngle } from '../../helpers/scripts/astro/calculateHorizonAngle';
+import SingleValue from './SingleValue'
+import dayjs from 'dayjs';
 
 
 export default function MoonInfos({ moonInfos }: any) {
@@ -79,7 +79,7 @@ export default function MoonInfos({ moonInfos }: any) {
           <View style={{ gap: 5 }}>
             {loading ? <Text>Chargement...</Text> : <SingleValue icon={require('../../../assets/icons/FiMoonset.png')} value={moonset} />}
             {loading ? <Text>Chargement...</Text> : <SingleValue icon={require('../../../assets/icons/FiAngleRight.png')} value={Math.floor(elongation)} unit='°' />}
-            {loading ? <Text>Chargement...</Text> : <SingleValue icon={require('../../../assets/icons/FiRuler.png')} value={formatter.format(Math.floor(distance))} />}
+            {loading ? <Text>Chargement...</Text> : <SingleValue icon={require('../../../assets/icons/FiRuler.png')} value={formatter.format(Math.floor(distance / 1000))} />}
           </View>
         </View>
       </View>
