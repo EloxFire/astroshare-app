@@ -55,17 +55,6 @@ export function AppSettingsProvider({ children }: AppSettingsProviderProps) {
       if (launchStatus) {
         return;
       }
-      // Check if location permission is granted
-      const hasLocationPermission = await askLocationPermission();
-      if (!hasLocationPermission) {
-        setLocationLoading(false);
-        showToast({ message: 'Vous devez autoriser l\'accès à la localisation pour utiliser l\'application', duration: Toast.durations.LONG, type: 'error' });
-        return;
-      }
-
-      setLocationPermissions(true);
-      showToast({ message: 'Acquisition de votre position', duration: Toast.durations.SHORT, type: 'success' });
-
       // Get user current position
       await refreshCurrentUserLocation();
     })();
@@ -83,6 +72,16 @@ export function AppSettingsProvider({ children }: AppSettingsProviderProps) {
 
   const refreshCurrentUserLocation = async () => {
     setLocationLoading(true);
+    // Check if location permission is granted
+    const hasLocationPermission = await askLocationPermission();
+    if (!hasLocationPermission) {
+      setLocationLoading(false);
+      showToast({ message: 'Vous devez autoriser l\'accès à la localisation pour utiliser l\'application', duration: Toast.durations.LONG, type: 'error' });
+      return;
+    }
+
+    setLocationPermissions(true);
+
     showToast({ message: 'Acquisition de votre position', duration: Toast.durations.SHORT, type: 'success' });
 
     try {

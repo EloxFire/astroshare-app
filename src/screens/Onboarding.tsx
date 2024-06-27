@@ -6,9 +6,12 @@ import { routes } from '../helpers/routes'
 import { storeData } from '../helpers/storage'
 import { onboardingStyles } from '../styles/screens/onboarding'
 import { isFirstLaunch } from '../helpers/scripts/checkFirstLaunch'
+import { useSettings } from '../contexts/AppSettingsContext'
 
 
 export default function Onboarding({ navigation }: any) {
+
+  const { refreshCurrentUserLocation } = useSettings()
 
   useEffect(() => {
     (async () => {
@@ -21,6 +24,7 @@ export default function Onboarding({ navigation }: any) {
 
   const handleAccept = async () => {
     await storeData('firstLaunch', 'false');
+    refreshCurrentUserLocation()
     navigation.navigate(routes.home.path)
   }
 

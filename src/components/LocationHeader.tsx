@@ -5,6 +5,7 @@ import { useSettings } from '../contexts/AppSettingsContext';
 import LocationModal from './LocationModal';
 import RefreshButton from './commons/buttons/RefreshButton';
 import * as Linking from 'expo-linking';
+import { app_colors } from '../helpers/constants';
 
 export default function LocationHeader() {
 
@@ -58,7 +59,7 @@ export default function LocationHeader() {
                   currentUserLocation ?
                     <Text style={locationHeaderStyles.container.location.value}>{currentUserLocation?.common_name}</Text>
                     :
-                    <Text style={locationHeaderStyles.container.location.value}>##Erreur##</Text>
+                    <Text style={[locationHeaderStyles.container.location.value, { color: app_colors.red_eighty }]}>##Erreur##</Text>
                   :
                   <TouchableOpacity style={locationHeaderStyles.container.location.settingsButton} onPress={() => Linking.openSettings()}>
                     <Text style={locationHeaderStyles.container.location.settingsButton.value}>Paramètres de localisation</Text>
