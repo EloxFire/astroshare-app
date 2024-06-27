@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { Animated, Easing, Image, Modal, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native'
+import { Animated, Easing, Image, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native'
 import { locationHeaderStyles } from '../styles/components/locationHeader'
 import { useSettings } from '../contexts/AppSettingsContext';
 import LocationModal from './LocationModal';

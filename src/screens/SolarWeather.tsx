@@ -27,26 +27,27 @@ export default function SolarWeather({ navigation }: any) {
   const [currentCmeImageFilter, setCurrentCmeImageFilter] = useState<ECmeFilters>('C2' as ECmeFilters)
   const [currentCmeImageUrl, setCurrentCmeImageUrl] = useState<string | undefined>("")
 
+
   useEffect(() => {
-    handleChangeSunImage(currentImageFilter)
-    handleChangeCMEImage(currentCmeImageFilter)
+    handleChangeSunImage(currentImageFilter, 'img')
+    handleChangeCMEImage(currentCmeImageFilter, 'img')
   }, [])
 
-  const handleChangeSunImage = (filter: ESunFilter) => {
+  const handleChangeSunImage = (filter: ESunFilter, type: 'img' | 'video') => {
     setCurrentImageUrl(undefined)
 
     setTimeout(() => {
       setCurrentImageFilter(filter)
-      setCurrentImageUrl(sunImagesSrcWavelengths[filter] + '?' + new Date())
+      setCurrentImageUrl(type === 'img' ? sunImagesSrcWavelengths[filter] + '?' + new Date() : sunVideoSrcWavelengths[filter] + '?' + new Date())
     }, 300)
   }
 
-  const handleChangeCMEImage = (filter: ECmeFilters) => {
+  const handleChangeCMEImage = (filter: ECmeFilters, type: 'img' | 'video') => {
     setCurrentCmeImageUrl(undefined)
 
     setTimeout(() => {
       setCurrentCmeImageFilter(filter)
-      setCurrentCmeImageUrl(cmeImageSrc[filter] + '?' + new Date())
+      setCurrentCmeImageUrl(type === 'img' ? cmeImageSrc[filter] + '?' + new Date() : cmeVideoSrc[filter] + '?' + new Date())
     }, 300)
   }
 
@@ -79,8 +80,10 @@ export default function SolarWeather({ navigation }: any) {
                   isMuted={true}
                   shouldPlay={true}
                   rate={2.0}
-                  // onLoadStart={() => setLoadingImage(true)}
+                  posterSource={require('../../assets/images/solarWeatherPlaceholderVideo.png')}
+                  usePoster={true}
                   isLooping={true}
+                  posterStyle={{ width: Dimensions.get('window').width - 40, height: Dimensions.get('window').width - 40, marginVertical: 10, borderRadius: 10 }}
                   resizeMode={ResizeMode.CONTAIN}
                   style={{ width: Dimensions.get('window').width - 40, height: Dimensions.get('window').width - 40, marginVertical: 10, borderRadius: 10, opacity: loadingImage ? .1 : 1, borderWidth: loadingImage ? 1 : 0, borderColor: app_colors.white_eighty }}
                 />
@@ -89,7 +92,7 @@ export default function SolarWeather({ navigation }: any) {
               {
                 Object.keys(ESunFilter).map((key: string) => {
                   return (
-                    <SimpleButton key={key} text={key} onPress={() => handleChangeSunImage(ESunFilter[key as keyof typeof ESunFilter])} />
+                    <SimpleButton key={key} text={key} onPress={() => handleChangeSunImage(ESunFilter[key as keyof typeof ESunFilter], isImageMode ? 'img' : 'video')} />
                   )
                 })
               }
@@ -118,7 +121,9 @@ export default function SolarWeather({ navigation }: any) {
                   isMuted={true}
                   shouldPlay={true}
                   rate={1.0}
-                  // onLoadStart={() => setLoadingCME(true)}
+                  posterSource={require('../../assets/images/solarWeatherPlaceholderVideo.png')}
+                  posterStyle={{ width: Dimensions.get('window').width - 40, height: Dimensions.get('window').width - 40, marginVertical: 10, borderRadius: 10 }}
+                  usePoster={true}
                   isLooping={true}
                   resizeMode={ResizeMode.CONTAIN}
                   style={{ width: Dimensions.get('window').width - 40, height: Dimensions.get('window').width - 40, marginVertical: 10, borderRadius: 10, opacity: loadingCME ? .1 : 1, borderWidth: loadingCME ? 1 : 0, borderColor: app_colors.white_eighty }}
@@ -128,7 +133,7 @@ export default function SolarWeather({ navigation }: any) {
               {
                 Object.keys(ECmeFilters).map((key: string) => {
                   return (
-                    <SimpleButton key={key} text={key} onPress={() => handleChangeCMEImage(ECmeFilters[key as keyof typeof ECmeFilters])} />
+                    <SimpleButton key={key} text={key} onPress={() => handleChangeCMEImage(ECmeFilters[key as keyof typeof ECmeFilters], isCmeImageMode ? 'img' : 'video')} />
                   )
                 })
               }
