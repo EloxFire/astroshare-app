@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { app_colors, cmeImageSrc, cmeVideoSrc, sunIMageFiltersDescription, sunImagesSrcWavelengths, sunVideoSrcWavelengths } from '../helpers/constants'
 import { Dimensions, ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import { globalStyles } from '../styles/global'
@@ -19,11 +19,36 @@ export default function SolarWeather({ navigation }: any) {
   const [loadingImage, setLoadingImage] = useState<boolean>(false)
   const [isImageMode, setIsImageMode] = useState<boolean>(true)
   const [currentImageFilter, setCurrentImageFilter] = useState<ESunFilter>('HMI_IC' as ESunFilter)
+  const [currentImageUrl, setCurrentImageUrl] = useState<string | undefined>("")
 
   // CME
   const [loadingCME, setLoadingCME] = useState<boolean>(false)
   const [isCmeImageMode, setIsCmeImageMode] = useState<boolean>(true)
   const [currentCmeImageFilter, setCurrentCmeImageFilter] = useState<ECmeFilters>('C2' as ECmeFilters)
+  const [currentCmeImageUrl, setCurrentCmeImageUrl] = useState<string | undefined>("")
+
+  useEffect(() => {
+    handleChangeSunImage(currentImageFilter)
+    handleChangeCMEImage(currentCmeImageFilter)
+  }, [])
+
+  const handleChangeSunImage = (filter: ESunFilter) => {
+    setCurrentImageUrl(undefined)
+
+    setTimeout(() => {
+      setCurrentImageFilter(filter)
+      setCurrentImageUrl(sunImagesSrcWavelengths[filter] + '?' + new Date())
+    }, 300)
+  }
+
+  const handleChangeCMEImage = (filter: ECmeFilters) => {
+    setCurrentCmeImageUrl(undefined)
+
+    setTimeout(() => {
+      setCurrentCmeImageFilter(filter)
+      setCurrentCmeImageUrl(cmeImageSrc[filter] + '?' + new Date())
+    }, 300)
+  }
 
   return (
     <View style={globalStyles.body}>
@@ -46,7 +71,7 @@ export default function SolarWeather({ navigation }: any) {
             <Text style={solarWeatherStyles.container.subtitle}>Source : NASA / SDO (Solar Dynamics Observatory)</Text>
             {
               isImageMode ?
-                <Image priority={'high'} placeholder={require('../../assets/images/solarWeatherPlaceholder.png')} source={loadingImage ? undefined : { uri: sunImagesSrcWavelengths[currentImageFilter] + '?' + new Date() }} style={solarWeatherStyles.sunImage} />
+                <Image priority={'high'} placeholder={require('../../assets/images/solarWeatherPlaceholder.png')} source={!currentImageUrl ? undefined : { uri: currentImageUrl }} style={solarWeatherStyles.sunImage} />
                 :
                 <Video
                   ref={videoRef}
@@ -64,7 +89,7 @@ export default function SolarWeather({ navigation }: any) {
               {
                 Object.keys(ESunFilter).map((key: string) => {
                   return (
-                    <SimpleButton key={key} text={key} onPress={() => setCurrentImageFilter(ESunFilter[key as keyof typeof ESunFilter])} />
+                    <SimpleButton key={key} text={key} onPress={() => handleChangeSunImage(ESunFilter[key as keyof typeof ESunFilter])} />
                   )
                 })
               }
@@ -85,7 +110,7 @@ export default function SolarWeather({ navigation }: any) {
             <Text style={solarWeatherStyles.container.subtitle}>Source : NASA / SoHO (Solar and Heliospheric Observatory)</Text>
             {
               isCmeImageMode ?
-                <Image priority={'high'} source={{ uri: cmeImageSrc[currentCmeImageFilter] + '?' + new Date() }} style={solarWeatherStyles.sunImage} />
+                <Image priority={'high'} placeholder={require('../../assets/images/solarWeatherPlaceholder.png')} source={!currentCmeImageUrl ? undefined : { uri: currentCmeImageUrl }} style={solarWeatherStyles.sunImage} />
                 :
                 <Video
                   ref={videoRef}
@@ -103,7 +128,7 @@ export default function SolarWeather({ navigation }: any) {
               {
                 Object.keys(ECmeFilters).map((key: string) => {
                   return (
-                    <SimpleButton key={key} text={key} onPress={() => setCurrentCmeImageFilter(ECmeFilters[key as keyof typeof ECmeFilters])} />
+                    <SimpleButton key={key} text={key} onPress={() => handleChangeCMEImage(ECmeFilters[key as keyof typeof ECmeFilters])} />
                   )
                 })
               }
