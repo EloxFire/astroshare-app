@@ -50,9 +50,9 @@ export default function Home({ navigation }: any) {
     try {
       const response = await axios.get(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/search?search=` + searchString);
       setSearchResults(response.data.data)
-    } catch (error) {
-      console.log(error)
-      showToast({ message: 'Une erreur est survenue...', type: 'error' })
+    } catch (error: any) {
+      console.log(error.message)
+      showToast({ message: error.message ? error.message : 'Une erreur inconnue est survenue...', type: 'error' })
     }
   }
 
