@@ -43,23 +43,23 @@ export const storageKeys = {
 }
 
 export const sunImagesSrcWavelengths = {
-  'HMI_IC': 'https://sdo.gsfc.nasa.gov/assets/img/latest/latest_1024_HMIIC.jpg',
-  'AIA_193': 'https://sdo.gsfc.nasa.gov/assets/img/latest/latest_1024_0193.jpg',
-  'AIA_304': 'https://sdo.gsfc.nasa.gov/assets/img/latest/latest_1024_0304.jpg',
-  'AIA_171': 'https://sdo.gsfc.nasa.gov/assets/img/latest/latest_1024_0171.jpg',
-  'AIA_131': 'https://sdo.gsfc.nasa.gov/assets/img/latest/latest_1024_0131.jpg',
-  'AIA_335': 'https://sdo.gsfc.nasa.gov/assets/img/latest/latest_1024_0335.jpg',
-  'AIA_1600': 'https://sdo.gsfc.nasa.gov/assets/img/latest/latest_1024_1600.jpg',
+  'HMI_IC': 'https://sdo.gsfc.nasa.gov/assets/img/latest/latest_512_HMIIC.jpg',
+  'AIA_193': 'https://sdo.gsfc.nasa.gov/assets/img/latest/latest_512_0193.jpg',
+  'AIA_304': 'https://sdo.gsfc.nasa.gov/assets/img/latest/latest_512_0304.jpg',
+  'AIA_171': 'https://sdo.gsfc.nasa.gov/assets/img/latest/latest_512_0171.jpg',
+  'AIA_131': 'https://sdo.gsfc.nasa.gov/assets/img/latest/latest_512_0131.jpg',
+  'AIA_335': 'https://sdo.gsfc.nasa.gov/assets/img/latest/latest_512_0335.jpg',
+  'AIA_1600': 'https://sdo.gsfc.nasa.gov/assets/img/latest/latest_512_1600.jpg',
 }
 
 export const sunVideoSrcWavelengths = {
-  'HMI_IC': 'https://sdo.gsfc.nasa.gov/assets/img/latest/mpeg/latest_1024_HMIIC.mp4',
-  'AIA_193': 'https://sdo.gsfc.nasa.gov/assets/img/latest/mpeg/latest_1024_0193.mp4',
-  'AIA_304': 'https://sdo.gsfc.nasa.gov/assets/img/latest/mpeg/latest_1024_0304.mp4',
-  'AIA_171': 'https://sdo.gsfc.nasa.gov/assets/img/latest/mpeg/latest_1024_0171.mp4',
-  'AIA_131': 'https://sdo.gsfc.nasa.gov/assets/img/latest/mpeg/latest_1024_0131.mp4',
-  'AIA_335': 'https://sdo.gsfc.nasa.gov/assets/img/latest/mpeg/latest_1024_0335.mp4',
-  'AIA_1600': 'https://sdo.gsfc.nasa.gov/assets/img/latest/mpeg/latest_1024_1600.mp4',
+  'HMI_IC': 'https://sdo.gsfc.nasa.gov/assets/img/latest/mpeg/latest_512_HMIIC.mp4',
+  'AIA_193': 'https://sdo.gsfc.nasa.gov/assets/img/latest/mpeg/latest_512_0193.mp4',
+  'AIA_304': 'https://sdo.gsfc.nasa.gov/assets/img/latest/mpeg/latest_512_0304.mp4',
+  'AIA_171': 'https://sdo.gsfc.nasa.gov/assets/img/latest/mpeg/latest_512_0171.mp4',
+  'AIA_131': 'https://sdo.gsfc.nasa.gov/assets/img/latest/mpeg/latest_512_0131.mp4',
+  'AIA_335': 'https://sdo.gsfc.nasa.gov/assets/img/latest/mpeg/latest_512_0335.mp4',
+  'AIA_1600': 'https://sdo.gsfc.nasa.gov/assets/img/latest/mpeg/latest_512_1600.mp4',
 }
 
 export const sunIMageFiltersDescription = {
@@ -73,8 +73,8 @@ export const sunIMageFiltersDescription = {
 }
 
 export const cmeImageSrc = {
-  'C2': 'https://soho.nascom.nasa.gov/data/realtime/c2/1024/latest.jpg',
-  'C3': 'https://soho.nascom.nasa.gov/data/realtime/c3/1024/latest.jpg',
+  'C2': 'https://soho.nascom.nasa.gov/data/realtime/c2/512/latest.jpg',
+  'C3': 'https://soho.nascom.nasa.gov/data/realtime/c3/512/latest.jpg',
 }
 
 export const cmeVideoSrc = {
