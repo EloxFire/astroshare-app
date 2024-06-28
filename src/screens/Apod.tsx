@@ -12,6 +12,7 @@ import Toast from 'react-native-root-toast'
 import PageTitle from '../components/commons/PageTitle'
 import dayjs from 'dayjs'
 import DisclaimerBar from '../components/banners/DisclaimerBar'
+import WebView from 'react-native-webview'
 
 export default function Apod({ navigation }: any) {
 
@@ -50,10 +51,11 @@ export default function Apod({ navigation }: any) {
           {
             apod?.media_type === 'video' ?
               apod?.url.includes('youtube') ?
-                <View style={{ display: 'flex', flexDirection: 'column', gap: 10, marginVertical: 30, width: '100%' }}>
-                  <DisclaimerBar message='Les vidéos provenant de Youtube ne sont pas encore supportées. Cliquez sur le lien ci-dessous pour copier le lien de la vidéo.' type='error' />
-                  <DisclaimerBar message={apod?.url} type='info' onPress={() => clickLink()} />
-                </View>
+                <WebView
+                  style={{ width: Dimensions.get('screen').width, height: (Dimensions.get('screen').width / (16 / 9)), marginVertical: 10 }}
+                  javaScriptEnabled={true}
+                  source={{ uri: apod?.url }}
+                />
                 :
                 <Video
                   ref={videoRef}
@@ -70,6 +72,7 @@ export default function Apod({ navigation }: any) {
                 <Image source={{ uri: apod?.url }} style={{ width: Dimensions.get('screen').width, height: Dimensions.get('screen').width, marginVertical: 10 }} resizeMode='contain' />
               )
           }
+
           <Text style={apodStyles.content.subtitle}>Description :</Text>
           <Text style={[apodStyles.content.text, { fontSize: 16, alignSelf: 'flex-start', lineHeight: 25 }]}>{apod?.explanation || 'Chargement'}</Text>
         </View>
