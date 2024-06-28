@@ -21,7 +21,7 @@ import DSOValues from "../components/commons/DSOValues";
 
 export default function ObjectDetails({ route, navigation }: any) {
 
-  const {currentUserLocation} = useSettings()
+  const { currentUserLocation } = useSettings()
   const { object, isVisible } = route.params;
   const { selectedSpot, defaultAltitude } = useSpot()
 
@@ -30,27 +30,27 @@ export default function ObjectDetails({ route, navigation }: any) {
   const [willRise, setWillRise] = useState<boolean>(false)
   const [isCircumpolar, setIsCircumpolar] = useState<boolean>(false)
 
-  const [selectedTimeBase, setSelectedTimeBase] = useState<'relative' | 'absolute'>('relative')  
+  const [selectedTimeBase, setSelectedTimeBase] = useState<'relative' | 'absolute'>('relative')
 
   useEffect(() => {
     const altitude = selectedSpot ? selectedSpot.equipments.altitude : defaultAltitude;
     const degRa = convertHMSToDegreeFromString(object.ra)
     const degDec = convertDMSToDegreeFromString(object.dec)
     const horizonAngle = calculateHorizonAngle(extractNumbers(altitude))
-    
-    
+
+
     if (!degRa || !degDec || !horizonAngle) return;
     const target: EquatorialCoordinate = { ra: degRa, dec: degDec }
     const observer: GeographicCoordinate = { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }
-    
+
     setWillRise(isBodyVisibleForNight(new Date(), observer, target, horizonAngle))
     setIsCircumpolar(isBodyCircumpolar(observer, target, horizonAngle))
 
     if (!isCircumpolar) {
       let rise = getBodyNextRise(new Date(), observer, target, horizonAngle)
       let set = getBodyNextSet(new Date(), observer, target, horizonAngle)
-      
-      if (isTransitInstance(rise)) {      
+
+      if (isTransitInstance(rise)) {
         setRiseTime(dayjs(rise.datetime))
       }
       if (isTransitInstance(set)) {
@@ -85,21 +85,21 @@ export default function ObjectDetails({ route, navigation }: any) {
           <DSOValues chipValue chipColor={app_colors.green_eighty} title="Télescope" value="Visible" />
         </View>
         <View>
-          <View style={{display: 'flex', flexDirection: 'row', alignItems: "center", justifyContent: 'space-between'}}>
+          <View style={{ display: 'flex', flexDirection: 'row', alignItems: "center", justifyContent: 'space-between' }}>
             <Text style={objectDetailsStyles.content.sectionTitle}>Visibilité</Text>
-            <View style={{display: 'flex', flexDirection: 'row', alignItems: "center", justifyContent: 'flex-end'}}>
+            <View style={{ display: 'flex', flexDirection: 'row', alignItems: "center", justifyContent: 'flex-end' }}>
               <Text style={objectDetailsStyles.dsoValues.select.text}>Temps : </Text>
               <TouchableOpacity style={objectDetailsStyles.dsoValues.select} onPress={() => setSelectedTimeBase('relative')}>
-                <Text style={[objectDetailsStyles.dsoValues.select.text, {backgroundColor: selectedTimeBase === 'relative' ? app_colors.white_forty : 'transparent'}]}>relatif</Text>
+                <Text style={[objectDetailsStyles.dsoValues.select.text, { backgroundColor: selectedTimeBase === 'relative' ? app_colors.white_forty : 'transparent' }]}>relatif</Text>
               </TouchableOpacity>
               <Text style={objectDetailsStyles.dsoValues.select.text}>/</Text>
               <TouchableOpacity style={objectDetailsStyles.dsoValues.select} onPress={() => setSelectedTimeBase('absolute')}>
-                <Text style={[objectDetailsStyles.dsoValues.select.text, {backgroundColor: selectedTimeBase === 'absolute' ? app_colors.white_forty : 'transparent'}]}>absolu</Text>
+                <Text style={[objectDetailsStyles.dsoValues.select.text, { backgroundColor: selectedTimeBase === 'absolute' ? app_colors.white_forty : 'transparent' }]}>absolu</Text>
               </TouchableOpacity>
             </View>
           </View>
-          <DSOValues chipValue chipColor={isVisible ? app_colors.green_eighty : app_colors.red_eighty} title="Maintenant" value={isVisible ? "Visible" : "Non visible"} />
-          <DSOValues chipValue chipColor={willRise ? app_colors.green_eighty : app_colors.red_eighty} title="Cette nuit" value={willRise ? "Oui" : "Non"} />          
+          <DSOValues chipValue chipColor={(isCircumpolar && !currentUserLocation.lat.toString().startsWith('-')) ? app_colors.green_eighty : isVisible ? app_colors.green_eighty : app_colors.red_eighty} title="Maintenant" value={(isCircumpolar && !currentUserLocation.lat.toString().startsWith('-')) ? "Visible" : isVisible ? "Visible" : "Non visible"} />
+          <DSOValues chipValue chipColor={willRise ? app_colors.green_eighty : app_colors.red_eighty} title="Cette nuit" value={willRise ? "Oui" : "Non"} />
           {
             typeof riseTime === 'object' && <DSOValues chipValue chipColor={app_colors.white_forty} title="Prochain lever" value={selectedTimeBase === 'relative' ? dayjs().to(riseTime) : riseTime.format('DD MMM à HH:mm').replace(':', 'h')} />
           }
