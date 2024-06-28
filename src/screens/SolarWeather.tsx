@@ -80,13 +80,12 @@ export default function SolarWeather({ navigation }: any) {
                   isMuted={true}
                   shouldPlay={true}
                   rate={2.0}
-                  posterSource={require('../../assets/images/solarWeatherPlaceholderVideo.png')}
-                  usePoster={true}
                   isLooping={true}
-                  posterStyle={{ width: Dimensions.get('window').width - 40, height: Dimensions.get('window').width - 40, marginVertical: 10, borderRadius: 10 }}
                   resizeMode={ResizeMode.CONTAIN}
                   style={{ width: Dimensions.get('window').width - 40, height: Dimensions.get('window').width - 40, marginVertical: 10, borderRadius: 10, opacity: loadingImage ? .1 : 1, borderWidth: loadingImage ? 1 : 0, borderColor: app_colors.white_eighty }}
-                />
+                >
+                  <Image placeholder={require('../../assets/images/solarWeatherPlaceholderVideo.png')} style={{ width: Dimensions.get('window').width - 40, height: Dimensions.get('window').width - 40, marginVertical: 10, borderRadius: 10 }} />
+                </Video>
             }
             <View style={solarWeatherStyles.container.buttons}>
               {
@@ -121,13 +120,12 @@ export default function SolarWeather({ navigation }: any) {
                   isMuted={true}
                   shouldPlay={true}
                   rate={1.0}
-                  posterSource={require('../../assets/images/solarWeatherPlaceholderVideo.png')}
-                  posterStyle={{ width: Dimensions.get('window').width - 40, height: Dimensions.get('window').width - 40, marginVertical: 10, borderRadius: 10 }}
-                  usePoster={true}
                   isLooping={true}
                   resizeMode={ResizeMode.CONTAIN}
                   style={{ width: Dimensions.get('window').width - 40, height: Dimensions.get('window').width - 40, marginVertical: 10, borderRadius: 10, opacity: loadingCME ? .1 : 1, borderWidth: loadingCME ? 1 : 0, borderColor: app_colors.white_eighty }}
-                />
+                >
+                  <Image placeholder={require('../../assets/images/solarWeatherPlaceholderVideo.png')} style={{ width: Dimensions.get('window').width - 40, height: Dimensions.get('window').width - 40, marginVertical: 10, borderRadius: 10 }} />
+                </Video>
             }
             <View style={solarWeatherStyles.container.buttons}>
               {

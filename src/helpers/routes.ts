@@ -8,6 +8,7 @@ export const routes = {
   moonPhases: { path: 'MoonPhasesScreen', requirements: [] },
   objectDetails: { path: 'ObjectDetails', requirements: [] },
   solarWeather: { path: 'SolarWeatherScreen', requirements: [] },
-  apod: { path: 'ApodScreen', requirements: [] },
   favoritesViewPoints: { path: 'FavoritesViewPoints', requirements: [] },
+  apod: { path: 'ApodScreen', requirements: [] },
+  skymapgenerator: {path: 'SkyMapGeneratorScreen', requirements: []},
 }

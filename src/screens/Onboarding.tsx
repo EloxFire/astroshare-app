@@ -7,6 +7,7 @@ import { storeData } from '../helpers/storage'
 import { onboardingStyles } from '../styles/screens/onboarding'
 import { isFirstLaunch } from '../helpers/scripts/checkFirstLaunch'
 import { useSettings } from '../contexts/AppSettingsContext'
+import { StackActions } from '@react-navigation/native';
 
 
 export default function Onboarding({ navigation }: any) {
@@ -17,7 +18,9 @@ export default function Onboarding({ navigation }: any) {
     (async () => {
       const firstTime = await isFirstLaunch();
       if (!firstTime) {
-        navigation.navigate(routes.home.path)
+        navigation.dispatch(
+          StackActions.replace(routes.home.path)
+        );
       }
     })()
   }, [])
@@ -25,7 +28,9 @@ export default function Onboarding({ navigation }: any) {
   const handleAccept = async () => {
     await storeData('firstLaunch', 'false');
     refreshCurrentUserLocation()
-    navigation.navigate(routes.home.path)
+    navigation.dispatch(
+      StackActions.replace(routes.home.path)
+    );
   }
 
   return (

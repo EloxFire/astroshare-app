@@ -92,7 +92,8 @@ export default function Home({ navigation }: any) {
           <Text style={globalStyles.sections.title}>Autres outils</Text>
           <Text style={globalStyles.sections.subtitle}>Explorez toujours plus !</Text>
           <View style={homeStyles.nasaTools.buttons}>
-            <SquareButton disabled={!hasInternetConnection} navigation={navigation} targetScreen={routes.apod.path} text="APOD" subtitle="// Image du jour de la NASA" image={require('../../assets/images/apod.png')} />
+            <SquareButton disabled={!hasInternetConnection} navigation={navigation} targetScreen={routes.apod.path} text="APOD" subtitle="// Image du jour de la NASA" image={require('../../assets/images/tools/apod.png')} />
+            {/* <SquareButton disabled={!hasInternetConnection} navigation={navigation} targetScreen={routes.skymapgenerator.path} text="Sky map" subtitle="// Générez des cartes du ciel" image={require('../../assets/images/tools/skymap.png')} /> */}
           </View>
         </View>
       </ScrollView>
