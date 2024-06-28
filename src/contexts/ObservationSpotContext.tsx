@@ -30,17 +30,28 @@ export function ObservationSpotProvider({ children }: ObservationSpotProviderPro
     })()
   }, [])
 
+  useEffect(() => {
+    _subscribe();
+    return () => _unsubscribe();
+  }, []);
+
   const _subscribe = () => {
+    const hasPermission = Barometer.isAvailableAsync()
+    if (!hasPermission) return;
+
+    console.log('Barometer available');
+
     setBarometerSubscription(
       Barometer.addListener((result) => {
         const paPressure = result.pressure * 100
         const altitude = 44330 * (1 - Math.pow(paPressure / 101325, 1 / 5.255))
-        console.log(altitude);
+        console.log('Altitude', altitude);
 
         setDefaultAltitude(`${Math.round(altitude)}m`)
       })
-    );
-    Barometer.setUpdateInterval(200);
+    )
+
+    Barometer.setUpdateInterval(500);
   };
 
   const _unsubscribe = () => {
@@ -48,10 +59,6 @@ export function ObservationSpotProvider({ children }: ObservationSpotProviderPro
     setBarometerSubscription(null);
   };
 
-  useEffect(() => {
-    _subscribe();
-    return () => _unsubscribe();
-  }, []);
 
 
   const handleCurrentSpotElevation = (newElevation: number) => {

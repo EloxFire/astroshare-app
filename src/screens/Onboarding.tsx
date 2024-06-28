@@ -44,6 +44,7 @@ export default function Onboarding({ navigation }: any) {
         <Text style={onboardingStyles.listText}>- Position géographique lors de l'utilisation</Text>
         <Text style={onboardingStyles.listText}>- Gyroscope</Text>
         <Text style={onboardingStyles.listText}>- Accéléromètre</Text>
+        <Text style={onboardingStyles.listText}>- Baromètre</Text>
       </View>
       <Text style={[onboardingStyles.text, { marginTop: 30 }]}>Ce message n'est affiché que <Text style={{ textDecorationLine: 'underline' }}>lors du premier démarrage</Text> de l'application</Text>
       <TouchableOpacity style={comingSoonStyles.button} onPress={() => handleAccept()}>
