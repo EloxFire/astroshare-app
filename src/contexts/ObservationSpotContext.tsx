@@ -17,7 +17,7 @@ export function ObservationSpotProvider({ children }: ObservationSpotProviderPro
 
   const [viewPoints, setViewPoints] = useState<TViewPoint[]>([])
   const [selectedSpot, setSelectedSpot] = useState<TViewPoint | null>(null)
-  const [defaultAltitude, setDefaultAltitude] = useState<string | null>(null)
+  const [defaultAltitude, setDefaultAltitude] = useState<string>('+341m')
 
   const [barometerSubscription, setBarometerSubscription] = useState<any>(null);
 

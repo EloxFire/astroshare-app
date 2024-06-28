@@ -1,23 +1,41 @@
 import React, { useEffect, useState } from 'react'
-import { Image, Keyboard, Text, TouchableOpacity, View } from 'react-native'
-import PageTitle from '../components/commons/PageTitle'
+import { Image, Text, TouchableOpacity, View } from 'react-native'
 import { globalStyles } from '../styles/global'
 import { moonPhasesStyles } from '../styles/screens/moonPhases'
-import { getLunarAge, getLunarDistance, getLunarElongation, getLunarIllumination, getLunarPhase, isFullMoon, isNewMoon } from '@observerly/astrometry'
-import InputWithIcon from '../components/forms/InputWithIcon'
-import { showToast } from '../helpers/scripts/showToast'
-import Toast from 'react-native-root-toast'
+import { getBodyNextRise, getBodyNextSet, getLunarAge, getLunarDistance, getLunarElongation, getLunarEquatorialCoordinate, getLunarIllumination, getLunarPhase, isFullMoon, isNewMoon, isTransitInstance } from '@observerly/astrometry'
+import { moonIcons } from '../helpers/scripts/loadImages'
+import { app_colors, moonPhases } from '../helpers/constants'
+import { useSpot } from '../contexts/ObservationSpotContext'
+import { extractNumbers } from '../helpers/scripts/extractNumbers'
+import { calculateHorizonAngle } from '../helpers/scripts/astro/calculateHorizonAngle'
+import { useSettings } from '../contexts/AppSettingsContext'
 import dayjs from 'dayjs'
 import BigValue from '../components/commons/BigValue'
-import { moonIcons } from '../helpers/scripts/loadImages'
 import DateTimePicker from '@react-native-community/datetimepicker';
 import SimpleButton from '../components/commons/buttons/SimpleButton'
-import { moonPhases } from '../helpers/constants'
+import PageTitle from '../components/commons/PageTitle'
+import DSOValues from '../components/commons/DSOValues'
+
+interface MoonData {
+  phase: string,
+  illumination: string,
+  distance: number,
+  elongation: number,
+  newMoon: boolean,
+  fullMoon: boolean,
+  age: number
+  moonrise?: string,
+  moonset?: string
+}
+
 
 export default function MoonPhases({ navigation }: any) {
 
+  const { selectedSpot, defaultAltitude } = useSpot()
+  const { currentUserLocation } = useSettings()
+
   const [date, setDate] = useState<Date>(new Date())
-  const [moonData, setMoonData] = useState<any>(null)
+  const [moonData, setMoonData] = useState<MoonData | null>(null)
   const [isDateModalVisible, setIsDateModalVisible] = useState(false)
 
   const formatter = new Intl.NumberFormat("fr-FR", {
@@ -34,21 +52,45 @@ export default function MoonPhases({ navigation }: any) {
   const getMoonData = () => {
     const phase = getLunarPhase(date)
     const illumination = getLunarIllumination(date).toFixed(2)
-    const distance = Math.floor(getLunarDistance(date))
+    const distance = Math.floor(getLunarDistance(date) / 1000)
     const elongation = Math.floor(getLunarElongation(date))
     const newMoon = isNewMoon(date)
     const fullMoon = isFullMoon(date)
     const age = Math.floor(getLunarAge(date).age)
 
     setMoonData({
-      phase,
-      illumination,
-      distance,
-      elongation,
-      newMoon,
-      fullMoon,
-      age
+      phase: phase,
+      illumination: illumination,
+      distance: distance,
+      elongation: elongation,
+      newMoon: newMoon,
+      fullMoon: fullMoon,
+      age: age,
+      moonrise: getMoonRiseAndSet().moonrise,
+      moonset: getMoonRiseAndSet().moonset
     })
+  }
+
+  const getMoonRiseAndSet = (): { moonrise: string, moonset: string } => {
+    const altitude = selectedSpot ? selectedSpot.equipments.altitude : extractNumbers(defaultAltitude);
+    const horizonAngle = calculateHorizonAngle(extractNumbers(altitude))
+    const moonCoords = getLunarEquatorialCoordinate(new Date())
+    console.log(moonCoords);
+
+    const moonRise = getBodyNextRise(new Date(), { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }, moonCoords, horizonAngle)
+    const moonSet = getBodyNextSet(new Date(), { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }, moonCoords, horizonAngle)
+
+    let moonrise = '##Erreur##'
+    let moonset = '##Erreur##'
+    if (isTransitInstance(moonRise)) {
+      moonRise.datetime < new Date() ? moonrise = "Déjà levée" : moonrise = dayjs(moonRise.datetime).add(2, 'h').format('HH:mm').replace(':', 'h')
+    }
+
+    if (isTransitInstance(moonSet)) {
+      moonSet.datetime < new Date() ? moonset = "Déjà couchée" : moonset = dayjs(moonSet.datetime).add(2, 'h').format('HH:mm').replace(':', 'h')
+    }
+
+    return { moonrise, moonset }
   }
 
   return (
@@ -56,48 +98,46 @@ export default function MoonPhases({ navigation }: any) {
       <PageTitle navigation={navigation} title="Phases de la lune" subtitle="// Calculez les phases de la Lune" />
       <View style={globalStyles.screens.separator} />
       <View style={moonPhasesStyles.content}>
-        <Text style={moonPhasesStyles.content.title}>Lune du {dayjs(date).format('DD MMMM YYYY')}</Text>
-        <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10 }}>
-          <TouchableOpacity onPress={() => setIsDateModalVisible(true)} style={moonPhasesStyles.content.selectButton}>
-            <Text style={moonPhasesStyles.content.selectButton.text}>Sélectioner une date</Text>
-          </TouchableOpacity>
-          <SimpleButton icon={require('../../assets/icons/FiRepeat.png')} small onPress={() => setDate(new Date())} />
+        <View style={moonPhasesStyles.content.phaseContainer}>
+          <Text style={moonPhasesStyles.content.title}>Lune du {dayjs(date).format('DD MMMM YYYY')}</Text>
+          <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10 }}>
+            <TouchableOpacity onPress={() => setIsDateModalVisible(true)} style={moonPhasesStyles.content.selectButton}>
+              <Text style={moonPhasesStyles.content.selectButton.text}>Sélectioner une date</Text>
+            </TouchableOpacity>
+            <SimpleButton icon={require('../../assets/icons/FiRepeat.png')} small onPress={() => setDate(new Date())} />
+          </View>
+
+          {
+            isDateModalVisible &&
+            <DateTimePicker
+              value={date}
+              mode='date'
+              display='default'
+              onChange={(event, selectedDate) => {
+                if (event.type === 'dismissed') {
+                  setIsDateModalVisible(false)
+                }
+                if (event.type === 'set' && selectedDate) {
+                  setIsDateModalVisible(false)
+                  setDate(selectedDate)
+                }
+              }}
+            />
+          }
+
+          <Image source={moonData?.phase ? moonIcons[moonData?.phase] : moonIcons["Full"]} style={{ height: 200, width: 200, alignSelf: 'center', marginVertical: 20 }} resizeMode='contain' />
+          <Text style={moonPhasesStyles.content.title}>{moonPhases[moonData?.phase!]}</Text>
         </View>
 
-        {
-          isDateModalVisible &&
-          <DateTimePicker
-            value={date}
-            mode='date'
-            display='default'
-            onChange={(event, selectedDate) => {
-              if (event.type === 'dismissed') {
-                setIsDateModalVisible(false)
-              }
-              if (event.type === 'set' && selectedDate) {
-                setIsDateModalVisible(false)
-                setDate(selectedDate)
-              }
-            }}
-          />
-        }
-
-        <Image source={moonData?.phase ? moonIcons[moonData?.phase] : moonIcons["Full"]} style={{ height: 200, width: 200, alignSelf: 'center', marginVertical: 20 }} resizeMode='contain' />
-
-        <View style={moonPhasesStyles.content.values}>
-          <BigValue label="Phase" value={moonPhases[moonData?.phase]} />
-          <BigValue right label="Illumination" value={moonData?.illumination + '%'} />
-        </View>
-        <View style={moonPhasesStyles.content.values}>
-          <BigValue label="Distance" value={formatter.format(moonData?.distance / 1000)} />
-          <BigValue right label="Élongation" value={moonData?.elongation + '°'} />
-        </View>
-        <View style={moonPhasesStyles.content.values}>
-          <BigValue label="Nouvelle lune" value={moonData?.newMoon ? 'Oui' : 'Non'} />
-          <BigValue right label="Pleine lune" value={moonData?.fullMoon ? 'Oui' : 'Non'} />
-        </View>
-        <View style={moonPhasesStyles.content.values}>
-          <BigValue label="Âge" value={moonData?.age + `${moonData?.age > 1 ? ' jours' : ' jour'}`} />
+        <View style={moonPhasesStyles.content.valuesContainer}>
+          <DSOValues title='Heure de lever' value={moonData?.moonrise!} chipValue chipColor={app_colors.grey} />
+          <DSOValues title='Heure de coucher' value={moonData?.moonset!} chipValue chipColor={app_colors.grey} />
+          <DSOValues title='Illumination' value={moonData?.illumination! + '%'} chipValue chipColor={app_colors.grey} />
+          <DSOValues title='Distance' value={formatter.format(moonData?.distance!)} chipValue chipColor={app_colors.grey} />
+          <DSOValues title='Élongation' value={moonData?.elongation! + '°'} chipValue chipColor={app_colors.grey} />
+          <DSOValues title='Âge' value={moonData?.age! + ' jours'} chipValue chipColor={app_colors.grey} />
+          <DSOValues title='Nouvelle lune' value={moonData?.newMoon! ? 'Oui' : 'Non'} chipValue chipColor={moonData?.newMoon! ? app_colors.green_eighty : app_colors.grey} />
+          <DSOValues title='Pleine lune' value={moonData?.fullMoon! ? 'Oui' : 'Non'} chipValue chipColor={moonData?.fullMoon! ? app_colors.green_eighty : app_colors.grey} />
         </View>
       </View>
     </View>

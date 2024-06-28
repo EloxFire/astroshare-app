@@ -15,12 +15,19 @@ export const moonPhasesStyles = {
       alignSelf: 'center' as 'center'
     },
 
-    values: {
-      display: 'flex' as 'flex',
-      flexDirection: 'row' as 'row',
-      justifyContent: 'space-between' as 'space-between',
-      marginTop: 10,
+    phaseContainer: {
+      backgroundColor: app_colors.white_no_opacity,
+      borderWidth: 1,
+      borderColor: app_colors.white_no_opacity,
+      borderRadius: 10,
+      padding: 10,
     },
+
+    valuesContainer: {
+      display: 'flex' as 'flex',
+      flexDirection: 'column' as 'column',
+      paddingTop: 20,
+    },    
 
     selectButton: {
       backgroundColor: app_colors.white_no_opacity,
