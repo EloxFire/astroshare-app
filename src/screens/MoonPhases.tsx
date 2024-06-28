@@ -57,6 +57,8 @@ export default function MoonPhases({ navigation }: any) {
     const newMoon = isNewMoon(date)
     const fullMoon = isFullMoon(date)
     const age = Math.floor(getLunarAge(date).age)
+    const moonrise = getMoonRiseAndSet(date).moonrise
+    const moonset = getMoonRiseAndSet(date).moonset
 
     setMoonData({
       phase: phase,
@@ -66,28 +68,27 @@ export default function MoonPhases({ navigation }: any) {
       newMoon: newMoon,
       fullMoon: fullMoon,
       age: age,
-      moonrise: getMoonRiseAndSet().moonrise,
-      moonset: getMoonRiseAndSet().moonset
+      moonrise: moonrise,
+      moonset: moonset
     })
   }
 
-  const getMoonRiseAndSet = (): { moonrise: string, moonset: string } => {
+  const getMoonRiseAndSet = (date: Date): { moonrise: string, moonset: string } => {
     const altitude = selectedSpot ? selectedSpot.equipments.altitude : extractNumbers(defaultAltitude);
     const horizonAngle = calculateHorizonAngle(extractNumbers(altitude))
     const moonCoords = getLunarEquatorialCoordinate(new Date())
-    console.log(moonCoords);
 
-    const moonRise = getBodyNextRise(new Date(), { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }, moonCoords, horizonAngle)
-    const moonSet = getBodyNextSet(new Date(), { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }, moonCoords, horizonAngle)
+    const moonRise = getBodyNextRise(date, { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }, moonCoords, horizonAngle)
+    const moonSet = getBodyNextSet(date, { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }, moonCoords, horizonAngle)
 
     let moonrise = '##Erreur##'
     let moonset = '##Erreur##'
     if (isTransitInstance(moonRise)) {
-      moonRise.datetime < new Date() ? moonrise = "Déjà levée" : moonrise = dayjs(moonRise.datetime).add(2, 'h').format('HH:mm').replace(':', 'h')
+      moonRise.datetime < date ? moonrise = "Déjà levée" : moonrise = dayjs(moonRise.datetime).add(2, 'h').format('HH:mm').replace(':', 'h')
     }
 
     if (isTransitInstance(moonSet)) {
-      moonSet.datetime < new Date() ? moonset = "Déjà couchée" : moonset = dayjs(moonSet.datetime).add(2, 'h').format('HH:mm').replace(':', 'h')
+      moonSet.datetime < date ? moonset = "Déjà couchée" : moonset = dayjs(moonSet.datetime).add(2, 'h').format('HH:mm').replace(':', 'h')
     }
 
     return { moonrise, moonset }
