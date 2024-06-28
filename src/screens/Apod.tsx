@@ -11,7 +11,6 @@ import axios from 'axios'
 import Toast from 'react-native-root-toast'
 import PageTitle from '../components/commons/PageTitle'
 import dayjs from 'dayjs'
-import DisclaimerBar from '../components/banners/DisclaimerBar'
 import WebView from 'react-native-webview'
 
 export default function Apod({ navigation }: any) {

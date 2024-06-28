@@ -53,15 +53,11 @@ export default function MoonInfos({ moonInfos }: any) {
     const moonSet = getBodyNextSet(new Date(), { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }, moonCoords, horizonAngle)
 
     if (isTransitInstance(moonRise)) {
-      console.log(moonRise.datetime);
-
-      moonRise.datetime > new Date() ? setMoonrise("Déjà levée") : setMoonrise(dayjs(moonRise.datetime).format('HH:mm'))
+      moonRise.datetime < new Date() ? setMoonrise("Déjà levée") : setMoonrise(dayjs(moonRise.datetime).add(2, 'h').format('HH:mm'))
     }
 
     if (isTransitInstance(moonSet)) {
-      console.log(moonSet.datetime);
-
-      moonSet.datetime < new Date() ? setMoonset("Déjà couchée") : setMoonset(dayjs(moonSet.datetime).format('HH:mm'))
+      moonSet.datetime < new Date() ? setMoonset("Déjà couchée") : setMoonset(dayjs(moonSet.datetime).add(2, 'h').format('HH:mm'))
     }
   }
 
