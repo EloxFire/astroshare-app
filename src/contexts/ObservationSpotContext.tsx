@@ -2,6 +2,7 @@ import React, { ReactNode, createContext, useContext, useEffect, useState } from
 import { getObject, storeData, storeObject } from '../helpers/storage'
 import { TViewPoint } from '../helpers/types/ViewPoint'
 import { storageKeys } from '../helpers/constants'
+import { Barometer } from 'expo-sensors'
 const ObservationSpotContext = createContext<any>({})
 
 export const useSpot = () => {
@@ -14,10 +15,11 @@ interface ObservationSpotProviderProps {
 
 export function ObservationSpotProvider({ children }: ObservationSpotProviderProps) {
 
-  const [currentSpotElevation, setCurrentSpotElevation] = useState<number>(0)
   const [viewPoints, setViewPoints] = useState<TViewPoint[]>([])
   const [selectedSpot, setSelectedSpot] = useState<TViewPoint | null>(null)
-  const defaultAltitude: string = "+341m"
+  const [defaultAltitude, setDefaultAltitude] = useState<string | null>(null)
+
+  const [barometerSubscription, setBarometerSubscription] = useState<any>(null);
 
   useEffect(() => {
     (async () => {
@@ -28,9 +30,31 @@ export function ObservationSpotProvider({ children }: ObservationSpotProviderPro
     })()
   }, [])
 
+  const _subscribe = () => {
+    setBarometerSubscription(
+      Barometer.addListener((result) => {
+        const paPressure = result.pressure * 100
+        const altitude = 44330 * (1 - Math.pow(paPressure / 101325, 1 / 5.255))
+        console.log(altitude);
+
+        setDefaultAltitude(`${Math.round(altitude)}m`)
+      })
+    );
+    Barometer.setUpdateInterval(200);
+  };
+
+  const _unsubscribe = () => {
+    barometerSubscription && barometerSubscription.remove();
+    setBarometerSubscription(null);
+  };
+
+  useEffect(() => {
+    _subscribe();
+    return () => _unsubscribe();
+  }, []);
+
 
   const handleCurrentSpotElevation = (newElevation: number) => {
-    setCurrentSpotElevation(newElevation)
     storeData(storageKeys.hasChangedCurrentSpotElevation, 'true')
   }
 
@@ -72,7 +96,6 @@ export function ObservationSpotProvider({ children }: ObservationSpotProviderPro
   }
 
   const values = {
-    currentSpotElevation,
     handleCurrentSpotElevation,
     addNewSpot,
     deleteSpot,

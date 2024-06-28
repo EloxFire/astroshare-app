@@ -12,6 +12,7 @@ import { isFirstLaunch } from '../helpers/scripts/checkFirstLaunch'
 import * as Location from 'expo-location'
 import Toast from 'react-native-root-toast';
 import NetInfo from '@react-native-community/netinfo';
+import { Night } from 'react-native-color-matrix-image-filters'
 
 const AppSettingsContext = createContext<any>({})
 

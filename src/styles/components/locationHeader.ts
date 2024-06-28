@@ -60,7 +60,7 @@ export const locationHeaderStyles = {
     padding: 10,
     position: 'absolute' as 'absolute',
     bottom: 0,
-    height: 200,
+    height: 250,
     
     header: {
       display: 'flex' as 'flex',
