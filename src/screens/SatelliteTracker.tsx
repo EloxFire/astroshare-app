@@ -62,13 +62,13 @@ export default function SatelliteTracker({ navigation }: any) {
                     latitude: issPosition.latitude,
                     longitude: issPosition.longitude,
                     latitudeDelta: 0,
-                    longitudeDelta: 200,
+                    longitudeDelta: 100,
                   }}
                   region={{
                     latitude: issPosition.latitude,
                     longitude: issPosition.longitude,
                     latitudeDelta: 0,
-                    longitudeDelta: 200,
+                    longitudeDelta: 100,
                   }}
                   style={satelliteTrackerStyles.mapContainer.map}
                   customMapStyle={mapStyle}
@@ -92,6 +92,8 @@ export default function SatelliteTracker({ navigation }: any) {
                     title="ISS"
                     description="Station Spatiale Internationale"
                     image={require('../../assets/icons/FiIss.png')}
+                    anchor={{ x: 0.5, y: 0.5 }}
+                    centerOffset={{ x: 0.5, y: 0.5 }}
                   />
                 </MapView>
                 :
