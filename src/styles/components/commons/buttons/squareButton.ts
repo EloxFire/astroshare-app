@@ -1,3 +1,4 @@
+import { Dimensions } from "react-native";
 import { app_colors } from "../../../../helpers/constants";
 
 export const squareButtonStyles = {
@@ -7,17 +8,17 @@ export const squareButtonStyles = {
     borderColor: app_colors.white_no_opacity,
     borderRadius: 10,
     padding: 10,
-    marginBottom: 10,
-    height: 180,
-    width: 180,
+    marginBottom: 20,
+    height: Dimensions.get('window').width / 2 - 20,
+    width: Dimensions.get('window').width / 2 - 20,
     position: 'relative' as 'relative',
 
     image: {
       position: 'absolute' as 'absolute',
       right: 0,
       bottom: 0,
-      height: 180,
-      width: 180,
+      height: Dimensions.get('window').width / 2 - 20,
+      width: Dimensions.get('window').width / 2 - 20,
       borderRadius: 10,
       opacity: .3,
     },

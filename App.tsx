@@ -26,6 +26,7 @@ import SolarWeather from "./src/screens/SolarWeather";
 import ScopeAlignment from "./src/screens/ScopeAlignment";
 import 'dayjs/locale/fr'
 import Onboarding from "./src/screens/Onboarding";
+import SatelliteTracker from "./src/screens/SatelliteTracker";
 
 dayjs.locale('fr');
 dayjs.extend(LocalizedFormat)
@@ -83,6 +84,7 @@ export default function App() {
               <Stack.Screen name={routes.settings.path} component={Settings} />
               <Stack.Screen name={routes.favoritesViewPoints.path} component={ViewPointsManager} />
               <Stack.Screen name={routes.about.path} component={About} />
+              <Stack.Screen name={routes.satelliteTracker.path} component={SatelliteTracker} />
             </Stack.Navigator>
           </ObservationSpotProvider>
         </AppSettingsProvider>

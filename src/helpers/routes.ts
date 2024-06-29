@@ -10,5 +10,6 @@ export const routes = {
   solarWeather: { path: 'SolarWeatherScreen', requirements: [] },
   favoritesViewPoints: { path: 'FavoritesViewPoints', requirements: [] },
   apod: { path: 'ApodScreen', requirements: [] },
-  skymapgenerator: {path: 'SkyMapGeneratorScreen', requirements: []},
+  skymapgenerator: { path: 'SkyMapGeneratorScreen', requirements: [] },
+  satelliteTracker: {path: 'SatelliteTrackerScreen', requirements: []},
 }

@@ -1,27 +1,21 @@
 import React, { useEffect, useState } from 'react'
 import { Dimensions, Text, View } from 'react-native'
 import { Circle, Line, Svg, Text as SvgText } from 'react-native-svg';
-import { convertHMSToDegreeFromString } from '../helpers/scripts/astro/HmsToDegree';
-import { getHourAngle, getLocalSiderealTime } from '@observerly/astrometry';
 import { useSettings } from '../contexts/AppSettingsContext';
 import { polarClockStyles } from '../styles/components/polarClock';
 import { Polaris, app_colors } from '../helpers/constants';
 import { scopeAlignmentStyles } from '../styles/screens/scopeAlignment';
 import { shortDmsCoord } from '../helpers/scripts/shortenDmsCoord';
-import { convertNumericLSTtoTime } from '../helpers/scripts/astro/convertNumericLSTtoTime';
 import dayjs from 'dayjs';
-import { convertAngleToTime } from '../helpers/scripts/astro/convertHAtoTimeString';
+import { convertEquatorialToHorizontal } from '@observerly/astrometry';
+import { convertHMSToDegreeFromString } from '../helpers/scripts/astro/HmsToDegree';
+import { convertDMSToDegreeFromString } from '../helpers/scripts/astro/DmsToDegree';
 
 
 export default function PolarClock() {
 
   const { currentUserLocation } = useSettings()
 
-
-  const [numericLST, setNumericLST] = useState<number>(0);
-  const [timeLST, setTimeLST] = useState<string>('');
-  const [HA, setHA] = useState<number>(0);
-  const [timeHA, setTimeHA] = useState<string>('');
   const [polarisX, setPolarisX] = useState<number>(0);
   const [polarisY, setPolarisY] = useState<number>(0);
 
@@ -35,27 +29,15 @@ export default function PolarClock() {
   }, [])
 
   const updatePosition = () => {
-    // console.log('Updating polaris position');
-    const degRa: number | undefined = convertHMSToDegreeFromString(Polaris.ra);
-    const radLon = currentUserLocation.lon * Math.PI / 180;
-    const nlst = getLocalSiderealTime(new Date(), radLon);
-    const tlst = convertNumericLSTtoTime(nlst);
+    polarisParams()
+  }
 
-    setNumericLST(nlst);
-    setTimeLST(tlst);
-
-    if (degRa) {
-      const ha = getHourAngle(new Date(), radLon, degRa) / 15;
-      const tha = convertAngleToTime(ha);
-      setHA(ha);
-      setTimeHA(tha);
-
-      const polarisPos = calculatePolarisPosition(nlst, ha);
-      setPolarisX(polarisPos.polarisX);
-      setPolarisY(polarisPos.polarisY);
-      console.log('Polaris position updated to : ', polarisPos);
-
-    }
+  const polarisParams = (): { alt: number, az: number } => {
+    const observer = { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon };
+    const target = { ra: convertHMSToDegreeFromString(Polaris.ra)!, dec: convertDMSToDegreeFromString(Polaris.dec)! };
+    const { alt, az } = convertEquatorialToHorizontal(new Date(), observer, target);
+    console.log('Altitude :', alt, 'Azimuth :', az);
+    return { alt, az };
   }
 
   const { width } = Dimensions.get('screen');
@@ -75,15 +57,13 @@ export default function PolarClock() {
     return { startX, startY, endX, endY };
   };
 
-  const calculatePolarisPosition = (LST: number, hourAngleOfPolaris: number) => {
-    const lstInDegrees = LST * 15;
-    const polarisAngle = (lstInDegrees + (360 - hourAngleOfPolaris * 15)) % 360;
-    const radius = (outerRadius + (outerRadius - 10)) / 2; // Position between the two concentric circles
-
-    const polarisX = centerX + radius * Math.cos((polarisAngle - 90) * Math.PI / 180);
-    const polarisY = centerY + radius * Math.sin((polarisAngle - 90) * Math.PI / 180);
-
-    return { polarisX, polarisY };
+  const calculatePolarisPosition = (alt: number, az: number, innerRadius: number, outerRadius: number) => {
+    const totalAngle = 180 - az; // Adjust the angle for SVG coordinate system
+    const angleInRadians = (totalAngle - 90) * Math.PI / 180; // Convert to radians
+    const radius = innerRadius + (outerRadius - innerRadius) * (alt / 90); // Scale altitude to fit between the inner and outer circles
+    const x = centerX + radius * Math.cos(angleInRadians);
+    const y = centerY + radius * Math.sin(angleInRadians);
+    return { x, y };
   };
 
   return (
@@ -100,18 +80,13 @@ export default function PolarClock() {
 
       <View style={scopeAlignmentStyles.content.dataContainer}>
         <Text style={scopeAlignmentStyles.content.dataContainer.title}>Temps local sidéral (LST) :</Text>
-        <Text style={scopeAlignmentStyles.content.dataContainer.value}>{timeLST}</Text>
+        <Text style={scopeAlignmentStyles.content.dataContainer.value}></Text>
       </View>
 
       <View style={scopeAlignmentStyles.content.dataContainer}>
         <Text style={scopeAlignmentStyles.content.dataContainer.title}>Position polaire :</Text>
-        <Text style={scopeAlignmentStyles.content.dataContainer.value}>{timeHA}</Text>
+        <Text style={scopeAlignmentStyles.content.dataContainer.value}></Text>
       </View>
-
-      {/* <View style={scopeAlignmentStyles.content.dataContainer}>
-        <Text style={scopeAlignmentStyles.content.dataContainer.title}>Position polaire :</Text>
-        <Text style={scopeAlignmentStyles.content.dataContainer.value}>{polarisX} {polarisY}</Text>
-      </View> */}
 
       <View style={polarClockStyles.container}>
         <Svg width={width} height={width}>
