@@ -1,5 +1,5 @@
 export enum ESunFilter {
-  'HMIIC' = 'HMI_IC',
+  'HMI_IC' = 'HMI_IC',
   'AIA_193' = 'AIA_193',
   'AIA_304' = 'AIA_304',
   'AIA_171' = 'AIA_171',
