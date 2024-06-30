@@ -146,7 +146,11 @@ export const getConstellationName = (constellation: string) => {
       return 'Scorpion';
     case 'Sct':
       return 'Écu de Sobieski';
-    case 'Ser' || 'Se1' || 'Se2':
+    case 'Ser':
+      return 'Serpent';
+    case 'Se1':
+      return 'Serpent';
+    case 'Se2':
       return 'Serpent';
     case 'Sex':
       return 'Sextant';

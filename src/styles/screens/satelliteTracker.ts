@@ -15,5 +15,24 @@ export const satelliteTrackerStyles = {
       width: '100%' as '100%',
       height: '100%' as '100%',
     }
+  },
+  flyoversContainer: {
+    display: 'flex' as 'flex',
+    flexDirection: 'column' as 'column',
+
+    title: {
+      color: app_colors.white,
+      fontSize: 20,
+      fontFamily: 'GilroyBlack',
+      textTransform: 'uppercase' as 'uppercase',
+      marginBottom: 10,
+    },
+
+    flyovers: {
+      display: 'flex' as 'flex',
+      flexDirection: 'column' as 'column',
+      marginTop: 10,
+      marginBottom: 10,
+    }
   }
 }

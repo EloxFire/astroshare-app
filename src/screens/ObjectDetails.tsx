@@ -59,6 +59,9 @@ export default function ObjectDetails({ route, navigation }: any) {
     }
   }, [])
 
+  console.log(object.const, getConstellationName(object.const));
+
+
   return (
     <View style={globalStyles.body}>
       <PageTitle

@@ -25,9 +25,7 @@ export const homeStyles = {
 
     buttons: {
       display: 'flex' as 'flex',
-      flexDirection: 'row' as 'row',
-      justifyContent: 'space-between' as 'space-between',
-      flexWrap: 'wrap' as 'wrap',
+      flexDirection: 'column' as 'column',
     }
   },
 }

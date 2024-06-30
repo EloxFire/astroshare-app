@@ -4,6 +4,7 @@ export const app_colors = {
   black_forty: '#00000099',
   white: '#FFFFFF',
   white_no_opacity: '#FFFFFF0D',
+  white_twenty: '#FFFFFF20',
   white_forty: '#FFFFFF40',
   white_sixty: '#FFFFFF60',
   white_eighty: '#FFFFFF80',

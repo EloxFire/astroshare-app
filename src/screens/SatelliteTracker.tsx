@@ -2,13 +2,16 @@ import React, { useEffect, useState } from 'react'
 import { ScrollView, Text, View } from 'react-native'
 import { globalStyles } from '../styles/global'
 import PageTitle from '../components/commons/PageTitle'
-import MapView, { Marker, PROVIDER_GOOGLE, Polyline } from 'react-native-maps'
+import MapView, { Circle, Marker, PROVIDER_GOOGLE, Polyline } from 'react-native-maps'
 import axios from 'axios'
 import { satelliteTrackerStyles } from '../styles/screens/satelliteTracker'
 import { mapStyle } from '../helpers/mapJsonStyle'
 import { app_colors } from '../helpers/constants'
 import DSOValues from '../components/commons/DSOValues'
 import { convertDDtoDMS } from '../helpers/scripts/convertDDtoDMSCoords'
+import { getLocationName } from '../helpers/api/getLocationFromCoords'
+import { getCountryByCode } from '../helpers/scripts/utils/getCountryByCode'
+import { Image } from 'expo-image'
 
 export default function SatelliteTracker({ navigation }: any) {
 
@@ -29,11 +32,14 @@ export default function SatelliteTracker({ navigation }: any) {
     try {
       const position = await axios.get(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/iss`)
       const trajectoryPoints = await axios.get(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/iss/trajectory`)
+      let name = await getLocationName({ lat: position.data.data.latitude, lon: position.data.data.longitude });
+
 
       const iss = {
         ...position.data.data,
         dsm_lat: convertDDtoDMS(position.data.data.latitude, position.data.data.latitude).dms_lat,
-        dsm_lon: convertDDtoDMS(position.data.data.longitude, position.data.data.longitude).dms_lon
+        dsm_lon: convertDDtoDMS(position.data.data.longitude, position.data.data.longitude).dms_lon,
+        country: name.country,
       }
       setIssPosition(iss)
       setTrajectoryPoints(trajectoryPoints.data.data)
@@ -48,12 +54,12 @@ export default function SatelliteTracker({ navigation }: any) {
     <View style={globalStyles.body}>
       <PageTitle navigation={navigation} title="ISS Tracker" subtitle="// Ou se trouve l'ISS en temps réel" />
       <View style={globalStyles.screens.separator} />
-      <ScrollView>
+      <ScrollView style={{ marginBottom: 50 }}>
         <View pointerEvents='none' style={satelliteTrackerStyles.mapContainer}>
           {
             loading ?
-              <View>
-                <Text>Chargement...</Text>
+              <View style={{ flex: 1 }}>
+                <Image style={{ flex: 1 }} source={require('../../assets/images/issTrackerPlaceholder.png')} />
               </View>
               :
               issPosition ?
@@ -95,6 +101,15 @@ export default function SatelliteTracker({ navigation }: any) {
                     anchor={{ x: 0.5, y: 0.5 }}
                     centerOffset={{ x: 0.5, y: 0.5 }}
                   />
+                  <Circle
+                    center={{
+                      latitude: issPosition.latitude,
+                      longitude: issPosition.longitude,
+                    }}
+                    radius={1200000}
+                    fillColor={app_colors.white_twenty}
+                    strokeColor={app_colors.white_forty}
+                  />
                 </MapView>
                 :
                 <View>
@@ -107,6 +122,13 @@ export default function SatelliteTracker({ navigation }: any) {
           <DSOValues title='Longitude' value={issPosition ? issPosition.dsm_lon : 'Chargement'} chipValue chipColor={app_colors.grey} />
           <DSOValues title='Altitude' value={issPosition ? `${issPosition.altitude.toFixed(2)} Km` : 'Chargement'} chipValue chipColor={app_colors.grey} />
           <DSOValues title='Vitesse' value={issPosition ? `${issPosition.velocity.toFixed(2)} Km/h` : 'Chargement'} chipValue chipColor={app_colors.grey} />
+          <DSOValues title='Pays (survol)' value={issPosition ? getCountryByCode(issPosition.country) : 'Chargement'} chipValue chipColor={app_colors.grey} />
+          <View style={globalStyles.screens.separator} />
+        </View>
+        <View style={satelliteTrackerStyles.flyoversContainer}>
+          <Text style={satelliteTrackerStyles.flyoversContainer.title}>Prochains passages (5j)</Text>
+          <View style={satelliteTrackerStyles.flyoversContainer.flyovers}>
+          </View>
         </View>
       </ScrollView>
     </View>

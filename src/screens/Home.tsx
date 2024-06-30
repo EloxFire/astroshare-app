@@ -15,7 +15,7 @@ import BigButton from '../components/commons/buttons/BigButton';
 import axios from 'axios';
 import HomeSearchResults from '../components/HomeSearchResults';
 import BannerHandler from '../components/banners/BannerHandler';
-import SquareButton from '../components/commons/buttons/SquareButton';
+import ToolButton from '../components/commons/buttons/ToolButton';
 
 export default function Home({ navigation }: any) {
 
@@ -92,9 +92,9 @@ export default function Home({ navigation }: any) {
           <Text style={globalStyles.sections.title}>Autres outils</Text>
           <Text style={globalStyles.sections.subtitle}>Explorez toujours plus !</Text>
           <View style={homeStyles.nasaTools.buttons}>
-            <SquareButton disabled={!hasInternetConnection} navigation={navigation} targetScreen={routes.apod.path} text="APOD" subtitle="// Image du jour de la NASA" image={require('../../assets/images/tools/apod.png')} />
-            <SquareButton disabled={!hasInternetConnection} navigation={navigation} targetScreen={routes.satelliteTracker.path} text="ISS Tracker" subtitle="// Ou se trouve l'ISS en temps réel" image={require('../../assets/images/tools/isstracker.png')} />
-            <SquareButton disabled={!hasInternetConnection} navigation={navigation} targetScreen={routes.skymapgenerator.path} text="Sky map" subtitle="// Générez des cartes du ciel" image={require('../../assets/images/tools/skymap.png')} />
+            <ToolButton disabled={!hasInternetConnection} navigation={navigation} targetScreen={routes.apod.path} text="APOD" subtitle="// Image du jour de la NASA" image={require('../../assets/images/tools/apod.png')} />
+            <ToolButton disabled={!hasInternetConnection} navigation={navigation} targetScreen={routes.satelliteTracker.path} text="ISS Tracker" subtitle="// Ou se trouve l'ISS en temps réel" image={require('../../assets/images/tools/isstracker.png')} />
+            <ToolButton disabled={!hasInternetConnection} navigation={navigation} targetScreen={routes.skymapgenerator.path} text="Sky map" subtitle="// Générez des cartes du ciel" image={require('../../assets/images/tools/skymap.png')} />
           </View>
         </View>
       </ScrollView>
