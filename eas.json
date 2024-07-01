@@ -14,15 +14,15 @@
       "distribution": "internal",
       "env": {
         "EXPO_PUBLIC_ASTROSHARE_API_URL":"https://api.astroshare.fr",
-        "EXPO_PUBLIC_APP_VERSION":"b_v0.1.1",
-        "EXPO_PUBLIC_LAST_UPDATE":"2024-06-26"
+        "EXPO_PUBLIC_APP_VERSION":"b_v0.2.0",
+        "EXPO_PUBLIC_LAST_UPDATE":"2024-07-01"
       }
     },
     "production": {
       "env": {
         "EXPO_PUBLIC_ASTROSHARE_API_URL":"https://api.astroshare.fr",
-        "EXPO_PUBLIC_APP_VERSION":"b_v0.1.1",
-        "EXPO_PUBLIC_LAST_UPDATE":"2024-06-26"
+        "EXPO_PUBLIC_APP_VERSION":"b_v0.2.0",
+        "EXPO_PUBLIC_LAST_UPDATE":"2024-07-01"
       }
     }
   },
