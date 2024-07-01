@@ -2,7 +2,7 @@
   "expo": {
     "name": "Astroshare",
     "slug": "astroshare-app",
-    "version": "b_v0.1.1",
+    "version": "b_v0.2.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -31,7 +31,7 @@
         "android.permission.CAMERA"
       ],
       "package": "fr.eavagliano.astroshare",
-      "versionCode": 5
+      "versionCode": 6
     },
     "web": {
       "favicon": "./assets/favicon.png"
