@@ -16,7 +16,7 @@ import { Image } from 'expo-image'
 export default function SatelliteTracker({ navigation }: any) {
 
   const [issPosition, setIssPosition] = useState<any>(null)
-  const [trajectoryPoints, setTrajectoryPoints] = useState<any>([])
+  const [trajectoryPoints, setTrajectoryPoints] = useState<any>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
