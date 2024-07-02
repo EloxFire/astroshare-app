@@ -104,6 +104,19 @@ export default function SatelliteTracker({ navigation }: any) {
             anchor={{ x: 0.5, y: 0.5 }}
             centerOffset={{ x: 0.5, y: 0.5 }}
           />
+
+        }
+        {
+          issPosition &&
+          <Circle
+            center={{
+              latitude: issPosition.latitude,
+              longitude: issPosition.longitude,
+            }}
+            radius={1200000}
+            fillColor={app_colors.white_twenty}
+            strokeColor={app_colors.white_forty}
+          />
         }
         {
           trajectoryPoints &&
