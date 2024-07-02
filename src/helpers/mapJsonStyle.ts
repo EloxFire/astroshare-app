@@ -134,7 +134,7 @@ export const mapStyle = [
       featureType: "road",
       stylers: [
         {
-          visibility: "off",
+          visibility: "on",
         },
       ],
     },
@@ -206,7 +206,7 @@ export const mapStyle = [
       elementType: "geometry",
       stylers: [
         {
-          color: "#000000",
+          color: "#0F0F0F",
         },
       ],
     },

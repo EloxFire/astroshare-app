@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react'
-import { ScrollView, Text, View } from 'react-native'
+import React, { useEffect, useRef, useState } from 'react'
+import { ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import { globalStyles } from '../styles/global'
 import PageTitle from '../components/commons/PageTitle'
 import MapView, { Circle, Marker, PROVIDER_GOOGLE, Polyline } from 'react-native-maps'
@@ -18,6 +18,9 @@ export default function SatelliteTracker({ navigation }: any) {
   const [issPosition, setIssPosition] = useState<any>(null)
   const [trajectoryPoints, setTrajectoryPoints] = useState<any>(null)
   const [loading, setLoading] = useState(true)
+  const [issInfosModalVisible, setIssInfosModalVisible] = useState(false)
+
+  const mapRef = useRef(null)
 
   useEffect(() => {
     getIssData()
@@ -27,6 +30,17 @@ export default function SatelliteTracker({ navigation }: any) {
 
     return () => clearInterval(update)
   }, [])
+
+  useEffect(() => {
+    if (!mapRef.current) return
+    // @ts-ignore
+    mapRef.current.animateToRegion({
+      latitude: issPosition ? issPosition.latitude : 0,
+      longitude: issPosition ? issPosition.longitude : 0,
+      latitudeDelta: 0,
+      longitudeDelta: 100,
+    })
+  }, [loading])
 
   const getIssData = async () => {
     try {
@@ -50,87 +64,85 @@ export default function SatelliteTracker({ navigation }: any) {
     }
   }
 
+  const centerIss = () => {
+    if (!mapRef.current) return
+    // @ts-ignore
+    mapRef.current.animateToRegion({
+      latitude: issPosition ? issPosition.latitude : 0,
+      longitude: issPosition ? issPosition.longitude : 0,
+      latitudeDelta: 0,
+      longitudeDelta: 100,
+    })
+  }
+
   return (
-    <View style={globalStyles.body}>
-      <PageTitle navigation={navigation} title="ISS Tracker" subtitle="// Ou se trouve l'ISS en temps réel" />
-      <View style={globalStyles.screens.separator} />
-      <ScrollView style={{ marginBottom: 50 }}>
-        <View pointerEvents='none' style={satelliteTrackerStyles.mapContainer}>
-          {
-            loading ?
-              <View style={{ flex: 1 }}>
-                <Image style={{ flex: 1 }} source={require('../../assets/images/issTrackerPlaceholder.png')} />
+    <View>
+      <MapView
+        ref={mapRef}
+        provider={PROVIDER_GOOGLE}
+        style={satelliteTrackerStyles.map}
+        customMapStyle={mapStyle}
+        initialRegion={{
+          latitude: issPosition ? issPosition.latitude : 0,
+          longitude: issPosition ? issPosition.longitude : 0,
+          latitudeDelta: 0,
+          longitudeDelta: 100,
+        }}
+        rotateEnabled={false}
+      >
+        {
+          issPosition &&
+          <Marker
+            coordinate={{
+              latitude: issPosition.latitude,
+              longitude: issPosition.longitude,
+            }}
+            title='ISS'
+            description="Position de l'ISS en temps réel"
+            image={require('../../assets/icons/FiIss.png')}
+            style={{ width: 50, height: 50 }}
+            anchor={{ x: 0.5, y: 0.5 }}
+            centerOffset={{ x: 0.5, y: 0.5 }}
+          />
+        }
+        {
+          trajectoryPoints &&
+          <Polyline
+            coordinates={trajectoryPoints}
+            strokeColor={app_colors.red}
+            strokeWidth={1}
+            geodesic
+          />
+        }
+      </MapView>
+      <View style={satelliteTrackerStyles.pageControls}>
+        <PageTitle title='ISS tracker' navigation={navigation} subtitle="// Position de l'ISS en temps réel" />
+      </View>
+      <TouchableOpacity style={satelliteTrackerStyles.button} onPress={() => setIssInfosModalVisible(!issInfosModalVisible)}>
+        <Image source={require('../../assets/icons/FiInfo.png')} style={{ width: 24, height: 24 }} />
+      </TouchableOpacity>
+      <TouchableOpacity style={[satelliteTrackerStyles.button, satelliteTrackerStyles.button.centerIss]} onPress={() => centerIss()}>
+        <Image source={require('../../assets/icons/FiIss.png')} style={{ width: 24, height: 24 }} />
+      </TouchableOpacity>
+      {
+        issInfosModalVisible &&
+        <View style={satelliteTrackerStyles.issModal}>
+          <ScrollView>
+            <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20 }}>
+              <View>
+                <Text style={satelliteTrackerStyles.issModal.title}>Station Spatiale Internationale</Text>
+                <Text style={satelliteTrackerStyles.issModal.subtitle}>(ISS)</Text>
               </View>
-              :
-              issPosition ?
-                <MapView
-                  initialRegion={{
-                    latitude: issPosition.latitude,
-                    longitude: issPosition.longitude,
-                    latitudeDelta: 0,
-                    longitudeDelta: 100,
-                  }}
-                  region={{
-                    latitude: issPosition.latitude,
-                    longitude: issPosition.longitude,
-                    latitudeDelta: 0,
-                    longitudeDelta: 100,
-                  }}
-                  style={satelliteTrackerStyles.mapContainer.map}
-                  customMapStyle={mapStyle}
-                  provider={PROVIDER_GOOGLE}
-                  zoomControlEnabled={false}
-                >
-                  {
-                    trajectoryPoints &&
-                    <Polyline
-                      coordinates={trajectoryPoints}
-                      strokeColor={app_colors.red_eighty}
-                      strokeWidth={1}
-                      geodesic
-                    />
-                  }
-                  <Marker
-                    coordinate={{
-                      latitude: issPosition.latitude,
-                      longitude: issPosition.longitude,
-                    }}
-                    title="ISS"
-                    description="Station Spatiale Internationale"
-                    image={require('../../assets/icons/FiIss.png')}
-                    anchor={{ x: 0.5, y: 0.5 }}
-                    centerOffset={{ x: 0.5, y: 0.5 }}
-                  />
-                  <Circle
-                    center={{
-                      latitude: issPosition.latitude,
-                      longitude: issPosition.longitude,
-                    }}
-                    radius={1200000}
-                    fillColor={app_colors.white_twenty}
-                    strokeColor={app_colors.white_forty}
-                  />
-                </MapView>
-                :
-                <View>
-                  <Text>Erreur lors du chargement des données</Text>
-                </View>
-          }
+              <Image source={require('../../assets/icons/FiIss.png')} style={{ width: 50, height: 50 }} />
+            </View>
+            <DSOValues title='Latitude' value={issPosition ? issPosition.dsm_lat : 'Chargement'} chipValue chipColor={app_colors.grey} />
+            <DSOValues title='Longitude' value={issPosition ? issPosition.dsm_lon : 'Chargement'} chipValue chipColor={app_colors.grey} />
+            <DSOValues title='Altitude' value={issPosition ? `${issPosition.altitude.toFixed(2)} Km` : 'Chargement'} chipValue chipColor={app_colors.grey} />
+            <DSOValues title='Vitesse' value={issPosition ? `${issPosition.velocity.toFixed(2)} Km/h` : 'Chargement'} chipValue chipColor={app_colors.grey} />
+            <DSOValues title='Pays (survol)' value={issPosition ? getCountryByCode(issPosition.country) : 'Chargement'} chipValue chipColor={app_colors.grey} />
+          </ScrollView>
         </View>
-        <View style={{ marginTop: 20 }}>
-          <DSOValues title='Latitude' value={issPosition ? issPosition.dsm_lat : 'Chargement'} chipValue chipColor={app_colors.grey} />
-          <DSOValues title='Longitude' value={issPosition ? issPosition.dsm_lon : 'Chargement'} chipValue chipColor={app_colors.grey} />
-          <DSOValues title='Altitude' value={issPosition ? `${issPosition.altitude.toFixed(2)} Km` : 'Chargement'} chipValue chipColor={app_colors.grey} />
-          <DSOValues title='Vitesse' value={issPosition ? `${issPosition.velocity.toFixed(2)} Km/h` : 'Chargement'} chipValue chipColor={app_colors.grey} />
-          <DSOValues title='Pays (survol)' value={issPosition ? getCountryByCode(issPosition.country) : 'Chargement'} chipValue chipColor={app_colors.grey} />
-          <View style={globalStyles.screens.separator} />
-        </View>
-        <View style={satelliteTrackerStyles.flyoversContainer}>
-          <Text style={satelliteTrackerStyles.flyoversContainer.title}>Prochains passages (5j)</Text>
-          <View style={satelliteTrackerStyles.flyoversContainer.flyovers}>
-          </View>
-        </View>
-      </ScrollView>
+      }
     </View>
   )
 }
