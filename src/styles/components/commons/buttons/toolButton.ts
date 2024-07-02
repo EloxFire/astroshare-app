@@ -9,7 +9,7 @@ export const toolButtonStyles = {
     borderRadius: 10,
     padding: 10,
     marginBottom: 10,
-    height: 65,
+    height: 55,
     width: Dimensions.get('window').width - 20,
     display: 'flex' as 'flex',
     flexDirection: 'column' as 'column',
@@ -19,7 +19,7 @@ export const toolButtonStyles = {
       position: 'absolute' as 'absolute',
       right: 0,
       bottom: 0,
-      height: 65,
+      height: 55,
       width: Dimensions.get('window').width - 20,
       borderRadius: 10,
       opacity: .2,
@@ -27,7 +27,7 @@ export const toolButtonStyles = {
 
     text: {
       color: app_colors.white,
-      fontSize: 25,
+      fontSize: 20,
       fontFamily: 'GilroyBlack',
       textTransform: 'uppercase' as 'uppercase',
       lineHeight: 25,
@@ -35,7 +35,7 @@ export const toolButtonStyles = {
 
     subtitle: {
       color: app_colors.white,
-      fontSize: 12,
+      fontSize: 10,
       fontFamily: 'AuxMono',
     }
   }
