@@ -30,6 +30,11 @@
         "android.permission.ACTIVITY_RECOGNITION",
         "android.permission.CAMERA"
       ],
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyBIHiqhKWwweIvQF36R8eFiYpM5G5LOWpU"
+        }
+      },
       "package": "fr.eavagliano.astroshare",
       "versionCode": 6
     },
