@@ -88,12 +88,13 @@ export function AppSettingsProvider({ children }: AppSettingsProviderProps) {
     try {
       let location = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Highest });
       const coords: LocationObject = { lat: location.coords.latitude, lon: location.coords.longitude }
+
       let name = await getLocationName(coords);
 
       const userCoords: LocationObject = {
         lat: location.coords.latitude,
         lon: location.coords.longitude,
-        common_name: name.local_names.fr,
+        common_name: name.local_names ? name.local_names.fr : name.name,
         country: name.country,
         state: name.state,
         dms: convertDDtoDMS(location.coords.latitude, location.coords.longitude)
