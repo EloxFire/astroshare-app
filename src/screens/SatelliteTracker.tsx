@@ -129,14 +129,22 @@ export default function SatelliteTracker({ navigation }: any) {
         }
       </MapView>
       <View style={satelliteTrackerStyles.pageControls}>
-        <PageTitle title='ISS tracker' navigation={navigation} subtitle="// Position de l'ISS en temps réel" />
+        <PageTitle title='Satellite tracker' navigation={navigation} subtitle="// Informations ISS et Starlink" />
       </View>
-      <TouchableOpacity style={satelliteTrackerStyles.button} onPress={() => setIssInfosModalVisible(!issInfosModalVisible)}>
-        <Image source={require('../../assets/icons/FiInfo.png')} style={{ width: 24, height: 24 }} />
-      </TouchableOpacity>
-      <TouchableOpacity style={[satelliteTrackerStyles.button, satelliteTrackerStyles.button.centerIss]} onPress={() => centerIss()}>
-        <Image source={require('../../assets/icons/FiIss.png')} style={{ width: 24, height: 24 }} />
-      </TouchableOpacity>
+      <View style={satelliteTrackerStyles.tools}>
+        <TouchableOpacity style={satelliteTrackerStyles.tools.button} onPress={() => centerIss()}>
+          <View style={{ padding: 10, backgroundColor: app_colors.white_twenty, borderRadius: 10 }}>
+            <Image source={require('../../assets/icons/FiIss.png')} style={satelliteTrackerStyles.tools.button.icon} />
+          </View>
+          <Text style={satelliteTrackerStyles.tools.button.label}>ISS</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={satelliteTrackerStyles.tools.button} onPress={() => centerIss()}>
+          <View style={{ padding: 10, backgroundColor: app_colors.white_twenty, borderRadius: 10 }}>
+            <Image source={require('../../assets/icons/FiStarlink.png')} style={satelliteTrackerStyles.tools.button.icon} />
+          </View>
+          <Text style={satelliteTrackerStyles.tools.button.label}>Starlink</Text>
+        </TouchableOpacity>
+      </View>
       {
         issInfosModalVisible &&
         <View style={satelliteTrackerStyles.issModal}>
