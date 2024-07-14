@@ -93,7 +93,7 @@ export default function Home({ navigation }: any) {
           <Text style={globalStyles.sections.subtitle}>Explorez toujours plus !</Text>
           <View style={homeStyles.nasaTools.buttons}>
             <ToolButton disabled={!hasInternetConnection} navigation={navigation} targetScreen={routes.apod.path} text="APOD" subtitle="// Image du jour de la NASA" image={require('../../assets/images/tools/apod.png')} />
-            <ToolButton disabled={!hasInternetConnection} navigation={navigation} targetScreen={routes.satelliteTracker.path} text="Satellite Tracker" subtitle="// Informations ISS et Starlink" image={require('../../assets/images/tools/isstracker.png')} />
+            <ToolButton disabled={!hasInternetConnection} navigation={navigation} targetScreen={routes.satelliteTracker.path} text="ISS Tracker" subtitle="// Position de l'ISS en temps réel" image={require('../../assets/images/tools/isstracker.png')} />
             {/* <ToolButton disabled={!hasInternetConnection} navigation={navigation} targetScreen={routes.skymapgenerator.path} text="Sky map" subtitle="// Générez des cartes du ciel" image={require('../../assets/images/tools/skymap.png')} /> */}
           </View>
         </View>
