@@ -1,10 +1,11 @@
 import React from 'react'
 import { Image, Modal, Text, TouchableOpacity, View } from 'react-native'
-import { app_colors } from '../helpers/constants'
 import { locationHeaderStyles } from '../styles/components/locationHeader'
 import { LocationObject } from '../helpers/types/LocationObject'
-import BigValue from './commons/BigValue'
 import { useSpot } from '../contexts/ObservationSpotContext'
+import { mapStyle } from '../helpers/mapJsonStyle'
+import BigValue from './commons/BigValue'
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps'
 
 interface LocationModalProps {
   visible: boolean
@@ -25,6 +26,30 @@ export default function LocationModal({ visible, onClose, coords }: LocationModa
           <TouchableOpacity onPress={() => onClose()}>
             <Image source={require('../../assets/icons/FiXCircle.png')} style={{ width: 20, height: 20 }} />
           </TouchableOpacity>
+        </View>
+        <View style={{ marginBottom: 20 }}>
+          <MapView
+            provider={PROVIDER_GOOGLE}
+            // customMapStyle={mapStyle}
+            style={locationHeaderStyles.modal.mapContainer}
+            initialRegion={{
+              latitude: coords ? coords.lat : 0,
+              longitude: coords ? coords.lon : 0,
+              latitudeDelta: 0,
+              longitudeDelta: 0.8,
+            }}
+          >
+            {
+              coords &&
+              <Marker
+                coordinate={{
+                  latitude: coords.lat,
+                  longitude: coords.lon
+                }}
+                style={{ width: 50, height: 50 }}
+              />
+            }
+          </MapView>
         </View>
         <View style={locationHeaderStyles.modal.body}>
           <View style={locationHeaderStyles.modal.body.column}>
