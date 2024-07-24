@@ -10,7 +10,6 @@ import { extractNumbers } from '../helpers/scripts/extractNumbers'
 import { calculateHorizonAngle } from '../helpers/scripts/astro/calculateHorizonAngle'
 import { useSettings } from '../contexts/AppSettingsContext'
 import dayjs from 'dayjs'
-import BigValue from '../components/commons/BigValue'
 import DateTimePicker from '@react-native-community/datetimepicker';
 import SimpleButton from '../components/commons/buttons/SimpleButton'
 import PageTitle from '../components/commons/PageTitle'
@@ -24,8 +23,8 @@ interface MoonData {
   newMoon: boolean,
   fullMoon: boolean,
   age: number
-  moonrise?: string,
-  moonset?: string
+  moonrise: string,
+  moonset: string
 }
 
 
@@ -68,8 +67,8 @@ export default function MoonPhases({ navigation }: any) {
       newMoon: newMoon,
       fullMoon: fullMoon,
       age: age,
-      moonrise: moonrise,
-      moonset: moonset
+      moonrise: moonrise || '##Erreur##',
+      moonset: moonset || '##Erreur##',
     })
   }
 
@@ -131,14 +130,14 @@ export default function MoonPhases({ navigation }: any) {
         </View>
 
         <View style={moonPhasesStyles.content.valuesContainer}>
-          <DSOValues title='Heure de lever' value={moonData ? moonData.moonrise! : "Chargement..."} chipValue chipColor={app_colors.grey} />
-          <DSOValues title='Heure de coucher' value={moonData ? moonData.moonset! : "Chargement..."} chipValue chipColor={app_colors.grey} />
-          <DSOValues title='Illumination' value={moonData ? moonData.illumination! + '%' : "Chargement..."} chipValue chipColor={app_colors.grey} />
-          <DSOValues title='Distance' value={moonData ? formatter.format(moonData.distance!) : "Chargement..."} chipValue chipColor={app_colors.grey} />
+          <DSOValues title='Heure de lever' value={moonData ? moonData.moonrise : "Chargement..."} chipValue chipColor={app_colors.grey} />
+          <DSOValues title='Heure de coucher' value={moonData ? moonData.moonset : "Chargement..."} chipValue chipColor={app_colors.grey} />
+          <DSOValues title='Illumination' value={moonData ? moonData.illumination + '%' : "Chargement..."} chipValue chipColor={app_colors.grey} />
+          <DSOValues title='Distance' value={moonData ? formatter.format(moonData.distance) : "Chargement..."} chipValue chipColor={app_colors.grey} />
           <DSOValues title='Élongation' value={moonData ? moonData.elongation! + '°' : "Chargement..."} chipValue chipColor={app_colors.grey} />
           <DSOValues title='Âge' value={moonData ? moonData.age! + ' jours' : "Chargement..."} chipValue chipColor={app_colors.grey} />
-          <DSOValues title='Nouvelle lune' value={moonData ? moonData.newMoon! ? 'Oui' : 'Non' : "Chargement..."} chipValue chipColor={moonData?.newMoon! ? app_colors.green_eighty : app_colors.grey} />
-          <DSOValues title='Pleine lune' value={moonData ? moonData.fullMoon! ? 'Oui' : 'Non' : "Chargement..."} chipValue chipColor={moonData?.fullMoon! ? app_colors.green_eighty : app_colors.grey} />
+          <DSOValues title='Nouvelle lune' value={moonData ? moonData.newMoon ? 'Oui' : 'Non' : "Chargement..."} chipValue chipColor={moonData?.newMoon! ? app_colors.green_eighty : app_colors.grey} />
+          <DSOValues title='Pleine lune' value={moonData ? moonData.fullMoon ? 'Oui' : 'Non' : "Chargement..."} chipValue chipColor={moonData?.fullMoon! ? app_colors.green_eighty : app_colors.grey} />
         </View>
       </View>
     </View>
