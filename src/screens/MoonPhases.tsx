@@ -125,7 +125,7 @@ export default function MoonPhases({ navigation }: any) {
             />
           }
 
-          {moonData && <Image source={moonData?.phase ? moonIcons[moonData?.phase] : moonIcons["Full"]} style={{ height: 200, width: 200, alignSelf: 'center', marginVertical: 20 }} resizeMode='contain' />}
+          {/* {moonData && <Image source={moonData?.phase ? moonIcons[moonData?.phase] : moonIcons["Full"]} style={{ height: 200, width: 200, alignSelf: 'center', marginVertical: 20 }} resizeMode='contain' />} */}
           <Text style={moonPhasesStyles.content.title}>{moonData ? moonPhases[moonData.phase] : "Chargement..."}</Text>
         </View>
 
