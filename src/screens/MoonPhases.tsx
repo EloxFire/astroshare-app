@@ -60,13 +60,13 @@ export default function MoonPhases({ navigation }: any) {
     const moonset = getMoonRiseAndSet(date).moonset
 
     setMoonData({
-      phase: phase,
-      illumination: illumination,
-      distance: distance,
-      elongation: elongation,
-      newMoon: newMoon,
-      fullMoon: fullMoon,
-      age: age,
+      phase: phase || 'Full',
+      illumination: illumination || '##Erreur##',
+      distance: distance || 0,
+      elongation: elongation || 0,
+      newMoon: newMoon || false,
+      fullMoon: fullMoon || false,
+      age: age || 0,
       moonrise: moonrise || '##Erreur##',
       moonset: moonset || '##Erreur##',
     })
@@ -125,7 +125,7 @@ export default function MoonPhases({ navigation }: any) {
             />
           }
 
-          {/* {moonData && <Image source={moonData?.phase ? moonIcons[moonData?.phase] : moonIcons["Full"]} style={{ height: 200, width: 200, alignSelf: 'center', marginVertical: 20 }} resizeMode='contain' />} */}
+          {moonData && <Image source={moonIcons[moonData.phase]} style={{ height: 200, width: 200, alignSelf: 'center', marginVertical: 20 }} resizeMode='contain' />}
           <Text style={moonPhasesStyles.content.title}>{moonData ? moonPhases[moonData.phase] : "Chargement..."}</Text>
         </View>
 
