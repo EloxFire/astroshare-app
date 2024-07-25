@@ -6,6 +6,8 @@ import { useSpot } from '../contexts/ObservationSpotContext'
 import { mapStyle } from '../helpers/mapJsonStyle'
 import BigValue from './commons/BigValue'
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps'
+import { app_colors } from '../helpers/constants'
+import DSOValues from './commons/DSOValues'
 
 interface LocationModalProps {
   visible: boolean
@@ -30,13 +32,13 @@ export default function LocationModal({ visible, onClose, coords }: LocationModa
         <View style={{ marginBottom: 20 }}>
           <MapView
             provider={PROVIDER_GOOGLE}
-            // customMapStyle={mapStyle}
+            customMapStyle={mapStyle}
             style={locationHeaderStyles.modal.mapContainer}
             initialRegion={{
               latitude: coords ? coords.lat : 0,
               longitude: coords ? coords.lon : 0,
               latitudeDelta: 0,
-              longitudeDelta: 0.8,
+              longitudeDelta: 0.05,
             }}
           >
             {
@@ -46,21 +48,20 @@ export default function LocationModal({ visible, onClose, coords }: LocationModa
                   latitude: coords.lat,
                   longitude: coords.lon
                 }}
-                style={{ width: 50, height: 50 }}
-              />
+              >
+                <View style={{ backgroundColor: app_colors.red, width: 8, height: 8, borderRadius: 10 }} />
+              </Marker>
             }
           </MapView>
         </View>
         <View style={locationHeaderStyles.modal.body}>
-          <View style={locationHeaderStyles.modal.body.column}>
-            <BigValue value={`${coords?.lat}${coords?.dms ? " - " + coords?.dms.dms_lat : ''}`} label='Latitude' />
-            <BigValue value={`${coords?.lon}${coords?.dms ? " - " + coords?.dms.dms_lon : ''}`} label='Longitude' />
-            <BigValue value={selectedSpot ? selectedSpot.equipments.altitude : `${defaultAltitude} (altitude par défaut)`} label={`Altitude`} />
-          </View>
-          <View style={locationHeaderStyles.modal.body.column}>
-            <BigValue value={coords?.common_name ? coords?.common_name : "N/A"} label='Lieu' />
-            <BigValue value={coords?.country ? coords?.country : 'N/A'} label='Pays' />
-          </View>
+          <DSOValues chipValue value={`${coords?.dms ? coords?.dms.dms_lat : ''}`} title='Latitude' chipColor={app_colors.white_no_opacity} />
+          <DSOValues chipValue value={`${coords?.dms ? coords?.dms.dms_lon : ''}`} title='Longitude' chipColor={app_colors.white_no_opacity} />
+          <DSOValues chipValue value={`${coords?.lat}`} title='Latitude (Degrés)' chipColor={app_colors.white_no_opacity} />
+          <DSOValues chipValue value={`${coords?.lon}`} title='Longitude (Degrés)' chipColor={app_colors.white_no_opacity} />
+          <DSOValues chipValue value={selectedSpot ? selectedSpot.equipments.altitude : `${defaultAltitude} (altitude par défaut)`} title={`Altitude`} chipColor={app_colors.white_no_opacity} />
+          <DSOValues chipValue value={coords?.common_name ? coords?.common_name : "N/A"} title='Lieu' chipColor={app_colors.white_no_opacity} />
+          <DSOValues chipValue value={coords?.country ? coords?.country : 'N/A'} title='Pays' chipColor={app_colors.white_no_opacity} />
         </View>
       </View>
     </Modal>

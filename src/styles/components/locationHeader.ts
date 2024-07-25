@@ -90,8 +90,7 @@ export const locationHeaderStyles = {
 
     body: {
       display: 'flex' as 'flex',
-      flexDirection: 'row' as 'row',
-      justifyContent: 'space-between' as 'space-between',
+      flexDirection: 'column' as 'column',
 
       column: {
         display: 'flex' as 'flex',
