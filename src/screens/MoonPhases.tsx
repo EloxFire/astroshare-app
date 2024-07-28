@@ -30,7 +30,7 @@ interface MoonData {
 
 export default function MoonPhases({ navigation }: any) {
 
-  const { selectedSpot, defaultAltitude } = useSpot()
+  // const { selectedSpot, defaultAltitude } = useSpot()
   const { currentUserLocation } = useSettings()
 
   const [date, setDate] = useState<Date>(new Date())
@@ -73,8 +73,9 @@ export default function MoonPhases({ navigation }: any) {
   }
 
   const getMoonRiseAndSet = (date: Date): { moonrise: string, moonset: string } => {
-    const altitude = selectedSpot ? selectedSpot.equipments.altitude : extractNumbers(defaultAltitude);
-    const horizonAngle = calculateHorizonAngle(extractNumbers(altitude))
+    const altitude = 341;
+    // const altitude = selectedSpot ? selectedSpot.equipments.altitude : extractNumbers(defaultAltitude);
+    const horizonAngle = calculateHorizonAngle(altitude)
     const moonCoords = getLunarEquatorialCoordinate(new Date())
 
     const moonRise = getBodyNextRise(date, { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }, moonCoords, horizonAngle)

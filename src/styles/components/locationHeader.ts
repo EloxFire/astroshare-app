@@ -60,7 +60,8 @@ export const locationHeaderStyles = {
     padding: 10,
     position: 'absolute' as 'absolute',
     bottom: 0,
-    height: 250,
+    height: 'auto' as 'auto',
+    paddingBottom: 40,
     
     header: {
       display: 'flex' as 'flex',
@@ -82,10 +83,14 @@ export const locationHeaderStyles = {
       }
     },
 
+    mapContainer: {
+      width: '100%' as '100%',
+      height: 100,
+    },
+
     body: {
       display: 'flex' as 'flex',
-      flexDirection: 'row' as 'row',
-      justifyContent: 'space-between' as 'space-between',
+      flexDirection: 'column' as 'column',
 
       column: {
         display: 'flex' as 'flex',
