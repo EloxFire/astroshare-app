@@ -98,7 +98,7 @@ export default function MoonPhases({ navigation }: any) {
       <PageTitle navigation={navigation} title="Phases de la lune" subtitle="// Calculez les phases de la Lune" />
       <View style={globalStyles.screens.separator} />
       <View style={moonPhasesStyles.content}>
-        <View style={moonPhasesStyles.content.phaseContainer}>
+        {/* <View style={moonPhasesStyles.content.phaseContainer}>
           <Text style={moonPhasesStyles.content.title}>Lune du {dayjs(date).format('DD MMMM YYYY')}</Text>
           <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10 }}>
             <TouchableOpacity onPress={() => setIsDateModalVisible(true)} style={moonPhasesStyles.content.selectButton}>
@@ -138,7 +138,7 @@ export default function MoonPhases({ navigation }: any) {
           <DSOValues title='Âge' value={moonData ? moonData.age! + ' jours' : "Chargement..."} chipValue chipColor={app_colors.grey} />
           <DSOValues title='Nouvelle lune' value={moonData ? moonData.newMoon ? 'Oui' : 'Non' : "Chargement..."} chipValue chipColor={moonData?.newMoon! ? app_colors.green_eighty : app_colors.grey} />
           <DSOValues title='Pleine lune' value={moonData ? moonData.fullMoon ? 'Oui' : 'Non' : "Chargement..."} chipValue chipColor={moonData?.fullMoon! ? app_colors.green_eighty : app_colors.grey} />
-        </View>
+        </View> */}
       </View>
     </View>
   )
