@@ -1,4 +1,7 @@
-module.exports= {
+import * as dotenv from "dotenv";
+dotenv.config();
+
+module.exports = {
   name: "Astroshare",
   slug: "astroshare-app",
   version: "v1.0.2",
