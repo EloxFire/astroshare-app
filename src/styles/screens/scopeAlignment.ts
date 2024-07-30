@@ -1,80 +1,86 @@
-import { Dimensions } from "react-native";
 import { app_colors } from "../../helpers/constants";
 
 export const scopeAlignmentStyles = {
-  content: {
-    display: "flex" as "flex",
-    flexDirection: "column" as "column",
-    // backgroundColor: 'red' as 'red',
-
+  header: {
+    height: 'auto' as 'auto',
     title: {
       color: app_colors.white,
-      fontSize: 20,
+      fontSize: 30,
       textAlign: "center" as "center",
       fontFamily: "GilroyBlack",
       textTransform: "uppercase" as "uppercase",
     },
-
-    subtitle: {
+    description: {
       color: app_colors.white,
       fontSize: 18,
       textAlign: "center" as "center",
       fontFamily: "GilroyMedium",
       marginBottom: 25,
-    },
-
-    infoText: {
-      color: app_colors.white,
-      fontSize: 14,
-      textAlign: "center" as "center",
-      fontFamily: "GilroyRegular",
-    },
-
-    dataContainer: {
-      width: Dimensions.get('window').width - 20,
-      alignSelf: 'center' as 'center',
+    }
+  },
+  content: {
+    display: "flex" as "flex",
+    flexDirection: "column" as "column",
+    flex: 1,
+    
+    list: {
       display: "flex" as "flex",
-      flexDirection: "row" as "row",
+      flexDirection: "column" as "column",
+      gap: 50,
+      flex: 1,
       justifyContent: "space-between" as "space-between",
-      gap: 30,
-
-      title: {
-        color: app_colors.white,
-        fontSize: 12,
-        fontFamily: "AuxMono",
-        opacity: 0.5,
-      },
-
-      value: {
-        color: app_colors.white,
-        fontSize: 12,
-        fontFamily: "GilroyRegular",
+      paddingBottom: 150,
+      
+      listElement: {
+        display: "flex" as "flex",
+        flexDirection: "column" as "column",
+  
+        number: {
+          color: app_colors.white,
+          fontSize: 50,
+          fontFamily: "GilroyBlack",
+          opacity: 0.3,
+        },
+  
+        value: {
+          color: app_colors.white,
+          fontSize: 15,
+          fontFamily: "GilroyRegular",
+        }
       }
     },
 
-    toolContainer: {
-      display: "flex" as "flex",
-      justifyContent: "center" as "center",
-      alignItems: "center" as "center",
-      marginTop: 25,
-    },
+    text: {
+      color: app_colors.white,
+      fontSize: 15,
+      marginBottom: 15,
+    }
+  },
+
+  footer: {
+    height: 'auto' as 'auto',
+    display: "flex" as "flex",
+    flexDirection: "column" as "column",
+    gap: 10,
+    marginBottom: 40,
 
     button: {
       backgroundColor: app_colors.white,
-      display: "flex" as "flex",
-      justifyContent: "center" as "center",
-      alignItems: "center" as "center",
-      padding: 10,
-      marginTop: 50,
       borderRadius: 10,
-      width: '75%' as '75%',
+      padding: 3,
+      display: "flex" as "flex",
+      flexDirection: "column" as "column",
+      alignItems: "center" as "center",
+      justifyContent: "center" as "center",
+      width: '75%' as '50%',
       alignSelf: 'center' as 'center',
-      
+      minHeight: 35,
+
       text: {
         color: app_colors.black,
         fontSize: 15,
-        fontFamily: "GilroyMedium",
+        fontFamily: "GilroyRegular",
       }
     }
-  },
+  }
 }

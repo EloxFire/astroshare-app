@@ -31,11 +31,13 @@
     "expo-location": "~17.0.1",
     "expo-sensors": "~13.0.9",
     "expo-status-bar": "~1.12.1",
+    "lottie-react-native": "6.7.0",
     "lpf": "^1.0.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-native": "0.74.3",
     "react-native-color-matrix-image-filters": "^6.0.9",
+    "react-native-easy-grid": "^0.2.2",
     "react-native-gesture-handler": "~2.16.1",
     "react-native-maps": "1.14.0",
     "react-native-root-toast": "^3.5.1",
@@ -46,8 +48,7 @@
     "react-native-webview": "13.8.6",
     "satellite.js": "^5.0.0",
     "tle.js": "^4.2.12",
-    "translate-google-api": "^1.0.4",
-    "lottie-react-native": "6.7.0"
+    "translate-google-api": "^1.0.4"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

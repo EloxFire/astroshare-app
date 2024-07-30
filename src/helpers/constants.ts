@@ -90,15 +90,11 @@ export const cmeImageDescription = {
 
 export const scopeAlignmentSteps = [
   {
-    title: 'Orientation',
-    description: 'Utilisez la boussole pour placer le trepried de votre télescope en direction du nord.',
-  },
-  {
-    title: 'Niveau',
-    description: 'Assurez-vous que votre télescope est parfaitement horizontal grâce au niveau à bulle.\nPlacez votre téléphone a plat sur le trépied de votre telescope.',
+    title: 'Matériel',
+    description: 'Vérifiez les éléments suivants pour bien débuter votre alignement polaire',
   },
   {
     title: 'Alignement polaire',
-    description: 'Installez la monture sur le trépied et alignez votre télescope sur le pôle nord céleste. Polaris doit être visible dans le viseur polaire comme indiqué sur le schéma.',
+    description: "Une fois les vérifications effectués, placez l'étoile polaire dans votre viseur polaire comme indiqué sur le schéma.",
   }
 ]

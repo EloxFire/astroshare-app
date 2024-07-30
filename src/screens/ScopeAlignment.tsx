@@ -3,6 +3,7 @@ import {
   Keyboard,
   ScrollView,
   Text,
+  TouchableOpacity,
   TouchableWithoutFeedback,
   View,
 } from "react-native";
@@ -13,13 +14,14 @@ import PageTitle from "../components/commons/PageTitle";
 import Compass from "../components/Compass";
 import PolarClock from "../components/PolarClock";
 import SpiritLevel from "../components/SpiritLevel";
+import { scopeAlignmentSteps } from "../helpers/constants";
 
 export default function ScopeAlignment({ navigation }: any) {
 
-  const [currentStep, setCurrentStep] = useState(3);
+  const [currentStep, setCurrentStep] = useState(1);
 
   const handleNextStep = () => {
-    currentStep === 3 ? navigation.navigate(routes.home.path) : setCurrentStep(currentStep + 1);
+    currentStep === 2 ? navigation.navigate(routes.home.path) : setCurrentStep(currentStep + 1);
   }
 
   const handlePreviousStep = () => {
@@ -27,40 +29,47 @@ export default function ScopeAlignment({ navigation }: any) {
   }
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-      <View style={globalStyles.body}>
-        <PageTitle navigation={navigation} title="Mise en station" subtitle="// Pour un alignement précis" />
-        <View style={globalStyles.screens.separator} />
-        <ScrollView>
-          <View style={scopeAlignmentStyles.content}>
-            <Text style={scopeAlignmentStyles.content.title}>Viseur polaire</Text>
-            {/* <Text style={scopeAlignmentStyles.content.title}>Étape {currentStep}</Text> */}
-            {/* <Text style={scopeAlignmentStyles.content.subtitle}>{scopeAlignmentSteps[currentStep - 1].title}</Text> */}
-            {/* <Text style={scopeAlignmentStyles.content.infoText}>{scopeAlignmentSteps[currentStep - 1].description}</Text> */}
-            <Text style={scopeAlignmentStyles.content.infoText}>Placez Polaris dans votre viseur polaire comme sur le schéma</Text>
+    <View style={globalStyles.body}>
+      <PageTitle navigation={navigation} title="Mise en station" subtitle="// Pour un alignement précis" />
+      <View style={globalStyles.screens.separator} />
 
-            <View style={scopeAlignmentStyles.content.toolContainer}>
-              {currentStep === 1 && <Compass />}
-              {currentStep === 2 && <SpiritLevel />}
-              {currentStep === 3 && <PolarClock />}
+      <View style={scopeAlignmentStyles.header}>
+        <Text style={scopeAlignmentStyles.header.title}>{scopeAlignmentSteps[currentStep - 1].title}</Text>
+        <Text style={scopeAlignmentStyles.header.description}>{scopeAlignmentSteps[currentStep - 1].description}</Text>
+      </View>
+
+      <View style={scopeAlignmentStyles.content}>
+        {currentStep === 1 && (
+          <View style={scopeAlignmentStyles.content.list}>
+            <View style={scopeAlignmentStyles.content.list.listElement}>
+              <Text style={scopeAlignmentStyles.content.list.listElement.number}>1</Text>
+              <Text style={scopeAlignmentStyles.content.list.listElement.value}>- Votre monture doit être orientée vers le nord, le plus précisément possible.</Text>
+            </View>
+            <View style={scopeAlignmentStyles.content.list.listElement}>
+              <Text style={scopeAlignmentStyles.content.list.listElement.number}>2</Text>
+              <Text style={scopeAlignmentStyles.content.text}>- Votre télescope doit être horizontal, vérifiez avec un niveau à bulle.</Text>
+            </View>
+            <View style={scopeAlignmentStyles.content.list.listElement}>
+              <Text style={scopeAlignmentStyles.content.list.listElement.number}>3</Text>
+              <Text style={scopeAlignmentStyles.content.text}>- Assurez-vous que votre monture est bien fixée sur le trépied de votre télescope.</Text>
             </View>
 
-            {/* <TouchableOpacity activeOpacity={.5} style={scopeAlignmentStyles.content.button} onPress={() => handleNextStep()}>
-              <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                <Text style={scopeAlignmentStyles.content.button.text}>{currentStep === 3 ? "Retour à l'accueil" : "Étape suivante"}</Text>
-              </View>
-            </TouchableOpacity>
-            {
-              currentStep !== 1 &&
-              <TouchableOpacity activeOpacity={.5} style={[scopeAlignmentStyles.content.button, { marginTop: 10 }]} onPress={() => handlePreviousStep()}>
-                <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                  <Text style={scopeAlignmentStyles.content.button.text}>{currentStep === 1 ? "Retour à l'accueil" : "Retour"}</Text>
-                </View>
-              </TouchableOpacity>
-            } */}
           </View>
-        </ScrollView>
+        )}
+        {
+          currentStep === 2 && <PolarClock />
+        }
       </View>
-    </TouchableWithoutFeedback>
+      <View style={scopeAlignmentStyles.footer}>
+        {currentStep !== 1 && (
+          <TouchableOpacity onPress={() => handlePreviousStep()} style={scopeAlignmentStyles.footer.button}>
+            <Text style={scopeAlignmentStyles.footer.button.text}>Précédent</Text>
+          </TouchableOpacity>
+        )}
+        <TouchableOpacity onPress={() => handleNextStep()} style={scopeAlignmentStyles.footer.button}>
+          <Text style={scopeAlignmentStyles.footer.button.text}>{currentStep === 2 ? "Retour à l'accueil" : "Suivant"}</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
   );
 }
