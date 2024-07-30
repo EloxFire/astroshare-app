@@ -34,7 +34,7 @@ module.exports = {
       }
     },
     package: "fr.eavagliano.astroshare",
-    versionCode: 10
+    versionCode: 11
   },
   web: {
     favicon: "./assets/favicon.png"
