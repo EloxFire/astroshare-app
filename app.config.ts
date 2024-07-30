@@ -30,7 +30,7 @@ module.exports = {
     ],
     config: {
       googleMaps: {
-        apiKey: process.env.GOOGLE_MAPS_API_KEY
+        apiKey: "AIzaSyBIHiqhKWwweIvQF36R8eFiYpM5G5LOWpU"
       }
     },
     package: "fr.eavagliano.astroshare",
