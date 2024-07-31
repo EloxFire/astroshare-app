@@ -96,6 +96,6 @@ export const scopeAlignmentSteps = [
   },
   {
     title: 'Alignement polaire',
-    description: "Une fois les vérifications effectués, placez l'étoile polaire dans votre viseur polaire comme indiqué sur le schéma.",
+    description: "Une fois les vérifications effectués, utilisez le viseur polaire pour aligner votre télescope sur le pôle céleste.",
   }
 ]

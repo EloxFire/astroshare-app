@@ -5,23 +5,21 @@ export const scopeAlignmentStyles = {
     height: 'auto' as 'auto',
     title: {
       color: app_colors.white,
-      fontSize: 30,
+      fontSize: 25,
       textAlign: "center" as "center",
       fontFamily: "GilroyBlack",
       textTransform: "uppercase" as "uppercase",
     },
     description: {
       color: app_colors.white,
-      fontSize: 18,
+      fontSize: 15,
       textAlign: "center" as "center",
       fontFamily: "GilroyMedium",
-      marginBottom: 25,
     }
   },
   content: {
-    display: "flex" as "flex",
-    flexDirection: "column" as "column",
     flex: 1,
+    marginBottom: 30,
     
     list: {
       display: "flex" as "flex",
@@ -53,7 +51,6 @@ export const scopeAlignmentStyles = {
     text: {
       color: app_colors.white,
       fontSize: 15,
-      marginBottom: 15,
     }
   },
 
