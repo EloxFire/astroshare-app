@@ -1,30 +1,25 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { ScrollView, Text, TouchableOpacity, View } from 'react-native'
-import { globalStyles } from '../styles/global'
-import PageTitle from '../components/commons/PageTitle'
-import MapView, { Circle, Marker, PROVIDER_GOOGLE, Polyline } from 'react-native-maps'
-import axios from 'axios'
+import { Dimensions, ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import { satelliteTrackerStyles } from '../styles/screens/satelliteTracker'
 import { mapStyle } from '../helpers/mapJsonStyle'
 import { app_colors } from '../helpers/constants'
-import DSOValues from '../components/commons/DSOValues'
 import { convertDDtoDMS } from '../helpers/scripts/convertDDtoDMSCoords'
 import { getLocationName } from '../helpers/api/getLocationFromCoords'
 import { getCountryByCode } from '../helpers/scripts/utils/getCountryByCode'
 import { Image } from 'expo-image'
-import { useSettings } from '../contexts/AppSettingsContext'
-import { getSatelliteInfo } from 'tle.js'
-import { useSpot } from '../contexts/ObservationSpotContext'
+import PageTitle from '../components/commons/PageTitle'
+import MapView, { Circle, Marker, PROVIDER_GOOGLE, Polyline } from 'react-native-maps'
+import axios from 'axios'
+import DSOValues from '../components/commons/DSOValues'
+import WebView from 'react-native-webview'
 
 export default function SatelliteTracker({ navigation }: any) {
-
-  const { currentUserLocation } = useSettings()
-  const { defaultAltitude } = useSpot()
 
   const [issPosition, setIssPosition] = useState<any>(null)
   const [trajectoryPoints, setTrajectoryPoints] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [issInfosModalVisible, setIssInfosModalVisible] = useState(false)
+  const [liveFeedModalVisible, setLiveFeedModalVisible] = useState(false)
 
   const mapRef = useRef(null)
 
@@ -89,6 +84,10 @@ export default function SatelliteTracker({ navigation }: any) {
     })
   }
 
+  const handleLiveFeedDisplay = () => {
+    setLiveFeedModalVisible(!liveFeedModalVisible)
+  }
+
   return (
     <View>
       <MapView
@@ -151,6 +150,14 @@ export default function SatelliteTracker({ navigation }: any) {
       <TouchableOpacity style={[satelliteTrackerStyles.button, satelliteTrackerStyles.button.centerIss]} onPress={() => centerIss()}>
         <Image source={require('../../assets/icons/FiIss.png')} style={{ width: 24, height: 24 }} />
       </TouchableOpacity>
+      <TouchableOpacity style={[satelliteTrackerStyles.button, satelliteTrackerStyles.button.liveFeed]} onPress={() => handleLiveFeedDisplay()}>
+        {
+          !liveFeedModalVisible ?
+            <Image source={require('../../assets/icons/FiPlayCircle.png')} style={{ width: 24, height: 24 }} />
+            :
+            <Image source={require('../../assets/icons/FiStopCircle.png')} style={{ width: 24, height: 24 }} />
+        }
+      </TouchableOpacity>
       {
         issInfosModalVisible &&
         <View style={satelliteTrackerStyles.issModal}>
@@ -167,6 +174,22 @@ export default function SatelliteTracker({ navigation }: any) {
             <DSOValues title='Altitude' value={issPosition ? `${issPosition.altitude.toFixed(2)} Km` : 'Chargement'} chipValue chipColor={app_colors.grey} />
             <DSOValues title='Vitesse' value={issPosition ? `${issPosition.velocity.toFixed(2)} Km/h` : 'Chargement'} chipValue chipColor={app_colors.grey} />
             <DSOValues title='Pays (survol)' value={issPosition ? getCountryByCode(issPosition.country) : 'Chargement'} chipValue chipColor={app_colors.grey} />
+          </ScrollView>
+        </View>
+      }
+
+      {
+        liveFeedModalVisible &&
+        <View style={satelliteTrackerStyles.issModal}>
+          <ScrollView>
+            <Text style={satelliteTrackerStyles.issModal.title}>Vidéo en direct</Text>
+            <Text style={[satelliteTrackerStyles.issModal.subtitle, { marginBottom: 10, fontFamily: 'GilroyRegular' }]}>La station à une période de 45 minutes dans le noir a chaque orbite</Text>
+            <WebView
+              style={{ width: Dimensions.get('screen').width - 20, height: (Dimensions.get('screen').width - 20) / (16 / 9), borderRadius: 10 }}
+              javaScriptEnabled={true}
+              source={{ uri: "https://www.youtube.com/embed/P9C25Un7xaM?si=AjWGfqmH5nZ8OOEB&amp;controls=0" }}
+              allowsFullscreenVideo
+            />
           </ScrollView>
         </View>
       }

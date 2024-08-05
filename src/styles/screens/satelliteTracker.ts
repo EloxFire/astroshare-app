@@ -40,6 +40,10 @@ export const satelliteTrackerStyles = {
 
     centerIss: {
       top: StatusBar.currentHeight! + 150,
+    },
+
+    liveFeed: {
+      top: StatusBar.currentHeight! + 200,
     }
   },
   issModal: {
