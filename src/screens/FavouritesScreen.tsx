@@ -18,6 +18,7 @@ export default function FavouritesScreen({ navigation }: any) {
   useEffect(() => {
     (async () => {
       const favs = await getObject(storageKeys.favouriteObjects)
+      if (!favs) return
       setObjects(favs)
     })()
   }, [isFocused])
