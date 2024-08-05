@@ -144,6 +144,19 @@ export default function SolarWeather({ navigation }: any) {
             <Text style={solarWeatherStyles.container.subtitle}>Source : NASA / SoHO (Solar and Heliospheric Observatory)</Text>
             <Image priority={'low'} source={{ uri: "https://soho.nascom.nasa.gov/data/synoptic/sunspots_earth/mdi_sunspots_1024.jpg" + '?' + new Date() }} style={solarWeatherStyles.sunImage} />
           </View>
+
+          {/* AURORA CONTAINER */}
+          <View style={solarWeatherStyles.container}>
+            <Text style={solarWeatherStyles.container.title}>Prévisions d'aurores (Nord)</Text>
+            <Text style={solarWeatherStyles.container.subtitle}>Source : NOAA Space Weather Prediction Center</Text>
+            <Image priority={'low'} source={{ uri: "https://services.swpc.noaa.gov/images/animations/ovation/north/latest.jpg" + '?' + new Date() }} style={solarWeatherStyles.sunImage} />
+          </View>
+
+          <View style={solarWeatherStyles.container}>
+            <Text style={solarWeatherStyles.container.title}>Prévisions d'aurores (Sud)</Text>
+            <Text style={solarWeatherStyles.container.subtitle}>Source : NOAA Space Weather Prediction Center</Text>
+            <Image priority={'low'} source={{ uri: "https://services.swpc.noaa.gov/images/animations/ovation/south/latest.jpg" + '?' + new Date() }} style={solarWeatherStyles.sunImage} />
+          </View>
         </View>
       </ScrollView>
     </View>
