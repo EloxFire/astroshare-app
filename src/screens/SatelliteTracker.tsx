@@ -12,12 +12,14 @@ import { convertDDtoDMS } from '../helpers/scripts/convertDDtoDMSCoords'
 import { getLocationName } from '../helpers/api/getLocationFromCoords'
 import { getCountryByCode } from '../helpers/scripts/utils/getCountryByCode'
 import { Image } from 'expo-image'
-import * as satellite from 'satellite.js';
 import { useSettings } from '../contexts/AppSettingsContext'
+import { getSatelliteInfo } from 'tle.js'
+import { useSpot } from '../contexts/ObservationSpotContext'
 
 export default function SatelliteTracker({ navigation }: any) {
 
   const { currentUserLocation } = useSettings()
+  const { defaultAltitude } = useSpot()
 
   const [issPosition, setIssPosition] = useState<any>(null)
   const [trajectoryPoints, setTrajectoryPoints] = useState<any>(null)
@@ -38,10 +40,6 @@ export default function SatelliteTracker({ navigation }: any) {
   useEffect(() => {
     (async () => {
       const TLE = await axios.get(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/iss/tle`)
-
-      const issPasses = calculatePasses(currentUserLocation.lat, currentUserLocation.lon, 48, TLE.data.data.line1, TLE.data.data.line2)
-      console.log("ISS passes :", issPasses)
-
     })()
   }, [])
 
@@ -79,43 +77,6 @@ export default function SatelliteTracker({ navigation }: any) {
       setLoading(false)
     }
   }
-
-  const calculatePasses = (latitude: number, longitude: number, durationHours: number = 48, TLE_L1: string, TLE_L2: string) => {
-    const satrec = satellite.twoline2satrec(TLE_L1, TLE_L2);
-    const now = new Date();
-    const endTime = new Date(now.getTime() + durationHours * 60 * 60 * 1000);
-    const passes = [];
-
-    while (now <= endTime) {
-      const positionAndVelocity = satellite.propagate(satrec, now);
-      const positionEci = positionAndVelocity.position;
-      if (positionEci) {
-        const gmst = satellite.gstime(now);
-        const positionGd = satellite.eciToGeodetic(positionEci as any, gmst);
-        const latitudeDeg = satellite.degreesLat(positionGd.latitude);
-        const longitudeDeg = satellite.degreesLong(positionGd.longitude);
-
-        // Check if ISS is above the horizon
-        const observerGd = {
-          longitude: satellite.degreesToRadians(longitude),
-          latitude: satellite.degreesToRadians(latitude),
-          height: 0
-        };
-
-        const lookAngles = satellite.ecfToLookAngles(observerGd, positionEci as any);
-        if (lookAngles.elevation > 0) {
-          passes.push({
-            time: new Date(now),
-            elevation: lookAngles.elevation,
-            azimuth: lookAngles.azimuth,
-          });
-        }
-      }
-      now.setMinutes(now.getMinutes() + 1);
-    }
-
-    return passes;
-  };
 
   const centerIss = () => {
     if (!mapRef.current) return
