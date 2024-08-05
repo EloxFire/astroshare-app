@@ -49,9 +49,12 @@ export default function FavouritesScreen({ navigation }: any) {
         }
       </ScrollView>
       {/* Clear all favs button */}
-      <TouchableOpacity style={{ marginVertical: 30, backgroundColor: app_colors.red_eighty, padding: 5, justifyContent: 'center', alignItems: 'center', borderRadius: 10, display: 'flex', width: '100%', height: 30 }} onPress={() => handleClearAll()}>
-        <Text style={{ color: app_colors.white }}>Vider les favoris</Text>
-      </TouchableOpacity>
+      {
+        objects.length > 0 &&
+        <TouchableOpacity style={{ marginVertical: 30, backgroundColor: app_colors.red_eighty, padding: 5, justifyContent: 'center', alignItems: 'center', borderRadius: 10, display: 'flex', width: '100%', height: 30 }} onPress={() => handleClearAll()}>
+          <Text style={{ color: app_colors.white }}>Vider les favoris</Text>
+        </TouchableOpacity>
+      }
     </View>
   )
 }
