@@ -6,7 +6,7 @@ import DisclaimerBar from './DisclaimerBar'
 
 export default function BannerHandler() {
 
-  const { hasInternetConnection, currentUserLocation } = useSettings()
+  const { hasInternetConnection, currentUserLocation, locationLoading } = useSettings()
   const [hasChangedSpotElevation, setHasChangedSpotElevation] = useState<boolean>(false)
   const [hasAddedSpot, setHasAddedSpot] = useState<boolean>(false)
 
@@ -25,12 +25,12 @@ export default function BannerHandler() {
         !hasInternetConnection &&
         <DisclaimerBar message="Aucune connexion à internet. Fonctionnalités réduites." type='error' />
       }
-      {
+      {/* {
         !hasAddedSpot &&
         <DisclaimerBar message="Ajoutez vos lieux d'observation favoris depuis les paramètres ! Paramètres > Lieux d'observation > Ajouter un lieu." type='info' />
-      }
+      } */}
       {
-        !currentUserLocation &&
+        !currentUserLocation && !locationLoading &&
         <DisclaimerBar message="Localisation introuvable, certaines fonctionnalités sont désactivées" type="error" />
       }
     </View>

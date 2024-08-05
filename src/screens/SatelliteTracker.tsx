@@ -85,6 +85,7 @@ export default function SatelliteTracker({ navigation }: any) {
   }
 
   const handleLiveFeedDisplay = () => {
+    setIssInfosModalVisible(false)
     setLiveFeedModalVisible(!liveFeedModalVisible)
   }
 
@@ -144,7 +145,7 @@ export default function SatelliteTracker({ navigation }: any) {
       <View style={satelliteTrackerStyles.pageControls}>
         <PageTitle title='ISS tracker' navigation={navigation} subtitle="// Position de l'ISS en temps réel" />
       </View>
-      <TouchableOpacity style={satelliteTrackerStyles.button} onPress={() => setIssInfosModalVisible(!issInfosModalVisible)}>
+      <TouchableOpacity style={satelliteTrackerStyles.button} onPress={() => { setLiveFeedModalVisible(false); setIssInfosModalVisible(!issInfosModalVisible) }}>
         <Image source={require('../../assets/icons/FiInfo.png')} style={{ width: 24, height: 24 }} />
       </TouchableOpacity>
       <TouchableOpacity style={[satelliteTrackerStyles.button, satelliteTrackerStyles.button.centerIss]} onPress={() => centerIss()}>
@@ -183,7 +184,7 @@ export default function SatelliteTracker({ navigation }: any) {
         <View style={satelliteTrackerStyles.issModal}>
           <ScrollView>
             <Text style={satelliteTrackerStyles.issModal.title}>Vidéo en direct</Text>
-            <Text style={[satelliteTrackerStyles.issModal.subtitle, { marginBottom: 10, fontFamily: 'GilroyRegular' }]}>La station à une période de 45 minutes dans le noir a chaque orbite</Text>
+            <Text style={[satelliteTrackerStyles.issModal.subtitle, { marginBottom: 10, fontFamily: 'GilroyRegular', opacity: .5 }]}>La station à une période de 45 minutes dans le noir a chaque orbite  -  Le flux video possède environ 15 secondes de retard sur la position actuelle affichée</Text>
             <WebView
               style={{ width: Dimensions.get('screen').width - 20, height: (Dimensions.get('screen').width - 20) / (16 / 9), borderRadius: 10 }}
               javaScriptEnabled={true}
