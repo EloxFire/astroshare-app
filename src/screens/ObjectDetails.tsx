@@ -152,7 +152,7 @@ export default function ObjectDetails({ route, navigation }: any) {
                 :
                 <Image source={require('../../assets/icons/FiHeart.png')} style={objectDetailsStyles.content.favouritesContainer.button.image} />
             }
-            <Text style={objectDetailsStyles.content.favouritesContainer.button.text}>{favouriteObjects.includes(object) ? 'Retirer des favoris' : 'Ajouter aux favoris'}</Text>
+            <Text style={objectDetailsStyles.content.favouritesContainer.button.text}>{favouriteObjects.some(obj => obj.name === object.name) ? 'Retirer des favoris' : 'Ajouter aux favoris'}</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
