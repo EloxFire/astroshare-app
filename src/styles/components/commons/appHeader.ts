@@ -11,6 +11,14 @@ export const appHeaderStyles = {
     logo: {
       maxHeight: 35,
       maxWidth: 116,
+    },
+
+    buttons: {
+      display: 'flex' as 'flex',
+      flexDirection: 'row' as 'row',
+      justifyContent: 'space-between' as 'space-between',
+      alignItems: 'center' as 'center',
+      gap: 15,
     }
   }
 }

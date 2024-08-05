@@ -5,7 +5,7 @@ import { getObjectName } from "../helpers/scripts/astro/getObjectName";
 import { objectDetailsStyles } from "../styles/screens/objectDetails";
 import { astroImages } from "../helpers/scripts/loadImages";
 import { getConstellationName } from "../helpers/scripts/getConstellationName";
-import { app_colors } from "../helpers/constants";
+import { app_colors, storageKeys } from "../helpers/constants";
 import { getObjectType } from "../helpers/scripts/astro/getObjectType";
 import { convertHMSToDegreeFromString } from "../helpers/scripts/astro/HmsToDegree";
 import { convertDMSToDegreeFromString } from "../helpers/scripts/astro/DmsToDegree";
@@ -18,6 +18,8 @@ import { prettyDec, prettyRa } from "../helpers/scripts/astro/prettyCoords";
 import dayjs, { Dayjs } from "dayjs";
 import PageTitle from "../components/commons/PageTitle";
 import DSOValues from "../components/commons/DSOValues";
+import { getObject, storeObject } from "../helpers/storage";
+import { DSO } from "../helpers/types/DSO";
 
 export default function ObjectDetails({ route, navigation }: any) {
 
@@ -31,6 +33,8 @@ export default function ObjectDetails({ route, navigation }: any) {
   const [isCircumpolar, setIsCircumpolar] = useState<boolean>(false)
 
   const [selectedTimeBase, setSelectedTimeBase] = useState<'relative' | 'absolute'>('relative')
+
+  const [favouriteObjects, setFavouriteObjects] = useState<DSO[]>([])
 
   useEffect(() => {
     const altitude = selectedSpot ? selectedSpot.equipments.altitude : defaultAltitude;
@@ -59,8 +63,31 @@ export default function ObjectDetails({ route, navigation }: any) {
     }
   }, [])
 
-  console.log(object.const, getConstellationName(object.const));
+  useEffect(() => {
+    (async () => {
+      const favs = await getObject(storageKeys.favouriteObjects)
+      setFavouriteObjects(favs)
+    })()
+  }, [])
 
+  const updateFavList = async (newList: DSO[]) => {
+    await storeObject(storageKeys.favouriteObjects, newList)
+  }
+
+  const handleFavorite = async () => {
+    if (favouriteObjects.some(obj => obj.name === object.name)) {
+      console.log("remove")
+      const favs = favouriteObjects.filter(obj => obj.name !== object.name)
+      setFavouriteObjects(favs)
+      await updateFavList(favs)
+
+    } else {
+      console.log("add")
+      const favs = [...favouriteObjects, object]
+      setFavouriteObjects(favs)
+      await updateFavList(favs)
+    }
+  }
 
   return (
     <View style={globalStyles.body}>
@@ -115,6 +142,18 @@ export default function ObjectDetails({ route, navigation }: any) {
           {
             typeof setTime === 'boolean' && <DSOValues chipValue chipColor={app_colors.white_forty} title="Heure de lever" value={isCircumpolar ? 'Toute la nuit' : 'Jamais'} />
           }
+        </View>
+
+        <View style={objectDetailsStyles.content.favouritesContainer}>
+          <TouchableOpacity style={objectDetailsStyles.content.favouritesContainer.button} onPress={() => handleFavorite()}>
+            {
+              favouriteObjects.some(obj => obj.name === object.name) ?
+                <Image source={require('../../assets/icons/FiHeartFill.png')} style={[objectDetailsStyles.content.favouritesContainer.button.image, { tintColor: app_colors.red }]} />
+                :
+                <Image source={require('../../assets/icons/FiHeart.png')} style={objectDetailsStyles.content.favouritesContainer.button.image} />
+            }
+            <Text style={objectDetailsStyles.content.favouritesContainer.button.text}>{favouriteObjects.includes(object) ? 'Retirer des favoris' : 'Ajouter aux favoris'}</Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </View>

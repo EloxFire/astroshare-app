@@ -10,9 +10,14 @@ export default function AppHeader({ navigation }: any) {
         source={require('../../../assets/logos/astroshare_logo_white.png')}
         resizeMode='contain'
       />
-      <TouchableOpacity onPress={() => navigation.navigate(routes.settings.path)}>
-        <Image source={require('../../../assets/icons/FiSettings.png')} style={{ width: 20, height: 20 }} />
-      </TouchableOpacity>
+      <View style={appHeaderStyles.container.buttons}>
+        <TouchableOpacity onPress={() => navigation.navigate(routes.favorites.path)}>
+          <Image source={require('../../../assets/icons/FiHeart.png')} style={{ width: 20, height: 20 }} />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate(routes.settings.path)}>
+          <Image source={require('../../../assets/icons/FiSettings.png')} style={{ width: 20, height: 20 }} />
+        </TouchableOpacity>
+      </View>
     </View>
   )
 }

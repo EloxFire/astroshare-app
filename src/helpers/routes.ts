@@ -11,5 +11,6 @@ export const routes = {
   favoritesViewPoints: { path: 'FavoritesViewPoints', requirements: [] },
   apod: { path: 'ApodScreen', requirements: [] },
   skymapgenerator: { path: 'SkyMapGeneratorScreen', requirements: [] },
-  satelliteTracker: {path: 'SatelliteTrackerScreen', requirements: []},
+  satelliteTracker: { path: 'SatelliteTrackerScreen', requirements: [] },
+  favorites: { path: 'FavoritesScreen', requirements: [] },
 }

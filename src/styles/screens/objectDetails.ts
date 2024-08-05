@@ -1,3 +1,4 @@
+import { tint } from "react-native-color-matrix-image-filters";
 import { app_colors } from "../../helpers/constants";
 
 export const objectDetailsStyles = {
@@ -36,6 +37,41 @@ export const objectDetailsStyles = {
     },
 
     dsoInfos: {
+    },
+
+    favouritesContainer: {
+      display: 'flex' as 'flex',
+      flexDirection: 'row' as 'row',
+      justifyContent: 'center' as 'center',
+      alignItems: 'center' as 'center',
+      gap: 10,
+      marginTop: 20,
+
+      button: {
+        display: 'flex' as 'flex',
+        flexDirection: 'row' as 'row',
+        alignItems: 'center' as 'center',
+        justifyContent: 'center' as 'center',
+        gap: 10,
+        backgroundColor: app_colors.white,
+        padding: 3,
+        borderRadius: 10,
+        width: '60%' as '60%',
+
+        image: {
+          width: 20,
+          height: 20,
+          tintColor: app_colors.black,
+        },
+
+        text: {
+          fontSize: 15,
+          fontFamily: 'GilroyRegular',
+          color: app_colors.black,
+          padding: 5,
+          borderRadius: 5,
+        }
+      }
     }
   },
 

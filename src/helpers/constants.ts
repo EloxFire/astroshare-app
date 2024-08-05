@@ -42,6 +42,7 @@ export const storageKeys = {
   hasChangedCurrentSpotElevation: 'hasChangedCurrentSpotElevation',
   hasAddedSpot: 'hasAddedSpot',
   selectedSpot: 'selectedSpot',
+  favouriteObjects: 'favouriteObjects',
 }
 
 export const sunImagesSrcWavelengths = {

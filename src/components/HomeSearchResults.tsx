@@ -2,9 +2,9 @@ import React, { useEffect, useRef } from 'react'
 import { FlatList, Image, SafeAreaView, Text, TouchableOpacity, View } from 'react-native'
 import { globalStyles } from '../styles/global'
 import { homeStyles } from '../styles/screens/home'
-import SearchResultCard from './SearchResultCard'
 import { DSO } from '../helpers/types/DSO'
 import { app_colors } from '../helpers/constants'
+import SearchResultCard from './cards/SearchResultCard'
 
 interface HomeSearchResultsProps {
   results: DSO[]
