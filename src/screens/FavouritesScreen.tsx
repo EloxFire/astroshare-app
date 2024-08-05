@@ -1,14 +1,14 @@
 import React, { useEffect } from 'react'
 import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import { globalStyles } from '../styles/global'
-import PageTitle from '../components/commons/PageTitle'
-import { getData, getObject, storeObject } from '../helpers/storage'
+import { getObject, storeObject } from '../helpers/storage'
 import { app_colors, storageKeys } from '../helpers/constants'
 import { DSO } from '../helpers/types/DSO'
-import ObjectCardLite from '../components/cards/ObjectCardLite'
 import { useIsFocused } from "@react-navigation/native";
 import { favouriteScreenStyles } from '../styles/screens/favouriteScreen'
 import { viewPointsManagerStyles } from '../styles/screens/viewPointsManager'
+import PageTitle from '../components/commons/PageTitle'
+import ObjectCardLite from '../components/cards/ObjectCardLite'
 
 export default function FavouritesScreen({ navigation }: any) {
 
