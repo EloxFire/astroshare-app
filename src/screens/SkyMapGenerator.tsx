@@ -6,12 +6,13 @@ import { useSettings } from '../contexts/AppSettingsContext'
 import { calculateHorizonAngle } from '../helpers/scripts/astro/calculateHorizonAngle'
 import { convertEquatorialToHorizontal, isBodyAboveHorizon, hercules, lyra, draco, cepheus } from '@observerly/astrometry'
 import { Circle, G, Line, Mask, Polyline, Rect, Svg, Text as SvgText } from 'react-native-svg';
-import PageTitle from '../components/commons/PageTitle'
-import axios from 'axios'
-import { app_colors } from '../helpers/constants'
-import DSOValues from '../components/commons/DSOValues'
-import dayjs from 'dayjs'
 import { constellationsAsterisms } from '../helpers/scripts/astro/constellationsAsterisms'
+import { app_colors } from '../helpers/constants'
+import PageTitle from '../components/commons/PageTitle'
+import DSOValues from '../components/commons/DSOValues'
+import ToggleButton from '../components/commons/buttons/ToggleButton'
+import dayjs from 'dayjs'
+import axios from 'axios'
 
 
 export default function SkyMapGenerator({ navigation }: any) {
@@ -22,6 +23,8 @@ export default function SkyMapGenerator({ navigation }: any) {
   const [starCatalogLoading, setStarCatalogLoading] = useState(true)
   const [currentTime, setCurrentTime] = useState(new Date())
 
+  const [showConstellations, setShowConstellations] = useState(true)
+
   const [starsToDisplay, setStarsToDisplay] = useState<Star[]>([])
 
   useEffect(() => {
@@ -31,7 +34,7 @@ export default function SkyMapGenerator({ navigation }: any) {
   useEffect(() => {
     const interval = setInterval(() => {
       updateDate()
-    }, 60000)
+    }, 1000)
 
     return () => clearInterval(interval)
   }, [])
@@ -86,8 +89,6 @@ export default function SkyMapGenerator({ navigation }: any) {
       <PageTitle navigation={navigation} title="Carte du ciel" subtitle="// Carte du ciel en direct" />
       <View style={globalStyles.screens.separator} />
 
-      <DSOValues title='Heure locale' chipValue chipColor={app_colors.grey} value={dayjs(currentTime).format('HH:mm:ss').replace(':', 'h').replace(':', 'm ')} />
-
       <Text style={{ color: app_colors.red_eighty, textAlign: 'center', fontSize: 20 }}>N</Text>
       <Svg height={screenWidth} width={screenWidth} transform={`rotate(180, ${screenWidth / 2}, ${screenWidth / 2})`}>
         <Mask id="circleMask">
@@ -99,7 +100,7 @@ export default function SkyMapGenerator({ navigation }: any) {
 
         <G mask='url(#circleMask)'>
           {
-            starsToDisplay.length > 0 &&
+            starsToDisplay.length > 0 && showConstellations &&
             constellationsAsterisms.flatMap((constellation, constellationIndex) => {
               return constellation.map((segment: any, segmentIndex: any) => {
                 if (segment.length < 2) return null;
@@ -149,6 +150,13 @@ export default function SkyMapGenerator({ navigation }: any) {
         </G>
       </Svg>
       <Text style={{ color: app_colors.red_eighty, textAlign: 'center', fontSize: 20 }}>S</Text>
+
+      <View style={{ marginTop: 20 }}>
+        <DSOValues title='Heure locale' chipValue chipColor={app_colors.grey} value={dayjs(currentTime).format('HH:mm:ss').replace(':', 'h').replace(':', 'm ')} />
+        <View style={{ marginTop: 10, borderTopWidth: 1, borderColor: app_colors.white_forty, paddingTop: 10 }}>
+          <ToggleButton title='Constellations' onToggle={() => setShowConstellations(!showConstellations)} toggled={showConstellations} />
+        </View>
+      </View>
     </View>
   )
 }
