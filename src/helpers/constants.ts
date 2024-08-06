@@ -19,6 +19,8 @@ export const app_colors = {
   green_forty: '#00FF0040',
   green_sixty: '#00FF0060',
   green_eighty: '#00FF0080',
+  turquoise: '#488f9d',
+  turquoise_sixty: '#488f9d60',
 }
 
 export const Polaris = {
