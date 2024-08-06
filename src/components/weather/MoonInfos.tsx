@@ -12,7 +12,7 @@ import SingleValue from './SingleValue'
 import dayjs from 'dayjs';
 
 
-export default function MoonInfos({ moonInfos }: any) {
+export default function MoonInfos() {
 
   const { currentUserLocation, currentUserHorizon } = useSettings()
   const { selectedSpot, defaultAltitude } = useSpot()

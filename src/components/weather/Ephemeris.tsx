@@ -8,10 +8,9 @@ import MoonInfos from './MoonInfos'
 
 interface EphemerisProps {
   weather: any
-  moonInfos: any
 }
 
-export default function Ephemeris({ weather, moonInfos }: EphemerisProps) {
+export default function Ephemeris({ weather }: EphemerisProps) {
 
   const [mode, setMode] = useState<'day' | 'night'>('day')
 
@@ -35,7 +34,7 @@ export default function Ephemeris({ weather, moonInfos }: EphemerisProps) {
           sunset={mode === 'night' ? dayjs.unix(weather.current.sunset).format('HH:mm') : dayjs.unix(weather.daily[1].sunset).format('HH:mm')}
         />
       }
-      <MoonInfos moonInfos={moonInfos} />
+      <MoonInfos />
     </View>
   )
 }

@@ -6,7 +6,6 @@ import { useSettings } from '../contexts/AppSettingsContext'
 import { getWeather } from '../helpers/api/getWeather'
 import { LocationObject } from '../helpers/types/LocationObject'
 import { getCityCoords } from '../helpers/api/getCityCoords'
-import { getMoon } from '../helpers/api/getMoon'
 import { convertDDtoDMS } from '../helpers/scripts/convertDDtoDMSCoords'
 import { showToast } from '../helpers/scripts/showToast'
 import PageTitle from '../components/commons/PageTitle'
@@ -22,7 +21,6 @@ export default function Weather({ navigation }: any) {
   const [searchString, setSearchString] = useState<string>('')
   const [searchedCity, setSearchedCity] = useState<LocationObject | null>(null)
   const [weather, setWeather] = useState<any>(null)
-  const [moonInfos, setMoonInfos] = useState<any>(null)
 
   useEffect(() => {
     getCurrent()
@@ -39,12 +37,6 @@ export default function Weather({ navigation }: any) {
         showToast({ message: 'Erreur lors de la récupération de la météo', type: 'error' })
       }
 
-      try {
-        const moon = await getMoon(currentUserLocation.lat, currentUserLocation.lon)
-        setMoonInfos(moon)
-      } catch (error) {
-        showToast({ message: 'Erreur lors de la récupération des informations lunaires', type: 'error' })
-      }
       setSearchedCity(null)
       setSearchString('')
       showToast({ message: 'Succès', type: 'success' })
@@ -97,7 +89,7 @@ export default function Weather({ navigation }: any) {
       <ScrollView>
         <WeatherOverview weather={weather} currentUserLocation={currentUserLocation} searchedCity={searchedCity} refresh={() => getCurrent()} />
         <Hourly weather={weather} />
-        <Ephemeris weather={weather} moonInfos={moonInfos} />
+        <Ephemeris weather={weather} />
         <Text style={weatherStyles.weatherContainer.title}>Légende</Text>
         <View style={weatherStyles.legend}>
           <SingleValue icon={require('../../assets/icons/FiThermometer.png')} value="Température" />
