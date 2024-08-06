@@ -6,7 +6,7 @@ import { useSettings } from '../contexts/AppSettingsContext'
 import { calculateHorizonAngle } from '../helpers/scripts/astro/calculateHorizonAngle'
 import { convertEquatorialToHorizontal, isBodyAboveHorizon, hercules, lyra, draco, cepheus } from '@observerly/astrometry'
 import { Circle, G, Line, Mask, Polyline, Rect, Svg, Text as SvgText } from 'react-native-svg';
-import { constellationsAsterisms } from '../helpers/scripts/astro/constellationsAsterisms'
+import { constellationsAsterisms, constellationsBoundaries } from '../helpers/scripts/astro/constellationsAsterisms'
 import { app_colors } from '../helpers/constants'
 import PageTitle from '../components/commons/PageTitle'
 import DSOValues from '../components/commons/DSOValues'
@@ -86,8 +86,10 @@ export default function SkyMapGenerator({ navigation }: any) {
 
   return (
     <View style={globalStyles.body}>
-      <PageTitle navigation={navigation} title="Carte du ciel" subtitle="// Carte du ciel en direct" />
-      <View style={globalStyles.screens.separator} />
+      <View style={{ zIndex: 10 }}>
+        <PageTitle navigation={navigation} title="Carte du ciel" subtitle="// Carte du ciel en direct" />
+        <View style={globalStyles.screens.separator} />
+      </View>
 
       <Text style={{ color: app_colors.red_eighty, textAlign: 'center', fontSize: 20 }}>N</Text>
       <Svg height={screenWidth} width={screenWidth} transform={`rotate(180, ${screenWidth / 2}, ${screenWidth / 2})`}>
@@ -99,6 +101,12 @@ export default function SkyMapGenerator({ navigation }: any) {
         <Circle cx={screenWidth / 2} cy={screenWidth / 2} r={radius} stroke={app_colors.white_forty} strokeWidth="1" fill={app_colors.black} />
 
         <G mask='url(#circleMask)'>
+
+          {
+            starCatalogLoading && starsToDisplay.length === 0 &&
+            <SvgText transform={`rotate(180, ${screenWidth / 2}, ${screenWidth / 2})`} x={screenWidth / 2} y={screenWidth / 2} textAnchor="middle" fontSize="12" fill={app_colors.white_eighty}>Génération de la carte...</SvgText>
+          }
+
           {
             starsToDisplay.length > 0 && showConstellations &&
             constellationsAsterisms.flatMap((constellation, constellationIndex) => {
