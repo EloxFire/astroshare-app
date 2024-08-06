@@ -67,7 +67,8 @@ export default function SkyMapGenerator({ navigation }: any) {
       const horizonAngle = calculateHorizonAngle(341)
 
       const isAboveHorizon = isBodyAboveHorizon(new Date(), { latitude: lat, longitude: lon }, { ra: ra, dec: dec }, horizonAngle)
-      if ((isAboveHorizon && star.V > 5.7) || star.ids.includes('alf UMi')) {
+      // if ((isAboveHorizon && star.V > 5.7) || star.ids.includes('alf UMi')) {
+      if ((isAboveHorizon && star.V < 4.8 && star.V > 0) || star.ids.includes('alf UMi')) {
         candidates.push(star)
       }
     })
@@ -99,49 +100,6 @@ export default function SkyMapGenerator({ navigation }: any) {
         <G mask='url(#circleMask)'>
           {
             starsToDisplay.length > 0 &&
-            constellationsAsterisms[0].map((segment: any, index: number) => {
-              console.log("Segment :", segment[0][0]);
-
-
-              // Convert each pair of coordinates to points
-              const points = segment.map((coord: any) => {
-                const [ra, dec] = coord;
-                const coords = convertEquatorialToHorizontal(currentTime, { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }, { ra, dec });
-                const r = radius * (1 - coords.alt / 90);
-                const theta = coords.az * (Math.PI / 180);
-                const x = (screenWidth / 2) + r * Math.sin(theta);
-                const y = (screenWidth / 2) + r * Math.cos(theta);
-                return `${x},${y}`;
-              }).join(' ');
-
-              return (
-                <Polyline key={index} points={points} stroke={app_colors.red_forty} strokeWidth="1" fill="none" />
-              );
-            })
-          }
-
-          {
-            starsToDisplay.length > 0 &&
-            starsToDisplay.map((star: Star, index: number) => {
-              const coords = convertEquatorialToHorizontal(currentTime, { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }, { ra: star.ra, dec: star.dec })
-              const r = radius * (1 - coords.alt / 90);
-              const theta = coords.az * (Math.PI / 180);
-              const x = (screenWidth / 2) + r * Math.sin(theta);
-              const y = (screenWidth / 2) + r * Math.cos(theta); // Remarquez le signe moins ici
-
-              if (star.ids.includes('alf UMi')) {
-                return (
-                  <Circle key={index} cx={x} cy={y} r="1" fill={app_colors.red} />
-                )
-              }
-
-              return (
-                <Circle key={index} cx={x} cy={y} r="0.5" fill={app_colors.white_eighty} />
-              );
-            })
-          }
-
-          {
             constellationsAsterisms.flatMap((constellation, constellationIndex) => {
               return constellation.map((segment: any, segmentIndex: any) => {
                 if (segment.length < 2) return null;
@@ -168,31 +126,28 @@ export default function SkyMapGenerator({ navigation }: any) {
             })
           }
 
-          {/* {
-            cepheus.features[0].geometry.coordinates.map((segment: any, index: number) => {
+          {
+            starsToDisplay.length > 0 &&
+            starsToDisplay.map((star: Star, index: number) => {
+              const coords = convertEquatorialToHorizontal(currentTime, { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }, { ra: star.ra, dec: star.dec })
+              const r = radius * (1 - coords.alt / 90);
+              const theta = coords.az * (Math.PI / 180);
+              const x = (screenWidth / 2) + r * Math.sin(theta);
+              const y = (screenWidth / 2) + r * Math.cos(theta); // Remarquez le signe moins ici
 
-              segment[0][0].map((coord: any) => {
-                console.log("Coord :", coord);
-              })
-
-              const points = segment.map((coord: any) => {
-                const [ra, dec] = coord;
-                const coords = convertEquatorialToHorizontal(currentTime, { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }, { ra, dec });
-                const r = radius * (1 - coords.alt / 90);
-                const theta = coords.az * (Math.PI / 180);
-                const x = (screenWidth / 2) + r * Math.sin(theta);
-                const y = (screenWidth / 2) + r * Math.cos(theta);
-                return `${x},${y}`;
-              }).join(' ');
+              if (star.ids.includes('alf UMi')) {
+                return (
+                  <Circle key={index} cx={x} cy={y} r="1" fill={app_colors.red} />
+                )
+              }
 
               return (
-                <Polyline key={index} points={points} stroke={app_colors.red_forty} strokeWidth="1" fill="none" />
+                <Circle key={index} cx={x} cy={y} r="0.5" fill={app_colors.white_eighty} />
               );
             })
-          } */}
+          }
         </G>
       </Svg>
-      <Text style={{ color: 'white' }}>{JSON.stringify(hercules.features[0].geometry['coordinates'][0][1])}</Text>
       <Text style={{ color: app_colors.red_eighty, textAlign: 'center', fontSize: 20 }}>S</Text>
     </View>
   )
