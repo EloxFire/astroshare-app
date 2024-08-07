@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import { Dimensions, Text, View } from 'react-native'
+import { Dimensions, ScrollView, Text, View } from 'react-native'
 import { globalStyles } from '../styles/global'
 import { Star } from '../helpers/types/Star'
 import { useSettings } from '../contexts/AppSettingsContext'
 import { calculateHorizonAngle } from '../helpers/scripts/astro/calculateHorizonAngle'
 import { convertEquatorialToHorizontal, isBodyAboveHorizon, hercules, lyra, draco, cepheus } from '@observerly/astrometry'
 import { Circle, G, Line, Mask, Polyline, Rect, Svg, Text as SvgText } from 'react-native-svg';
-import { constellationsAsterisms, constellationsBoundaries } from '../helpers/scripts/astro/constellationsAsterisms'
+import { constellationsAsterisms } from '../helpers/scripts/astro/constellationsAsterisms'
 import { app_colors } from '../helpers/constants'
 import PageTitle from '../components/commons/PageTitle'
 import DSOValues from '../components/commons/DSOValues'
@@ -24,6 +24,8 @@ export default function SkyMapGenerator({ navigation }: any) {
   const [currentTime, setCurrentTime] = useState(new Date())
 
   const [showConstellations, setShowConstellations] = useState(true)
+  const [showConstellationsName, setShowConstellationsName] = useState(false)
+  const [showStarsName, setShowStarsName] = useState(false)
 
   const [starsToDisplay, setStarsToDisplay] = useState<Star[]>([])
 
@@ -110,7 +112,7 @@ export default function SkyMapGenerator({ navigation }: any) {
           {
             starsToDisplay.length > 0 && showConstellations &&
             constellationsAsterisms.flatMap((constellation, constellationIndex) => {
-              return constellation.map((segment: any, segmentIndex: any) => {
+              return constellation.features[0].geometry.coordinates.map((segment: any, segmentIndex: any) => {
                 if (segment.length < 2) return null;
 
                 const start = segment[0];
@@ -151,19 +153,68 @@ export default function SkyMapGenerator({ navigation }: any) {
               }
 
               return (
-                <Circle key={index} cx={x} cy={y} r="0.5" fill={app_colors.white_eighty} />
+                <>
+                  <Circle key={`star-${index}`} cx={x} cy={y} r="0.5" fill={app_colors.white_eighty} />
+                  {
+                    showStarsName && star.V < 3 &&
+                    <SvgText
+                      key={`star-${star.ids}`}
+                      x={x + 10}
+                      y={y}
+                      fill={app_colors.turquoise_sixty}
+                      fontSize="5"
+                      textAnchor="middle"
+                      transform={`rotate(180, ${x}, ${y})`}
+                    >
+                      {star.ids.split('|').filter(id => id.includes('NAME'))}
+                    </SvgText>
+                  }
+                </>
               );
             })
+          }
+
+          {
+            starsToDisplay.length > 0 && showConstellations && showConstellationsName &&
+            constellationsAsterisms.map((constellation, constellationIndex) => {
+              const centrum = constellation.features[0].properties?.centrum;
+              if (!centrum) return null;
+
+              const coords = convertEquatorialToHorizontal(currentTime, { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }, { ra: centrum.ra, dec: centrum.dec });
+              const centerR = radius * (1 - coords.alt / 90);
+              const centerTheta = coords.az * (Math.PI / 180);
+              const centerX = (screenWidth / 2) + centerR * Math.sin(centerTheta);
+              const centerY = (screenWidth / 2) + centerR * Math.cos(centerTheta);
+
+              const name = constellation.features[0].properties?.name || `Constellation ${constellationIndex}`;
+
+              return (
+                <SvgText
+                  key={`name-${constellationIndex}`}
+                  x={centerX}
+                  y={centerY}
+                  fill={app_colors.white}
+                  fontSize="8"
+                  textAnchor="middle"
+                  transform={`rotate(180, ${centerX}, ${centerY})`}
+                >
+                  {name}
+                </SvgText>
+              );
+            }).filter(Boolean)
           }
         </G>
       </Svg>
       <Text style={{ color: app_colors.red_eighty, textAlign: 'center', fontSize: 20 }}>S</Text>
 
       <View style={{ marginTop: 20 }}>
-        <DSOValues title='Heure locale' chipValue chipColor={app_colors.grey} value={dayjs(currentTime).format('HH:mm:ss').replace(':', 'h').replace(':', 'm ')} />
-        <View style={{ marginTop: 10, borderTopWidth: 1, borderColor: app_colors.white_forty, paddingTop: 10 }}>
+        <DSOValues title='Heure locale' chipValue chipColor={app_colors.grey} value={dayjs(currentTime).format('HH:mm:ss').replace(':', 'h').replace(':', 'm') + "s"} />
+        <ScrollView style={{ marginTop: 10, borderTopWidth: 1, borderColor: app_colors.white_forty, paddingTop: 10 }}>
           <ToggleButton title='Constellations' onToggle={() => setShowConstellations(!showConstellations)} toggled={showConstellations} />
-        </View>
+          <ToggleButton title='Noms constellations' onToggle={() => setShowConstellationsName(!showConstellationsName)} toggled={showConstellationsName} />
+          {/* <Text style={{ color: 'white' }}>{constellationsAsterisms[0].features[0].properties?.name}</Text> */}
+          {/* <Text style={{ color: 'white' }}>{JSON.stringify(constellationsAsterisms[0].features[0].properties?.centrum)}</Text> */}
+        </ScrollView>
       </View>
     </View>
   )
