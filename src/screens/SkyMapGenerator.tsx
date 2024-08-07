@@ -4,7 +4,7 @@ import { globalStyles } from '../styles/global'
 import { Star } from '../helpers/types/Star'
 import { useSettings } from '../contexts/AppSettingsContext'
 import { calculateHorizonAngle } from '../helpers/scripts/astro/calculateHorizonAngle'
-import { convertEquatorialToHorizontal, isBodyAboveHorizon, hercules, lyra, draco, cepheus } from '@observerly/astrometry'
+import { convertEquatorialToHorizontal, isBodyAboveHorizon, hercules, lyra, draco, cepheus, getPlanetaryPositions } from '@observerly/astrometry'
 import { Circle, G, Line, Mask, Polyline, Rect, Svg, Text as SvgText } from 'react-native-svg';
 import { constellationsAsterisms } from '../helpers/scripts/astro/constellationsAsterisms'
 import { app_colors } from '../helpers/constants'

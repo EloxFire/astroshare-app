@@ -5,14 +5,16 @@ import { homeStyles } from '../styles/screens/home'
 import { DSO } from '../helpers/types/DSO'
 import { app_colors } from '../helpers/constants'
 import SearchResultCard from './cards/SearchResultCard'
+import SearchPlanetResultCard from './cards/SearchPlanetResultCard'
 
 interface HomeSearchResultsProps {
   results: DSO[]
   onReset: () => void
   navigation: any
+  type: 'search' | 'planet'
 }
 
-export default function HomeSearchResults({ results, onReset, navigation }: HomeSearchResultsProps) {
+export default function HomeSearchResults({ results, onReset, navigation, type }: HomeSearchResultsProps) {
 
   const flatListRef = useRef<FlatList>(null)
 
@@ -34,14 +36,26 @@ export default function HomeSearchResults({ results, onReset, navigation }: Home
         }
       </View>
       <SafeAreaView style={homeStyles.searchResults}>
-        <FlatList
-          ref={flatListRef}
-          scrollEnabled={results.length > 1}
-          horizontal
-          data={results}
-          renderItem={({ item }) => <SearchResultCard object={item} navigation={navigation} />}
-          keyExtractor={item => item.name + item.ra}
-        />
+        {
+          type === 'search' ?
+            <FlatList
+              ref={flatListRef}
+              scrollEnabled={results.length > 1}
+              horizontal
+              data={results}
+              renderItem={({ item }) => <SearchResultCard object={item} navigation={navigation} />}
+              keyExtractor={item => item.name + item.ra}
+            />
+            :
+            <FlatList
+              ref={flatListRef}
+              scrollEnabled={results.length > 1}
+              horizontal
+              data={results}
+              renderItem={({ item }) => <SearchPlanetResultCard planet={item} navigation={navigation} />}
+              keyExtractor={item => item.name + item.ra}
+            />
+        }
       </SafeAreaView>
     </View>
   )

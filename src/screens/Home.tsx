@@ -16,11 +16,9 @@ import axios from 'axios';
 import HomeSearchResults from '../components/HomeSearchResults';
 import BannerHandler from '../components/banners/BannerHandler';
 import ToolButton from '../components/commons/buttons/ToolButton';
+import HomeSearchModule from '../components/forms/HomeSearchModule';
 
 export default function Home({ navigation }: any) {
-
-  const [searchString, setSearchString] = useState('')
-  const [searchResults, setSearchResults] = useState<DSO[]>([])
   const { hasInternetConnection, currentUserLocation } = useSettings()
 
   useEffect(() => {
@@ -32,51 +30,12 @@ export default function Home({ navigation }: any) {
     })()
   }, [])
 
-  const handleSearch = async () => {
-    if (!hasInternetConnection) {
-      showToast({ message: 'Aucune connexion à internet', type: 'error' })
-      return;
-    }
-
-    if (!currentUserLocation) {
-      showToast({ message: 'Localisation requise pour effectuer une recherche', type: 'error' })
-      return;
-    }
-
-    Keyboard.dismiss()
-    console.log('Search pressed', searchString)
-    if (searchString === '') return;
-
-    try {
-      const response = await axios.get(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/search?search=` + searchString);
-      setSearchResults(response.data.data)
-    } catch (error: any) {
-      console.log(error.message)
-      showToast({ message: error.message ? error.message : 'Une erreur inconnue est survenue...', type: 'error' })
-    }
-  }
-
-  const handleResetSearch = () => {
-    setSearchResults([])
-    setSearchString('')
-  }
-
   return (
     <View style={globalStyles.body}>
       <AppHeader navigation={navigation} />
       <BannerHandler />
       <LocationHeader />
-      <InputWithIcon
-        placeholder="Rechercher un objet céleste"
-        changeEvent={(string: string) => setSearchString(string)}
-        icon={require('../../assets/icons/FiSearch.png')}
-        search={() => handleSearch()}
-        value={searchString}
-      />
-      {
-        searchResults.length > 0 &&
-        <HomeSearchResults results={searchResults} onReset={handleResetSearch} navigation={navigation} />
-      }
+      <HomeSearchModule navigation={navigation} />
       <ScrollView style={{ borderTopWidth: 1, borderTopColor: app_colors.white_forty }}>
         <View style={homeStyles.toolsSuggestions}>
           <Text style={globalStyles.sections.title}>Vos outils</Text>
