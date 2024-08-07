@@ -8,6 +8,8 @@ import axios from 'axios'
 import { useSettings } from '../../contexts/AppSettingsContext'
 import { planetNamesRegexes, solarSystemRegexes } from '../../helpers/scripts/utils/regex/searchRegex'
 import { getPlanetaryPositions, Planet } from '@observerly/astrometry'
+import { useSolarSystem } from '../../contexts/SolarSystemContext'
+import { GlobalPlanet } from '../../helpers/types/GlobalPlanet'
 
 interface HomeSearchModuleProps {
   navigation: any
@@ -16,10 +18,11 @@ interface HomeSearchModuleProps {
 export default function HomeSearchModule({ navigation }: HomeSearchModuleProps) {
 
   const { hasInternetConnection, currentUserLocation } = useSettings()
+  const { planets } = useSolarSystem()
 
   const [searchString, setSearchString] = useState('')
   const [searchResults, setSearchResults] = useState<DSO[]>([])
-  const [planetResults, setPlanetResults] = useState<Planet[]>([])
+  const [planetResults, setPlanetResults] = useState<GlobalPlanet[]>([])
 
   const handleSearch = async () => {
     if (!hasInternetConnection) {
@@ -34,12 +37,14 @@ export default function HomeSearchModule({ navigation }: HomeSearchModuleProps) 
 
     Keyboard.dismiss()
     console.log('Search pressed', searchString)
+    setSearchResults([])
+    setPlanetResults([])
     if (searchString === '') return;
     if (planetNamesRegexes.some(regex => regex.test(searchString))) {
-      getPlanetInfos(searchString)
+      setPlanetResults(planets.filter((planet: GlobalPlanet) => planet.name.toLowerCase() === searchString.toLowerCase()))
       return;
     } else if (solarSystemRegexes.some(regex => regex.test(searchString))) {
-      getPlanetsInfos()
+      setPlanetResults(planets)
       return;
     }
 
@@ -56,21 +61,6 @@ export default function HomeSearchModule({ navigation }: HomeSearchModuleProps) 
     setSearchResults([])
     setPlanetResults([])
     setSearchString('')
-  }
-
-  const getPlanetInfos = (planet: string) => {
-    setSearchResults([])
-    setPlanetResults([])
-    console.log('getPlanetInfos')
-  }
-
-  const getPlanetsInfos = () => {
-    setSearchResults([])
-    setPlanetResults([])
-    const planets = getPlanetaryPositions(new Date(), { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon })
-    console.log(planets)
-
-    setPlanetResults(planets)
   }
 
   return (
