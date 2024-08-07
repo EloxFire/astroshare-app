@@ -10,7 +10,7 @@ export const constellationsAsterisms = [
   aries,
   auriga,
   bootes,
-  caelum,
+  // caelum, // Removed because it was not drawn correctly
   camelopardalis,
   cancer,
   canesVenatici,

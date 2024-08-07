@@ -65,7 +65,7 @@ export default function SkyMapGenerator({ navigation }: any) {
     if (stars.length === 0) return;
 
     const candidates: Star[] = []
-    stars.forEach((star: Star, index: number) => {
+    stars.forEach((star: Star) => {
 
       const { ra, dec } = star
       const { lat, lon } = currentUserLocation
