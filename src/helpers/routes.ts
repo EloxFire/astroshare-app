@@ -7,6 +7,7 @@ export const routes = {
   weather: { path: 'WeatherScreen', requirements: [] },
   moonPhases: { path: 'MoonPhasesScreen', requirements: [] },
   objectDetails: { path: 'ObjectDetails', requirements: [] },
+  planetDetails: { path: 'PlanetDetails', requirements: [] },
   solarWeather: { path: 'SolarWeatherScreen', requirements: [] },
   favoritesViewPoints: { path: 'FavoritesViewPoints', requirements: [] },
   apod: { path: 'ApodScreen', requirements: [] },

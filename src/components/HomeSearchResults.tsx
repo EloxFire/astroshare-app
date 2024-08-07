@@ -6,9 +6,10 @@ import { DSO } from '../helpers/types/DSO'
 import { app_colors } from '../helpers/constants'
 import SearchResultCard from './cards/SearchResultCard'
 import SearchPlanetResultCard from './cards/SearchPlanetResultCard'
+import { Planet } from '@observerly/astrometry'
 
 interface HomeSearchResultsProps {
-  results: DSO[]
+  results: Planet[] | DSO[]
   onReset: () => void
   navigation: any
   type: 'search' | 'planet'

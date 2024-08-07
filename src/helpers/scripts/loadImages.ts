@@ -38,6 +38,14 @@ export const astroImages: any = {
   '*': require('../../../assets/icons/astro/STAR.png'),
   '*ASS': require('../../../assets/icons/astro/STARASS.png'),
   '**': require('../../../assets/icons/astro/STARSTAR.png'),
+  'MERCURY': require('../../../assets/icons/astro/planets/MERCURY.png'),
+  'VENUS': require('../../../assets/icons/astro/planets/VENUS.png'),
+  'EARTH': require('../../../assets/icons/astro/planets/EARTH.png'),
+  'MARS': require('../../../assets/icons/astro/planets/MARS.png'),
+  'JUPITER': require('../../../assets/icons/astro/planets/JUPITER.png'),
+  'SATURN': require('../../../assets/icons/astro/planets/SATURN.png'),
+  'URANUS': require('../../../assets/icons/astro/planets/URANUS.png'),
+  'NEPTUNE': require('../../../assets/icons/astro/planets/NEPTUNE.png'),
 }
 
 export const moonIcons: any = {
