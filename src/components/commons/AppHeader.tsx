@@ -14,7 +14,7 @@ export default function AppHeader({ navigation }: any) {
   useEffect(() => {
     (async () => {
       const favs = await getObject(storageKeys.favouriteObjects)
-      setHasFavs(favs.length > 0)
+      setHasFavs(favs && favs.length > 0)
     })()
   }, [isFocused])
 
