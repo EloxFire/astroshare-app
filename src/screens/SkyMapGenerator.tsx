@@ -81,7 +81,7 @@ export default function SkyMapGenerator({ navigation }: any) {
 
 
   // SVG dimensions
-  const radius = 185;
+  const radius = 170;
   const screenWidth = Dimensions.get('window').width - 20;
 
   return (
