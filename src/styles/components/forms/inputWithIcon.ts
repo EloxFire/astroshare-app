@@ -11,6 +11,7 @@ export const inputWithIconStyles = {
     borderRadius: 10,
     marginVertical: 15,
     height: 40,
+    flex: 1,
     
     inputIcon: {
       marginRight: 5,

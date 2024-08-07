@@ -29,7 +29,6 @@ export function SolarSystemProvider({ children }: SolarSystemProviderProps) {
   }, [currentUserLocation])
 
   const getPlanets = () => {
-    console.log('getPlanets')
     if (!currentUserLocation) return;
     const planets = getPlanetaryPositions(new Date(), { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon })
     let system = planets;
@@ -42,12 +41,7 @@ export function SolarSystemProvider({ children }: SolarSystemProviderProps) {
     globalEarthItem.λ = 0
     globalEarthItem.β = 0
 
-
-
     system.splice(2, 0, earth as GlobalPlanet)
-
-    console.log(system)
-
     setPlanets(system)
   }
 
