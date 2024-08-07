@@ -80,6 +80,7 @@ export const objectDetailsStyles = {
     display: 'flex' as 'flex',
     flexDirection: 'row' as 'row',
     justifyContent: 'space-between' as 'space-between',
+    alignItems: 'center' as 'center',
 
     select: {
       display: 'flex' as 'flex',
