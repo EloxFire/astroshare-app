@@ -39,6 +39,7 @@ export default function HomeSearchModule({ navigation }: HomeSearchModuleProps) 
     }
 
     if (searchString === '') return;
+    if (searchString.includes('*')) return;
 
     Keyboard.dismiss()
     setSearchResults([])
@@ -62,6 +63,7 @@ export default function HomeSearchModule({ navigation }: HomeSearchModuleProps) 
       const starsResponse = await axios.get(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/stars/` + searchString);
       setStarsResults(starsResponse.data.data)
     } catch (error: any) {
+      setStarsResults([])
       console.log("Star Error :", error.message)
       if (!error.message.includes('404')) {
         showToast({ message: error.message ? error.message : 'Une erreur inconnue est survenue...', type: 'error' })
@@ -72,6 +74,7 @@ export default function HomeSearchModule({ navigation }: HomeSearchModuleProps) 
       const dsoResponse = await axios.get(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/search?search=` + searchString);
       setSearchResults(dsoResponse.data.data)
     } catch (error: any) {
+      setSearchResults([])
       console.log("DSO Error :", error.message)
       if (!error.message.includes('404')) {
         showToast({ message: error.message ? error.message : 'Une erreur inconnue est survenue...', type: 'error' })
@@ -98,7 +101,7 @@ export default function HomeSearchModule({ navigation }: HomeSearchModuleProps) 
         />
       </View>
       {
-        (searchResults.length > 0 || planetResults.length > 0) &&
+        (searchResults.length > 0 || planetResults.length > 0 || starsResults.length > 0) &&
         <HomeSearchResults results={searchResults} planetResults={planetResults} onReset={handleResetSearch} starsResults={starsResults} navigation={navigation} />
       }
     </View>

@@ -38,10 +38,18 @@ export default function SearchPlanetResultCard({ planet, navigation }: SearchPla
           <Image style={searchResultCardStyles.card.image} source={astroImages[planet.name.toUpperCase()]} />
         </View>
         <View style={searchResultCardStyles.card.body}>
-          <DSOValues title="Inclinaison" value={(23.5 + parseFloat(planet.i.toFixed(1))).toString() + "°"} />
-          <DSOValues title="Masse" value={planet.name === 'Earth' ? (9.972e24 + " Kg").toString() : planet.i.toFixed(2) + "x Terre"} />
-          <DSOValues title="Distance" value={planet.name === 'Earth' ? "Vous êtes ici" : planet.a.toFixed(2) + "M Km"} />
-          <DSOValues title="Diamètre" value={(planet.r * 2).toString() + " Km"} />
+          <View style={searchResultCardStyles.card.body.info}>
+            <Text style={searchResultCardStyles.card.body.info.title}>Inclinaison :</Text>
+            <Text style={searchResultCardStyles.card.body.info.value}>{(23.5 + parseFloat(planet.i.toFixed(1))).toString() + "°"}</Text>
+          </View>
+          <View style={searchResultCardStyles.card.body.info}>
+            <Text style={searchResultCardStyles.card.body.info.title}>Masse :</Text>
+            <Text style={searchResultCardStyles.card.body.info.value}>{planet.name === 'Earth' ? (9.972e24 + " Kg").toString() : (planet.m.toFixed(2)) + "x Terre"}</Text>
+          </View>
+          <View style={searchResultCardStyles.card.body.info}>
+            <Text style={searchResultCardStyles.card.body.info.title}>Diamètre :</Text>
+            <Text style={searchResultCardStyles.card.body.info.value}>{(planet.r * 2).toString() + " Km"}</Text>
+          </View>
         </View>
         <View style={searchResultCardStyles.card.footer}>
           <Text style={[searchResultCardStyles.card.footer.chip, { backgroundColor: isVisible ? app_colors.green_eighty : app_colors.red_eighty }]}>{isVisible ? `Visible` : "Non visible"}</Text>

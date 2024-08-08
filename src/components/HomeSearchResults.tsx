@@ -23,10 +23,6 @@ export default function HomeSearchResults({ results, planetResults, onReset, nav
   const flatListRef = useRef<FlatList>(null)
   const planetFlatListRef = useRef<FlatList>(null)
   const starFlatListRef = useRef<FlatList>(null)
-  const data = results.concat(planetResults as any)
-
-  console.log(data);
-
 
 
   useEffect(() => {
