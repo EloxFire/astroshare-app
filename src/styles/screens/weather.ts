@@ -5,6 +5,11 @@ export const weatherStyles = {
     display: 'flex' as 'flex',
     flexDirection: 'column' as 'column',
 
+    inputContainer:{
+      width: '100%' as '100%',
+      height: 70
+    },
+
     text: {
       fontSize: 12,
       fontFamily: 'GilroyRegular',

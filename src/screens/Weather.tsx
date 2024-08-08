@@ -76,7 +76,7 @@ export default function Weather({ navigation }: any) {
     <View style={globalStyles.body}>
       <PageTitle navigation={navigation} title="Météo en direct" subtitle="// C'est l'heure de sortir le télescope !" />
       <View style={globalStyles.screens.separator} />
-      <View style={weatherStyles.content}>
+      <View style={weatherStyles.content.inputContainer}>
         <InputWithIcon icon={require('../../assets/icons/FiSearch.png')} placeholder="Rechercher une ville" changeEvent={(text: string) => setSearchString(text)} search={() => searchWeather()} value={searchString} />
       </View>
       {
