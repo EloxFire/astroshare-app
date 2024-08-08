@@ -11,6 +11,7 @@ import { getPlanetaryPositions, Planet } from '@observerly/astrometry'
 import { useSolarSystem } from '../../contexts/SolarSystemContext'
 import { GlobalPlanet } from '../../helpers/types/GlobalPlanet'
 import { app_colors } from '../../helpers/constants'
+import { Star } from '../../helpers/types/Star'
 
 interface HomeSearchModuleProps {
   navigation: any
@@ -24,7 +25,7 @@ export default function HomeSearchModule({ navigation }: HomeSearchModuleProps) 
   const [searchString, setSearchString] = useState('')
   const [searchResults, setSearchResults] = useState<DSO[]>([])
   const [planetResults, setPlanetResults] = useState<GlobalPlanet[]>([])
-  const [searchMode, setSearchMode] = useState<'planet' | 'search'>('search')
+  const [starsResults, setStarsResults] = useState<Star[]>([])
 
   const handleSearch = async () => {
     if (!hasInternetConnection) {
@@ -42,24 +43,38 @@ export default function HomeSearchModule({ navigation }: HomeSearchModuleProps) 
     Keyboard.dismiss()
     setSearchResults([])
     setPlanetResults([])
+    setStarsResults([])
 
-    if (searchMode === 'search') {
-      try {
-        const response = await axios.get(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/search?search=` + searchString);
-        setSearchResults(response.data.data)
-      } catch (error: any) {
-        console.log(error.message)
-        showToast({ message: error.message ? error.message : 'Une erreur inconnue est survenue...', type: 'error' })
-      }
-    } else {
-      const planetsRegex = /\b(?:Mercury|Mercure|Venus|Vénus|Earth|Terre|Mars|Jupiter|Saturn|Saturne|Uranus|Neptune)\b/i;
 
+    const planetsRegex = /\b(?:Mercury|Mercure|Venus|Vénus|Earth|Terre|Mars|Jupiter|Saturn|Saturne|Uranus|Neptune)\b/i;
+
+    try {
       if (planetsRegex.test(searchString)) {
         setPlanetResults(planets.filter((planet: GlobalPlanet) => planet.name.toLowerCase() === searchString.toLowerCase()))
-        return;
       } else if (solarSystemRegexes.some(regex => regex.test(searchString))) {
         setPlanetResults(planets)
-        return;
+      }
+    } catch (error) {
+      console.log("Planet Error :", error)
+    }
+
+    try {
+      const starsResponse = await axios.get(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/stars/` + searchString);
+      setStarsResults(starsResponse.data.data)
+    } catch (error: any) {
+      console.log("Star Error :", error.message)
+      if (!error.message.includes('404')) {
+        showToast({ message: error.message ? error.message : 'Une erreur inconnue est survenue...', type: 'error' })
+      }
+    }
+
+    try {
+      const dsoResponse = await axios.get(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/search?search=` + searchString);
+      setSearchResults(dsoResponse.data.data)
+    } catch (error: any) {
+      console.log("DSO Error :", error.message)
+      if (!error.message.includes('404')) {
+        showToast({ message: error.message ? error.message : 'Une erreur inconnue est survenue...', type: 'error' })
       }
     }
   }
@@ -67,20 +82,13 @@ export default function HomeSearchModule({ navigation }: HomeSearchModuleProps) 
   const handleResetSearch = () => {
     setSearchResults([])
     setPlanetResults([])
+    setStarsResults([])
     setSearchString('')
-  }
-
-  const handleSearchMode = () => {
-    showToast({ message: searchMode === 'search' ? "Mode de recherche : Planètes" : "Mode de recherche : Ciel profond", type: 'success', duration: 1500 })
-    setSearchMode(searchMode === 'search' ? 'planet' : 'search')
   }
 
   return (
     <View>
       <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-        <TouchableOpacity onPress={() => handleSearchMode()} style={{ backgroundColor: searchMode === 'search' ? app_colors.white_no_opacity : app_colors.white_eighty, padding: 4, alignItems: 'center', borderRadius: 10, display: 'flex', borderWidth: 1, borderColor: app_colors.white_no_opacity }}>
-          <Image source={require('../../../assets/icons/astro/planets/EARTH.png')} style={{ width: 30, height: 30 }} />
-        </TouchableOpacity>
         <InputWithIcon
           placeholder="Rechercher un objet céleste"
           changeEvent={(string: string) => setSearchString(string)}
@@ -90,12 +98,8 @@ export default function HomeSearchModule({ navigation }: HomeSearchModuleProps) 
         />
       </View>
       {
-        searchResults.length > 0 &&
-        <HomeSearchResults type='search' results={searchResults} onReset={handleResetSearch} navigation={navigation} />
-      }
-      {
-        planetResults.length > 0 &&
-        <HomeSearchResults type='planet' results={planetResults} onReset={handleResetSearch} navigation={navigation} />
+        (searchResults.length > 0 || planetResults.length > 0) &&
+        <HomeSearchResults results={searchResults} planetResults={planetResults} onReset={handleResetSearch} starsResults={starsResults} navigation={navigation} />
       }
     </View>
   )

@@ -31,6 +31,7 @@ import SkyMapGenerator from "./src/screens/SkyMapGenerator";
 import FavouritesScreen from "./src/screens/FavouritesScreen";
 import PlanetDetails from "./src/screens/PlanetDetails";
 import { SolarSystemProvider } from "./src/contexts/SolarSystemContext";
+import BrightStarDetails from "./src/screens/BrightStarDetails";
 
 dayjs.locale('fr');
 dayjs.extend(LocalizedFormat)
@@ -82,6 +83,7 @@ export default function App() {
                 <Stack.Screen name={routes.home.path} component={Home} />
                 <Stack.Screen name={routes.objectDetails.path} component={ObjectDetails} />
                 <Stack.Screen name={routes.planetDetails.path} component={PlanetDetails} />
+                <Stack.Screen name={routes.brightStarDetails.path} component={BrightStarDetails} />
                 <Stack.Screen name={routes.scopeAlignment.path} component={ScopeAlignment} />
                 <Stack.Screen name={routes.weather.path} component={Weather} />
                 <Stack.Screen name={routes.moonPhases.path} component={MoonPhases} />

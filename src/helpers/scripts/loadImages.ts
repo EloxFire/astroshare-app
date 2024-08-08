@@ -46,6 +46,7 @@ export const astroImages: any = {
   'SATURN': require('../../../assets/icons/astro/planets/SATURN.png'),
   'URANUS': require('../../../assets/icons/astro/planets/URANUS.png'),
   'NEPTUNE': require('../../../assets/icons/astro/planets/NEPTUNE.png'),
+  'BRIGHTSTAR': require('../../../assets/icons/astro/BRIGHTSTAR.png'),
 }
 
 export const moonIcons: any = {
