@@ -15,16 +15,16 @@
       "distribution": "internal",
       "env": {
         "EXPO_PUBLIC_ASTROSHARE_API_URL":"https://api.astroshare.fr",
-        "EXPO_PUBLIC_APP_VERSION":"b_v1.4.1",
-        "EXPO_PUBLIC_LAST_UPDATE":"2024-08-09",
+        "EXPO_PUBLIC_APP_VERSION":"b_v1.5.0",
+        "EXPO_PUBLIC_LAST_UPDATE":"2024-08-10",
         "GOOGLE_MAPS_API_KEY":"AIzaSyBIHiqhKWwweIvQF36R8eFiYpM5G5LOWpU"
       }
     },
     "production": {
       "env": {
         "EXPO_PUBLIC_ASTROSHARE_API_URL":"https://api.astroshare.fr",
-        "EXPO_PUBLIC_APP_VERSION":"b_v1.4.1",
-        "EXPO_PUBLIC_LAST_UPDATE":"2024-08-09",
+        "EXPO_PUBLIC_APP_VERSION":"b_v1.5.0",
+        "EXPO_PUBLIC_LAST_UPDATE":"2024-08-10",
         "GOOGLE_MAPS_API_KEY":"AIzaSyBIHiqhKWwweIvQF36R8eFiYpM5G5LOWpU"
       }
     }
