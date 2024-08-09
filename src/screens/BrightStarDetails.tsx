@@ -22,7 +22,6 @@ import { app_colors } from "../helpers/constants";
 export default function BrightStarDetails({ route, navigation }: any) {
 
   const { currentUserLocation } = useSettings()
-  const { object, isVisible } = route.params;
   const { selectedSpot, defaultAltitude } = useSpot()
 
   const [riseTime, setRiseTime] = useState<Dayjs | boolean>(false)
@@ -32,6 +31,7 @@ export default function BrightStarDetails({ route, navigation }: any) {
 
   const params = route.params;
   const star: Star = params.star;
+  const starVisible = params.visible
 
   useEffect(() => {
     const altitude = selectedSpot ? selectedSpot.equipments.altitude : defaultAltitude;
@@ -91,7 +91,7 @@ export default function BrightStarDetails({ route, navigation }: any) {
               </TouchableOpacity>
             </View>
           </View>
-          <DSOValues chipValue chipColor={(isCircumpolar && !currentUserLocation.lat.toString().startsWith('-')) ? app_colors.green_eighty : isVisible ? app_colors.green_eighty : app_colors.red_eighty} title="Maintenant" value={(isCircumpolar && !currentUserLocation.lat.toString().startsWith('-')) ? "Visible" : isVisible ? "Visible" : "Non visible"} />
+          <DSOValues chipValue chipColor={(isCircumpolar && !currentUserLocation.lat.toString().startsWith('-')) ? app_colors.green_eighty : starVisible ? app_colors.green_eighty : app_colors.red_eighty} title="Maintenant" value={(isCircumpolar && !currentUserLocation.lat.toString().startsWith('-')) ? "Visible" : starVisible ? "Visible" : "Non visible"} />
           <DSOValues chipValue chipColor={willRise ? app_colors.green_eighty : app_colors.red_eighty} title="Cette nuit" value={willRise ? "Oui" : "Non"} />
           {
             typeof riseTime === 'object' && <DSOValues chipValue chipColor={app_colors.white_forty} title="Prochain lever" value={selectedTimeBase === 'relative' ? dayjs().to(riseTime) : riseTime.format('DD MMM à HH:mm').replace(':', 'h')} />

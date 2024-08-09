@@ -42,7 +42,7 @@ export default function HomeSearchResults({ results, planetResults, onReset, nav
       <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 10 }}>
         <Text style={globalStyles.sections.title}>Objets trouvés</Text>
         {
-          (results.length > 0 || planetResults.length > 0) &&
+          (results.length > 0 || planetResults.length > 0 || starsResults.length > 0) &&
           <TouchableOpacity style={{ backgroundColor: app_colors.white_no_opacity, padding: 5, justifyContent: 'center', alignItems: 'center', borderRadius: 10, display: 'flex', width: 30, height: 30 }} onPress={() => onReset()}>
             <Image source={require('../../assets/icons/FiTrash.png')} style={{ width: 15, height: 15 }} />
           </TouchableOpacity>

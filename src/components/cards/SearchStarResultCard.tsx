@@ -16,6 +16,8 @@ import { convertDDtoDMS } from '../../helpers/scripts/convertDDtoDMSCoords'
 import { convertDegreesRaToHMS } from '../../helpers/scripts/astro/coords/convertDegreesRaToHMS'
 import { convertDegreesDecToDMS } from '../../helpers/scripts/astro/coords/convertDegreesDecToDms'
 import { getConstellationName } from '../../helpers/scripts/getConstellationName'
+import { useSpot } from '../../contexts/ObservationSpotContext'
+import { extractNumbers } from '../../helpers/scripts/extractNumbers'
 
 interface SearchPlanetResultCardProps {
   star: Star
@@ -24,19 +26,22 @@ interface SearchPlanetResultCardProps {
 
 export default function SearchStarResultCard({ star, navigation }: SearchPlanetResultCardProps) {
 
+  const { selectedSpot, defaultAltitude } = useSpot()
   const { currentUserLocation } = useSettings()
   const [isVisible, setIsVisible] = useState<boolean>(false)
 
   useEffect(() => {
+    const altitude = selectedSpot ? selectedSpot.equipments.altitude : defaultAltitude;
     if (!currentUserLocation) return;
     const observer: GeographicCoordinate = { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }
     const target: EquatorialCoordinate = { ra: star.ra, dec: star.dec }
-    const horizonAngle = calculateHorizonAngle(341)
-    setIsVisible(isBodyAboveHorizon(new Date(), observer, target, horizonAngle))
-  }, [])
+    const horizonAngle = calculateHorizonAngle(extractNumbers(altitude))
+    const visible = isBodyAboveHorizon(new Date(), observer, target, horizonAngle)
+    setIsVisible(visible)
+  }, [currentUserLocation])
 
   return (
-    <TouchableOpacity onPress={() => navigation.navigate(routes.brightStarDetails.path, { star: star })}>
+    <TouchableOpacity onPress={() => navigation.navigate(routes.brightStarDetails.path, { star: star, visible: isVisible })}>
       <View style={searchResultCardStyles.card}>
         <View style={searchResultCardStyles.card.header}>
           <View>

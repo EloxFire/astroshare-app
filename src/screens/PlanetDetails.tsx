@@ -14,6 +14,7 @@ export default function PlanetDetails({ route, navigation }: any) {
   const { currentUserLocation } = useSettings()
   const params = route.params;
   const planet: GlobalPlanet = params.planet;
+  const planetVisible = params.visible
 
   const [selectedTimeBase, setSelectedTimeBase] = useState<'relative' | 'absolute'>('relative')
 

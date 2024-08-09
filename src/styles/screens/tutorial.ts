@@ -6,7 +6,53 @@ export const tutorialStyles = {
     display: 'flex' as 'flex',
     flexDirection: 'column' as 'column',
     justifyContent: 'space-between' as 'space-between',
-    paddingVertical: 20,
+    paddingBottom: 20,
+
+    screen: {
+      display: 'flex' as 'flex',
+      flexDirection: 'column' as 'column',
+      justifyContent: 'flex-start' as 'flex-start',
+      flex: 1,
+
+      title: {
+        fontSize: 20,
+        color: app_colors.white,
+        fontFamily: 'GilroyBlack',
+        textTransform: 'uppercase' as 'uppercase',
+        alignSelf: 'center' as 'center',
+      },
+
+      subtitle: {
+        fontSize: 12,
+        color: app_colors.white,
+        fontFamily: 'AuxMono',
+        opacity: 0.8,
+        alignSelf: 'center' as 'center',
+        marginBottom: 20,
+      },
+
+      imageContainer: {
+        backgroundColor: app_colors.white_no_opacity,
+        borderColor: app_colors.white_no_opacity,
+        borderWidth: 1,
+        borderRadius: 10,
+        padding: 10,
+        marginBottom: 20,
+        
+        image: {
+          width: '100%' as '100%',
+          height: 300,
+        },
+      },
+
+      description: {
+        fontSize: 16,
+        color: app_colors.white,
+        fontFamily: 'GilroyRegular',
+        textAlign: 'left' as 'left',
+        marginBottom: 10,
+      }
+    },
 
     bottomBar: {
       height: 100,

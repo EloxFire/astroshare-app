@@ -29,7 +29,7 @@ export default function SearchPlanetResultCard({ planet, navigation }: SearchPla
   }, [])
 
   return (
-    <TouchableOpacity onPress={() => navigation.navigate(routes.planetDetails.path, { planet: planet })}>
+    <TouchableOpacity onPress={() => navigation.navigate(routes.planetDetails.path, { planet: planet, planetVisible: isVisible })}>
       <View style={searchResultCardStyles.card}>
         <View style={searchResultCardStyles.card.header}>
           <View>
