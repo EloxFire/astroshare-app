@@ -1,15 +1,19 @@
-import React, { useEffect, useState } from 'react'
-import { Image, TouchableOpacity, View } from 'react-native'
+import React, { useEffect, useRef, useState } from 'react'
+import { Animated, Easing, Image, Text, TouchableOpacity, View } from 'react-native'
 import { appHeaderStyles } from '../../styles/components/commons/appHeader'
 import { routes } from '../../helpers/routes'
 import { useIsFocused } from '@react-navigation/native'
 import { getObject } from '../../helpers/storage'
 import { app_colors, storageKeys } from '../../helpers/constants'
+import { isFirstLaunch } from '../../helpers/scripts/checkFirstLaunch'
 
 export default function AppHeader({ navigation }: any) {
 
   const isFocused = useIsFocused();
   const [hasFavs, setHasFavs] = useState(false)
+  const [showTutorial, setShowTutorial] = useState(true)
+
+  const pulseAnim = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
     (async () => {
@@ -18,6 +22,39 @@ export default function AppHeader({ navigation }: any) {
     })()
   }, [isFocused])
 
+  useEffect(() => {
+    (async () => {
+      const firstLaunch = await isFirstLaunch();
+      if (firstLaunch) {
+        setShowTutorial(true);
+      }
+    })()
+  }, [])
+
+  useEffect(() => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(pulseAnim, {
+          toValue: 1.2,
+          duration: 1000,
+          useNativeDriver: true,
+          easing: Easing.linear
+        }),
+        Animated.timing(pulseAnim, {
+          toValue: 1,
+          duration: 1000,
+          useNativeDriver: true,
+          easing: Easing.linear
+        }),
+      ])
+    ).start();
+  }, []);
+
+  const interpolated = pulseAnim.interpolate({
+    inputRange: [1, 1.2],
+    outputRange: [1.2, 1]
+  });
+
   return (
     <View style={appHeaderStyles.container}>
       <Image style={appHeaderStyles.container.logo}
@@ -25,6 +62,14 @@ export default function AppHeader({ navigation }: any) {
         resizeMode='contain'
       />
       <View style={appHeaderStyles.container.buttons}>
+        {
+          showTutorial &&
+          <Animated.View style={{ transform: [{ scale: interpolated }] }}>
+            <TouchableOpacity style={appHeaderStyles.container.tutorialButton} onPress={() => navigation.navigate(routes.tutorial.path)}>
+              <Text style={appHeaderStyles.container.tutorialButton.text}>Tutoriel</Text>
+            </TouchableOpacity>
+          </Animated.View>
+        }
         <TouchableOpacity onPress={() => navigation.navigate(routes.favorites.path)}>
           {
             !hasFavs ?

@@ -1,5 +1,6 @@
 export const routes = {
-  onboarding: {path: 'Onboarding', requirements: []},
+  onboarding: { path: 'Onboarding', requirements: [] },
+  tutorial: { path: 'Tutorial', requirements: [] },
   home: { path: 'Home', requirements: [] },
   settings: { path: 'Settings', requirements: [] },
   about: { path: 'About', requirements: [] },

@@ -32,6 +32,7 @@ import FavouritesScreen from "./src/screens/FavouritesScreen";
 import PlanetDetails from "./src/screens/PlanetDetails";
 import { SolarSystemProvider } from "./src/contexts/SolarSystemContext";
 import BrightStarDetails from "./src/screens/BrightStarDetails";
+import TutorialScreen from "./src/screens/TutorialScreen";
 
 dayjs.locale('fr');
 dayjs.extend(LocalizedFormat)
@@ -80,6 +81,7 @@ export default function App() {
               <StatusBar animated style="light" translucent />
               <Stack.Navigator screenOptions={{ headerShown: false }}>
                 <Stack.Screen name={routes.onboarding.path} component={Onboarding} />
+                <Stack.Screen name={routes.tutorial.path} component={TutorialScreen} />
                 <Stack.Screen name={routes.home.path} component={Home} />
                 <Stack.Screen name={routes.objectDetails.path} component={ObjectDetails} />
                 <Stack.Screen name={routes.planetDetails.path} component={PlanetDetails} />
