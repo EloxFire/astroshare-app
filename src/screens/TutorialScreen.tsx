@@ -41,20 +41,22 @@ export default function TutorialScreen({ navigation }: any) {
       />
       <View style={globalStyles.screens.separator} />
       <View style={tutorialStyles.content}>
-        <View style={tutorialStyles.content.screen}>
-          <Text style={tutorialStyles.content.screen.title}>{tutorialScreens[currentStep].title}</Text>
-          {screen.subtitle && <Text style={tutorialStyles.content.screen.subtitle}>{screen.subtitle}</Text>}
-          <View style={tutorialStyles.content.screen.imageContainer}>
-            <Image style={tutorialStyles.content.screen.imageContainer.image} source={screen.image} resizeMode='contain' />
+        <ScrollView>
+          <View style={tutorialStyles.content.screen}>
+            <Text style={tutorialStyles.content.screen.title}>{tutorialScreens[currentStep].title}</Text>
+            {screen.subtitle && <Text style={tutorialStyles.content.screen.subtitle}>{screen.subtitle}</Text>}
+            <View style={tutorialStyles.content.screen.imageContainer}>
+              <Image style={tutorialStyles.content.screen.imageContainer.image} source={screen.image} resizeMode='contain' />
+            </View>
+            {
+              screen.description && screen.description.map((description: string, index: number) => {
+                return (
+                  <Text key={`description-${index}`} style={tutorialStyles.content.screen.description}>{description}</Text>
+                )
+              })
+            }
           </View>
-          {
-            screen.description && screen.description.map((description: string, index: number) => {
-              return (
-                <Text key={`description-${index}`} style={tutorialStyles.content.screen.description}>{description}</Text>
-              )
-            })
-          }
-        </View>
+        </ScrollView>
         <View style={tutorialStyles.content.bottomBar}>
           <TouchableOpacity onPress={onPressPrevious}>
             <Text style={{ color: app_colors.white }}>{currentStep === 0 ? 'Retour' : 'Précédent'}</Text>
