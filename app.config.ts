@@ -46,6 +46,9 @@ module.exports = {
   },
   plugins: [
     [
+      "expo-localization"
+    ],
+    [
       "expo-sensors",
       {
         motionPermission: "Autoriser Astroshare à utiliser les capteurs de mouvement."
