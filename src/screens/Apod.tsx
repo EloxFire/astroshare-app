@@ -12,6 +12,7 @@ import Toast from 'react-native-root-toast'
 import PageTitle from '../components/commons/PageTitle'
 import dayjs from 'dayjs'
 import WebView from 'react-native-webview'
+import YoutubePlayer from "react-native-youtube-iframe";
 
 export default function Apod({ navigation }: any) {
 
@@ -50,10 +51,11 @@ export default function Apod({ navigation }: any) {
           {
             apod?.media_type === 'video' ?
               apod?.url.includes('youtube') ?
-                <WebView
-                  style={{ width: Dimensions.get('screen').width, height: (Dimensions.get('screen').width / (16 / 9)), marginVertical: 10 }}
-                  javaScriptEnabled={true}
-                  source={{ uri: apod?.url }}
+                <YoutubePlayer
+                  width={Dimensions.get('screen').width - 20}
+                  height={(Dimensions.get('screen').width - 20) / (16 / 9)}
+                  play
+                  videoId={apod?.url.split('embed/')[1].split('?')[0]}
                 />
                 :
                 <Video
