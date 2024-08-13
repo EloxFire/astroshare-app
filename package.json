@@ -35,6 +35,7 @@
     "expo-location": "~17.0.1",
     "expo-sensors": "~13.0.9",
     "expo-status-bar": "~1.12.1",
+    "i18n-js": "^4.4.3",
     "lottie-react-native": "6.7.0",
     "lpf": "^1.0.0",
     "react": "18.2.0",
