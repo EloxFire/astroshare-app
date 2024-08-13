@@ -12,6 +12,7 @@ import MapView, { Circle, Marker, PROVIDER_GOOGLE, Polyline } from 'react-native
 import axios from 'axios'
 import DSOValues from '../components/commons/DSOValues'
 import WebView from 'react-native-webview'
+import YoutubePlayer from "react-native-youtube-iframe";
 
 export default function SatelliteTracker({ navigation }: any) {
 
@@ -114,7 +115,7 @@ export default function SatelliteTracker({ navigation }: any) {
             title='ISS'
             description="Position de l'ISS en temps réel"
             image={require('../../assets/icons/FiIss.png')}
-            style={{ width: 50, height: 50 }}
+            style={{ width: 40, height: 40 }}
             anchor={{ x: 0.5, y: 0.5 }}
             centerOffset={{ x: 0.5, y: 0.5 }}
           />
@@ -185,11 +186,11 @@ export default function SatelliteTracker({ navigation }: any) {
           <ScrollView>
             <Text style={satelliteTrackerStyles.issModal.title}>Vidéo en direct</Text>
             <Text style={[satelliteTrackerStyles.issModal.subtitle, { marginBottom: 10, fontFamily: 'GilroyRegular', opacity: .5 }]}>La station à une période de 45 minutes dans le noir a chaque orbite  -  Le flux video possède environ 15 secondes de retard sur la position actuelle affichée</Text>
-            <WebView
-              style={{ width: Dimensions.get('screen').width - 20, height: (Dimensions.get('screen').width - 20) / (16 / 9), borderRadius: 10 }}
-              javaScriptEnabled={true}
-              source={{ uri: "https://www.youtube.com/embed/P9C25Un7xaM?si=AjWGfqmH5nZ8OOEB&amp;controls=0" }}
-              allowsFullscreenVideo
+            <YoutubePlayer
+              width={Dimensions.get('screen').width - 20}
+              height={(Dimensions.get('screen').width - 20) / (16 / 9)}
+              play
+              videoId={"P9C25Un7xaM"}
             />
           </ScrollView>
         </View>

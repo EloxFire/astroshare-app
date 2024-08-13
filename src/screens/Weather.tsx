@@ -101,8 +101,8 @@ export default function Weather({ navigation }: any) {
           <View>
             <SingleValue icon={require('../../assets/icons/FiWind.png')} value="Vent" />
             <SingleValue icon={require('../../assets/icons/FiCompass.png')} value="Direction vent" />
-            <SingleValue icon={require('../../assets/icons/FiTrendingUp.png')} value="T max" />
-            <SingleValue icon={require('../../assets/icons/FiTrendingDown.png')} value="T mini" />
+            <SingleValue icon={require('../../assets/icons/FiTrendingUp.png')} value="Température max" />
+            <SingleValue icon={require('../../assets/icons/FiTrendingDown.png')} value="Température mini" />
           </View>
         </View>
       </ScrollView>
