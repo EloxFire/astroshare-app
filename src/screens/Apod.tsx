@@ -34,11 +34,6 @@ export default function Apod({ navigation }: any) {
     }
   }
 
-  const clickLink = async () => {
-    await Clipboard.setStringAsync(apod?.url || '');
-    showToast({ message: 'Lien copié', duration: Toast.durations.LONG, type: 'success' });
-  }
-
   return (
     <View style={globalStyles.body}>
       <PageTitle navigation={navigation} title="APOD" subtitle="// Image du jour de la NASA" />

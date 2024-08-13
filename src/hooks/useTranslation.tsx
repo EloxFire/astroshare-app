@@ -1,5 +1,5 @@
 import React, { ReactNode, createContext, useContext, useEffect, useState } from 'react';
-import * as Device from 'expo-device';
+import { frTranslations } from '../translation/fr';
 
 const TranslationContext = createContext<any>({})
 
@@ -23,11 +23,15 @@ export function TranslationProvider({ children }: TranslationProviderProps) {
     // Device.getLan
   }, [])
 
-  const translateText = (key: string, params?: any) => {
+  const translateText = (key: string, params?: any): string => {
+    const translatedKey = 
+
+    return translatedKey
   }
 
   const values = {
     currentLocale,
+    changeLocale,
   }
 
   return (
