@@ -46,7 +46,7 @@ export default function ScopeAlignment({ navigation }: any) {
               </View>
               <View style={scopeAlignmentStyles.content.list.listElement}>
                 <Text style={scopeAlignmentStyles.content.list.listElement.number}>2</Text>
-                <Text style={scopeAlignmentStyles.content.text}>- Votre télescope doit être horizontal, vérifiez avec un niveau à bulle.</Text>
+                <Text style={scopeAlignmentStyles.content.text}>- Votre télescope doit être à l'horizontal, vérifiable avec un niveau à bulle.</Text>
               </View>
               <View style={scopeAlignmentStyles.content.list.listElement}>
                 <Text style={scopeAlignmentStyles.content.list.listElement.number}>3</Text>

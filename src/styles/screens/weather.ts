@@ -86,10 +86,8 @@ export const weatherStyles = {
 
   legend: {
     display: 'flex' as 'flex',
-    flexWrap: 'wrap' as 'wrap',
     flexDirection: 'row' as 'row',
     justifyContent: 'space-between' as 'space-between',
-    alignItems: 'center' as 'center',
     marginLeft: -10,
     marginBottom: 50,
   },

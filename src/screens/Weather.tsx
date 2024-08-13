@@ -92,14 +92,18 @@ export default function Weather({ navigation }: any) {
         <Ephemeris weather={weather} />
         <Text style={weatherStyles.weatherContainer.title}>Légende</Text>
         <View style={weatherStyles.legend}>
-          <SingleValue icon={require('../../assets/icons/FiThermometer.png')} value="Température" />
-          <SingleValue icon={require('../../assets/icons/FiUser.png')} value="Ressenti" />
-          <SingleValue icon={require('../../assets/icons/FiDroplet.png')} value="Humidité" />
-          <SingleValue icon={require('../../assets/icons/FiAlignCenter.png')} value="Nuages" />
-          <SingleValue icon={require('../../assets/icons/FiWind.png')} value="Vent" />
-          <SingleValue icon={require('../../assets/icons/FiCompass.png')} value="Direction vent" />
-          <SingleValue icon={require('../../assets/icons/FiTrendingUp.png')} value="T max" />
-          <SingleValue icon={require('../../assets/icons/FiTrendingDown.png')} value="T mini" />
+          <View>
+            <SingleValue icon={require('../../assets/icons/FiThermometer.png')} value="Température" />
+            <SingleValue icon={require('../../assets/icons/FiUser.png')} value="Ressenti" />
+            <SingleValue icon={require('../../assets/icons/FiDroplet.png')} value="Humidité" />
+            <SingleValue icon={require('../../assets/icons/FiAlignCenter.png')} value="Nuages" />
+          </View>
+          <View>
+            <SingleValue icon={require('../../assets/icons/FiWind.png')} value="Vent" />
+            <SingleValue icon={require('../../assets/icons/FiCompass.png')} value="Direction vent" />
+            <SingleValue icon={require('../../assets/icons/FiTrendingUp.png')} value="T max" />
+            <SingleValue icon={require('../../assets/icons/FiTrendingDown.png')} value="T mini" />
+          </View>
         </View>
       </ScrollView>
     </View>
