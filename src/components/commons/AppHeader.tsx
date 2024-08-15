@@ -6,6 +6,7 @@ import { useIsFocused } from '@react-navigation/native'
 import { getObject } from '../../helpers/storage'
 import { app_colors, storageKeys } from '../../helpers/constants'
 import { isFirstLaunch } from '../../helpers/scripts/checkFirstLaunch'
+import { i18n } from '../../helpers/scripts/i18n'
 
 export default function AppHeader({ navigation }: any) {
 
@@ -66,7 +67,7 @@ export default function AppHeader({ navigation }: any) {
           showTutorial &&
           <Animated.View style={{ transform: [{ scale: interpolated }] }}>
             <TouchableOpacity style={appHeaderStyles.container.tutorialButton} onPress={() => navigation.navigate(routes.tutorial.path)}>
-              <Text style={appHeaderStyles.container.tutorialButton.text}>Tutoriel</Text>
+              <Text style={appHeaderStyles.container.tutorialButton.text}>{i18n.t('tutorialScreen.button')}</Text>
             </TouchableOpacity>
           </Animated.View>
         }

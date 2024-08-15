@@ -26,20 +26,7 @@ export default function HomeSearchModule({ navigation }: HomeSearchModuleProps) 
   const [planetResults, setPlanetResults] = useState<GlobalPlanet[]>([])
   const [starsResults, setStarsResults] = useState<Star[]>([])
 
-  useEffect(() => {
-    Keyboard.addListener('keyboardDidHide', onKeyboardDidHide);
-
-    return () => {
-      Keyboard.removeAllListeners('keyboardDidHide');
-    };
-  }, [])
-
-  const onKeyboardDidHide = () => {
-    handleSearch()
-  }
-
   const handleSearch = async () => {
-    console.log("handleSearch")
 
     if (!hasInternetConnection) {
       showToast({ message: i18n.t('common.errors.noInternetConnection'), type: 'error' })
@@ -59,6 +46,7 @@ export default function HomeSearchModule({ navigation }: HomeSearchModuleProps) 
     setSearchResults([])
     setPlanetResults([])
     setStarsResults([])
+    Keyboard.dismiss()
 
 
     const planetsRegex = /\b(?:Mercury|Mercure|Venus|Vénus|Earth|Terre|Mars|Jupiter|Saturn|Saturne|Uranus|Neptune)\b/i;
@@ -108,7 +96,7 @@ export default function HomeSearchModule({ navigation }: HomeSearchModuleProps) 
       <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 10 }}>
         <InputWithIcon
           placeholder={i18n.t('homeSearchModule.input_placeholder')}
-          changeEvent={(string: string) => setSearchString(string)}
+          changeEvent={(string: string) => { setSearchString(string) }}
           icon={require('../../../assets/icons/FiSearch.png')}
           search={() => handleSearch()}
           value={searchString}

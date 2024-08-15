@@ -1,3 +1,4 @@
+import { tutorialScreen } from "../en/screens/tutorialScreen";
 import { commonTranslations } from "./common/common";
 import { homeSearchModuleTranslations } from "./components/forms/homeSearchModule";
 import { locationHeaderTranslations } from "./components/locationHeader";
@@ -14,5 +15,5 @@ export const frTranslations = {
   locationHeader: locationHeaderTranslations,
   homeSearchModule: homeSearchModuleTranslations,
   languageSelection: languageSelection,
-
+  tutorialScreen: tutorialScreen,
 }

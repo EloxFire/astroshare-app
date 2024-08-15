@@ -5,6 +5,7 @@ import { locationModalTranslations } from "./components/locationModal";
 import { homeTranslations } from "./screens/home";
 import { languageSelection } from "./screens/languageSelection";
 import { settingsTranslations } from "./screens/settings";
+import { tutorialScreen } from "./screens/tutorialScreen";
 
 export const enTranslations = {
   common: commonTranslations,
@@ -14,4 +15,5 @@ export const enTranslations = {
   locationHeader: locationHeaderTranslations,
   homeSearchModule: homeSearchModuleTranslations,
   languageSelection: languageSelection,
+  tutorialScreen: tutorialScreen,
 }

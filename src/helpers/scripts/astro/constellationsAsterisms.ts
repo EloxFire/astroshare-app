@@ -36,12 +36,12 @@ export const constellationsAsterisms = [
   dorado,
   draco,
   equuleus,
-  eridanus,
+  // eridanus, // Removed because it was not drawn correctly
   fornax,
   gemini,
   grus,
   hercules,
-  horologium,
+  // horologium, // Removed because it was not drawn correctly
   hydra,
   hydrus,
   indus,
