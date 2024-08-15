@@ -6,6 +6,7 @@ import LocationModal from './LocationModal';
 import RefreshButton from './commons/buttons/RefreshButton';
 import * as Linking from 'expo-linking';
 import { app_colors } from '../helpers/constants';
+import { i18n } from '../helpers/scripts/i18n';
 
 export default function LocationHeader() {
 
@@ -50,19 +51,19 @@ export default function LocationHeader() {
         <LocationModal visible={isModalShown} onClose={handleModal} coords={currentUserLocation!} />
         <TouchableOpacity style={locationHeaderStyles.container.location} onPress={() => handleModal()}>
           <View style={locationHeaderStyles.container.location.text}>
-            <Text style={locationHeaderStyles.container.location.title}>Votre position</Text>
+            <Text style={locationHeaderStyles.container.location.title}>{i18n.t('locationHeader.title')}</Text>
             {
               locationLoading ?
-                <Animated.Text style={[locationHeaderStyles.container.location.value, { opacity: interpolated }]}>Acquisition GPS...</Animated.Text>
+                <Animated.Text style={[locationHeaderStyles.container.location.value, { opacity: interpolated }]}>{i18n.t('locationHeader.aquisition')}</Animated.Text>
                 :
                 locationPermissions ?
                   currentUserLocation ?
                     <Text style={locationHeaderStyles.container.location.value}>{currentUserLocation?.common_name}</Text>
                     :
-                    <Text style={[locationHeaderStyles.container.location.value, { color: app_colors.red_eighty }]}>##Erreur##</Text>
+                    <Text style={[locationHeaderStyles.container.location.value, { color: app_colors.red_eighty }]}>{i18n.t('locationHeader.error')}</Text>
                   :
                   <TouchableOpacity style={locationHeaderStyles.container.location.settingsButton} onPress={() => Linking.openSettings()}>
-                    <Text style={locationHeaderStyles.container.location.settingsButton.value}>Paramètres de localisation</Text>
+                    <Text style={locationHeaderStyles.container.location.settingsButton.value}>{i18n.t('locationHeader.settings')}</Text>
                   </TouchableOpacity>
             }
           </View>

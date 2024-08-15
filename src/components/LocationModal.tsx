@@ -4,11 +4,10 @@ import { locationHeaderStyles } from '../styles/components/locationHeader'
 import { LocationObject } from '../helpers/types/LocationObject'
 import { useSpot } from '../contexts/ObservationSpotContext'
 import { mapStyle } from '../helpers/mapJsonStyle'
-import BigValue from './commons/BigValue'
-import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps'
 import { app_colors } from '../helpers/constants'
-import DSOValues from './commons/DSOValues'
 import { i18n } from '../helpers/scripts/i18n'
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps'
+import DSOValues from './commons/DSOValues'
 
 interface LocationModalProps {
   visible: boolean
