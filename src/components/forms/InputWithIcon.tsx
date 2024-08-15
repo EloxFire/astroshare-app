@@ -18,13 +18,13 @@ export default function InputWithIcon({ placeholder, changeEvent, icon, search, 
       <TextInput
         style={inputWithIconStyles.inputContainer.input}
         placeholder={placeholder}
-        onChangeText={(searchString) => {changeEvent(searchString)}}
+        onChangeText={(searchString) => { changeEvent(searchString) }}
         underlineColorAndroid="transparent"
-        placeholderTextColor="#FFFFFF25"
+        placeholderTextColor="#FFFFFF60"
         value={value}
       />
       <TouchableOpacity onPress={() => search()}>
-        <Image style={[inputWithIconStyles.inputContainer.inputIcon, {tintColor: value !== '' ? app_colors.white : '#FFFFFF25'}]} source={icon} resizeMode='contain' />
+        <Image style={[inputWithIconStyles.inputContainer.inputIcon, { tintColor: value !== '' ? app_colors.white : '#FFFFFF25' }]} source={icon} resizeMode='contain' />
       </TouchableOpacity>
     </View>
   )

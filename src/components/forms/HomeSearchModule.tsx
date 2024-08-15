@@ -1,17 +1,16 @@
 import React, { useState } from 'react'
-import { Image, Keyboard, TouchableOpacity, View } from 'react-native'
-import InputWithIcon from './InputWithIcon'
-import HomeSearchResults from '../HomeSearchResults'
+import { Keyboard, View } from 'react-native'
 import { showToast } from '../../helpers/scripts/showToast'
 import { DSO } from '../../helpers/types/DSO'
-import axios from 'axios'
 import { useSettings } from '../../contexts/AppSettingsContext'
-import { planetNamesRegexes, solarSystemRegexes } from '../../helpers/scripts/utils/regex/searchRegex'
-import { getPlanetaryPositions, Planet } from '@observerly/astrometry'
+import { solarSystemRegexes } from '../../helpers/scripts/utils/regex/searchRegex'
 import { useSolarSystem } from '../../contexts/SolarSystemContext'
 import { GlobalPlanet } from '../../helpers/types/GlobalPlanet'
-import { app_colors } from '../../helpers/constants'
 import { Star } from '../../helpers/types/Star'
+import { i18n } from '../../helpers/scripts/i18n'
+import InputWithIcon from './InputWithIcon'
+import HomeSearchResults from '../HomeSearchResults'
+import axios from 'axios'
 
 interface HomeSearchModuleProps {
   navigation: any
@@ -29,12 +28,12 @@ export default function HomeSearchModule({ navigation }: HomeSearchModuleProps) 
 
   const handleSearch = async () => {
     if (!hasInternetConnection) {
-      showToast({ message: 'Aucune connexion à internet', type: 'error' })
+      showToast({ message: i18n.t('common.errors.noInternetConnection'), type: 'error' })
       return;
     }
 
     if (!currentUserLocation) {
-      showToast({ message: 'Localisation requise pour effectuer une recherche', type: 'error' })
+      showToast({ message: i18n.t('common.errors.noLocation'), type: 'error' })
       return;
     }
 
@@ -66,7 +65,7 @@ export default function HomeSearchModule({ navigation }: HomeSearchModuleProps) 
       setStarsResults([])
       console.log("Star Error :", error.message)
       if (!error.message.includes('404')) {
-        showToast({ message: error.message ? error.message : 'Une erreur inconnue est survenue...', type: 'error' })
+        showToast({ message: error.message ? error.message : i18n.t('common.errors.unknownError'), type: 'error' })
       }
     }
 
@@ -77,7 +76,7 @@ export default function HomeSearchModule({ navigation }: HomeSearchModuleProps) 
       setSearchResults([])
       console.log("DSO Error :", error.message)
       if (!error.message.includes('404')) {
-        showToast({ message: error.message ? error.message : 'Une erreur inconnue est survenue...', type: 'error' })
+        showToast({ message: error.message ? error.message : i18n.t('common.errors.unknownError'), type: 'error' })
       }
     }
   }
@@ -93,7 +92,7 @@ export default function HomeSearchModule({ navigation }: HomeSearchModuleProps) 
     <View>
       <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 10 }}>
         <InputWithIcon
-          placeholder="Rechercher un objet céleste"
+          placeholder={i18n.t('homeSearchModule.input_placeholder')}
           changeEvent={(string: string) => setSearchString(string)}
           icon={require('../../../assets/icons/FiSearch.png')}
           search={() => handleSearch()}
