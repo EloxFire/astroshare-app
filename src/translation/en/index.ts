@@ -6,10 +6,10 @@ import { homeTranslations } from "./screens/home";
 import { settingsTranslations } from "./screens/settings";
 
 export const enTranslations = {
-  "common": commonTranslations,
-  "home": homeTranslations,
-  "settings": settingsTranslations,
-  "locationModal": locationModalTranslations,
-  "locationHeader": locationHeaderTranslations,
-  "homeSearchModule": homeSearchModuleTranslations
+  common: commonTranslations,
+  home: homeTranslations,
+  settings: settingsTranslations,
+  locationModal: locationModalTranslations,
+  locationHeader: locationHeaderTranslations,
+  homeSearchModule: homeSearchModuleTranslations
 }
