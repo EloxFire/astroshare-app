@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Keyboard, View } from 'react-native'
 import { showToast } from '../../helpers/scripts/showToast'
 import { DSO } from '../../helpers/types/DSO'
@@ -26,7 +26,21 @@ export default function HomeSearchModule({ navigation }: HomeSearchModuleProps) 
   const [planetResults, setPlanetResults] = useState<GlobalPlanet[]>([])
   const [starsResults, setStarsResults] = useState<Star[]>([])
 
+  useEffect(() => {
+    Keyboard.addListener('keyboardDidHide', onKeyboardDidHide);
+
+    return () => {
+      Keyboard.removeAllListeners('keyboardDidHide');
+    };
+  }, [])
+
+  const onKeyboardDidHide = () => {
+    handleSearch()
+  }
+
   const handleSearch = async () => {
+    console.log("handleSearch")
+
     if (!hasInternetConnection) {
       showToast({ message: i18n.t('common.errors.noInternetConnection'), type: 'error' })
       return;
@@ -38,9 +52,10 @@ export default function HomeSearchModule({ navigation }: HomeSearchModuleProps) 
     }
 
     if (searchString === '') return;
-    if (searchString.includes('*')) return;
+    // if (searchString.includes('*')) return;
 
-    Keyboard.dismiss()
+    const formatedSearchString = searchString.trim().replaceAll('*', '');
+
     setSearchResults([])
     setPlanetResults([])
     setStarsResults([])
@@ -49,9 +64,9 @@ export default function HomeSearchModule({ navigation }: HomeSearchModuleProps) 
     const planetsRegex = /\b(?:Mercury|Mercure|Venus|Vénus|Earth|Terre|Mars|Jupiter|Saturn|Saturne|Uranus|Neptune)\b/i;
 
     try {
-      if (planetsRegex.test(searchString)) {
-        setPlanetResults(planets.filter((planet: GlobalPlanet) => planet.name.toLowerCase() === searchString.toLowerCase()))
-      } else if (solarSystemRegexes.some(regex => regex.test(searchString))) {
+      if (planetsRegex.test(formatedSearchString)) {
+        setPlanetResults(planets.filter((planet: GlobalPlanet) => planet.name.toLowerCase() === formatedSearchString.toLowerCase()))
+      } else if (solarSystemRegexes.some(regex => regex.test(formatedSearchString))) {
         setPlanetResults(planets)
       }
     } catch (error) {
@@ -59,7 +74,7 @@ export default function HomeSearchModule({ navigation }: HomeSearchModuleProps) 
     }
 
     try {
-      const starsResponse = await axios.get(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/stars/` + searchString);
+      const starsResponse = await axios.get(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/stars/` + formatedSearchString);
       setStarsResults(starsResponse.data.data)
     } catch (error: any) {
       setStarsResults([])
@@ -70,7 +85,7 @@ export default function HomeSearchModule({ navigation }: HomeSearchModuleProps) 
     }
 
     try {
-      const dsoResponse = await axios.get(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/search?search=` + searchString);
+      const dsoResponse = await axios.get(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/search?search=` + formatedSearchString);
       setSearchResults(dsoResponse.data.data)
     } catch (error: any) {
       setSearchResults([])

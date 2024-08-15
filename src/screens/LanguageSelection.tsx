@@ -22,8 +22,8 @@ export default function LanguageSelection({ navigation }: any) {
     <View style={globalStyles.body}>
       <PageTitle
         navigation={navigation}
-        title={i18n.t('title')}
-        subtitle="// Changez la langue de l'application"
+        title={i18n.t('languageSelection.title')}
+        subtitle={i18n.t('languageSelection.subtitle')}
       />
       <View style={globalStyles.screens.separator} />
       <ScrollView>
@@ -32,7 +32,8 @@ export default function LanguageSelection({ navigation }: any) {
             languagesList.map((language: any, index: number) => {
               return (
                 <TouchableOpacity key={index} style={languageSelectionStyles.content.button} onPress={() => changeLocale(language.twoLettersCode)}>
-                  <Text style={languageSelectionStyles.content.button.text}>{getUnicodeFlagIcon(language.twoLettersCode.toUpperCase())}</Text>
+                  <Text style={languageSelectionStyles.content.button.text}>{language.name}</Text>
+                  <Text style={languageSelectionStyles.content.button.icon}>{getUnicodeFlagIcon(language.twoLettersCode.toUpperCase())}</Text>
                 </TouchableOpacity>
               )
             })
