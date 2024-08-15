@@ -8,6 +8,7 @@ import BigValue from './commons/BigValue'
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps'
 import { app_colors } from '../helpers/constants'
 import DSOValues from './commons/DSOValues'
+import { i18n } from '../helpers/scripts/i18n'
 
 interface LocationModalProps {
   visible: boolean
@@ -24,7 +25,7 @@ export default function LocationModal({ visible, onClose, coords }: LocationModa
     <Modal animationType='slide' visible={visible} transparent>
       <View style={locationHeaderStyles.modal}>
         <View style={locationHeaderStyles.modal.header}>
-          <Text style={locationHeaderStyles.modal.header.title}>Votre position</Text>
+          <Text style={locationHeaderStyles.modal.header.title}>{i18n.t('locationModal.title')}</Text>
           <TouchableOpacity onPress={() => onClose()}>
             <Image source={require('../../assets/icons/FiXCircle.png')} style={{ width: 20, height: 20 }} />
           </TouchableOpacity>
@@ -55,13 +56,13 @@ export default function LocationModal({ visible, onClose, coords }: LocationModa
           </MapView>
         </View>
         <View style={locationHeaderStyles.modal.body}>
-          <DSOValues chipValue value={`${coords?.dms ? coords?.dms.dms_lat : ''}`} title='Latitude' chipColor={app_colors.white_no_opacity} />
-          <DSOValues chipValue value={`${coords?.dms ? coords?.dms.dms_lon : ''}`} title='Longitude' chipColor={app_colors.white_no_opacity} />
-          <DSOValues chipValue value={`${coords?.lat}`} title='Latitude (Degrés)' chipColor={app_colors.white_no_opacity} />
-          <DSOValues chipValue value={`${coords?.lon}`} title='Longitude (Degrés)' chipColor={app_colors.white_no_opacity} />
-          <DSOValues chipValue value={selectedSpot ? selectedSpot.equipments.altitude : `${defaultAltitude} (altitude par défaut)`} title={`Altitude`} chipColor={app_colors.white_no_opacity} />
-          <DSOValues chipValue value={coords?.common_name ? coords?.common_name : "N/A"} title='Lieu' chipColor={app_colors.white_no_opacity} />
-          <DSOValues chipValue value={coords?.country ? coords?.country : 'N/A'} title='Pays' chipColor={app_colors.white_no_opacity} />
+          <DSOValues chipValue value={`${coords?.dms ? coords?.dms.dms_lat : ''}`} title={i18n.t('locationModal.chips.latitude')} chipColor={app_colors.white_no_opacity} />
+          <DSOValues chipValue value={`${coords?.dms ? coords?.dms.dms_lon : ''}`} title={i18n.t('locationModal.chips.longitude')} chipColor={app_colors.white_no_opacity} />
+          <DSOValues chipValue value={`${coords?.lat}`} title={i18n.t('locationModal.chips.degrees_latitude')} chipColor={app_colors.white_no_opacity} />
+          <DSOValues chipValue value={`${coords?.lon}`} title={i18n.t('locationModal.chips.degrees_longitude')} chipColor={app_colors.white_no_opacity} />
+          <DSOValues chipValue value={selectedSpot ? selectedSpot.equipments.altitude : `${defaultAltitude} ${i18n.t('locationModal.chips.default_altitude')}`} title={i18n.t('locationModal.chips.altitude')} chipColor={app_colors.white_no_opacity} />
+          <DSOValues chipValue value={coords?.common_name ? coords?.common_name : "N/A"} title={i18n.t('locationModal.chips.common_name')} chipColor={app_colors.white_no_opacity} />
+          <DSOValues chipValue value={coords?.country ? coords?.country : 'N/A'} title={i18n.t('locationModal.chips.country')} chipColor={app_colors.white_no_opacity} />
         </View>
       </View>
     </Modal>

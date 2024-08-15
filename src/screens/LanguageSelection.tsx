@@ -6,13 +6,20 @@ import PageTitle from '../components/commons/PageTitle'
 import { i18n } from '../helpers/scripts/i18n'
 import { languagesList } from '../helpers/scripts/i18n/languagesList'
 import getUnicodeFlagIcon from 'country-flag-icons/unicode'
+import { routes } from '../helpers/routes'
 
 export default function LanguageSelection({ navigation }: any) {
+
+  const changeLocale = (code: string) => {
+    i18n.locale = code
+    navigation.navigate(routes.home.path)
+  }
+
   return (
     <View style={globalStyles.body}>
       <PageTitle
         navigation={navigation}
-        title="Langue"
+        title={i18n.t('title')}
         subtitle="// Changez la langue de l'application"
       />
       <View style={globalStyles.screens.separator} />
@@ -21,7 +28,7 @@ export default function LanguageSelection({ navigation }: any) {
           {
             languagesList.map((language: any, index: number) => {
               return (
-                <TouchableOpacity key={index} style={languageSelectionStyles.content.button} onPress={() => i18n.locale = language.twoLettersCode}>
+                <TouchableOpacity key={index} style={languageSelectionStyles.content.button} onPress={() => changeLocale(language.twoLettersCode)}>
                   <Text style={languageSelectionStyles.content.button.text}>{getUnicodeFlagIcon(language.twoLettersCode.toUpperCase())}</Text>
                 </TouchableOpacity>
               )

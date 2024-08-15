@@ -7,6 +7,6 @@ export const languagesList = [
   {
     name: 'Anglais',
     nativeName: 'English',
-    twoLettersCode: 'GB',
+    twoLettersCode: 'gb',
   }
 ]

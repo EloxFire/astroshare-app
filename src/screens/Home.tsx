@@ -17,6 +17,7 @@ import HomeSearchResults from '../components/HomeSearchResults';
 import BannerHandler from '../components/banners/BannerHandler';
 import ToolButton from '../components/commons/buttons/ToolButton';
 import HomeSearchModule from '../components/forms/HomeSearchModule';
+import { i18n } from '../helpers/scripts/i18n';
 
 export default function Home({ navigation }: any) {
   const { hasInternetConnection, currentUserLocation } = useSettings()
@@ -38,8 +39,8 @@ export default function Home({ navigation }: any) {
       <HomeSearchModule navigation={navigation} />
       <ScrollView style={{ borderTopWidth: 1, borderTopColor: app_colors.white_forty }}>
         <View style={homeStyles.toolsSuggestions}>
-          <Text style={globalStyles.sections.title}>Vos outils</Text>
-          <Text style={globalStyles.sections.subtitle}>Votre caisse à outils personnalisée</Text>
+          <Text style={globalStyles.sections.title}>{i18n.t('home.tools.title')}</Text>
+          <Text style={globalStyles.sections.subtitle}>{i18n.t('home.tools.subtitle')}</Text>
           <View style={homeStyles.toolsSuggestions.buttons}>
             <BigButton disabled={!hasInternetConnection || !currentUserLocation} navigation={navigation} targetScreen={routes.weather.path} text="Météo en direct" subtitle="// C'est le moment de sortir le téléscope !" icon={require('../../assets/icons/FiSun.png')} />
             <BigButton disabled={!currentUserLocation} navigation={navigation} targetScreen={routes.scopeAlignment.path} text="Mise en station" subtitle='// Votre assistant de mise en station' icon={require('../../assets/icons/FiCompass.png')} />
@@ -48,8 +49,8 @@ export default function Home({ navigation }: any) {
           </View>
         </View>
         <View style={homeStyles.nasaTools}>
-          <Text style={globalStyles.sections.title}>Autres outils</Text>
-          <Text style={globalStyles.sections.subtitle}>Explorez toujours plus !</Text>
+          <Text style={globalStyles.sections.title}>{i18n.t('home.other_tools.title')}</Text>
+          <Text style={globalStyles.sections.subtitle}>{i18n.t('home.other_tools.subtitle')}</Text>
           <View style={homeStyles.nasaTools.buttons}>
             <ToolButton disabled={!hasInternetConnection} navigation={navigation} targetScreen={routes.apod.path} text="APOD" subtitle="// Image du jour de la NASA" image={require('../../assets/images/tools/apod.png')} />
             <ToolButton disabled={!hasInternetConnection} navigation={navigation} targetScreen={routes.satelliteTracker.path} text="ISS Tracker" subtitle="// Position de l'ISS en temps réel" image={require('../../assets/images/tools/isstracker.png')} />
