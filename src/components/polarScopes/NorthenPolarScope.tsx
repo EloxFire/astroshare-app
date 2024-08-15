@@ -8,6 +8,7 @@ import DSOValues from '../commons/DSOValues';
 import { shortDmsCoord } from '../../helpers/scripts/shortenDmsCoord';
 import { getHourAngle, getLocalSiderealTime } from '@observerly/astrometry';
 import { useSettings } from '../../contexts/AppSettingsContext';
+import { i18n } from '../../helpers/scripts/i18n';
 
 interface Position {
   x: number;
@@ -65,10 +66,10 @@ export default function NorthenPolarScope() {
   return (
     <>
       <View style={{ width: '100%' }}>
-        <DSOValues title='Longitude' chipValue chipColor={app_colors.grey} value={shortDmsCoord(currentUserLocation.dms.dms_lon)} />
-        <DSOValues title='Heure locale' chipValue chipColor={app_colors.grey} value={dayjs(new Date()).format('HH:mm:ss').replace(':', 'h ').replace(':', 'm ') + 's'} />
-        <DSOValues title='Temps local sidéral' chipValue chipColor={app_colors.grey} value={convertDecimalHoursToTime(localSiderialTime).replace(':', 'h ').replace(':', 'm ') + 's'} />
-        <DSOValues title='Angle horaire polaire' chipValue chipColor={app_colors.grey} value={hourAngle.toFixed(2)} />
+        <DSOValues title={i18n.t('scopeAlignment.polarClock.longitude')} chipValue chipColor={app_colors.grey} value={shortDmsCoord(currentUserLocation.dms.dms_lon)} />
+        <DSOValues title={i18n.t('scopeAlignment.polarClock.local_time')} chipValue chipColor={app_colors.grey} value={dayjs(new Date()).format('HH:mm:ss').replace(':', 'h ').replace(':', 'm ') + 's'} />
+        <DSOValues title={i18n.t('scopeAlignment.polarClock.local_sidereal_time')} chipValue chipColor={app_colors.grey} value={convertDecimalHoursToTime(localSiderialTime).replace(':', 'h ').replace(':', 'm ') + 's'} />
+        <DSOValues title={i18n.t('scopeAlignment.polarClock.hour_angle')} chipValue chipColor={app_colors.grey} value={hourAngle.toFixed(2)} />
       </View>
       <Svg style={{ backgroundColor: 'transparent' }} height={svgHeight} width={svgWidth}>
         {/* Cercle principal */}

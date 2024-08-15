@@ -81,14 +81,3 @@ export const cmeImageDescription = {
   'C2': 'Courone intérieure',
   'C3': 'Champ large (32 diamètres solaires)',
 }
-
-export const scopeAlignmentSteps = [
-  {
-    title: 'Matériel',
-    description: 'Vérifiez les éléments suivants pour bien débuter votre alignement polaire',
-  },
-  {
-    title: 'Alignement polaire',
-    description: "Une fois les vérifications effectués, utilisez le viseur polaire pour aligner votre télescope sur le pôle céleste.",
-  }
-]

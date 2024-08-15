@@ -7,6 +7,7 @@ import { ephemerisBarTranslation } from "./components/weather/ephemerisBar";
 import { hourlyOverviewTranslation } from "./components/weather/hourlyOverview";
 import { homeTranslations } from "./screens/home";
 import { languageSelection } from "./screens/languageSelection";
+import { scopeAlignmentTranslation } from "./screens/scopeAlignment";
 import { settingsTranslations } from "./screens/settings";
 import { weatherTranslation } from "./screens/weather";
 
@@ -22,4 +23,5 @@ export const frTranslations = {
   weather: weatherTranslation,
   weather_hourly_overview: hourlyOverviewTranslation,
   ephemerisBar: ephemerisBarTranslation,
+  scopeAlignment: scopeAlignmentTranslation,
 }
