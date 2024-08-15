@@ -57,15 +57,6 @@ export const sunVideoSrcWavelengths = {
   'AIA_1600': 'https://sdo.gsfc.nasa.gov/assets/img/latest/mpeg/latest_512_1600.mp4',
 }
 
-export const sunIMageFiltersDescription = {
-  'HMI_IC': 'Soleil en lumière visible',
-  'AIA_193': 'Couronne solaire',
-  'AIA_304': 'Filaments solaires',
-  'AIA_171': 'Boucles coronales',
-  'AIA_131': 'Éruptions solaires',
-  'AIA_335': 'Régions actives',
-  'AIA_1600': 'Champs magnétiques',
-}
 
 export const cmeImageSrc = {
   'C2': 'https://soho.nascom.nasa.gov/data/realtime/c2/512/latest.jpg',

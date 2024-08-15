@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { app_colors, cmeImageSrc, cmeVideoSrc, sunIMageFiltersDescription, sunImagesSrcWavelengths, sunVideoSrcWavelengths } from '../helpers/constants'
+import { app_colors, cmeImageSrc, cmeVideoSrc, sunImagesSrcWavelengths, sunVideoSrcWavelengths } from '../helpers/constants'
 import { Dimensions, ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import { globalStyles } from '../styles/global'
 import { moonPhasesStyles } from '../styles/screens/moonPhases'
@@ -10,6 +10,8 @@ import { ECmeFilters } from '../helpers/types/CmeFilters'
 import { Image } from 'expo-image'
 import PageTitle from '../components/commons/PageTitle'
 import SimpleButton from '../components/commons/buttons/SimpleButton'
+import { i18n } from '../helpers/scripts/i18n'
+import { sunIMageFiltersDescription } from '../helpers/scripts/astro/solar/solarFilters'
 
 export default function SolarWeather({ navigation }: any) {
 
@@ -53,7 +55,7 @@ export default function SolarWeather({ navigation }: any) {
 
   return (
     <View style={globalStyles.body}>
-      <PageTitle navigation={navigation} title="Météo solaire" subtitle="// Météo de notre étoile en direct" />
+      <PageTitle navigation={navigation} title={i18n.t('home.buttons.solar_weather.title')} subtitle={i18n.t('home.buttons.solar_weather.subtitle')} />
       <View style={globalStyles.screens.separator} />
       <ScrollView>
         <View style={moonPhasesStyles.content}>
@@ -61,14 +63,14 @@ export default function SolarWeather({ navigation }: any) {
           <View style={solarWeatherStyles.container}>
             <View style={{ display: 'flex', flexDirection: 'row' }}>
               <TouchableOpacity onPress={() => setIsImageMode(true)} style={{ height: 35, flex: 1, borderBottomWidth: isImageMode ? 1 : 0, borderColor: app_colors.white, marginBottom: 10, padding: 5 }}>
-                <Text style={{ fontFamily: 'GilroyBlack', color: app_colors.white, textTransform: 'uppercase', textAlign: "center", fontSize: 18 }}>Image</Text>
+                <Text style={{ fontFamily: 'GilroyBlack', color: app_colors.white, textTransform: 'uppercase', textAlign: "center", fontSize: 18 }}>{i18n.t('solarWeather.containers.switches.image')}</Text>
               </TouchableOpacity>
               <TouchableOpacity onPress={() => setIsImageMode(false)} style={{ height: 35, flex: 1, borderBottomWidth: isImageMode ? 0 : 1, borderColor: app_colors.white, marginBottom: 10, padding: 5 }}>
-                <Text style={{ fontFamily: 'GilroyBlack', color: app_colors.white, textTransform: 'uppercase', textAlign: "center", fontSize: 18 }}>Vidéo</Text>
+                <Text style={{ fontFamily: 'GilroyBlack', color: app_colors.white, textTransform: 'uppercase', textAlign: "center", fontSize: 18 }}>{i18n.t('solarWeather.containers.switches.video')}</Text>
               </TouchableOpacity>
             </View>
-            <Text style={solarWeatherStyles.container.title}>Instrument : {currentImageFilter}</Text>
-            <Text style={[solarWeatherStyles.container.subtitle, { opacity: 1 }]}>Zone d'étude : {loadingImage ? "Chargement" : sunIMageFiltersDescription[currentImageFilter]}</Text>
+            <Text style={solarWeatherStyles.container.title}>{i18n.t('solarWeather.containers.instrument', { currentImageFilter: currentImageFilter })}</Text>
+            <Text style={[solarWeatherStyles.container.subtitle, { opacity: 1 }]}>{i18n.t('solarWeather.containers.zone', { zone: loadingImage ? i18n.t('common.loadings.simple') : i18n.t(`solarWeather.studyZones.${currentImageFilter}`) })}</Text>
             <Text style={solarWeatherStyles.container.subtitle}>Source : NASA / SDO (Solar Dynamics Observatory)</Text>
             {
               isImageMode ?
@@ -102,13 +104,13 @@ export default function SolarWeather({ navigation }: any) {
           <View style={solarWeatherStyles.container}>
             <View style={{ display: 'flex', flexDirection: 'row' }}>
               <TouchableOpacity onPress={() => setIsCmeImageMode(true)} style={{ height: 35, flex: 1, borderBottomWidth: isCmeImageMode ? 1 : 0, borderColor: app_colors.white, marginBottom: 10, padding: 5 }}>
-                <Text style={{ fontFamily: 'GilroyBlack', color: app_colors.white, textTransform: 'uppercase', textAlign: "center", fontSize: 18 }}>Image</Text>
+                <Text style={{ fontFamily: 'GilroyBlack', color: app_colors.white, textTransform: 'uppercase', textAlign: "center", fontSize: 18 }}>{i18n.t('solarWeather.containers.switches.image')}</Text>
               </TouchableOpacity>
               <TouchableOpacity onPress={() => setIsCmeImageMode(false)} style={{ height: 35, flex: 1, borderBottomWidth: isCmeImageMode ? 0 : 1, borderColor: app_colors.white, marginBottom: 10, padding: 5 }}>
-                <Text style={{ fontFamily: 'GilroyBlack', color: app_colors.white, textTransform: 'uppercase', textAlign: "center", fontSize: 18 }}>Vidéo</Text>
+                <Text style={{ fontFamily: 'GilroyBlack', color: app_colors.white, textTransform: 'uppercase', textAlign: "center", fontSize: 18 }}>{i18n.t('solarWeather.containers.switches.video')}</Text>
               </TouchableOpacity>
             </View>
-            <Text style={solarWeatherStyles.container.title}>Ejections de Masse Coronale (EMC)</Text>
+            <Text style={solarWeatherStyles.container.title}>{i18n.t('solarWeather.containers.emc')}</Text>
             <Text style={solarWeatherStyles.container.subtitle}>Source : NASA / SoHO (Solar and Heliospheric Observatory)</Text>
             {
               isCmeImageMode ?
@@ -140,20 +142,20 @@ export default function SolarWeather({ navigation }: any) {
 
           {/* SUNSPOTS CONTAINER */}
           <View style={solarWeatherStyles.container}>
-            <Text style={solarWeatherStyles.container.title}>Tâches solaires (Active Regions)</Text>
+            <Text style={solarWeatherStyles.container.title}>{i18n.t('solarWeather.containers.sunspots')}</Text>
             <Text style={solarWeatherStyles.container.subtitle}>Source : NASA / SoHO (Solar and Heliospheric Observatory)</Text>
             <Image priority={'low'} source={{ uri: "https://soho.nascom.nasa.gov/data/synoptic/sunspots_earth/mdi_sunspots_1024.jpg" + '?' + new Date() }} style={solarWeatherStyles.sunImage} />
           </View>
 
           {/* AURORA CONTAINER */}
           <View style={solarWeatherStyles.container}>
-            <Text style={solarWeatherStyles.container.title}>Prévisions d'aurores (Nord)</Text>
+            <Text style={solarWeatherStyles.container.title}>{i18n.t('solarWeather.containers.northenAurora')}</Text>
             <Text style={solarWeatherStyles.container.subtitle}>Source : NOAA Space Weather Prediction Center</Text>
             <Image priority={'low'} source={{ uri: "https://services.swpc.noaa.gov/images/animations/ovation/north/latest.jpg" + '?' + new Date() }} style={solarWeatherStyles.sunImage} />
           </View>
 
           <View style={solarWeatherStyles.container}>
-            <Text style={solarWeatherStyles.container.title}>Prévisions d'aurores (Sud)</Text>
+            <Text style={solarWeatherStyles.container.title}>{i18n.t('solarWeather.containers.southernAurora')}</Text>
             <Text style={solarWeatherStyles.container.subtitle}>Source : NOAA Space Weather Prediction Center</Text>
             <Image priority={'low'} source={{ uri: "https://services.swpc.noaa.gov/images/animations/ovation/south/latest.jpg" + '?' + new Date() }} style={solarWeatherStyles.sunImage} />
           </View>

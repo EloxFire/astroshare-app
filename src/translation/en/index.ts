@@ -10,6 +10,7 @@ import { languageSelection } from "./screens/languageSelection";
 import { moonPhasesTranslation } from "./screens/moonPhases";
 import { scopeAlignmentTranslation } from "./screens/scopeAlignment";
 import { settingsTranslations } from "./screens/settings";
+import { solarWeatherTranslations } from "./screens/solarWeather";
 import { tutorialScreen } from "./screens/tutorialScreen";
 
 export const enTranslations = {
@@ -25,5 +26,6 @@ export const enTranslations = {
   weather_hourly_overview: hourlyOverviewTranslation,
   ephemerisBar: ephemerisBarTranslation,
   scopeAlignment: scopeAlignmentTranslation,
-  moonPhases: moonPhasesTranslation
+  moonPhases: moonPhasesTranslation,
+  solarWeather: solarWeatherTranslations
 }
