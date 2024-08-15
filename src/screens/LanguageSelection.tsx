@@ -7,11 +7,14 @@ import { i18n } from '../helpers/scripts/i18n'
 import { languagesList } from '../helpers/scripts/i18n/languagesList'
 import getUnicodeFlagIcon from 'country-flag-icons/unicode'
 import { routes } from '../helpers/routes'
+import { storeData } from '../helpers/storage'
+import { showToast } from '../helpers/scripts/showToast'
 
 export default function LanguageSelection({ navigation }: any) {
 
-  const changeLocale = (code: string) => {
+  const changeLocale = async (code: string) => {
     i18n.locale = code
+    await storeData('locale', code)
     navigation.navigate(routes.home.path)
   }
 

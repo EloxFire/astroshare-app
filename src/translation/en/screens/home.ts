@@ -1,10 +1,10 @@
 export const homeTranslations = {
   "tools": {
-    "title": "Vos outils",
-    "subtitle": "Votre caisse à outils personnalisée"
+    "title": "Your tools",
+    "subtitle": "Your custom tool box"
   },
   "other_tools": {
-    "title": "Autres outils",
-    "subtitle": "Explorez toujours plus !"
+    "title": "Other tools",
+    "subtitle": "Explore beyond limits !"
   }
 }
