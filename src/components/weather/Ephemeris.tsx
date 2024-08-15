@@ -5,6 +5,7 @@ import { calculateDayPercentage } from '../../helpers/scripts/astro/calculateDay
 import { weatherStyles } from '../../styles/screens/weather'
 import EphemerisBar from './EphemerisBar'
 import MoonInfos from './MoonInfos'
+import { i18n } from '../../helpers/scripts/i18n'
 
 interface EphemerisProps {
   weather: any
@@ -24,7 +25,7 @@ export default function Ephemeris({ weather }: EphemerisProps) {
 
   return (
     <View style={[weatherStyles.weatherContainer, { marginBottom: 50 }]}>
-      <Text style={[weatherStyles.weatherContainer.title, { marginBottom: 20 }]}>Éphéméride</Text>
+      <Text style={[weatherStyles.weatherContainer.title, { marginBottom: 20 }]}>{i18n.t('ephemerisBar.title')}</Text>
       {
         weather &&
         <EphemerisBar
