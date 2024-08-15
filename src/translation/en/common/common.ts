@@ -8,7 +8,8 @@ export const commonTranslations = {
     invalidSearch: "Invalid search",
     invalidPlanet: "Invalid planet name",
     invalidStar: "Invalid star name",
-    unknownError: "An unknown error occurred..."
+    unknownError: "An unknown error occurred...",
+    simple: "##Error##"
   },
   loadings: {
     simple: "Loading...",

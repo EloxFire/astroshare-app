@@ -1,6 +1,6 @@
 export const weatherTranslation = {
   input_placeholder: "Search a city",
-  reset_button: "Back to {city}",
+  reset_button: "Back to %{city}",
   legend: {
     title: "Legend",
     temperature: "Temperature",
