@@ -190,7 +190,7 @@ export default function SatelliteTracker({ navigation }: any) {
               width={Dimensions.get('screen').width - 20}
               height={(Dimensions.get('screen').width - 20) / (16 / 9)}
               play
-              videoId={"P9C25Un7xaM"}
+              videoId={"nEC3xRSSc3k"}
             />
           </ScrollView>
         </View>

@@ -17,9 +17,8 @@ interface TranslationProviderProps {
 export function TranslationProvider({ children }: TranslationProviderProps) {
 
 
-  useEffect(() => {
-    // Device.getLan
-  }, [])
+  // const changeLOcale
+
   const values = {
     // changeLocale
   }

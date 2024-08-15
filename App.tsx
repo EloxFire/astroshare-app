@@ -34,6 +34,8 @@ import { SolarSystemProvider } from "./src/contexts/SolarSystemContext";
 import BrightStarDetails from "./src/screens/BrightStarDetails";
 import TutorialScreen from "./src/screens/TutorialScreen";
 import { TranslationProvider } from "./src/hooks/useTranslation";
+import './src/helpers/scripts/i18n/index';
+import LanguageSelection from "./src/screens/LanguageSelection";
 
 dayjs.locale('fr');
 dayjs.extend(LocalizedFormat)
@@ -99,6 +101,7 @@ export default function App() {
                   <Stack.Screen name={routes.satelliteTracker.path} component={SatelliteTracker} />
                   <Stack.Screen name={routes.favorites.path} component={FavouritesScreen} />
                   <Stack.Screen name={routes.skymapgenerator.path} component={SkyMapGenerator} />
+                  <Stack.Screen name={routes.language.path} component={LanguageSelection} />
                 </Stack.Navigator>
               </SolarSystemProvider>
             </ObservationSpotProvider>

@@ -3,6 +3,7 @@ export const routes = {
   tutorial: { path: 'Tutorial', requirements: [] },
   home: { path: 'Home', requirements: [] },
   settings: { path: 'Settings', requirements: [] },
+  language: { path: 'LanguageSelection', requirements: [] },
   about: { path: 'About', requirements: [] },
   scopeAlignment: { path: 'ScopeAlignmentScreen ', requirements: [] },
   weather: { path: 'WeatherScreen', requirements: [] },
