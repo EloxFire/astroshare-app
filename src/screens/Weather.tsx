@@ -14,6 +14,7 @@ import SingleValue from '../components/weather/SingleValue'
 import WeatherOverview from '../components/weather/WeatherOverview'
 import Ephemeris from '../components/weather/Ephemeris'
 import Hourly from '../components/weather/Hourly'
+import { i18n } from '../helpers/scripts/i18n'
 
 export default function Weather({ navigation }: any) {
 
@@ -74,35 +75,35 @@ export default function Weather({ navigation }: any) {
 
   return (
     <View style={globalStyles.body}>
-      <PageTitle navigation={navigation} title="Météo en direct" subtitle="// C'est l'heure de sortir le télescope !" />
+      <PageTitle navigation={navigation} title={i18n.t('home.buttons.weather.title')} subtitle={i18n.t('home.buttons.weather.subtitle')} />
       <View style={globalStyles.screens.separator} />
       <View style={weatherStyles.content.inputContainer}>
-        <InputWithIcon icon={require('../../assets/icons/FiSearch.png')} placeholder="Rechercher une ville" changeEvent={(text: string) => setSearchString(text)} search={() => searchWeather()} value={searchString} />
+        <InputWithIcon icon={require('../../assets/icons/FiSearch.png')} placeholder={i18n.t('weather.input_placeholder')} changeEvent={(text: string) => setSearchString(text)} search={() => searchWeather()} value={searchString} />
       </View>
       {
         searchedCity &&
         <TouchableOpacity style={weatherStyles.weatherContainer.resetButton} onPress={() => getCurrent()}>
           <Image source={require('../../assets/icons/FiRepeat.png')} style={{ width: 15, height: 15, marginRight: 10 }} />
-          <Text style={weatherStyles.content.text}>Retour à {currentUserLocation.common_name || ""}</Text>
+          <Text style={weatherStyles.content.text}>{i18n.t('weather.reset_button', { city: currentUserLocation.common_name || "" })}</Text>
         </TouchableOpacity>
       }
       <ScrollView>
         <WeatherOverview weather={weather} currentUserLocation={currentUserLocation} searchedCity={searchedCity} refresh={() => getCurrent()} />
         <Hourly weather={weather} />
         <Ephemeris weather={weather} />
-        <Text style={weatherStyles.weatherContainer.title}>Légende</Text>
+        <Text style={weatherStyles.weatherContainer.title}>{i18n.t('weather.legend.title')}</Text>
         <View style={weatherStyles.legend}>
           <View>
-            <SingleValue icon={require('../../assets/icons/FiThermometer.png')} value="Température" />
-            <SingleValue icon={require('../../assets/icons/FiUser.png')} value="Ressenti" />
-            <SingleValue icon={require('../../assets/icons/FiDroplet.png')} value="Humidité" />
-            <SingleValue icon={require('../../assets/icons/FiAlignCenter.png')} value="Nuages" />
+            <SingleValue icon={require('../../assets/icons/FiThermometer.png')} value={i18n.t('weather.legend.temperature')} />
+            <SingleValue icon={require('../../assets/icons/FiUser.png')} value={i18n.t('weather.legend.feels_like')} />
+            <SingleValue icon={require('../../assets/icons/FiDroplet.png')} value={i18n.t('weather.legend.humidity')} />
+            <SingleValue icon={require('../../assets/icons/FiAlignCenter.png')} value={i18n.t('weather.legend.clouds')} />
           </View>
           <View>
-            <SingleValue icon={require('../../assets/icons/FiWind.png')} value="Vent" />
-            <SingleValue icon={require('../../assets/icons/FiCompass.png')} value="Direction vent" />
-            <SingleValue icon={require('../../assets/icons/FiTrendingUp.png')} value="Température max" />
-            <SingleValue icon={require('../../assets/icons/FiTrendingDown.png')} value="Température mini" />
+            <SingleValue icon={require('../../assets/icons/FiWind.png')} value={i18n.t('weather.legend.wind')} />
+            <SingleValue icon={require('../../assets/icons/FiCompass.png')} value={i18n.t('weather.legend.wind_direction')} />
+            <SingleValue icon={require('../../assets/icons/FiTrendingUp.png')} value={i18n.t('weather.legend.max_temp')} />
+            <SingleValue icon={require('../../assets/icons/FiTrendingDown.png')} value={i18n.t('weather.legend.min_temp')} />
           </View>
         </View>
       </ScrollView>

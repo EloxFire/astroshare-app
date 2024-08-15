@@ -1,3 +1,4 @@
+import { weatherTranslation } from "../fr/screens/weather";
 import { commonTranslations } from "./common/common";
 import { homeSearchModuleTranslations } from "./components/forms/homeSearchModule";
 import { locationHeaderTranslations } from "./components/locationHeader";
@@ -16,4 +17,5 @@ export const enTranslations = {
   homeSearchModule: homeSearchModuleTranslations,
   languageSelection: languageSelection,
   tutorialScreen: tutorialScreen,
+  weather: weatherTranslation
 }
