@@ -6,6 +6,7 @@ import { locationModalTranslations } from "./components/locationModal";
 import { homeTranslations } from "./screens/home";
 import { languageSelection } from "./screens/languageSelection";
 import { settingsTranslations } from "./screens/settings";
+import { weatherTranslation } from "./screens/weather";
 
 export const frTranslations = {
   common: commonTranslations,
@@ -16,4 +17,5 @@ export const frTranslations = {
   homeSearchModule: homeSearchModuleTranslations,
   languageSelection: languageSelection,
   tutorialScreen: tutorialScreen,
+  weather: weatherTranslation,
 }
