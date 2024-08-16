@@ -13,6 +13,7 @@ import { showToast } from '../helpers/scripts/showToast'
 export default function LanguageSelection({ navigation }: any) {
 
   const changeLocale = async (code: string) => {
+    showToast({ message: i18n.t('languageSelection.warning'), type: 'error', duration: 3000 })
     i18n.locale = code
     await storeData('locale', code)
     navigation.navigate(routes.home.path)
