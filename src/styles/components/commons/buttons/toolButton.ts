@@ -25,6 +25,12 @@ export const toolButtonStyles = {
       opacity: .2,
     },
 
+    icon: {
+      width: 30,
+      height: 30,
+      marginRight: 10,
+    },
+
     text: {
       color: app_colors.white,
       fontSize: 20,

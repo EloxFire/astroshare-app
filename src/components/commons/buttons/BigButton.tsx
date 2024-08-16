@@ -3,6 +3,7 @@ import { Image, ImageSourcePropType, Text, TouchableOpacity, View } from 'react-
 import { bigButtonStyles } from '../../../styles/components/commons/buttons/bigButton'
 import { EFeatureRequirements } from '../../../helpers/types/FeatureRequirements'
 import { useSettings } from '../../../contexts/AppSettingsContext'
+import { app_colors } from '../../../helpers/constants'
 
 interface BigButtonProps {
   text: string
@@ -11,12 +12,13 @@ interface BigButtonProps {
   navigation?: any
   targetScreen?: string
   hasCheckbox?: boolean
+  isPremium?: boolean
   isChecked?: boolean
   disabled?: boolean
   onPress?: () => void
 }
 
-export default function BigButton({ text, icon, navigation, targetScreen, subtitle, hasCheckbox, isChecked, onPress, disabled }: BigButtonProps) {
+export default function BigButton({ text, icon, navigation, targetScreen, subtitle, hasCheckbox, isChecked, onPress, disabled, isPremium }: BigButtonProps) {
 
   const handleNavigation = () => {
     if (!navigation || !targetScreen) return;
@@ -48,6 +50,13 @@ export default function BigButton({ text, icon, navigation, targetScreen, subtit
             style={bigButtonStyles.button.icon}
           />
         )
+      }
+      {
+        isPremium &&
+        <Image
+          source={require('../../../../assets/icons/FiLock.png')}
+          style={[bigButtonStyles.button.icon, { tintColor: app_colors.gold }]}
+        />
       }
     </TouchableOpacity>
   )
