@@ -13,6 +13,7 @@ import DSOValues from '../components/commons/DSOValues'
 import ToggleButton from '../components/commons/buttons/ToggleButton'
 import dayjs from 'dayjs'
 import axios from 'axios'
+import { i18n } from '../helpers/scripts/i18n'
 
 
 export default function SkyMapGenerator({ navigation }: any) {
@@ -89,7 +90,7 @@ export default function SkyMapGenerator({ navigation }: any) {
   return (
     <View style={globalStyles.body}>
       <View style={{ zIndex: 10 }}>
-        <PageTitle navigation={navigation} title="Carte du ciel" subtitle="// Carte du ciel en direct" />
+        <PageTitle navigation={navigation} title={i18n.t('home.buttons.skymap_generator.title')} subtitle={i18n.t('home.buttons.skymap_generator.subtitle')} />
         <View style={globalStyles.screens.separator} />
       </View>
 
@@ -131,7 +132,7 @@ export default function SkyMapGenerator({ navigation }: any) {
                 const endY = (screenWidth / 2) + endR * Math.cos(endTheta);
 
                 return (
-                  <Line key={`${constellationIndex}-${segmentIndex}`} x1={startX} y1={startY} x2={endX} y2={endY} stroke={app_colors.red_forty} strokeWidth="1" fill="none" />
+                  <Line key={`${constellationIndex}-${segmentIndex}`} x1={startX} y1={startY} x2={endX} y2={endY} stroke={app_colors.red_eighty} strokeWidth="1" fill="none" />
                 );
               }).filter(Boolean); // Filter out any null values
             })
@@ -208,10 +209,10 @@ export default function SkyMapGenerator({ navigation }: any) {
       <Text style={{ color: app_colors.red_eighty, textAlign: 'center', fontSize: 20 }}>S</Text>
 
       <View style={{ marginTop: 20 }}>
-        <DSOValues title='Heure locale' chipValue chipColor={app_colors.grey} value={dayjs(currentTime).format('HH:mm:ss').replace(':', 'h').replace(':', 'm') + "s"} />
+        <DSOValues title={i18n.t('skymapGenerator.localTime')} chipValue chipColor={app_colors.grey} value={dayjs(currentTime).format('HH:mm:ss').replace(':', 'h').replace(':', 'm') + "s"} />
         <ScrollView style={{ marginTop: 10, borderTopWidth: 1, borderColor: app_colors.white_forty, paddingTop: 10 }}>
-          <ToggleButton title='Constellations' onToggle={() => setShowConstellations(!showConstellations)} toggled={showConstellations} />
-          <ToggleButton title='Noms constellations' onToggle={() => setShowConstellationsName(!showConstellationsName)} toggled={showConstellationsName} />
+          <ToggleButton title={i18n.t('skymapGenerator.constellations')} onToggle={() => setShowConstellations(!showConstellations)} toggled={showConstellations} />
+          <ToggleButton title={i18n.t('skymapGenerator.constellationsName')} onToggle={() => setShowConstellationsName(!showConstellationsName)} toggled={showConstellationsName} />
           {/* <Text style={{ color: 'white' }}>{constellationsAsterisms[0].features[0].properties?.name}</Text> */}
           {/* <Text style={{ color: 'white' }}>{JSON.stringify(constellationsAsterisms[0].features[0].properties?.centrum)}</Text> */}
         </ScrollView>
