@@ -1,3 +1,5 @@
+import { i18n } from "../i18n";
+
 export const countryCodes: { [key: string]: string } = {
   "AF": "Afghanistan",
   "AX": "Îles Åland",
@@ -251,5 +253,5 @@ export const countryCodes: { [key: string]: string } = {
 };
 
 export const getCountryByCode = (code: string): string => {
-  return countryCodes[code] || "Inconnu";
+  return countryCodes[code] || i18n.t('satelliteTracker.infosModal.unknown');
 };

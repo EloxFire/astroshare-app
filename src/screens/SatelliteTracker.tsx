@@ -13,6 +13,7 @@ import axios from 'axios'
 import DSOValues from '../components/commons/DSOValues'
 import WebView from 'react-native-webview'
 import YoutubePlayer from "react-native-youtube-iframe";
+import { i18n } from '../helpers/scripts/i18n'
 
 export default function SatelliteTracker({ navigation }: any) {
 
@@ -144,7 +145,7 @@ export default function SatelliteTracker({ navigation }: any) {
         }
       </MapView>
       <View style={satelliteTrackerStyles.pageControls}>
-        <PageTitle title='ISS tracker' navigation={navigation} subtitle="// Position de l'ISS en temps réel" />
+        <PageTitle title={i18n.t('home.buttons.satellite_tracker.title')} navigation={navigation} subtitle={i18n.t('home.buttons.satellite_tracker.subtitle')} />
       </View>
       <TouchableOpacity style={satelliteTrackerStyles.button} onPress={() => { setLiveFeedModalVisible(false); setIssInfosModalVisible(!issInfosModalVisible) }}>
         <Image source={require('../../assets/icons/FiInfo.png')} style={{ width: 24, height: 24 }} />
@@ -171,11 +172,11 @@ export default function SatelliteTracker({ navigation }: any) {
               </View>
               <Image source={require('../../assets/icons/FiIss.png')} style={{ width: 50, height: 50 }} />
             </View>
-            <DSOValues title='Latitude' value={issPosition ? issPosition.dsm_lat : 'Chargement'} chipValue chipColor={app_colors.grey} />
-            <DSOValues title='Longitude' value={issPosition ? issPosition.dsm_lon : 'Chargement'} chipValue chipColor={app_colors.grey} />
-            <DSOValues title='Altitude' value={issPosition ? `${issPosition.altitude.toFixed(2)} Km` : 'Chargement'} chipValue chipColor={app_colors.grey} />
-            <DSOValues title='Vitesse' value={issPosition ? `${issPosition.velocity.toFixed(2)} Km/h` : 'Chargement'} chipValue chipColor={app_colors.grey} />
-            <DSOValues title='Pays (survol)' value={issPosition ? getCountryByCode(issPosition.country) : 'Chargement'} chipValue chipColor={app_colors.grey} />
+            <DSOValues title={i18n.t('satelliteTracker.infosModal.latitude')} value={issPosition ? issPosition.dsm_lat : i18n.t('common.loadings.simple')} chipValue chipColor={app_colors.grey} />
+            <DSOValues title={i18n.t('satelliteTracker.infosModal.longitude')} value={issPosition ? issPosition.dsm_lon : i18n.t('common.loadings.simple')} chipValue chipColor={app_colors.grey} />
+            <DSOValues title={i18n.t('satelliteTracker.infosModal.altitude')} value={issPosition ? `${issPosition.altitude.toFixed(2)} Km` : i18n.t('common.loadings.simple')} chipValue chipColor={app_colors.grey} />
+            <DSOValues title={i18n.t('satelliteTracker.infosModal.speed')} value={issPosition ? `${issPosition.velocity.toFixed(2)} Km/h` : i18n.t('common.loadings.simple')} chipValue chipColor={app_colors.grey} />
+            <DSOValues title={i18n.t('satelliteTracker.infosModal.country')} value={issPosition ? getCountryByCode(issPosition.country) : i18n.t('common.loadings.simple')} chipValue chipColor={app_colors.grey} />
           </ScrollView>
         </View>
       }
@@ -184,8 +185,8 @@ export default function SatelliteTracker({ navigation }: any) {
         liveFeedModalVisible &&
         <View style={satelliteTrackerStyles.issModal}>
           <ScrollView>
-            <Text style={satelliteTrackerStyles.issModal.title}>Vidéo en direct</Text>
-            <Text style={[satelliteTrackerStyles.issModal.subtitle, { marginBottom: 10, fontFamily: 'GilroyRegular', opacity: .5 }]}>La station à une période de 45 minutes dans le noir a chaque orbite  -  Le flux video possède environ 15 secondes de retard sur la position actuelle affichée</Text>
+            <Text style={satelliteTrackerStyles.issModal.title}>{i18n.t('satelliteTracker.liveModal.title')}</Text>
+            <Text style={[satelliteTrackerStyles.issModal.subtitle, { marginBottom: 10, fontFamily: 'GilroyRegular', opacity: .5 }]}>{i18n.t('satelliteTracker.liveModal.subtitle')}</Text>
             <YoutubePlayer
               width={Dimensions.get('screen').width - 20}
               height={(Dimensions.get('screen').width - 20) / (16 / 9)}

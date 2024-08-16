@@ -28,7 +28,7 @@ export const homeTranslations = {
       title: "APOD",
       subtitle: "// Astronomy Picture of the Day"
     },
-    iss_tracker: {
+    satellite_tracker: {
       title: "ISS Tracker",
       subtitle: "// ISS position in real-time"
     },

@@ -8,6 +8,7 @@ import { hourlyOverviewTranslation } from "./components/weather/hourlyOverview";
 import { homeTranslations } from "./screens/home";
 import { languageSelection } from "./screens/languageSelection";
 import { moonPhasesTranslation } from "./screens/moonPhases";
+import { satelliteTrackerTranslations } from "./screens/satelliteTracker";
 import { scopeAlignmentTranslation } from "./screens/scopeAlignment";
 import { settingsTranslations } from "./screens/settings";
 import { solarWeatherTranslations } from "./screens/solarWeather";
@@ -27,5 +28,6 @@ export const enTranslations = {
   ephemerisBar: ephemerisBarTranslation,
   scopeAlignment: scopeAlignmentTranslation,
   moonPhases: moonPhasesTranslation,
-  solarWeather: solarWeatherTranslations
+  solarWeather: solarWeatherTranslations,
+  satelliteTracker: satelliteTrackerTranslations
 }
