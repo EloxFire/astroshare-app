@@ -4,7 +4,7 @@ dotenv.config();
 module.exports = {
   name: "Astroshare",
   slug: "astroshare-app",
-  version: "b_v1.6.0",
+  version: "b_v1.6.1",
   orientation: "portrait",
   icon: "./assets/icon.png",
   userInterfaceStyle: "light",
@@ -25,7 +25,6 @@ module.exports = {
     },
     permissions: [
       "android.permission.ACCESS_FINE_LOCATION",
-      "com.android.vending.BILLING"
     ],
     blockedPermissions: [
       "android.permission.ACTIVITY_RECOGNITION",
@@ -37,7 +36,7 @@ module.exports = {
       }
     },
     package: "fr.eavagliano.astroshare",
-    versionCode: 20
+    versionCode: 21
   },
   web: {
     favicon: "./assets/favicon.png"
