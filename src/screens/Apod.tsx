@@ -13,6 +13,7 @@ import PageTitle from '../components/commons/PageTitle'
 import dayjs from 'dayjs'
 import WebView from 'react-native-webview'
 import YoutubePlayer from "react-native-youtube-iframe";
+import { i18n } from '../helpers/scripts/i18n'
 
 export default function Apod({ navigation }: any) {
 
@@ -36,13 +37,13 @@ export default function Apod({ navigation }: any) {
 
   return (
     <View style={globalStyles.body}>
-      <PageTitle navigation={navigation} title="APOD" subtitle="// Image du jour de la NASA" />
+      <PageTitle navigation={navigation} title={i18n.t('home.buttons.apod.title')} subtitle={i18n.t('home.buttons.apod.subtitle')} />
       <View style={globalStyles.screens.separator} />
       <ScrollView>
         <View style={apodStyles.content}>
-          <Text style={apodStyles.content.title}>{apod?.title.replace(/(\r\n|\n|\r)/gm, "") || "Chargement"}</Text>
-          {apod?.copyright && <Text style={[apodStyles.content.text, { color: app_colors.white_eighty }]}>Copyright : {apod?.copyright.replace(/(\r\n|\n|\r)/gm, "") || "Chargement"}</Text>}
-          <Text style={[apodStyles.content.text, { color: app_colors.white_eighty, marginTop: 5 }]}>Date : {apod?.date ? dayjs(apod?.date).format('DD/MM/YYYY') : "Chargement"}</Text>
+          <Text style={apodStyles.content.title}>{apod?.title.replace(/(\r\n|\n|\r)/gm, "") || i18n.t('common.loadings.simple')}</Text>
+          {apod?.copyright && <Text style={[apodStyles.content.text, { color: app_colors.white_eighty }]}>Copyright : {apod?.copyright.replace(/(\r\n|\n|\r)/gm, "") || i18n.t('common.loadings.simple')}</Text>}
+          <Text style={[apodStyles.content.text, { color: app_colors.white_eighty, marginTop: 5 }]}>Date : {apod?.date ? dayjs(apod?.date).format('DD/MM/YYYY') : i18n.t('common.loadings.simple')}</Text>
           {
             apod?.media_type === 'video' ?
               apod?.url.includes('youtube') ?
@@ -70,7 +71,7 @@ export default function Apod({ navigation }: any) {
           }
 
           <Text style={apodStyles.content.subtitle}>Description :</Text>
-          <Text style={[apodStyles.content.text, { fontSize: 16, alignSelf: 'flex-start', lineHeight: 25 }]}>{apod?.explanation || 'Chargement'}</Text>
+          <Text style={[apodStyles.content.text, { fontSize: 16, alignSelf: 'flex-start', lineHeight: 25 }]}>{apod?.explanation || i18n.t('common.loadings.simple')}</Text>
         </View>
       </ScrollView>
     </View>
