@@ -42,7 +42,7 @@ export default function SearchStarResultCard({ star, navigation }: SearchPlanetR
   }, [currentUserLocation])
 
   return (
-    <TouchableOpacity onPress={() => navigation.navigate(routes.brightStarDetails.path, { star: star, visible: isVisible })}>
+    <TouchableOpacity onPress={() => navigation.push(routes.brightStarDetails.path, { star: star, visible: isVisible })}>
       <View style={searchResultCardStyles.card}>
         <View style={searchResultCardStyles.card.header}>
           <View>

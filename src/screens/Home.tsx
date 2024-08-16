@@ -21,7 +21,7 @@ export default function Home({ navigation }: any) {
     (async () => {
       const firstLaunch = await isFirstLaunch();
       if (firstLaunch) {
-        navigation.navigate(routes.onboarding.path)
+        navigation.push(routes.onboarding.path)
       }
     })()
   }, [])

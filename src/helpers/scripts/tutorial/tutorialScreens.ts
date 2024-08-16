@@ -6,7 +6,7 @@ export const tutorialScreens = [
     description: [
       "Profitez d'une barre de recherche universelle qui vous permet de trouver tout ce que vous cherchez.",
       "Planètes, objets du ciel profond, étoiles nomées, et bien plus très prochainement !",
-      "Découvrez notre catalogue de plus de 13 000 objets tout confondus, regroupés en un seul endroit, ici, sur Astroshare !"
+      "Découvrez notre catalogue de plus de 13 000 objets, regroupés en un seul endroit, ici, sur Astroshare !"
     ]
   },
   {

@@ -8,15 +8,15 @@ import { languagesList } from '../helpers/scripts/i18n/languagesList'
 import getUnicodeFlagIcon from 'country-flag-icons/unicode'
 import { routes } from '../helpers/routes'
 import { storeData } from '../helpers/storage'
-import { showToast } from '../helpers/scripts/showToast'
+import { app_colors } from '../helpers/constants'
 
 export default function LanguageSelection({ navigation }: any) {
 
   const changeLocale = async (code: string) => {
-    showToast({ message: i18n.t('languageSelection.warning'), type: 'error', duration: 3000 })
+    // showToast({ message: i18n.t('languageSelection.warning'), type: 'error', duration: 3000 })
     i18n.locale = code
     await storeData('locale', code)
-    navigation.navigate(routes.home.path)
+    navigation.push(routes.home.path)
   }
 
   return (
@@ -31,10 +31,12 @@ export default function LanguageSelection({ navigation }: any) {
         <View style={languageSelectionStyles.content}>
           {
             languagesList.map((language: any, index: number) => {
+              console.log(language)
+
               return (
-                <TouchableOpacity key={index} style={languageSelectionStyles.content.button} onPress={() => changeLocale(language.twoLettersCode)}>
+                <TouchableOpacity key={index} style={[languageSelectionStyles.content.button, { borderColor: i18n.locale === language.twoLettersCode ? app_colors.white : app_colors.white_no_opacity }]} onPress={() => changeLocale(language.twoLettersCode)}>
                   <Text style={languageSelectionStyles.content.button.text}>{language.name}</Text>
-                  <Text style={languageSelectionStyles.content.button.icon}>{getUnicodeFlagIcon(language.twoLettersCode.toUpperCase())}</Text>
+                  <Text style={languageSelectionStyles.content.button.icon}>{getUnicodeFlagIcon(language.twoLettersCode === 'en' ? 'GB' : language.twoLettersCode.toUpperCase())}</Text>
                 </TouchableOpacity>
               )
             })

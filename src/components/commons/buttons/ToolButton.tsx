@@ -18,7 +18,7 @@ export default function ToolButton({ text, image, navigation, targetScreen, subt
 
   const handleNavigation = () => {
     if (!navigation || !targetScreen) return;
-    navigation.navigate(targetScreen)
+    navigation.push(targetScreen)
   }
 
   const handleButtonPress = () => {

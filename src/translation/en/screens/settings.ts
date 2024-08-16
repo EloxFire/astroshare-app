@@ -1,30 +1,34 @@
 export const settingsTranslations = {
-  "title": "Settings",
-  "subtitle": "// Customize your Astroshare application",
-  "buttons": {
-    "nightMode": {
-      "title": "Night mode",
-      "subtitle": "// Night filter (Experimental)"
+  title: "Settings",
+  subtitle: "// Customize your Astroshare application",
+  buttons: {
+    nightMode: {
+      title: "Night mode",
+      subtitle: "// Night filter (Experimental)"
     },
-    "cellularData": {
-      "title": "Cellular data",
-      "subtitle": "// Disable cellular data"
+    cellularData: {
+      title: "Cellular data",
+      subtitle: "// Disable cellular data"
     },
-    "favoritesViewPoints": {
-      "title": "Observation locations",
-      "subtitle": "// Configure your favorite observation locations"
+    favoritesViewPoints: {
+      title: "Observation locations",
+      subtitle: "// Configure your favorite observation locations"
     },
-    "language": {
-      "title": "Language",
-      "subtitle": "// Change the language of the application"
+    tutorial: {
+      title: "Tutorial",
+      subtitle: "// Discover how to use the application"
     },
-    "permissions": {
-      "title": "Permissions",
-      "subtitle": "// Manage application access"
+    language: {
+      title: "Language",
+      subtitle: "// Change the language of the application"
     },
-    "about": {
-      "title": "About",
-      "subtitle": "// Version, contact, legal"
+    permissions: {
+      title: "Permissions",
+      subtitle: "// Manage application access"
+    },
+    about: {
+      title: "About",
+      subtitle: "// Version, contact, legal"
     }
   }
 }

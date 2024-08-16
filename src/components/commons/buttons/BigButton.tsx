@@ -20,7 +20,7 @@ export default function BigButton({ text, icon, navigation, targetScreen, subtit
 
   const handleNavigation = () => {
     if (!navigation || !targetScreen) return;
-    navigation.navigate(targetScreen)
+    navigation.push(targetScreen)
   }
 
   const handleButtonPress = () => {

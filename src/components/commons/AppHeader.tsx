@@ -12,7 +12,7 @@ export default function AppHeader({ navigation }: any) {
 
   const isFocused = useIsFocused();
   const [hasFavs, setHasFavs] = useState(false)
-  const [showTutorial, setShowTutorial] = useState(true)
+  const [showTutorial, setShowTutorial] = useState(false)
 
   const pulseAnim = useRef(new Animated.Value(1)).current;
 
@@ -66,12 +66,12 @@ export default function AppHeader({ navigation }: any) {
         {
           showTutorial &&
           <Animated.View style={{ transform: [{ scale: interpolated }] }}>
-            <TouchableOpacity style={appHeaderStyles.container.tutorialButton} onPress={() => navigation.navigate(routes.tutorial.path)}>
+            <TouchableOpacity style={appHeaderStyles.container.tutorialButton} onPress={() => navigation.push(routes.tutorial.path)}>
               <Text style={appHeaderStyles.container.tutorialButton.text}>{i18n.t('tutorialScreen.button')}</Text>
             </TouchableOpacity>
           </Animated.View>
         }
-        <TouchableOpacity onPress={() => navigation.navigate(routes.favorites.path)}>
+        <TouchableOpacity onPress={() => navigation.push(routes.favorites.path)}>
           {
             !hasFavs ?
               <Image source={require('../../../assets/icons/FiHeart.png')} style={{ width: 20, height: 20 }} />
@@ -79,7 +79,7 @@ export default function AppHeader({ navigation }: any) {
               <Image source={require('../../../assets/icons/FiHeartFill.png')} style={{ width: 20, height: 20, tintColor: app_colors.red_eighty }} />
           }
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate(routes.settings.path)}>
+        <TouchableOpacity onPress={() => navigation.push(routes.settings.path)}>
           <Image source={require('../../../assets/icons/FiSettings.png')} style={{ width: 20, height: 20 }} />
         </TouchableOpacity>
       </View>

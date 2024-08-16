@@ -17,7 +17,7 @@ export default function ComingSoon({ route, navigation }: any) {
       <View style={globalStyles.screens.separator} />
       <Text style={[globalStyles.sections.title, { textAlign: 'center', marginTop: 50 }]}>Bientôt disponible !</Text>
       <Text style={[globalStyles.sections.subtitle, { textAlign: 'center', fontSize: 18, lineHeight: 22, marginTop: 15 }]}>{disclaimer}</Text>
-      <TouchableOpacity style={comingSoonStyles.button} onPress={() => navigation.navigate(routes.home.path)}>
+      <TouchableOpacity style={comingSoonStyles.button} onPress={() => navigation.push(routes.home.path)}>
         <Text style={comingSoonStyles.buttonText}>Revenir à l'accueil</Text>
       </TouchableOpacity>
     </View>

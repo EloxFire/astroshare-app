@@ -17,7 +17,7 @@ interface ObjectCardLiteProps {
 
 export default function ObjectCardLite({ object, navigation }: ObjectCardLiteProps) {
   return (
-    <TouchableOpacity onPress={() => navigation.navigate(routes.objectDetails.path, { object: object })} style={objectCardLiteStyles.card}>
+    <TouchableOpacity onPress={() => navigation.push(routes.objectDetails.path, { object: object })} style={objectCardLiteStyles.card}>
       <Image style={objectCardLiteStyles.card.image} source={astroImages[object.type.toUpperCase()]} />
       <View style={objectCardLiteStyles.card.infos}>
         <Text style={objectCardLiteStyles.card.infos.title}>{getObjectName(object, 'all', true).toUpperCase()} {object.common_names.split(',')[0] !== '' && `(${object.common_names.split(',')[0]})`}</Text>

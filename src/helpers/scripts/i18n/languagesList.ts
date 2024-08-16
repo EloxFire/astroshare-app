@@ -1,12 +1,12 @@
+import { i18n } from ".";
+
 export const languagesList = [
   {
-    name: 'Français',
-    nativeName: 'Français',
+    name: i18n.t('languages.fr'),
     twoLettersCode: 'fr',
   },
   {
-    name: 'Anglais',
-    nativeName: 'English',
-    twoLettersCode: 'gb',
+    name: i18n.t('languages.en'),
+    twoLettersCode: 'en',
   }
 ]
