@@ -8,6 +8,10 @@ import { onboardingStyles } from '../styles/screens/onboarding'
 import { isFirstLaunch } from '../helpers/scripts/checkFirstLaunch'
 import { useSettings } from '../contexts/AppSettingsContext'
 import { StackActions } from '@react-navigation/native';
+import { languageSelectionStyles } from '../styles/screens/languageSelection'
+import { i18n } from '../helpers/scripts/i18n'
+import { app_colors } from '../helpers/constants'
+import getUnicodeFlagIcon from 'country-flag-icons/unicode'
 
 
 export default function Onboarding({ navigation }: any) {
@@ -25,6 +29,12 @@ export default function Onboarding({ navigation }: any) {
     })()
   }, [])
 
+  const changeLocale = async (code: string) => {
+    i18n.locale = code
+    await storeData('locale', code)
+    navigation.replace(routes.onboarding.path)
+  }
+
   const handleAccept = async () => {
     await storeData('firstLaunch', 'false');
     refreshCurrentUserLocation()
@@ -36,20 +46,28 @@ export default function Onboarding({ navigation }: any) {
   return (
     <View style={globalStyles.body}>
       <Image source={require('../../assets/logos/astroshare_logo_white.png')} resizeMode="contain" style={{ alignSelf: "center", height: 50, marginBottom: 20 }} />
-      <Text style={onboardingStyles.title}>Bienvenue !</Text>
-      <Text style={onboardingStyles.subtitle}>Merci d'avoir téléchargé l'application Astroshare !</Text>
-      <Text style={[onboardingStyles.subtitle, { marginBottom: 40 }]}>Voici quelques informations importantes :</Text>
-      <Text style={onboardingStyles.text}>Pour que l'application Astroshare soit fonctionnelle et la plus pertinante possible, cette dernière à accès aux informations suivantes :</Text>
+      <Text style={onboardingStyles.title}>{i18n.t('onboarding.title')}</Text>
+      <Text style={onboardingStyles.subtitle}>{i18n.t('onboarding.subtitle')}</Text>
+      <Text style={[onboardingStyles.subtitle, { marginBottom: 40 }]}>{i18n.t('onboarding.disclaimer')}</Text>
+      <Text style={onboardingStyles.text}>{i18n.t('onboarding.text')}</Text>
       <View style={{ marginTop: 30 }}>
-        <Text style={onboardingStyles.listText}>- Position géographique lors de l'utilisation</Text>
-        <Text style={onboardingStyles.listText}>- Gyroscope</Text>
-        <Text style={onboardingStyles.listText}>- Accéléromètre</Text>
-        <Text style={onboardingStyles.listText}>- Baromètre</Text>
+        <Text style={onboardingStyles.listText}>{i18n.t('onboarding.listText')}</Text>
+        <Text style={onboardingStyles.listText}>{i18n.t('onboarding.listText2')}</Text>
+        <Text style={onboardingStyles.listText}>{i18n.t('onboarding.listText3')}</Text>
+        <Text style={onboardingStyles.listText}>{i18n.t('onboarding.listText4')}</Text>
       </View>
-      <Text style={[onboardingStyles.text, { marginTop: 30 }]}>Ce message n'est affiché que <Text style={{ textDecorationLine: 'underline' }}>lors du premier démarrage</Text> de l'application</Text>
-      <TouchableOpacity style={comingSoonStyles.button} onPress={() => handleAccept()}>
-        <Text style={comingSoonStyles.buttonText}>Accepter</Text>
+      <Text style={[onboardingStyles.text, { marginTop: 30 }]}>{i18n.t('onboarding.messageShown')}</Text>
+      <TouchableOpacity style={comingSoonStyles.button} onPress={() => handleAccept()} disabled={!isFirstLaunch}>
+        <Text style={comingSoonStyles.buttonText}>{i18n.t('onboarding.accept')}</Text>
       </TouchableOpacity>
+      <View style={{ marginTop: 20, display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+        <TouchableOpacity style={[languageSelectionStyles.content.button, { justifyContent: 'center' }]} onPress={() => changeLocale('fr')}>
+          <Text style={languageSelectionStyles.content.button.icon}>{getUnicodeFlagIcon('FR')}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={[languageSelectionStyles.content.button, { justifyContent: 'center' }]} onPress={() => changeLocale('en')}>
+          <Text style={languageSelectionStyles.content.button.icon}>{getUnicodeFlagIcon('GB')}</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   )
 }

@@ -10,6 +10,7 @@ import { hourlyOverviewTranslation } from "./components/weather/hourlyOverview";
 import { homeTranslations } from "./screens/home";
 import { languageSelection } from "./screens/languageSelection";
 import { moonPhasesTranslation } from "./screens/moonPhases";
+import { onboardingTranslations } from "./screens/onboarding";
 import { satelliteTrackerTranslations } from "./screens/satelliteTracker";
 import { scopeAlignmentTranslation } from "./screens/scopeAlignment";
 import { settingsTranslations } from "./screens/settings";
@@ -19,6 +20,7 @@ import { tutorialScreen } from "./screens/tutorialScreen";
 import { viewpointsManagerTranslations } from "./screens/viewpointsManager";
 
 export const enTranslations = {
+  onboarding: onboardingTranslations,
   common: commonTranslations,
   languages: languagesTranslations,
   home: homeTranslations,
