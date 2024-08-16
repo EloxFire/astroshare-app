@@ -25,6 +25,7 @@ module.exports = {
     },
     permissions: [
       "android.permission.ACCESS_FINE_LOCATION",
+      "com.android.vending.BILLING"
     ],
     blockedPermissions: [
       "android.permission.ACTIVITY_RECOGNITION",
