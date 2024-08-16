@@ -1,5 +1,6 @@
 import { weatherTranslation } from "../fr/screens/weather";
 import { commonTranslations } from "./common/common";
+import { resultCardsTranslations } from "./components/cards/resultCards";
 import { homeSearchModuleTranslations } from "./components/forms/homeSearchModule";
 import { locationHeaderTranslations } from "./components/locationHeader";
 import { locationModalTranslations } from "./components/locationModal";
@@ -33,5 +34,6 @@ export const enTranslations = {
   solarWeather: solarWeatherTranslations,
   satelliteTracker: satelliteTrackerTranslations,
   skymapGenerator: skymapGeneratorTranslations,
-  viewpointsManager: viewpointsManagerTranslations
+  viewpointsManager: viewpointsManagerTranslations,
+  resultCards: resultCardsTranslations,
 }

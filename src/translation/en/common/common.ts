@@ -28,5 +28,10 @@ export const commonTranslations = {
     yes: "Yes",
     no: "No",
     days: "days",
+  },
+  visibility: {
+    visible: "Visible",
+    notVisible: "Not visible",
+    error: "Error while calculating visibility",
   }
 }

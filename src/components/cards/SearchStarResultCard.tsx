@@ -18,6 +18,7 @@ import { convertDegreesDecToDMS } from '../../helpers/scripts/astro/coords/conve
 import { getConstellationName } from '../../helpers/scripts/getConstellationName'
 import { useSpot } from '../../contexts/ObservationSpotContext'
 import { extractNumbers } from '../../helpers/scripts/extractNumbers'
+import { i18n } from '../../helpers/scripts/i18n'
 
 interface SearchPlanetResultCardProps {
   star: Star
@@ -51,25 +52,25 @@ export default function SearchStarResultCard({ star, navigation }: SearchPlanetR
         </View>
         <View style={searchResultCardStyles.card.body}>
           <View style={searchResultCardStyles.card.body.info}>
-            <Text style={searchResultCardStyles.card.body.info.title}>Constellation :</Text>
+            <Text style={searchResultCardStyles.card.body.info.title}>{i18n.t('resultCards.starCard.constellation')} :</Text>
             <Text style={searchResultCardStyles.card.body.info.value}>{getConstellationName(getConstellation({ ra: star.ra, dec: star.dec })?.abbreviation || "Inconnu")}</Text>
           </View>
           <View style={searchResultCardStyles.card.body.info}>
-            <Text style={searchResultCardStyles.card.body.info.title}>Magnitude :</Text>
+            <Text style={searchResultCardStyles.card.body.info.title}>{i18n.t('resultCards.starCard.magnitude')} :</Text>
             <Text style={searchResultCardStyles.card.body.info.value}>{star.V.toString() || star.B.toString()}</Text>
           </View>
           <View style={searchResultCardStyles.card.body.info}>
-            <Text style={searchResultCardStyles.card.body.info.title}>Ascension droite :</Text>
+            <Text style={searchResultCardStyles.card.body.info.title}>{i18n.t('resultCards.starCard.right_ascension')} :</Text>
             <Text style={searchResultCardStyles.card.body.info.value}>{convertDegreesRaToHMS(star.ra)}</Text>
           </View>
           <View style={searchResultCardStyles.card.body.info}>
-            <Text style={searchResultCardStyles.card.body.info.title}>Déclinaison :</Text>
+            <Text style={searchResultCardStyles.card.body.info.title}>{i18n.t('resultCards.starCard.declination')} :</Text>
             <Text style={searchResultCardStyles.card.body.info.value}>{convertDegreesDecToDMS(star.dec)}</Text>
           </View>
 
         </View>
         <View style={searchResultCardStyles.card.footer}>
-          <Text style={[searchResultCardStyles.card.footer.chip, { backgroundColor: isVisible ? app_colors.green_eighty : app_colors.red_eighty }]}>{isVisible ? `Visible` : "Non visible"}</Text>
+          <Text style={[searchResultCardStyles.card.footer.chip, { backgroundColor: isVisible ? app_colors.green_eighty : app_colors.red_eighty }]}>{isVisible ? i18n.t('common.visibility.visible') : i18n.t('common.visibility.notVisible')}</Text>
         </View>
       </View>
     </TouchableOpacity>

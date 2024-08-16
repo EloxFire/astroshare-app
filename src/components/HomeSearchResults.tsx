@@ -9,6 +9,7 @@ import SearchResultCard from './cards/SearchResultCard'
 import SearchPlanetResultCard from './cards/SearchPlanetResultCard'
 import { Star } from '../helpers/types/Star'
 import SearchStarResultCard from './cards/SearchStarResultCard'
+import { i18n } from '../helpers/scripts/i18n'
 
 interface HomeSearchResultsProps {
   results: DSO[]
@@ -40,7 +41,7 @@ export default function HomeSearchResults({ results, planetResults, onReset, nav
   return (
     <View>
       <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-        <Text style={globalStyles.sections.title}>Objets trouvés</Text>
+        <Text style={globalStyles.sections.title}>{i18n.t('homeSearchModule.found_objects')}</Text>
         {
           (results.length > 0 || planetResults.length > 0 || starsResults.length > 0) &&
           <TouchableOpacity style={{ backgroundColor: app_colors.white_no_opacity, padding: 5, justifyContent: 'center', alignItems: 'center', borderRadius: 10, display: 'flex', width: 30, height: 30 }} onPress={() => onReset()}>

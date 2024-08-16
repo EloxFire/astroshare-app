@@ -9,6 +9,7 @@ import { useEffect, useState } from 'react'
 import { useSettings } from '../../contexts/AppSettingsContext'
 import { app_colors } from '../../helpers/constants'
 import { calculateHorizonAngle } from '../../helpers/scripts/astro/calculateHorizonAngle'
+import { i18n } from '../../helpers/scripts/i18n'
 
 interface SearchPlanetResultCardProps {
   planet: GlobalPlanet
@@ -39,20 +40,20 @@ export default function SearchPlanetResultCard({ planet, navigation }: SearchPla
         </View>
         <View style={searchResultCardStyles.card.body}>
           <View style={searchResultCardStyles.card.body.info}>
-            <Text style={searchResultCardStyles.card.body.info.title}>Inclinaison :</Text>
+            <Text style={searchResultCardStyles.card.body.info.title}>{i18n.t('resultCards.planetCard.inclination')} :</Text>
             <Text style={searchResultCardStyles.card.body.info.value}>{(23.5 + parseFloat(planet.i.toFixed(1))).toString() + "°"}</Text>
           </View>
           <View style={searchResultCardStyles.card.body.info}>
-            <Text style={searchResultCardStyles.card.body.info.title}>Masse :</Text>
-            <Text style={searchResultCardStyles.card.body.info.value}>{planet.name === 'Earth' ? (9.972e24 + " Kg").toString() : (planet.m.toFixed(2)) + "x Terre"}</Text>
+            <Text style={searchResultCardStyles.card.body.info.title}>{i18n.t('resultCards.planetCard.mass')} :</Text>
+            <Text style={searchResultCardStyles.card.body.info.value}>{planet.name === 'Earth' ? (9.972e24 + " Kg").toString() : (planet.m.toFixed(2)) + i18n.t('resultCards.planetCard.massUnit')}</Text>
           </View>
           <View style={searchResultCardStyles.card.body.info}>
-            <Text style={searchResultCardStyles.card.body.info.title}>Diamètre :</Text>
+            <Text style={searchResultCardStyles.card.body.info.title}>{i18n.t('resultCards.planetCard.diameter')} :</Text>
             <Text style={searchResultCardStyles.card.body.info.value}>{(planet.r * 2).toString() + " Km"}</Text>
           </View>
         </View>
         <View style={searchResultCardStyles.card.footer}>
-          <Text style={[searchResultCardStyles.card.footer.chip, { backgroundColor: isVisible ? app_colors.green_eighty : app_colors.red_eighty }]}>{isVisible ? `Visible` : "Non visible"}</Text>
+          <Text style={[searchResultCardStyles.card.footer.chip, { backgroundColor: isVisible ? app_colors.green_eighty : app_colors.red_eighty }]}>{isVisible ? i18n.t('common.visibility.visible') : i18n.t('common.visibility.notVisible')}</Text>
         </View>
       </View>
     </TouchableOpacity>

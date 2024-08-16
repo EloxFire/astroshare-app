@@ -16,6 +16,7 @@ import { useSpot } from '../../contexts/ObservationSpotContext'
 import { extractNumbers } from '../../helpers/scripts/extractNumbers'
 import dayjs, { Dayjs } from 'dayjs'
 import { prettyDec, prettyRa } from '../../helpers/scripts/astro/prettyCoords'
+import { i18n } from '../../helpers/scripts/i18n'
 
 interface SearchResultCardProps {
   object: DSO
@@ -75,24 +76,24 @@ export default function SearchResultCard({ object, navigation }: SearchResultCar
         </View>
         <View style={searchResultCardStyles.card.body}>
           <View style={searchResultCardStyles.card.body.info}>
-            <Text style={searchResultCardStyles.card.body.info.title}>Magnitude :</Text>
+            <Text style={searchResultCardStyles.card.body.info.title}>{i18n.t('resultCards.deepSkyObjectCard.magnitude')} :</Text>
             <Text style={searchResultCardStyles.card.body.info.value}>{object.b_mag || object.v_mag}</Text>
           </View>
           <View style={searchResultCardStyles.card.body.info}>
-            <Text style={searchResultCardStyles.card.body.info.title}>Constellation :</Text>
+            <Text style={searchResultCardStyles.card.body.info.title}>{i18n.t('resultCards.deepSkyObjectCard.constellation')} :</Text>
             <Text style={searchResultCardStyles.card.body.info.value}>{getConstellationName(object.const)}</Text>
           </View>
           <View style={searchResultCardStyles.card.body.info}>
-            <Text style={searchResultCardStyles.card.body.info.title}>Ascension droite :</Text>
+            <Text style={searchResultCardStyles.card.body.info.title}>{i18n.t('resultCards.deepSkyObjectCard.right_ascension')} :</Text>
             <Text style={searchResultCardStyles.card.body.info.value}>{prettyRa(object.ra)}</Text>
           </View>
           <View style={searchResultCardStyles.card.body.info}>
-            <Text style={searchResultCardStyles.card.body.info.title}>Déclinaison :</Text>
+            <Text style={searchResultCardStyles.card.body.info.title}>{i18n.t('resultCards.deepSkyObjectCard.declination')} :</Text>
             <Text style={searchResultCardStyles.card.body.info.value}>{prettyDec(object.dec)}</Text>
           </View>
         </View>
         <View style={searchResultCardStyles.card.footer}>
-          <Text style={[searchResultCardStyles.card.footer.chip, { backgroundColor: isVisible ? app_colors.green_eighty : app_colors.red_eighty }]}>{isVisible ? `Visible` : "Non visible"}</Text>
+          <Text style={[searchResultCardStyles.card.footer.chip, { backgroundColor: isVisible ? app_colors.green_eighty : app_colors.red_eighty }]}>{isVisible ? i18n.t('common.visibility.visible') : i18n.t('common.visibility.notVisible')}</Text>
         </View>
       </View>
     </TouchableOpacity>
