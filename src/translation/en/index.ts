@@ -14,6 +14,7 @@ import { settingsTranslations } from "./screens/settings";
 import { skymapGeneratorTranslations } from "./screens/skymapGenerator";
 import { solarWeatherTranslations } from "./screens/solarWeather";
 import { tutorialScreen } from "./screens/tutorialScreen";
+import { viewpointsManagerTranslations } from "./screens/viewpointsManager";
 
 export const enTranslations = {
   common: commonTranslations,
@@ -31,5 +32,6 @@ export const enTranslations = {
   moonPhases: moonPhasesTranslation,
   solarWeather: solarWeatherTranslations,
   satelliteTracker: satelliteTrackerTranslations,
-  skymapGenerator: skymapGeneratorTranslations
+  skymapGenerator: skymapGeneratorTranslations,
+  viewpointsManager: viewpointsManagerTranslations
 }

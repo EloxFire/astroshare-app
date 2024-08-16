@@ -13,6 +13,7 @@ import { scopeAlignmentTranslation } from "./screens/scopeAlignment";
 import { settingsTranslations } from "./screens/settings";
 import { skymapGeneratorTranslations } from "./screens/skymapGenerator";
 import { solarWeatherTranslations } from "./screens/solarWeather";
+import { viewpointsManagerTranslations } from "./screens/viewpointsManager";
 import { weatherTranslation } from "./screens/weather";
 
 export const frTranslations = {
@@ -31,5 +32,6 @@ export const frTranslations = {
   moonPhases: moonPhasesTranslation,
   solarWeather: solarWeatherTranslations,
   satelliteTracker: satelliteTrackerTranslations,
-  skymapGenerator: skymapGeneratorTranslations
+  skymapGenerator: skymapGeneratorTranslations,
+  viewpointsManager: viewpointsManagerTranslations
 }

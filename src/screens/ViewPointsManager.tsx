@@ -10,7 +10,8 @@ import PageTitle from '../components/commons/PageTitle'
 import ViewPoint from '../components/ViewPoint'
 import AddSpotModal from '../components/modals/AddSpotModal'
 import DeleteSpotModal from '../components/modals/DeleteSpotModal'
-import InputWithIcon from '../components/forms/InputWithIcon'
+import { i18n } from '../helpers/scripts/i18n'
+import { viewpointsManagerTranslations } from '../translation/en/screens/viewpointsManager'
 
 export default function ViewPointsManager({ navigation }: any) {
 
@@ -35,20 +36,20 @@ export default function ViewPointsManager({ navigation }: any) {
     <View style={globalStyles.body}>
       {isModalVisible && <AddSpotModal onClose={() => setIsModalVisible(false)} />}
       {isDeleteModalVisible && <DeleteSpotModal onClose={() => setDeleteModalVisible(false)} />}
-      <PageTitle navigation={navigation} title="Lieux d'observation" subtitle="// Gérez vos lieux d'observation favoris" />
+      <PageTitle navigation={navigation} title={i18n.t('viewpointsManager.title')} subtitle={i18n.t('viewpointsManager.subtitle')} />
       <View style={globalStyles.screens.separator} />
       <View style={viewPointsManagerStyles.content}>
         <View style={{ display: 'flex', flexDirection: 'row', gap: 10, justifyContent: 'center' }}>
-          <SimpleButton text="Ajouter un lieu" icon={require('../../assets/icons/FiPlus.png')} onPress={() => setIsModalVisible(true)} />
-          <SimpleButton text="Supprimer un lieu" icon={require('../../assets/icons/FiTrash.png')} onPress={() => setDeleteModalVisible(true)} />
+          <SimpleButton text={i18n.t('viewpointsManager.addViewPoint')} icon={require('../../assets/icons/FiPlus.png')} onPress={() => setIsModalVisible(true)} />
+          <SimpleButton text={i18n.t('viewpointsManager.deleteViewPoint')} icon={require('../../assets/icons/FiTrash.png')} onPress={() => setDeleteModalVisible(true)} />
         </View>
-        <Text style={viewPointsManagerStyles.content.title}>Vos lieux</Text>
-        <Text style={viewPointsManagerStyles.content.text}>Lieu actuel : {viewPoints.length === 0 ? "Aucun lieu enregistré" : selectedSpot ? selectedSpot.title : 'Aucun'}</Text>
+        <Text style={viewPointsManagerStyles.content.title}>{i18n.t('viewpointsManager.sectionTitle')}</Text>
+        <Text style={viewPointsManagerStyles.content.text}>{i18n.t('viewpointsManager.currentViewPoint')} : {viewPoints.length === 0 ? i18n.t('viewpointsManager.noViewPoint') : selectedSpot ? selectedSpot.title : i18n.t('viewpointsManager.noViewPoint')}</Text>
         <ScrollView>
           <View style={viewPointsManagerStyles.content.viewPoints}>
             {
               viewPoints.length <= 0 ?
-                <Text style={viewPointsManagerStyles.content.noViewPoints}>Aucun lieu d'observation enregistré</Text>
+                <Text style={viewPointsManagerStyles.content.noViewPoints}>{i18n.t('viewpointsManager.noViewPoints')}</Text>
                 :
                 viewPoints.map((viewPoint: TViewPoint) => {
                   return (
@@ -60,9 +61,7 @@ export default function ViewPointsManager({ navigation }: any) {
               viewPoints.length === 0 && (
                 <View style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 60 }}>
                   <Image source={require('../../assets/icons/FiViewPoint.png')} style={{ width: 90, height: 90, opacity: .5, marginBottom: 20 }} />
-                  <Text style={[viewPointsManagerStyles.content.text, { opacity: .5, marginBottom: 0, fontSize: 15 }]}>Ajouter un lieu d'observation</Text>
-                  <Text style={[viewPointsManagerStyles.content.text, { opacity: .5, marginBottom: 0, fontSize: 15 }]}>pour des informations encore</Text>
-                  <Text style={[viewPointsManagerStyles.content.text, { opacity: .5, marginBottom: 0, fontSize: 15 }]}>plus précises et personnalisées</Text>
+                  <Text style={[viewPointsManagerStyles.content.text, { opacity: .5, marginBottom: 0, fontSize: 15, marginHorizontal: 50, textAlign: 'center' }]}>{i18n.t('viewpointsManager.description')}</Text>
                 </View>
               )
             }
