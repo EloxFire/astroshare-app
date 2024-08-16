@@ -1,23 +1,18 @@
-import React, { useEffect, useState } from 'react'
-import { Keyboard, ScrollView, Text, View } from 'react-native'
+import React, { useEffect } from 'react'
+import { ScrollView, Text, View } from 'react-native'
 import { globalStyles } from '../styles/global'
 import { homeStyles } from '../styles/screens/home';
 import { routes } from '../helpers/routes';
-import { DSO } from '../helpers/types/DSO';
 import { app_colors } from '../helpers/constants';
 import { useSettings } from '../contexts/AppSettingsContext';
-import { showToast } from '../helpers/scripts/showToast';
 import { isFirstLaunch } from '../helpers/scripts/checkFirstLaunch';
+import { i18n } from '../helpers/scripts/i18n';
 import LocationHeader from '../components/LocationHeader';
-import InputWithIcon from '../components/forms/InputWithIcon';
 import AppHeader from '../components/commons/AppHeader';
 import BigButton from '../components/commons/buttons/BigButton';
-import axios from 'axios';
-import HomeSearchResults from '../components/HomeSearchResults';
 import BannerHandler from '../components/banners/BannerHandler';
 import ToolButton from '../components/commons/buttons/ToolButton';
 import HomeSearchModule from '../components/forms/HomeSearchModule';
-import { i18n } from '../helpers/scripts/i18n';
 
 export default function Home({ navigation }: any) {
   const { hasInternetConnection, currentUserLocation } = useSettings()
