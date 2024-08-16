@@ -11,6 +11,6 @@ export const satelliteTrackerTranslations = {
   },
   liveModal: {
     title: "Live feed",
-    subtitle: "The ISS station is 45 minutes in black - The live feed has a period of 45 minutes -  The video has an approximate delay of 15 seconds on the current displayed position",
+    subtitle: "The ISS stays in the black for 45 minutes each orbit - The video stream has a 15 second delay (approx.) on the current position displayed",
   }
 }
