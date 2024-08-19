@@ -63,7 +63,7 @@ export default function AppHeader({ navigation }: any) {
         resizeMode='contain'
       />
       <View style={appHeaderStyles.container.buttons}>
-        <TouchableOpacity onPress={() => navigation.push(routes.settings.path)}>
+        <TouchableOpacity onPress={() => navigation.push(routes.sellScreen.path)}>
           <Image source={require('../../../assets/icons/FiUnlock.png')} style={{ width: 20, height: 20, tintColor: app_colors.gold }} />
         </TouchableOpacity>
         {

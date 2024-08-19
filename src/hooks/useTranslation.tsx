@@ -3,6 +3,7 @@ import { frTranslations } from '../translation/fr';
 import { getLocales } from 'expo-localization';
 import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
 import { I18n } from 'i18n-js';
+import { getData } from '../helpers/storage';
 
 const TranslationContext = createContext<any>({})
 
@@ -16,11 +17,19 @@ interface TranslationProviderProps {
 
 export function TranslationProvider({ children }: TranslationProviderProps) {
 
+  useEffect(() => {
+    (async () => {
+      const locale = await getData('locale');
+      if (locale) {
+        setCurrentLocale(locale);
+      }
+    })()
+  }, [])
 
-  // const changeLOcale
+  const [currentLocale, setCurrentLocale] = useState('fr');
 
   const values = {
-    // changeLocale
+    currentLocale
   }
 
   return (

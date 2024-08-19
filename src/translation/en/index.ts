@@ -11,6 +11,7 @@ import { homeTranslations } from "./screens/home";
 import { languageSelection } from "./screens/languageSelection";
 import { moonPhasesTranslation } from "./screens/moonPhases";
 import { onboardingTranslations } from "./screens/onboarding";
+import { proTranslations } from "./screens/pro";
 import { satelliteTrackerTranslations } from "./screens/satelliteTracker";
 import { scopeAlignmentTranslation } from "./screens/scopeAlignment";
 import { settingsTranslations } from "./screens/settings";
@@ -40,4 +41,5 @@ export const enTranslations = {
   skymapGenerator: skymapGeneratorTranslations,
   viewpointsManager: viewpointsManagerTranslations,
   resultCards: resultCardsTranslations,
+  pro: proTranslations,
 }

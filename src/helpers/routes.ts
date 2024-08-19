@@ -17,4 +17,5 @@ export const routes = {
   skymapgenerator: { path: 'SkyMapGeneratorScreen', requirements: [] },
   satelliteTracker: { path: 'SatelliteTrackerScreen', requirements: [] },
   favorites: { path: 'FavoritesScreen', requirements: [] },
+  sellScreen: { path: 'SellScreen', requirements: [] },
 }

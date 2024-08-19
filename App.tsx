@@ -36,6 +36,7 @@ import TutorialScreen from "./src/screens/TutorialScreen";
 import { TranslationProvider } from "./src/hooks/useTranslation";
 import './src/helpers/scripts/i18n/index';
 import LanguageSelection from "./src/screens/LanguageSelection";
+import SellScreen from "./src/screens/pro/SellScreen";
 
 dayjs.locale('fr');
 dayjs.extend(LocalizedFormat)
@@ -102,6 +103,7 @@ export default function App() {
                   <Stack.Screen name={routes.favorites.path} component={FavouritesScreen} />
                   <Stack.Screen name={routes.skymapgenerator.path} component={SkyMapGenerator} />
                   <Stack.Screen name={routes.language.path} component={LanguageSelection} />
+                  <Stack.Screen name={routes.sellScreen.path} component={SellScreen} />
                 </Stack.Navigator>
               </SolarSystemProvider>
             </ObservationSpotProvider>
