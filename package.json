@@ -55,7 +55,8 @@
     "react-native-youtube-iframe": "^2.3.0",
     "satellite.js": "^5.0.0",
     "tle.js": "^4.9.0",
-    "translate-google-api": "^1.0.4"
+    "translate-google-api": "^1.0.4",
+    "expo-dev-client": "~4.0.23"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
