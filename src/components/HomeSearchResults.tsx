@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react'
-import { FlatList, Image, SafeAreaView, ScrollView, SectionList, Text, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, FlatList, Image, SafeAreaView, ScrollView, SectionList, Text, TouchableOpacity, View } from 'react-native'
 import { globalStyles } from '../styles/global'
 import { homeStyles } from '../styles/screens/home'
 import { DSO } from '../helpers/types/DSO'
@@ -17,9 +17,10 @@ interface HomeSearchResultsProps {
   starsResults: Star[]
   onReset: () => void
   navigation: any
+  loading: boolean
 }
 
-export default function HomeSearchResults({ results, planetResults, onReset, navigation, starsResults }: HomeSearchResultsProps) {
+export default function HomeSearchResults({ results, planetResults, onReset, navigation, starsResults, loading }: HomeSearchResultsProps) {
 
   const flatListRef = useRef<FlatList>(null)
   const planetFlatListRef = useRef<FlatList>(null)
@@ -40,13 +41,24 @@ export default function HomeSearchResults({ results, planetResults, onReset, nav
 
   return (
     <View>
-      <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-        <Text style={globalStyles.sections.title}>{i18n.t('homeSearchModule.found_objects')}</Text>
+      <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
+        <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+          <Text style={globalStyles.sections.title}>{i18n.t('homeSearchModule.found_objects')}</Text>
+          {
+            loading && (
+              <ActivityIndicator size="small" color={app_colors.white} />
+            )
+          }
+          {
+            (results.length > 0 || planetResults.length > 0 || starsResults.length > 0) &&
+            <TouchableOpacity style={{ backgroundColor: app_colors.white_no_opacity, padding: 5, justifyContent: 'center', alignItems: 'center', borderRadius: 10, display: 'flex', width: 30, height: 30 }} onPress={() => onReset()}>
+              <Image source={require('../../assets/icons/FiTrash.png')} style={{ width: 15, height: 15 }} />
+            </TouchableOpacity>
+          }
+        </View>
         {
-          (results.length > 0 || planetResults.length > 0 || starsResults.length > 0) &&
-          <TouchableOpacity style={{ backgroundColor: app_colors.white_no_opacity, padding: 5, justifyContent: 'center', alignItems: 'center', borderRadius: 10, display: 'flex', width: 30, height: 30 }} onPress={() => onReset()}>
-            <Image source={require('../../assets/icons/FiTrash.png')} style={{ width: 15, height: 15 }} />
-          </TouchableOpacity>
+          !loading &&
+          <Text style={{ color: app_colors.white, fontSize: 14, marginLeft: 10 }}> {results.length + planetResults.length + starsResults.length} {i18n.t('homeSearchModule.results')}</Text>
         }
       </View>
       <SafeAreaView style={homeStyles.searchResults}>

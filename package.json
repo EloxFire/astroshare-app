@@ -1,6 +1,6 @@
 {
   "name": "astroshare-app",
-  "version": "b_v1.6.1",
+  "version": "b_v1.6.2",
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
     "start": "expo start",

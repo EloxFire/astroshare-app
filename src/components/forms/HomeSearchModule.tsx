@@ -25,6 +25,7 @@ export default function HomeSearchModule({ navigation }: HomeSearchModuleProps) 
   const [searchResults, setSearchResults] = useState<DSO[]>([])
   const [planetResults, setPlanetResults] = useState<GlobalPlanet[]>([])
   const [starsResults, setStarsResults] = useState<Star[]>([])
+  const [searchResultsLoading, setSearchResultsLoading] = useState(false)
 
   const handleSearch = async () => {
 
@@ -47,6 +48,8 @@ export default function HomeSearchModule({ navigation }: HomeSearchModuleProps) 
     setPlanetResults([])
     setStarsResults([])
     Keyboard.dismiss()
+
+    setSearchResultsLoading(true)
 
 
     const planetsRegex = /\b(?:Mercury|Mercure|Venus|Vénus|Earth|Terre|Mars|Jupiter|Saturn|Saturne|Uranus|Neptune)\b/i;
@@ -82,6 +85,8 @@ export default function HomeSearchModule({ navigation }: HomeSearchModuleProps) 
         showToast({ message: error.message ? error.message : i18n.t('common.errors.unknownError'), type: 'error' })
       }
     }
+
+    setSearchResultsLoading(false)
   }
 
   const handleResetSearch = () => {
@@ -104,7 +109,7 @@ export default function HomeSearchModule({ navigation }: HomeSearchModuleProps) 
       </View>
       {
         (searchResults.length > 0 || planetResults.length > 0 || starsResults.length > 0) &&
-        <HomeSearchResults results={searchResults} planetResults={planetResults} onReset={handleResetSearch} starsResults={starsResults} navigation={navigation} />
+        <HomeSearchResults loading={searchResultsLoading} results={searchResults} planetResults={planetResults} onReset={handleResetSearch} starsResults={starsResults} navigation={navigation} />
       }
     </View>
   )
