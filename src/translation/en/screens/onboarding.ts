@@ -3,7 +3,7 @@ export const onboardingTranslations = {
   subtitle: 'Thank you for downloading Astroshare !',
   disclaimer: 'Here are some important informations:',
   text: 'To make Astroshare as functional and pleasant as possible, this app needs the following informations:',
-  listText: '- Geographical position at launch',
+  listText: '- Geographical position while using the app',
   listText2: '- Gyroscope',
   listText3: '- Accelerometer',
   listText4: '- Barometer',
