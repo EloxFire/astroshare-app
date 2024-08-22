@@ -11,6 +11,6 @@ export const satelliteTrackerTranslations = {
   },
   liveModal: {
     title: "Vidéo en direct",
-    subtitle: "La station spatiale à une période de 45 minutes dans le noir à chaque orbite - Le flux vidéo possède environ 15 secondes de retard sur la position actuelle affichée",
+    subtitle: "La station spatiale à une période de 45 minutes dans le noir à chaque orbite - Le flux vidéo peut posséder environ 15 secondes de retard sur la position actuelle affichée sur la carte.",
   }
 }

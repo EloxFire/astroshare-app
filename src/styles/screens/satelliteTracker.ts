@@ -71,6 +71,14 @@ export const satelliteTrackerStyles = {
       color: app_colors.white,
       fontSize: 12,
       fontFamily: 'AuxMono',
+    },
+
+    liveDot: {
+      width: 10,
+      height: 10,
+      borderRadius: 10,
+      backgroundColor: app_colors.red,
+      marginRight: 5,
     }
   }
 }

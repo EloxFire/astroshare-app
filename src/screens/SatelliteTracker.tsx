@@ -11,19 +11,23 @@ import PageTitle from '../components/commons/PageTitle'
 import MapView, { Circle, Marker, PROVIDER_GOOGLE, Polyline } from 'react-native-maps'
 import axios from 'axios'
 import DSOValues from '../components/commons/DSOValues'
-import WebView from 'react-native-webview'
 import YoutubePlayer from "react-native-youtube-iframe";
 import { i18n } from '../helpers/scripts/i18n'
 
 export default function SatelliteTracker({ navigation }: any) {
+  const issFeed = "bZ4nAEhwoCI"
+  const backupIssFeed = "nEC3xRSSc3k";
 
   const [issPosition, setIssPosition] = useState<any>(null)
   const [trajectoryPoints, setTrajectoryPoints] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [issInfosModalVisible, setIssInfosModalVisible] = useState(false)
   const [liveFeedModalVisible, setLiveFeedModalVisible] = useState(false)
+  const [currentIssFeedId, setCurrentIssFeedId] = useState(issFeed)
 
   const mapRef = useRef(null)
+  const youtubePlayerRef = useRef(null)
+
 
   useEffect(() => {
     getIssData()
@@ -89,6 +93,14 @@ export default function SatelliteTracker({ navigation }: any) {
   const handleLiveFeedDisplay = () => {
     setIssInfosModalVisible(false)
     setLiveFeedModalVisible(!liveFeedModalVisible)
+  }
+
+  const handleFeed = () => {
+    if (currentIssFeedId === issFeed) {
+      setCurrentIssFeedId(backupIssFeed)
+    } else {
+      setCurrentIssFeedId(issFeed)
+    }
   }
 
   return (
@@ -185,13 +197,18 @@ export default function SatelliteTracker({ navigation }: any) {
         liveFeedModalVisible &&
         <View style={satelliteTrackerStyles.issModal}>
           <ScrollView>
-            <Text style={satelliteTrackerStyles.issModal.title}>{i18n.t('satelliteTracker.liveModal.title')}</Text>
+            <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+              <View style={satelliteTrackerStyles.issModal.liveDot} />
+              <Text style={satelliteTrackerStyles.issModal.title}>{i18n.t('satelliteTracker.liveModal.title')}</Text>
+            </View>
             <Text style={[satelliteTrackerStyles.issModal.subtitle, { marginBottom: 10, fontFamily: 'GilroyRegular', opacity: .5 }]}>{i18n.t('satelliteTracker.liveModal.subtitle')}</Text>
             <YoutubePlayer
               width={Dimensions.get('screen').width - 20}
               height={(Dimensions.get('screen').width - 20) / (16 / 9)}
               play
-              videoId={"nEC3xRSSc3k"}
+              ref={youtubePlayerRef}
+              videoId={currentIssFeedId}
+              onError={() => handleFeed()}
             />
           </ScrollView>
         </View>
