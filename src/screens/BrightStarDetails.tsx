@@ -18,6 +18,7 @@ import dayjs, { Dayjs } from "dayjs";
 import { Star } from "../helpers/types/Star";
 import DSOValues from "../components/commons/DSOValues";
 import PageTitle from "../components/commons/PageTitle";
+import { i18n } from "../helpers/scripts/i18n";
 
 export default function BrightStarDetails({ route, navigation }: any) {
 
@@ -93,46 +94,46 @@ export default function BrightStarDetails({ route, navigation }: any) {
     <View style={globalStyles.body}>
       <PageTitle
         navigation={navigation}
-        title="Détails de l'étoile"
-        subtitle="// Toutes les infos que vous devez connaître !"
+        title={i18n.t('detailsPages.stars.title')}
+        subtitle={i18n.t('detailsPages.stars.subtitle')}
       />
       <View style={globalStyles.screens.separator} />
       <ScrollView>
         <Text style={objectDetailsStyles.content.title}>{getBrightStarName(star.ids)}</Text>
         <Image style={objectDetailsStyles.content.image} source={astroImages['BRIGHTSTAR']} />
         <View style={objectDetailsStyles.content.dsoInfos}>
-          <DSOValues title="Constellation" value={getConstellationName(getConstellation({ ra: star.ra, dec: star.dec })?.abbreviation || "Inconnu")} />
-          <DSOValues title="Magnitude" value={star.V.toString() || star.B.toString()} />
-          <DSOValues title="Ascension droite" value={convertDegreesRaToHMS(star.ra)} />
-          <DSOValues title="Déclinaison" value={convertDegreesDecToDMS(star.dec)} />
+          <DSOValues title={i18n.t('detailsPages.stars.labels.constellation')} value={getConstellationName(getConstellation({ ra: star.ra, dec: star.dec })?.abbreviation || "Inconnu")} />
+          <DSOValues title={i18n.t('detailsPages.stars.labels.magnitude')} value={star.V.toString() || star.B.toString()} />
+          <DSOValues title={i18n.t('detailsPages.stars.labels.rightAscension')} value={convertDegreesRaToHMS(star.ra)} />
+          <DSOValues title={i18n.t('detailsPages.stars.labels.declination')} value={convertDegreesDecToDMS(star.dec)} />
         </View>
         <View>
           <View style={{ display: 'flex', flexDirection: 'row', alignItems: "center", justifyContent: 'space-between' }}>
-            <Text style={objectDetailsStyles.content.sectionTitle}>Visibilité</Text>
+            <Text style={objectDetailsStyles.content.sectionTitle}>{i18n.t('common.visibility.title')}</Text>
             <View style={{ display: 'flex', flexDirection: 'row', alignItems: "center", justifyContent: 'flex-end' }}>
-              <Text style={objectDetailsStyles.dsoValues.select.text}>Temps : </Text>
+              <Text style={objectDetailsStyles.dsoValues.select.text}>{i18n.t('common.time.time')} : </Text>
               <TouchableOpacity style={objectDetailsStyles.dsoValues.select} onPress={() => setSelectedTimeBase('relative')}>
-                <Text style={[objectDetailsStyles.dsoValues.select.text, { backgroundColor: selectedTimeBase === 'relative' ? app_colors.white_forty : 'transparent' }]}>relatif</Text>
+                <Text style={[objectDetailsStyles.dsoValues.select.text, { backgroundColor: selectedTimeBase === 'relative' ? app_colors.white_forty : 'transparent' }]}>{i18n.t('common.other.relative')}</Text>
               </TouchableOpacity>
               <Text style={objectDetailsStyles.dsoValues.select.text}>/</Text>
               <TouchableOpacity style={objectDetailsStyles.dsoValues.select} onPress={() => setSelectedTimeBase('absolute')}>
-                <Text style={[objectDetailsStyles.dsoValues.select.text, { backgroundColor: selectedTimeBase === 'absolute' ? app_colors.white_forty : 'transparent' }]}>absolu</Text>
+                <Text style={[objectDetailsStyles.dsoValues.select.text, { backgroundColor: selectedTimeBase === 'absolute' ? app_colors.white_forty : 'transparent' }]}>{i18n.t('common.other.absolute')}</Text>
               </TouchableOpacity>
             </View>
           </View>
-          <DSOValues chipValue chipColor={(isCircumpolar && !currentUserLocation.lat.toString().startsWith('-')) ? app_colors.green_eighty : starVisible ? app_colors.green_eighty : app_colors.red_eighty} title="Maintenant" value={(isCircumpolar && !currentUserLocation.lat.toString().startsWith('-')) ? "Visible" : starVisible ? "Visible" : "Non visible"} />
+          <DSOValues chipValue chipColor={(isCircumpolar && !currentUserLocation.lat.toString().startsWith('-')) ? app_colors.green_eighty : starVisible ? app_colors.green_eighty : app_colors.red_eighty} title={i18n.t('common.time.now')} value={(isCircumpolar && !currentUserLocation.lat.toString().startsWith('-')) ? i18n.t('common.visibility.visible') : starVisible ? i18n.t('common.visibility.visible') : i18n.t('common.visibility.notVisible')} />
           <DSOValues chipValue chipColor={willRise ? app_colors.green_eighty : app_colors.red_eighty} title="Cette nuit" value={willRise ? "Oui" : "Non"} />
           {
-            typeof riseTime === 'object' && <DSOValues chipValue chipColor={app_colors.white_forty} title="Prochain lever" value={selectedTimeBase === 'relative' ? dayjs().to(riseTime) : riseTime.format('DD MMM à HH:mm').replace(':', 'h')} />
+            typeof riseTime === 'object' && <DSOValues chipValue chipColor={app_colors.white_forty} title={i18n.t('common.visibility.nextRise')} value={selectedTimeBase === 'relative' ? dayjs().to(riseTime) : riseTime.format('DD MMM à HH:mm').replace(':', 'h')} />
           }
           {
-            typeof riseTime === 'boolean' && <DSOValues chipValue chipColor={app_colors.white_forty} title="Heure de lever" value={isCircumpolar ? 'Toute la nuit' : 'Jamais'} />
+            typeof riseTime === 'boolean' && <DSOValues chipValue chipColor={app_colors.white_forty} title={i18n.t('common.visibility.nextRise')} value={isCircumpolar ? i18n.t('common.time.allNight') : i18n.t('common.time.never')} />
           }
           {
-            typeof setTime === 'object' && <DSOValues chipValue chipColor={app_colors.white_forty} title="Prochain coucher" value={selectedTimeBase === 'relative' ? dayjs().to(setTime) : setTime.format('DD MMM à HH:mm').replace(':', 'h')} />
+            typeof setTime === 'object' && <DSOValues chipValue chipColor={app_colors.white_forty} title={i18n.t('common.visibility.nextSet')} value={selectedTimeBase === 'relative' ? dayjs().to(setTime) : setTime.format('DD MMM à HH:mm').replace(':', 'h')} />
           }
           {
-            typeof setTime === 'boolean' && <DSOValues chipValue chipColor={app_colors.white_forty} title="Heure de lever" value={isCircumpolar ? 'Toute la nuit' : 'Jamais'} />
+            typeof setTime === 'boolean' && <DSOValues chipValue chipColor={app_colors.white_forty} title={i18n.t('common.visibility.nextSet')} value={isCircumpolar ? i18n.t('common.time.allNight') : i18n.t('common.time.never')} />
           }
         </View>
         <View style={objectDetailsStyles.content.favouritesContainer}>
@@ -143,7 +144,7 @@ export default function BrightStarDetails({ route, navigation }: any) {
                 :
                 <Image source={require('../../assets/icons/FiHeart.png')} style={objectDetailsStyles.content.favouritesContainer.button.image} />
             }
-            <Text style={objectDetailsStyles.content.favouritesContainer.button.text}>{favouriteStars.some(obj => obj.ids === star.ids) ? 'Retirer des favoris' : 'Ajouter aux favoris'}</Text>
+            <Text style={objectDetailsStyles.content.favouritesContainer.button.text}>{favouriteStars.some(obj => obj.ids === star.ids) ? i18n.t('common.other.removeFav') : i18n.t('common.other.addFav')}</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
