@@ -13,7 +13,7 @@ interface BrightStarCardLiteProps {
 
 export default function BrightStarCardLite({ star, navigation }: BrightStarCardLiteProps) {
   return (
-    <TouchableOpacity onPress={() => navigation.push(routes.planetDetails.path, { star: star })} style={objectCardLiteStyles.card}>
+    <TouchableOpacity onPress={() => navigation.push(routes.brightStarDetails.path, { star: star })} style={objectCardLiteStyles.card}>
       <Image style={objectCardLiteStyles.card.image} source={astroImages['BRIGHTSTAR']} />
       <View style={objectCardLiteStyles.card.infos}>
         <Text style={objectCardLiteStyles.card.infos.title}>{getBrightStarName(star.ids)}</Text>
