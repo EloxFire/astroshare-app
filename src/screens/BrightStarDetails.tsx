@@ -124,13 +124,13 @@ export default function BrightStarDetails({ route, navigation }: any) {
           <DSOValues chipValue chipColor={(isCircumpolar && !currentUserLocation.lat.toString().startsWith('-')) ? app_colors.green_eighty : starVisible ? app_colors.green_eighty : app_colors.red_eighty} title={i18n.t('common.time.now')} value={(isCircumpolar && !currentUserLocation.lat.toString().startsWith('-')) ? i18n.t('common.visibility.visible') : starVisible ? i18n.t('common.visibility.visible') : i18n.t('common.visibility.notVisible')} />
           <DSOValues chipValue chipColor={willRise ? app_colors.green_eighty : app_colors.red_eighty} title="Cette nuit" value={willRise ? "Oui" : "Non"} />
           {
-            typeof riseTime === 'object' && <DSOValues chipValue chipColor={app_colors.white_forty} title={i18n.t('common.visibility.nextRise')} value={selectedTimeBase === 'relative' ? dayjs().to(riseTime) : riseTime.format('DD MMM à HH:mm').replace(':', 'h')} />
+            typeof riseTime === 'object' && <DSOValues chipValue chipColor={app_colors.white_forty} title={i18n.t('common.visibility.nextRise')} value={selectedTimeBase === 'relative' ? dayjs().to(riseTime) : riseTime.add(2, 'hour').format('DD MMM à HH:mm').replace(':', 'h')} />
           }
           {
             typeof riseTime === 'boolean' && <DSOValues chipValue chipColor={app_colors.white_forty} title={i18n.t('common.visibility.nextRise')} value={isCircumpolar ? i18n.t('common.time.allNight') : i18n.t('common.time.never')} />
           }
           {
-            typeof setTime === 'object' && <DSOValues chipValue chipColor={app_colors.white_forty} title={i18n.t('common.visibility.nextSet')} value={selectedTimeBase === 'relative' ? dayjs().to(setTime) : setTime.format('DD MMM à HH:mm').replace(':', 'h')} />
+            typeof setTime === 'object' && <DSOValues chipValue chipColor={app_colors.white_forty} title={i18n.t('common.visibility.nextSet')} value={selectedTimeBase === 'relative' ? dayjs().to(setTime) : setTime.add(2, 'hour').format('DD MMM à HH:mm').replace(':', 'h')} />
           }
           {
             typeof setTime === 'boolean' && <DSOValues chipValue chipColor={app_colors.white_forty} title={i18n.t('common.visibility.nextSet')} value={isCircumpolar ? i18n.t('common.time.allNight') : i18n.t('common.time.never')} />

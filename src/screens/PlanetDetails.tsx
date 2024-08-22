@@ -139,13 +139,13 @@ export default function PlanetDetails({ route, navigation }: any) {
             <DSOValues chipValue chipColor={willRise ? app_colors.green_eighty : app_colors.red_eighty} title={i18n.t('common.time.thisNight')} value={willRise ? i18n.t('common.other.yes') : i18n.t('common.other.no')} />
             <DSOValues chipValue chipColor={app_colors.white_forty} title={i18n.t('common.visibility.altitude')} value={planet.alt.toFixed(2) + "°"} />
             {
-              typeof riseTime === 'object' && <DSOValues chipValue chipColor={app_colors.white_forty} title={i18n.t('common.visibility.nextRise')} value={selectedTimeBase === 'relative' ? dayjs().to(riseTime) : riseTime.format('DD MMM à HH:mm').replace(':', 'h')} />
+              typeof riseTime === 'object' && <DSOValues chipValue chipColor={app_colors.white_forty} title={i18n.t('common.visibility.nextRise')} value={selectedTimeBase === 'relative' ? dayjs().to(riseTime) : riseTime.add(2, 'hour').format('DD MMM à HH:mm').replace(':', 'h')} />
             }
             {
               typeof riseTime === 'boolean' && <DSOValues chipValue chipColor={app_colors.white_forty} title={i18n.t('common.visibility.nextRise')} value={riseTime ? i18n.t('common.time.allNight') : i18n.t('common.time.never')} />
             }
             {
-              typeof setTime === 'object' && <DSOValues chipValue chipColor={app_colors.white_forty} title={i18n.t('common.visibility.nextSet')} value={selectedTimeBase === 'relative' ? dayjs().to(setTime) : setTime.format('DD MMM à HH:mm').replace(':', 'h')} />
+              typeof setTime === 'object' && <DSOValues chipValue chipColor={app_colors.white_forty} title={i18n.t('common.visibility.nextSet')} value={selectedTimeBase === 'relative' ? dayjs().to(setTime) : setTime.add(2, 'hour').format('DD MMM à HH:mm').replace(':', 'h')} />
             }
             {
               typeof setTime === 'boolean' && <DSOValues chipValue chipColor={app_colors.white_forty} title={i18n.t('common.visibility.nextSet')} value={setTime ? i18n.t('common.time.allNight') : i18n.t('common.time.never')} />
