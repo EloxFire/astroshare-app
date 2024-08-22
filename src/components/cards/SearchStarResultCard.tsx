@@ -51,23 +51,10 @@ export default function SearchStarResultCard({ star, navigation }: SearchPlanetR
           <Image style={searchResultCardStyles.card.image} source={astroImages['BRIGHTSTAR']} />
         </View>
         <View style={searchResultCardStyles.card.body}>
-          <View style={searchResultCardStyles.card.body.info}>
-            <Text style={searchResultCardStyles.card.body.info.title}>{i18n.t('resultCards.starCard.constellation')} :</Text>
-            <Text style={searchResultCardStyles.card.body.info.value}>{getConstellationName(getConstellation({ ra: star.ra, dec: star.dec })?.abbreviation || "Inconnu")}</Text>
-          </View>
-          <View style={searchResultCardStyles.card.body.info}>
-            <Text style={searchResultCardStyles.card.body.info.title}>{i18n.t('resultCards.starCard.magnitude')} :</Text>
-            <Text style={searchResultCardStyles.card.body.info.value}>{star.V.toString() || star.B.toString()}</Text>
-          </View>
-          <View style={searchResultCardStyles.card.body.info}>
-            <Text style={searchResultCardStyles.card.body.info.title}>{i18n.t('resultCards.starCard.right_ascension')} :</Text>
-            <Text style={searchResultCardStyles.card.body.info.value}>{convertDegreesRaToHMS(star.ra)}</Text>
-          </View>
-          <View style={searchResultCardStyles.card.body.info}>
-            <Text style={searchResultCardStyles.card.body.info.title}>{i18n.t('resultCards.starCard.declination')} :</Text>
-            <Text style={searchResultCardStyles.card.body.info.value}>{convertDegreesDecToDMS(star.dec)}</Text>
-          </View>
-
+          <DSOValues small title="Constellation" value={getConstellationName(getConstellation({ ra: star.ra, dec: star.dec })?.abbreviation || "Inconnu")} />
+          <DSOValues small title="Magnitude" value={star.V.toString() || star.B.toString()} />
+          <DSOValues small title="Ascension droite" value={convertDegreesRaToHMS(star.ra)} />
+          <DSOValues small title="Déclinaison" value={convertDegreesDecToDMS(star.dec)} />
         </View>
         <View style={searchResultCardStyles.card.footer}>
           <Text style={[searchResultCardStyles.card.footer.chip, { backgroundColor: isVisible ? app_colors.green_eighty : app_colors.red_eighty }]}>{isVisible ? i18n.t('common.visibility.visible') : i18n.t('common.visibility.notVisible')}</Text>

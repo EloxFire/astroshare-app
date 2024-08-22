@@ -29,6 +29,8 @@ export const commonTranslations = {
     days: "jours",
     relative: "relatif",
     absolute: "absolu",
+    removeFav: "Retirer des favoris",
+    addFav: "Ajouter aux favoris",
   },
   time: {
     time: "Temps",

@@ -17,6 +17,7 @@ import { extractNumbers } from '../../helpers/scripts/extractNumbers'
 import dayjs, { Dayjs } from 'dayjs'
 import { prettyDec, prettyRa } from '../../helpers/scripts/astro/prettyCoords'
 import { i18n } from '../../helpers/scripts/i18n'
+import DSOValues from '../commons/DSOValues'
 
 interface SearchResultCardProps {
   object: DSO
@@ -75,22 +76,10 @@ export default function SearchResultCard({ object, navigation }: SearchResultCar
           <Image style={searchResultCardStyles.card.image} source={astroImages[object.type.toUpperCase()]} />
         </View>
         <View style={searchResultCardStyles.card.body}>
-          <View style={searchResultCardStyles.card.body.info}>
-            <Text style={searchResultCardStyles.card.body.info.title}>{i18n.t('resultCards.deepSkyObjectCard.magnitude')} :</Text>
-            <Text style={searchResultCardStyles.card.body.info.value}>{object.b_mag || object.v_mag}</Text>
-          </View>
-          <View style={searchResultCardStyles.card.body.info}>
-            <Text style={searchResultCardStyles.card.body.info.title}>{i18n.t('resultCards.deepSkyObjectCard.constellation')} :</Text>
-            <Text style={searchResultCardStyles.card.body.info.value}>{getConstellationName(object.const)}</Text>
-          </View>
-          <View style={searchResultCardStyles.card.body.info}>
-            <Text style={searchResultCardStyles.card.body.info.title}>{i18n.t('resultCards.deepSkyObjectCard.right_ascension')} :</Text>
-            <Text style={searchResultCardStyles.card.body.info.value}>{prettyRa(object.ra)}</Text>
-          </View>
-          <View style={searchResultCardStyles.card.body.info}>
-            <Text style={searchResultCardStyles.card.body.info.title}>{i18n.t('resultCards.deepSkyObjectCard.declination')} :</Text>
-            <Text style={searchResultCardStyles.card.body.info.value}>{prettyDec(object.dec)}</Text>
-          </View>
+          <DSOValues small title="Magnitude" value={(object.b_mag || object.v_mag).toString()} />
+          <DSOValues small title="Constellation" value={getConstellationName(object.const)} />
+          <DSOValues small title="Ascension droite" value={prettyRa(object.ra)} />
+          <DSOValues small title="Déclinaison" value={prettyDec(object.dec)} />
         </View>
         <View style={searchResultCardStyles.card.footer}>
           <Text style={[searchResultCardStyles.card.footer.chip, { backgroundColor: isVisible ? app_colors.green_eighty : app_colors.red_eighty }]}>{isVisible ? i18n.t('common.visibility.visible') : i18n.t('common.visibility.notVisible')}</Text>
