@@ -40,7 +40,6 @@ export default function Weather({ navigation }: any) {
 
       setSearchedCity(null)
       setSearchString('')
-      showToast({ message: 'Succès', type: 'success' })
     }
   }
 
@@ -70,7 +69,6 @@ export default function Weather({ navigation }: any) {
     const searchedWeather = await getWeather(city.lat, city.lon)
     setSearchedCity(city)
     setWeather(searchedWeather)
-    showToast({ message: 'Succès', type: 'success' })
   }
 
   return (

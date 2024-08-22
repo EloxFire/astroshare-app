@@ -83,8 +83,6 @@ export function AppSettingsProvider({ children }: AppSettingsProviderProps) {
 
     setLocationPermissions(true);
 
-    showToast({ message: 'Acquisition de votre position', duration: Toast.durations.SHORT, type: 'success' });
-
     try {
       let location = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Highest });
       const coords: LocationObject = { lat: location.coords.latitude, lon: location.coords.longitude }
@@ -103,7 +101,6 @@ export function AppSettingsProvider({ children }: AppSettingsProviderProps) {
       setCurrentUserLocation(userCoords);
       setCurrentUserHorizon(90 - userCoords.lat)
       setLocationLoading(false);
-      showToast({ message: 'Signal trouvé : ' + userCoords.common_name, duration: Toast.durations.LONG, type: 'success' });
     } catch (error) {
       console.log("Error while getting location name : ", error);
 
