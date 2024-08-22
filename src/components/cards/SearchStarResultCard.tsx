@@ -46,7 +46,7 @@ export default function SearchStarResultCard({ star, navigation }: SearchPlanetR
       <View style={searchResultCardStyles.card}>
         <View style={searchResultCardStyles.card.header}>
           <View>
-            <Text style={searchResultCardStyles.card.header.title}>{getBrightStarName(star.ids)}</Text>
+            <Text style={searchResultCardStyles.card.header.title}>{getBrightStarName(star.ids)?.length > 11 ? getBrightStarName(star.ids)?.slice(0, 11) + '...' : getBrightStarName(star.ids) || i18n.t('common.errors.unkownStar')}</Text>
           </View>
           <Image style={searchResultCardStyles.card.image} source={astroImages['BRIGHTSTAR']} />
         </View>

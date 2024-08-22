@@ -107,7 +107,7 @@ export default function SkyMapGenerator({ navigation }: any) {
 
           {
             starCatalogLoading && starsToDisplay.length === 0 &&
-            <SvgText transform={`rotate(180, ${screenWidth / 2}, ${screenWidth / 2})`} x={screenWidth / 2} y={screenWidth / 2} textAnchor="middle" fontSize="12" fill={app_colors.white_eighty}>Génération de la carte...</SvgText>
+            <SvgText transform={`rotate(180, ${screenWidth / 2}, ${screenWidth / 2})`} x={screenWidth / 2} y={screenWidth / 2} textAnchor="middle" fontSize="12" fill={app_colors.white_eighty}>{i18n.t('skymapGenerator.mapLoading')}</SvgText>
           }
 
           {
