@@ -8,17 +8,18 @@ interface DSOValuesProps {
   value: string
   chipValue?: boolean
   chipColor?: string
+  small?: boolean
 }
 
-export default function DSOValues({ title, value, chipValue, chipColor }: DSOValuesProps) {
+export default function DSOValues({ title, value, chipValue, chipColor, small }: DSOValuesProps) {
   return (
     <View style={objectDetailsStyles.dsoValues}>
-      <Text style={objectDetailsStyles.dsoValues.title}>{title}</Text>
+      <Text style={[objectDetailsStyles.dsoValues.title, { fontSize: small ? 10 : 12 }]}>{title}</Text>
       {
-        chipValue ?
-          <Text style={[objectDetailsStyles.dsoValues.chip, {backgroundColor: chipColor ? chipColor : app_colors.white_forty}]}>{value}</Text>
+        (chipValue && !small) ?
+          <Text style={[objectDetailsStyles.dsoValues.chip, { backgroundColor: chipColor ? chipColor : app_colors.white_forty }]}>{value}</Text>
           :
-          <Text style={objectDetailsStyles.dsoValues.value}>{value}</Text>
+          <Text style={[objectDetailsStyles.dsoValues.value, { fontSize: small ? 12 : 15 }]}>{value}</Text>
       }
     </View>
   )

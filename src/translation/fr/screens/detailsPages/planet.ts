@@ -22,6 +22,10 @@ export const planetTranslations = {
     position: "Position",
     symbol: "Symbole",
     distanceSun: "Distance du Soleil",
+    short: {
+      surfaceTemperature: "Temp (surface)",
+      naturalSatellites: "Satellites",
+    }
   },
   units: {
     orbitalPeriod: "années",

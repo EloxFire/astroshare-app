@@ -110,9 +110,9 @@ export default function PlanetDetails({ route, navigation }: any) {
         <Image style={objectDetailsStyles.content.image} source={astroImages[planet.name.toUpperCase()]} />
         <View style={objectDetailsStyles.content.dsoInfos}>
           <DSOValues title={i18n.t('detailsPages.planets.labels.symbol')} value={planet.symbol} />
-          <DSOValues title={i18n.t('detailsPages.planets.labels.position')} value={`${planetsOrder[planet.name.toUpperCase()]} / 9`} />
+          <DSOValues title={i18n.t('detailsPages.planets.labels.position')} value={`${planetsOrder[planet.name.toUpperCase()]} / 8`} />
           <DSOValues title={i18n.t('detailsPages.planets.labels.inclination')} value={(23.5 + parseFloat(planet.i.toFixed(1))).toString() + "°"} />
-          <DSOValues title={i18n.t('detailsPages.planets.labels.mass')} value={planet.name === 'Earth' ? (9.972e24 + " Kg").toString() : planet.i.toFixed(2) + i18n.t('detailsPages.planets.units.mass')} />
+          <DSOValues title={i18n.t('detailsPages.planets.labels.mass')} value={planet.name === 'Earth' ? (9.972e24 + " Kg").toString() : planet.m.toFixed(2) + i18n.t('detailsPages.planets.units.mass')} />
           <DSOValues title={i18n.t('detailsPages.planets.labels.orbitalPeriod')} value={planet.name === 'Earth' ? "365.25 jours" : planet.T + " " + i18n.t('detailsPages.planets.units.orbitalPeriod')} />
           <DSOValues title={i18n.t('detailsPages.planets.labels.distanceSun')} value={planet.a.toFixed(2) + " " + i18n.t('detailsPages.planets.units.distanceSun')} />
           <DSOValues title={i18n.t('detailsPages.planets.labels.diameter')} value={formatKm(planetsSizes[planet.name.toUpperCase()], currentLCID).toString()} />
