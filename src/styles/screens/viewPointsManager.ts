@@ -19,6 +19,7 @@ export const viewPointsManagerStyles = {
       fontSize: 12,
       fontFamily: 'GilroyMedium',
       marginBottom: 20,
+      textAlign: 'center' as 'center',
     },
     
     noViewPoints: {

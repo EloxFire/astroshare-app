@@ -7,6 +7,7 @@ import { locationHeaderTranslations } from "./components/locationHeader";
 import { locationModalTranslations } from "./components/locationModal";
 import { ephemerisBarTranslation } from "./components/weather/ephemerisBar";
 import { hourlyOverviewTranslation } from "./components/weather/hourlyOverview";
+import { favouriteScreenTranslations } from "./screens/favouriteScreen";
 import { homeTranslations } from "./screens/home";
 import { languageSelection } from "./screens/languageSelection";
 import { moonPhasesTranslation } from "./screens/moonPhases";
@@ -40,4 +41,5 @@ export const frTranslations = {
   skymapGenerator: skymapGeneratorTranslations,
   viewpointsManager: viewpointsManagerTranslations,
   resultCards: resultCardsTranslations,
+  favouriteScreen: favouriteScreenTranslations,
 }
