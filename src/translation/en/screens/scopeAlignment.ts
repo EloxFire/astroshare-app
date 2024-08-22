@@ -11,7 +11,7 @@ export const scopeAlignmentTranslation = {
   },
   checks: {
     north: "- Your mount must be oriented towards the north, precisely as possible.",
-    horizontal: "- Your telescope must be horizontal, verifiable with a level on the bubble.",
+    horizontal: "- Your telescope must be horizontal, verifiable with a spirit level.",
     mounted: "- Ensure that your mount is mounted and secured on the telescope tripod.",
   },
   polarClock: {
