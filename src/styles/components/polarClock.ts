@@ -8,6 +8,7 @@ export const polarClockStyles = {
     alignItems: "center" as "center",
     padding: 10,
     height: "100%" as "100%",
+    paddingTop: 25,
   },
 
   text: {
