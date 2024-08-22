@@ -37,6 +37,8 @@ export const storageKeys = {
   hasAddedSpot: 'hasAddedSpot',
   selectedSpot: 'selectedSpot',
   favouriteObjects: 'favouriteObjects',
+  favouritePlanets: 'favouritePlanets',
+  favouriteStars: 'favouriteStars',
 }
 
 export const sunImagesSrcWavelengths = {

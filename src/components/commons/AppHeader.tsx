@@ -18,8 +18,10 @@ export default function AppHeader({ navigation }: any) {
 
   useEffect(() => {
     (async () => {
-      const favs = await getObject(storageKeys.favouriteObjects)
-      setHasFavs(favs && favs.length > 0)
+      const favsObjects = await getObject(storageKeys.favouriteObjects)
+      const favsPlanets = await getObject(storageKeys.favouritePlanets)
+      const favsStars = await getObject(storageKeys.favouriteStars)
+      setHasFavs(favsObjects && favsObjects.length > 0 || favsPlanets && favsPlanets.length > 0 || favsStars && favsStars.length > 0)
     })()
   }, [isFocused])
 

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import { globalStyles } from '../styles/global'
 import { getObject, storeObject } from '../helpers/storage'
@@ -10,23 +10,50 @@ import { viewPointsManagerStyles } from '../styles/screens/viewPointsManager'
 import PageTitle from '../components/commons/PageTitle'
 import ObjectCardLite from '../components/cards/ObjectCardLite'
 import { i18n } from '../helpers/scripts/i18n'
+import { GlobalPlanet } from '../helpers/types/GlobalPlanet'
+import { Star } from '../helpers/types/Star'
+import PlanetCardLite from '../components/cards/PlanetCardLite'
+import BrightStarCardLite from '../components/cards/BrightStarCardList'
 
 export default function FavouritesScreen({ navigation }: any) {
 
   const isFocused = useIsFocused();
-  const [objects, setObjects] = React.useState<DSO[]>([])
+  const [objects, setObjects] = useState<DSO[]>([])
+  const [planets, setPlanets] = useState<GlobalPlanet[]>([])
+  const [stars, setStars] = useState<Star[]>([])
+
+  const [objectsTabOppened, setObjectsTabOppened] = useState(false)
+  const [planetsTabOppened, setPlanetsTabOppened] = useState(false)
+  const [starsTabOppened, setStarsTabOppened] = useState(false)
 
   useEffect(() => {
     (async () => {
       const favs = await getObject(storageKeys.favouriteObjects)
-      if (!favs) return
-      setObjects(favs)
+      const favsPlanets = await getObject(storageKeys.favouritePlanets)
+      const favsStars = await getObject(storageKeys.favouriteStars)
+      if (favs) setObjects(favs)
+      if (favsPlanets) setPlanets(favsPlanets)
+      if (favsStars) setStars(favsStars)
     })()
   }, [isFocused])
 
   const handleClearAll = async () => {
     await storeObject(storageKeys.favouriteObjects, [])
     setObjects([])
+  }
+
+  const handleOpenTab = (tab: string) => {
+    switch (tab) {
+      case 'dso':
+        setObjectsTabOppened(!objectsTabOppened)
+        break;
+      case 'planet':
+        setPlanetsTabOppened(!planetsTabOppened)
+        break;
+      case 'star':
+        setStarsTabOppened(!starsTabOppened)
+        break;
+    }
   }
 
   return (
@@ -36,10 +63,7 @@ export default function FavouritesScreen({ navigation }: any) {
 
       <ScrollView style={{ flex: 1 }}>
         {
-          objects.length > 0 ?
-            objects.map((object: DSO, index: number) => {
-              return <ObjectCardLite key={index} object={object} navigation={navigation} />
-            }) :
+          (objects.length === 0 && planets.length === 0 && stars.length === 0) ? (
             <View>
               <Text style={favouriteScreenStyles.noFavsBadge}>{i18n.t('favouriteScreen.noFavs')}</Text>
               <View style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 60 }}>
@@ -47,15 +71,68 @@ export default function FavouritesScreen({ navigation }: any) {
                 <Text style={[viewPointsManagerStyles.content.text, { opacity: .5, marginBottom: 0, fontSize: 15 }]}>{i18n.t('favouriteScreen.noFavsHint')}</Text>
               </View>
             </View>
+          )
+            :
+            <>
+              <TouchableOpacity onPress={() => handleOpenTab('dso')} style={favouriteScreenStyles.listButton}>
+                <Text style={favouriteScreenStyles.listButton.text}>{i18n.t('favouriteScreen.dso.title')} - ({objects.length})</Text>
+                <Image source={require('../../assets/icons/FiChevronDown.png')} style={[favouriteScreenStyles.listButton.icon, { transform: [{ rotate: objectsTabOppened ? '0deg' : '-90deg' }] }]} />
+              </TouchableOpacity>
+              {
+                objectsTabOppened &&
+                <View style={{ marginBottom: 10 }}>
+                  {
+                    objects.length > 0 ?
+                      objects.map((object: DSO, index: number) => {
+                        return <ObjectCardLite key={index} object={object} navigation={navigation} />
+                      }) :
+                      <View>
+                        <Text style={favouriteScreenStyles.noFavsBadge}>{i18n.t('favouriteScreen.dso.noFavs')}</Text>
+                      </View>
+                  }
+                </View>
+              }
+              <TouchableOpacity onPress={() => handleOpenTab('planet')} style={favouriteScreenStyles.listButton}>
+                <Text style={favouriteScreenStyles.listButton.text}>{i18n.t('favouriteScreen.planet.title')} - ({planets.length})</Text>
+                <Image source={require('../../assets/icons/FiChevronDown.png')} style={[favouriteScreenStyles.listButton.icon, { transform: [{ rotate: planetsTabOppened ? '0deg' : '-90deg' }] }]} />
+              </TouchableOpacity>
+              {
+                planetsTabOppened &&
+                <View style={{ marginBottom: 10 }}>
+                  {
+                    planets.length > 0 ?
+                      planets.map((planet: GlobalPlanet, index: number) => {
+                        return <PlanetCardLite key={index} planet={planet} navigation={navigation} />
+                      })
+                      :
+                      <View>
+                        <Text style={favouriteScreenStyles.noFavsBadge}>{i18n.t('favouriteScreen.dso.noFavs')}</Text>
+                      </View>
+                  }
+                </View>
+              }
+              <TouchableOpacity onPress={() => handleOpenTab('star')} style={favouriteScreenStyles.listButton} >
+                <Text style={favouriteScreenStyles.listButton.text}>{i18n.t('favouriteScreen.star.title')} - ({stars.length})</Text>
+                <Image source={require('../../assets/icons/FiChevronDown.png')} style={[favouriteScreenStyles.listButton.icon, { transform: [{ rotate: starsTabOppened ? '0deg' : '-90deg' }] }]} />
+              </TouchableOpacity>
+              {
+                starsTabOppened &&
+                <View style={{ marginBottom: 10 }}>
+                  {
+                    stars.length > 0 ?
+                      stars.map((star: Star, index: number) => {
+                        return <BrightStarCardLite key={index} star={star} navigation={navigation} />
+                      })
+                      :
+                      <View>
+                        <Text style={favouriteScreenStyles.noFavsBadge}>{i18n.t('favouriteScreen.dso.noFavs')}</Text>
+                      </View>
+                  }
+                </View>
+              }
+            </>
         }
       </ScrollView>
-      {/* Clear all favs button */}
-      {
-        objects.length > 0 &&
-        <TouchableOpacity style={{ marginVertical: 30, backgroundColor: app_colors.red_eighty, padding: 5, justifyContent: 'center', alignItems: 'center', borderRadius: 10, display: 'flex', width: '100%', height: 30 }} onPress={() => handleClearAll()}>
-          <Text style={{ color: app_colors.white }}>{i18n.t('favouriteScreen.emptyButton')}</Text>
-        </TouchableOpacity>
-      }
     </View>
   )
 }

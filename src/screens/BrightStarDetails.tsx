@@ -4,20 +4,20 @@ import { globalStyles } from "../styles/global";
 import { objectDetailsStyles } from "../styles/screens/objectDetails";
 import { astroImages } from "../helpers/scripts/loadImages";
 import { useSettings } from "../contexts/AppSettingsContext";
-import PageTitle from "../components/commons/PageTitle";
-import { EclipticCoordinate, EquatorialCoordinate, GeographicCoordinate, getBodyNextRise, getBodyNextSet, getConstellation, HorizontalCoordinate, isBodyCircumpolar, isBodyVisibleForNight, isTransitInstance, Planet } from "@observerly/astrometry";
-import DSOValues from "../components/commons/DSOValues";
-import { GlobalPlanet } from "../helpers/types/GlobalPlanet";
-import { Star } from "../helpers/types/Star";
+import { EquatorialCoordinate, GeographicCoordinate, getBodyNextRise, getBodyNextSet, getConstellation, HorizontalCoordinate, isBodyCircumpolar, isBodyVisibleForNight, isTransitInstance, Planet } from "@observerly/astrometry";
 import { getBrightStarName } from "../helpers/scripts/astro/objects/getBrightStarName";
 import { convertDegreesDecToDMS } from "../helpers/scripts/astro/coords/convertDegreesDecToDms";
 import { convertDegreesRaToHMS } from "../helpers/scripts/astro/coords/convertDegreesRaToHMS";
 import { getConstellationName } from "../helpers/scripts/getConstellationName";
-import dayjs, { Dayjs } from "dayjs";
 import { calculateHorizonAngle } from "../helpers/scripts/astro/calculateHorizonAngle";
 import { extractNumbers } from "../helpers/scripts/extractNumbers";
 import { useSpot } from "../contexts/ObservationSpotContext";
-import { app_colors } from "../helpers/constants";
+import { app_colors, storageKeys } from "../helpers/constants";
+import { getObject, storeObject } from "../helpers/storage";
+import dayjs, { Dayjs } from "dayjs";
+import { Star } from "../helpers/types/Star";
+import DSOValues from "../components/commons/DSOValues";
+import PageTitle from "../components/commons/PageTitle";
 
 export default function BrightStarDetails({ route, navigation }: any) {
 
@@ -29,9 +29,20 @@ export default function BrightStarDetails({ route, navigation }: any) {
   const [willRise, setWillRise] = useState<boolean>(false)
   const [isCircumpolar, setIsCircumpolar] = useState<boolean>(false)
 
+  const [selectedTimeBase, setSelectedTimeBase] = useState<'relative' | 'absolute'>('relative')
+  const [favouriteStars, setFavouriteStars] = useState<Star[]>([])
+
   const params = route.params;
   const star: Star = params.star;
   const starVisible = params.visible
+
+  useEffect(() => {
+    (async () => {
+      const favs = await getObject(storageKeys.favouriteStars)
+      if (!favs) return
+      setFavouriteStars(favs)
+    })()
+  }, [])
 
   useEffect(() => {
     const altitude = selectedSpot ? selectedSpot.equipments.altitude : defaultAltitude;
@@ -58,7 +69,25 @@ export default function BrightStarDetails({ route, navigation }: any) {
     }
   }, [])
 
-  const [selectedTimeBase, setSelectedTimeBase] = useState<'relative' | 'absolute'>('relative')
+  const updateFavList = async (newList: Star[]) => {
+    await storeObject(storageKeys.favouriteStars, newList)
+  }
+
+  const handleFavorite = async () => {
+    if (favouriteStars.some(obj => obj.ids === star.ids)) {
+      console.log("remove")
+      const favs = favouriteStars.filter(obj => obj.ids !== star.ids)
+      setFavouriteStars(favs)
+      await updateFavList(favs)
+
+    } else {
+      console.log("add")
+      const favs = [...favouriteStars, star]
+      setFavouriteStars(favs)
+      await updateFavList(favs)
+    }
+  }
+
 
   return (
     <View style={globalStyles.body}>
@@ -105,6 +134,17 @@ export default function BrightStarDetails({ route, navigation }: any) {
           {
             typeof setTime === 'boolean' && <DSOValues chipValue chipColor={app_colors.white_forty} title="Heure de lever" value={isCircumpolar ? 'Toute la nuit' : 'Jamais'} />
           }
+        </View>
+        <View style={objectDetailsStyles.content.favouritesContainer}>
+          <TouchableOpacity style={objectDetailsStyles.content.favouritesContainer.button} onPress={() => handleFavorite()}>
+            {
+              favouriteStars.some(obj => obj.ids === star.ids) ?
+                <Image source={require('../../assets/icons/FiHeartFill.png')} style={[objectDetailsStyles.content.favouritesContainer.button.image, { tintColor: app_colors.red }]} />
+                :
+                <Image source={require('../../assets/icons/FiHeart.png')} style={objectDetailsStyles.content.favouritesContainer.button.image} />
+            }
+            <Text style={objectDetailsStyles.content.favouritesContainer.button.text}>{favouriteStars.some(obj => obj.ids === star.ids) ? 'Retirer des favoris' : 'Ajouter aux favoris'}</Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </View>
