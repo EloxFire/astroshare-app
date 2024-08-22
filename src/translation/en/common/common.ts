@@ -44,6 +44,12 @@ export const commonTranslations = {
     allNight: "All night",
     never: "Never",
   },
+  observation: {
+    title: "Observation",
+    nakedEye: "Naked eye",
+    binoculars: "Binoculars",
+    telescope: "Telescope",
+  },
   visibility: {
     title: "Visibility",
     visible: "Visible",
