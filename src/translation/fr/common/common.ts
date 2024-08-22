@@ -26,6 +26,27 @@ export const commonTranslations = {
   other: {
     yes: "Oui",
     no: "Non",
-    days: "jours"
+    days: "jours",
+    relative: "relatif",
+    absolute: "absolu",
+  },
+  time: {
+    time: "Temps",
+    hours: "heures",
+    minutes: "minutes",
+    days: "jours",
+    now: "Maintenant",
+    thisNight: "Cette nuit",
+    allNight: "Toute la nuit",
+    never: "Jamais",
+  },
+  visibility: {
+    title: "Visibilité",
+    visible: "Visible",
+    notVisible: "Non visible",
+    error: "Erreur lors du calcul de la visibilité",
+    nextRise: "Prochain lever",
+    nextSet: "Prochain coucher",
+    altitude: "Altitude",
   }
 }

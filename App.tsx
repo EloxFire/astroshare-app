@@ -25,6 +25,7 @@ import LocalizedFormat from 'dayjs/plugin/localizedFormat'
 import SolarWeather from "./src/screens/SolarWeather";
 import ScopeAlignment from "./src/screens/ScopeAlignment";
 import 'dayjs/locale/fr'
+import 'dayjs/locale/en'
 import Onboarding from "./src/screens/Onboarding";
 import SatelliteTracker from "./src/screens/SatelliteTracker";
 import SkyMapGenerator from "./src/screens/SkyMapGenerator";

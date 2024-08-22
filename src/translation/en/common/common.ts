@@ -29,10 +29,28 @@ export const commonTranslations = {
     yes: "Yes",
     no: "No",
     days: "days",
+    relative: "relative",
+    absolute: "absolute",
+    removeFav: "Remove from favorites",
+    addFav: "Add to favorites",
+  },
+  time: {
+    time: "Time",
+    hours: "hours",
+    minutes: "minutes",
+    days: "days",
+    now: "Now",
+    thisNight: "This night",
+    allNight: "All night",
+    never: "Never",
   },
   visibility: {
+    title: "Visibility",
     visible: "Visible",
     notVisible: "Not visible",
     error: "Error while calculating visibility",
+    nextRise: "Next rise time",
+    nextSet: "Next set time",
+    altitude: "Altitude",
   }
 }

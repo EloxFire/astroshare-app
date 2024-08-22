@@ -7,6 +7,7 @@ import { locationHeaderTranslations } from "./components/locationHeader";
 import { locationModalTranslations } from "./components/locationModal";
 import { ephemerisBarTranslation } from "./components/weather/ephemerisBar";
 import { hourlyOverviewTranslation } from "./components/weather/hourlyOverview";
+import { detailsPages } from "./screens/detailsPages";
 import { favouriteScreenTranslations } from "./screens/favouriteScreen";
 import { homeTranslations } from "./screens/home";
 import { languageSelection } from "./screens/languageSelection";
@@ -44,4 +45,5 @@ export const enTranslations = {
   resultCards: resultCardsTranslations,
   pro: proTranslations,
   favouriteScreen: favouriteScreenTranslations,
+  detailsPages: detailsPages,
 }
