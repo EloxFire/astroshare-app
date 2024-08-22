@@ -1,6 +1,6 @@
 import React, { ReactNode, createContext, useContext, useEffect, useState } from 'react'
 import { useSettings } from './AppSettingsContext'
-import { earth, EclipticCoordinate, EquatorialCoordinate, getPlanetaryPositions, HorizontalCoordinate, Planet } from '@observerly/astrometry'
+import { convertEquatorialToHorizontal, earth, EclipticCoordinate, EquatorialCoordinate, getLunarEquatorialCoordinate, getPlanetaryPositions, HorizontalCoordinate, Planet } from '@observerly/astrometry'
 import { GlobalPlanet } from '../helpers/types/GlobalPlanet'
 
 const SolarSystemContext = createContext<any>({})
@@ -18,12 +18,22 @@ export function SolarSystemProvider({ children }: SolarSystemProviderProps) {
   const { currentUserLocation } = useSettings();
 
   const [planets, setPlanets] = useState<GlobalPlanet[]>([]);
+  const [moonCoords, setMoonCoords] = useState<(EquatorialCoordinate & HorizontalCoordinate)>({ ra: 0, dec: 0, alt: 0, az: 0 })
 
   useEffect(() => {
     getPlanets()
     const interval = setInterval(() => {
       getPlanets()
     }, 60000)
+
+    return () => clearInterval(interval)
+  }, [currentUserLocation])
+
+  useEffect(() => {
+    getMoon()
+    const interval = setInterval(() => {
+      getMoon()
+    }, 30000)
 
     return () => clearInterval(interval)
   }, [currentUserLocation])
@@ -45,8 +55,24 @@ export function SolarSystemProvider({ children }: SolarSystemProviderProps) {
     setPlanets(system)
   }
 
+  const getMoon = () => {
+    if (!currentUserLocation) return;
+    const eqCoords = getLunarEquatorialCoordinate(new Date())
+    const horizontalCoords = convertEquatorialToHorizontal(new Date(), { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }, { ra: eqCoords.ra, dec: eqCoords.dec })
+
+    const moonCoords = {
+      ra: eqCoords.ra,
+      dec: eqCoords.dec,
+      alt: horizontalCoords.alt,
+      az: horizontalCoords.az,
+    }
+
+    setMoonCoords(moonCoords)
+  }
+
   const values = {
     planets,
+    moonCoords,
   }
 
   return (

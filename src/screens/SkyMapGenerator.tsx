@@ -5,7 +5,7 @@ import { Star } from '../helpers/types/Star'
 import { useSettings } from '../contexts/AppSettingsContext'
 import { calculateHorizonAngle } from '../helpers/scripts/astro/calculateHorizonAngle'
 import { convertEquatorialToHorizontal, isBodyAboveHorizon, hercules, lyra, draco, cepheus, getPlanetaryPositions } from '@observerly/astrometry'
-import { Circle, G, Line, Mask, Polyline, Rect, Svg, Text as SvgText } from 'react-native-svg';
+import { Circle, G, Image, Line, Mask, Polyline, Rect, Svg, Text as SvgText } from 'react-native-svg';
 import { constellationsAsterisms } from '../helpers/scripts/astro/constellationsAsterisms'
 import { app_colors } from '../helpers/constants'
 import PageTitle from '../components/commons/PageTitle'
@@ -14,11 +14,15 @@ import ToggleButton from '../components/commons/buttons/ToggleButton'
 import dayjs from 'dayjs'
 import axios from 'axios'
 import { i18n } from '../helpers/scripts/i18n'
+import { useSolarSystem } from '../contexts/SolarSystemContext'
+import { GlobalPlanet } from '../helpers/types/GlobalPlanet'
+import { astroImages } from '../helpers/scripts/loadImages'
 
 
 export default function SkyMapGenerator({ navigation }: any) {
 
   const { currentUserLocation } = useSettings()
+  const { planets, moonCoords } = useSolarSystem()
 
   const [starCatalog, setStarCatalog] = useState<Star[]>([])
   const [starCatalogLoading, setStarCatalogLoading] = useState(true)
@@ -27,6 +31,10 @@ export default function SkyMapGenerator({ navigation }: any) {
   const [showConstellations, setShowConstellations] = useState(true)
   const [showConstellationsName, setShowConstellationsName] = useState(false)
   const [showStarsName, setShowStarsName] = useState(false)
+  const [showPlanets, setShowPlanets] = useState(true)
+
+  const [moonX, setMoonX] = useState(0)
+  const [moonY, setMoonY] = useState(0)
 
   const [starsToDisplay, setStarsToDisplay] = useState<Star[]>([])
 
@@ -45,6 +53,14 @@ export default function SkyMapGenerator({ navigation }: any) {
   useEffect(() => {
     const interval = setInterval(() => {
       getStarsAboveHorizon(starCatalog)
+    }, 60000)
+
+    return () => clearInterval(interval)
+  }, [])
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      calculateMoonPosition()
     }, 60000)
 
     return () => clearInterval(interval)
@@ -80,6 +96,16 @@ export default function SkyMapGenerator({ navigation }: any) {
     })
 
     setStarsToDisplay(candidates)
+  }
+
+  const calculateMoonPosition = () => {
+    if (!currentUserLocation) return;
+    const r = radius * (1 - moonCoords.alt / 90);
+    const theta = moonCoords.az * (Math.PI / 180);
+    const x = (screenWidth / 2) + r * Math.sin(theta);
+    const y = (screenWidth / 2) + r * Math.cos(theta); // Remarquez le signe moins ici
+
+    return { x, y }
   }
 
 
@@ -191,7 +217,7 @@ export default function SkyMapGenerator({ navigation }: any) {
 
               return (
                 <SvgText
-                  key={`name-${constellationIndex}`}
+                  key={`name-${constellationIndex}-${name}`}
                   x={centerX}
                   y={centerY}
                   fill={app_colors.white}
@@ -204,6 +230,40 @@ export default function SkyMapGenerator({ navigation }: any) {
               );
             }).filter(Boolean)
           }
+
+          {
+            (planets.length > 0 && showPlanets && !starCatalogLoading) &&
+            planets.map((planet: GlobalPlanet, index: number) => {
+              if (planet.name === 'Earth') return null;
+              const coords = convertEquatorialToHorizontal(currentTime, { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }, { ra: planet.ra, dec: planet.dec })
+              const r = radius * (1 - coords.alt / 90);
+              const theta = coords.az * (Math.PI / 180);
+              const x = (screenWidth / 2) + r * Math.sin(theta);
+              const y = (screenWidth / 2) + r * Math.cos(theta); // Remarquez le signe moins ici
+
+              return (
+                <>
+                  <Image href={astroImages[planet.name.toUpperCase()]} key={`planet-${index}`} x={x} y={y} width={10} height={10} />
+                  <SvgText
+                    key={`name-planet-${planet.name}`}
+                    x={x - 5}
+                    y={y + 10}
+                    fill={app_colors.white}
+                    fontSize="8"
+                    textAnchor="middle"
+                    transform={`rotate(180, ${x}, ${y})`}
+                  >
+                    {planet.name}
+                  </SvgText>
+                </>
+              );
+            })
+          }
+          {
+            (showPlanets && moonCoords && !starCatalogLoading) && (
+              <Image href={astroImages['Moon']} x={moonX} y={moonY} width={10} height={10} />
+            )
+          }
         </G>
       </Svg>
       <Text style={{ color: app_colors.red_eighty, textAlign: 'center', fontSize: 20 }}>S</Text>
@@ -213,6 +273,7 @@ export default function SkyMapGenerator({ navigation }: any) {
         <ScrollView style={{ marginTop: 10, borderTopWidth: 1, borderColor: app_colors.white_forty, paddingTop: 10 }}>
           <ToggleButton title={i18n.t('skymapGenerator.constellations')} onToggle={() => setShowConstellations(!showConstellations)} toggled={showConstellations} />
           <ToggleButton title={i18n.t('skymapGenerator.constellationsName')} onToggle={() => setShowConstellationsName(!showConstellationsName)} toggled={showConstellationsName} />
+          <ToggleButton title={i18n.t('skymapGenerator.planets')} onToggle={() => setShowPlanets(!showPlanets)} toggled={showPlanets} />
           {/* <Text style={{ color: 'white' }}>{constellationsAsterisms[0].features[0].properties?.name}</Text> */}
           {/* <Text style={{ color: 'white' }}>{JSON.stringify(constellationsAsterisms[0].features[0].properties?.centrum)}</Text> */}
         </ScrollView>
