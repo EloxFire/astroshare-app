@@ -12,6 +12,7 @@ import AddSpotModal from '../components/modals/AddSpotModal'
 import DeleteSpotModal from '../components/modals/DeleteSpotModal'
 import { i18n } from '../helpers/scripts/i18n'
 import { viewpointsManagerTranslations } from '../translation/en/screens/viewpointsManager'
+import ScreenInfo from '../components/ScreenInfo'
 
 export default function ViewPointsManager({ navigation }: any) {
 
@@ -59,10 +60,7 @@ export default function ViewPointsManager({ navigation }: any) {
             }
             {
               viewPoints.length === 0 && (
-                <View style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 60 }}>
-                  <Image source={require('../../assets/icons/FiViewPoint.png')} style={{ width: 90, height: 90, opacity: .5, marginBottom: 20 }} />
-                  <Text style={[viewPointsManagerStyles.content.text, { opacity: .5, marginBottom: 0, fontSize: 15, marginHorizontal: 50, textAlign: 'center' }]}>{i18n.t('viewpointsManager.description')}</Text>
-                </View>
+                <ScreenInfo image={require('../../assets/icons/FiViewPoint.png')} text={i18n.t('viewpointsManager.description')} />
               )
             }
           </View>
