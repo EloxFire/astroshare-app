@@ -13,17 +13,19 @@ import axios from 'axios'
 import DSOValues from '../../components/commons/DSOValues'
 import YoutubePlayer from "react-native-youtube-iframe";
 import { i18n } from '../../helpers/scripts/i18n'
+import { issFeedImages } from '../../helpers/scripts/loadImages'
+import { useTranslation } from '../../hooks/useTranslation'
 
 export default function IssTracker({ navigation }: any) {
-  const issFeed = "bZ4nAEhwoCI"
-  const backupIssFeed = "nEC3xRSSc3k";
+
+  const { currentLocale } = useTranslation()
 
   const [issPosition, setIssPosition] = useState<any>(null)
   const [trajectoryPoints, setTrajectoryPoints] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [issInfosModalVisible, setIssInfosModalVisible] = useState(false)
   const [liveFeedModalVisible, setLiveFeedModalVisible] = useState(false)
-  const [currentIssFeedId, setCurrentIssFeedId] = useState(issFeed)
+  const [issFeedError, setIssFeedError] = useState(false)
 
   const mapRef = useRef(null)
   const youtubePlayerRef = useRef(null)
@@ -62,8 +64,6 @@ export default function IssTracker({ navigation }: any) {
 
       let name = await getLocationName({ lat: position.data.data.latitude, lon: position.data.data.longitude });
 
-
-
       const iss = {
         ...position.data.data,
         dsm_lat: convertDDtoDMS(position.data.data.latitude, position.data.data.latitude).dms_lat,
@@ -95,14 +95,6 @@ export default function IssTracker({ navigation }: any) {
     setLiveFeedModalVisible(!liveFeedModalVisible)
   }
 
-  const handleFeed = () => {
-    if (currentIssFeedId === issFeed) {
-      setCurrentIssFeedId(backupIssFeed)
-    } else {
-      setCurrentIssFeedId(issFeed)
-    }
-  }
-
   return (
     <View>
       <MapView
@@ -127,7 +119,7 @@ export default function IssTracker({ navigation }: any) {
             }}
             title='ISS'
             description="Position de l'ISS en temps réel"
-            image={require('../../assets/icons/FiIss.png')}
+            image={require('../../../assets/icons/FiIss.png')}
             style={{ width: 40, height: 40 }}
             anchor={{ x: 0.5, y: 0.5 }}
             centerOffset={{ x: 0.5, y: 0.5 }}
@@ -159,36 +151,41 @@ export default function IssTracker({ navigation }: any) {
       <View style={satelliteTrackerStyles.pageControls}>
         <PageTitle title={i18n.t('home.buttons.satellite_tracker.title')} navigation={navigation} subtitle={i18n.t('home.buttons.satellite_tracker.subtitle')} />
       </View>
-      <TouchableOpacity style={satelliteTrackerStyles.button} onPress={() => { setLiveFeedModalVisible(false); setIssInfosModalVisible(!issInfosModalVisible) }}>
-        <Image source={require('../../assets/icons/FiInfo.png')} style={{ width: 24, height: 24 }} />
-      </TouchableOpacity>
-      <TouchableOpacity style={[satelliteTrackerStyles.button, satelliteTrackerStyles.button.centerIss]} onPress={() => centerIss()}>
-        <Image source={require('../../assets/icons/FiIss.png')} style={{ width: 24, height: 24 }} />
-      </TouchableOpacity>
-      <TouchableOpacity style={[satelliteTrackerStyles.button, satelliteTrackerStyles.button.liveFeed]} onPress={() => handleLiveFeedDisplay()}>
-        {
-          !liveFeedModalVisible ?
-            <Image source={require('../../assets/icons/FiPlayCircle.png')} style={{ width: 24, height: 24 }} />
-            :
-            <Image source={require('../../assets/icons/FiStopCircle.png')} style={{ width: 24, height: 24 }} />
-        }
-      </TouchableOpacity>
+      <View style={satelliteTrackerStyles.buttons}>
+        <TouchableOpacity style={satelliteTrackerStyles.buttons.button} onPress={() => { setLiveFeedModalVisible(false); setIssInfosModalVisible(!issInfosModalVisible) }}>
+          <Image source={require('../../../assets/icons/FiInfo.png')} style={{ width: 18, height: 18 }} />
+          <Text style={satelliteTrackerStyles.buttons.button.text}>{i18n.t('satelliteTracker.issTracker.buttons.infos')}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={satelliteTrackerStyles.buttons.button} onPress={() => centerIss()}>
+          <Image source={require('../../../assets/icons/FiIss.png')} style={{ width: 18, height: 18 }} />
+          <Text style={satelliteTrackerStyles.buttons.button.text}>{i18n.t('satelliteTracker.issTracker.buttons.center')}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={satelliteTrackerStyles.buttons.button} onPress={() => handleLiveFeedDisplay()}>
+          {
+            !liveFeedModalVisible ?
+              <Image source={require('../../../assets/icons/FiPlayCircle.png')} style={{ width: 18, height: 18 }} />
+              :
+              <Image source={require('../../../assets/icons/FiStopCircle.png')} style={{ width: 18, height: 18 }} />
+          }
+          <Text style={satelliteTrackerStyles.buttons.button.text}>{i18n.t('satelliteTracker.issTracker.buttons.feed')}</Text>
+        </TouchableOpacity>
+      </View>
       {
         issInfosModalVisible &&
         <View style={satelliteTrackerStyles.issModal}>
           <ScrollView>
             <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20 }}>
               <View>
-                <Text style={satelliteTrackerStyles.issModal.title}>Station Spatiale Internationale</Text>
-                <Text style={satelliteTrackerStyles.issModal.subtitle}>(ISS)</Text>
+                <Text style={satelliteTrackerStyles.issModal.title}>{i18n.t('satelliteTracker.issTracker.infosModal.title')}</Text>
+                <Text style={satelliteTrackerStyles.issModal.subtitle}>{i18n.t('satelliteTracker.issTracker.infosModal.subtitle')}</Text>
               </View>
-              <Image source={require('../../assets/icons/FiIss.png')} style={{ width: 50, height: 50 }} />
+              <Image source={require('../../../assets/icons/FiIss.png')} style={{ width: 50, height: 50 }} />
             </View>
-            <DSOValues title={i18n.t('satelliteTracker.infosModal.latitude')} value={issPosition ? issPosition.dsm_lat : i18n.t('common.loadings.simple')} chipValue chipColor={app_colors.grey} />
-            <DSOValues title={i18n.t('satelliteTracker.infosModal.longitude')} value={issPosition ? issPosition.dsm_lon : i18n.t('common.loadings.simple')} chipValue chipColor={app_colors.grey} />
-            <DSOValues title={i18n.t('satelliteTracker.infosModal.altitude')} value={issPosition ? `${issPosition.altitude.toFixed(2)} Km` : i18n.t('common.loadings.simple')} chipValue chipColor={app_colors.grey} />
-            <DSOValues title={i18n.t('satelliteTracker.infosModal.speed')} value={issPosition ? `${issPosition.velocity.toFixed(2)} Km/h` : i18n.t('common.loadings.simple')} chipValue chipColor={app_colors.grey} />
-            <DSOValues title={i18n.t('satelliteTracker.infosModal.country')} value={issPosition ? getCountryByCode(issPosition.country) : i18n.t('common.loadings.simple')} chipValue chipColor={app_colors.grey} />
+            <DSOValues title={i18n.t('satelliteTracker.issTracker.infosModal.latitude')} value={issPosition ? issPosition.dsm_lat : i18n.t('common.loadings.simple')} chipValue chipColor={app_colors.grey} />
+            <DSOValues title={i18n.t('satelliteTracker.issTracker.infosModal.longitude')} value={issPosition ? issPosition.dsm_lon : i18n.t('common.loadings.simple')} chipValue chipColor={app_colors.grey} />
+            <DSOValues title={i18n.t('satelliteTracker.issTracker.infosModal.altitude')} value={issPosition ? `${issPosition.altitude.toFixed(2)} Km` : i18n.t('common.loadings.simple')} chipValue chipColor={app_colors.grey} />
+            <DSOValues title={i18n.t('satelliteTracker.issTracker.infosModal.speed')} value={issPosition ? `${issPosition.velocity.toFixed(2)} Km/h` : i18n.t('common.loadings.simple')} chipValue chipColor={app_colors.grey} />
+            <DSOValues title={i18n.t('satelliteTracker.issTracker.infosModal.country')} value={issPosition ? getCountryByCode(issPosition.country) : i18n.t('common.loadings.simple')} chipValue chipColor={app_colors.grey} />
           </ScrollView>
         </View>
       }
@@ -199,17 +196,22 @@ export default function IssTracker({ navigation }: any) {
           <ScrollView>
             <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
               <View style={satelliteTrackerStyles.issModal.liveDot} />
-              <Text style={satelliteTrackerStyles.issModal.title}>{i18n.t('satelliteTracker.liveModal.title')}</Text>
+              <Text style={satelliteTrackerStyles.issModal.title}>{i18n.t('satelliteTracker.issTracker.liveModal.title')}</Text>
             </View>
-            <Text style={[satelliteTrackerStyles.issModal.subtitle, { marginBottom: 10, fontFamily: 'GilroyRegular', opacity: .5 }]}>{i18n.t('satelliteTracker.liveModal.subtitle')}</Text>
-            <YoutubePlayer
-              width={Dimensions.get('screen').width - 20}
-              height={(Dimensions.get('screen').width - 20) / (16 / 9)}
-              play
-              ref={youtubePlayerRef}
-              videoId={currentIssFeedId}
-              onError={() => handleFeed()}
-            />
+            <Text style={[satelliteTrackerStyles.issModal.subtitle, { marginBottom: 10, fontFamily: 'GilroyRegular', opacity: .5 }]}>{i18n.t('satelliteTracker.issTracker.liveModal.subtitle')}</Text>
+            {
+              issFeedError ?
+                <Image source={issFeedImages[currentLocale]} style={{ width: '100%', height: 220, borderRadius: 10, borderWidth: 1, borderColor: app_colors.white_twenty }} />
+                :
+                <YoutubePlayer
+                  width={Dimensions.get('screen').width - 20}
+                  height={(Dimensions.get('screen').width - 20) / (16 / 9)}
+                  play
+                  ref={youtubePlayerRef}
+                  videoId={"bZ4nAEhwoCI"}
+                  onError={() => setIssFeedError(true)}
+                />
+            }
           </ScrollView>
         </View>
       }

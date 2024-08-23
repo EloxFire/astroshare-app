@@ -59,3 +59,8 @@ export const moonIcons: any = {
   'Last Quarter': require('../../../assets/icons/astro/moon/Last Quarter.png'),
   'Waning Crescent': require('../../../assets/icons/astro/moon/Waning Crescent.png'),
 }
+
+export const issFeedImages: any = {
+  'fr': require('../../../assets/images/iss_feed_error_fr.png'),
+  'en': require('../../../assets/images/iss_feed_error_en.png'),
+}

@@ -253,5 +253,5 @@ export const countryCodes: { [key: string]: string } = {
 };
 
 export const getCountryByCode = (code: string): string => {
-  return countryCodes[code] || i18n.t('satelliteTracker.infosModal.unknown');
+  return countryCodes[code] || i18n.t('satelliteTracker.issTracker.infosModal.unknown');
 };

@@ -38,6 +38,7 @@ import { TranslationProvider } from "./src/hooks/useTranslation";
 import './src/helpers/scripts/i18n/index';
 import LanguageSelection from "./src/screens/LanguageSelection";
 import SellScreen from "./src/screens/pro/SellScreen";
+import IssTracker from "./src/screens/satelliteTracker/IssTracker";
 
 dayjs.locale('fr');
 dayjs.extend(LocalizedFormat)
@@ -101,6 +102,7 @@ export default function App() {
                   <Stack.Screen name={routes.favoritesViewPoints.path} component={ViewPointsManager} />
                   <Stack.Screen name={routes.about.path} component={About} />
                   <Stack.Screen name={routes.satelliteTracker.path} component={SatelliteTracker} />
+                  <Stack.Screen name={routes.issTracker.path} component={IssTracker} />
                   <Stack.Screen name={routes.favorites.path} component={FavouritesScreen} />
                   <Stack.Screen name={routes.skymapgenerator.path} component={SkyMapGenerator} />
                   <Stack.Screen name={routes.language.path} component={LanguageSelection} />

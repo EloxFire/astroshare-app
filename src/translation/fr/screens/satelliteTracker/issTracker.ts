@@ -1,4 +1,9 @@
 export const issTrackerTranslations = {
+  buttons: {
+    infos: "Infos",
+    center: "Centrer",
+    feed: "Vidéo"
+  },
   infosModal: {
     title: "Station Spatiale Internationale",
     subtitle: "(ISS)",
