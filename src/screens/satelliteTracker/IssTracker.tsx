@@ -119,8 +119,7 @@ export default function IssTracker({ navigation }: any) {
             }}
             title='ISS'
             description="Position de l'ISS en temps réel"
-            image={require('../../../assets/icons/FiIss.png')}
-            style={{ width: 40, height: 40 }}
+            image={require('../../../assets/icons/FiIssSmall.png')}
             anchor={{ x: 0.5, y: 0.5 }}
             centerOffset={{ x: 0.5, y: 0.5 }}
           />
