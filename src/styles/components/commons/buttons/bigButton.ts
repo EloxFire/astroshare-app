@@ -31,7 +31,7 @@ export const bigButtonStyles = {
     subtitle: {
       color: app_colors.white,
       opacity: .6,
-      fontSize: 9,
+      fontSize: 10,
       fontFamily: 'AuxMono',
     }
   }
