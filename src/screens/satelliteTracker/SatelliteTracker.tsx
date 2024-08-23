@@ -23,7 +23,7 @@ export default function SatelliteTracker({ navigation }: any) {
           <ToolButton text={i18n.t('satelliteTracker.home.buttons.issTracker.title')} subtitle={i18n.t('satelliteTracker.home.buttons.issTracker.subtitle')} image={require('../../../assets/images/tools/isstracker.png')} onPress={() => navigation.navigate(routes.issTracker.path)} />
           <ToolButton text={i18n.t('satelliteTracker.home.buttons.starlinkTracker.title')} subtitle={i18n.t('satelliteTracker.home.buttons.starlinkTracker.subtitle')} image={require('../../../assets/images/tools/starlinktracker.png')} onPress={() => navigation.navigate(routes.starlinkTracker.path)} />
         </View>
-        <ScreenInfo image={require('../../../assets/icons/FiIss.png')} text={"Ceci est un texte de test pour voir comment ca se passe"} />
+        <ScreenInfo image={require('../../../assets/icons/FiIss.png')} text={i18n.t('satelliteTracker.home.info')} />
       </ScrollView>
     </View>
   )
