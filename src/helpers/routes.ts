@@ -16,6 +16,9 @@ export const routes = {
   apod: { path: 'ApodScreen', requirements: [] },
   skymapgenerator: { path: 'SkyMapGeneratorScreen', requirements: [] },
   satelliteTracker: { path: 'SatelliteTrackerScreen', requirements: [] },
+  issTracker: { path: 'IssTrackerScreen', requirements: [] },
+  starlinkTracker: { path: 'StarlinkTrackerScreen', requirements: [] },
+  spaceXDataScreen: { path: 'SpaceXDataScreen', requirements: [] },
   favorites: { path: 'FavoritesScreen', requirements: [] },
   sellScreen: { path: 'SellScreen', requirements: [] },
 }

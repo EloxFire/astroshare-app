@@ -19,32 +19,38 @@ export const satelliteTrackerStyles = {
     padding: 10,
     paddingTop: StatusBar.currentHeight
   },
-  button: {
+  buttons: {
     position: 'absolute' as 'absolute',
+    top: StatusBar.currentHeight! + 75,
+    left: 0,
+    width: Dimensions.get('screen').width,
     display: 'flex' as 'flex',
-    flexDirection: 'column' as 'column',
+    flexDirection: 'row' as 'row',
     alignItems: 'center' as 'center',
     justifyContent: 'center' as 'center',
-    top: StatusBar.currentHeight! + 100,
-    left: 0,
-    zIndex: 1,
-    width: 50,
-    height: 40,
-    backgroundColor: app_colors.black,
-    borderTopRightRadius: 10,
-    borderBottomRightRadius: 10,
-    borderColor: app_colors.white_eighty,
-    borderRightWidth: 1,
-    borderBottomWidth: 1,
-    borderTopWidth: 1,
 
-    centerIss: {
-      top: StatusBar.currentHeight! + 150,
+    button: {
+      display: 'flex' as 'flex',
+      flexDirection: 'row' as 'row',
+      alignItems: 'center' as 'center',
+      justifyContent: 'center' as 'center',
+      zIndex: 1,
+      width: Dimensions.get('screen').width / 3 - 20,
+      height: 35,
+      gap: 10,
+      backgroundColor: app_colors.black,
+      borderWidth: 1,
+      borderColor: app_colors.white_twenty,
+      borderRadius: 10,
+      marginRight: 10,
+
+      text: {
+        color: app_colors.white,
+        fontSize: 12,
+        fontFamily: 'GilroyRegular',
+        textTransform: 'uppercase' as 'uppercase',
+      }
     },
-
-    liveFeed: {
-      top: StatusBar.currentHeight! + 200,
-    }
   },
   issModal: {
     position: 'absolute' as 'absolute',

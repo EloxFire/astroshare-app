@@ -14,6 +14,7 @@ import { GlobalPlanet } from '../helpers/types/GlobalPlanet'
 import { Star } from '../helpers/types/Star'
 import PlanetCardLite from '../components/cards/PlanetCardLite'
 import BrightStarCardLite from '../components/cards/BrightStarCardList'
+import ScreenInfo from '../components/ScreenInfo'
 
 export default function FavouritesScreen({ navigation }: any) {
 
@@ -66,10 +67,7 @@ export default function FavouritesScreen({ navigation }: any) {
           (objects.length === 0 && planets.length === 0 && stars.length === 0) ? (
             <View>
               <Text style={favouriteScreenStyles.noFavsBadge}>{i18n.t('favouriteScreen.noFavs')}</Text>
-              <View style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 60 }}>
-                <Image source={require('../../assets/icons/FiHeart.png')} style={{ width: 90, height: 90, opacity: .5, marginBottom: 20 }} />
-                <Text style={[viewPointsManagerStyles.content.text, { opacity: .5, marginBottom: 0, fontSize: 15 }]}>{i18n.t('favouriteScreen.noFavsHint')}</Text>
-              </View>
+              <ScreenInfo image={require('../../assets/icons/FiHeart.png')} text={i18n.t('favouriteScreen.noFavsHint')} />
             </View>
           )
             :

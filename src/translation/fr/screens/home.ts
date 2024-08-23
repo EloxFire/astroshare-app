@@ -10,31 +10,31 @@ export const homeTranslations = {
   buttons: {
     weather: {
       title: "Météo en direct",
-      subtitle: "C'est le moment de sortir le téléscope !"
+      subtitle: "// C'est le moment de sortir le téléscope !"
     },
     scope_alignment: {
       title: "Mise en station",
-      subtitle: "Votre assistant de mise en station"
+      subtitle: "// Votre assistant de mise en station"
     },
     moon_phases: {
       title: "Phases de la Lune",
-      subtitle: "Calculez les phases de la Lune"
+      subtitle: "// Calculez les phases de la Lune"
     },
     solar_weather: {
       title: "Météo solaire",
-      subtitle: "Situation de nôtre étoile en temps réel !"
+      subtitle: "// Situation de nôtre étoile en temps réel !"
     },
     apod: {
       title: "APOD",
-      subtitle: "Image du jour de la NASA"
+      subtitle: "// Image du jour de la NASA"
     },
     satellite_tracker: {
-      title: "ISS Tracker",
-      subtitle: "Position de l'ISS en temps réel"
+      title: "Satellites",
+      subtitle: "// Suivi de l'ISS et de Starlink"
     },
     skymap_generator: {
       title: "Carte du ciel",
-      subtitle: "Carte du ciel en direct"
+      subtitle: "// Carte du ciel en direct"
     }
   }
 }
