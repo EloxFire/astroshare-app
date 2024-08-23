@@ -1,5 +1,5 @@
 export const homeTranslations = {
-  title: "Suivi de satellite",
+  title: "Satellites",
   subtitle: "// Suivi de l'ISS et de Starlink",
   buttons: {
     issTracker: {
