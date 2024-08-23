@@ -29,8 +29,8 @@ export const homeTranslations = {
       subtitle: "// Astronomy Picture of the Day"
     },
     satellite_tracker: {
-      title: "ISS Tracker",
-      subtitle: "// ISS position in real-time"
+      title: "Satellite tracker",
+      subtitle: "// ISS and Starlink satellites positions"
     },
     skymap_generator: {
       title: "Skymap generator",

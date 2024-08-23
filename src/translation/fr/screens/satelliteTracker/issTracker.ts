@@ -1,4 +1,4 @@
-export const satelliteTrackerTranslations = {
+export const issTrackerTranslations = {
   infosModal: {
     title: "Station Spatiale Internationale",
     subtitle: "(ISS)",

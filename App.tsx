@@ -27,7 +27,7 @@ import ScopeAlignment from "./src/screens/ScopeAlignment";
 import 'dayjs/locale/fr'
 import 'dayjs/locale/en'
 import Onboarding from "./src/screens/Onboarding";
-import SatelliteTracker from "./src/screens/SatelliteTracker";
+import SatelliteTracker from "./src/screens/satelliteTracker/SatelliteTracker";
 import SkyMapGenerator from "./src/screens/SkyMapGenerator";
 import FavouritesScreen from "./src/screens/FavouritesScreen";
 import PlanetDetails from "./src/screens/PlanetDetails";

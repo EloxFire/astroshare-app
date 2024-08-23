@@ -1,20 +1,20 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { Dimensions, ScrollView, Text, TouchableOpacity, View } from 'react-native'
-import { satelliteTrackerStyles } from '../styles/screens/satelliteTracker'
-import { mapStyle } from '../helpers/mapJsonStyle'
-import { app_colors } from '../helpers/constants'
-import { convertDDtoDMS } from '../helpers/scripts/convertDDtoDMSCoords'
-import { getLocationName } from '../helpers/api/getLocationFromCoords'
-import { getCountryByCode } from '../helpers/scripts/utils/getCountryByCode'
+import { satelliteTrackerStyles } from '../../styles/screens/satelliteTracker'
+import { mapStyle } from '../../helpers/mapJsonStyle'
+import { app_colors } from '../../helpers/constants'
+import { convertDDtoDMS } from '../../helpers/scripts/convertDDtoDMSCoords'
+import { getLocationName } from '../../helpers/api/getLocationFromCoords'
+import { getCountryByCode } from '../../helpers/scripts/utils/getCountryByCode'
 import { Image } from 'expo-image'
-import PageTitle from '../components/commons/PageTitle'
+import PageTitle from '../../components/commons/PageTitle'
 import MapView, { Circle, Marker, PROVIDER_GOOGLE, Polyline } from 'react-native-maps'
 import axios from 'axios'
-import DSOValues from '../components/commons/DSOValues'
+import DSOValues from '../../components/commons/DSOValues'
 import YoutubePlayer from "react-native-youtube-iframe";
-import { i18n } from '../helpers/scripts/i18n'
+import { i18n } from '../../helpers/scripts/i18n'
 
-export default function SatelliteTracker({ navigation }: any) {
+export default function IssTracker({ navigation }: any) {
   const issFeed = "bZ4nAEhwoCI"
   const backupIssFeed = "nEC3xRSSc3k";
 
