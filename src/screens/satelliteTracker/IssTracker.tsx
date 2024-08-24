@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { Dimensions, ScrollView, Text, TouchableOpacity, View } from 'react-native'
-import { satelliteTrackerStyles } from '../../styles/screens/satelliteTracker'
 import { mapStyle } from '../../helpers/mapJsonStyle'
 import { app_colors } from '../../helpers/constants'
 import { convertDDtoDMS } from '../../helpers/scripts/convertDDtoDMSCoords'
@@ -15,6 +14,7 @@ import YoutubePlayer from "react-native-youtube-iframe";
 import { i18n } from '../../helpers/scripts/i18n'
 import { issFeedImages } from '../../helpers/scripts/loadImages'
 import { useTranslation } from '../../hooks/useTranslation'
+import { issTrackerStyles } from '../../styles/screens/satelliteTracker/issTracker'
 
 export default function IssTracker({ navigation }: any) {
 
@@ -100,7 +100,7 @@ export default function IssTracker({ navigation }: any) {
       <MapView
         ref={mapRef}
         provider={PROVIDER_GOOGLE}
-        style={satelliteTrackerStyles.map}
+        style={issTrackerStyles.map}
         customMapStyle={mapStyle}
         initialRegion={{
           latitude: issPosition ? issPosition.latitude : 0,
@@ -147,36 +147,36 @@ export default function IssTracker({ navigation }: any) {
           />
         }
       </MapView>
-      <View style={satelliteTrackerStyles.pageControls}>
+      <View style={issTrackerStyles.pageControls}>
         <PageTitle title={i18n.t('home.buttons.satellite_tracker.title')} navigation={navigation} subtitle={i18n.t('home.buttons.satellite_tracker.subtitle')} />
       </View>
-      <View style={satelliteTrackerStyles.buttons}>
-        <TouchableOpacity style={satelliteTrackerStyles.buttons.button} onPress={() => { setLiveFeedModalVisible(false); setIssInfosModalVisible(!issInfosModalVisible) }}>
+      <View style={issTrackerStyles.buttons}>
+        <TouchableOpacity style={issTrackerStyles.buttons.button} onPress={() => { setLiveFeedModalVisible(false); setIssInfosModalVisible(!issInfosModalVisible) }}>
           <Image source={require('../../../assets/icons/FiInfo.png')} style={{ width: 18, height: 18 }} />
-          <Text style={satelliteTrackerStyles.buttons.button.text}>{i18n.t('satelliteTracker.issTracker.buttons.infos')}</Text>
+          <Text style={issTrackerStyles.buttons.button.text}>{i18n.t('satelliteTracker.issTracker.buttons.infos')}</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={satelliteTrackerStyles.buttons.button} onPress={() => centerIss()}>
+        <TouchableOpacity style={issTrackerStyles.buttons.button} onPress={() => centerIss()}>
           <Image source={require('../../../assets/icons/FiIss.png')} style={{ width: 18, height: 18 }} />
-          <Text style={satelliteTrackerStyles.buttons.button.text}>{i18n.t('satelliteTracker.issTracker.buttons.center')}</Text>
+          <Text style={issTrackerStyles.buttons.button.text}>{i18n.t('satelliteTracker.issTracker.buttons.center')}</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={satelliteTrackerStyles.buttons.button} onPress={() => handleLiveFeedDisplay()}>
+        <TouchableOpacity style={issTrackerStyles.buttons.button} onPress={() => handleLiveFeedDisplay()}>
           {
             !liveFeedModalVisible ?
               <Image source={require('../../../assets/icons/FiPlayCircle.png')} style={{ width: 18, height: 18 }} />
               :
               <Image source={require('../../../assets/icons/FiStopCircle.png')} style={{ width: 18, height: 18 }} />
           }
-          <Text style={satelliteTrackerStyles.buttons.button.text}>{i18n.t('satelliteTracker.issTracker.buttons.feed')}</Text>
+          <Text style={issTrackerStyles.buttons.button.text}>{i18n.t('satelliteTracker.issTracker.buttons.feed')}</Text>
         </TouchableOpacity>
       </View>
       {
         issInfosModalVisible &&
-        <View style={satelliteTrackerStyles.issModal}>
+        <View style={issTrackerStyles.issModal}>
           <ScrollView>
             <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20 }}>
               <View>
-                <Text style={satelliteTrackerStyles.issModal.title}>{i18n.t('satelliteTracker.issTracker.infosModal.title')}</Text>
-                <Text style={satelliteTrackerStyles.issModal.subtitle}>{i18n.t('satelliteTracker.issTracker.infosModal.subtitle')}</Text>
+                <Text style={issTrackerStyles.issModal.title}>{i18n.t('satelliteTracker.issTracker.infosModal.title')}</Text>
+                <Text style={issTrackerStyles.issModal.subtitle}>{i18n.t('satelliteTracker.issTracker.infosModal.subtitle')}</Text>
               </View>
               <Image source={require('../../../assets/icons/FiIss.png')} style={{ width: 50, height: 50 }} />
             </View>
@@ -191,13 +191,13 @@ export default function IssTracker({ navigation }: any) {
 
       {
         liveFeedModalVisible &&
-        <View style={satelliteTrackerStyles.issModal}>
+        <View style={issTrackerStyles.issModal}>
           <ScrollView>
             <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-              <View style={satelliteTrackerStyles.issModal.liveDot} />
-              <Text style={satelliteTrackerStyles.issModal.title}>{i18n.t('satelliteTracker.issTracker.liveModal.title')}</Text>
+              <View style={issTrackerStyles.issModal.liveDot} />
+              <Text style={issTrackerStyles.issModal.title}>{i18n.t('satelliteTracker.issTracker.liveModal.title')}</Text>
             </View>
-            <Text style={[satelliteTrackerStyles.issModal.subtitle, { marginBottom: 10, fontFamily: 'GilroyRegular', opacity: .5 }]}>{i18n.t('satelliteTracker.issTracker.liveModal.subtitle')}</Text>
+            <Text style={[issTrackerStyles.issModal.subtitle, { marginBottom: 10, fontFamily: 'GilroyRegular', opacity: .5 }]}>{i18n.t('satelliteTracker.issTracker.liveModal.subtitle')}</Text>
             {
               issFeedError ?
                 <Image source={issFeedImages[currentLocale]} style={{ width: '100%', height: 220, borderRadius: 10, borderWidth: 1, borderColor: app_colors.white_twenty }} />

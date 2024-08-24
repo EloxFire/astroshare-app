@@ -1,7 +1,7 @@
 import { Dimensions, StatusBar } from "react-native";
-import { app_colors } from "../../helpers/constants";
+import { app_colors } from "../../../helpers/constants";
 
-export const satelliteTrackerStyles = {
+export const issTrackerStyles = {
   map: {
     width: Dimensions.get('screen').width,
     height: Dimensions.get('screen').height,
