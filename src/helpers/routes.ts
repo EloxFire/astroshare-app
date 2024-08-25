@@ -21,4 +21,5 @@ export const routes = {
   spaceXDataScreen: { path: 'SpaceXDataScreen', requirements: [] },
   favorites: { path: 'FavoritesScreen', requirements: [] },
   sellScreen: { path: 'SellScreen', requirements: [] },
+  transitScreen: { path: 'TransitScreen', requirements: [] },
 }

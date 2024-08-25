@@ -18,6 +18,7 @@ import { scopeAlignmentTranslation } from "./screens/scopeAlignment";
 import { settingsTranslations } from "./screens/settings";
 import { skymapGeneratorTranslations } from "./screens/skymapGenerator";
 import { solarWeatherTranslations } from "./screens/solarWeather";
+import { transitsTranslations } from "./screens/transits";
 import { viewpointsManagerTranslations } from "./screens/viewpointsManager";
 import { weatherTranslation } from "./screens/weather";
 
@@ -44,4 +45,5 @@ export const frTranslations = {
   resultCards: resultCardsTranslations,
   favouriteScreen: favouriteScreenTranslations,
   detailsPages: detailsPages,
+  transits: transitsTranslations
 }

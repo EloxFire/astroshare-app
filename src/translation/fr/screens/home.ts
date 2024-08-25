@@ -24,6 +24,10 @@ export const homeTranslations = {
       title: "Météo solaire",
       subtitle: "// Situation de nôtre étoile en temps réel !"
     },
+    transits: {
+      title: "Transits & Éclipses",
+      subtitle: "// Calculez les transits de corps célestes"
+    },
     apod: {
       title: "APOD",
       subtitle: "// Image du jour de la NASA"
