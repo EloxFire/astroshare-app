@@ -50,5 +50,8 @@ export const commonTranslations = {
     nextRise: "Prochain lever",
     nextSet: "Prochain coucher",
     altitude: "Altitude",
+  },
+  premium: {
+    basic: "Premium"
   }
 }

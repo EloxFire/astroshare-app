@@ -3,6 +3,7 @@ import { app_colors } from "../../../../helpers/constants";
 
 export const toolButtonStyles = {
   button: {
+    position: 'relative' as 'relative',
     backgroundColor: app_colors.white_no_opacity,
     borderWidth: 1,
     borderColor: app_colors.white_no_opacity,
