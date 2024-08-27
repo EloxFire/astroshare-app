@@ -51,7 +51,14 @@ export const commonTranslations = {
     nextSet: "Prochain coucher",
     altitude: "Altitude",
   },
-  premium: {
-    basic: "Premium"
+  planets: {
+    Mercury: "Mercure",
+    Venus: "Vénus",
+    Earth: "Terre",
+    Mars: "Mars",
+    Jupiter: "Jupiter",
+    Saturn: "Saturne",
+    Uranus: "Uranus",
+    Neptune: "Neptune"
   }
 }

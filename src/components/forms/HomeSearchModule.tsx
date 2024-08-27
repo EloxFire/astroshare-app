@@ -11,6 +11,7 @@ import { i18n } from '../../helpers/scripts/i18n'
 import InputWithIcon from './InputWithIcon'
 import HomeSearchResults from '../HomeSearchResults'
 import axios from 'axios'
+import { getSearchedPlanet } from '../../helpers/scripts/astro/planets/getSearchedPlanet'
 
 interface HomeSearchModuleProps {
   navigation: any
@@ -53,10 +54,14 @@ export default function HomeSearchModule({ navigation }: HomeSearchModuleProps) 
 
 
     const planetsRegex = /\b(?:Mercury|Mercure|Venus|Vénus|Earth|Terre|Mars|Jupiter|Saturn|Saturne|Uranus|Neptune)\b/i;
+    let searchedPlanet = getSearchedPlanet(formatedSearchString);
+
+    console.log("searchedPlanet", searchedPlanet);
+
 
     try {
       if (planetsRegex.test(formatedSearchString)) {
-        setPlanetResults(planets.filter((planet: GlobalPlanet) => planet.name.toLowerCase() === formatedSearchString.toLowerCase()))
+        setPlanetResults(planets.filter((planet: GlobalPlanet) => planet.name.toLowerCase() === searchedPlanet.toLowerCase()))
       } else if (solarSystemRegexes.some(regex => regex.test(formatedSearchString))) {
         setPlanetResults(planets)
       }

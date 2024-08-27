@@ -105,7 +105,7 @@ export default function PlanetDetails({ route, navigation }: any) {
       />
       <View style={globalStyles.screens.separator} />
       <ScrollView>
-        <Text style={objectDetailsStyles.content.title}>{planet.name.toUpperCase()}</Text>
+        <Text style={objectDetailsStyles.content.title}>{i18n.t(`common.planets.${planet.name}`).toUpperCase()}</Text>
         {planet.name === 'Earth' && <Text style={objectDetailsStyles.content.subtitle}>{i18n.t('detailsPages.planets.labels.civilization')}</Text>}
         <Image style={objectDetailsStyles.content.image} source={astroImages[planet.name.toUpperCase()]} />
         <View style={objectDetailsStyles.content.dsoInfos}>

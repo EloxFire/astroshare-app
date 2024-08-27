@@ -86,7 +86,7 @@ export const constellationsAsterisms = [
   tucana,
   ursaMajor,
   ursaMinor,
-  vela,
+  // vela, // Removed because it was not drawn correctly
   virgo,
   volans,
   vulpecula,

@@ -200,7 +200,7 @@ export default function IssTracker({ navigation }: any) {
             <Text style={[issTrackerStyles.issModal.subtitle, { marginBottom: 10, fontFamily: 'GilroyRegular', opacity: .5 }]}>{i18n.t('satelliteTracker.issTracker.liveModal.subtitle')}</Text>
             {
               issFeedError ?
-                <Image source={issFeedImages[currentLocale]} style={{ width: '100%', height: 220, borderRadius: 10, borderWidth: 1, borderColor: app_colors.white_twenty }} />
+                <Image source={issFeedImages[i18n.locale]} style={{ width: '100%', height: 220, borderRadius: 10, borderWidth: 1, borderColor: app_colors.white_twenty }} />
                 :
                 <YoutubePlayer
                   width={Dimensions.get('screen').width - 20}

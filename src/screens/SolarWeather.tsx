@@ -8,10 +8,10 @@ import { ESunFilter } from '../helpers/types/SunFilter'
 import { ResizeMode, Video } from 'expo-av'
 import { ECmeFilters } from '../helpers/types/CmeFilters'
 import { Image } from 'expo-image'
+import { localizedForecastPlaceholders, localizedImagePlaceholders, localizedVideoPlaceholders } from '../helpers/scripts/loadImages'
+import { i18n } from '../helpers/scripts/i18n'
 import PageTitle from '../components/commons/PageTitle'
 import SimpleButton from '../components/commons/buttons/SimpleButton'
-import { i18n } from '../helpers/scripts/i18n'
-import { sunIMageFiltersDescription } from '../helpers/scripts/astro/solar/solarFilters'
 
 export default function SolarWeather({ navigation }: any) {
 
@@ -37,6 +37,7 @@ export default function SolarWeather({ navigation }: any) {
 
   const handleChangeSunImage = (filter: ESunFilter, type: 'img' | 'video') => {
     setCurrentImageUrl(undefined)
+    setLoadingImage(true)
 
     setTimeout(() => {
       setCurrentImageFilter(filter)
@@ -46,6 +47,7 @@ export default function SolarWeather({ navigation }: any) {
 
   const handleChangeCMEImage = (filter: ECmeFilters, type: 'img' | 'video') => {
     setCurrentCmeImageUrl(undefined)
+    setLoadingCME(true)
 
     setTimeout(() => {
       setCurrentCmeImageFilter(filter)
@@ -74,7 +76,7 @@ export default function SolarWeather({ navigation }: any) {
             <Text style={solarWeatherStyles.container.subtitle}>Source : NASA / SDO (Solar Dynamics Observatory)</Text>
             {
               isImageMode ?
-                <Image priority={'high'} placeholder={require('../../assets/images/solarWeatherPlaceholder.png')} source={!currentImageUrl ? undefined : { uri: currentImageUrl }} style={solarWeatherStyles.sunImage} />
+                <Image priority={'high'} placeholder={localizedImagePlaceholders[i18n.locale]} source={!currentImageUrl ? undefined : { uri: currentImageUrl }} style={solarWeatherStyles.sunImage} />
                 :
                 <Video
                   ref={videoRef}
@@ -86,7 +88,7 @@ export default function SolarWeather({ navigation }: any) {
                   resizeMode={ResizeMode.CONTAIN}
                   style={{ width: Dimensions.get('window').width - 40, height: Dimensions.get('window').width - 40, marginVertical: 10, borderRadius: 10, opacity: loadingImage ? .1 : 1, borderWidth: loadingImage ? 1 : 0, borderColor: app_colors.white_eighty }}
                 >
-                  <Image placeholder={require('../../assets/images/solarWeatherPlaceholderVideo.png')} style={{ width: Dimensions.get('window').width - 40, height: Dimensions.get('window').width - 40, marginVertical: 10, borderRadius: 10 }} />
+                  <Image placeholder={localizedVideoPlaceholders[i18n.locale]} style={{ width: Dimensions.get('window').width - 40, height: Dimensions.get('window').width - 40, marginVertical: 10, borderRadius: 10 }} />
                 </Video>
             }
             <View style={solarWeatherStyles.container.buttons}>
@@ -114,7 +116,7 @@ export default function SolarWeather({ navigation }: any) {
             <Text style={solarWeatherStyles.container.subtitle}>Source : NASA / SoHO (Solar and Heliospheric Observatory)</Text>
             {
               isCmeImageMode ?
-                <Image priority={'high'} placeholder={require('../../assets/images/solarWeatherPlaceholder.png')} source={!currentCmeImageUrl ? undefined : { uri: currentCmeImageUrl }} style={solarWeatherStyles.sunImage} />
+                <Image priority={'high'} placeholder={localizedImagePlaceholders[i18n.locale]} source={!currentCmeImageUrl ? undefined : { uri: currentCmeImageUrl }} style={solarWeatherStyles.sunImage} />
                 :
                 <Video
                   ref={videoRef}
@@ -126,7 +128,7 @@ export default function SolarWeather({ navigation }: any) {
                   resizeMode={ResizeMode.CONTAIN}
                   style={{ width: Dimensions.get('window').width - 40, height: Dimensions.get('window').width - 40, marginVertical: 10, borderRadius: 10, opacity: loadingCME ? .1 : 1, borderWidth: loadingCME ? 1 : 0, borderColor: app_colors.white_eighty }}
                 >
-                  <Image placeholder={require('../../assets/images/solarWeatherPlaceholderVideo.png')} style={{ width: Dimensions.get('window').width - 40, height: Dimensions.get('window').width - 40, marginVertical: 10, borderRadius: 10 }} />
+                  <Image placeholder={localizedVideoPlaceholders[i18n.locale]} style={{ width: Dimensions.get('window').width - 40, height: Dimensions.get('window').width - 40, marginVertical: 10, borderRadius: 10 }} />
                 </Video>
             }
             <View style={solarWeatherStyles.container.buttons}>
@@ -144,20 +146,20 @@ export default function SolarWeather({ navigation }: any) {
           <View style={solarWeatherStyles.container}>
             <Text style={solarWeatherStyles.container.title}>{i18n.t('solarWeather.containers.sunspots')}</Text>
             <Text style={solarWeatherStyles.container.subtitle}>Source : NASA / SoHO (Solar and Heliospheric Observatory)</Text>
-            <Image priority={'low'} source={{ uri: "https://soho.nascom.nasa.gov/data/synoptic/sunspots_earth/mdi_sunspots_1024.jpg" + '?' + new Date() }} style={solarWeatherStyles.sunImage} />
+            <Image placeholder={localizedImagePlaceholders[i18n.locale]} source={{ uri: "https://soho.nascom.nasa.gov/data/synoptic/sunspots_earth/mdi_sunspots.jpg" + '?' + new Date() }} style={solarWeatherStyles.sunImage} />
           </View>
 
           {/* AURORA CONTAINER */}
           <View style={solarWeatherStyles.container}>
             <Text style={solarWeatherStyles.container.title}>{i18n.t('solarWeather.containers.northenAurora')}</Text>
             <Text style={solarWeatherStyles.container.subtitle}>Source : NOAA Space Weather Prediction Center</Text>
-            <Image priority={'low'} source={{ uri: "https://services.swpc.noaa.gov/images/animations/ovation/north/latest.jpg" + '?' + new Date() }} style={solarWeatherStyles.sunImage} />
+            <Image placeholder={localizedForecastPlaceholders[i18n.locale]} source={{ uri: "https://services.swpc.noaa.gov/images/animations/ovation/north/latest.jpg" + '?' + new Date() }} style={solarWeatherStyles.sunImage} />
           </View>
 
           <View style={solarWeatherStyles.container}>
             <Text style={solarWeatherStyles.container.title}>{i18n.t('solarWeather.containers.southernAurora')}</Text>
             <Text style={solarWeatherStyles.container.subtitle}>Source : NOAA Space Weather Prediction Center</Text>
-            <Image priority={'low'} source={{ uri: "https://services.swpc.noaa.gov/images/animations/ovation/south/latest.jpg" + '?' + new Date() }} style={solarWeatherStyles.sunImage} />
+            <Image placeholder={localizedForecastPlaceholders[i18n.locale]} source={{ uri: "https://services.swpc.noaa.gov/images/animations/ovation/south/latest.jpg" + '?' + new Date() }} style={solarWeatherStyles.sunImage} />
           </View>
         </View>
       </ScrollView>

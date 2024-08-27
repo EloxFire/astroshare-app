@@ -7,6 +7,7 @@ import { getObject } from '../../helpers/storage'
 import { app_colors, storageKeys } from '../../helpers/constants'
 import { isFirstLaunch } from '../../helpers/scripts/checkFirstLaunch'
 import { i18n } from '../../helpers/scripts/i18n'
+import { localizedWhiteLogo } from '../../helpers/scripts/loadImages'
 
 export default function AppHeader({ navigation }: any) {
 
@@ -61,7 +62,7 @@ export default function AppHeader({ navigation }: any) {
   return (
     <View style={appHeaderStyles.container}>
       <Image style={appHeaderStyles.container.logo}
-        source={require('../../../assets/logos/astroshare_logo_white.png')}
+        source={localizedWhiteLogo[i18n.locale]}
         resizeMode='contain'
       />
       <View style={appHeaderStyles.container.buttons}>

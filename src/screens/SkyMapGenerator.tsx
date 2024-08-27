@@ -59,12 +59,8 @@ export default function SkyMapGenerator({ navigation }: any) {
   }, [])
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      calculateMoonPosition()
-    }, 60000)
-
-    return () => clearInterval(interval)
-  }, [])
+    calculateMoonPosition()
+  }, [moonCoords])
 
   const updateDate = () => {
     setCurrentTime(new Date())
@@ -105,7 +101,8 @@ export default function SkyMapGenerator({ navigation }: any) {
     const x = (screenWidth / 2) + r * Math.sin(theta);
     const y = (screenWidth / 2) + r * Math.cos(theta); // Remarquez le signe moins ici
 
-    return { x, y }
+    setMoonX(x)
+    setMoonY(y)
   }
 
 
@@ -158,7 +155,7 @@ export default function SkyMapGenerator({ navigation }: any) {
                 const endY = (screenWidth / 2) + endR * Math.cos(endTheta);
 
                 return (
-                  <Line key={`${constellationIndex}-${segmentIndex}`} x1={startX} y1={startY} x2={endX} y2={endY} stroke={app_colors.red_eighty} strokeWidth="1" fill="none" />
+                  <Line key={`constell-${constellationIndex}-${segmentIndex}`} x1={startX} y1={startY} x2={endX} y2={endY} stroke={app_colors.red_eighty} strokeWidth="1" fill="none" />
                 );
               }).filter(Boolean); // Filter out any null values
             })
@@ -243,7 +240,7 @@ export default function SkyMapGenerator({ navigation }: any) {
 
               return (
                 <>
-                  <Image href={astroImages[planet.name.toUpperCase()]} key={`planet-${index}`} x={x} y={y} width={10} height={10} />
+                  <Image href={astroImages[planet.name.toUpperCase()]} key={`planet-${index}`} x={x} y={y} width={15} height={15} />
                   <SvgText
                     key={`name-planet-${planet.name}`}
                     x={x - 5}

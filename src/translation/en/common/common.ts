@@ -58,5 +58,15 @@ export const commonTranslations = {
     nextRise: "Next rise time",
     nextSet: "Next set time",
     altitude: "Altitude",
+  },
+  planets: {
+    Mercury: "Mercury",
+    Venus: "Venus",
+    Earth: "Earth",
+    Mars: "Mars",
+    Jupiter: "Jupiter",
+    Saturn: "Saturn",
+    Uranus: "Uranus",
+    Neptune: "Neptune"
   }
 }

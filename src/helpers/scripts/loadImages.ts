@@ -64,3 +64,28 @@ export const issFeedImages: any = {
   'fr': require('../../../assets/images/iss_feed_error_fr.png'),
   'en': require('../../../assets/images/iss_feed_error_en.png'),
 }
+
+export const localizedWhiteLogo: any = {
+  'fr': require('../../../assets/logos/fr/logo_white.png'),
+  'en': require('../../../assets/logos/en/logo_white.png'),
+}
+
+export const localizedBlackLogo: any = {
+  'fr': require('../../../assets/logos/fr/logo_black.png'),
+  'en': require('../../../assets/logos/en/logo_black.png'),
+}
+
+export const localizedImagePlaceholders: any = {
+  'fr': require('../../../assets/images/placeholders/fr/image.png'),
+  'en': require('../../../assets/images/placeholders/en/image.png'),
+}
+
+export const localizedVideoPlaceholders: any = {
+  'fr': require('../../../assets/images/placeholders/fr/video.png'),
+  'en': require('../../../assets/images/placeholders/en/video.png'),
+}
+
+export const localizedForecastPlaceholders: any = {
+  'fr': require('../../../assets/images/placeholders/fr/forecast.png'),
+  'en': require('../../../assets/images/placeholders/en/forecast.png'),
+}

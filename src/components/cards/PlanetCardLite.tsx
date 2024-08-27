@@ -4,6 +4,7 @@ import { objectCardLiteStyles } from '../../styles/components/cards/objectCardLi
 import { astroImages } from '../../helpers/scripts/loadImages'
 import { routes } from '../../helpers/routes'
 import { GlobalPlanet } from '../../helpers/types/GlobalPlanet'
+import { i18n } from '../../helpers/scripts/i18n'
 
 interface PlanetCardLiteProps {
   planet: GlobalPlanet
@@ -15,7 +16,7 @@ export default function PlanetCardLite({ planet, navigation }: PlanetCardLitePro
     <TouchableOpacity onPress={() => navigation.push(routes.planetDetails.path, { planet: planet })} style={objectCardLiteStyles.card}>
       <Image style={objectCardLiteStyles.card.image} source={astroImages[planet.name.toUpperCase()]} />
       <View style={objectCardLiteStyles.card.infos}>
-        <Text style={objectCardLiteStyles.card.infos.title}>{planet.name.toUpperCase()}</Text>
+        <Text style={objectCardLiteStyles.card.infos.title}>{i18n.t(`common.planets.${planet.name}`).toUpperCase()}</Text>
       </View>
     </TouchableOpacity>
   )

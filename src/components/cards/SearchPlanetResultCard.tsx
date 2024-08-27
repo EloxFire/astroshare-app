@@ -41,7 +41,7 @@ export default function SearchPlanetResultCard({ planet, navigation }: SearchPla
       <View style={searchResultCardStyles.card}>
         <View style={searchResultCardStyles.card.header}>
           <View>
-            <Text style={searchResultCardStyles.card.header.title}>{planet.name}</Text>
+            <Text style={searchResultCardStyles.card.header.title}>{i18n.t(`common.planets.${planet.name}`)}</Text>
           </View>
           <Image style={searchResultCardStyles.card.image} source={astroImages[planet.name.toUpperCase()]} />
         </View>
