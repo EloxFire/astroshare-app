@@ -74,7 +74,7 @@ export default function FavouritesScreen({ navigation }: any) {
             <>
               <TouchableOpacity onPress={() => handleOpenTab('dso')} style={favouriteScreenStyles.listButton}>
                 <Text style={favouriteScreenStyles.listButton.text}>{i18n.t('favouriteScreen.dso.title')} - ({objects.length})</Text>
-                <Image source={require('../../assets/icons/FiChevronDown.png')} style={[favouriteScreenStyles.listButton.icon, { transform: [{ rotate: objectsTabOppened ? '0deg' : '-90deg' }] }]} />
+                <Image source={require('../../assets/icons/FiChevronDown.png')} style={[favouriteScreenStyles.listButton.icon, { transform: [{ rotate: objectsTabOppened ? '-180deg' : '0deg' }] }]} />
               </TouchableOpacity>
               {
                 objectsTabOppened &&
@@ -92,7 +92,7 @@ export default function FavouritesScreen({ navigation }: any) {
               }
               <TouchableOpacity onPress={() => handleOpenTab('planet')} style={favouriteScreenStyles.listButton}>
                 <Text style={favouriteScreenStyles.listButton.text}>{i18n.t('favouriteScreen.planet.title')} - ({planets.length})</Text>
-                <Image source={require('../../assets/icons/FiChevronDown.png')} style={[favouriteScreenStyles.listButton.icon, { transform: [{ rotate: planetsTabOppened ? '0deg' : '-90deg' }] }]} />
+                <Image source={require('../../assets/icons/FiChevronDown.png')} style={[favouriteScreenStyles.listButton.icon, { transform: [{ rotate: planetsTabOppened ? '-180deg' : '0deg' }] }]} />
               </TouchableOpacity>
               {
                 planetsTabOppened &&
@@ -111,7 +111,7 @@ export default function FavouritesScreen({ navigation }: any) {
               }
               <TouchableOpacity onPress={() => handleOpenTab('star')} style={favouriteScreenStyles.listButton} >
                 <Text style={favouriteScreenStyles.listButton.text}>{i18n.t('favouriteScreen.star.title')} - ({stars.length})</Text>
-                <Image source={require('../../assets/icons/FiChevronDown.png')} style={[favouriteScreenStyles.listButton.icon, { transform: [{ rotate: starsTabOppened ? '0deg' : '-90deg' }] }]} />
+                <Image source={require('../../assets/icons/FiChevronDown.png')} style={[favouriteScreenStyles.listButton.icon, { transform: [{ rotate: starsTabOppened ? '-180deg' : '0deg' }] }]} />
               </TouchableOpacity>
               {
                 starsTabOppened &&
