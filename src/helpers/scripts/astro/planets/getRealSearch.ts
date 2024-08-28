@@ -1,5 +1,8 @@
-export const getSearchedPlanet = (searchString: string): string => {
+const polarisRegex = /\b([ÉE]toile [Pp]olaire|[Pp]olaris)\b/
+
+export const getRealSearch = (searchString: string): string => {
   switch (searchString.toLowerCase()) {
+    // Planets
     case 'mercure':
     case 'mercury':
       return 'Mercury';
@@ -21,5 +24,9 @@ export const getSearchedPlanet = (searchString: string): string => {
     case 'neptune':
       return 'Neptune';
   }
-  return '';
+
+  if(polarisRegex.test(searchString)) { return 'TIC 303256075'; }
+
+  // If the search string does not match any case, return the original search string
+  return searchString;
 }
