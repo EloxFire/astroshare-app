@@ -60,6 +60,8 @@ export const commonTranslations = {
     altitude: "Altitude",
   },
   planets: {
+    Sun: "Sun",
+    Moon: "Moon",
     Mercury: "Mercury",
     Venus: "Venus",
     Earth: "Earth",

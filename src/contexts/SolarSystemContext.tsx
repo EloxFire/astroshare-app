@@ -1,6 +1,6 @@
 import React, { ReactNode, createContext, useContext, useEffect, useState } from 'react'
 import { useSettings } from './AppSettingsContext'
-import { convertEquatorialToHorizontal, earth, EclipticCoordinate, EquatorialCoordinate, getLunarEquatorialCoordinate, getPlanetaryPositions, HorizontalCoordinate, Planet } from '@observerly/astrometry'
+import { convertEquatorialToHorizontal, earth, EclipticCoordinate, EquatorialCoordinate, getLunarEquatorialCoordinate, getLunarPhase, getPlanetaryPositions, HorizontalCoordinate, Planet } from '@observerly/astrometry'
 import { GlobalPlanet } from '../helpers/types/GlobalPlanet'
 
 const SolarSystemContext = createContext<any>({})
@@ -18,13 +18,13 @@ export function SolarSystemProvider({ children }: SolarSystemProviderProps) {
   const { currentUserLocation } = useSettings();
 
   const [planets, setPlanets] = useState<GlobalPlanet[]>([]);
-  const [moonCoords, setMoonCoords] = useState<(EquatorialCoordinate & HorizontalCoordinate)>({ ra: 0, dec: 0, alt: 0, az: 0 })
+  const [moonCoords, setMoonCoords] = useState<(EquatorialCoordinate & HorizontalCoordinate & { phase: string })>({ ra: 0, dec: 0, alt: 0, az: 0, phase: 'Full' })
 
   useEffect(() => {
     getPlanets()
     const interval = setInterval(() => {
       getPlanets()
-    }, 10000)
+    }, 60000)
 
     return () => clearInterval(interval)
   }, [currentUserLocation])
@@ -33,14 +33,13 @@ export function SolarSystemProvider({ children }: SolarSystemProviderProps) {
     getMoon()
     const interval = setInterval(() => {
       getMoon()
-    }, 10000)
+    }, 60000)
 
     return () => clearInterval(interval)
   }, [currentUserLocation])
 
   const getPlanets = () => {
     if (!currentUserLocation) return;
-    console.log("Updating planets infos");
     const planets = getPlanetaryPositions(new Date(), { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon })
     let system = planets;
 
@@ -59,16 +58,18 @@ export function SolarSystemProvider({ children }: SolarSystemProviderProps) {
 
   const getMoon = () => {
     if (!currentUserLocation) return;
-    console.log("Updating moon coords");
 
     const eqCoords = getLunarEquatorialCoordinate(new Date())
     const horizontalCoords = convertEquatorialToHorizontal(new Date(), { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }, { ra: eqCoords.ra, dec: eqCoords.dec })
+    const phase = getLunarPhase(new Date())
+
 
     const moonCoords = {
       ra: eqCoords.ra,
       dec: eqCoords.dec,
       alt: horizontalCoords.alt,
       az: horizontalCoords.az,
+      phase: phase
     }
 
     setMoonCoords(moonCoords)

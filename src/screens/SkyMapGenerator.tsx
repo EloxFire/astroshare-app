@@ -16,7 +16,7 @@ import axios from 'axios'
 import { i18n } from '../helpers/scripts/i18n'
 import { useSolarSystem } from '../contexts/SolarSystemContext'
 import { GlobalPlanet } from '../helpers/types/GlobalPlanet'
-import { astroImages } from '../helpers/scripts/loadImages'
+import { astroImages, moonIcons } from '../helpers/scripts/loadImages'
 
 
 export default function SkyMapGenerator({ navigation }: any) {
@@ -101,6 +101,10 @@ export default function SkyMapGenerator({ navigation }: any) {
     const x = (screenWidth / 2) + r * Math.sin(theta);
     const y = (screenWidth / 2) + r * Math.cos(theta); // Remarquez le signe moins ici
 
+
+    console.log('Moon coords', x, y);
+
+
     setMoonX(x)
     setMoonY(y)
   }
@@ -136,6 +140,7 @@ export default function SkyMapGenerator({ navigation }: any) {
           {
             starsToDisplay.length > 0 && showConstellations &&
             constellationsAsterisms.flatMap((constellation, constellationIndex) => {
+              // @ts-ignore
               return constellation.features[0].geometry.coordinates.map((segment: any, segmentIndex: any) => {
                 if (segment.length < 2) return null;
 
@@ -258,7 +263,20 @@ export default function SkyMapGenerator({ navigation }: any) {
           }
           {
             (showPlanets && moonCoords && !starCatalogLoading) && (
-              <Image href={astroImages['Moon']} x={moonX} y={moonY} width={10} height={10} />
+              <>
+                <Image href={moonIcons[moonCoords.phase]} x={moonX} y={moonY} width={10} height={10} />
+                <SvgText
+                  key={`the-moon`}
+                  x={moonX - 5}
+                  y={moonY + 10}
+                  fill={app_colors.white}
+                  fontSize="8"
+                  textAnchor="middle"
+                  transform={`rotate(180, ${moonX}, ${moonY})`}
+                >
+                  {i18n.t('common.planets.Moon')}
+                </SvgText>
+              </>
             )
           }
         </G>
