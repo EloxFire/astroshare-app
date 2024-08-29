@@ -13,6 +13,7 @@ import BigButton from '../components/commons/buttons/BigButton';
 import BannerHandler from '../components/banners/BannerHandler';
 import ToolButton from '../components/commons/buttons/ToolButton';
 import HomeSearchModule from '../components/forms/HomeSearchModule';
+import GlobalSummary from '../components/GlobalSummary';
 
 export default function Home({ navigation }: any) {
   const { hasInternetConnection, currentUserLocation } = useSettings()
@@ -32,7 +33,8 @@ export default function Home({ navigation }: any) {
       <BannerHandler />
       <LocationHeader />
       <HomeSearchModule navigation={navigation} />
-      <ScrollView style={{ borderTopWidth: 1, borderTopColor: app_colors.white_forty }}>
+      <ScrollView style={{ borderTopWidth: 1, borderTopColor: app_colors.white_twenty }}>
+        <GlobalSummary />
         <View style={homeStyles.toolsSuggestions}>
           <Text style={globalStyles.sections.title}>{i18n.t('home.tools.title')}</Text>
           <Text style={globalStyles.sections.subtitle}>{i18n.t('home.tools.subtitle')}</Text>

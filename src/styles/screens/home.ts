@@ -21,7 +21,7 @@ export const homeStyles = {
     display: 'flex' as 'flex',
     flexDirection: 'column' as 'column',
     marginTop: 10,
-    marginBottom: 10,
+    marginBottom: 80,
 
     buttons: {
       display: 'flex' as 'flex',

@@ -49,6 +49,14 @@ export const astroImages: any = {
   'BRIGHTSTAR': require('../../../assets/icons/astro/BRIGHTSTAR.png'),
 }
 
+export const twilightBandsBackgrounds: any = {
+  'Day': require('../../../assets/icons/astro/bands/DAY.png'),
+  'Civil': require('../../../assets/icons/astro/bands/CIVIL.png'),
+  'Nautical': require('../../../assets/icons/astro/bands/NAUTICAL.png'),
+  'Astronomical': require('../../../assets/icons/astro/bands/ASTRONOMICAL.png'),
+  'Night': require('../../../assets/icons/astro/bands/NIGHT.png'),
+}
+
 export const moonIcons: any = {
   'New': require('../../../assets/icons/astro/moon/New Moon.png'),
   'Waxing Crescent': require('../../../assets/icons/astro/moon/Waxing Crescent.png'),

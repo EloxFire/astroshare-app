@@ -2,7 +2,9 @@ import { scopeAlignmentStyles } from './../styles/screens/scopeAlignment';
 import { i18n } from './scripts/i18n';
 export const app_colors = {
   black: '#000000',
-  black_forty: '#00000099',
+  black_eighty: '#00000080',
+  black_sixty: '#00000060',
+  black_forty: '#00000040',
   white: '#FFFFFF',
   white_no_opacity: '#FFFFFF0D',
   white_twenty: '#FFFFFF20',
@@ -24,6 +26,8 @@ export const app_colors = {
   turquoise_sixty: '#488f9d60',
   gold: '#CCCCCC',
   gold_eighty: '#FFBA1580',
+  blue: '#061e92',
+  blue_twenty: '##061e9220',
 }
 
 export const Polaris = {
