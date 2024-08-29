@@ -36,6 +36,12 @@ export const globalStyles = {
       opacity: 0.6,
       textTransform: "uppercase" as "uppercase",
     },
+
+    text: {
+      color: app_colors.white,
+      fontSize: 14,
+      fontFamily: "GilroyRegular",
+    }
   },
   screens: {
     title: {
@@ -60,4 +66,12 @@ export const globalStyles = {
       marginVertical: 10,
     },
   },
+  globalContainer: {
+    backgroundColor: app_colors.white_no_opacity,
+    borderColor: app_colors.white_no_opacity,
+    padding: 10,
+    borderRadius: 10,
+    borderWidth: 1,
+    marginBottom: 20,
+  }
 };

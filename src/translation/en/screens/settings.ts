@@ -18,6 +18,10 @@ export const settingsTranslations = {
       title: "Tutorial",
       subtitle: "// Discover how to use the application"
     },
+    data: {
+      title: "Astronomical data",
+      subtitle: "// Where do the displayed data come from?"
+    },
     language: {
       title: "Language",
       subtitle: "// Change the language of the application"

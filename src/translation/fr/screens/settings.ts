@@ -18,6 +18,10 @@ export const settingsTranslations = {
       title: "Tutoriel",
       subtitle: "// Découvrez comment utiliser l'application"
     },
+    data: {
+      title: "Données astronomiques",
+      subtitle: "// D'ou proviennent les données affichées ?"
+    },
     language: {
       title: "Langue",
       subtitle: "// Changez la langue de l'application"

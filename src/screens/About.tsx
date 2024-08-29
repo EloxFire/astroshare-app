@@ -7,53 +7,49 @@ import * as Linking from 'expo-linking';
 import PageTitle from "../components/commons/PageTitle";
 import dayjs from "dayjs";
 import { app_colors } from "../helpers/constants";
+import { i18n } from "../helpers/scripts/i18n";
 
 export default function About({ navigation }: any) {
   return (
     <View style={globalStyles.body}>
       <PageTitle
         navigation={navigation}
-        title="À propos"
-        subtitle="// Version, contact, legal"
+        title={i18n.t('settings.buttons.about.title')}
+        subtitle={i18n.t('settings.buttons.about.subtitle')}
       />
       <View style={globalStyles.screens.separator} />
       <ScrollView>
         <View style={settingsStyles.content}>
-          <Text style={aboutStyles.title}>Application</Text>
+          <Text style={aboutStyles.title}>{i18n.t('about.app.title')}</Text>
           <View style={aboutStyles.row}>
-            <Text style={[aboutStyles.text, { marginRight: 10 }]}>Version :</Text>
+            <Text style={[aboutStyles.text, { marginRight: 10 }]}>{i18n.t('about.app.version')}</Text>
             <Text style={aboutStyles.chip}>{process.env.EXPO_PUBLIC_APP_VERSION}</Text>
           </View>
           <View style={aboutStyles.row}>
-            <Text style={[aboutStyles.text, { marginRight: 10 }]}>Dernière mise à jour :</Text>
+            <Text style={[aboutStyles.text, { marginRight: 10 }]}>{i18n.t('about.app.lastUpdate')}</Text>
             <Text style={aboutStyles.chip}>{dayjs(process.env.EXPO_PUBLIC_LAST_UPDATE).format('DD MMMM YYYY')}</Text>
           </View>
 
-          <Text style={[aboutStyles.title, { marginTop: 30 }]}>Contact</Text>
-          <Text style={[aboutStyles.text, { marginBottom: 10 }]}>Pour tout renseignement, ou afin de reporter un bug, merci de me contacter directement par mail à l'adresse suivante :</Text>
+          <Text style={[aboutStyles.title, { marginTop: 30 }]}>{i18n.t('about.contact.title')}</Text>
+          <Text style={[aboutStyles.text, { marginBottom: 10 }]}>{i18n.t('about.contact.description')}</Text>
           <TouchableOpacity onPress={() => Linking.openURL('mailto:contact@enzoavagliano.fr')}>
             <Text style={[aboutStyles.text, { marginBottom: 10, textDecorationLine: "underline" }]}>contact@enzoavagliano.fr</Text>
           </TouchableOpacity>
 
-          <Text style={[aboutStyles.title, { marginTop: 30 }]}>Mentions légales</Text>
-          <Text style={[aboutStyles.text, { marginBottom: 10 }]}>Éditeur : Enzo Avagliano</Text>
-          <Text style={[aboutStyles.text, { marginBottom: 10 }]}>Siège social : 36 rue Mignet, 13100 Aix-en-Provence, France</Text>
-          <Text style={[aboutStyles.text, { marginBottom: 10 }]}>Téléphone : 06.69.07.42.59</Text>
-          <Text style={[aboutStyles.text, { marginBottom: 10 }]}>SIRET : 89122657300014</Text>
+          <Text style={[aboutStyles.title, { marginTop: 30 }]}>{i18n.t('about.legal.title')}</Text>
+          <Text style={[aboutStyles.text, { marginBottom: 10 }]}>{i18n.t('about.legal.editor')}</Text>
+          <Text style={[aboutStyles.text, { marginBottom: 10 }]}>{i18n.t('about.legal.address')}</Text>
+          <Text style={[aboutStyles.text, { marginBottom: 10 }]}>{i18n.t('about.legal.phone')}</Text>
+          <Text style={[aboutStyles.text, { marginBottom: 10 }]}>{i18n.t('about.legal.siret')}</Text>
 
-          <Text style={[aboutStyles.title, { marginTop: 30 }]}>Politique de confidentialité</Text>
-          <Text style={[aboutStyles.text, { marginBottom: 10 }]}>La politique de confidentialité est accessible via le lien suivant :</Text>
+          <Text style={[aboutStyles.title, { marginTop: 30 }]}>{i18n.t('about.privacy.title')}</Text>
+          <Text style={[aboutStyles.text, { marginBottom: 10 }]}>{i18n.t('about.privacy.description')}</Text>
           <TouchableOpacity onPress={() => Linking.openURL('https://www.astroshare.fr/application-mobile/politique-de-confidentialite')}>
-            <Text style={[aboutStyles.text, { marginBottom: 10, textDecorationLine: "underline" }]}>Politique de confidentialité</Text>
+            <Text style={[aboutStyles.text, { marginBottom: 10, textDecorationLine: "underline" }]}>{i18n.t('about.privacy.linkTitle')}</Text>
           </TouchableOpacity>
 
-          {/* <Text style={[aboutStyles.title, {marginTop: 30}]}>Conditions d'utilisation</Text>
-          <Text style={[aboutStyles.text, {marginBottom: 10}]}>Les CGU sont disponible en téléchargement</Text>
-          <TouchableOpacity style={{backgroundColor: app_colors.white_forty, width: '50%', borderRadius: 8}} onPress={() => Linking.openURL('mailto:contact@enzoavagliano.fr')}>
-            <Text style={[aboutStyles.text, {textAlign: 'center'}]}>Télécharger le document</Text>
-          </TouchableOpacity> */}
 
-          <Text style={[aboutStyles.title, { marginTop: 30 }]}>License</Text>
+          <Text style={[aboutStyles.title, { marginTop: 30 }]}>{i18n.t('about.license.title')}</Text>
           <Text style={aboutStyles.subtitle}>MIT License</Text>
           <Text style={[aboutStyles.text, { marginBottom: 10 }]}>Copyright (©) {dayjs().year()} Enzo Avagliano</Text>
           <Text style={[aboutStyles.text, { marginBottom: 10 }]}>

@@ -9,6 +9,8 @@ import { locationHeaderTranslations } from "./components/locationHeader";
 import { locationModalTranslations } from "./components/locationModal";
 import { ephemerisBarTranslation } from "./components/weather/ephemerisBar";
 import { hourlyOverviewTranslation } from "./components/weather/hourlyOverview";
+import { aboutTranslations } from "./screens/about";
+import { astroDataInfosTranslations } from "./screens/astroDataInfos";
 import { detailsPages } from "./screens/detailsPages";
 import { favouriteScreenTranslations } from "./screens/favouriteScreen";
 import { homeTranslations } from "./screens/home";
@@ -50,4 +52,6 @@ export const frTranslations = {
   transits: transitsTranslations,
   constellations: constellationsNamesTranslations,
   objectTypes: objectTypesTranslations,
+  astroDataInfos: astroDataInfosTranslations,
+  about: aboutTranslations,
 }
