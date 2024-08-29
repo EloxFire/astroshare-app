@@ -33,11 +33,11 @@ export const homeTranslations = {
       subtitle: "// Astronomy Picture of the Day"
     },
     satellite_tracker: {
-      title: "Satellite tracker",
-      subtitle: "// ISS and Starlink satellites positions"
+      title: "Satellites",
+      subtitle: "// Real-time satellites tracker"
     },
     skymap_generator: {
-      title: "Skymap generator",
+      title: "Skymap",
       subtitle: "// Skymap in real-time"
     }
   }

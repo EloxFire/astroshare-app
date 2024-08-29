@@ -14,8 +14,8 @@ export default function SatelliteTracker({ navigation }: any) {
     <View style={globalStyles.body}>
       <PageTitle
         navigation={navigation}
-        title={i18n.t('satelliteTracker.home.title')}
-        subtitle={i18n.t('satelliteTracker.home.subtitle')}
+        title={i18n.t('home.buttons.satellite_tracker.title')}
+        subtitle={i18n.t('home.buttons.satellite_tracker.subtitle')}
       />
       <View style={globalStyles.screens.separator} />
       <ScrollView>
