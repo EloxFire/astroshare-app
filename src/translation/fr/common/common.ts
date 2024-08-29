@@ -8,7 +8,9 @@ export const commonTranslations = {
     invalidSearch: "Recherche invalide",
     invalidPlanet: "Nom de la planète invalide",
     invalidStar: "Nom de la étoile invalide",
-    unknownError: "Une erreur inconnue est survenue..."
+    unknownError: "Une erreur inconnue est survenue...",
+    simple: "##Erreur##",
+    unkonwn: "Inconnu",
   },
   loadings: {
     simple: "Chargement...",

@@ -1,186 +1,188 @@
+import { i18n } from "./i18n";
+
 export const getConstellationName = (constellation: string) => {
   switch (constellation) {
     case 'And':
-      return 'Andromède';
+      return i18n.t('constellations.And');
     case 'Ant':
-      return 'Machine Pneumatique';
+      return i18n.t('constellations.Ant');
     case 'Aps':
-      return 'Oiseau de Paradis';
+      return i18n.t('constellations.Aps');
     case 'Aql':
-      return 'Aigle';
+      return i18n.t('constellations.Aql');
     case 'Aqr':
-      return 'Verseau';
+      return i18n.t('constellations.Aqr');
     case 'Ara':
-      return 'Autel';
+      return i18n.t('constellations.Ara');
     case 'Ari':
-      return 'Bélier';
+      return i18n.t('constellations.Ari');
     case 'Aur':
-      return 'Cocher';
+      return i18n.t('constellations.Aur');
     case 'Boo':
-      return 'Bouvier';
+      return i18n.t('constellations.Boo');
     case 'Cae':
-      return 'Burin';
+      return i18n.t('constellations.Cae');
     case 'Cam':
-      return 'Girafe';
+      return i18n.t('constellations.Cam');
     case 'Cap':
-      return 'Capricorne';
+      return i18n.t('constellations.Cap');
     case 'Car':
-      return 'Carène';
+      return i18n.t('constellations.Car');
     case 'Cas':
-      return 'Cassiopée';
+      return i18n.t('constellations.Cas');
     case 'Cen':
-      return 'Centaure';
+      return i18n.t('constellations.Cen');
     case 'Cep':
-      return 'Céphée';
+      return i18n.t('constellations.Cep');
     case 'Cet':
-      return 'Baleine';
+      return i18n.t('constellations.Cet');
     case 'Cha':
-      return 'Caméléon';
+      return i18n.t('constellations.Cha');
     case 'Cir':
-      return 'Compas';
+      return i18n.t('constellations.Cir');
     case 'CMa':
-      return 'Grand Chien';
+      return i18n.t('constellations.CMa');
     case 'CMi':
-      return 'Petit Chien';
+      return i18n.t('constellations.CMi');
     case 'Cnc':
-      return 'Cancer';
+      return i18n.t('constellations.Cnc');
     case 'Col':
-      return 'Colombe';
+      return i18n.t('constellations.Col');
     case 'Com':
-      return 'Chevelure de Bérénice';
+      return i18n.t('constellations.Com');
     case 'CrA':
-      return 'Couronne Australe';
+      return i18n.t('constellations.CrA');
     case 'CrB':
-      return 'Couronne Boréale';
+      return i18n.t('constellations.CrB');
     case 'Crt':
-      return 'Coupe';
+      return i18n.t('constellations.Crt');
     case 'Cru':
-      return 'Croix du Sud';
+      return i18n.t('constellations.Cru');
     case 'Crv':
-      return 'Corbeau';
+      return i18n.t('constellations.Crv');
     case 'CVn':
-      return 'Chiens de Chasse';
+      return i18n.t('constellations.CVn');
     case 'Cyg':
-      return 'Cygne';
+      return i18n.t('constellations.Cyg');
     case 'Del':
-      return 'Dauphin';
+      return i18n.t('constellations.Del');
     case 'Dor':
-      return 'Dorade';
+      return i18n.t('constellations.Dor');
     case 'Dra':
-      return 'Dragon';
+      return i18n.t('constellations.Dra');
     case 'Equ':
-      return 'Petit Cheval';
+      return i18n.t('constellations.Equ');
     case 'Eri':
-      return 'Éridan';
+      return i18n.t('constellations.Eri');
     case 'For':
-      return 'Fourneau';
+      return i18n.t('constellations.For');
     case 'Gem':
-      return 'Gémeaux';
+      return i18n.t('constellations.Gem');
     case 'Gru':
-      return 'Grue';
+      return i18n.t('constellations.Gru');
     case 'Her':
-      return 'Hercule';
+      return i18n.t('constellations.Her');
     case 'Hor':
-      return 'Horloge';
+      return i18n.t('constellations.Hor');
     case 'Hya':
-      return 'Hydre';
+      return i18n.t('constellations.Hya');
     case 'Hyi':
-      return 'Hydre Mâle';
+      return i18n.t('constellations.Hyi');
     case 'Ind':
-      return 'Indien';
+      return i18n.t('constellations.Ind');
     case 'Lac':
-      return 'Lézard';
+      return i18n.t('constellations.Lac');
     case 'Leo':
-      return 'Lion';
+      return i18n.t('constellations.Leo');
     case 'Lep':
-      return 'Lièvre';
+      return i18n.t('constellations.Lep');
     case 'Lib':
-      return 'Balance';
+      return i18n.t('constellations.Lib');
     case 'LMi':
-      return 'Petit Lion';
+      return i18n.t('constellations.LMi');
     case 'Lup':
-      return 'Loup';
+      return i18n.t('constellations.Lup');
     case 'Lyn':
-      return 'Lynx';
+      return i18n.t('constellations.Lyn');
     case 'Lyr':
-      return 'Lyre';
+      return i18n.t('constellations.Lyr');
     case 'Men':
-      return 'Table';
+      return i18n.t('constellations.Men');
     case 'Mic':
-      return 'Microscope';
+      return i18n.t('constellations.Mic');
     case 'Mon':
-      return 'Licorne';
+      return i18n.t('constellations.Mon');
     case 'Mus':
-      return 'Mouche';
+      return i18n.t('constellations.Mus');
     case 'Nor':
-      return 'Règle';
+      return i18n.t('constellations.Nor');
     case 'Oct':
-      return 'Octant';
+      return i18n.t('constellations.Oct');
     case 'Oph':
-      return 'Ophiuchus';
+      return i18n.t('constellations.Oph');
     case 'Ori':
-      return 'Orion';
+      return i18n.t('constellations.Ori');
     case 'Pav':
-      return 'Paon';
+      return i18n.t('constellations.Pav');
     case 'Peg':
-      return 'Pégase';
+      return i18n.t('constellations.Peg');
     case 'Per':
-      return 'Persée';
+      return i18n.t('constellations.Per');
     case 'Phe':
-      return 'Phénix';
+      return i18n.t('constellations.Phe');
     case 'Pic':
-      return 'Pigeon';
+      return i18n.t('constellations.Pic');
     case 'PsA':
-      return 'Poissons Austraux';
+      return i18n.t('constellations.PsA');
     case 'Psc':
-      return 'Poissons';
+      return i18n.t('constellations.Psc');
     case 'Pup':
-      return 'Poupe';
+      return i18n.t('constellations.Pup');
     case 'Pyx':
-      return 'Boussole';
+      return i18n.t('constellations.Pyx');
     case 'Ret':
-      return 'Filet';
+      return i18n.t('constellations.Ret');
     case 'Scl':
-      return 'Scorpion';
+      return i18n.t('constellations.Scl');
     case 'Sco':
-      return 'Scorpion';
+      return i18n.t('constellations.Sco');
     case 'Sct':
-      return 'Écu de Sobieski';
+      return i18n.t('constellations.Sct');
     case 'Ser':
-      return 'Serpent';
+      return i18n.t('constellations.Ser');
     case 'Se1':
-      return 'Serpent';
+      return i18n.t('constellations.Se1');
     case 'Se2':
-      return 'Serpent';
+      return i18n.t('constellations.Se2');
     case 'Sex':
-      return 'Sextant';
+      return i18n.t('constellations.Sex');
     case 'Sge':
-      return 'Flèche';
+      return i18n.t('constellations.Sge');
     case 'Sgr':
-      return 'Sagittaire';
+      return i18n.t('constellations.Sgr');
     case 'Tau':
-      return 'Taureau';
+      return i18n.t('constellations.Tau');
     case 'Tel':
-      return 'Télescope';
+      return i18n.t('constellations.Tel');
     case 'TrA':
-      return 'Triangle Australe';
+      return i18n.t('constellations.TrA');
     case 'Tri':
-      return 'Triangle';
+      return i18n.t('constellations.Tri');
     case 'Tuc':
-      return 'Toucan';
+      return i18n.t('constellations.Tuc');
     case 'UMa':
-      return 'Grande Ourse';
+      return i18n.t('constellations.UMa');
     case 'UMi':
-      return 'Petite Ourse';
+      return i18n.t('constellations.UMi');
     case 'Vel':
-      return 'Voiles';
+      return i18n.t('constellations.Vel');
     case 'Vir':
-      return 'Vierge';
+      return i18n.t('constellations.Vir');
     case 'Vol':
-      return 'Poisson Volant';
+      return i18n.t('constellations.Vol');
     case 'Vul':
-      return 'Renard';
+      return i18n.t('constellations.Vul');
     default:
-      return 'Unknown';
+      return i18n.t('common.errors.unknown');
   }
 };

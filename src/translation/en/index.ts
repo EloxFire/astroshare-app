@@ -1,5 +1,6 @@
 import { weatherTranslation } from "../fr/screens/weather";
 import { commonTranslations } from "./common/common";
+import { constellationsNamesTranslations } from "./common/constellations";
 import { languagesTranslations } from "./common/languages";
 import { resultCardsTranslations } from "./components/cards/resultCards";
 import { homeSearchModuleTranslations } from "./components/forms/homeSearchModule";
@@ -46,4 +47,5 @@ export const enTranslations = {
   pro: proTranslations,
   favouriteScreen: favouriteScreenTranslations,
   detailsPages: detailsPages,
+  constellations: constellationsNamesTranslations
 }
