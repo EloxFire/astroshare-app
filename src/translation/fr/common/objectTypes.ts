@@ -1,0 +1,18 @@
+export const objectTypesTranslations = {
+  "cln": "Amas globulaire",
+  "drkn": "Nébuleuse sombre",
+  "g": "Galaxie",
+  "gcl": "Amas globulaire",
+  "ggroup": "Groupe de galaxies",
+  "gpair": "Paire de galaxies",
+  "gtrpl": "Trio de galaxies",
+  "hii": "Région HII",
+  "neb": "Nébuleuse",
+  "ocl": "Amas ouvert",
+  "pn": "Nébuleuse planétaire",
+  "snr": "Reste de supernova",
+  "rfn": "Nébuleuse en réflexion",
+  "star": "Étoile",
+  "starass": "Astérisme",
+  "dblstar": "Étoile double",
+}

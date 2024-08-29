@@ -11,6 +11,7 @@ export const commonTranslations = {
     unknownError: "Une erreur inconnue est survenue...",
     simple: "##Erreur##",
     unkonwn: "Inconnu",
+    other: "Other",
   },
   loadings: {
     simple: "Chargement...",

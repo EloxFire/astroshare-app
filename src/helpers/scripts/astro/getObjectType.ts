@@ -1,43 +1,44 @@
 import { DSO } from "../../types/DSO"
 import { DSOCatalog } from "../../types/DSOCatalogs"
+import { i18n } from "../i18n"
 
 export const getObjectType = (object: DSO) => {
   switch (object.type) {
     case "Cl+N":
-      return "Amas ouvert + Nébuleuse"
+      return i18n.t('objectTypes.cln')
     case "DRKN":
-      return "Nébuleuse sombre"
+      return i18n.t('objectTypes.drkn')
     case "G":
-      return "Galaxie"
+      return i18n.t('objectTypes.g')
     case "GCl":
-      return "Amas globulaire"
+      return i18n.t('objectTypes.gcl')
     case "GGroup":
-      return "Groupe de galaxies"
+      return i18n.t('objectTypes.ggroup')
     case "GPair":
-      return "Paire de galaxies"
+      return i18n.t('objectTypes.gpair')
     case "GTrpl":
-      return "Trio de galaxies"
+      return i18n.t('objectTypes.gtrpl')
     case "HII":
-      return "Région HII"
+      return i18n.t('objectTypes.hii')
     case "Neb":
-      return "Nébuleuse"
+      return i18n.t('objectTypes.neb')
     case "OCl":
-      return "Amas ouvert"
+      return i18n.t('objectTypes.ocl')
     case "PN":
-      return "Nébuleuse planétaire"
+      return i18n.t('objectTypes.pn')
     case "SNR":
-      return "Reste de supernova"
+      return i18n.t('objectTypes.snr')
     case "RfN":
-      return "Nébuleuse en réflexion"
+      return i18n.t('objectTypes.rfn')
     case "*":
-      return "Étoile"
+      return i18n.t('objectTypes.star')
     case "*Ass":
-      return "Astérisme"
+      return i18n.t('objectTypes.starass')
     case "**":
-      return "Étoile double"
+      return i18n.t('objectTypes.dblstar')
     case "Other":
-      return "Autre"
+      return i18n.t('common.errors.other')
     default:
-      return "Autre"
+      return i18n.t('common.errors.unknown')
   }
 }

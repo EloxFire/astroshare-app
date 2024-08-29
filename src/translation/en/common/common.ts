@@ -12,6 +12,7 @@ export const commonTranslations = {
     simple: "##Error##",
     unkownStar: "No name",
     unkonwn: "Unknown",
+    other: "Other"
   },
   loadings: {
     simple: "Loading...",

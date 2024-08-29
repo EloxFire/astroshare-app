@@ -1,0 +1,18 @@
+export const objectTypesTranslations = {
+  "cln": "Globular Cluster",
+  "drkn": "Dark nebula",
+  "g": "Galaxy",
+  "gcl": "Globular Cluster",
+  "ggroup": "Galaxy Group",
+  "gpair": "Galaxy Pair",
+  "gtrpl": "Galaxy Trio",
+  "hii": "HII Region",
+  "neb": "Nebula",
+  "ocl": "Open Cluster",
+  "pn": "Planetary Nebula",
+  "snr": "Supernova Remnant",
+  "rfn": "Reflection Nebula",
+  "star": "Star",
+  "starass": "Asterism",
+  "dblstar": "Double Star",
+}

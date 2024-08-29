@@ -2,6 +2,7 @@ import { tutorialScreen } from "../en/screens/tutorialScreen";
 import { commonTranslations } from "./common/common";
 import { constellationsNamesTranslations } from "./common/constellations";
 import { languagesTranslations } from "./common/languages";
+import { objectTypesTranslations } from "./common/objectTypes";
 import { resultCardsTranslations } from "./components/cards/resultCards";
 import { homeSearchModuleTranslations } from "./components/forms/homeSearchModule";
 import { locationHeaderTranslations } from "./components/locationHeader";
@@ -47,5 +48,6 @@ export const frTranslations = {
   favouriteScreen: favouriteScreenTranslations,
   detailsPages: detailsPages,
   transits: transitsTranslations,
-  constellations: constellationsNamesTranslations
+  constellations: constellationsNamesTranslations,
+  objectTypes: objectTypesTranslations,
 }

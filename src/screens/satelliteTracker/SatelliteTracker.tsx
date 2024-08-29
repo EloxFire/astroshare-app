@@ -2,10 +2,10 @@ import React from 'react'
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import { i18n } from '../../helpers/scripts/i18n'
 import { globalStyles } from '../../styles/global'
-import PageTitle from '../../components/commons/PageTitle'
-import { satelliteTrackerHomeStyles } from '../../styles/screens/satelliteTracker/home'
-import ToolButton from '../../components/commons/buttons/ToolButton'
 import { routes } from '../../helpers/routes'
+import { satelliteTrackerHomeStyles } from '../../styles/screens/satelliteTracker/home'
+import PageTitle from '../../components/commons/PageTitle'
+import ToolButton from '../../components/commons/buttons/ToolButton'
 import ScreenInfo from '../../components/ScreenInfo'
 
 export default function SatelliteTracker({ navigation }: any) {
