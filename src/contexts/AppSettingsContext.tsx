@@ -13,6 +13,7 @@ import * as Location from 'expo-location'
 import Toast from 'react-native-root-toast';
 import NetInfo from '@react-native-community/netinfo';
 import { Night } from 'react-native-color-matrix-image-filters'
+import { HomeWidget } from '../helpers/types/HomeWidget'
 
 const AppSettingsContext = createContext<any>({})
 
@@ -35,6 +36,7 @@ export function AppSettingsProvider({ children }: AppSettingsProviderProps) {
   const [currentUserHorizon, setCurrentUserHorizon] = useState<number>(0)
   const [isCellularDataEnabled, setIsCellularDataEnabled] = useState<boolean>(true)
   const [hasInternetConnection, setHasInternetConnection] = useState<boolean>(false)
+  const [selectedHomeWidget, setSelectedHomeWidget] = useState<HomeWidget>('None' as HomeWidget)
 
   useEffect(() => {
     (async () => {
@@ -131,6 +133,7 @@ export function AppSettingsProvider({ children }: AppSettingsProviderProps) {
     isCellularDataEnabled,
     handleCellularData,
     hasInternetConnection,
+    selectedHomeWidget,
   }
 
   return (

@@ -264,7 +264,7 @@ export default function SkyMapGenerator({ navigation }: any) {
           {
             (showPlanets && moonCoords && !starCatalogLoading) && (
               <>
-                <Image href={moonIcons[moonCoords.phase]} x={moonX} y={moonY} width={10} height={10} />
+                <Image href={moonIcons[moonCoords.phase]} x={moonX} y={moonY} width={12} height={12} />
                 <SvgText
                   key={`the-moon`}
                   x={moonX - 5}

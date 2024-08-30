@@ -12,6 +12,7 @@ export const commonTranslations = {
     simple: "##Erreur##",
     unkonwn: "Inconnu",
     other: "Other",
+    noPlanets: "Aucune planète visible",
   },
   loadings: {
     simple: "Chargement...",

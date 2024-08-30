@@ -9,6 +9,7 @@ import { locationHeaderTranslations } from "./components/locationHeader";
 import { locationModalTranslations } from "./components/locationModal";
 import { ephemerisBarTranslation } from "./components/weather/ephemerisBar";
 import { hourlyOverviewTranslation } from "./components/weather/hourlyOverview";
+import { widgetsTranslations } from "./components/widgets";
 import { aboutTranslations } from "./screens/about";
 import { astroDataInfosTranslations } from "./screens/astroDataInfos";
 import { detailsPages } from "./screens/detailsPages";
@@ -54,4 +55,5 @@ export const frTranslations = {
   objectTypes: objectTypesTranslations,
   astroDataInfos: astroDataInfosTranslations,
   about: aboutTranslations,
+  widgets: widgetsTranslations
 }

@@ -13,7 +13,7 @@ import BigButton from '../components/commons/buttons/BigButton';
 import BannerHandler from '../components/banners/BannerHandler';
 import ToolButton from '../components/commons/buttons/ToolButton';
 import HomeSearchModule from '../components/forms/HomeSearchModule';
-import GlobalSummary from '../components/GlobalSummary';
+import GlobalSummary from '../components/widgets/home/GlobalSummary';
 
 export default function Home({ navigation }: any) {
   const { hasInternetConnection, currentUserLocation } = useSettings()
