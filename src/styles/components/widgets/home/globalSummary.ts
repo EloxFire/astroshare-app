@@ -1,4 +1,4 @@
-import { app_colors } from "../../helpers/constants";
+import { app_colors } from "../../../../helpers/constants";
 
 export const globalSummaryStyles = {
   container: {

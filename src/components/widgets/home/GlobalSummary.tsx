@@ -1,26 +1,21 @@
-import React, { useEffect, useState } from 'react'
-import { ActivityIndicator, Image, ImageBackground, ImageSourcePropType, Text, View } from 'react-native'
-import { globalSummaryStyles } from '../../../styles/components/globalSummary'
-import { useSettings } from '../../../contexts/AppSettingsContext';
-import { getWeather } from '../../../helpers/api/getWeather';
-import { showToast } from '../../../helpers/scripts/showToast';
-import { EquatorialCoordinate, GeographicCoordinate, getNight, getTwilightBandsForDay, HorizontalCoordinate, isBodyAboveHorizon, TwilightBand } from '@observerly/astrometry';
-import { useSpot } from '../../../contexts/ObservationSpotContext';
-import { extractNumbers } from '../../../helpers/scripts/extractNumbers';
-import { calculateHorizonAngle } from '../../../helpers/scripts/astro/calculateHorizonAngle';
-import { astroImages, twilightBandsBackgrounds, weatherImages } from '../../../helpers/scripts/loadImages';
-import { formatCelsius } from '../../../helpers/scripts/utils/formatters/formaters';
-import { i18n } from '../../../helpers/scripts/i18n';
-import { capitalize } from '../../../helpers/scripts/utils/formatters/capitalize';
-import { app_colors } from '../../../helpers/constants';
-import { useSolarSystem } from '../../../contexts/SolarSystemContext';
-import { GlobalPlanet } from '../../../helpers/types/GlobalPlanet';
-import { globalStyles } from '../../../styles/global';
-
-interface NightInterface {
-  start: Date | null,
-  end: Date | null
-}
+import { useState, useEffect } from "react";
+import { GeographicCoordinate, getTwilightBandsForDay, EquatorialCoordinate, isBodyAboveHorizon, TwilightBand } from "@observerly/astrometry";
+import { ImageSourcePropType, View, ImageBackground, ActivityIndicator, Text, Image } from "react-native";
+import { useSettings } from "../../../contexts/AppSettingsContext";
+import { useSpot } from "../../../contexts/ObservationSpotContext";
+import { useSolarSystem } from "../../../contexts/SolarSystemContext";
+import { getWeather } from "../../../helpers/api/getWeather";
+import { calculateHorizonAngle } from "../../../helpers/scripts/astro/calculateHorizonAngle";
+import { extractNumbers } from "../../../helpers/scripts/extractNumbers";
+import { i18n } from "../../../helpers/scripts/i18n";
+import { twilightBandsBackgrounds, weatherImages, astroImages } from "../../../helpers/scripts/loadImages";
+import { showToast } from "../../../helpers/scripts/showToast";
+import { capitalize } from "../../../helpers/scripts/utils/formatters/capitalize";
+import { formatCelsius } from "../../../helpers/scripts/utils/formatters/formaters";
+import { GlobalPlanet } from "../../../helpers/types/GlobalPlanet";
+import { globalSummaryStyles } from "../../../styles/components/widgets/home/globalSummary";
+import { globalStyles } from "../../../styles/global";
+import { app_colors } from "../../../helpers/constants";
 
 export default function GlobalSummary() {
 
@@ -30,14 +25,12 @@ export default function GlobalSummary() {
 
   const [loading, setLoading] = useState<boolean>(true)
   const [currentWeather, setCurrentWeather] = useState<any>(null)
-  const [night, setNight] = useState<NightInterface>({ start: new Date(), end: new Date() })
-  const [twilightBands, setTwilightBands] = useState<TwilightBand[]>([])
   const [backgroundColor, setBackgroundColor] = useState<ImageSourcePropType>(twilightBandsBackgrounds.Night)
   const [visiblePlanets, setVisiblePlanets] = useState<GlobalPlanet[]>([])
 
   useEffect(() => {
     getInfos()
-  }, [currentUserLocation])
+  }, [currentUserLocation, planets])
 
   const getInfos = async () => {
     if (!currentUserLocation) return;
@@ -54,10 +47,7 @@ export default function GlobalSummary() {
       showToast({ message: 'Erreur lors de la récupération de la météo', type: 'error' })
     }
 
-    const nightTimes = getNight(new Date(), observer, horizonAngle)
     const bands = getTwilightBandsForDay(new Date(), observer)
-    setTwilightBands(bands)
-    setNight(nightTimes)
 
     setBackgroundColor(backgroundFromTwilightBands(bands))
 

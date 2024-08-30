@@ -1,5 +1,4 @@
-import { scopeAlignmentStyles } from './../styles/screens/scopeAlignment';
-import { i18n } from './scripts/i18n';
+
 export const app_colors = {
   black: '#000000',
   black_eighty: '#00000080',
