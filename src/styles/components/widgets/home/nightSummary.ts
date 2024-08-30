@@ -19,7 +19,7 @@ export const nightSummaryStyles = {
     },
 
     title: {
-      fontSize: 18,
+      fontSize: 16,
       textTransform: 'uppercase' as 'uppercase',
       fontFamily: 'GilroyBlack',
       color: app_colors.white,
@@ -54,14 +54,14 @@ export const nightSummaryStyles = {
           flexDirection: 'column' as 'column',
 
           title: {
-            fontSize: 12,
+            fontSize: 10,
             fontFamily: 'GilroyBlack',
             textTransform: 'uppercase' as 'uppercase',
             color: app_colors.white,
           },
 
           value: {
-            fontSize: 16,
+            fontSize: 14,
             fontFamily: 'GilroyRegular',
             color: app_colors.white,
           }
@@ -76,8 +76,8 @@ export const nightSummaryStyles = {
         flex: 1,
 
         icon: {
-          height: 50,
-          width: 50,
+          height: 70,
+          width: 70,
         },
 
         title: {
@@ -85,6 +85,33 @@ export const nightSummaryStyles = {
           fontFamily: 'GilroyBlack',
           textTransform: 'uppercase' as 'uppercase',
           color: app_colors.white,
+        }
+      },
+
+      planets: {
+        display: 'flex' as 'flex',
+        flexDirection: 'row' as 'row',
+        flexWrap: 'wrap' as 'wrap',
+        justifyContent: 'flex-end' as 'flex-end',
+        gap: 5,
+        maxWidth: 150,
+
+        planet: {
+          display: 'flex' as 'flex',
+          flexDirection: 'column' as 'column',
+          alignItems: 'center' as 'center',
+          gap: 5,
+
+          icon: {
+            height: 15,
+            width: 15,
+          },
+
+          name: {
+            fontSize: 8.5,
+            fontFamily: 'GilroyRegular',
+            color: app_colors.white,
+          }
         }
       }
     }

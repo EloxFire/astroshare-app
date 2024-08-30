@@ -14,6 +14,10 @@ export const settingsTranslations = {
       title: "Lieux d'observation",
       subtitle: "// Configurez vos lieux d'observation favoris"
     },
+    widgets: {
+      title: "Personnalisation page d'accueil",
+      subtitle: "// Configurez vos widgets"
+    },
     tutorial: {
       title: "Tutoriel",
       subtitle: "// Découvrez comment utiliser l'application"

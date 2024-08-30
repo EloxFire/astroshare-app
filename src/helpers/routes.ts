@@ -22,5 +22,6 @@ export const routes = {
   favorites: { path: 'FavoritesScreen', requirements: [] },
   sellScreen: { path: 'SellScreen', requirements: [] },
   transitScreen: { path: 'TransitScreen', requirements: [] },
-  astroDataInfos: {path: 'AstroDataInfos', requirements: []},
+  astroDataInfos: { path: 'AstroDataInfos', requirements: [] },
+  widgetsManager: {path: 'WidgetsManager', requirements: []}
 }

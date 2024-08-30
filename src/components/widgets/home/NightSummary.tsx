@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { ActivityIndicator, Image, ImageBackground, Text, View } from 'react-native'
 import { useSettings } from '../../../contexts/AppSettingsContext';
-import { GeographicCoordinate, getBodyNextRise, getBodyNextSet, getLunarAge, getLunarDistance, getLunarElongation, getLunarEquatorialCoordinate, getLunarIllumination, getLunarPhase, getNight, getTwilightBandsForDay, isBodyAboveHorizon, isFullMoon, isNewMoon, isTransitInstance, TwilightBand } from '@observerly/astrometry';
+import { EquatorialCoordinate, GeographicCoordinate, getBodyNextRise, getBodyNextSet, getLunarAge, getLunarDistance, getLunarElongation, getLunarEquatorialCoordinate, getLunarIllumination, getLunarPhase, getNight, getTwilightBandsForDay, isBodyAboveHorizon, isFullMoon, isNewMoon, isTransitInstance, TwilightBand } from '@observerly/astrometry';
 import { useSpot } from '../../../contexts/ObservationSpotContext';
 import { extractNumbers } from '../../../helpers/scripts/extractNumbers';
 import { calculateHorizonAngle } from '../../../helpers/scripts/astro/calculateHorizonAngle';
@@ -11,7 +11,9 @@ import { globalStyles } from '../../../styles/global';
 import { globalSummaryStyles } from '../../../styles/components/widgets/home/globalSummary';
 import { nightSummaryStyles } from '../../../styles/components/widgets/home/nightSummary';
 import dayjs from 'dayjs';
-import { moonIcons } from '../../../helpers/scripts/loadImages';
+import { astroImages, moonIcons } from '../../../helpers/scripts/loadImages';
+import { GlobalPlanet } from '../../../helpers/types/GlobalPlanet';
+import { useSolarSystem } from '../../../contexts/SolarSystemContext';
 
 interface NightInterface {
   start: Date | null,
@@ -30,14 +32,20 @@ interface MoonData {
   moonset: string
 }
 
-export default function NightSummary() {
+interface NightSummaryProps {
+  noHeader?: boolean
+}
+
+export default function NightSummary({ noHeader }: NightSummaryProps) {
 
   const { currentUserLocation } = useSettings();
   const { selectedSpot, defaultAltitude } = useSpot()
+  const { planets } = useSolarSystem()
 
   const [loading, setLoading] = useState<boolean>(true)
   const [night, setNight] = useState<NightInterface>()
   const [moonData, setMoonData] = useState<MoonData | null>(null)
+  const [visiblePlanets, setVisiblePlanets] = useState<GlobalPlanet[]>([])
 
   useEffect(() => {
     getInfos()
@@ -54,6 +62,17 @@ export default function NightSummary() {
     setNight(nightTimes)
 
     getMoonData()
+
+    let vp: GlobalPlanet[] = [];
+    planets.forEach((planet: GlobalPlanet) => {
+      const target: EquatorialCoordinate = { ra: planet.ra, dec: planet.dec }
+      const isAbove = isBodyAboveHorizon(new Date(), observer, target, horizonAngle)
+      if (isAbove && planet.name !== 'Earth') {
+        vp.push(planet)
+      }
+    })
+
+    setVisiblePlanets(vp)
     setLoading(false)
   }
 
@@ -115,11 +134,14 @@ export default function NightSummary() {
   }
 
   return (
-    <View style={{ marginTop: 10, marginBottom: 20 }}>
-      <View>
-        <Text style={globalStyles.sections.title}>{i18n.t('widgets.homeWidgets.title')}</Text>
-        <Text style={[globalStyles.sections.subtitle, { marginBottom: 0 }]}>{i18n.t('widgets.homeWidgets.night.title')}</Text>
-      </View>
+    <View style={{ marginTop: noHeader ? 0 : 10, marginBottom: 20 }}>
+      {
+        !noHeader &&
+        <View>
+          <Text style={globalStyles.sections.title}>{i18n.t('common.other.overview')}</Text>
+          <Text style={[globalStyles.sections.subtitle, { marginBottom: 0 }]}>{i18n.t('widgets.homeWidgets.night.title')}</Text>
+        </View>
+      }
       <ImageBackground source={loading ? undefined : require('../../../../assets/icons/astro/bands/NIGHT.png')} imageStyle={nightSummaryStyles.container.backgroundPicture} resizeMode='cover' style={[nightSummaryStyles.container, { justifyContent: loading ? 'center' : 'flex-start' }]}>
         {
           loading ?
@@ -127,44 +149,65 @@ export default function NightSummary() {
             :
             <>
               <View style={nightSummaryStyles.container.blur} />
-              <Text style={nightSummaryStyles.container.title}>Nuit à venir</Text>
+              <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+                <Text style={nightSummaryStyles.container.title}>{dayjs().isAfter(night?.start) ? i18n.t('widgets.homeWidgets.night.container.alterTitle') : i18n.t('widgets.homeWidgets.night.container.title')}</Text>
+                {/* <Text style={nightSummaryStyles.container.title}>Planètes</Text> */}
+                <Text style={nightSummaryStyles.container.title}>{moonData ? moonPhasesList[moonData.phase] : i18n.t('common.loadings.simple')}</Text>
+              </View>
               <View style={nightSummaryStyles.container.data}>
                 <View style={nightSummaryStyles.container.data.timings}>
                   <View style={nightSummaryStyles.container.data.timings.info}>
-                    <Text style={nightSummaryStyles.container.data.timings.info.title}>Début</Text>
+                    <Text style={nightSummaryStyles.container.data.timings.info.title}>{i18n.t('widgets.homeWidgets.night.container.night.start')}</Text>
                     <Text style={nightSummaryStyles.container.data.timings.info.value}>{dayjs(night?.start).format('HH:mm').replace(':', 'h')}</Text>
                   </View>
                   <View style={nightSummaryStyles.container.data.timings.info}>
-                    <Text style={nightSummaryStyles.container.data.timings.info.title}>Fin</Text>
+                    <Text style={nightSummaryStyles.container.data.timings.info.title}>{i18n.t('widgets.homeWidgets.night.container.night.end')}</Text>
                     <Text style={nightSummaryStyles.container.data.timings.info.value}>{dayjs(night?.end).format('HH:mm').replace(':', 'h')}</Text>
                   </View>
                 </View>
                 {
                   moonData &&
-                  <View style={nightSummaryStyles.container.data.moon}>
-                    <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-                      <View style={[nightSummaryStyles.container.data.timings.info, { alignItems: 'flex-end' }]}>
-                        <Text style={nightSummaryStyles.container.data.timings.info.title}>Lever</Text>
+                  <>
+                    <View style={nightSummaryStyles.container.data.moon}>
+                      <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                        {/* <View style={[nightSummaryStyles.container.data.timings.info, { alignItems: 'flex-end' }]}>
+                          <Text style={nightSummaryStyles.container.data.timings.info.title}>Lever</Text>
+                          <Text style={nightSummaryStyles.container.data.timings.info.value}>{moonData.moonrise}</Text>
+                        </View> */}
+                        <Image source={moonIcons[moonData.phase]} style={nightSummaryStyles.container.data.moon.icon} resizeMode='contain' />
+                        {/* <View style={[nightSummaryStyles.container.data.timings.info, { alignItems: 'flex-start' }]}>
+                          <Text style={nightSummaryStyles.container.data.timings.info.title}>Coucher</Text>
+                          <Text style={nightSummaryStyles.container.data.timings.info.value}>{moonData.moonset}</Text>
+                        </View> */}
+                      </View>
+                      {/* <Text style={nightSummaryStyles.container.data.moon.title}>{moonPhasesList[moonData.phase]}</Text> */}
+                    </View>
+                    <View style={nightSummaryStyles.container.data.timings}>
+                      <View style={nightSummaryStyles.container.data.timings.info}>
+                        <Text style={nightSummaryStyles.container.data.timings.info.title}>{i18n.t('widgets.homeWidgets.night.container.moon.rise')}</Text>
                         <Text style={nightSummaryStyles.container.data.timings.info.value}>{moonData.moonrise}</Text>
                       </View>
-                      <Image source={moonIcons[moonData.phase]} style={nightSummaryStyles.container.data.moon.icon} resizeMode='contain' />
-                      <View style={[nightSummaryStyles.container.data.timings.info, { alignItems: 'flex-start' }]}>
-                        <Text style={nightSummaryStyles.container.data.timings.info.title}>Coucher</Text>
+                      <View style={nightSummaryStyles.container.data.timings.info}>
+                        <Text style={nightSummaryStyles.container.data.timings.info.title}>{i18n.t('widgets.homeWidgets.night.container.moon.set')}</Text>
                         <Text style={nightSummaryStyles.container.data.timings.info.value}>{moonData.moonset}</Text>
                       </View>
                     </View>
-                    <Text style={nightSummaryStyles.container.data.moon.title}>{moonPhasesList[moonData.phase]}</Text>
-                  </View>
+                  </>
                 }
-                {/* <View style={nightSummaryStyles.container.data.timings}>
-                  <View style={nightSummaryStyles.container.data.timings.info}>
-                    <Text style={nightSummaryStyles.container.data.timings.info.title}>Début</Text>
-                    <Text style={nightSummaryStyles.container.data.timings.info.value}>{dayjs(night?.start).format('HH:mm').replace(':', 'h')}</Text>
-                  </View>
-                  <View style={nightSummaryStyles.container.data.timings.info}>
-                    <Text style={nightSummaryStyles.container.data.timings.info.title}>Fin</Text>
-                    <Text style={nightSummaryStyles.container.data.timings.info.value}>{dayjs(night?.end).format('HH:mm').replace(':', 'h')}</Text>
-                  </View>
+                {/* <View style={nightSummaryStyles.container.data.planets}>
+                  {
+                    visiblePlanets.length > 0 ?
+                      visiblePlanets.map((planet: GlobalPlanet, index: number) => (
+                        <>
+                          <View key={index} style={nightSummaryStyles.container.data.planets.planet}>
+                            <Image style={nightSummaryStyles.container.data.planets.planet.icon} source={astroImages[planet.name.toUpperCase()]} />
+                            <Text style={nightSummaryStyles.container.data.planets.planet.name}>{i18n.t(`common.planets.${planet.name}`)}</Text>
+                          </View>
+                        </>
+                      ))
+                      :
+                      <Text style={globalSummaryStyles.container.currentSkyContainer.planets.empty}>{i18n.t('common.errors.noPlanets')}</Text>
+                  }
                 </View> */}
               </View>
             </>

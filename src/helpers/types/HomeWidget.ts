@@ -1,5 +1,5 @@
 export enum HomeWidget {
-  'Current' = 'Current',
+  'Live' = 'Live',
   'Night' = 'Night',
   'None' = 'None'
 }

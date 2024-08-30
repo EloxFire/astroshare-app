@@ -42,6 +42,7 @@ export const storageKeys = {
   favouriteObjects: 'favouriteObjects',
   favouritePlanets: 'favouritePlanets',
   favouriteStars: 'favouriteStars',
+  homeWidgets: 'selectedHomeWidget',
 }
 
 export const sunImagesSrcWavelengths = {

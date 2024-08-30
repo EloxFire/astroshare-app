@@ -36,6 +36,7 @@ export const commonTranslations = {
     absolute: "absolute",
     removeFav: "Remove from favorites",
     addFav: "Add to favorites",
+    overview: "Overview",
   },
   time: {
     time: "Time",

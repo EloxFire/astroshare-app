@@ -5,7 +5,7 @@ import { Dimensions, View } from 'react-native'
 import { convertDDtoDMS } from '../helpers/scripts/convertDDtoDMSCoords'
 import { getLocationName } from '../helpers/api/getLocationFromCoords'
 import { showToast } from '../helpers/scripts/showToast'
-import { app_colors } from '../helpers/constants'
+import { app_colors, storageKeys } from '../helpers/constants'
 import { getData, storeData } from '../helpers/storage'
 import { routes } from '../helpers/routes'
 import { isFirstLaunch } from '../helpers/scripts/checkFirstLaunch'
@@ -73,6 +73,22 @@ export function AppSettingsProvider({ children }: AppSettingsProviderProps) {
     }
   }, [])
 
+  useEffect(() => {
+    (async () => {
+      const sw = await getData(storageKeys.homeWidgets)
+      if (!sw) {
+        await storeData(storageKeys.homeWidgets, 'None');
+      } else {
+        setSelectedHomeWidget(sw as HomeWidget);
+      }
+    })()
+  }, [])
+
+  const updateSelectedHomeWidget = async (widget: HomeWidget) => {
+    await storeData(storageKeys.homeWidgets, widget);
+    setSelectedHomeWidget(widget);
+  }
+
   const refreshCurrentUserLocation = async () => {
     setLocationLoading(true);
     // Check if location permission is granted
@@ -134,6 +150,7 @@ export function AppSettingsProvider({ children }: AppSettingsProviderProps) {
     handleCellularData,
     hasInternetConnection,
     selectedHomeWidget,
+    updateSelectedHomeWidget,
   }
 
   return (

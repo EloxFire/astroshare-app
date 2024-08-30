@@ -17,7 +17,11 @@ import { globalSummaryStyles } from "../../../styles/components/widgets/home/glo
 import { globalStyles } from "../../../styles/global";
 import { app_colors } from "../../../helpers/constants";
 
-export default function GlobalSummary() {
+interface GlobalSummaryProps {
+  noHeader?: boolean
+}
+
+export default function GlobalSummary({ noHeader }: GlobalSummaryProps) {
 
   const { currentUserLocation } = useSettings();
   const { selectedSpot, defaultAltitude } = useSpot()
@@ -55,7 +59,7 @@ export default function GlobalSummary() {
     planets.forEach((planet: GlobalPlanet) => {
       const target: EquatorialCoordinate = { ra: planet.ra, dec: planet.dec }
       const isAbove = isBodyAboveHorizon(new Date(), observer, target, horizonAngle)
-      if (isAbove) {
+      if (isAbove && planet.name !== 'Earth') {
         vp.push(planet)
       }
     })
@@ -84,11 +88,14 @@ export default function GlobalSummary() {
   }
 
   return (
-    <View style={{ marginTop: 10, marginBottom: 20 }}>
-      <View>
-        <Text style={globalStyles.sections.title}>{i18n.t('widgets.homeWidgets.title')}</Text>
-        <Text style={[globalStyles.sections.subtitle, { marginBottom: 0 }]}>{i18n.t('widgets.homeWidgets.live.title')}</Text>
-      </View>
+    <View style={{ marginTop: noHeader ? 0 : 10, marginBottom: 20 }}>
+      {
+        !noHeader &&
+        <View>
+          <Text style={globalStyles.sections.title}>{i18n.t('common.other.overview')}</Text>
+          <Text style={[globalStyles.sections.subtitle, { marginBottom: 0 }]}>{i18n.t('widgets.homeWidgets.live.title')}</Text>
+        </View>
+      }
       <ImageBackground source={loading ? undefined : backgroundColor} imageStyle={globalSummaryStyles.container.backgroundPicture} resizeMode='cover' style={[globalSummaryStyles.container, { justifyContent: loading ? 'center' : 'space-between' }]}>
         {
           loading ?
@@ -119,10 +126,12 @@ export default function GlobalSummary() {
                   {
                     visiblePlanets.length > 0 ?
                       visiblePlanets.map((planet: GlobalPlanet, index: number) => (
-                        <View key={index} style={globalSummaryStyles.container.currentSkyContainer.planets.planet}>
-                          <Image style={globalSummaryStyles.container.currentSkyContainer.planets.planet.icon} source={astroImages[planet.name.toUpperCase()]} />
-                          <Text style={globalSummaryStyles.container.currentSkyContainer.planets.planet.name}>{i18n.t(`common.planets.${planet.name}`)}</Text>
-                        </View>
+                        <>
+                          <View key={index} style={globalSummaryStyles.container.currentSkyContainer.planets.planet}>
+                            <Image style={globalSummaryStyles.container.currentSkyContainer.planets.planet.icon} source={astroImages[planet.name.toUpperCase()]} />
+                            <Text style={globalSummaryStyles.container.currentSkyContainer.planets.planet.name}>{i18n.t(`common.planets.${planet.name}`)}</Text>
+                          </View>
+                        </>
                       ))
                       :
                       <Text style={globalSummaryStyles.container.currentSkyContainer.planets.empty}>{i18n.t('common.errors.noPlanets')}</Text>

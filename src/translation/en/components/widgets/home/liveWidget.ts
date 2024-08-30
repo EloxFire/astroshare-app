@@ -1,4 +1,4 @@
 export const liveHomeWidgetTranslations = {
-  title: 'Live overview',
+  title: 'Live sky at a glance',
   sky: "In the sky"
 }

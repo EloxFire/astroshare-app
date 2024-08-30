@@ -36,14 +36,14 @@ export const globalSummaryStyles = {
       height: '100%' as '100%',
       
       city: {
-        fontSize: 18,
+        fontSize: 16,
         textTransform: 'uppercase' as 'uppercase',
         fontFamily: 'GilroyBlack',
         color: app_colors.white,
       },
 
       description: {
-        fontSize: 18,
+        fontSize: 16,
         fontFamily: 'GilroyRegular',
         color: app_colors.white,
       },
@@ -70,12 +70,12 @@ export const globalSummaryStyles = {
             gap: 3,
             
             icon: {
-              width: 18,
-              height: 18,
+              width: 16,
+              height: 16,
             },
 
             value: {
-              fontSize: 18,
+              fontSize: 16,
               fontFamily: 'GilroyBlack',
               color: app_colors.white,
             }
@@ -91,7 +91,7 @@ export const globalSummaryStyles = {
       gap: 5,
 
       title: {
-        fontSize: 18,
+        fontSize: 16,
         textTransform: 'uppercase' as 'uppercase',
         fontFamily: 'GilroyBlack',
         color: app_colors.white,
@@ -106,7 +106,7 @@ export const globalSummaryStyles = {
         gap: 10,
 
         empty: {
-          fontSize: 15,
+          fontSize: 12,
           fontFamily: 'GilroyRegular',
           color: app_colors.white,
         },
@@ -122,7 +122,7 @@ export const globalSummaryStyles = {
           },
 
           name: {
-            fontSize: 12,
+            fontSize: 10,
             fontFamily: 'GilroyRegular',
             color: app_colors.white,
           }

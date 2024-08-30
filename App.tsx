@@ -42,6 +42,7 @@ import IssTracker from "./src/screens/satelliteTracker/IssTracker";
 import StarlinkTracker from "./src/screens/satelliteTracker/StarlinkTracker";
 import TransitsScreen from "./src/screens/transits/TransitsScreen";
 import AstroDataInfos from "./src/screens/AstroDataInfos";
+import WidgetManager from "./src/screens/WidgetManager";
 
 dayjs.locale('fr');
 dayjs.extend(LocalizedFormat)
@@ -113,6 +114,7 @@ export default function App() {
                   <Stack.Screen name={routes.sellScreen.path} component={SellScreen} />
                   <Stack.Screen name={routes.transitScreen.path} component={TransitsScreen} />
                   <Stack.Screen name={routes.astroDataInfos.path} component={AstroDataInfos} />
+                  <Stack.Screen name={routes.widgetsManager.path} component={WidgetManager} />
                 </Stack.Navigator>
               </SolarSystemProvider>
             </ObservationSpotProvider>
