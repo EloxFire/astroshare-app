@@ -73,6 +73,8 @@ export const constellationsNamesTranslations = {
   Sco: "Scorpion",
   Sct: "Écu de Sobieski",
   Ser: "Serpent",
+  Se1: "Serpent",
+  Se2: "Serpent",
   Sex: "Sextant",
   Sge: "Flèche",
   Sgr: "Sagittaire",
