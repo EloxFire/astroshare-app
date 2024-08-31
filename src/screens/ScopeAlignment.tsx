@@ -13,7 +13,6 @@ import { routes } from "../helpers/routes";
 import PageTitle from "../components/commons/PageTitle";
 import PolarClock from "../components/PolarClock";
 import { i18n } from "../helpers/scripts/i18n";
-import { scopeAlignmentSteps } from "../helpers/scripts/scopeAlignment";
 
 export default function ScopeAlignment({ navigation }: any) {
 
@@ -26,6 +25,17 @@ export default function ScopeAlignment({ navigation }: any) {
   const handlePreviousStep = () => {
     currentStep === 1 ? navigation.push(routes.home.path) : setCurrentStep(currentStep - 1);
   }
+
+  const scopeAlignmentSteps = [
+    {
+      title: i18n.t('scopeAlignment.steps.material.title'),
+      description: i18n.t('scopeAlignment.steps.material.description'),
+    },
+    {
+      title: i18n.t('scopeAlignment.steps.alignment.title'),
+      description: i18n.t('scopeAlignment.steps.alignment.description'),
+    }
+  ]
 
   return (
     <View style={globalStyles.body}>
