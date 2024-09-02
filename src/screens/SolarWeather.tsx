@@ -42,6 +42,7 @@ export default function SolarWeather({ navigation }: any) {
     setTimeout(() => {
       setCurrentImageFilter(filter)
       setCurrentImageUrl(type === 'img' ? sunImagesSrcWavelengths[filter] + '?' + new Date() : sunVideoSrcWavelengths[filter] + '?' + new Date())
+      setLoadingImage(false)
     }, 300)
   }
 
@@ -52,6 +53,7 @@ export default function SolarWeather({ navigation }: any) {
     setTimeout(() => {
       setCurrentCmeImageFilter(filter)
       setCurrentCmeImageUrl(type === 'img' ? cmeImageSrc[filter] + '?' + new Date() : cmeVideoSrc[filter] + '?' + new Date())
+      setLoadingCME(false)
     }, 300)
   }
 
