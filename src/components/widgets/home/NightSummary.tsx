@@ -8,10 +8,9 @@ import { calculateHorizonAngle } from '../../../helpers/scripts/astro/calculateH
 import { i18n } from '../../../helpers/scripts/i18n';
 import { app_colors } from '../../../helpers/constants';
 import { globalStyles } from '../../../styles/global';
-import { globalSummaryStyles } from '../../../styles/components/widgets/home/globalSummary';
 import { nightSummaryStyles } from '../../../styles/components/widgets/home/nightSummary';
 import dayjs from 'dayjs';
-import { astroImages, moonIcons } from '../../../helpers/scripts/loadImages';
+import { moonIcons } from '../../../helpers/scripts/loadImages';
 import { GlobalPlanet } from '../../../helpers/types/GlobalPlanet';
 import { useSolarSystem } from '../../../contexts/SolarSystemContext';
 

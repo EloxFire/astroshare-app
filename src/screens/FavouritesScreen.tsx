@@ -104,7 +104,7 @@ export default function FavouritesScreen({ navigation }: any) {
                       })
                       :
                       <View>
-                        <Text style={favouriteScreenStyles.noFavsBadge}>{i18n.t('favouriteScreen.dso.noFavs')}</Text>
+                        <Text style={favouriteScreenStyles.noFavsBadge}>{i18n.t('favouriteScreen.planet.noFavs')}</Text>
                       </View>
                   }
                 </View>
@@ -123,7 +123,7 @@ export default function FavouritesScreen({ navigation }: any) {
                       })
                       :
                       <View>
-                        <Text style={favouriteScreenStyles.noFavsBadge}>{i18n.t('favouriteScreen.dso.noFavs')}</Text>
+                        <Text style={favouriteScreenStyles.noFavsBadge}>{i18n.t('favouriteScreen.star.noFavs')}</Text>
                       </View>
                   }
                 </View>
