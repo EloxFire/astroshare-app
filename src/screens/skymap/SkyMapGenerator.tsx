@@ -1,22 +1,22 @@
 import React, { useEffect, useState } from 'react'
 import { Dimensions, ScrollView, Text, View } from 'react-native'
-import { globalStyles } from '../styles/global'
-import { Star } from '../helpers/types/Star'
-import { useSettings } from '../contexts/AppSettingsContext'
-import { calculateHorizonAngle } from '../helpers/scripts/astro/calculateHorizonAngle'
+import { globalStyles } from '../../styles/global'
+import { Star } from '../../helpers/types/Star'
+import { useSettings } from '../../contexts/AppSettingsContext'
+import { calculateHorizonAngle } from '../../helpers/scripts/astro/calculateHorizonAngle'
 import { convertEquatorialToHorizontal, isBodyAboveHorizon, hercules, lyra, draco, cepheus, getPlanetaryPositions } from '@observerly/astrometry'
 import { Circle, G, Image, Line, Mask, Polyline, Rect, Svg, Text as SvgText } from 'react-native-svg';
-import { constellationsAsterisms } from '../helpers/scripts/astro/constellationsAsterisms'
-import { app_colors } from '../helpers/constants'
-import PageTitle from '../components/commons/PageTitle'
-import DSOValues from '../components/commons/DSOValues'
-import ToggleButton from '../components/commons/buttons/ToggleButton'
+import { constellationsAsterisms } from '../../helpers/scripts/astro/constellationsAsterisms'
+import { app_colors } from '../../helpers/constants'
+import PageTitle from '../../components/commons/PageTitle'
+import DSOValues from '../../components/commons/DSOValues'
+import ToggleButton from '../../components/commons/buttons/ToggleButton'
 import dayjs from 'dayjs'
 import axios from 'axios'
-import { i18n } from '../helpers/scripts/i18n'
-import { useSolarSystem } from '../contexts/SolarSystemContext'
-import { GlobalPlanet } from '../helpers/types/GlobalPlanet'
-import { astroImages, moonIcons } from '../helpers/scripts/loadImages'
+import { i18n } from '../../helpers/scripts/i18n'
+import { useSolarSystem } from '../../contexts/SolarSystemContext'
+import { GlobalPlanet } from '../../helpers/types/GlobalPlanet'
+import { astroImages, moonIcons } from '../../helpers/scripts/loadImages'
 
 
 export default function SkyMapGenerator({ navigation }: any) {
@@ -134,7 +134,7 @@ export default function SkyMapGenerator({ navigation }: any) {
 
           {
             starCatalogLoading && starsToDisplay.length === 0 &&
-            <SvgText transform={`rotate(180, ${screenWidth / 2}, ${screenWidth / 2})`} x={screenWidth / 2} y={screenWidth / 2} textAnchor="middle" fontSize="12" fill={app_colors.white_eighty}>{i18n.t('skymapGenerator.mapLoading')}</SvgText>
+            <SvgText transform={`rotate(180, ${screenWidth / 2}, ${screenWidth / 2})`} x={screenWidth / 2} y={screenWidth / 2} textAnchor="middle" fontSize="12" fill={app_colors.white_eighty}>{i18n.t('skymap.flatmap.mapLoading')}</SvgText>
           }
 
           {
@@ -284,11 +284,11 @@ export default function SkyMapGenerator({ navigation }: any) {
       <Text style={{ color: app_colors.red_eighty, textAlign: 'center', fontSize: 20 }}>S</Text>
 
       <View style={{ marginTop: 20 }}>
-        <DSOValues title={i18n.t('skymapGenerator.localTime')} chipValue chipColor={app_colors.grey} value={dayjs(currentTime).format('HH:mm:ss').replace(':', 'h').replace(':', 'm') + "s"} />
+        <DSOValues title={i18n.t('skymap.flatmap.localTime')} chipValue chipColor={app_colors.grey} value={dayjs(currentTime).format('HH:mm:ss').replace(':', 'h').replace(':', 'm') + "s"} />
         <ScrollView style={{ marginTop: 10, borderTopWidth: 1, borderColor: app_colors.white_forty, paddingTop: 10 }}>
-          <ToggleButton title={i18n.t('skymapGenerator.constellations')} onToggle={() => setShowConstellations(!showConstellations)} toggled={showConstellations} />
-          <ToggleButton title={i18n.t('skymapGenerator.constellationsName')} onToggle={() => setShowConstellationsName(!showConstellationsName)} toggled={showConstellationsName} />
-          <ToggleButton title={i18n.t('skymapGenerator.planets')} onToggle={() => setShowPlanets(!showPlanets)} toggled={showPlanets} />
+          <ToggleButton title={i18n.t('skymap.flatmap.constellations')} onToggle={() => setShowConstellations(!showConstellations)} toggled={showConstellations} />
+          <ToggleButton title={i18n.t('skymap.flatmap.constellationsName')} onToggle={() => setShowConstellationsName(!showConstellationsName)} toggled={showConstellationsName} />
+          <ToggleButton title={i18n.t('skymap.flatmap.planets')} onToggle={() => setShowPlanets(!showPlanets)} toggled={showPlanets} />
           {/* <Text style={{ color: 'white' }}>{constellationsAsterisms[0].features[0].properties?.name}</Text> */}
           {/* <Text style={{ color: 'white' }}>{JSON.stringify(constellationsAsterisms[0].features[0].properties?.centrum)}</Text> */}
         </ScrollView>

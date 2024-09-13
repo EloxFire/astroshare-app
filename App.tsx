@@ -28,7 +28,7 @@ import 'dayjs/locale/fr'
 import 'dayjs/locale/en'
 import Onboarding from "./src/screens/Onboarding";
 import SatelliteTracker from "./src/screens/satelliteTracker/SatelliteTracker";
-import SkyMapGenerator from "./src/screens/SkyMapGenerator";
+import SkyMapGenerator from "./src/screens/skymap/SkyMapGenerator";
 import FavouritesScreen from "./src/screens/FavouritesScreen";
 import PlanetDetails from "./src/screens/PlanetDetails";
 import { SolarSystemProvider } from "./src/contexts/SolarSystemContext";
@@ -43,6 +43,8 @@ import StarlinkTracker from "./src/screens/satelliteTracker/StarlinkTracker";
 import TransitsScreen from "./src/screens/transits/TransitsScreen";
 import AstroDataInfos from "./src/screens/AstroDataInfos";
 import WidgetManager from "./src/screens/WidgetManager";
+import SkyMapSelection from "./src/screens/skymap/SkyMapSelection";
+import Planetarium from "./src/screens/skymap/Planetarium";
 
 dayjs.locale('fr');
 dayjs.extend(LocalizedFormat)
@@ -109,7 +111,9 @@ export default function App() {
                   <Stack.Screen name={routes.issTracker.path} component={IssTracker} />
                   <Stack.Screen name={routes.starlinkTracker.path} component={StarlinkTracker} />
                   <Stack.Screen name={routes.favorites.path} component={FavouritesScreen} />
-                  <Stack.Screen name={routes.skymapgenerator.path} component={SkyMapGenerator} />
+                  <Stack.Screen name={routes.skymapSelection.path} component={SkyMapSelection} />
+                  <Stack.Screen name={routes.flatSkymap.path} component={SkyMapGenerator} />
+                  <Stack.Screen name={routes.planetarium.path} component={Planetarium} />
                   <Stack.Screen name={routes.language.path} component={LanguageSelection} />
                   <Stack.Screen name={routes.sellScreen.path} component={SellScreen} />
                   <Stack.Screen name={routes.transitScreen.path} component={TransitsScreen} />
