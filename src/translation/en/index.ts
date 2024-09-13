@@ -23,7 +23,8 @@ import { proTranslations } from "./screens/pro";
 import { satelliteTrackerTranslations } from "./screens/satelliteTracker";
 import { scopeAlignmentTranslation } from "./screens/scopeAlignment";
 import { settingsTranslations } from "./screens/settings";
-import { skymapGeneratorTranslations } from "./screens/skymapGenerator";
+import { skymapTranslations } from "./screens/skymap";
+import { skymapGeneratorTranslations } from "./screens/skymap/skymapGenerator";
 import { solarWeatherTranslations } from "./screens/solarWeather";
 import { tutorialScreen } from "./screens/tutorialScreen";
 import { viewpointsManagerTranslations } from "./screens/viewpointsManager";
@@ -49,7 +50,7 @@ export const enTranslations = {
   moonPhases: moonPhasesTranslation,
   solarWeather: solarWeatherTranslations,
   satelliteTracker: satelliteTrackerTranslations,
-  skymapGenerator: skymapGeneratorTranslations,
+  skymap: skymapTranslations,
   viewpointsManager: viewpointsManagerTranslations,
   resultCards: resultCardsTranslations,
   pro: proTranslations,
