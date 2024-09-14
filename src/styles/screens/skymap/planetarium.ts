@@ -18,6 +18,7 @@ export const planetariumStyles = {
       display: 'flex' as 'flex',
       flexDirection: 'row' as 'row',
       alignItems: 'center' as 'center',
+      zIndex: 10,
 
       text: {
         color: app_colors.white,
