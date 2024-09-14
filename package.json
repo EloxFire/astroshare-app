@@ -60,12 +60,14 @@
     "react-native-youtube": "^2.0.2",
     "react-native-youtube-iframe": "^2.3.0",
     "satellite.js": "^5.0.0",
+    "three": "^0.168.0",
     "tle.js": "^4.9.0",
     "translate-google-api": "^1.0.4"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
     "@types/react": "~18.2.79",
+    "@types/three": "^0.168.0",
     "typescript": "~5.3.3"
   },
   "private": true
