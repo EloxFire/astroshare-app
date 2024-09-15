@@ -10,6 +10,7 @@ import * as ExpoTHREE from "expo-three";
 import { Star } from '../../helpers/types/Star'
 import axios from 'axios'
 import { convertEquatorialToHorizontal } from '@observerly/astrometry'
+import { createStarMaterial } from '../../helpers/scripts/astro/skymap/createStarMaterial'
 
 export default function Planetarium({ navigation }: any) {
 
@@ -56,14 +57,26 @@ export default function Planetarium({ navigation }: any) {
     // _scene.add( axesHelper );
 
     // Add stars to the scene
-    brightStars.data.data.slice(1, 1000).forEach((star: Star) => {
-      const geometry = new THREE.SphereGeometry(0.01, 10, 10)
-      const material = new THREE.MeshBasicMaterial({ color: 0xffffff })
-      const starMesh = new THREE.Mesh(geometry, material)
-      const {alt, az} = convertEquatorialToHorizontal(new Date(), {latitude: currentUserLocation.lat, longitude: currentUserLocation.lon}, {ra: star.ra, dec: star.dec})
-      const {x, y, z} = convertAltAzToXYZ(alt, az, 5)
-      starMesh.position.set(x, y, z)
-      _scene.add(starMesh)
+    brightStars.data.data.forEach((star: Star) => {
+      const geometry = new THREE.BufferGeometry();
+      const positions = new Float32Array(1 * 3);
+      const colors = new Float32Array(1 * 3);
+
+      const positionAttribute = new THREE.BufferAttribute(positions, 3);
+      const colorAttribute = new THREE.BufferAttribute(colors, 3);
+
+      geometry.setAttribute('position', positionAttribute);
+      geometry.setAttribute('color', colorAttribute);
+
+      const starPoint = new THREE.Points(geometry, createStarMaterial(star));
+
+      const { alt, az } = convertEquatorialToHorizontal(new Date(), { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }, { ra: star.ra, dec: star.dec });
+      const { x, y, z } = convertAltAzToXYZ(alt, az, 5);
+
+      positionAttribute.setXYZ(0, x, y, z);
+      colorAttribute.setXYZ(0, 1, 1, 1);
+
+      _scene.add(starPoint);
     })
 
     const animate = () => {
