@@ -9,7 +9,7 @@ function mapRange(value: number, inMin: number, inMax: number, outMin: number, o
 export const createStarMaterial = (star: Star) => {
   const coeff_profondeur = 0.71; //coefficient appliqué au calcul de la distance des étoiles en fonction de leur magnitude (très sensible!!)
   const distance = 1000; //distance d'affichage d'une étoile de magnitude 0 dans l'environement 3D
-  const star_size = 25; //taille des étoiles, ajusté pour que le rendu soit le plus réaliste possible realtif à la vision humaine
+  const star_size = 0.05; //taille des étoiles, ajusté pour que le rendu soit le plus réaliste possible realtif à la vision humaine
 
   const star_type = star.sp_type ? star.sp_type[0] : 'A'; //récupération de la première lettre du type spectral de l'étoile
   
