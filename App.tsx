@@ -55,6 +55,7 @@ import LaunchDetails from "./src/screens/launches/LaunchDetails";
 import {storageKeys} from "./src/helpers/constants";
 import SkyMapSelection from "./src/screens/skymap/SkyMapSelection";
 import Planetarium from "./src/screens/skymap/Planetarium";
+import { StarsContextProvider } from "./src/contexts/StarsContext";
 
 dayjs.locale('fr');
 dayjs.extend(LocalizedFormat)
