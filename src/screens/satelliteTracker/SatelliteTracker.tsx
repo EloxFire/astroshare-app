@@ -21,8 +21,8 @@ export default function SatelliteTracker({ navigation }: any) {
       <ScrollView>
         <View style={satelliteTrackerHomeStyles.buttons}>
           <ToolButton text={i18n.t('satelliteTracker.home.buttons.issTracker.title')} subtitle={i18n.t('satelliteTracker.home.buttons.issTracker.subtitle')} image={require('../../../assets/images/tools/isstracker.png')} onPress={() => navigation.navigate(routes.issTracker.path)} />
+          <ToolButton text={i18n.t('satelliteTracker.home.buttons.starlinkTracker.title')} subtitle={i18n.t('satelliteTracker.home.buttons.starlinkTracker.subtitle')} image={require('../../../assets/images/tools/starlinktracker.png')} onPress={() => navigation.navigate(routes.starlinkTracker.path)} />
           <ToolButton disabled text={i18n.t('satelliteTracker.home.buttons.tss.title')} subtitle={i18n.t('satelliteTracker.home.buttons.tss.subtitle')} image={require('../../../assets/images/tools/tiangongtracker.png')} onPress={() => navigation.navigate(routes.starlinkTracker.path)} />
-          <ToolButton disabled text={i18n.t('satelliteTracker.home.buttons.starlinkTracker.title')} subtitle={i18n.t('satelliteTracker.home.buttons.starlinkTracker.subtitle')} image={require('../../../assets/images/tools/starlinktracker.png')} onPress={() => navigation.navigate(routes.starlinkTracker.path)} />
         </View>
         <ScreenInfo image={require('../../../assets/icons/FiIss.png')} text={i18n.t('satelliteTracker.home.info')} />
       </ScrollView>

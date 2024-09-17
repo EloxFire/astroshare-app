@@ -1,11 +1,12 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useTranslation } from '../../hooks/useTranslation'
 import { ScrollView, Text, View } from 'react-native'
 import { globalStyles } from '../../styles/global'
 import { i18n } from '../../helpers/scripts/i18n'
-import axios from 'axios'
-import PageTitle from '../../components/commons/PageTitle'
 import { starlinkTrackerStyles } from '../../styles/screens/satelliteTracker/starlinkTracker'
+import { StarlinkSatellite } from '../../helpers/types/StarlinkSatellite'
+import PageTitle from '../../components/commons/PageTitle'
+import axios from 'axios'
 
 export default function StarlinkTracker({ navigation }: any) {
 
@@ -23,14 +24,14 @@ export default function StarlinkTracker({ navigation }: any) {
   }, [])
 
   const getStarlinkConstellation = async () => {
-    const constellation = await axios.get(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/spacex/starlink`)
-    const satellites = constellation.data.data
-    const active = satellites.filter((satellite: StarlinkSatellite) => satellite.spaceTrack.DECAYED === 0)
-    const inactive = satellites.filter((satellite: StarlinkSatellite) => satellite.spaceTrack.DECAYED === 1)
-    setConstellation(satellites)
-    setTotalSatellites(satellites.length)
-    setTotalActive(active.length)
-    setTotalInactive(inactive.length)
+    const constellation = await (await axios.get(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/spacex/starlink`)).data.data
+    setConstellation(constellation.satellites)
+    setTotalSatellites(constellation.satellites.length + constellation.satcat_missing_tle.length)
+    setTotalActive(constellation.satellites.filter((satellite: StarlinkSatellite) => satellite.DECAY === null && satellite.TLE).length)
+    setTotalInactive(constellation.satcat_missing_tle.length)
+    
+    
+    
     setLoading(false)
   }
 

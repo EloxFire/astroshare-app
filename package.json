@@ -58,6 +58,7 @@
     "react-native-youtube": "^2.0.2",
     "react-native-youtube-iframe": "^2.3.0",
     "satellite.js": "^5.0.0",
+    "starlinkapi": "^1.0.0",
     "tle.js": "^4.9.0",
     "translate-google-api": "^1.0.4"
   },
