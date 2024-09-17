@@ -11,9 +11,7 @@ import { Star } from '../../helpers/types/Star';
 import { convertEquatorialToHorizontal } from '@observerly/astrometry';
 import { getStarMaterial } from '../../helpers/scripts/astro/skymap/createStarMaterial';
 import { useStarCatalog } from '../../contexts/StarsContext';
-import { Float } from 'react-native/Libraries/Types/CodegenTypes';
 import { getEffectiveAngularResolution } from '../../helpers/scripts/astro/skymap/getEffectiveAngularResolution';
-import { degToRadians } from '../../helpers/scripts/utils/math/convertDegreesToRadians';
 import { convertAltAzToXYZ } from '../../helpers/scripts/astro/coords/convertAltAzToXYZ';
 import { getEuclideanDistance } from '../../helpers/scripts/astro/skymap/getEuclideanDistance';
 import { getFovFromAngularResolution } from '../../helpers/scripts/astro/skymap/getFovFromAngularResolution';
@@ -32,38 +30,41 @@ export default function Planetarium({ navigation }: any) {
   const sceneRef = useRef<THREE.Scene | null>(null);
   const rendererRef = useRef<ExpoTHREE.Renderer | null>(null);
 
+  // Add THREE axis helper to the scene
   
-
+  
+  
   const _onContextCreate = async (gl: ExpoWebGLRenderingContext) => {
     const { drawingBufferWidth, drawingBufferHeight } = gl;
     setCameraWidth(drawingBufferWidth);
     setCameraHeight(drawingBufferHeight);
-
+    
     // Initialize scene, camera, and renderer
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(90, drawingBufferWidth / drawingBufferHeight, 0.1, 50000);
     const renderer = new ExpoTHREE.Renderer({ gl });
-
+    
     renderer.setSize(drawingBufferWidth, drawingBufferHeight);
     renderer.setClearColor(0x080808); // Background color
-
+    
     camera.position.set(0, 0, 0); // Camera positioned at the origin
-
+    const axesHelper = new THREE.AxesHelper(5);
+    
     // Store them in refs
     cameraRef.current = camera;
     sceneRef.current = scene;
     rendererRef.current = renderer;
-
+    
     // Group stars by their material type for efficient rendering
     const materialGroups: { [key: string]: { positions: Float32Array, geometry: THREE.BufferGeometry } } = {};
-
+    sceneRef.current.add(axesHelper);
+    
     // Iterate over the stars and group them by material type
     starsCatalog.forEach((star: Star, index: number) => {
       const { alt, az } = convertEquatorialToHorizontal(new Date(), { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }, { ra: star.ra, dec: star.dec });
       const { x, y, z } = convertAltAzToXYZ(alt, az, 5);
 
       // Get the material for the star
-      const starMaterial = getStarMaterial(star);
       const starType = star.sp_type ? star.sp_type[0] : 'A';
 
       // Check if this material group exists, if not, create it
@@ -101,7 +102,6 @@ export default function Planetarium({ navigation }: any) {
     let ground = new THREE.Mesh(Groundgeometry, material);
     let vec = getGlobePosition(currentUserLocation.lat, currentUserLocation.lon);
 
-    // ground.lookAt(vec);
     camera.rotateX(90)
     scene.add(ground);
 
