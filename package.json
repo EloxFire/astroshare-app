@@ -32,12 +32,14 @@
     "expo-dev-client": "~4.0.23",
     "expo-device": "~6.0.2",
     "expo-font": "~12.0.9",
+    "expo-gl": "^14.0.2",
     "expo-image": "~1.12.13",
     "expo-linking": "~6.3.1",
     "expo-localization": "~15.0.3",
     "expo-location": "~17.0.1",
     "expo-sensors": "~13.0.9",
     "expo-status-bar": "~1.12.1",
+    "expo-three": "^8.0.0",
     "i18n-js": "^4.4.3",
     "lottie-react-native": "6.7.0",
     "lpf": "^1.0.0",
@@ -46,7 +48,7 @@
     "react-native": "0.74.5",
     "react-native-color-matrix-image-filters": "^7.0.1",
     "react-native-easy-grid": "^0.2.2",
-    "react-native-gesture-handler": "^2.16.1",
+    "react-native-gesture-handler": "~2.16.1",
     "react-native-maps": "1.14.0",
     "react-native-purchases": "^8.1.0",
     "react-native-root-toast": "^3.6.0",
@@ -59,12 +61,14 @@
     "react-native-youtube-iframe": "^2.3.0",
     "satellite.js": "^5.0.0",
     "starlinkapi": "^1.0.0",
+    "three": "^0.168.0",
     "tle.js": "^4.9.0",
     "translate-google-api": "^1.0.4"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
     "@types/react": "~18.2.79",
+    "@types/three": "^0.168.0",
     "typescript": "~5.3.3"
   },
   "private": true
