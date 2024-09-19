@@ -10,7 +10,6 @@ export const simpleButtonStyles = {
     borderWidth: 1,
     borderColor: app_colors.white_no_opacity,
     borderRadius: 10,
-    marginBottom: 10,
     alignSelf: 'center' as 'center',
 
     text: {

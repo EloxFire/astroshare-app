@@ -13,16 +13,21 @@ interface SpaceXContextProviderProps {
 export function SpaceXContextProvider({ children }: SpaceXContextProviderProps) {
 
   const [constellation, setConstellation] = useState<any>([])
+  const [nextStarlinkLaunches, setNextStarlinkLaunches] = useState<[]>([])
 
   useEffect(() => {
     (async () => {
       const constellation = await axios.get(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/spacex/starlink`)
+      const sl = await axios.get(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/spacex/starlink/launches/next`)
+      
+      setNextStarlinkLaunches(sl.data.data.results)
       setConstellation(constellation.data.data)      
     })()
   }, [])
 
   const values = {
-    constellation
+    constellation,
+    nextStarlinkLaunches
   }
 
   return (
