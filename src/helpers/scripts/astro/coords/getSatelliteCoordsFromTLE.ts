@@ -1,4 +1,5 @@
 import * as satellite from 'satellite.js';
+import { convertRadiansToDMS } from './convertRadiansToDMS';
 
 export type SatellitePosition = {
   longitude: number,
@@ -13,22 +14,25 @@ export const getSatelliteCoordsFromTLE = async (tle: string[]) => {
   const tleLine2 = tle[2].trim();
 
   const satrec = satellite.twoline2satrec(tleLine1, tleLine2);
-
-  // console.log(satrec);
-
-  // if(!satrec) return null;
   
   // Get the position of the satellite at the given date
   const date = new Date();
   const positionAndVelocity = satellite.propagate(satrec, date);
   const gmst = satellite.gstime(date);
+  if(!positionAndVelocity) return null;
+  if(!positionAndVelocity.position) return null;
+  if(typeof positionAndVelocity.position === 'boolean') return null;
   const position = satellite.eciToGeodetic(positionAndVelocity.position as any, gmst);
 
-  console.log(tleLine0);
+  // console.log("Nom:", tleLine0);
+  // console.log("Longitude: " + position.longitude + " | " + convertRadiansToDMS(position.longitude));
+  // console.log("Latitude: " + position.latitude + " | " + convertRadiansToDMS(position.latitude));
+  // console.log("Altitude: " + position.height);
+  // console.log(" ");
+  // console.log(" ");
+  // console.log(" ");
   
-  // console.log(position.longitude);// in radians
-  // console.log(position.latitude);// in radians
-  console.log(position.height);// in km
+  
 
   return {
     name: tleLine0,

@@ -26,80 +26,80 @@ export default function StarlinkTracker({ navigation }: any) {
   const rendererRef = useRef<ExpoTHREE.Renderer | null>(null);
   const earthMeshRef = useRef<THREE.Mesh | null>(null);
 
+  const earthRadius = 6371;  // Earth radius in km
+
 
   const _onContextCreate = async (gl: ExpoWebGLRenderingContext) => {
     const { drawingBufferWidth, drawingBufferHeight } = gl;
-    
+  
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(80, drawingBufferWidth / drawingBufferHeight, 0.1, 50000);
+    const camera = new THREE.PerspectiveCamera(80, drawingBufferWidth / drawingBufferHeight, 0.1, 500000); // Ajout d'un far grand
     const renderer = new ExpoTHREE.Renderer({ gl });
-    
+  
     renderer.setSize(drawingBufferWidth, drawingBufferHeight);
-    renderer.setClearColor(0x080808);
-    
-    camera.position.set(0, 0, 5);
-    
-    // Store them in refs
+  
+    // Ajuste la caméra pour qu'elle soit un peu plus éloignée afin de voir la Terre et les satellites
+    camera.position.set(0, 0, 15000);
+  
     cameraRef.current = camera;
     sceneRef.current = scene;
     rendererRef.current = renderer;
-    
-    // const axesHelper = new THREE.AxesHelper(3);
-    // sceneRef.current.add(axesHelper);
-
-    // Create a sphere to represent the Earth
-    const earthGeometry = new THREE.SphereGeometry(1, 128, 128);
+  
+    const earthGeometry = new THREE.SphereGeometry(earthRadius, 128, 128);
     const textureLoader = new ExpoTHREE.TextureLoader();
     const earthTexture = await textureLoader.loadAsync(require('../../../assets/images/textures/nasa_globe_flat.jpg'));
     const earthMaterial = new THREE.MeshBasicMaterial({ map: earthTexture });
     const earth = new THREE.Mesh(earthGeometry, earthMaterial);
     sceneRef.current.add(earth);
-
-    // Store the earth mesh in a ref
+  
     earthMeshRef.current = earth;
-
-    // Add satellites to the scene
-    const geometry = new THREE.SphereGeometry(0.03, 32, 32);
-    const material = new THREE.MeshBasicMaterial({ color: app_colors.red });
-
-    // Create an InstancedMesh
-    const count = constellation.satellites.length;
-    const instanceMesh = new THREE.InstancedMesh(geometry, material, count);
-
-    // Populate the instances
-    const positionAttribute = geometry.attributes.position;
+  
+    // Satellite geometry (agrandi pour être visible)
+    const satelliteGeometry = new THREE.SphereGeometry(15, 32, 32);  // Taille temporaire plus grande
+    const satelliteMaterial = new THREE.MeshBasicMaterial({ color: app_colors.red });
+  
+    // Utilisation d'InstancedMesh pour afficher plusieurs satellites
+    const instanceCount = constellation.satellites.length; // Nombre de satellites affichés
+    const instanceMesh = new THREE.InstancedMesh(satelliteGeometry, satelliteMaterial, instanceCount);
+  
     const matrix = new THREE.Matrix4();
-
-    const satellites = constellation.satellites;
-    satellites.splice(0, 2).forEach((satellite: StarlinkSatellite, index: number) => {
-      if(satellite.TLE){
-        getSatelliteCoordsFromTLE(satellite.TLE).then(position => {
-          if(!position) return;
-          const radius = 1 + position.altitude / 100;  // Radius from the Earth's surface
-          const x = radius * Math.cos(position.latitude) * Math.cos(position.longitude);
-          const y = radius * Math.sin(position.latitude);
-          const z = radius * Math.cos(position.latitude) * Math.sin(position.longitude);
-
-          matrix.setPosition(x, y, z);
-          instanceMesh.setMatrixAt(index, matrix);
-        });
+  
+    // Charger et positionner les satellites
+    const satellites = constellation.satellites.slice(0, instanceCount);
+  
+    satellites.forEach(async (satellite: StarlinkSatellite, index: number) => {
+      if (satellite.TLE) {
+        const position = await getSatelliteCoordsFromTLE(satellite.TLE);
+        if (!position) return;
+  
+        // Utiliser le rayon de la Terre et l'altitude pour positionner correctement les satellites
+        const radius = earthRadius + position.altitude; // Calcul de la distance en fonction de l'altitude
+  
+        // Conversion des coordonnées sphériques en cartésiennes
+        const x = radius * Math.cos(position.latitude) * Math.cos(position.longitude);
+        const y = radius * Math.sin(position.latitude);
+        const z = radius * Math.cos(position.latitude) * Math.sin(position.longitude);
+  
+        // Réinitialisation de la matrice avant de définir la position
+        matrix.identity();
+        matrix.setPosition(x, y, z);
+        instanceMesh.setMatrixAt(index, matrix);
       }
+  
+      // Nécessaire pour que l'InstancedMesh sache qu'il doit mettre à jour les matrices
+      instanceMesh.instanceMatrix.needsUpdate = true;
     });
-
-    if(sceneRef.current) sceneRef.current.add(instanceMesh);
-
-
-    // Animation loop to render the scene
+  
+    sceneRef.current.add(instanceMesh);
+  
     const animate = () => {
       requestAnimationFrame(animate);
-      // ground.lookAt(getGlobePosition(currentUserLocation.lat, currentUserLocation.lon));
       if (rendererRef.current && sceneRef.current && cameraRef.current) {
         rendererRef.current.render(sceneRef.current, cameraRef.current);
-        gl.endFrameEXP(); // Required for Expo's GL context
+        gl.endFrameEXP();
       }
     };
-
-    // Start the animation
+  
     animate();
   };
 
@@ -107,7 +107,7 @@ export default function StarlinkTracker({ navigation }: any) {
   let polarAngle = Math.PI / 2;  // Angle vertical (hauteur)
   let azimuthalAngle = 0;  // Angle horizontal (autour de l'axe Y)
   const rotationSpeed = 0.005;  
-  const distanceFromEarth = 5;  // Distance fixe de la caméra par rapport à la Terre
+  let distanceFromEarth = 15000;  // Distance fixe de la caméra par rapport à la Terre
   
   // Fonction pour mettre à jour la position de la caméra autour de la Terre
   const updateCameraPosition = (camera: THREE.PerspectiveCamera) => {
@@ -146,6 +146,23 @@ export default function StarlinkTracker({ navigation }: any) {
       }
     });
 
+    // Ajout du zoom
+  const zoom = Gesture.Pinch()
+    .onChange((e) => {
+      const camera = cameraRef.current;
+  
+      if (camera) {
+        distanceFromEarth *= 1 - e.scale;
+  
+        // Contrainte sur la distance pour éviter de rentrer dans la Terre
+        distanceFromEarth = Math.max(1, Math.min(10, distanceFromEarth));
+  
+        updateCameraPosition(camera);
+      }
+    });
+
+    const gestures = Gesture.Simultaneous(pan, zoom);
+
 
   return (
     <GestureHandlerRootView>
@@ -156,24 +173,29 @@ export default function StarlinkTracker({ navigation }: any) {
           subtitle={i18n.t('satelliteTracker.starlinkTracker.subtitle')}
         />
         <View style={globalStyles.screens.separator} />
-        <View style={starlinkTrackerStyles.stats}>
-          <View style={starlinkTrackerStyles.stats.stat}>
-            <Text style={starlinkTrackerStyles.stats.stat.title}>{i18n.t('satelliteTracker.starlinkTracker.stats.total')}</Text>
-            <Text style={starlinkTrackerStyles.stats.stat.value}>{constellation.satellites.length + constellation.satcat_missing_tle.length}</Text>
-          </View>
-          <View style={starlinkTrackerStyles.stats.stat}>
-            <Text style={starlinkTrackerStyles.stats.stat.title}>{i18n.t('satelliteTracker.starlinkTracker.stats.active')}</Text>
-            <Text style={starlinkTrackerStyles.stats.stat.value}>{constellation.satellites.filter((satellite: StarlinkSatellite) => satellite.DECAY === null && satellite.TLE).length}</Text>
-          </View>
-          <View style={starlinkTrackerStyles.stats.stat}>
-            <Text style={starlinkTrackerStyles.stats.stat.title}>{i18n.t('satelliteTracker.starlinkTracker.stats.inactive')}</Text>
-            <Text style={starlinkTrackerStyles.stats.stat.value}>{constellation.satcat_missing_tle.length}</Text>
+        <View style={starlinkTrackerStyles.statsContainer}>
+          <Text style={globalStyles.sections.title}>Constellation</Text>
+          <View style={starlinkTrackerStyles.statsContainer.stats}>
+            <View style={starlinkTrackerStyles.statsContainer.stats.stat}>
+              <Text style={starlinkTrackerStyles.statsContainer.stats.stat.title}>{i18n.t('satelliteTracker.starlinkTracker.stats.total')}</Text>
+              <Text style={starlinkTrackerStyles.statsContainer.stats.stat.value}>{constellation.satellites.length + constellation.satcat_missing_tle.length}</Text>
+            </View>
+            <View style={starlinkTrackerStyles.statsContainer.stats.stat}>
+              <Text style={starlinkTrackerStyles.statsContainer.stats.stat.title}>{i18n.t('satelliteTracker.starlinkTracker.stats.active')}</Text>
+              <Text style={starlinkTrackerStyles.statsContainer.stats.stat.value}>{constellation.satellites.filter((satellite: StarlinkSatellite) => satellite.DECAY === null && satellite.TLE).length}</Text>
+            </View>
+            <View style={starlinkTrackerStyles.statsContainer.stats.stat}>
+              <Text style={starlinkTrackerStyles.statsContainer.stats.stat.title}>{i18n.t('satelliteTracker.starlinkTracker.stats.inactive')}</Text>
+              <Text style={starlinkTrackerStyles.statsContainer.stats.stat.value}>{constellation.satcat_missing_tle.length}</Text>
+            </View>
           </View>
         </View>
-        <ScrollView style={{marginTop: 50}}>
-          <GestureDetector gesture={pan}>
-            <GLView style={{ width: Dimensions.get('screen').width, height: Dimensions.get('screen').width }} onContextCreate={_onContextCreate} />
-          </GestureDetector>
+        <ScrollView style={{marginTop: 20}}>
+          <View style={starlinkTrackerStyles.glviewContainer}>
+            <GestureDetector gesture={gestures}>
+              <GLView style={starlinkTrackerStyles.glviewContainer.glview} onContextCreate={_onContextCreate} />
+            </GestureDetector>
+          </View>
         </ScrollView>
       </View>
     </GestureHandlerRootView>

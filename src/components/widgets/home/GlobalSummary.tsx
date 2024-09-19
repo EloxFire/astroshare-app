@@ -126,12 +126,10 @@ export default function GlobalSummary({ noHeader }: GlobalSummaryProps) {
                   {
                     visiblePlanets.length > 0 ?
                       visiblePlanets.map((planet: GlobalPlanet, index: number) => (
-                        <>
-                          <View key={index} style={globalSummaryStyles.container.currentSkyContainer.planets.planet}>
-                            <Image style={globalSummaryStyles.container.currentSkyContainer.planets.planet.icon} source={astroImages[planet.name.toUpperCase()]} />
-                            <Text style={globalSummaryStyles.container.currentSkyContainer.planets.planet.name}>{i18n.t(`common.planets.${planet.name}`)}</Text>
-                          </View>
-                        </>
+                        <View key={`planet-${index}-${planet.name}`} style={globalSummaryStyles.container.currentSkyContainer.planets.planet}>
+                          <Image style={globalSummaryStyles.container.currentSkyContainer.planets.planet.icon} source={astroImages[planet.name.toUpperCase()]} />
+                          <Text style={globalSummaryStyles.container.currentSkyContainer.planets.planet.name}>{i18n.t(`common.planets.${planet.name}`)}</Text>
+                        </View>
                       ))
                       :
                       <Text style={globalSummaryStyles.container.currentSkyContainer.planets.empty}>{i18n.t('common.errors.noPlanets')}</Text>

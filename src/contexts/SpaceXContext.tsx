@@ -17,9 +17,7 @@ export function SpaceXContextProvider({ children }: SpaceXContextProviderProps) 
   useEffect(() => {
     (async () => {
       const constellation = await axios.get(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/spacex/starlink`)
-      setConstellation(constellation.data.data)
-      console.log(JSON.stringify(constellation.data.data.satellites[0]));
-      
+      setConstellation(constellation.data.data)      
     })()
   }, [])
 
