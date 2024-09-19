@@ -24,21 +24,10 @@ export const getSatelliteCoordsFromTLE = async (tle: string[]) => {
   if(typeof positionAndVelocity.position === 'boolean') return null;
   const position = satellite.eciToGeodetic(positionAndVelocity.position as any, gmst);
 
-  // console.log("Nom:", tleLine0);
-  // console.log("Longitude: " + position.longitude + " | " + convertRadiansToDMS(position.longitude));
-  // console.log("Latitude: " + position.latitude + " | " + convertRadiansToDMS(position.latitude));
-  // console.log("Altitude: " + position.height);
-  // console.log(" ");
-  // console.log(" ");
-  // console.log(" ");
-  
-  
-
   return {
     name: tleLine0,
     longitude: position.longitude,
     latitude: position.latitude,
     altitude: position.height
   }
-  
 }
