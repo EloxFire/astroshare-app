@@ -12,7 +12,6 @@ import * as THREE from 'three'
 import * as ExpoTHREE from 'expo-three'
 import { app_colors } from '../../helpers/constants'
 import { Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
-import { getEffectiveAngularResolution } from '../../helpers/scripts/astro/skymap/getEffectiveAngularResolution'
 import { useSpacex } from '../../contexts/SpaceXContext'
 import { getSatelliteCoordsFromTLE } from '../../helpers/scripts/astro/coords/getSatelliteCoordsFromTLE'
 import SimpleButton from '../../components/commons/buttons/SimpleButton'
@@ -36,31 +35,36 @@ export default function StarlinkTracker({ navigation }: any) {
 
   const _onContextCreate = async (gl: ExpoWebGLRenderingContext) => {
     const { drawingBufferWidth, drawingBufferHeight } = gl;
-  
+
+    // Initialisation de la scène, de la caméra et du renderer
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(80, drawingBufferWidth / drawingBufferHeight, 0.1, 500000); // Ajout d'un far grand
+    const camera = new THREE.PerspectiveCamera(80, drawingBufferWidth / drawingBufferHeight, 0.1, 500000); // Grand "far" pour voir les satellites
     const renderer = new ExpoTHREE.Renderer({ gl });
-  
+
     renderer.setSize(drawingBufferWidth, drawingBufferHeight);
-  
-    // Ajuste la caméra pour qu'elle soit un peu plus éloignée afin de voir la Terre et les satellites
+
+    // Positionner la caméra pour voir la Terre et les satellites
     camera.position.set(0, 0, 11500);
-  
+
+    // Stocker les références dans les refs
     cameraRef.current = camera;
     sceneRef.current = scene;
     rendererRef.current = renderer;
-  
+
+    // Ajouter la Terre
     const earthGeometry = new THREE.SphereGeometry(earthRadius, 128, 128);
     const textureLoader = new ExpoTHREE.TextureLoader();
     const earthTexture = await textureLoader.loadAsync(require('../../../assets/images/textures/nasa_globe_flat.jpg'));
     const earthMaterial = new THREE.MeshBasicMaterial({ map: earthTexture });
     const earth = new THREE.Mesh(earthGeometry, earthMaterial);
     sceneRef.current.add(earth);
-  
+
     earthMeshRef.current = earth;
-    
+
+    // Mise à jour des positions des satellites
     updateSatellitesPosition(constellation.satellites);
-  
+    
+    // Boucle d'animation pour rendre la scène
     const animate = () => {
       requestAnimationFrame(animate);
       if (rendererRef.current && sceneRef.current && cameraRef.current) {
@@ -68,7 +72,7 @@ export default function StarlinkTracker({ navigation }: any) {
         gl.endFrameEXP();
       }
     };
-  
+
     animate();
   };
 
@@ -91,45 +95,44 @@ export default function StarlinkTracker({ navigation }: any) {
   };
 
   const updateSatellitesPosition = async (satellites: StarlinkSatellite[]) => {
-    // Satellite geometry (agrandi pour être visible)
-    const satelliteGeometry = new THREE.SphereGeometry(15, 32, 32);  // Taille temporaire plus grande
-    const satelliteMaterial = new THREE.MeshBasicMaterial({ color: app_colors.red });
+    const satelliteGeometry = new THREE.BufferGeometry();
+    const positions = new Float32Array(satellites.length * 3);
   
-    // Utilisation d'InstancedMesh pour afficher plusieurs satellites
-    const instanceCount = constellation.satellites.length; // Nombre de satellites affichés  
-    const instanceMesh = new THREE.InstancedMesh(satelliteGeometry, satelliteMaterial, instanceCount);
-  
-    const matrix = new THREE.Matrix4();
-  
-    satellites.forEach(async (satellite: StarlinkSatellite, index: number) => {
+    // Remplir le tableau positions avec les coordonnées calculées
+    await Promise.all(satellites.map(async (satellite: StarlinkSatellite, index: number) => {
       if (satellite.TLE) {
         const position = await getSatelliteCoordsFromTLE(satellite.TLE);
-        if (!position) return;
+        if (position) {
+          const radius = earthRadius + position.altitude;
   
-        // Utiliser le rayon de la Terre et l'altitude pour positionner correctement les satellites
-        const radius = earthRadius + position.altitude; // Calcul de la distance en fonction de l'altitude
+          const x = radius * Math.cos(position.latitude) * Math.sin(position.longitude);
+          const z = radius * Math.cos(position.latitude) * Math.cos(position.longitude);
+          const y = radius * Math.sin(position.latitude);
   
-        // Conversion des coordonnées sphériques en cartésiennes
-        const x = radius * Math.cos(position.latitude) * Math.cos(position.longitude);
-        const y = radius * Math.sin(position.latitude);
-        const z = radius * Math.cos(position.latitude) * Math.sin(position.longitude);
-  
-        // Réinitialisation de la matrice avant de définir la position
-        matrix.identity();
-        matrix.setPosition(x, y, z);
-        instanceMesh.setMatrixAt(index, matrix);
+          positions[index * 3] = x;
+          positions[index * 3 + 1] = y;
+          positions[index * 3 + 2] = z;
+        }
       }
+    }));
   
-      // Nécessaire pour que l'InstancedMesh sache qu'il doit mettre à jour les matrices
-      instanceMesh.instanceMatrix.needsUpdate = true;
-    });
-
-    if(sceneRef.current) {
-      sceneRef.current.add(instanceMesh);
-    }else{
-      console.log('sceneRef.current is null')
+    // Mettre à jour les attributs de la géométrie
+    satelliteGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    satelliteGeometry.computeBoundingSphere(); // Optionnel, pour améliorer les performances de rendu
+  
+    const satelliteMaterial = new THREE.PointsMaterial({ color: app_colors.red, size: 15 });
+    const satelliteMesh = new THREE.Points(satelliteGeometry, satelliteMaterial);
+  
+    // Si un ancien mesh de satellites existe, le retirer avant d'ajouter le nouveau
+    const existingMesh = sceneRef.current?.children.find(child => child instanceof THREE.Points);
+    if (existingMesh) {
+      sceneRef.current?.remove(existingMesh);
     }
-  }
+  
+    if (sceneRef.current) {
+      sceneRef.current.add(satelliteMesh);
+    }
+  };
   
   const pan = Gesture.Pan()
   .onStart(() => {
@@ -138,59 +141,74 @@ export default function StarlinkTracker({ navigation }: any) {
     oldY = 0;
   })
   .onChange((e) => {
-    const camera = cameraRef.current;
+  const camera = cameraRef.current;
 
-    if (camera) {
-      // Calculate the delta movement from the previous touch point
-      const deltaX = e.translationX - oldX;
-      const deltaY = e.translationY - oldY;
+  if (camera) {
+    // Calculate the delta movement from the previous touch point
+    const deltaX = e.translationX - oldX;
+    const deltaY = e.translationY - oldY;
 
-      // Adjust the rotation speed based on the zoom level
-      // Add a minimum threshold to avoid excessive sensitivity
-      const adjustedRotationSpeed = Math.max(rotationSpeed * (11500 / distanceFromEarth), 0.00001);
+    // Adjust the rotation speed based on the zoom level
+    // Add a minimum threshold to avoid excessive sensitivity
+    const adjustedRotationSpeed = Math.max(rotationSpeed * (11500 / distanceFromEarth), 0.00001);
 
-      // Update angles based on the delta movement and adjusted rotation speed
-      azimuthalAngle += deltaX * adjustedRotationSpeed;  // Horizontal rotation
-      polarAngle -= deltaY * adjustedRotationSpeed;  // Vertical rotation
+    // Update angles based on the delta movement and adjusted rotation speed
+    azimuthalAngle += deltaX * adjustedRotationSpeed;  // Horizontal rotation
+    polarAngle -= deltaY * adjustedRotationSpeed;  // Vertical rotation
 
-      // Constrain polarAngle to prevent the camera from going under or over the Earth
-      polarAngle = Math.max(0.1, Math.min(Math.PI - 0.1, polarAngle));
+    // Constrain polarAngle to prevent the camera from going under or over the Earth
+    polarAngle = Math.max(0.1, Math.min(Math.PI - 0.1, polarAngle));
 
-      // Update the camera's position
-      updateCameraPosition(camera);
+    // Update the camera's position
+    updateCameraPosition(camera);
 
-      // Update old coordinates for the next gesture change event
-      oldX = e.translationX;
-      oldY = e.translationY;
-    }
-  });
+    // Update old coordinates for the next gesture change event
+    oldX = e.translationX;
+    oldY = e.translationY;
+  }
+});
 
   // Ajout du zoom
   const zoom = Gesture.Pinch()
-    .onChange((e) => {
-      const camera = cameraRef.current;
-  
-      if (camera) {
-        const zoomFactor = 0.01; // Adjust this value to make the zoom less sensitive
-        distanceFromEarth *= 1 - (e.scale - 1) * zoomFactor;
-  
-        // Contrainte sur la distance pour éviter de rentrer dans la Terre
-        distanceFromEarth = Math.max(8000, Math.min(22000, distanceFromEarth));
-  
-        updateCameraPosition(camera);
-      }
-    });
+  .onChange((e) => {
+    const camera = cameraRef.current;
 
-    const gestures = Gesture.Simultaneous(zoom, pan);
+    if (camera) {
+      const zoomFactor = 0.01; // Adjust this value to make the zoom less sensitive
+      distanceFromEarth *= 1 - (e.scale - 1) * zoomFactor;
 
+      // Contrainte sur la distance pour éviter de rentrer dans la Terre
+      distanceFromEarth = Math.max(8000, Math.min(22000, distanceFromEarth));
 
-    const handleLauncgDetails = (index: number) => {
-      if(launchDetails === index){
-        setLaunchDetails(-1)
-      }else{
-        setLaunchDetails(index)
-      }
+      updateCameraPosition(camera);
     }
+  });
+
+  const gestures = Gesture.Simultaneous(zoom, pan);
+
+
+  const handleLauncgDetails = (index: number) => {
+    if(launchDetails === index){
+      setLaunchDetails(-1)
+    }else{
+      setLaunchDetails(index)
+    }
+  }
+
+  // FOR FUTURE USE
+  // const handleLiveTracking = () => {
+
+  //   if(liveTrackInterval.current){
+  //     clearInterval(liveTrackInterval.current)
+  //     liveTrackInterval.current = null
+  //   }
+
+  //   const interval = setInterval(() => {
+  //     updateSatellitesPosition(constellation.satellites);
+  //   }, 2500)
+
+  //   liveTrackInterval.current = interval;
+  // }
 
 
   return (
