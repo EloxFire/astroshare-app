@@ -1,10 +1,10 @@
 import * as satellite from 'satellite.js';
-import { convertRadiansToDMS } from './convertRadiansToDMS';
 
 export type SatellitePosition = {
   longitude: number,
   latitude: number,
-  height: number
+  altitude: number,
+  name: string
 }
 
 export const getSatelliteCoordsFromTLE = async (tle: string[]) => {
@@ -22,12 +22,14 @@ export const getSatelliteCoordsFromTLE = async (tle: string[]) => {
   if(!positionAndVelocity) return null;
   if(!positionAndVelocity.position) return null;
   if(typeof positionAndVelocity.position === 'boolean') return null;
-  const position = satellite.eciToGeodetic(positionAndVelocity.position as any, gmst);
+  const position = satellite.eciToGeodetic(positionAndVelocity.position, gmst);
 
-  return {
+  const formatedPosition: SatellitePosition = {
     name: tleLine0,
     longitude: position.longitude,
     latitude: position.latitude,
     altitude: position.height
-  }
+  }  
+
+  return formatedPosition
 }
