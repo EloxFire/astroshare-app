@@ -94,7 +94,7 @@ export default function IssTracker({ navigation }: any) {
     const earth = new THREE.Mesh(earthGeometry, earthMaterial);
     scene.add(earth);
 
-    earth.rotation.y = degToRad(-90);  // Tourner la Terre pour que l'Europe soit au centre
+    earth.rotation.y = degToRad(-90);
 
     earthMeshRef.current = earth;
 

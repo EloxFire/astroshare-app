@@ -17,6 +17,7 @@ import { getSatelliteCoordsFromTLE } from '../../helpers/scripts/astro/coords/ge
 import SimpleButton from '../../components/commons/buttons/SimpleButton'
 import dayjs from 'dayjs'
 import { getLaunchStatus } from '../../helpers/scripts/astro/launchApi/getLaunchStatus'
+import { degToRad } from 'three/src/math/MathUtils'
 
 export default function StarlinkTracker({ navigation }: any) {
 
@@ -58,6 +59,7 @@ export default function StarlinkTracker({ navigation }: any) {
     const earthMaterial = new THREE.MeshBasicMaterial({ map: earthTexture });
     const earth = new THREE.Mesh(earthGeometry, earthMaterial);
     sceneRef.current.add(earth);
+    earth.rotation.y = degToRad(-90);
 
     earthMeshRef.current = earth;
 
