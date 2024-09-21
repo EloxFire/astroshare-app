@@ -5,7 +5,7 @@ import { app_colors } from '../../helpers/constants'
 
 interface DSOValuesProps {
   title: string
-  value: string
+  value: string | ReactNode
   chipValue?: boolean
   chipColor?: string
   small?: boolean

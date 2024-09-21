@@ -12,7 +12,7 @@ export const homeTranslations = {
       subtitle: "// Starlink constellation tracking"
     },
     tss: {
-      title: "Tiangong Space Station",
+      title: "Tiangong (Coming soon)",
       subtitle: "// Tracking of the Chinese space station"
     }
   }

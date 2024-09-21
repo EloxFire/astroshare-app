@@ -1,12 +1,6 @@
 export const issTrackerTranslations = {
-  buttons: {
-    infos: "Infos",
-    center: "Center",
-    feed: "Live feed"
-  },
-  infosModal: {
+  stats: {
     title: "International Space Station",
-    subtitle: "(ISS)",
     latitude: "Latitude",
     longitude: "Longitude",
     altitude: "Altitude",
@@ -14,8 +8,12 @@ export const issTrackerTranslations = {
     country: "Country (flyover)",
     unknown: "Unknown"
   },
-  liveModal: {
-    title: "Live feed",
-    subtitle: "The ISS stays in the black for 45 minutes each orbit - The video stream may have a 15 second delay (approx.) on the current position displayed on the map.",
-  }
+  '3dMap': {
+    title: "Interactive 3D map",
+    button: "Follow ISS",
+  },
+  '2dMap': {
+    title: "Interactive 2D map",
+    button: "Re-center",
+  },
 }
