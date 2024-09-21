@@ -17,6 +17,7 @@ import { app_colors } from '../../helpers/constants'
 import { getSatelliteCoordsFromTLE } from '../../helpers/scripts/astro/coords/getSatelliteCoordsFromTLE'
 import { degToRad } from 'three/src/math/MathUtils'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
+import ToggleButton from '../../components/commons/buttons/ToggleButton'
 
 const modelLoader = new GLTFLoader();
 
@@ -29,19 +30,26 @@ export default function IssTracker({ navigation }: any) {
   const rendererRef = useRef<ExpoTHREE.Renderer | null>(null);
   const earthMeshRef = useRef<THREE.Mesh | null>(null);
   const issMeshRef = useRef<THREE.Points | null>(null);
-
+  
   const earthRadius = 6371;  // Earth radius in km
-
+  
   const [issPosition, setIssPosition] = useState<any>(null)
   const [trajectoryPoints, setTrajectoryPoints] = useState<any>(null)
   const [issTle, setIssTle] = useState<any>(null)
   const [loading, setLoading] = useState(true)
+  const [focusIss, setFocusIss] = useState(true)
+  
+  const focusIssRef = useRef(focusIss);
+
+  useEffect(() => {
+    focusIssRef.current = focusIss;
+  }, [focusIss]);
 
   useEffect(() => {
     getIssData()
     const update = setInterval(() => {
       getIssData()
-      updateIssPosition()
+      updateIssPosition(focusIssRef.current)
     }, 5000)
 
     return () => clearInterval(update)
@@ -98,7 +106,7 @@ export default function IssTracker({ navigation }: any) {
 
     earthMeshRef.current = earth;
 
-    updateIssPosition();
+    updateIssPosition(focusIss);
 
     const animate = () => {
       requestAnimationFrame(animate);
@@ -111,7 +119,24 @@ export default function IssTracker({ navigation }: any) {
     animate();
   };
 
-  const updateIssPosition = async () => {
+  const updateCameraToFollowIss = (issLat: number, issLon: number) => {
+    if (cameraRef.current) {
+      console.log("ISS focus is enabled, updating camera");
+
+      const cameraOrbitDistance = 11500;  // Adjust the distance from the Earth's center for the camera's orbit
+      const cameraX = cameraOrbitDistance * Math.cos(issLat) * Math.sin(issLon);
+      const cameraZ = cameraOrbitDistance * Math.cos(issLat) * Math.cos(issLon);
+      const cameraY = cameraOrbitDistance * Math.sin(issLat);  // Adjust the camera height according to the latitude
+
+      // Set the camera's position to orbit above the ISS
+      cameraRef.current.position.set(cameraX, cameraY, cameraZ);
+
+      // Ensure the camera still looks at the center of the Earth
+      cameraRef.current.lookAt(0, 0, 0);
+    }
+  }
+
+  const updateIssPosition = async (doesIssNeedFocus: boolean) => {
     const response = await axios.get(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/iss/tle`)
     const tle = [response.data.data.header.trim(), response.data.data.line1.trim(), response.data.data.line2.trim()]
   
@@ -136,6 +161,12 @@ export default function IssTracker({ navigation }: any) {
         positions[0] = x;
         positions[1] = y;
         positions[2] = z;
+
+        // Move the camera to orbit above the ISS, keeping its focus on the Earth's center
+        console.log('focusIss', focusIss);
+        if(doesIssNeedFocus === true){
+          updateCameraToFollowIss(latRad, lonRad);
+        }
       }
     }
   
@@ -242,6 +273,7 @@ export default function IssTracker({ navigation }: any) {
                   <GLView style={starlinkTrackerStyles.content.glviewContainer.glview} onContextCreate={_onContextCreate} />
                 </GestureDetector>
               </View>
+              <ToggleButton title='Focus ISS' toggled={focusIss} onToggle={() => setFocusIss(!focusIss)} />
             </View>
           </ScrollView>
         </View>
