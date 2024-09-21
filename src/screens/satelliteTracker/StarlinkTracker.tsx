@@ -18,6 +18,8 @@ import SimpleButton from '../../components/commons/buttons/SimpleButton'
 import dayjs from 'dayjs'
 import { getLaunchStatus } from '../../helpers/scripts/astro/launchApi/getLaunchStatus'
 import { degToRad } from 'three/src/math/MathUtils'
+import DSOValues from '../../components/commons/DSOValues'
+import { issTrackerStyles } from '../../styles/screens/satelliteTracker/issTracker'
 
 export default function StarlinkTracker({ navigation }: any) {
 
@@ -225,26 +227,16 @@ export default function StarlinkTracker({ navigation }: any) {
           <ScrollView>
             <View style={starlinkTrackerStyles.content}>
               <View style={starlinkTrackerStyles.content.statsContainer}>
-                <Text style={globalStyles.sections.title}>Constellation</Text>
-                <View style={starlinkTrackerStyles.content.statsContainer.stats}>
-                  <View style={starlinkTrackerStyles.content.statsContainer.stats.stat}>
-                    <Text style={starlinkTrackerStyles.content.statsContainer.stats.stat.title}>{i18n.t('satelliteTracker.starlinkTracker.stats.total')}</Text>
-                    <Text style={starlinkTrackerStyles.content.statsContainer.stats.stat.value}>{constellation.satellites.length + constellation.satcat_missing_tle.length}</Text>
-                  </View>
-                  <View style={starlinkTrackerStyles.content.statsContainer.stats.stat}>
-                    <Text style={starlinkTrackerStyles.content.statsContainer.stats.stat.title}>{i18n.t('satelliteTracker.starlinkTracker.stats.active')}</Text>
-                    <Text style={starlinkTrackerStyles.content.statsContainer.stats.stat.value}>{constellation.satellites.filter((satellite: StarlinkSatellite) => satellite.DECAY === null && satellite.TLE).length}</Text>
-                  </View>
-                  <View style={starlinkTrackerStyles.content.statsContainer.stats.stat}>
-                    <Text style={starlinkTrackerStyles.content.statsContainer.stats.stat.title}>{i18n.t('satelliteTracker.starlinkTracker.stats.inactive')}</Text>
-                    <Text style={starlinkTrackerStyles.content.statsContainer.stats.stat.value}>{constellation.satcat_missing_tle.length}</Text>
-                  </View>
-                </View>
+                <Text style={[globalStyles.sections.title, {fontSize: 20, marginBottom: 10}]}>Constellation</Text>
+                <DSOValues title={i18n.t('satelliteTracker.starlinkTracker.stats.total')} value={constellation.satellites.length + constellation.satcat_missing_tle.length} />
+                <DSOValues title={i18n.t('satelliteTracker.starlinkTracker.stats.active')} value={constellation.satellites.filter((satellite: StarlinkSatellite) => satellite.DECAY === null && satellite.TLE).length} />
+                <DSOValues title={i18n.t('satelliteTracker.starlinkTracker.stats.inactive')} value={constellation.satcat_missing_tle.length} />
               </View>
-              <SimpleButton icon={require('../../../assets/icons/FiRepeat.png')} text='Actualiser les positions' onPress={() => updateSatellitesPosition(constellation.satellites)} />
                 <View style={starlinkTrackerStyles.content.glviewContainer}>
+                  <Text style={issTrackerStyles.content.liveStats.title}>Carte 3D interactive</Text>
+                  <SimpleButton small icon={require('../../../assets/icons/FiRepeat.png')} text='Actualiser les positions' onPress={() => updateSatellitesPosition(constellation.satellites)} />
                   <GestureDetector gesture={gestures}>
-                    <GLView style={starlinkTrackerStyles.content.glviewContainer.glview} onContextCreate={_onContextCreate} />
+                    <GLView style={[starlinkTrackerStyles.content.glviewContainer.glview, {marginTop: 10}]} onContextCreate={_onContextCreate} />
                   </GestureDetector>
                 </View>
               <View style={starlinkTrackerStyles.content.launches}>

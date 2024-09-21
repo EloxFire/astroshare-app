@@ -55,10 +55,11 @@ export const starlinkTrackerStyles = {
       borderColor: app_colors.white_no_opacity,
       backgroundColor: app_colors.white_no_opacity,
       borderRadius: 10,
+      padding: 10,
   
       glview: {
-        width: Dimensions.get('screen').width - 22,
-        height: Dimensions.get('screen').width - 20,
+        width: Dimensions.get('screen').width - 42,
+        height: Dimensions.get('screen').width - 40,
         margin: 0,
         padding: 0,
       }

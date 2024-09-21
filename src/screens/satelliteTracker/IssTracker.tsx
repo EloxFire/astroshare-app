@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { ScrollView, Text, View } from 'react-native'
+import { ActivityIndicator, ScrollView, Text, View } from 'react-native'
 import { convertDDtoDMS } from '../../helpers/scripts/convertDDtoDMSCoords'
 import { getLocationName } from '../../helpers/api/getLocationFromCoords'
 import { getCountryByCode } from '../../helpers/scripts/utils/getCountryByCode'
@@ -18,6 +18,13 @@ import { getSatelliteCoordsFromTLE } from '../../helpers/scripts/astro/coords/ge
 import { degToRad } from 'three/src/math/MathUtils'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import ToggleButton from '../../components/commons/buttons/ToggleButton'
+import { issTrackerStyles } from '../../styles/screens/satelliteTracker/issTracker'
+import DSOValues from '../../components/commons/DSOValues'
+import { shortDmsCoord } from '../../helpers/scripts/shortenDmsCoord'
+import getCountryFlag from 'country-flag-icons/unicode'
+import MapView, { Circle, Marker, PROVIDER_GOOGLE, Polyline } from 'react-native-maps'
+import { mapStyle } from '../../helpers/mapJsonStyle'
+import SimpleButton from '../../components/commons/buttons/SimpleButton'
 
 const modelLoader = new GLTFLoader();
 
@@ -38,6 +45,13 @@ export default function IssTracker({ navigation }: any) {
   const [issTle, setIssTle] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [focusIss, setFocusIss] = useState(true)
+
+  const [issInfosModalVisible, setIssInfosModalVisible] = useState(false)
+  const [liveFeedModalVisible, setLiveFeedModalVisible] = useState(false)
+  const [issFeedError, setIssFeedError] = useState(false)
+
+  const mapRef = useRef(null)
+  const youtubePlayerRef = useRef(null)
   
   const focusIssRef = useRef(focusIss);
 
@@ -55,6 +69,17 @@ export default function IssTracker({ navigation }: any) {
     return () => clearInterval(update)
   }, [])
 
+  useEffect(() => {
+    if (!mapRef.current) return
+    // @ts-ignore
+    mapRef.current.animateToRegion({
+      latitude: issPosition ? issPosition.latitude : 0,
+      longitude: issPosition ? issPosition.longitude : 0,
+      latitudeDelta: 0,
+      longitudeDelta: 100,
+    })
+  }, [loading])
+
   const getIssData = async () => {
     try {
       const position = await axios.get(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/iss`)
@@ -64,8 +89,8 @@ export default function IssTracker({ navigation }: any) {
 
       const iss = {
         ...position.data.data,
-        dsm_lat: convertDDtoDMS(position.data.data.latitude, position.data.data.latitude).dms_lat,
-        dsm_lon: convertDDtoDMS(position.data.data.longitude, position.data.data.longitude).dms_lon,
+        dms_lat: convertDDtoDMS(position.data.data.latitude, position.data.data.latitude).dms_lat,
+        dms_lon: convertDDtoDMS(position.data.data.longitude, position.data.data.longitude).dms_lon,
         country: name.country
       }
 
@@ -240,6 +265,22 @@ export default function IssTracker({ navigation }: any) {
   }
 });
 
+const centerIss = () => {
+  if (!mapRef.current) return
+  // @ts-ignore
+  mapRef.current.animateToRegion({
+    latitude: issPosition ? issPosition.latitude : 0,
+    longitude: issPosition ? issPosition.longitude : 0,
+    latitudeDelta: 0,
+    longitudeDelta: 100,
+  })
+}
+
+const handleLiveFeedDisplay = () => {
+  setIssInfosModalVisible(false)
+  setLiveFeedModalVisible(!liveFeedModalVisible)
+}
+
   return (
     <GestureHandlerRootView>
       <View style={globalStyles.body}>
@@ -250,30 +291,79 @@ export default function IssTracker({ navigation }: any) {
         />
           <View style={globalStyles.screens.separator} />
           <ScrollView>
-            <View style={starlinkTrackerStyles.content}>
-              <View style={starlinkTrackerStyles.content.statsContainer}>
-                <Text style={globalStyles.sections.title}>ISS</Text>
-                <View style={starlinkTrackerStyles.content.statsContainer.stats}>
-                  <View style={starlinkTrackerStyles.content.statsContainer.stats.stat}>
-                    <Text style={starlinkTrackerStyles.content.statsContainer.stats.stat.title}>Altitude (Km)</Text>
-                    <Text style={starlinkTrackerStyles.content.statsContainer.stats.stat.value}>{issPosition?.altitude.toFixed(2)}</Text>
-                  </View>
-                  <View style={starlinkTrackerStyles.content.statsContainer.stats.stat}>
-                    <Text style={starlinkTrackerStyles.content.statsContainer.stats.stat.title}>Vitesse (Km/h)</Text>
-                    <Text style={starlinkTrackerStyles.content.statsContainer.stats.stat.value}>{issPosition?.velocity.toFixed(2)}</Text>
-                  </View>
-                  <View style={starlinkTrackerStyles.content.statsContainer.stats.stat}>
-                    <Text style={starlinkTrackerStyles.content.statsContainer.stats.stat.title}>Pays</Text>
-                    <Text style={starlinkTrackerStyles.content.statsContainer.stats.stat.value}>{getCountryByCode(issPosition?.country)}</Text>
-                  </View>
-                </View>
+            <View style={issTrackerStyles.content}>
+              <View style={issTrackerStyles.content.liveStats}>
+                <Text style={issTrackerStyles.content.liveStats.title}>ISS</Text>
+                <DSOValues title="Latitude" value={issPosition ? shortDmsCoord(issPosition.dms_lat) : <ActivityIndicator size={'small'} color={app_colors.white} animating />} />
+                <DSOValues title="Longitude" value={issPosition ? shortDmsCoord(issPosition.dms_lon) : <ActivityIndicator size={'small'} color={app_colors.white} animating />} />
+                <DSOValues title="Altitude" value={issPosition ? `${issPosition.altitude.toFixed(2)} Km` : <ActivityIndicator size={'small'} color={app_colors.white} animating />} />
+                <DSOValues title="Vitesse" value={issPosition ? `${issPosition.velocity.toFixed(2)} Km/h` : <ActivityIndicator size={'small'} color={app_colors.white} animating />} />
+                <DSOValues title="Pays (Survol)" value={issPosition ? `${getCountryByCode(issPosition.country)} - ${getCountryFlag(issPosition.country === i18n.t('satelliteTracker.issTracker.infosModal.unknown') ? 'ZZ' : issPosition.country )}` : <ActivityIndicator size={'small'} color={app_colors.white} animating />} />
               </View>
               <View style={starlinkTrackerStyles.content.glviewContainer}>
+                <Text style={issTrackerStyles.content.liveStats.title}>Carte 3D interactive</Text>
                 <GestureDetector gesture={pan}>
                   <GLView style={starlinkTrackerStyles.content.glviewContainer.glview} onContextCreate={_onContextCreate} />
                 </GestureDetector>
+                <ToggleButton title='Focus ISS' toggled={focusIss} onToggle={() => setFocusIss(!focusIss)} />
               </View>
-              <ToggleButton title='Focus ISS' toggled={focusIss} onToggle={() => setFocusIss(!focusIss)} />
+              <View style={issTrackerStyles.content.mapContainer}>
+                <Text style={issTrackerStyles.content.liveStats.title}>Carte 2D interactive</Text>
+                <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                  <SimpleButton text='Re-center' onPress={centerIss} icon={require('../../../assets/icons/FiIss.png')} />
+                </View>
+                <MapView
+                  ref={mapRef}
+                  provider={PROVIDER_GOOGLE}
+                  style={issTrackerStyles.content.mapContainer.map}
+                  customMapStyle={mapStyle}
+                  initialRegion={{
+                    latitude: issPosition ? issPosition.latitude : 0,
+                    longitude: issPosition ? issPosition.longitude : 0,
+                    latitudeDelta: 0,
+                    longitudeDelta: 1000,
+                  }}
+                  rotateEnabled={false}
+                  cameraZoomRange={{ minCenterCoordinateDistance: 1000 }}
+                >
+                  {
+                    issPosition &&
+                    <Marker
+                      coordinate={{
+                        latitude: issPosition.latitude,
+                        longitude: issPosition.longitude,
+                      }}
+                      title='ISS'
+                      description="Position de l'ISS en temps réel"
+                      image={require('../../../assets/icons/FiIssSmall.png')}
+                      anchor={{ x: 0.5, y: 0.5 }}
+                      centerOffset={{ x: 0.5, y: 0.5 }}
+                    />
+
+                  }
+                  {
+                    issPosition &&
+                    <Circle
+                      center={{
+                        latitude: issPosition.latitude,
+                        longitude: issPosition.longitude,
+                      }}
+                      radius={1200000}
+                      fillColor={app_colors.white_twenty}
+                      strokeColor={app_colors.white_forty}
+                    />
+                  }
+                  {
+                    trajectoryPoints &&
+                    <Polyline
+                      coordinates={trajectoryPoints}
+                      strokeColor={app_colors.red}
+                      strokeWidth={1}
+                      geodesic
+                    />
+                  }
+                </MapView>
+              </View>
             </View>
           </ScrollView>
         </View>
