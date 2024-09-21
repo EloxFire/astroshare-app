@@ -15,6 +15,10 @@ import axios from 'axios'
 import PageTitle from '../../components/commons/PageTitle'
 import { app_colors } from '../../helpers/constants'
 import { getSatelliteCoordsFromTLE } from '../../helpers/scripts/astro/coords/getSatelliteCoordsFromTLE'
+import { degToRad } from 'three/src/math/MathUtils'
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
+
+const modelLoader = new GLTFLoader();
 
 export default function IssTracker({ navigation }: any) {
 
@@ -37,16 +41,11 @@ export default function IssTracker({ navigation }: any) {
     getIssData()
     const update = setInterval(() => {
       getIssData()
+      updateIssPosition()
     }, 5000)
 
     return () => clearInterval(update)
   }, [])
-
-  useEffect(() => {
-    if(issTle){
-      updateIssPosition()
-    }
-  }, [issTle])
 
   const getIssData = async () => {
     try {
@@ -88,13 +87,14 @@ export default function IssTracker({ navigation }: any) {
     sceneRef.current = scene;
     rendererRef.current = renderer;
 
-    // Ajouter la Terre
-    const earthGeometry = new THREE.SphereGeometry(earthRadius, 128, 128);
     const textureLoader = new ExpoTHREE.TextureLoader();
-    const earthTexture = await textureLoader.loadAsync(require('../../../assets/images/textures/nasa_globe_flat.jpg'));
+    const earthTexture = await textureLoader.loadAsync(require('../../../assets/images/textures/earth_night.jpg'));
     const earthMaterial = new THREE.MeshBasicMaterial({ map: earthTexture });
+    const earthGeometry = new THREE.SphereGeometry(earthRadius, 128, 128);  // 128 segments pour une sphère plus lisse
     const earth = new THREE.Mesh(earthGeometry, earthMaterial);
-    sceneRef.current.add(earth);
+    scene.add(earth);
+
+    earth.rotation.y = degToRad(-90);  // Tourner la Terre pour que l'Europe soit au centre
 
     earthMeshRef.current = earth;
 
@@ -112,31 +112,36 @@ export default function IssTracker({ navigation }: any) {
   };
 
   const updateIssPosition = async () => {
-    if (!issTle) {
-      console.log('No TLE data for ISS');
-      return;
-    };
-
+    const response = await axios.get(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/iss/tle`)
+    const tle = [response.data.data.header.trim(), response.data.data.line1.trim(), response.data.data.line2.trim()]
+  
     const issGeometry = new THREE.BufferGeometry();
     const positions = new Float32Array(3);
   
-    // Remplir le tableau positions avec les coordonnées calculées
-    const position = await getSatelliteCoordsFromTLE(issTle);
-    if (position) {
-      const radius = earthRadius + position.altitude;
+    // Récupérer les coordonnées du satellite
+    if(tle){
+      const position = await getSatelliteCoordsFromTLE(tle);
+      if (position) {
+        const radius = earthRadius + position.altitude;
+    
+        // Convertir les angles de latitude et longitude de degrés en radians
+        const latRad = position.latitude;
+        const lonRad = position.longitude;
 
-      const x = radius * Math.cos(position.latitude) * Math.sin(position.longitude);
-      const z = radius * Math.cos(position.latitude) * Math.cos(position.longitude);
-      const y = radius * Math.sin(position.latitude);
-
-      positions[0] = x;
-      positions[1] = y;
-      positions[2] = z;
+        // Calcul des coordonnées cartésiennes en utilisant les angles en radians
+        const x = radius * Math.cos(latRad) * Math.sin(lonRad);
+        const z = radius * Math.cos(latRad) * Math.cos(lonRad);
+        const y = radius * Math.sin(latRad);
+    
+        positions[0] = x;
+        positions[1] = y;
+        positions[2] = z;
+      }
     }
   
     // Mettre à jour les attributs de la géométrie
     issGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    issGeometry.computeBoundingSphere(); // Optionnel, pour améliorer les performances de rendu
+    issGeometry.computeBoundingSphere(); // Optionnel pour améliorer les performances de rendu
   
     const satelliteMaterial = new THREE.PointsMaterial({ color: app_colors.red, size: 100 });
     const satelliteMesh = new THREE.Points(issGeometry, satelliteMaterial);

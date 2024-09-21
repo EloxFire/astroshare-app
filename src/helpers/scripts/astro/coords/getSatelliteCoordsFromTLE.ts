@@ -1,4 +1,5 @@
 import * as satellite from 'satellite.js';
+import { radToDeg } from 'three/src/math/MathUtils';
 
 export type SatellitePosition = {
   longitude: number,
@@ -29,7 +30,7 @@ export const getSatelliteCoordsFromTLE = async (tle: string[]) => {
     longitude: position.longitude,
     latitude: position.latitude,
     altitude: position.height
-  }  
+  }
 
   return formatedPosition
 }

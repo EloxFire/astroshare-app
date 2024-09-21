@@ -54,7 +54,7 @@ export default function StarlinkTracker({ navigation }: any) {
     // Ajouter la Terre
     const earthGeometry = new THREE.SphereGeometry(earthRadius, 128, 128);
     const textureLoader = new ExpoTHREE.TextureLoader();
-    const earthTexture = await textureLoader.loadAsync(require('../../../assets/images/textures/nasa_globe_flat.jpg'));
+    const earthTexture = await textureLoader.loadAsync(require('../../../assets/images/textures/earth_night.jpg'));
     const earthMaterial = new THREE.MeshBasicMaterial({ map: earthTexture });
     const earth = new THREE.Mesh(earthGeometry, earthMaterial);
     sceneRef.current.add(earth);
