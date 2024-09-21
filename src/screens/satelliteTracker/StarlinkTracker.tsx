@@ -227,20 +227,20 @@ export default function StarlinkTracker({ navigation }: any) {
           <ScrollView>
             <View style={starlinkTrackerStyles.content}>
               <View style={starlinkTrackerStyles.content.statsContainer}>
-                <Text style={[globalStyles.sections.title, {fontSize: 20, marginBottom: 10}]}>Constellation</Text>
+                <Text style={[globalStyles.sections.title, {fontSize: 20, marginBottom: 10}]}>{i18n.t('satelliteTracker.starlinkTracker.stats.title')}</Text>
                 <DSOValues title={i18n.t('satelliteTracker.starlinkTracker.stats.total')} value={constellation.satellites.length + constellation.satcat_missing_tle.length} />
                 <DSOValues title={i18n.t('satelliteTracker.starlinkTracker.stats.active')} value={constellation.satellites.filter((satellite: StarlinkSatellite) => satellite.DECAY === null && satellite.TLE).length} />
                 <DSOValues title={i18n.t('satelliteTracker.starlinkTracker.stats.inactive')} value={constellation.satcat_missing_tle.length} />
               </View>
                 <View style={starlinkTrackerStyles.content.glviewContainer}>
-                  <Text style={issTrackerStyles.content.liveStats.title}>Carte 3D interactive</Text>
-                  <SimpleButton small icon={require('../../../assets/icons/FiRepeat.png')} text='Actualiser les positions' onPress={() => updateSatellitesPosition(constellation.satellites)} />
+                  <Text style={issTrackerStyles.content.liveStats.title}>{i18n.t('satelliteTracker.starlinkTracker.3dMap.title')}</Text>
+                  <SimpleButton small icon={require('../../../assets/icons/FiRepeat.png')} text={i18n.t('satelliteTracker.starlinkTracker.3dMap.button')} onPress={() => updateSatellitesPosition(constellation.satellites)} />
                   <GestureDetector gesture={gestures}>
                     <GLView style={[starlinkTrackerStyles.content.glviewContainer.glview, {marginTop: 10}]} onContextCreate={_onContextCreate} />
                   </GestureDetector>
                 </View>
               <View style={starlinkTrackerStyles.content.launches}>
-                <Text style={globalStyles.sections.title}>Prochains lancements</Text>
+                <Text style={globalStyles.sections.title}>{i18n.t('satelliteTracker.starlinkTracker.launches.title')}</Text>
                 <View style={starlinkTrackerStyles.content.launches.list}>
                   {
                     nextStarlinkLaunches.length > 0 ?
@@ -249,15 +249,15 @@ export default function StarlinkTracker({ navigation }: any) {
                         <Text style={starlinkTrackerStyles.content.launches.list.launch.title}>{launch.name.split('|')[1].trim()}</Text>
                         <View style={starlinkTrackerStyles.content.launches.list.launch.infos}>
                           <View style={starlinkTrackerStyles.content.launches.list.launch.infos.info}>
-                            <Text style={starlinkTrackerStyles.content.launches.list.launch.infos.info.label}>Statut</Text>
+                            <Text style={starlinkTrackerStyles.content.launches.list.launch.infos.info.label}>{i18n.t('satelliteTracker.starlinkTracker.launches.launch.status')}</Text>
                             <Text style={starlinkTrackerStyles.content.launches.list.launch.infos.info.value}>{getLaunchStatus(launch.status.id)}</Text>
                           </View>
                           <View style={starlinkTrackerStyles.content.launches.list.launch.infos.info}>
-                            <Text style={starlinkTrackerStyles.content.launches.list.launch.infos.info.label}>Date</Text>
+                            <Text style={starlinkTrackerStyles.content.launches.list.launch.infos.info.label}>{i18n.t('satelliteTracker.starlinkTracker.launches.launch.date')}</Text>
                             <Text style={starlinkTrackerStyles.content.launches.list.launch.infos.info.value}>{dayjs(launch.net).format('DD/MM/YYYY')}</Text>
                           </View>
                           <View style={starlinkTrackerStyles.content.launches.list.launch.infos.info}>
-                            <Text style={starlinkTrackerStyles.content.launches.list.launch.infos.info.label}>Lanceur</Text>
+                            <Text style={starlinkTrackerStyles.content.launches.list.launch.infos.info.label}>{i18n.t('satelliteTracker.starlinkTracker.launches.launch.launcher')}</Text>
                             <Text style={starlinkTrackerStyles.content.launches.list.launch.infos.info.value}>{launch.rocket.configuration.name}</Text>
                           </View>
                         </View>
@@ -265,26 +265,26 @@ export default function StarlinkTracker({ navigation }: any) {
                           launchDetails === launch_index &&
                           <View style={starlinkTrackerStyles.content.launches.list.launch.moreInfos}>
                             <View style={starlinkTrackerStyles.content.launches.list.launch.infos.info}>
-                              <Text style={starlinkTrackerStyles.content.launches.list.launch.infos.info.label}>Météo</Text>
+                              <Text style={starlinkTrackerStyles.content.launches.list.launch.infos.info.label}>{i18n.t('satelliteTracker.starlinkTracker.launches.launch.weather')}</Text>
                               <Text style={starlinkTrackerStyles.content.launches.list.launch.infos.info.value}>{launch.weather_concerns ? "À surveiller" : "OK"}</Text>
                             </View>
                             <View style={starlinkTrackerStyles.content.launches.list.launch.infos.info}>
-                              <Text style={starlinkTrackerStyles.content.launches.list.launch.infos.info.label}>Orbite visée</Text>
+                              <Text style={starlinkTrackerStyles.content.launches.list.launch.infos.info.label}>{i18n.t('satelliteTracker.starlinkTracker.launches.launch.orbit')}</Text>
                               <Text style={starlinkTrackerStyles.content.launches.list.launch.infos.info.value}>{launch.mission.orbit.abbrev}</Text>
                             </View>
                             <View style={starlinkTrackerStyles.content.launches.list.launch.infos.info}>
-                              <Text style={starlinkTrackerStyles.content.launches.list.launch.infos.info.label}>Type</Text>
+                              <Text style={starlinkTrackerStyles.content.launches.list.launch.infos.info.label}>{i18n.t('satelliteTracker.starlinkTracker.launches.launch.type')}</Text>
                               <Text style={starlinkTrackerStyles.content.launches.list.launch.infos.info.value}>{launch.launch_service_provider.type}</Text>
                             </View>
                           </View>
                         }
                         <View style={{marginTop: 10}}>
-                          <SimpleButton small text='Voir plus de détails' onPress={() => handleLauncgDetails(launch_index)} />
+                          <SimpleButton small text={launch_index === launchDetails ? i18n.t('satelliteTracker.starlinkTracker.launches.launch.button.less') : i18n.t('satelliteTracker.starlinkTracker.launches.launch.button.more')} onPress={() => handleLauncgDetails(launch_index)} />
                         </View>
                       </View>
                     ))
                     :
-                    <SimpleButton disabled text='Pas de lancements prévus pour le moment.' />
+                    <SimpleButton disabled text={i18n.t('satelliteTracker.starlinkTracker.launches.empty')} />
                   }
                 </View>
               </View>

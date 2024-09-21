@@ -30,6 +30,7 @@ const modelLoader = new GLTFLoader();
 
 export default function IssTracker({ navigation }: any) {
 
+  const {currentLocale} = useTranslation()
 
   // THREE RELATED OBJECTS
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
@@ -293,24 +294,24 @@ const handleLiveFeedDisplay = () => {
           <ScrollView>
             <View style={issTrackerStyles.content}>
               <View style={issTrackerStyles.content.liveStats}>
-                <Text style={issTrackerStyles.content.liveStats.title}>ISS</Text>
-                <DSOValues title="Latitude" value={issPosition ? shortDmsCoord(issPosition.dms_lat) : <ActivityIndicator size={'small'} color={app_colors.white} animating />} />
-                <DSOValues title="Longitude" value={issPosition ? shortDmsCoord(issPosition.dms_lon) : <ActivityIndicator size={'small'} color={app_colors.white} animating />} />
-                <DSOValues title="Altitude" value={issPosition ? `${issPosition.altitude.toFixed(2)} Km` : <ActivityIndicator size={'small'} color={app_colors.white} animating />} />
-                <DSOValues title="Vitesse" value={issPosition ? `${issPosition.velocity.toFixed(2)} Km/h` : <ActivityIndicator size={'small'} color={app_colors.white} animating />} />
-                <DSOValues title="Pays (Survol)" value={issPosition ? `${getCountryByCode(issPosition.country)} - ${getCountryFlag(issPosition.country === i18n.t('satelliteTracker.issTracker.infosModal.unknown') ? 'ZZ' : issPosition.country )}` : <ActivityIndicator size={'small'} color={app_colors.white} animating />} />
+                <Text style={issTrackerStyles.content.liveStats.title}>{i18n.t('satelliteTracker.issTracker.stats.title')}</Text>
+                <DSOValues title={i18n.t('satelliteTracker.issTracker.stats.latitude')} value={issPosition ? shortDmsCoord(issPosition.dms_lat) : <ActivityIndicator size={'small'} color={app_colors.white} animating />} />
+                <DSOValues title={i18n.t('satelliteTracker.issTracker.stats.longitude')} value={issPosition ? shortDmsCoord(issPosition.dms_lon) : <ActivityIndicator size={'small'} color={app_colors.white} animating />} />
+                <DSOValues title={i18n.t('satelliteTracker.issTracker.stats.altitude')} value={issPosition ? `${issPosition.altitude.toFixed(2)} Km` : <ActivityIndicator size={'small'} color={app_colors.white} animating />} />
+                <DSOValues title={i18n.t('satelliteTracker.issTracker.stats.speed')} value={issPosition ? `${issPosition.velocity.toFixed(2)} Km/h` : <ActivityIndicator size={'small'} color={app_colors.white} animating />} />
+                <DSOValues title={i18n.t('satelliteTracker.issTracker.stats.country')} value={issPosition ? `${getCountryByCode(issPosition.country, currentLocale)} - ${getCountryFlag(issPosition.country === i18n.t('satelliteTracker.issTracker.infosModal.unknown') ? 'ZZ' : issPosition.country )}` : <ActivityIndicator size={'small'} color={app_colors.white} animating />} />
               </View>
               <View style={starlinkTrackerStyles.content.glviewContainer}>
-                <Text style={issTrackerStyles.content.liveStats.title}>Carte 3D interactive</Text>
+                <Text style={issTrackerStyles.content.liveStats.title}>{i18n.t('satelliteTracker.issTracker.3dMap.title')}</Text>
                 <GestureDetector gesture={pan}>
                   <GLView style={starlinkTrackerStyles.content.glviewContainer.glview} onContextCreate={_onContextCreate} />
                 </GestureDetector>
-                <ToggleButton title='Focus ISS' toggled={focusIss} onToggle={() => setFocusIss(!focusIss)} />
+                <ToggleButton title={i18n.t('satelliteTracker.issTracker.3dMap.button')} toggled={focusIss} onToggle={() => setFocusIss(!focusIss)} />
               </View>
               <View style={issTrackerStyles.content.mapContainer}>
-                <Text style={issTrackerStyles.content.liveStats.title}>Carte 2D interactive</Text>
+                <Text style={issTrackerStyles.content.liveStats.title}>{i18n.t('satelliteTracker.issTracker.2dMap.title')}</Text>
                 <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-                  <SimpleButton text='Re-center' onPress={centerIss} icon={require('../../../assets/icons/FiIss.png')} />
+                  <SimpleButton text={i18n.t('satelliteTracker.issTracker.2dMap.button')} onPress={centerIss} icon={require('../../../assets/icons/FiIss.png')} />
                 </View>
                 <MapView
                   ref={mapRef}

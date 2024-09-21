@@ -1,21 +1,19 @@
 export const issTrackerTranslations = {
-  buttons: {
-    infos: "Infos",
-    center: "Centrer",
-    feed: "Vidéo"
-  },
-  infosModal: {
-    title: "Station Spatiale Internationale",
-    subtitle: "(ISS)",
+  stats: {
+    title: "Station spatiale internationale",
     latitude: "Latitude",
     longitude: "Longitude",
     altitude: "Altitude",
     speed: "Vitesse",
-    country: "Pays (Survol)",
+    country: "Pays (survol)",
     unknown: "Inconnu"
   },
-  liveModal: {
-    title: "Vidéo en direct",
-    subtitle: "La station spatiale à une période de 45 minutes dans le noir à chaque orbite - Le flux vidéo peut posséder environ 15 secondes de retard sur la position actuelle affichée sur la carte.",
-  }
+  '3dMap': {
+    title: "Carte 3D interactive",
+    button: "Suivre l'ISS",
+  },
+  '2dMap': {
+    title: "Carte 2D interactive",
+    button: "Re-centrer",
+  },
 }
