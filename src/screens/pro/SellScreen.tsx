@@ -15,7 +15,7 @@ export default function SellScreen({ navigation }: any) {
 
   useEffect(() => {
     const setup = async () => {
-      await Purchases.configure({ apiKey: "goog_xItcRBDSytVPVcnwcPZPLkqmfYg" });
+      const offerings = await Purchases.configure({ apiKey: "goog_xItcRBDSytVPVcnwcPZPLkqmfYg" });
 
       const offerings = await Purchases.getOfferings();
       setCurrentOffering(offerings.current);
