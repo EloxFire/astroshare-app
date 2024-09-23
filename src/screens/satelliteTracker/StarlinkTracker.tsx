@@ -20,6 +20,7 @@ import { getLaunchStatus } from '../../helpers/scripts/astro/launchApi/getLaunch
 import { degToRad } from 'three/src/math/MathUtils'
 import DSOValues from '../../components/commons/DSOValues'
 import { issTrackerStyles } from '../../styles/screens/satelliteTracker/issTracker'
+import { Asset } from 'expo-asset';
 
 export default function StarlinkTracker({ navigation }: any) {
 
@@ -38,37 +39,38 @@ export default function StarlinkTracker({ navigation }: any) {
 
   const _onContextCreate = async (gl: ExpoWebGLRenderingContext) => {
     const { drawingBufferWidth, drawingBufferHeight } = gl;
-
+  
     // Initialisation de la scène, de la caméra et du renderer
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(80, drawingBufferWidth / drawingBufferHeight, 0.1, 500000); // Grand "far" pour voir les satellites
+    const camera = new THREE.PerspectiveCamera(80, drawingBufferWidth / drawingBufferHeight, 0.1, 500000);
     const renderer = new ExpoTHREE.Renderer({ gl });
-
+  
     renderer.setSize(drawingBufferWidth, drawingBufferHeight);
-
-    // Positionner la caméra pour voir la Terre et les satellites
     camera.position.set(0, 0, 11500);
-
-    // Stocker les références dans les refs
+  
     cameraRef.current = camera;
     sceneRef.current = scene;
     rendererRef.current = renderer;
-
-    // Ajouter la Terre
-    const earthGeometry = new THREE.SphereGeometry(earthRadius, 128, 128);
+  
+    // Preload texture using Expo Asset
+    const earthTextureAsset = Asset.fromModule(require('../../../assets/images/textures/earth_night.jpg'));
+    await earthTextureAsset.downloadAsync();
+  
+    // Load the texture after it is preloaded
     const textureLoader = new ExpoTHREE.TextureLoader();
-    const earthTexture = await textureLoader.loadAsync(require('../../../assets/images/textures/earth_night.jpg'));
+    const earthTexture = await textureLoader.loadAsync(earthTextureAsset.localUri || earthTextureAsset.uri);
+  
+    const earthGeometry = new THREE.SphereGeometry(earthRadius, 128, 128);
     const earthMaterial = new THREE.MeshBasicMaterial({ map: earthTexture });
     const earth = new THREE.Mesh(earthGeometry, earthMaterial);
     sceneRef.current.add(earth);
     earth.rotation.y = degToRad(-90);
-
+  
     earthMeshRef.current = earth;
-
+  
     // Mise à jour des positions des satellites
     updateSatellitesPosition(constellation.satellites);
     
-    // Boucle d'animation pour rendre la scène
     const animate = () => {
       requestAnimationFrame(animate);
       if (rendererRef.current && sceneRef.current && cameraRef.current) {
@@ -76,7 +78,7 @@ export default function StarlinkTracker({ navigation }: any) {
         gl.endFrameEXP();
       }
     };
-
+  
     animate();
   };
 
