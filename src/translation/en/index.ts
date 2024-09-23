@@ -1,4 +1,4 @@
-import { weatherTranslation } from "../fr/screens/weather";
+import { weatherTranslation } from "./screens/weather";
 import { commonTranslations } from "./common/common";
 import { constellationsNamesTranslations } from "./common/constellations";
 import { languagesTranslations } from "./common/languages";

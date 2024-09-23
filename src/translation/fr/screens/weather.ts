@@ -1,6 +1,6 @@
 export const weatherTranslation = {
-  input_placeholder: "Search a city",
-  reset_button: "Back to %{city}",
+  input_placeholder: "Rechercher une ville",
+  reset_button: "Retour à %{city}",
   legend: {
     title: "Légende",
     temperature: "Température",
@@ -9,7 +9,7 @@ export const weatherTranslation = {
     clouds: "Nuages",
     wind: "Vent",
     wind_direction: "Direction du vent",
-    max_temp: "Température maximale",
-    min_temp: "Température minimale"
+    max_temp: "Température max",
+    min_temp: "Température min"
   }
 }
