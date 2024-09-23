@@ -28,9 +28,9 @@ export default function WidgetManager({ navigation }: any) {
       <ScrollView>
         <View style={{ paddingTop: 20 }}>
           {
-            Object.keys(HomeWidget).map((widget) => {
+            Object.keys(HomeWidget).map((widget, index) => {
               return (
-                <TouchableOpacity onPress={() => handleWidget(widget)} style={{ display: 'flex', flexDirection: 'column', marginBottom: 50, borderTopWidth: 1, borderTopColor: app_colors.white_twenty, paddingTop: 10 }}>
+                <TouchableOpacity key={`widget-${index}`} onPress={() => handleWidget(widget)} style={{ display: 'flex', flexDirection: 'column', marginBottom: 50, borderTopWidth: 1, borderTopColor: app_colors.white_twenty, paddingTop: 10 }}>
                   <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
                     {widget === 'Live' && <Text style={{ fontSize: 16, textTransform: 'uppercase', fontFamily: 'GilroyBlack', color: app_colors.white }}>Aperçu du ciel en direct</Text>}
                     {widget === 'Night' && <Text style={{ fontSize: 16, textTransform: 'uppercase', fontFamily: 'GilroyBlack', color: app_colors.white }}>Aperçu de la nuit</Text>}
