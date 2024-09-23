@@ -22,6 +22,8 @@ export const planetTranslations = {
     position: "Position",
     symbol: "Symbol",
     distanceSun: "Distance from the Sun",
+    rightAscension: "Right ascension",
+    declination: "Declination",
     short: {
       surfaceTemperature: "Temp (surface)",
       naturalSatellites: "Satellites",

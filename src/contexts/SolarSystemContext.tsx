@@ -24,7 +24,7 @@ export function SolarSystemProvider({ children }: SolarSystemProviderProps) {
     getPlanets()
     const interval = setInterval(() => {
       getPlanets()
-    }, 60000)
+    }, 2000)
 
     return () => clearInterval(interval)
   }, [currentUserLocation])
@@ -33,7 +33,7 @@ export function SolarSystemProvider({ children }: SolarSystemProviderProps) {
     getMoon()
     const interval = setInterval(() => {
       getMoon()
-    }, 60000)
+    }, 30000)
 
     return () => clearInterval(interval)
   }, [currentUserLocation])

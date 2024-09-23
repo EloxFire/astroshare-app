@@ -21,6 +21,9 @@ import { planetsSizes } from "../helpers/scripts/astro/planets/sizes";
 import { planetTemps } from "../helpers/scripts/astro/planets/temps";
 import { planetSatellites } from "../helpers/scripts/astro/planets/satellites";
 import { i18n } from "../helpers/scripts/i18n";
+import { prettyDec, prettyRa } from "../helpers/scripts/astro/prettyCoords";
+import { convertDegreesDecToDMS } from "../helpers/scripts/astro/coords/convertDegreesDecToDms";
+import { convertDegreesRaToHMS } from "../helpers/scripts/astro/coords/convertDegreesRaToHMS";
 
 export default function PlanetDetails({ route, navigation }: any) {
 
@@ -118,6 +121,8 @@ export default function PlanetDetails({ route, navigation }: any) {
           <DSOValues title={i18n.t('detailsPages.planets.labels.diameter')} value={formatKm(planetsSizes[planet.name.toUpperCase()], currentLCID).toString()} />
           <DSOValues title={i18n.t('detailsPages.planets.labels.surfaceTemperature')} value={formatCelsius(planetTemps[planet.name.toUpperCase()], currentLCID).toString()} />
           <DSOValues title={i18n.t('detailsPages.planets.labels.naturalSatellites')} value={planetSatellites[planet.name.toUpperCase()].toString()} />
+          <DSOValues title={i18n.t('detailsPages.planets.labels.rightAscension')} value={prettyRa(convertDegreesRaToHMS(planet.ra))} />
+          <DSOValues title={i18n.t('detailsPages.planets.labels.declination')} value={prettyDec(convertDegreesDecToDMS(planet.dec))} />
         </View>
         {
           planet.name !== 'Earth' &&
