@@ -61,7 +61,7 @@ export default function NorthenPolarScope() {
   const centerX = svgWidth / 2;
   const centerY = svgHeight / 2;
   const radius = (svgWidth / 2) - 30;
-  const strokeColor = app_colors.red_eighty;
+  const strokeColor = app_colors.red;
 
   return (
     <>
