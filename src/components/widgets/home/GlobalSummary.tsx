@@ -16,6 +16,7 @@ import { GlobalPlanet } from "../../../helpers/types/GlobalPlanet";
 import { globalSummaryStyles } from "../../../styles/components/widgets/home/globalSummary";
 import { globalStyles } from "../../../styles/global";
 import { app_colors } from "../../../helpers/constants";
+import { isNightPastTwelve } from "../../../helpers/scripts/astro/transits/isNightPastTwelve";
 
 interface GlobalSummaryProps {
   noHeader?: boolean
@@ -37,7 +38,11 @@ export default function GlobalSummary({ noHeader }: GlobalSummaryProps) {
   }, [currentUserLocation, planets])
 
   const getInfos = async () => {
-    if (!currentUserLocation) return;
+    const nightPastTwelve = isNightPastTwelve(new Date(), { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon })
+    // If isNightPastTwelve is true, we need to set the date to the previous day
+    const date = new Date()
+    date.setDate(date.getDate() - (nightPastTwelve ? 1 : 0))    
+    if (!currentUserLocation) return;    
 
     const altitude = selectedSpot ? selectedSpot.equipments.altitude : defaultAltitude;
     const observer: GeographicCoordinate = { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }
@@ -51,14 +56,14 @@ export default function GlobalSummary({ noHeader }: GlobalSummaryProps) {
       showToast({ message: 'Erreur lors de la récupération de la météo', type: 'error' })
     }
 
-    const bands = getTwilightBandsForDay(new Date(), observer)
+    const bands = getTwilightBandsForDay(date, observer)
 
     setBackgroundColor(backgroundFromTwilightBands(bands))
 
     let vp: GlobalPlanet[] = [];
     planets.forEach((planet: GlobalPlanet) => {
       const target: EquatorialCoordinate = { ra: planet.ra, dec: planet.dec }
-      const isAbove = isBodyAboveHorizon(new Date(), observer, target, horizonAngle)
+      const isAbove = isBodyAboveHorizon(date, observer, target, horizonAngle)
       if (isAbove && planet.name !== 'Earth') {
         vp.push(planet)
       }

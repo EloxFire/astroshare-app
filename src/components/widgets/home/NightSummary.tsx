@@ -13,6 +13,7 @@ import dayjs from 'dayjs';
 import { moonIcons } from '../../../helpers/scripts/loadImages';
 import { GlobalPlanet } from '../../../helpers/types/GlobalPlanet';
 import { useSolarSystem } from '../../../contexts/SolarSystemContext';
+import { isNightPastTwelve } from '../../../helpers/scripts/astro/transits/isNightPastTwelve';
 
 interface NightInterface {
   start: Date | null,
@@ -149,7 +150,7 @@ export default function NightSummary({ noHeader }: NightSummaryProps) {
             <>
               <View style={nightSummaryStyles.container.blur} />
               <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-                <Text style={nightSummaryStyles.container.title}>{dayjs().isAfter(night?.start) ? i18n.t('widgets.homeWidgets.night.container.alterTitle') : i18n.t('widgets.homeWidgets.night.container.title')}</Text>
+                <Text style={nightSummaryStyles.container.title}>{isNightPastTwelve(new Date, {latitude: currentUserLocation.lat, longitude: currentUserLocation.lon}) ? i18n.t('widgets.homeWidgets.night.container.alterTitle') : i18n.t('widgets.homeWidgets.night.container.title')}</Text>
                 {/* <Text style={nightSummaryStyles.container.title}>Planètes</Text> */}
                 <Text style={nightSummaryStyles.container.title}>{moonData ? moonPhasesList[moonData.phase] : i18n.t('common.loadings.simple')}</Text>
               </View>
