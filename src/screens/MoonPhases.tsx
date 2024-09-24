@@ -39,6 +39,8 @@ export default function MoonPhases({ navigation }: any) {
   const [isDateModalVisible, setIsDateModalVisible] = useState(false)
 
   const [selectedView, setSelectedView] = useState<boolean>(true) // true = day, false = calendar
+  const [selectedMonth, setSelectedMonth] = useState<number>(dayjs().month())
+  const [moonMonthInfos, setMoonMonthInfos] = useState<any>([])
 
   const formatter = new Intl.NumberFormat("fr-FR", {
     style: 'unit',
@@ -50,6 +52,10 @@ export default function MoonPhases({ navigation }: any) {
   useEffect(() => {
     getMoonData()
   }, [date])
+
+  useEffect(() => {
+    getMoonCalendar()
+  }, [selectedMonth, date])
 
   const getMoonData = () => {
     const phase = getLunarPhase(date)
@@ -106,6 +112,39 @@ export default function MoonPhases({ navigation }: any) {
     "Waning Gibbous": i18n.t('common.moon_phases.waning_gibbous'),
     "Last Quarter": i18n.t('common.moon_phases.last_quarter'),
     "Waning Crescent": i18n.t('common.moon_phases.waning_crescent'),
+  }
+
+  const getMoonCalendar = () => {
+    setMoonMonthInfos([])
+    const daysInMonth = dayjs().month(selectedMonth).daysInMonth()
+    const monthInfos = []
+    for (let i = 0; i < daysInMonth; i++) {
+      const dayDate = dayjs().month(selectedMonth).date(i + 1)
+      const formatedDate = dayDate.toDate()
+      const phase = getLunarPhase(formatedDate)
+      const illumination = getLunarIllumination(formatedDate).toFixed(2)
+      const distance = Math.floor(getLunarDistance(formatedDate) / 1000)
+      const elongation = Math.floor(getLunarElongation(formatedDate))
+      const newMoon = isNewMoon(formatedDate)
+      const fullMoon = isFullMoon(formatedDate)
+      const age = Math.floor(getLunarAge(formatedDate).age)
+      const moonrise = getMoonRiseAndSet(formatedDate).moonrise
+      const moonset = getMoonRiseAndSet(formatedDate).moonset
+
+      monthInfos.push({
+        date: dayDate.format("DD MMM"),
+        phase: phase,
+        illumination: illumination,
+        distance: distance,
+        elongation: elongation,
+        newMoon: newMoon,
+        fullMoon: fullMoon,
+        age: age,
+        moonrise: moonrise,
+        moonset: moonset
+      })
+    }
+    setMoonMonthInfos(monthInfos)
   }
 
   return (
@@ -165,33 +204,26 @@ export default function MoonPhases({ navigation }: any) {
             !selectedView &&
             <View>
               <SimpleButton icon={require('../../assets/icons/FiCalendar.png')} text={selectedView ? i18n.t('moonPhases.calendar.button.more') : i18n.t('moonPhases.calendar.button.less')} onPress={() => setSelectedView(!selectedView)} />
+              <View style={moonPhasesStyles.content.calendarHeader}>
+                <SimpleButton icon={require('../../assets/icons/FiChevronLeft.png')} onPress={() => setSelectedMonth(selectedMonth - 1)} />
+                <Text style={moonPhasesStyles.content.title}>{dayjs().month(selectedMonth).format('MMMM YYYY')}</Text>
+                <SimpleButton icon={require('../../assets/icons/FiChevronRight.png')} onPress={() => setSelectedMonth(selectedMonth + 1)} />
+              </View>
               <View style={moonPhasesStyles.content.calendar}>
                 {
-                  [...Array(dayjs().daysInMonth())].map((day, index) => {
-                    const dayDate = dayjs(date).set('date', index + 1)
-                    const formatedDate = dayDate.toDate()
-                    const phase = getLunarPhase(formatedDate)
-                    const illumination = getLunarIllumination(formatedDate).toFixed(2)
-                    const distance = Math.floor(getLunarDistance(formatedDate) / 1000)
-                    const elongation = Math.floor(getLunarElongation(formatedDate))
-                    const newMoon = isNewMoon(formatedDate)
-                    const fullMoon = isFullMoon(formatedDate)
-                    const age = Math.floor(getLunarAge(formatedDate).age)
-                    const moonrise = getMoonRiseAndSet(formatedDate).moonrise
-                    const moonset = getMoonRiseAndSet(formatedDate).moonset
-                    
+                  moonMonthInfos.map((day: any, index: number) => {
                     return (
                       <View key={index} style={moonPhasesStyles.content.calendar.day}>
-                        <Text style={moonPhasesStyles.content.calendar.day.title}>{dayDate.format("DD MMM")}</Text>
-                        <Image source={moonIcons[phase]} style={{ height: 70, width: 70, alignSelf: 'center', marginVertical: 10 }} resizeMode='contain' />
-                        <DSOValues small title={i18n.t('moonPhases.calendar.pills.rise_time')} value={moonrise} />
-                        <DSOValues small title={i18n.t('moonPhases.calendar.pills.set_time')} value={moonset} />
-                        <DSOValues small title={i18n.t('moonPhases.calendar.pills.illumination')} value={illumination} />
-                        <DSOValues small title={i18n.t('moonPhases.calendar.pills.distance')} value={formatter.format(distance)} />
-                        <DSOValues small title={i18n.t('moonPhases.calendar.pills.elongation')} value={elongation + '°'} />
-                        <DSOValues small title={i18n.t('moonPhases.calendar.pills.age')} value={age + ' ' + i18n.t('common.other.days')} />
-                        <DSOValues small title={i18n.t('moonPhases.calendar.pills.new_moon')} value={newMoon ? i18n.t('common.other.yes') : i18n.t('common.other.no')} />
-                        <DSOValues small title={i18n.t('moonPhases.calendar.pills.full_moon')} value={fullMoon ? i18n.t('common.other.yes') : i18n.t('common.other.no')} />
+                        <Text style={moonPhasesStyles.content.calendar.day.title}>{day.date}</Text>
+                        <Image source={moonIcons[day.phase]} style={{ height: 70, width: 70, alignSelf: 'center', marginVertical: 10 }} resizeMode='contain' />
+                        <DSOValues small title={i18n.t('moonPhases.calendar.pills.rise_time')} value={day.moonrise} />
+                        <DSOValues small title={i18n.t('moonPhases.calendar.pills.set_time')} value={day.moonset} />
+                        <DSOValues small title={i18n.t('moonPhases.calendar.pills.illumination')} value={day.illumination} />
+                        <DSOValues small title={i18n.t('moonPhases.calendar.pills.distance')} value={formatter.format(day.distance)} />
+                        <DSOValues small title={i18n.t('moonPhases.calendar.pills.elongation')} value={day.elongation + '°'} />
+                        <DSOValues small title={i18n.t('moonPhases.calendar.pills.age')} value={day.age + ' ' + i18n.t('common.other.days')} />
+                        <DSOValues small title={i18n.t('moonPhases.calendar.pills.new_moon')} value={day.newMoon ? i18n.t('common.other.yes') : i18n.t('common.other.no')} />
+                        <DSOValues small title={i18n.t('moonPhases.calendar.pills.full_moon')} value={day.fullMoon ? i18n.t('common.other.yes') : i18n.t('common.other.no')} />
                       </View>
                     )
                   })

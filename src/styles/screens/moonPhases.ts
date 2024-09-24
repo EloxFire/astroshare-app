@@ -50,6 +50,13 @@ export const moonPhasesStyles = {
       }
     },
 
+    calendarHeader: {
+      display: 'flex' as 'flex',
+      flexDirection: 'row' as 'row',
+      justifyContent: 'space-between' as 'space-between',
+      marginTop: 20,
+    },
+
     calendar: {
       display: 'flex' as 'flex',
       flexDirection: 'row' as 'row',
