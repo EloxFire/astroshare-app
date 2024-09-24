@@ -53,7 +53,7 @@ export default function NightSummary({ noHeader }: NightSummaryProps) {
 
   const getInfos = async () => {
     if (!currentUserLocation) return;
-    const date = isNightPastTwelve(new Date(), {latitude: currentUserLocation.lat, longitude: currentUserLocation.lon}) ? dayjs().subtract(1, 'day').toDate() : new Date();
+    const date = isNightPastTwelve(new Date(), {latitude: currentUserLocation.lat, longitude: currentUserLocation.lon}) ? dayjs().subtract(1, 'day').toDate() : dayjs().subtract(12,'hours').toDate();
     
 
     const altitude = selectedSpot ? selectedSpot.equipments.altitude : defaultAltitude;
@@ -154,7 +154,7 @@ export default function NightSummary({ noHeader }: NightSummaryProps) {
             <>
               <View style={nightSummaryStyles.container.blur} />
               <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-                <Text style={nightSummaryStyles.container.title}>{isNightPastTwelve(new Date, {latitude: currentUserLocation.lat, longitude: currentUserLocation.lon}) ? i18n.t('widgets.homeWidgets.night.container.alterTitle') : i18n.t('widgets.homeWidgets.night.container.title')}</Text>
+                <Text style={nightSummaryStyles.container.title}>{isNightPastTwelve(new Date, {latitude: currentUserLocation.lat, longitude: currentUserLocation.lon}) ? i18n.t('widgets.homeWidgets.night.container.alterTitle') : dayjs().isAfter(dayjs(night!.start)) ? i18n.t('widgets.homeWidgets.night.container.alterTitle') : i18n.t('widgets.homeWidgets.night.container.title')}</Text>
                 {/* <Text style={nightSummaryStyles.container.title}>Planètes</Text> */}
                 <Text style={nightSummaryStyles.container.title}>{moonData ? moonPhasesList[moonData.phase] : i18n.t('common.loadings.simple')}</Text>
               </View>
