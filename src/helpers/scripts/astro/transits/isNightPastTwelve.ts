@@ -10,7 +10,6 @@ export const isNightPastTwelve = (date: Date, observer: GeographicCoordinate): b
     const nextSunRiseTime = dayjs(nextSunRise.datetime)
     const currentDate = dayjs(date)
 
-    console.log('Prochain lever du soleil', nextSunRiseTime.format('YYYY-MM-DD HH:mm:ss'));
 
     // Vérifie si le prochain lever de soleil est bien le jour même et non au lendemain
     if (nextSunRiseTime.isAfter(currentDate, 'day')) {
