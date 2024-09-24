@@ -39,6 +39,8 @@ export default function GlobalSummary({ noHeader }: GlobalSummaryProps) {
 
   const getInfos = async () => {
     const nightPastTwelve = isNightPastTwelve(new Date(), { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon })
+    console.log('nightPastTwelve', nightPastTwelve);
+    
     // If isNightPastTwelve is true, we need to set the date to the previous day
     const date = new Date()
     date.setDate(date.getDate() - (nightPastTwelve ? 1 : 0))    

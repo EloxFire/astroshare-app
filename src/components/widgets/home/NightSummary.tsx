@@ -53,15 +53,17 @@ export default function NightSummary({ noHeader }: NightSummaryProps) {
 
   const getInfos = async () => {
     if (!currentUserLocation) return;
+    const date = isNightPastTwelve(new Date(), {latitude: currentUserLocation.lat, longitude: currentUserLocation.lon}) ? dayjs().subtract(1, 'day').toDate() : new Date();
+    
 
     const altitude = selectedSpot ? selectedSpot.equipments.altitude : defaultAltitude;
     const observer: GeographicCoordinate = { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }
     const horizonAngle = calculateHorizonAngle(extractNumbers(altitude))
 
-    const nightTimes = getNight(new Date(), observer, horizonAngle)
+    const nightTimes = getNight(date, observer, horizonAngle)
     setNight(nightTimes)
 
-    getMoonData()
+    getMoonData(date)
 
     let vp: GlobalPlanet[] = [];
     planets.forEach((planet: GlobalPlanet) => {
@@ -76,8 +78,8 @@ export default function NightSummary({ noHeader }: NightSummaryProps) {
     setLoading(false)
   }
 
-  const getMoonData = () => {
-    const date = new Date()
+  const getMoonData = (d: Date) => {
+    const date = d
     const phase = getLunarPhase(date)
     const illumination = getLunarIllumination(date).toFixed(2)
     const distance = Math.floor(getLunarDistance(date) / 1000)
@@ -87,6 +89,8 @@ export default function NightSummary({ noHeader }: NightSummaryProps) {
     const age = Math.floor(getLunarAge(date).age)
     const moonrise = getMoonRiseAndSet(date).moonrise
     const moonset = getMoonRiseAndSet(date).moonset
+
+
 
     setMoonData({
       phase: phase || 'Full',
