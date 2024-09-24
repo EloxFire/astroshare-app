@@ -22,6 +22,7 @@ import { onboardingTranslations } from "./screens/onboarding";
 import { satelliteTrackerTranslations } from "./screens/satelliteTracker";
 import { scopeAlignmentTranslation } from "./screens/scopeAlignment";
 import { settingsTranslations } from "./screens/settings";
+import { changelogScreenTranslations } from "./screens/settings/changelog";
 import { skymapGeneratorTranslations } from "./screens/skymapGenerator";
 import { solarWeatherTranslations } from "./screens/solarWeather";
 import { transitsTranslations } from "./screens/transits";
@@ -57,5 +58,6 @@ export const frTranslations = {
   astroDataInfos: astroDataInfosTranslations,
   about: aboutTranslations,
   widgets: widgetsTranslations,
-  spaceStuff: spaceStuffTranslations
+  spaceStuff: spaceStuffTranslations,
+  changelog: changelogScreenTranslations
 }

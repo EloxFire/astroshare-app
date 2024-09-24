@@ -23,5 +23,6 @@ export const routes = {
   sellScreen: { path: 'SellScreen', requirements: [] },
   transitScreen: { path: 'TransitScreen', requirements: [] },
   astroDataInfos: { path: 'AstroDataInfos', requirements: [] },
-  widgetsManager: {path: 'WidgetsManager', requirements: []}
+  widgetsManager: {path: 'WidgetsManager', requirements: []},
+  changelogScreen: {path: 'ChangelogScreen', requirements: []}
 }

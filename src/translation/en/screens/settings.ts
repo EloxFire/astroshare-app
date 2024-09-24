@@ -6,6 +6,10 @@ export const settingsTranslations = {
       title: "Night mode",
       subtitle: "// Night filter (Experimental)"
     },
+    changelog: {
+      title: "Changelog",
+      subtitle: "// Discover the latest updates"
+    },
     cellularData: {
       title: "Cellular data",
       subtitle: "// Disable cellular data"

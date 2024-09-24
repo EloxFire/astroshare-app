@@ -44,6 +44,7 @@ import TransitsScreen from "./src/screens/transits/TransitsScreen";
 import AstroDataInfos from "./src/screens/AstroDataInfos";
 import WidgetManager from "./src/screens/WidgetManager";
 import { SpaceXContextProvider } from "./src/contexts/SpaceXContext";
+import ChangelogScreen from "./src/screens/settings/Changelog";
 
 dayjs.locale('fr');
 dayjs.extend(LocalizedFormat)
@@ -117,6 +118,7 @@ export default function App() {
                     <Stack.Screen name={routes.transitScreen.path} component={TransitsScreen} />
                     <Stack.Screen name={routes.astroDataInfos.path} component={AstroDataInfos} />
                     <Stack.Screen name={routes.widgetsManager.path} component={WidgetManager} />
+                    <Stack.Screen name={routes.changelogScreen.path} component={ChangelogScreen} />
                   </Stack.Navigator>
                 </SpaceXContextProvider>
               </SolarSystemProvider>

@@ -24,7 +24,8 @@ export default function Settings({ navigation }: any) {
       <ScrollView>
         <View style={settingsStyles.content}>
           <BigButton icon={require('../../assets/icons/FiEye.png')} text={i18n.t('settings.buttons.nightMode.title')} subtitle={i18n.t('settings.buttons.nightMode.subtitle')} hasCheckbox isChecked={isNightMode} onPress={() => handleNightMode()} />
-          <BigButton disabled icon={require('../../assets/icons/FiWifi.png')} text={i18n.t('settings.buttons.cellularData.title')} subtitle={i18n.t('settings.buttons.cellularData.subtitle')} hasCheckbox isChecked={isCellularDataEnabled} onPress={() => handleCellularData()} />
+          <BigButton icon={require('../../assets/icons/FiFileText.png')} text={i18n.t('settings.buttons.changelog.title')} subtitle={i18n.t('settings.buttons.changelog.subtitle')} navigation={navigation} targetScreen={routes.changelogScreen.path} />
+          {/* <BigButton disabled icon={require('../../assets/icons/FiWifi.png')} text={i18n.t('settings.buttons.cellularData.title')} subtitle={i18n.t('settings.buttons.cellularData.subtitle')} hasCheckbox isChecked={isCellularDataEnabled} onPress={() => handleCellularData()} /> */}
           <BigButton icon={require('../../assets/icons/FiViewPoint.png')} text={i18n.t('settings.buttons.favoritesViewPoints.title')} subtitle={i18n.t('settings.buttons.favoritesViewPoints.subtitle')} navigation={navigation} targetScreen={routes.favoritesViewPoints.path} />
           <BigButton icon={require('../../assets/icons/FiWidget.png')} text={i18n.t('settings.buttons.widgets.title')} subtitle={i18n.t('settings.buttons.widgets.subtitle')} navigation={navigation} targetScreen={routes.widgetsManager.path} />
           <BigButton icon={require('../../assets/icons/FiLifeBuoy.png')} text={i18n.t('settings.buttons.tutorial.title')} subtitle={i18n.t('settings.buttons.tutorial.subtitle')} targetScreen={routes.tutorial.path} navigation={navigation} />
