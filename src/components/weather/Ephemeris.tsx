@@ -31,7 +31,6 @@ export default function Ephemeris({ weather }: EphemerisProps) {
 
   useEffect(() => {
     setTwilightBands(getTwilightBandsForDay(new Date(), {latitude: currentUserLocation.lat, longitude: currentUserLocation.lon}))
-    console.log(getTwilightBandsForDay(new Date(), {latitude: currentUserLocation.lat, longitude: currentUserLocation.lon}));
     
   }, [])
 
