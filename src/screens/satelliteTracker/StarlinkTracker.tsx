@@ -6,7 +6,6 @@ import { i18n } from '../../helpers/scripts/i18n'
 import { starlinkTrackerStyles } from '../../styles/screens/satelliteTracker/starlinkTracker'
 import { StarlinkSatellite } from '../../helpers/types/StarlinkSatellite'
 import PageTitle from '../../components/commons/PageTitle'
-import axios from 'axios'
 import { ExpoWebGLRenderingContext, GLView } from 'expo-gl'
 import * as THREE from 'three'
 import * as ExpoTHREE from 'expo-three'
@@ -21,6 +20,7 @@ import { degToRad } from 'three/src/math/MathUtils'
 import DSOValues from '../../components/commons/DSOValues'
 import { issTrackerStyles } from '../../styles/screens/satelliteTracker/issTracker'
 import { Asset } from 'expo-asset';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 
 export default function StarlinkTracker({ navigation }: any) {
 
@@ -37,6 +37,9 @@ export default function StarlinkTracker({ navigation }: any) {
   const earthRadius = 6371;  // Earth radius in km
 
 
+  const earthRef = useRef<THREE.Mesh | null>(null)
+
+
   const _onContextCreate = async (gl: ExpoWebGLRenderingContext) => {
     const { drawingBufferWidth, drawingBufferHeight } = gl;
   
@@ -51,22 +54,45 @@ export default function StarlinkTracker({ navigation }: any) {
     cameraRef.current = camera;
     sceneRef.current = scene;
     rendererRef.current = renderer;
+
+    const ambientLight = new THREE.AmbientLight(0x404040, 3)
+    scene.add(ambientLight)
+
+    // Lumière directionnelle
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 1)
+    directionalLight.position.set(5, 5, 5).normalize()
+    scene.add(directionalLight)
+
+    // Charger le modèle GLTF/GLB
+    const loader = new GLTFLoader()
+    const model = Asset.fromModule(require('../../models/earth.glb'))
+    await model.downloadAsync()
+
+    loader.load(
+      model.uri, // chemin du modèle GLB
+      (gltf) => {
+        const model = gltf.scene
+        model.scale.set(0.5, 0.5, 0.5) // Ajuster l'échelle du modèle
+        scene.add(model)
+      },
+      undefined,
+      (error) => {
+        console.error(error)
+      }
+    )
   
-    // Preload texture using Expo Asset
-    const earthTextureAsset = Asset.fromModule(require('../../../assets/images/textures/earth_night.jpg'));
-    await earthTextureAsset.downloadAsync();
+    // const textureLoader = new ExpoTHREE.TextureLoader();
+    // const earthTexture = await textureLoader.loadAsync(require('../../../assets/images/textures/earth_night.jpg'));
+
+    // const earthTexture = new THREE.TextureLoader().load(require('../../../assets/images/textures/earth_night.jpg'));
   
-    // Load the texture after it is preloaded
-    const textureLoader = new ExpoTHREE.TextureLoader();
-    const earthTexture = await textureLoader.loadAsync(earthTextureAsset.localUri || earthTextureAsset.uri);
+    // const earthGeometry = new THREE.SphereGeometry(earthRadius, 128, 128);
+    // const earthMaterial = new THREE.MeshBasicMaterial({ map: earthTexture });
+    // const earth = new THREE.Mesh(earthGeometry, earthMaterial);
+    // sceneRef.current.add(earth);
+    // earth.rotation.y = degToRad(-90);
   
-    const earthGeometry = new THREE.SphereGeometry(earthRadius, 128, 128);
-    const earthMaterial = new THREE.MeshBasicMaterial({ map: earthTexture });
-    const earth = new THREE.Mesh(earthGeometry, earthMaterial);
-    sceneRef.current.add(earth);
-    earth.rotation.y = degToRad(-90);
-  
-    earthMeshRef.current = earth;
+    // earthMeshRef.current = earth;
   
     // Mise à jour des positions des satellites
     updateSatellitesPosition(constellation.satellites);
