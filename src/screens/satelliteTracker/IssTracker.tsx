@@ -25,6 +25,8 @@ import getCountryFlag from 'country-flag-icons/unicode'
 import MapView, { Circle, Marker, PROVIDER_GOOGLE, Polyline } from 'react-native-maps'
 import { mapStyle } from '../../helpers/mapJsonStyle'
 import SimpleButton from '../../components/commons/buttons/SimpleButton'
+import * as FileSystem from 'expo-file-system';
+import { Asset } from 'expo-asset';
 
 const modelLoader = new GLTFLoader();
 
@@ -106,31 +108,65 @@ export default function IssTracker({ navigation }: any) {
     }
   }
 
+  // La fonction pour charger la texture de la Terre
+  const loadAndProcessAsset = async () => {
+    try {
+      // Charger l'asset de la texture
+      const asset = Asset.fromModule(require('../../../assets/images/textures/earth_night.jpg'));
+      if (!asset.localUri) {
+        await asset.downloadAsync();
+      }
+
+      const { width, height } = asset;
+      const localUri = `${FileSystem.cacheDirectory}copied_texture.png`;
+      const fileInfo = await FileSystem.getInfoAsync(localUri);
+      if (!fileInfo.exists) {
+        await FileSystem.copyAsync({ from: asset.localUri!, to: localUri });
+      }
+
+      const copiedAsset = Asset.fromURI(`${localUri}`);
+      copiedAsset.height = height;
+      copiedAsset.width = width;
+      copiedAsset.localUri = localUri;
+
+      return ExpoTHREE.loadAsync(copiedAsset);
+    } catch (error) {
+      console.error('Erreur lors du chargement de l\'asset :', error);
+    }
+  };
+
   const _onContextCreate = async (gl: ExpoWebGLRenderingContext) => {
     const { drawingBufferWidth, drawingBufferHeight } = gl;
 
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(80, drawingBufferWidth / drawingBufferHeight, 0.1, 500000); // Grand "far" pour voir les satellites
+    const camera = new THREE.PerspectiveCamera(80, drawingBufferWidth / drawingBufferHeight, 0.1, 500000);
     const renderer = new ExpoTHREE.Renderer({ gl });
 
     renderer.setSize(drawingBufferWidth, drawingBufferHeight);
-
     camera.position.set(0, 0, 11500);
 
     cameraRef.current = camera;
     sceneRef.current = scene;
     rendererRef.current = renderer;
 
-    const textureLoader = new ExpoTHREE.TextureLoader();
-    const earthTexture = await textureLoader.loadAsync(require('../../../assets/images/textures/earth_night.jpg'));
-    const earthMaterial = new THREE.MeshBasicMaterial({ map: earthTexture });
-    const earthGeometry = new THREE.SphereGeometry(earthRadius, 128, 128);  // 128 segments pour une sphère plus lisse
-    const earth = new THREE.Mesh(earthGeometry, earthMaterial);
-    scene.add(earth);
+    const ambientLight = new THREE.AmbientLight(0x404040, 3);
+    scene.add(ambientLight);
 
-    earth.rotation.y = degToRad(-90);
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+    directionalLight.position.set(5, 5, 5).normalize();
+    scene.add(directionalLight);
 
-    earthMeshRef.current = earth;
+    // Charger la texture de la Terre
+    const earthTexture = await loadAndProcessAsset();
+    if (earthTexture) {
+      const earthGeometry = new THREE.SphereGeometry(earthRadius, 128, 128);
+      const earthMaterial = new THREE.MeshBasicMaterial({ map: earthTexture });
+      const earth = new THREE.Mesh(earthGeometry, earthMaterial);
+
+      earth.rotation.y = degToRad(-90);
+      scene.add(earth);
+      earthMeshRef.current = earth;
+    }
 
     updateIssPosition(focusIss);
 
@@ -299,7 +335,7 @@ const handleLiveFeedDisplay = () => {
                 <DSOValues title={i18n.t('satelliteTracker.issTracker.stats.longitude')} value={issPosition ? shortDmsCoord(issPosition.dms_lon) : <ActivityIndicator size={'small'} color={app_colors.white} animating />} />
                 <DSOValues title={i18n.t('satelliteTracker.issTracker.stats.altitude')} value={issPosition ? `${issPosition.altitude.toFixed(2)} Km` : <ActivityIndicator size={'small'} color={app_colors.white} animating />} />
                 <DSOValues title={i18n.t('satelliteTracker.issTracker.stats.speed')} value={issPosition ? `${issPosition.velocity.toFixed(2)} Km/h` : <ActivityIndicator size={'small'} color={app_colors.white} animating />} />
-                <DSOValues title={i18n.t('satelliteTracker.issTracker.stats.country')} value={issPosition ? `${getCountryByCode(issPosition.country, currentLocale)} - ${getCountryFlag(issPosition.country === i18n.t('satelliteTracker.issTracker.infosModal.unknown') ? 'ZZ' : issPosition.country )}` : <ActivityIndicator size={'small'} color={app_colors.white} animating />} />
+                <DSOValues title={i18n.t('satelliteTracker.issTracker.stats.country')} value={issPosition ? `${getCountryByCode(issPosition.country, currentLocale)} - ${getCountryFlag(issPosition.country === i18n.t('satelliteTracker.issTracker.stats.unknown') ? 'ZZ' : issPosition.country )}` : <ActivityIndicator size={'small'} color={app_colors.white} animating />} />
               </View>
               <View style={starlinkTrackerStyles.content.glviewContainer}>
                 <Text style={issTrackerStyles.content.liveStats.title}>{i18n.t('satelliteTracker.issTracker.3dMap.title')}</Text>
@@ -308,7 +344,7 @@ const handleLiveFeedDisplay = () => {
                 </GestureDetector>
                 <ToggleButton title={i18n.t('satelliteTracker.issTracker.3dMap.button')} toggled={focusIss} onToggle={() => setFocusIss(!focusIss)} />
               </View>
-              <View style={issTrackerStyles.content.mapContainer}>
+              <View style={issTrackerStyles.content.mapContainer}> 
                 <Text style={issTrackerStyles.content.liveStats.title}>{i18n.t('satelliteTracker.issTracker.2dMap.title')}</Text>
                 <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
                   <SimpleButton text={i18n.t('satelliteTracker.issTracker.2dMap.button')} onPress={centerIss} icon={require('../../../assets/icons/FiIss.png')} />

@@ -507,10 +507,10 @@ export const countryCodesEnglish: { [key: string]: string } = {
 export const getCountryByCode = (code: string, locale: string): string => {
   switch (locale) {
     case 'fr':
-      return countryCodesFrench[code] || i18n.t('satelliteTracker.issTracker.infosModal.unknown');
+      return countryCodesFrench[code] || i18n.t('satelliteTracker.issTracker.stats.unknown');
     case 'en':
-      return countryCodesEnglish[code] || i18n.t('satelliteTracker.issTracker.infosModal.unknown');
+      return countryCodesEnglish[code] || i18n.t('satelliteTracker.issTracker.stats.unknown');
     default:
-      return countryCodesFrench[code] || i18n.t('satelliteTracker.issTracker.infosModal.unknown');
+      return countryCodesFrench[code] || i18n.t('satelliteTracker.issTracker.stats.unknown');
   }
 };

@@ -21,6 +21,7 @@ import DSOValues from '../../components/commons/DSOValues'
 import { issTrackerStyles } from '../../styles/screens/satelliteTracker/issTracker'
 import { Asset } from 'expo-asset';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
+import * as FileSystem from 'expo-file-system';
 
 export default function StarlinkTracker({ navigation }: any) {
 
@@ -39,64 +40,71 @@ export default function StarlinkTracker({ navigation }: any) {
 
   const earthRef = useRef<THREE.Mesh | null>(null)
 
+  // La fonction pour charger la texture de la Terre
+  const loadAndProcessAsset = async () => {
+    try {
+      // Charger l'asset de la texture
+      const asset = Asset.fromModule(require('../../../assets/images/textures/earth_night.jpg'));
+      if (!asset.localUri) {
+        await asset.downloadAsync();
+      }
 
+      const { width, height } = asset;
+      const localUri = `${FileSystem.cacheDirectory}copied_texture.png`;
+      const fileInfo = await FileSystem.getInfoAsync(localUri);
+      if (!fileInfo.exists) {
+        await FileSystem.copyAsync({ from: asset.localUri!, to: localUri });
+      }
+
+      const copiedAsset = Asset.fromURI(`${localUri}`);
+      copiedAsset.height = height;
+      copiedAsset.width = width;
+      copiedAsset.localUri = localUri;
+
+      return ExpoTHREE.loadAsync(copiedAsset);
+    } catch (error) {
+      console.error('Erreur lors du chargement de l\'asset :', error);
+    }
+  };
+
+  // Modification de la fonction _onContextCreate pour ajouter la Terre avec sa texture
   const _onContextCreate = async (gl: ExpoWebGLRenderingContext) => {
     const { drawingBufferWidth, drawingBufferHeight } = gl;
-  
+
     // Initialisation de la scène, de la caméra et du renderer
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(80, drawingBufferWidth / drawingBufferHeight, 0.1, 500000);
     const renderer = new ExpoTHREE.Renderer({ gl });
-  
+
     renderer.setSize(drawingBufferWidth, drawingBufferHeight);
     camera.position.set(0, 0, 11500);
-  
+
     cameraRef.current = camera;
     sceneRef.current = scene;
     rendererRef.current = renderer;
 
-    const ambientLight = new THREE.AmbientLight(0x404040, 3)
-    scene.add(ambientLight)
+    const ambientLight = new THREE.AmbientLight(0x404040, 3);
+    scene.add(ambientLight);
 
-    // Lumière directionnelle
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 1)
-    directionalLight.position.set(5, 5, 5).normalize()
-    scene.add(directionalLight)
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+    directionalLight.position.set(5, 5, 5).normalize();
+    scene.add(directionalLight);
 
-    // Charger le modèle GLTF/GLB
-    const loader = new GLTFLoader()
-    const model = Asset.fromModule(require('../../models/earth.glb'))
-    await model.downloadAsync()
+    // Chargement de la texture de la Terre
+    const earthTexture = await loadAndProcessAsset();
+    if (earthTexture) {
+      const earthGeometry = new THREE.SphereGeometry(earthRadius, 128, 128);
+      const earthMaterial = new THREE.MeshBasicMaterial({ map: earthTexture });
+      const earth = new THREE.Mesh(earthGeometry, earthMaterial);
 
-    loader.load(
-      model.uri, // chemin du modèle GLB
-      (gltf) => {
-        const model = gltf.scene
-        model.scale.set(0.5, 0.5, 0.5) // Ajuster l'échelle du modèle
-        scene.add(model)
-      },
-      undefined,
-      (error) => {
-        console.error(error)
-      }
-    )
-  
-    // const textureLoader = new ExpoTHREE.TextureLoader();
-    // const earthTexture = await textureLoader.loadAsync(require('../../../assets/images/textures/earth_night.jpg'));
+      earth.rotation.y = degToRad(-90);
+      scene.add(earth);
+      earthMeshRef.current = earth;
+    }
 
-    // const earthTexture = new THREE.TextureLoader().load(require('../../../assets/images/textures/earth_night.jpg'));
-  
-    // const earthGeometry = new THREE.SphereGeometry(earthRadius, 128, 128);
-    // const earthMaterial = new THREE.MeshBasicMaterial({ map: earthTexture });
-    // const earth = new THREE.Mesh(earthGeometry, earthMaterial);
-    // sceneRef.current.add(earth);
-    // earth.rotation.y = degToRad(-90);
-  
-    // earthMeshRef.current = earth;
-  
     // Mise à jour des positions des satellites
     updateSatellitesPosition(constellation.satellites);
-    
+
     const animate = () => {
       requestAnimationFrame(animate);
       if (rendererRef.current && sceneRef.current && cameraRef.current) {
@@ -104,7 +112,7 @@ export default function StarlinkTracker({ navigation }: any) {
         gl.endFrameEXP();
       }
     };
-  
+
     animate();
   };
 
