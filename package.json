@@ -48,6 +48,7 @@
     "react-native": "0.74.5",
     "react-native-color-matrix-image-filters": "^7.0.1",
     "react-native-easy-grid": "^0.2.2",
+    "react-native-element-dropdown": "^2.12.1",
     "react-native-gesture-handler": "~2.16.1",
     "react-native-maps": "1.14.0",
     "react-native-purchases": "^8.1.0",

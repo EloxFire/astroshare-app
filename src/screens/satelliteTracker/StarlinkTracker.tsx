@@ -17,24 +17,35 @@ import PageTitle from '../../components/commons/PageTitle';
 import dayjs from 'dayjs';
 import { radToDeg } from 'three/src/math/MathUtils';
 import { getLaunchStatus } from '../../helpers/scripts/astro/launchApi/getLaunchStatus';
+import { MultiSelect } from 'react-native-element-dropdown';
 
 type StarlinkMarker = { latitude: number; longitude: number; title: string };
 
 export default function StarlinkTracker({ navigation }: any) {
   const { constellation, nextStarlinkLaunches } = useSpacex();
 
-  const [activeSatellites, setActiveSatellites] = useState<StarlinkSatellite[]>(constellation.satellites.filter(
-    (satellite: StarlinkSatellite) => satellite.DECAY === null && satellite.TLE
-  ));
   const [markers, setMarkers] = useState<StarlinkMarker[]>([]);
   const [launchDetails, setLaunchDetails] = useState<number>(-1);
   const [loading, setLoading] = useState<boolean>(true);
-  const [visibleMarkers, setVisibleMarkers] = useState<StarlinkMarker[]>([]);
-  const [visibleRegion, setVisibleRegion] = useState<any>(null);
+  const [selectedStallites, setSelectedSatellites] = useState<StarlinkSatellite[]>([]);
+  const [data, setData] = useState<any>([]);
 
   const mapRef = useRef(null);
 
-  const handleLauncgDetails = (index: number) => {
+  useEffect(() => {
+    if (constellation.satellites.length > 0) {
+      const sats: StarlinkMarker[] = [];
+      constellation.satellites.forEach((satellite: StarlinkSatellite) => {
+        if (satellite.DECAY === null && satellite.TLE) {
+          sats.push({ latitude: satellite.latitude, longitude: satellite.longitude, title: satellite.SATNAME });
+        }
+      });
+      setData(sats);
+      setLoading(false);
+    }
+  }, [constellation]);
+
+  const handleLaunchDetails = (index: number) => {
     if (launchDetails === index) {
       setLaunchDetails(-1);
     } else {
@@ -43,49 +54,12 @@ export default function StarlinkTracker({ navigation }: any) {
   };
 
 
-  useEffect(() => {
-    setLoading(true);
-    const markers: StarlinkMarker[] = [];
-    activeSatellites.forEach(async (satellite: StarlinkSatellite) => {
-      const coords = await getSatelliteCoordsFromTLE(satellite.TLE);
-      if(!coords) return;
-      markers.push({
-        latitude: coords.latitude,
-        longitude: coords.longitude,
-        title: satellite.SATNAME,
-      });
-    });
-    setMarkers(markers);
-    setLoading(false);
-  }, []);
 
-  useEffect(() => {
-    if(!visibleRegion){
-      setLoading(true);
-      const visibleMarkers = markers.filter((marker: StarlinkMarker) => {
-        return (
-          radToDeg(marker.latitude) < 0 + visibleRegion.latitudeDelta &&
-          radToDeg(marker.latitude) > 0 - visibleRegion.latitudeDelta &&
-          radToDeg(marker.longitude) < 0 + visibleRegion.longitudeDelta &&
-          radToDeg(marker.longitude) > 0 - visibleRegion.longitudeDelta
-        );
-      });
-      setVisibleMarkers(visibleMarkers);
-      setLoading(false);
-    }else{
-      setLoading(true);
-      const visibleMarkers = markers.filter((marker: StarlinkMarker) => {
-        return (
-          radToDeg(marker.latitude) < visibleRegion.latitude + visibleRegion.latitudeDelta &&
-          radToDeg(marker.latitude) > visibleRegion.latitude - visibleRegion.latitudeDelta &&
-          radToDeg(marker.longitude) < visibleRegion.longitude + visibleRegion.longitudeDelta &&
-          radToDeg(marker.longitude) > visibleRegion.longitude - visibleRegion.longitudeDelta
-        );
-      });
-      setVisibleMarkers(visibleMarkers);
-      setLoading(false);
-    }
-  }, [visibleRegion]);
+  const handleSelectSatellite = (event: any) => {
+    console.log(event);
+    
+  }
+
 
   return (
     <GestureHandlerRootView>
@@ -121,6 +95,13 @@ export default function StarlinkTracker({ navigation }: any) {
               <Text style={issTrackerStyles.content.liveStats.title}>
                 {i18n.t('satelliteTracker.issTracker.2dMap.title')}
               </Text>
+              <MultiSelect
+                data={data}
+                onChange={(selected) => handleSelectSatellite(selected)}
+                labelField={'name'}
+                valueField={'id'}
+                style={{borderWidth: 1, borderColor: app_colors.white_no_opacity, borderRadius: 5, padding: 5, backgroundColor: app_colors.white_no_opacity}}
+              />
               {loading && (
                 <Text>
                   <ActivityIndicator size={'small'} color={app_colors.white} animating /> {i18n.t('common.loadings.simple')}
@@ -132,32 +113,14 @@ export default function StarlinkTracker({ navigation }: any) {
                 style={issTrackerStyles.content.mapContainer.map}
                 customMapStyle={mapStyle}
                 initialRegion={{
-                  latitude: 0,
-                  longitude: 0,
-                  latitudeDelta: 32,
-                  longitudeDelta: 32,
+                  latitude: 45,
+                  longitude: 1,
+                  latitudeDelta: 25,
+                  longitudeDelta: 25,
                 }}
-                onRegionChangeComplete={(region) => setVisibleRegion(region)}
                 rotateEnabled={false}
-                cameraZoomRange={{ minCenterCoordinateDistance: 1000 }}
+                zoomEnabled={false}
               >
-                {!loading &&
-                  visibleMarkers.length > 0 &&
-                  visibleMarkers.map((marker: StarlinkMarker, index: number) => (
-                    <Marker
-                      key={index}
-                      coordinate={{
-                        latitude: radToDeg(marker.latitude),
-                        longitude: radToDeg(marker.longitude),
-                      }}
-                      title={marker.title}
-                      description={marker.title}
-                    >
-                      <View style={{ backgroundColor: app_colors.red, width: 2, height: 2 }}>
-                        <Text style={{color: 'white', fontSize: 10}}>{marker.title}</Text>
-                      </View>
-                    </Marker>
-                  ))}
               </MapView>
             </View>
             <View style={starlinkTrackerStyles.content.launches}>
@@ -200,7 +163,7 @@ export default function StarlinkTracker({ navigation }: any) {
                           </View>
                         }
                         <View style={{marginTop: 10}}>
-                          <SimpleButton small text={launch_index === launchDetails ? i18n.t('satelliteTracker.starlinkTracker.launches.launch.button.less') : i18n.t('satelliteTracker.starlinkTracker.launches.launch.button.more')} onPress={() => handleLauncgDetails(launch_index)} />
+                          <SimpleButton small text={launch_index === launchDetails ? i18n.t('satelliteTracker.starlinkTracker.launches.launch.button.less') : i18n.t('satelliteTracker.starlinkTracker.launches.launch.button.more')} onPress={() => handleLaunchDetails(launch_index)} />
                         </View>
                       </View>
                     ))
@@ -209,6 +172,7 @@ export default function StarlinkTracker({ navigation }: any) {
                   }
                 </View>
               </View>
+              <Text style={{color: 'white'}}>{JSON.stringify(data)}</Text>
           </View>
         </ScrollView>
       </View>
