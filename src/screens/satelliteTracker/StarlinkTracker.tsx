@@ -1,23 +1,27 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, ScrollView, Text, View } from 'react-native';
-import { globalStyles } from '../../styles/global';
-import { i18n } from '../../helpers/scripts/i18n';
-import { starlinkTrackerStyles } from '../../styles/screens/satelliteTracker/starlinkTracker';
-import { StarlinkSatellite } from '../../helpers/types/StarlinkSatellite';
-import { mapStyle } from '../../helpers/mapJsonStyle';
-import { app_colors } from '../../helpers/constants';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { useSpacex } from '../../contexts/SpaceXContext';
-import { getSatelliteCoordsFromTLE } from '../../helpers/scripts/astro/coords/getSatelliteCoordsFromTLE';
-import { issTrackerStyles } from '../../styles/screens/satelliteTracker/issTracker';
-import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
-import SimpleButton from '../../components/commons/buttons/SimpleButton';
-import DSOValues from '../../components/commons/DSOValues';
-import PageTitle from '../../components/commons/PageTitle';
-import dayjs from 'dayjs';
-import { radToDeg } from 'three/src/math/MathUtils';
-import { getLaunchStatus } from '../../helpers/scripts/astro/launchApi/getLaunchStatus';
-import { MultiSelect } from 'react-native-element-dropdown';
+import React, { useEffect, useRef, useState } from 'react'
+import { useTranslation } from '../../hooks/useTranslation'
+import { ActivityIndicator, Dimensions, ScrollView, Text, View } from 'react-native'
+import { globalStyles } from '../../styles/global'
+import { i18n } from '../../helpers/scripts/i18n'
+import { starlinkTrackerStyles } from '../../styles/screens/satelliteTracker/starlinkTracker'
+import { StarlinkSatellite } from '../../helpers/types/StarlinkSatellite'
+import PageTitle from '../../components/commons/PageTitle'
+import { ExpoWebGLRenderingContext, GLView } from 'expo-gl'
+import * as THREE from 'three'
+import * as ExpoTHREE from 'expo-three'
+import { app_colors } from '../../helpers/constants'
+import { Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
+import { useSpacex } from '../../contexts/SpaceXContext'
+import { getSatelliteCoordsFromTLE } from '../../helpers/scripts/astro/coords/getSatelliteCoordsFromTLE'
+import SimpleButton from '../../components/commons/buttons/SimpleButton'
+import dayjs from 'dayjs'
+import { getLaunchStatus } from '../../helpers/scripts/astro/launchApi/getLaunchStatus'
+import { degToRad } from 'three/src/math/MathUtils'
+import DSOValues from '../../components/commons/DSOValues'
+import { issTrackerStyles } from '../../styles/screens/satelliteTracker/issTracker'
+import { Asset } from 'expo-asset';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
+import * as FileSystem from 'expo-file-system';
 
 type StarlinkMarker = { latitude: number; longitude: number; title: string };
 
@@ -32,16 +36,108 @@ export default function StarlinkTracker({ navigation }: any) {
 
   const mapRef = useRef(null);
 
-  useEffect(() => {
-    if (constellation.satellites.length > 0) {
-      const sats: StarlinkMarker[] = [];
-      constellation.satellites.forEach((satellite: StarlinkSatellite) => {
-        if (satellite.DECAY === null && satellite.TLE) {
-          sats.push({ latitude: satellite.latitude, longitude: satellite.longitude, title: satellite.SATNAME });
-        }
-      });
-      setData(sats);
-      setLoading(false);
+  // THREE RELATED OBJECTS
+  const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
+  const sceneRef = useRef<THREE.Scene | null>(null);
+  const rendererRef = useRef<ExpoTHREE.Renderer | null>(null);
+  const earthMeshRef = useRef<THREE.Mesh | null>(null);
+
+  const earthRadius = 6371;  // Earth radius in km
+
+
+  const earthRef = useRef<THREE.Mesh | null>(null)
+
+  // La fonction pour charger la texture de la Terre
+  const loadAndProcessAsset = async () => {
+    try {
+      // Charger l'asset de la texture
+      const asset = Asset.fromModule(require('../../../assets/images/textures/earth_night.jpg'));
+      if (!asset.localUri) {
+        await asset.downloadAsync();
+      }
+
+      const { width, height } = asset;
+      const localUri = `${FileSystem.cacheDirectory}copied_texture.png`;
+      const fileInfo = await FileSystem.getInfoAsync(localUri);
+      if (!fileInfo.exists) {
+        await FileSystem.copyAsync({ from: asset.localUri!, to: localUri });
+      }
+
+      const copiedAsset = Asset.fromURI(`${localUri}`);
+      copiedAsset.height = height;
+      copiedAsset.width = width;
+      copiedAsset.localUri = localUri;
+
+      return ExpoTHREE.loadAsync(copiedAsset);
+    } catch (error) {
+      console.error('Erreur lors du chargement de l\'asset :', error);
+    }
+  };
+
+  // Modification de la fonction _onContextCreate pour ajouter la Terre avec sa texture
+  const _onContextCreate = async (gl: ExpoWebGLRenderingContext) => {
+    const { drawingBufferWidth, drawingBufferHeight } = gl;
+
+    // Initialisation de la scène, de la caméra et du renderer
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(80, drawingBufferWidth / drawingBufferHeight, 0.1, 500000);
+    const renderer = new ExpoTHREE.Renderer({ gl });
+
+    renderer.setSize(drawingBufferWidth, drawingBufferHeight);
+    camera.position.set(0, 0, 11500);
+
+    cameraRef.current = camera;
+    sceneRef.current = scene;
+    rendererRef.current = renderer;
+
+    const ambientLight = new THREE.AmbientLight(0x404040, 3);
+    scene.add(ambientLight);
+
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+    directionalLight.position.set(5, 5, 5).normalize();
+    scene.add(directionalLight);
+
+    // Chargement de la texture de la Terre
+    const earthTexture = await loadAndProcessAsset();
+    if (earthTexture) {
+      const earthGeometry = new THREE.SphereGeometry(earthRadius, 128, 128);
+      const earthMaterial = new THREE.MeshBasicMaterial({ map: earthTexture });
+      const earth = new THREE.Mesh(earthGeometry, earthMaterial);
+
+      earth.rotation.y = degToRad(-90);
+      scene.add(earth);
+      earthMeshRef.current = earth;
+    }
+
+    // Mise à jour des positions des satellites
+    updateSatellitesPosition(constellation.satellites);
+
+    const animate = () => {
+      requestAnimationFrame(animate);
+      if (rendererRef.current && sceneRef.current && cameraRef.current) {
+        rendererRef.current.render(sceneRef.current, cameraRef.current);
+        gl.endFrameEXP();
+      }
+    };
+
+    animate();
+  };
+
+  let oldX = 0.0, oldY = 0.0;
+  let polarAngle = Math.PI / 2;  // Angle vertical (hauteur)
+  let azimuthalAngle = 0;  // Angle horizontal (autour de l'axe Y)
+  const rotationSpeed = 0.005;  
+  let distanceFromEarth = 11500;  // Distance fixe de la caméra par rapport à la Terre
+  
+  // Fonction pour mettre à jour la position de la caméra autour de la Terre
+  const updateCameraPosition = (camera: THREE.PerspectiveCamera) => {
+    const x = distanceFromEarth * Math.sin(polarAngle) * Math.cos(azimuthalAngle);
+    const y = distanceFromEarth * Math.cos(polarAngle);
+    const z = distanceFromEarth * Math.sin(polarAngle) * Math.sin(azimuthalAngle);
+    
+    camera.position.set(x, y, z);
+    if(earthMeshRef.current){
+      camera.lookAt(earthMeshRef.current.position);  // La caméra regarde toujours la Terre
     }
   }, [constellation]);
 
