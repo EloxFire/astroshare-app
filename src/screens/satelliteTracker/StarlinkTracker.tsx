@@ -23,18 +23,11 @@ import { Asset } from 'expo-asset';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import * as FileSystem from 'expo-file-system';
 
-type StarlinkMarker = { latitude: number; longitude: number; title: string };
-
 export default function StarlinkTracker({ navigation }: any) {
-  const { constellation, nextStarlinkLaunches } = useSpacex();
 
-  const [markers, setMarkers] = useState<StarlinkMarker[]>([]);
-  const [launchDetails, setLaunchDetails] = useState<number>(-1);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [selectedStallites, setSelectedSatellites] = useState<StarlinkSatellite[]>([]);
-  const [data, setData] = useState<any>([]);
+  const { constellation, nextStarlinkLaunches} = useSpacex()
 
-  const mapRef = useRef(null);
+  const [launchDetails, setLaunchDetails] = useState<number>(-1)
 
   // THREE RELATED OBJECTS
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
@@ -139,22 +132,123 @@ export default function StarlinkTracker({ navigation }: any) {
     if(earthMeshRef.current){
       camera.lookAt(earthMeshRef.current.position);  // La caméra regarde toujours la Terre
     }
-  }, [constellation]);
-
-  const handleLaunchDetails = (index: number) => {
-    if (launchDetails === index) {
-      setLaunchDetails(-1);
-    } else {
-      setLaunchDetails(index);
-    }
   };
 
+  const updateSatellitesPosition = async (satellites: StarlinkSatellite[]) => {
+    const satelliteGeometry = new THREE.BufferGeometry();
+    const positions = new Float32Array(satellites.length * 3);
+  
+    // Remplir le tableau positions avec les coordonnées calculées
+    await Promise.all(satellites.map(async (satellite: StarlinkSatellite, index: number) => {
+      if (satellite.TLE) {
+        const position = await getSatelliteCoordsFromTLE(satellite.TLE);
+        if (position) {
+          const radius = earthRadius + position.altitude;
+  
+          const x = radius * Math.cos(position.latitude) * Math.sin(position.longitude);
+          const z = radius * Math.cos(position.latitude) * Math.cos(position.longitude);
+          const y = radius * Math.sin(position.latitude);
+  
+          positions[index * 3] = x;
+          positions[index * 3 + 1] = y;
+          positions[index * 3 + 2] = z;
+        }
+      }
+    }));
+  
+    // Mettre à jour les attributs de la géométrie
+    satelliteGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    satelliteGeometry.computeBoundingSphere(); // Optionnel, pour améliorer les performances de rendu
+  
+    const satelliteMaterial = new THREE.PointsMaterial({ color: app_colors.red, size: 15 });
+    const satelliteMesh = new THREE.Points(satelliteGeometry, satelliteMaterial);
+  
+    // Si un ancien mesh de satellites existe, le retirer avant d'ajouter le nouveau
+    const existingMesh = sceneRef.current?.children.find(child => child instanceof THREE.Points);
+    if (existingMesh) {
+      sceneRef.current?.remove(existingMesh);
+    }
+  
+    if (sceneRef.current) {
+      sceneRef.current.add(satelliteMesh);
+    }
+  };
+  
+  const pan = Gesture.Pan()
+  .onStart(() => {
+    // Initialize old coordinates for delta calculations
+    oldX = 0;
+    oldY = 0;
+  })
+  .onChange((e) => {
+  const camera = cameraRef.current;
 
+  if (camera) {
+    // Calculate the delta movement from the previous touch point
+    const deltaX = e.translationX - oldX;
+    const deltaY = e.translationY - oldY;
 
-  const handleSelectSatellite = (event: any) => {
-    console.log(event);
-    
+    // Adjust the rotation speed based on the zoom level
+    // Add a minimum threshold to avoid excessive sensitivity
+    const adjustedRotationSpeed = Math.max(rotationSpeed * (11500 / distanceFromEarth), 0.00001);
+
+    // Update angles based on the delta movement and adjusted rotation speed
+    azimuthalAngle += deltaX * adjustedRotationSpeed;  // Horizontal rotation
+    polarAngle -= deltaY * adjustedRotationSpeed;  // Vertical rotation
+
+    // Constrain polarAngle to prevent the camera from going under or over the Earth
+    polarAngle = Math.max(0.1, Math.min(Math.PI - 0.1, polarAngle));
+
+    // Update the camera's position
+    updateCameraPosition(camera);
+
+    // Update old coordinates for the next gesture change event
+    oldX = e.translationX;
+    oldY = e.translationY;
   }
+});
+
+  // Ajout du zoom
+  const zoom = Gesture.Pinch()
+  .onChange((e) => {
+    const camera = cameraRef.current;
+
+    if (camera) {
+      const zoomFactor = 0.01; // Adjust this value to make the zoom less sensitive
+      distanceFromEarth *= 1 - (e.scale - 1) * zoomFactor;
+
+      // Contrainte sur la distance pour éviter de rentrer dans la Terre
+      distanceFromEarth = Math.max(8000, Math.min(22000, distanceFromEarth));
+
+      updateCameraPosition(camera);
+    }
+  });
+
+  const gestures = Gesture.Simultaneous(zoom, pan);
+
+
+  const handleLauncgDetails = (index: number) => {
+    if(launchDetails === index){
+      setLaunchDetails(-1)
+    }else{
+      setLaunchDetails(index)
+    }
+  }
+
+  // FOR FUTURE USE
+  // const handleLiveTracking = () => {
+
+  //   if(liveTrackInterval.current){
+  //     clearInterval(liveTrackInterval.current)
+  //     liveTrackInterval.current = null
+  //   }
+
+  //   const interval = setInterval(() => {
+  //     updateSatellitesPosition(constellation.satellites);
+  //   }, 2500)
+
+  //   liveTrackInterval.current = interval;
+  // }
 
 
   return (
@@ -165,61 +259,23 @@ export default function StarlinkTracker({ navigation }: any) {
           title={i18n.t('satelliteTracker.starlinkTracker.title')}
           subtitle={i18n.t('satelliteTracker.starlinkTracker.subtitle')}
         />
-        <View style={globalStyles.screens.separator} />
-        <ScrollView>
-          <View style={starlinkTrackerStyles.content}>
-            <View style={starlinkTrackerStyles.content.statsContainer}>
-              <Text style={[globalStyles.sections.title, { fontSize: 20, marginBottom: 10 }]}>
-                {i18n.t('satelliteTracker.starlinkTracker.stats.title')}
-              </Text>
-              <DSOValues
-                title={i18n.t('satelliteTracker.starlinkTracker.stats.total')}
-                value={constellation.satellites.length + constellation.satcat_missing_tle.length}
-              />
-              <DSOValues
-                title={i18n.t('satelliteTracker.starlinkTracker.stats.active')}
-                value={constellation.satellites.filter(
-                  (satellite: StarlinkSatellite) => satellite.DECAY === null && satellite.TLE
-                ).length}
-              />
-              <DSOValues
-                title={i18n.t('satelliteTracker.starlinkTracker.stats.inactive')}
-                value={constellation.satcat_missing_tle.length}
-              />
-            </View>
-            <View style={issTrackerStyles.content.mapContainer}>
-              <Text style={issTrackerStyles.content.liveStats.title}>
-                {i18n.t('satelliteTracker.issTracker.2dMap.title')}
-              </Text>
-              <MultiSelect
-                data={data}
-                onChange={(selected) => handleSelectSatellite(selected)}
-                labelField={'name'}
-                valueField={'id'}
-                style={{borderWidth: 1, borderColor: app_colors.white_no_opacity, borderRadius: 5, padding: 5, backgroundColor: app_colors.white_no_opacity}}
-              />
-              {loading && (
-                <Text>
-                  <ActivityIndicator size={'small'} color={app_colors.white} animating /> {i18n.t('common.loadings.simple')}
-                </Text>
-              )}
-              <MapView
-                ref={mapRef}
-                provider={PROVIDER_GOOGLE}
-                style={issTrackerStyles.content.mapContainer.map}
-                customMapStyle={mapStyle}
-                initialRegion={{
-                  latitude: 45,
-                  longitude: 1,
-                  latitudeDelta: 25,
-                  longitudeDelta: 25,
-                }}
-                rotateEnabled={false}
-                zoomEnabled={false}
-              >
-              </MapView>
-            </View>
-            <View style={starlinkTrackerStyles.content.launches}>
+          <View style={globalStyles.screens.separator} />
+          <ScrollView>
+            <View style={starlinkTrackerStyles.content}>
+              <View style={starlinkTrackerStyles.content.statsContainer}>
+                <Text style={[globalStyles.sections.title, {fontSize: 20, marginBottom: 10}]}>{i18n.t('satelliteTracker.starlinkTracker.stats.title')}</Text>
+                <DSOValues title={i18n.t('satelliteTracker.starlinkTracker.stats.total')} value={constellation.satellites.length + constellation.satcat_missing_tle.length} />
+                <DSOValues title={i18n.t('satelliteTracker.starlinkTracker.stats.active')} value={constellation.satellites.filter((satellite: StarlinkSatellite) => satellite.DECAY === null && satellite.TLE).length} />
+                <DSOValues title={i18n.t('satelliteTracker.starlinkTracker.stats.inactive')} value={constellation.satcat_missing_tle.length} />
+              </View>
+                <View style={starlinkTrackerStyles.content.glviewContainer}>
+                  <Text style={issTrackerStyles.content.liveStats.title}>{i18n.t('satelliteTracker.starlinkTracker.3dMap.title')}</Text>
+                  <SimpleButton small icon={require('../../../assets/icons/FiRepeat.png')} text={i18n.t('satelliteTracker.starlinkTracker.3dMap.button')} onPress={() => updateSatellitesPosition(constellation.satellites)} />
+                  <GestureDetector gesture={gestures}>
+                    <GLView style={[starlinkTrackerStyles.content.glviewContainer.glview, {marginTop: 10}]} onContextCreate={_onContextCreate} />
+                  </GestureDetector>
+                </View>
+              <View style={starlinkTrackerStyles.content.launches}>
                 <Text style={globalStyles.sections.title}>{i18n.t('satelliteTracker.starlinkTracker.launches.title')}</Text>
                 <View style={starlinkTrackerStyles.content.launches.list}>
                   {
@@ -259,7 +315,7 @@ export default function StarlinkTracker({ navigation }: any) {
                           </View>
                         }
                         <View style={{marginTop: 10}}>
-                          <SimpleButton small text={launch_index === launchDetails ? i18n.t('satelliteTracker.starlinkTracker.launches.launch.button.less') : i18n.t('satelliteTracker.starlinkTracker.launches.launch.button.more')} onPress={() => handleLaunchDetails(launch_index)} />
+                          <SimpleButton small text={launch_index === launchDetails ? i18n.t('satelliteTracker.starlinkTracker.launches.launch.button.less') : i18n.t('satelliteTracker.starlinkTracker.launches.launch.button.more')} onPress={() => handleLauncgDetails(launch_index)} />
                         </View>
                       </View>
                     ))
@@ -268,10 +324,9 @@ export default function StarlinkTracker({ navigation }: any) {
                   }
                 </View>
               </View>
-              <Text style={{color: 'white'}}>{JSON.stringify(data)}</Text>
-          </View>
-        </ScrollView>
-      </View>
+            </View>
+          </ScrollView>
+        </View>
     </GestureHandlerRootView>
-  );
+  )
 }

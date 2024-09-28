@@ -28,22 +28,45 @@ import SimpleButton from '../../components/commons/buttons/SimpleButton'
 import * as FileSystem from 'expo-file-system';
 import { Asset } from 'expo-asset';
 
+const modelLoader = new GLTFLoader();
+
 export default function IssTracker({ navigation }: any) {
 
   const {currentLocale} = useTranslation()
 
+  // THREE RELATED OBJECTS
+  const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
+  const sceneRef = useRef<THREE.Scene | null>(null);
+  const rendererRef = useRef<ExpoTHREE.Renderer | null>(null);
+  const earthMeshRef = useRef<THREE.Mesh | null>(null);
+  const issMeshRef = useRef<THREE.Points | null>(null);
+  
+  const earthRadius = 6371;  // Earth radius in km
+  
   const [issPosition, setIssPosition] = useState<any>(null)
   const [trajectoryPoints, setTrajectoryPoints] = useState<any>(null)
   const [issTle, setIssTle] = useState<any>(null)
   const [loading, setLoading] = useState(true)
+  const [focusIss, setFocusIss] = useState(true)
+
+  const [issInfosModalVisible, setIssInfosModalVisible] = useState(false)
+  const [liveFeedModalVisible, setLiveFeedModalVisible] = useState(false)
+  const [issFeedError, setIssFeedError] = useState(false)
 
   const mapRef = useRef(null)
+  const youtubePlayerRef = useRef(null)
+  
+  const focusIssRef = useRef(focusIss);
 
+  useEffect(() => {
+    focusIssRef.current = focusIss;
+  }, [focusIss]);
 
   useEffect(() => {
     getIssData()
     const update = setInterval(() => {
       getIssData()
+      updateIssPosition(focusIssRef.current)
     }, 5000)
 
     return () => clearInterval(update)
@@ -174,6 +197,127 @@ export default function IssTracker({ navigation }: any) {
       cameraRef.current.lookAt(0, 0, 0);
     }
   }
+
+  const updateIssPosition = async (doesIssNeedFocus: boolean) => {
+    const response = await axios.get(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/iss/tle`)
+    const tle = [response.data.data.header.trim(), response.data.data.line1.trim(), response.data.data.line2.trim()]
+  
+    const issGeometry = new THREE.BufferGeometry();
+    const positions = new Float32Array(3);
+  
+    // Récupérer les coordonnées du satellite
+    if(tle){
+      const position = await getSatelliteCoordsFromTLE(tle);
+      if (position) {
+        const radius = earthRadius + position.altitude;
+    
+        // Convertir les angles de latitude et longitude de degrés en radians
+        const latRad = position.latitude;
+        const lonRad = position.longitude;
+
+        // Calcul des coordonnées cartésiennes en utilisant les angles en radians
+        const x = radius * Math.cos(latRad) * Math.sin(lonRad);
+        const z = radius * Math.cos(latRad) * Math.cos(lonRad);
+        const y = radius * Math.sin(latRad);
+    
+        positions[0] = x;
+        positions[1] = y;
+        positions[2] = z;
+
+        // Move the camera to orbit above the ISS, keeping its focus on the Earth's center
+        console.log('focusIss', focusIss);
+        if(doesIssNeedFocus === true){
+          updateCameraToFollowIss(latRad, lonRad);
+        }
+      }
+    }
+  
+    // Mettre à jour les attributs de la géométrie
+    issGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    issGeometry.computeBoundingSphere(); // Optionnel pour améliorer les performances de rendu
+  
+    const satelliteMaterial = new THREE.PointsMaterial({ color: app_colors.red, size: 100 });
+    const satelliteMesh = new THREE.Points(issGeometry, satelliteMaterial);
+  
+    // Si un ancien mesh de satellites existe, le retirer avant d'ajouter le nouveau
+    const existingMesh = sceneRef.current?.children.find(child => child instanceof THREE.Points);
+    if (existingMesh) {
+      sceneRef.current?.remove(existingMesh);
+    }
+  
+    if (sceneRef.current) { 
+      sceneRef.current.add(satelliteMesh);
+    }
+  };
+
+  let oldX = 0.0, oldY = 0.0;
+  let polarAngle = Math.PI / 2;  // Angle vertical (hauteur)
+  let azimuthalAngle = 0;  // Angle horizontal (autour de l'axe Y)
+  const rotationSpeed = 0.005;  
+  let distanceFromEarth = 11500;  // Distance fixe de la caméra par rapport à la Terre
+  
+  // Fonction pour mettre à jour la position de la caméra autour de la Terre
+  const updateCameraPosition = (camera: THREE.PerspectiveCamera) => {
+    const x = distanceFromEarth * Math.sin(polarAngle) * Math.cos(azimuthalAngle);
+    const y = distanceFromEarth * Math.cos(polarAngle);
+    const z = distanceFromEarth * Math.sin(polarAngle) * Math.sin(azimuthalAngle);
+    
+    camera.position.set(x, y, z);
+    if(earthMeshRef.current){
+      camera.lookAt(earthMeshRef.current.position);  // La caméra regarde toujours la Terre
+    }
+  };
+
+  const pan = Gesture.Pan()
+  .onStart(() => {
+    // Initialize old coordinates for delta calculations
+    oldX = 0;
+    oldY = 0;
+  })
+  .onChange((e) => {
+  const camera = cameraRef.current;
+
+  if (camera) {
+    // Calculate the delta movement from the previous touch point
+    const deltaX = e.translationX - oldX;
+    const deltaY = e.translationY - oldY;
+
+    // Adjust the rotation speed based on the zoom level
+    // Add a minimum threshold to avoid excessive sensitivity
+    const adjustedRotationSpeed = Math.max(rotationSpeed * (11500 / distanceFromEarth), 0.00001);
+
+    // Update angles based on the delta movement and adjusted rotation speed
+    azimuthalAngle += deltaX * adjustedRotationSpeed;  // Horizontal rotation
+    polarAngle -= deltaY * adjustedRotationSpeed;  // Vertical rotation
+
+    // Constrain polarAngle to prevent the camera from going under or over the Earth
+    polarAngle = Math.max(0.1, Math.min(Math.PI - 0.1, polarAngle));
+
+    // Update the camera's position
+    updateCameraPosition(camera);
+
+    // Update old coordinates for the next gesture change event
+    oldX = e.translationX;
+    oldY = e.translationY;
+  }
+});
+
+const centerIss = () => {
+  if (!mapRef.current) return
+  // @ts-ignore
+  mapRef.current.animateToRegion({
+    latitude: issPosition ? issPosition.latitude : 0,
+    longitude: issPosition ? issPosition.longitude : 0,
+    latitudeDelta: 0,
+    longitudeDelta: 100,
+  })
+}
+
+const handleLiveFeedDisplay = () => {
+  setIssInfosModalVisible(false)
+  setLiveFeedModalVisible(!liveFeedModalVisible)
+}
+
   return (
     <GestureHandlerRootView>
       <View style={globalStyles.body}>
