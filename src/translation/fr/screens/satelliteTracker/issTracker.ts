@@ -16,4 +16,7 @@ export const issTrackerTranslations = {
     title: "Carte 2D interactive",
     button: "Re-centrer",
   },
+  nextPasses: {
+    title: "Prochains passages (48h)",
+  }
 }

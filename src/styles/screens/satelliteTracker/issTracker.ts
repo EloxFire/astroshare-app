@@ -41,5 +41,13 @@ export const issTrackerStyles = {
         height: Dimensions.get('screen').width - 40,
       }
     },
+
+    nextPasses: {
+      borderWidth : 1,
+      borderColor: app_colors.white_no_opacity,
+      backgroundColor: app_colors.white_no_opacity,
+      borderRadius: 10,
+      padding: 10,
+    }
   },
 }

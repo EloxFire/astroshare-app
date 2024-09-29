@@ -27,12 +27,16 @@ import { mapStyle } from '../../helpers/mapJsonStyle'
 import SimpleButton from '../../components/commons/buttons/SimpleButton'
 import * as FileSystem from 'expo-file-system';
 import { Asset } from 'expo-asset';
+import { getNextIssPasses, IssPass } from '../../helpers/scripts/utils/satellites/getNextIssPasses'
+import { useSettings } from '../../contexts/AppSettingsContext'
+import IssPassCard from '../../components/cards/IssPassCard'
 
 const modelLoader = new GLTFLoader();
 
 export default function IssTracker({ navigation }: any) {
 
   const {currentLocale} = useTranslation()
+  const {currentUserLocation} = useSettings()
 
   // THREE RELATED OBJECTS
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
@@ -52,6 +56,8 @@ export default function IssTracker({ navigation }: any) {
   const [issInfosModalVisible, setIssInfosModalVisible] = useState(false)
   const [liveFeedModalVisible, setLiveFeedModalVisible] = useState(false)
   const [issFeedError, setIssFeedError] = useState(false)
+
+  const [issPasses, setIssPasses] = useState<IssPass[]>([])
 
   const mapRef = useRef(null)
   const youtubePlayerRef = useRef(null)
@@ -96,6 +102,14 @@ export default function IssTracker({ navigation }: any) {
         dms_lon: convertDDtoDMS(position.data.data.longitude, position.data.data.longitude).dms_lon,
         country: name.country
       }
+
+      const passes: IssPass[] = getNextIssPasses(currentUserLocation.lat, currentUserLocation.lon, 341, [tle.data.data.line1.trim(), tle.data.data.line2.trim()])
+      if(passes){
+        setIssPasses(passes)
+      }else {
+        setIssPasses([])
+      }
+      
 
       setIssPosition(iss)
       setTrajectoryPoints(trajectoryPoints.data.data)
@@ -400,6 +414,17 @@ const handleLiveFeedDisplay = () => {
                     />
                   }
                 </MapView>
+              </View>
+              <View style={issTrackerStyles.content.nextPasses}>
+                <Text style={issTrackerStyles.content.liveStats.title}>{i18n.t('satelliteTracker.issTracker.nextPasses.title')}</Text>
+                {
+                  issPasses.length > 0 ?
+                  issPasses.map((pass, index) => (
+                    <IssPassCard key={index} pass={pass} navigation={navigation} />
+                  ))
+                  :
+                  <Text>Pas de passage à votre position dans les 48 prochaines heures</Text>
+                }
               </View>
             </View>
           </ScrollView>
