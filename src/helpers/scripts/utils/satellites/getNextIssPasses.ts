@@ -8,30 +8,25 @@ export type IssPass = {
   maxElevation: number;
   startElevation: number;
   endElevation: number;
-  startAzimuth: number; // Direction d'arrivée en degrés
-  startDirectionCardinal: string; // Direction cardinale d'arrivée
-  endAzimuth: number; // Direction de fin en degrés
-  endDirectionCardinal: string; // Direction cardinale de fin
-  trajectory: { latitude: number; longitude: number; }[]; // Trajectoire durant le passage visible
-  magnitude: number; // Magnitude estimée du passage
+  startAzimuth: number;
+  startDirectionCardinal: string;
+  endAzimuth: number;
+  endDirectionCardinal: string;
+  trajectory: { latitude: number; longitude: number; }[];
 }
 
 export const getNextIssPasses = (latitude: number, longitude: number, altitude: number, tle: string[]): IssPass[] => {
   try {
-    console.log(tle[0]);
-
-    // Créer l'objet satellite à partir des TLE
     const satrec = satellite.twoline2satrec(tle[0], tle[1]);
-
     const observerGd = {
       latitude: satellite.degreesToRadians(latitude),
       longitude: satellite.degreesToRadians(longitude),
-      height: altitude / 1000,  // Altitude en km
+      height: altitude / 1000,
     };
 
     const currentDate = new Date();
-    const endDate = new Date(currentDate.getTime() + 48 * 60 * 60 * 1000);  // 48 heures plus tard
-    const step = 10;  // Intervalle réduit à 10 secondes pour plus de précision
+    const endDate = new Date(currentDate.getTime() + 360 * 60 * 60 * 1000);
+    const step = 1;  // Intervalle de 1 seconde pour améliorer la précision
 
     const passes: IssPass[] = [];
     let passInProgress = false;
@@ -45,64 +40,59 @@ export const getNextIssPasses = (latitude: number, longitude: number, altitude: 
 
     for (let time = currentDate; time <= endDate; time = new Date(time.getTime() + step * 1000)) {
       const positionAndVelocity = satellite.propagate(satrec, time);
-      const positionEci = positionAndVelocity.position;
+      if (!positionAndVelocity.position) continue;
 
-      if (positionEci) {
-        const gmst = satellite.gstime(time);
-        const positionGd = satellite.eciToGeodetic(positionEci, gmst);
-        const { longitude: passLon, latitude: passLat } = positionGd;
+      const gmst = satellite.gstime(time);
+      const positionGd = satellite.eciToGeodetic(positionAndVelocity.position, gmst);
+      const lookAngles = satellite.ecfToLookAngles(observerGd, satellite.eciToEcf(positionAndVelocity.position, gmst));
 
-        // Vérifier si l'ISS est visible (élévation > 0)
-        const lookAngles = satellite.ecfToLookAngles(observerGd, satellite.eciToEcf(positionEci, gmst));
+      const currentElevation = radToDeg(lookAngles.elevation);
+      const currentAzimuth = radToDeg(lookAngles.azimuth);
 
-        if (lookAngles.elevation > 0) {
-          if (!passInProgress) {
-            // Début d'un nouveau passage
-            passInProgress = true;
-            passStartTime = time;
-            maxElevation = lookAngles.elevation;
-            startElevation = lookAngles.elevation;
-            startAzimuth = radToDeg(lookAngles.azimuth);
-          } else {
-            // Passage en cours, vérifier si l'élévation est la plus élevée observée
-            if (lookAngles.elevation > maxElevation) {
-              maxElevation = lookAngles.elevation;
-            }
+      if (currentElevation > 0) {
+        if (!passInProgress) {
+          // Début d'un nouveau passage
+          passInProgress = true;
+          passStartTime = time;
+          maxElevation = currentElevation;
+          startElevation = currentElevation;
+          startAzimuth = currentAzimuth;
+        } else {
+          // Passage en cours, mettre à jour l'élévation maximale
+          if (currentElevation > maxElevation) {
+            maxElevation = currentElevation;
           }
-          // Ajouter la position courante à la trajectoire visible
-          trajectory.push({
-            latitude: radToDeg(passLat),
-            longitude: radToDeg(passLon),
-          });
-        } else if (passInProgress) {
-          // Fin d'un passage
-          passInProgress = false;
-          endElevation = lookAngles.elevation;  // À la fin du passage, l'élévation est proche de 0
-          endAzimuth = radToDeg(lookAngles.azimuth);
-          const passEndTime = time;
-          const duration = (passEndTime.getTime() - passStartTime!.getTime()) / 1000; // Durée en secondes
-
-          // Calcul approximatif de la magnitude
-          const magnitude = calculateIssMagnitude(maxElevation);
-
-          passes.push({
-            startTime: passStartTime!,
-            endTime: passEndTime,
-            duration: duration,  // Durée en secondes
-            maxElevation: radToDeg(maxElevation),  // Élévation maximale en degrés
-            startElevation: radToDeg(startElevation),
-            endElevation: radToDeg(endElevation),
-            startAzimuth,
-            startDirectionCardinal: getCardinalDirection(startAzimuth),
-            endAzimuth,
-            endDirectionCardinal: getCardinalDirection(endAzimuth),
-            trajectory: [...trajectory],
-            magnitude,
-          });
-
-          // Réinitialiser les valeurs pour le prochain passage
-          trajectory.length = 0;
+          endElevation = currentElevation;
         }
+
+        // Ajouter la position courante à la trajectoire visible
+        trajectory.push({
+          latitude: radToDeg(positionGd.latitude),
+          longitude: radToDeg(positionGd.longitude),
+        });
+      } else if (passInProgress) {
+        // Fin d'un passage
+        passInProgress = false;
+        endAzimuth = currentAzimuth;
+        const passEndTime = time;
+        const duration = (passEndTime.getTime() - passStartTime!.getTime()) / 1000;
+
+        passes.push({
+          startTime: passStartTime!,
+          endTime: passEndTime,
+          duration: duration,
+          maxElevation: maxElevation,
+          startElevation: startElevation,
+          endElevation: endElevation,
+          startAzimuth: startAzimuth,
+          startDirectionCardinal: getCardinalDirection(startAzimuth),
+          endAzimuth: endAzimuth,
+          endDirectionCardinal: getCardinalDirection(endAzimuth),
+          trajectory: [...trajectory],
+        });
+
+        // Réinitialiser les valeurs pour le prochain passage
+        trajectory.length = 0;
       }
     }
 
@@ -132,15 +122,4 @@ const getCardinalDirection = (azimuth: number): string => {
   if (azimuth >= 303.75 && azimuth < 326.25) return 'Nord-Ouest';
   if (azimuth >= 326.25 && azimuth < 348.75) return 'Nord-Nord-Ouest';
   return 'Nord';
-};
-
-// Fonction pour calculer une estimation de la magnitude
-const calculateIssMagnitude = (maxElevation: number): number => {
-  // La magnitude dépend de l'éclairage du soleil et de l'altitude de l'ISS.
-  // Ici, on donne une estimation simplifiée en fonction de l'élévation maximale.
-  if (maxElevation >= 80) return -3.0; // Très lumineux, comme Vénus
-  if (maxElevation >= 60) return -2.5; // Très visible
-  if (maxElevation >= 40) return -2.0; // Lumineux
-  if (maxElevation >= 20) return -1.5; // Modérément lumineux
-  return -1.0; // Faiblement lumineux
 };

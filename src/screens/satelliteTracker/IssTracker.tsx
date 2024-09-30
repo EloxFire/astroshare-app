@@ -30,8 +30,7 @@ import { Asset } from 'expo-asset';
 import { getNextIssPasses, IssPass } from '../../helpers/scripts/utils/satellites/getNextIssPasses'
 import { useSettings } from '../../contexts/AppSettingsContext'
 import IssPassCard from '../../components/cards/IssPassCard'
-
-const modelLoader = new GLTFLoader();
+import { isNight } from '@observerly/astrometry'
 
 export default function IssTracker({ navigation }: any) {
 
@@ -52,10 +51,6 @@ export default function IssTracker({ navigation }: any) {
   const [issTle, setIssTle] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [focusIss, setFocusIss] = useState(true)
-
-  const [issInfosModalVisible, setIssInfosModalVisible] = useState(false)
-  const [liveFeedModalVisible, setLiveFeedModalVisible] = useState(false)
-  const [issFeedError, setIssFeedError] = useState(false)
 
   const [issPasses, setIssPasses] = useState<IssPass[]>([])
 
@@ -103,12 +98,12 @@ export default function IssTracker({ navigation }: any) {
         country: name.country
       }
 
-      const passes: IssPass[] = getNextIssPasses(currentUserLocation.lat, currentUserLocation.lon, 341, [tle.data.data.line1.trim(), tle.data.data.line2.trim()])
-      if(passes){
-        setIssPasses(passes)
-      }else {
-        setIssPasses([])
-      }
+      // const passes: IssPass[] = getNextIssPasses(currentUserLocation.lat, currentUserLocation.lon, 341, [tle.data.data.line1.trim(), tle.data.data.line2.trim()])
+      // if(passes){
+      //   setIssPasses(passes)
+      // }else {
+      //   setIssPasses([])
+      // }
       
 
       setIssPosition(iss)
@@ -197,8 +192,6 @@ export default function IssTracker({ navigation }: any) {
 
   const updateCameraToFollowIss = (issLat: number, issLon: number) => {
     if (cameraRef.current) {
-      console.log("ISS focus is enabled, updating camera");
-
       const cameraOrbitDistance = 11500;  // Adjust the distance from the Earth's center for the camera's orbit
       const cameraX = cameraOrbitDistance * Math.cos(issLat) * Math.sin(issLon);
       const cameraZ = cameraOrbitDistance * Math.cos(issLat) * Math.cos(issLon);
@@ -239,7 +232,6 @@ export default function IssTracker({ navigation }: any) {
         positions[2] = z;
 
         // Move the camera to orbit above the ISS, keeping its focus on the Earth's center
-        console.log('focusIss', focusIss);
         if(doesIssNeedFocus === true){
           updateCameraToFollowIss(latRad, lonRad);
         }
@@ -327,11 +319,6 @@ const centerIss = () => {
   })
 }
 
-const handleLiveFeedDisplay = () => {
-  setIssInfosModalVisible(false)
-  setLiveFeedModalVisible(!liveFeedModalVisible)
-}
-
   return (
     <GestureHandlerRootView>
       <View style={globalStyles.body}>
@@ -415,17 +402,19 @@ const handleLiveFeedDisplay = () => {
                   }
                 </MapView>
               </View>
-              <View style={issTrackerStyles.content.nextPasses}>
+              {/* <View style={issTrackerStyles.content.nextPasses}>
                 <Text style={issTrackerStyles.content.liveStats.title}>{i18n.t('satelliteTracker.issTracker.nextPasses.title')}</Text>
                 {
                   issPasses.length > 0 ?
-                  issPasses.map((pass, index) => (
-                    <IssPassCard key={index} pass={pass} navigation={navigation} />
-                  ))
+                  issPasses.map((pass, index) => {
+                    if(isNight(new Date(pass.startTime), {latitude: currentUserLocation.lat, longitude: currentUserLocation.lon})){
+                      return <IssPassCard key={index} pass={pass} navigation={navigation} />
+                    }
+                  })
                   :
                   <Text>Pas de passage à votre position dans les 48 prochaines heures</Text>
                 }
-              </View>
+              </View> */}
             </View>
           </ScrollView>
         </View>
