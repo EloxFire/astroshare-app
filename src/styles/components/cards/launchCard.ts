@@ -13,7 +13,7 @@ export const launchCardStyles = {
 
     thumbnail: {
       height: 148,
-      width: 110,
+      width: 80,
       borderTopLeftRadius: 10,
       borderBottomLeftRadius: 10,
     },
@@ -66,6 +66,32 @@ export const launchCardStyles = {
           }
         }
       },
+
+      body: {
+        display: 'flex' as 'flex',
+        flexDirection: 'row' as 'row',
+        justifyContent: 'space-between' as 'space-between',
+        alignItems: 'center' as 'center',
+        paddingTop: 10,
+
+        info: {
+          display: 'flex' as 'flex',
+          flexDirection: 'column' as 'column',
+  
+          label: {
+            fontSize: 12,
+            fontFamily: 'AuxMono',
+            color: app_colors.white,
+            opacity: .5,
+          },
+  
+          text: {
+            fontSize: 12,
+            fontFamily: 'GilroyRegular',
+            color: app_colors.white,
+          }
+        }
+      }
     }
   }
 }
