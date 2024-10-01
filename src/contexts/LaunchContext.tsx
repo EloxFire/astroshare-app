@@ -16,7 +16,6 @@ interface LaunchContextProviderProps {
 export function LaunchDataContextProvider({ children }: LaunchContextProviderProps) {
 
   const [launchData, setLaunchData] = useState<LaunchData[]>([])
-  const [agenciesData, setAgenciesData] = useState<any>([])
   const [launchContextLoading, setLaunchContextLoading] = useState<boolean>(true)
 
   useEffect(() => {
@@ -31,15 +30,22 @@ export function LaunchDataContextProvider({ children }: LaunchContextProviderPro
 
     // If last update is older than 3 hours, fetch new data
     if(!storedData || !lastUpdate || new Date().getTime() - new Date(lastUpdate).getTime() > 10800000) {
+      console.log('Fetching new data');
+      
       const data = await axios.get(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/launches`)
-      setLaunchData(data.data.data.results)
+      
+      setLaunchData(data.data)
       await storeData(storageKeys.launches.lastUpdate, new Date().toISOString())
+    }else{
+      console.log('Using stored data');
+      setLaunchData(storedData)
     }
     setLaunchContextLoading(false)
   }
 
   const values = {
-    launchData
+    launchData,
+    launchContextLoading
   }
 
   return (
