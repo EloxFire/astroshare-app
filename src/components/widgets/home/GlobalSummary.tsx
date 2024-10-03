@@ -35,6 +35,10 @@ export default function GlobalSummary({ noHeader }: GlobalSummaryProps) {
 
   useEffect(() => {
     getInfos()
+
+    const interval = setInterval(() => {
+      getInfos()
+    }, 60000)
   }, [currentUserLocation, planets])
 
   const getInfos = async () => {
@@ -66,7 +70,8 @@ export default function GlobalSummary({ noHeader }: GlobalSummaryProps) {
     planets.forEach((planet: GlobalPlanet) => {
       const target: EquatorialCoordinate = { ra: planet.ra, dec: planet.dec }
       const isAbove = isBodyAboveHorizon(date, observer, target, horizonAngle)
-      if (isAbove && planet.name !== 'Earth') {
+
+      if (!isAbove && planet.name !== 'Earth') {
         vp.push(planet)
       }
     })

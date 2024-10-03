@@ -25,21 +25,6 @@ export function LaunchDataContextProvider({ children }: LaunchContextProviderPro
   
   const getLaunchData = async () => {
     setLaunchContextLoading(true)
-    const storedData = await getObject(storageKeys.launches.data)
-    const lastUpdate = await getObject(storageKeys.launches.lastUpdate)
-
-    // If last update is older than 3 hours, fetch new data
-    if(!storedData || !lastUpdate || new Date().getTime() - new Date(lastUpdate).getTime() > 10800000) {
-      console.log('Fetching new data');
-      
-      const data = await axios.get(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/launches`)
-      
-      setLaunchData(data.data)
-      await storeData(storageKeys.launches.lastUpdate, new Date().toISOString())
-    }else{
-      console.log('Using stored data');
-      setLaunchData(storedData)
-    }
     setLaunchContextLoading(false)
   }
 
