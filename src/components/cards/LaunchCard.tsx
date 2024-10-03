@@ -1,26 +1,17 @@
-import React, { useEffect, useState } from 'react'
+import React, {ReactNode} from 'react'
 import { Image, Text, TouchableOpacity, View } from 'react-native'
+import {i18n} from "../../helpers/scripts/i18n";
 import { launchCardStyles } from '../../styles/components/cards/launchCard'
 import { getLaunchStatusColor } from '../../helpers/scripts/launches/getLaunchStatusColor'
-import axios from 'axios'
+import DSOValues from "../commons/DSOValues";
+import dayjs from "dayjs";
 
 interface LaunchCardProps {
   launch: any
   navigation: any
 }
 
-export default function LaunchCard({ launch, navigation }: LaunchCardProps) {
-
-  const [agencyDetails, setAgencyDetails] = useState<any>(null)
-
-  useEffect(() => {
-    getAgencyDetails()
-  }, [])
-
-  const getAgencyDetails = async () => {
-    const agency = await axios.get(launch.launch_service_provider.url)
-    setAgencyDetails(agency.data)
-  }
+export default function LaunchCard({ launch, navigation }: LaunchCardProps): ReactNode {
 
   return (
     <TouchableOpacity style={launchCardStyles.card}>
@@ -37,24 +28,10 @@ export default function LaunchCard({ launch, navigation }: LaunchCardProps) {
           <Text style={[launchCardStyles.card.content.header.badge, {backgroundColor: getLaunchStatusColor(launch.status.id).backgroundColor, color: getLaunchStatusColor(launch.status.id).textColor }]}>{launch.status.abbrev}</Text>
         </View>
         <View style={launchCardStyles.card.content.body}>
-          <View style={launchCardStyles.card.content.body.info}>
-            <Text style={launchCardStyles.card.content.body.info.label}>Lanceur</Text>
-            <Text style={launchCardStyles.card.content.body.info.text}>{launch.rocket.configuration.full_name}</Text>
-          </View>
-          <View style={launchCardStyles.card.content.body.info}>
-            <Text style={launchCardStyles.card.content.body.info.label}>Pas de tir</Text>
-            <Text style={launchCardStyles.card.content.body.info.text}>{launch.pad.name}</Text>
-          </View>
-        </View>
-        <View style={launchCardStyles.card.content.body}>
-          <View style={launchCardStyles.card.content.body.info}>
-            <Text style={launchCardStyles.card.content.body.info.label}>Opérateur</Text>
-            <Image source={{uri: agencyDetails?.social_logo.image_url}} style={{marginTop: 2}} resizeMode='contain' width={30} height={30} />
-          </View>
-          <View style={launchCardStyles.card.content.body.info}>
-            <Text style={launchCardStyles.card.content.body.info.label}>Pas de tir</Text>
-            <Text style={launchCardStyles.card.content.body.info.text}>{launch.pad.name}</Text>
-          </View>
+          <DSOValues small title={`${i18n.t('launchesScreen.launchCards.date')} ${launch.status.id !== 1 ? i18n.t('launchesScreen.launchCards.temporary') : ""}`} value={dayjs(launch.net).format("DD MMM YYYY")} />
+          <DSOValues small title={i18n.t('launchesScreen.launchCards.launcher')} value={launch.rocket.configuration.full_name} />
+          <DSOValues small title={i18n.t('launchesScreen.launchCards.operator')} value={`${launch.launch_service_provider.name.length > 25 ? `${launch.launch_service_provider.name.slice(0, 25)}...` : launch.launch_service_provider.name}`} />
+          <DSOValues small title={i18n.t('launchesScreen.launchCards.launchPad')} value={launch.pad.name} />
         </View>
       </View>
     </TouchableOpacity>

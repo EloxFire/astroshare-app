@@ -1,4 +1,4 @@
-import React from "react";
+import React, {ReactNode} from "react";
 import { ActivityIndicator, ScrollView, Text, View } from "react-native";
 import { globalStyles } from "../../styles/global";
 import { i18n } from "../../helpers/scripts/i18n";
@@ -26,11 +26,11 @@ export default function LaunchesScreen({ navigation }: any) {
           {
             !launchContextLoading ?
               launchData.length > 0 ?
-              launchData.map((launch: any, index: number) => (
+              launchData.map((launch: any, index: number): ReactNode => (
                   <LaunchCard key={index} launch={launch} navigation={navigation} />
                 ))
                 :
-                <SimpleButton disabled text="Aucun lancements trouvés..."/>
+                <SimpleButton disabled text={i18n.t('launchesScreen.launchCards.noLaunches')}/>
             :
             <ActivityIndicator size="large" color={app_colors.white} />
           }

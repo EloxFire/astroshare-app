@@ -1,9 +1,8 @@
-import React, { ReactNode, createContext, useContext, useEffect, useState } from 'react'
+import React, {ReactNode, createContext, useContext, useEffect, useState, Context} from 'react'
 import axios from 'axios'
-import { getObject, storeData } from '../helpers/storage'
-import { storageKeys } from '../helpers/constants'
 import { LaunchData } from '../helpers/types/LaunchData'
-const LaunchContext = createContext<any>({})
+
+const LaunchContext: Context<any> = createContext<any>({})
 
 export const useLaunchData = () => {
   return useContext(LaunchContext)
@@ -23,8 +22,10 @@ export function LaunchDataContextProvider({ children }: LaunchContextProviderPro
   }, [])
   
   
-  const getLaunchData = async () => {
+  const getLaunchData= async () => {
     setLaunchContextLoading(true)
+    const launchesData = await axios.get(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/launches/upcoming`)
+    setLaunchData(launchesData.data.data)
     setLaunchContextLoading(false)
   }
 
