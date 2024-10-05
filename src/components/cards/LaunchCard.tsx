@@ -22,7 +22,7 @@ export default function LaunchCard({ launch, navigation }: LaunchCardProps): Rea
             <Text style={launchCardStyles.card.content.header.title}>{launch.name.split('|')[0].trim()}</Text>
             <View style={launchCardStyles.card.content.header.subtitleContainer}>
               <Text style={launchCardStyles.card.content.header.subtitleContainer.label}>Mission : </Text>
-              <Text style={launchCardStyles.card.content.header.subtitleContainer.text}>{launch.name.split('|')[1].trim()}</Text>
+              <Text style={launchCardStyles.card.content.header.subtitleContainer.text}>{launch.name.split('|')[1].trim().length > 20 ? `${launch.name.split('|')[1].trim().slice(0, 20)}...` : launch.name.split('|')[1].trim()}</Text>
             </View>
           </View>
           <Text style={[launchCardStyles.card.content.header.badge, {backgroundColor: getLaunchStatusColor(launch.status.id).backgroundColor, color: getLaunchStatusColor(launch.status.id).textColor }]}>{launch.status.abbrev}</Text>
@@ -32,6 +32,7 @@ export default function LaunchCard({ launch, navigation }: LaunchCardProps): Rea
           <DSOValues small title={i18n.t('launchesScreen.launchCards.launcher')} value={launch.rocket.configuration.full_name} />
           <DSOValues small title={i18n.t('launchesScreen.launchCards.operator')} value={`${launch.launch_service_provider.name.length > 25 ? `${launch.launch_service_provider.name.slice(0, 25)}...` : launch.launch_service_provider.name}`} />
           <DSOValues small title={i18n.t('launchesScreen.launchCards.launchPad')} value={launch.pad.name} />
+          <DSOValues small title={i18n.t('launchesScreen.launchCards.client')} value={launch.mission.agencies.length > 0 ? launch.mission.agencies[0].name : "N/A" } />
         </View>
       </View>
     </TouchableOpacity>

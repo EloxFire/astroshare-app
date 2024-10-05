@@ -6,6 +6,7 @@ export const launchesScreenTranslations = {
     launcher: 'Rocket',
     operator: 'Operator',
     launchPad: 'Launch Pad',
+    client: 'Client',
     noLaunches: 'No launches found...'
   }
 }

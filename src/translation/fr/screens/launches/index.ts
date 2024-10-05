@@ -6,6 +6,7 @@ export const launchesScreenTranslations = {
     launcher: 'Lanceur',
     operator: 'Opérateur',
     launchPad: 'Pas de tir',
+    client: 'Client',
     noLaunches: 'Aucun lancement trouvé...'
   }
 }
