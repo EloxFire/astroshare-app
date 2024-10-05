@@ -67,7 +67,9 @@
     "starlinkapi": "^1.0.0",
     "three": "^0.168.0",
     "tle.js": "^4.9.0",
-    "translate-google-api": "^1.0.4"
+    "translate-google-api": "^1.0.4",
+    "expo-notifications": "~0.28.18",
+    "expo-constants": "~16.0.2"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

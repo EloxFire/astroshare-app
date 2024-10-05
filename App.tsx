@@ -1,6 +1,6 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { useEffect, useState } from "react";
+import {useEffect, useRef, useState} from "react";
 import { Text, TextInput, View } from "react-native";
 import { loadingSplashStyles } from "./src/styles/screens/loadingSplash";
 import { StatusBar } from "expo-status-bar";
@@ -47,6 +47,9 @@ import { SpaceXContextProvider } from "./src/contexts/SpaceXContext";
 import ChangelogScreen from "./src/screens/settings/Changelog";
 import LaunchesScreen from "./src/screens/launches/Launches";
 import { LaunchDataContextProvider } from "./src/contexts/LaunchContext";
+import * as Notifications from 'expo-notifications';
+import {registerForPushNotificationsAsync} from "./src/helpers/scripts/notifications/registerPushNotifications";
+import {storeData} from "./src/helpers/storage";
 
 dayjs.locale('fr');
 dayjs.extend(LocalizedFormat)
@@ -60,8 +63,20 @@ dayjs().format('L LT')
 
 const Stack = createNativeStackNavigator();
 
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+  }),
+});
+
 export default function App() {
   const [appIsReady, setAppIsReady] = useState(false);
+  const [expoPushToken, setExpoPushToken] = useState('');
+  const [notification, setNotification] = useState<Notifications.Notification | undefined>(undefined);
+  const notificationListener = useRef<Notifications.Subscription>();
+  const responseListener = useRef<Notifications.Subscription>();
 
   useEffect(() => {
     async function prepare() {
@@ -78,6 +93,36 @@ export default function App() {
 
     prepare();
   }, []);
+
+  useEffect(() => {
+    registerForPushNotificationsAsync()
+      .then(token => setExpoPushToken(token ?? ''))
+      .catch((error: any) => setExpoPushToken(`${error}`));
+
+    notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
+      setNotification(notification);
+    });
+
+    responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
+      console.log(response);
+    });
+
+    return () => {
+      notificationListener.current &&
+      Notifications.removeNotificationSubscription(notificationListener.current);
+      responseListener.current &&
+      Notifications.removeNotificationSubscription(responseListener.current);
+    };
+  }, []);
+
+  useEffect(() => {
+    (async() => {
+      if(expoPushToken !== ''){
+        await storeData('expoPushToken', expoPushToken)
+        console.log('Token stored')
+      }
+    })()
+  }, [expoPushToken])
 
   if (!appIsReady) {
     return (
