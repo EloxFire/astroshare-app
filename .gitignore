@@ -23,6 +23,7 @@ eas.json
 
 # Metro
 .metro-health-check*
+.idea/
 
 # debug
 npm-debug.*
