@@ -35,12 +35,18 @@ export default function GlobalSummary({ noHeader }: GlobalSummaryProps) {
 
   useEffect(() => {
     getInfos()
+
+    const interval = setInterval(() => {
+      getInfos()
+    }, 60000)
+
+    return () => clearInterval(interval)
   }, [currentUserLocation, planets])
 
-  const getInfos = async () => {
-    const nightPastTwelve = isNightPastTwelve(new Date(), { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon })
-    console.log('nightPastTwelve', nightPastTwelve);
-    
+  const getInfos = async (): Promise<void> => {
+    if(!currentUserLocation) return;
+    const nightPastTwelve: boolean = isNightPastTwelve(new Date(), { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon })
+
     // If isNightPastTwelve is true, we need to set the date to the previous day
     const date = new Date()
     date.setDate(date.getDate() - (nightPastTwelve ? 1 : 0))    
@@ -66,7 +72,8 @@ export default function GlobalSummary({ noHeader }: GlobalSummaryProps) {
     planets.forEach((planet: GlobalPlanet) => {
       const target: EquatorialCoordinate = { ra: planet.ra, dec: planet.dec }
       const isAbove = isBodyAboveHorizon(date, observer, target, horizonAngle)
-      if (isAbove && planet.name !== 'Earth') {
+
+      if (!isAbove && planet.name !== 'Earth') {
         vp.push(planet)
       }
     })

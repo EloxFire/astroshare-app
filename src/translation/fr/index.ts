@@ -28,6 +28,7 @@ import { solarWeatherTranslations } from "./screens/solarWeather";
 import { transitsTranslations } from "./screens/transits";
 import { viewpointsManagerTranslations } from "./screens/viewpointsManager";
 import { weatherTranslation } from "./screens/weather";
+import {launchesScreenTranslations} from "./screens/launches";
 
 export const frTranslations = {
   onboarding: onboardingTranslations,
@@ -59,5 +60,6 @@ export const frTranslations = {
   about: aboutTranslations,
   widgets: widgetsTranslations,
   spaceStuff: spaceStuffTranslations,
-  changelog: changelogScreenTranslations
+  changelog: changelogScreenTranslations,
+  launchesScreen: launchesScreenTranslations,
 }

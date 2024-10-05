@@ -1,26 +1,18 @@
-import React, { useEffect, useState } from 'react'
+import React, {ReactNode} from 'react'
 import { Image, Text, TouchableOpacity, View } from 'react-native'
+import {i18n} from "../../helpers/scripts/i18n";
 import { launchCardStyles } from '../../styles/components/cards/launchCard'
 import { getLaunchStatusColor } from '../../helpers/scripts/launches/getLaunchStatusColor'
-import axios from 'axios'
+import DSOValues from "../commons/DSOValues";
+import dayjs from "dayjs";
+import {truncate} from "../../helpers/scripts/utils/formatters/truncate";
 
 interface LaunchCardProps {
   launch: any
   navigation: any
 }
 
-export default function LaunchCard({ launch, navigation }: LaunchCardProps) {
-
-  const [agencyDetails, setAgencyDetails] = useState<any>(null)
-
-  useEffect(() => {
-    getAgencyDetails()
-  }, [])
-
-  const getAgencyDetails = async () => {
-    const agency = await axios.get(launch.launch_service_provider.url)
-    setAgencyDetails(agency.data)
-  }
+export default function LaunchCard({ launch, navigation }: LaunchCardProps): ReactNode {
 
   return (
     <TouchableOpacity style={launchCardStyles.card}>
@@ -31,30 +23,17 @@ export default function LaunchCard({ launch, navigation }: LaunchCardProps) {
             <Text style={launchCardStyles.card.content.header.title}>{launch.name.split('|')[0].trim()}</Text>
             <View style={launchCardStyles.card.content.header.subtitleContainer}>
               <Text style={launchCardStyles.card.content.header.subtitleContainer.label}>Mission : </Text>
-              <Text style={launchCardStyles.card.content.header.subtitleContainer.text}>{launch.name.split('|')[1].trim()}</Text>
+              <Text style={launchCardStyles.card.content.header.subtitleContainer.text}>{truncate(launch.name.split('|')[1].trim(), 25)}</Text>
             </View>
           </View>
           <Text style={[launchCardStyles.card.content.header.badge, {backgroundColor: getLaunchStatusColor(launch.status.id).backgroundColor, color: getLaunchStatusColor(launch.status.id).textColor }]}>{launch.status.abbrev}</Text>
         </View>
         <View style={launchCardStyles.card.content.body}>
-          <View style={launchCardStyles.card.content.body.info}>
-            <Text style={launchCardStyles.card.content.body.info.label}>Lanceur</Text>
-            <Text style={launchCardStyles.card.content.body.info.text}>{launch.rocket.configuration.full_name}</Text>
-          </View>
-          <View style={launchCardStyles.card.content.body.info}>
-            <Text style={launchCardStyles.card.content.body.info.label}>Pas de tir</Text>
-            <Text style={launchCardStyles.card.content.body.info.text}>{launch.pad.name}</Text>
-          </View>
-        </View>
-        <View style={launchCardStyles.card.content.body}>
-          <View style={launchCardStyles.card.content.body.info}>
-            <Text style={launchCardStyles.card.content.body.info.label}>Opérateur</Text>
-            <Image source={{uri: agencyDetails?.social_logo.image_url}} style={{marginTop: 2}} resizeMode='contain' width={30} height={30} />
-          </View>
-          <View style={launchCardStyles.card.content.body.info}>
-            <Text style={launchCardStyles.card.content.body.info.label}>Pas de tir</Text>
-            <Text style={launchCardStyles.card.content.body.info.text}>{launch.pad.name}</Text>
-          </View>
+          <DSOValues small title={`${i18n.t('launchesScreen.launchCards.date')} ${launch.status.id !== 1 ? i18n.t('launchesScreen.launchCards.temporary') : ""}`} value={dayjs(launch.net).format("DD MMM YYYY")} />
+          <DSOValues small title={i18n.t('launchesScreen.launchCards.launcher')} value={launch.rocket.configuration.full_name} />
+          <DSOValues small title={i18n.t('launchesScreen.launchCards.operator')} value={truncate(launch.launch_service_provider.name, 25)} />
+          <DSOValues small title={i18n.t('launchesScreen.launchCards.launchPad')} value={truncate(launch.pad.name, 25)} />
+          <DSOValues small title={i18n.t('launchesScreen.launchCards.client')} value={launch.mission.agencies.length > 0 ? truncate(launch.mission.agencies[0].name, 25) : "N/A" } />
         </View>
       </View>
     </TouchableOpacity>

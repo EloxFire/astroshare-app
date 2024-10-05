@@ -9,11 +9,11 @@ export const launchCardStyles = {
     borderWidth: 1,
     borderRadius: 10,
     marginBottom: 20,
-    height: 150,
+    height: 165,
 
     thumbnail: {
-      height: 148,
-      width: 80,
+      height: 163,
+      width: 100,
       borderTopLeftRadius: 10,
       borderBottomLeftRadius: 10,
     },
@@ -33,6 +33,10 @@ export const launchCardStyles = {
         flexDirection: 'row' as 'row',
         justifyContent: 'space-between' as 'space-between',
         alignItems: 'flex-start' as 'flex-start',
+        borderBottomWidth: 1,
+        borderColor: app_colors.white_twenty,
+        paddingBottom: 5,
+        marginBottom: 5,
 
         title: {
           fontSize: 16,
@@ -69,28 +73,9 @@ export const launchCardStyles = {
 
       body: {
         display: 'flex' as 'flex',
-        flexDirection: 'row' as 'row',
+        flexDirection: 'column' as 'column',
         justifyContent: 'space-between' as 'space-between',
-        alignItems: 'center' as 'center',
-        paddingTop: 10,
-
-        info: {
-          display: 'flex' as 'flex',
-          flexDirection: 'column' as 'column',
-  
-          label: {
-            fontSize: 12,
-            fontFamily: 'AuxMono',
-            color: app_colors.white,
-            opacity: .5,
-          },
-  
-          text: {
-            fontSize: 12,
-            fontFamily: 'GilroyRegular',
-            color: app_colors.white,
-          }
-        }
+        flex: 1,
       }
     }
   }

@@ -46,6 +46,7 @@ import WidgetManager from "./src/screens/WidgetManager";
 import { SpaceXContextProvider } from "./src/contexts/SpaceXContext";
 import ChangelogScreen from "./src/screens/settings/Changelog";
 import LaunchesScreen from "./src/screens/launches/Launches";
+import { LaunchDataContextProvider } from "./src/contexts/LaunchContext";
 
 dayjs.locale('fr');
 dayjs.extend(LocalizedFormat)
@@ -93,35 +94,37 @@ export default function App() {
             <ObservationSpotProvider>
               <SolarSystemProvider>
                 <SpaceXContextProvider>
-                  <StatusBar animated style="light" translucent />
-                  <Stack.Navigator screenOptions={{ headerShown: false }}>
-                    <Stack.Screen name={routes.onboarding.path} component={Onboarding} />
-                    <Stack.Screen name={routes.tutorial.path} component={TutorialScreen} />
-                    <Stack.Screen name={routes.home.path} component={Home} />
-                    <Stack.Screen name={routes.objectDetails.path} component={ObjectDetails} />
-                    <Stack.Screen name={routes.planetDetails.path} component={PlanetDetails} />
-                    <Stack.Screen name={routes.brightStarDetails.path} component={BrightStarDetails} />
-                    <Stack.Screen name={routes.scopeAlignment.path} component={ScopeAlignment} />
-                    <Stack.Screen name={routes.weather.path} component={Weather} />
-                    <Stack.Screen name={routes.moonPhases.path} component={MoonPhases} />
-                    <Stack.Screen name={routes.solarWeather.path} component={SolarWeather} />
-                    <Stack.Screen name={routes.apod.path} component={Apod} />
-                    <Stack.Screen name={routes.settings.path} component={Settings} />
-                    <Stack.Screen name={routes.favoritesViewPoints.path} component={ViewPointsManager} />
-                    <Stack.Screen name={routes.about.path} component={About} />
-                    <Stack.Screen name={routes.satelliteTracker.path} component={SatelliteTracker} />
-                    <Stack.Screen name={routes.issTracker.path} component={IssTracker} />
-                    <Stack.Screen name={routes.starlinkTracker.path} component={StarlinkTracker} />
-                    <Stack.Screen name={routes.favorites.path} component={FavouritesScreen} />
-                    <Stack.Screen name={routes.skymapgenerator.path} component={SkyMapGenerator} />
-                    <Stack.Screen name={routes.language.path} component={LanguageSelection} />
-                    <Stack.Screen name={routes.sellScreen.path} component={SellScreen} />
-                    <Stack.Screen name={routes.transitScreen.path} component={TransitsScreen} />
-                    <Stack.Screen name={routes.astroDataInfos.path} component={AstroDataInfos} />
-                    <Stack.Screen name={routes.widgetsManager.path} component={WidgetManager} />
-                    <Stack.Screen name={routes.changelogScreen.path} component={ChangelogScreen} />
-                    <Stack.Screen name={routes.launchesScreen.path} component={LaunchesScreen} />
-                  </Stack.Navigator>
+                  <LaunchDataContextProvider>
+                    <StatusBar animated style="light" translucent />
+                    <Stack.Navigator screenOptions={{ headerShown: false }}>
+                      <Stack.Screen name={routes.onboarding.path} component={Onboarding} />
+                      <Stack.Screen name={routes.tutorial.path} component={TutorialScreen} />
+                      <Stack.Screen name={routes.home.path} component={Home} />
+                      <Stack.Screen name={routes.objectDetails.path} component={ObjectDetails} />
+                      <Stack.Screen name={routes.planetDetails.path} component={PlanetDetails} />
+                      <Stack.Screen name={routes.brightStarDetails.path} component={BrightStarDetails} />
+                      <Stack.Screen name={routes.scopeAlignment.path} component={ScopeAlignment} />
+                      <Stack.Screen name={routes.weather.path} component={Weather} />
+                      <Stack.Screen name={routes.moonPhases.path} component={MoonPhases} />
+                      <Stack.Screen name={routes.solarWeather.path} component={SolarWeather} />
+                      <Stack.Screen name={routes.apod.path} component={Apod} />
+                      <Stack.Screen name={routes.settings.path} component={Settings} />
+                      <Stack.Screen name={routes.favoritesViewPoints.path} component={ViewPointsManager} />
+                      <Stack.Screen name={routes.about.path} component={About} />
+                      <Stack.Screen name={routes.satelliteTracker.path} component={SatelliteTracker} />
+                      <Stack.Screen name={routes.issTracker.path} component={IssTracker} />
+                      <Stack.Screen name={routes.starlinkTracker.path} component={StarlinkTracker} />
+                      <Stack.Screen name={routes.favorites.path} component={FavouritesScreen} />
+                      <Stack.Screen name={routes.skymapgenerator.path} component={SkyMapGenerator} />
+                      <Stack.Screen name={routes.language.path} component={LanguageSelection} />
+                      <Stack.Screen name={routes.sellScreen.path} component={SellScreen} />
+                      <Stack.Screen name={routes.transitScreen.path} component={TransitsScreen} />
+                      <Stack.Screen name={routes.astroDataInfos.path} component={AstroDataInfos} />
+                      <Stack.Screen name={routes.widgetsManager.path} component={WidgetManager} />
+                      <Stack.Screen name={routes.changelogScreen.path} component={ChangelogScreen} />
+                      <Stack.Screen name={routes.launchesScreen.path} component={LaunchesScreen} />
+                    </Stack.Navigator>
+                  </LaunchDataContextProvider>
                 </SpaceXContextProvider>
               </SolarSystemProvider>
             </ObservationSpotProvider>
