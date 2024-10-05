@@ -13,7 +13,7 @@ import { i18n } from '../helpers/scripts/i18n'
 import { GlobalPlanet } from '../helpers/types/GlobalPlanet'
 import { Star } from '../helpers/types/Star'
 import PlanetCardLite from '../components/cards/PlanetCardLite'
-import BrightStarCardLite from '../components/cards/BrightStarCardList'
+import BrightStarCardLite from '../components/cards/BrightStarCardLite'
 import ScreenInfo from '../components/ScreenInfo'
 
 export default function FavouritesScreen({ navigation }: any) {

@@ -12,6 +12,12 @@ export const objectCardLiteStyles = {
     alignItems: 'center' as 'center',
     gap: 10,
     marginBottom: 8,
+
+    visibility: {
+      width: 2,
+      height: '100%' as '100%',
+      borderRadius: 2
+    },
     
     image: {
       width: 35,
