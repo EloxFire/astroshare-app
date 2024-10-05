@@ -46,7 +46,8 @@ export const storageKeys = {
   launches: {
     lastUpdate: 'launchesLastUpdate',
     data: 'launchesData',
-  }
+  },
+  notificationsId: 'notificationsId',
 }
 
 export const sunImagesSrcWavelengths = {

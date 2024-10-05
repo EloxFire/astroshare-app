@@ -60,7 +60,6 @@ dayjs.tz.setDefault('Europe/Paris');
 dayjs().format('L LT')
 
 
-
 const Stack = createNativeStackNavigator();
 
 Notifications.setNotificationHandler({
@@ -74,9 +73,6 @@ Notifications.setNotificationHandler({
 export default function App() {
   const [appIsReady, setAppIsReady] = useState(false);
   const [expoPushToken, setExpoPushToken] = useState('');
-  const [notification, setNotification] = useState<Notifications.Notification | undefined>(undefined);
-  const notificationListener = useRef<Notifications.Subscription>();
-  const responseListener = useRef<Notifications.Subscription>();
 
   useEffect(() => {
     async function prepare() {
@@ -98,21 +94,6 @@ export default function App() {
     registerForPushNotificationsAsync()
       .then(token => setExpoPushToken(token ?? ''))
       .catch((error: any) => setExpoPushToken(`${error}`));
-
-    notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
-      setNotification(notification);
-    });
-
-    responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
-      console.log(response);
-    });
-
-    return () => {
-      notificationListener.current &&
-      Notifications.removeNotificationSubscription(notificationListener.current);
-      responseListener.current &&
-      Notifications.removeNotificationSubscription(responseListener.current);
-    };
   }, []);
 
   useEffect(() => {

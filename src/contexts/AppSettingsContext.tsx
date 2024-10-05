@@ -12,8 +12,9 @@ import { isFirstLaunch } from '../helpers/scripts/checkFirstLaunch'
 import * as Location from 'expo-location'
 import Toast from 'react-native-root-toast';
 import NetInfo from '@react-native-community/netinfo';
-import { Night } from 'react-native-color-matrix-image-filters'
 import { HomeWidget } from '../helpers/types/HomeWidget'
+import { v4 as uuidv4 } from 'uuid';
+import axios from "axios";
 
 const AppSettingsContext = createContext<any>({})
 
@@ -83,6 +84,18 @@ export function AppSettingsProvider({ children }: AppSettingsProviderProps) {
       }
     })()
   }, [])
+
+  // SETUP USER NOTIFICATIONS
+  useEffect(() => {
+    if(currentUserLocation){
+      (async () => {
+        const hasNotificationsSetup = await getData(storageKeys.notificationsId);
+        if(!hasNotificationsSetup){
+
+        }
+      })()
+    }
+  }, [currentUserLocation])
 
   const updateSelectedHomeWidget = async (widget: HomeWidget) => {
     await storeData(storageKeys.homeWidgets, widget);
