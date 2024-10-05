@@ -24,9 +24,11 @@ export const planetTranslations = {
     distanceSun: "Distance du Soleil",
     rightAscension: "Ascension droite",
     declination: "Déclinaison",
+    characteristic: "Caractéristique",
     short: {
       surfaceTemperature: "Temp (surface)",
       naturalSatellites: "Satellites",
+      inclination: "Inclinaison axe",
     }
   },
   units: {

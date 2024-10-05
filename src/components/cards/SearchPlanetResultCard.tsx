@@ -49,9 +49,18 @@ export default function SearchPlanetResultCard({ planet, navigation }: SearchPla
           <Image style={searchResultCardStyles.card.image} source={astroImages[planet.name.toUpperCase()]} />
         </View>
         <View style={searchResultCardStyles.card.body}>
-          <DSOValues small title={i18n.t('detailsPages.planets.labels.rightAscension')} value={prettyRa(convertDegreesRaToHMS(planet.ra))} />
-          <DSOValues small title={i18n.t('detailsPages.planets.labels.declination')} value={prettyDec(convertDegreesDecToDMS(planet.dec))} />
-          {/* <DSOValues small title={i18n.t('detailsPages.planets.labels.position')} value={`${planetsOrder[planet.name.toUpperCase()]} / 8`} /> */}
+          {
+            planet.name !== 'Earth' ?
+            <>
+              <DSOValues small title={i18n.t('detailsPages.planets.labels.rightAscension')} value={prettyRa(convertDegreesRaToHMS(planet.ra))} />
+              <DSOValues small title={i18n.t('detailsPages.planets.labels.declination')} value={prettyDec(convertDegreesDecToDMS(planet.dec))} />
+            </>
+            :
+            <>
+              <DSOValues small title={i18n.t('detailsPages.planets.labels.characteristic')} value={"Vous êtes ici"} />
+              <DSOValues small title={i18n.t('detailsPages.planets.labels.short.inclination')} value={23.5 + "°"} />
+            </>
+          }
           <DSOValues small title={i18n.t('detailsPages.planets.labels.diameter')} value={formatKm(planetsSizes[planet.name.toUpperCase()], currentLCID).toString()} />
           <DSOValues small title={i18n.t('detailsPages.planets.labels.short.surfaceTemperature')} value={formatCelsius(planetTemps[planet.name.toUpperCase()], currentLCID).toString()} />
           <DSOValues small title={i18n.t('detailsPages.planets.labels.short.naturalSatellites')} value={planetSatellites[planet.name.toUpperCase()].toString()} />
