@@ -19,6 +19,12 @@ export function LaunchDataContextProvider({ children }: LaunchContextProviderPro
 
   useEffect(() => {
     getLaunchData()
+
+    const interval = setInterval(() => {
+      getLaunchData()
+    }, 600000)
+
+    return () => clearInterval(interval)
   }, [])
   
   
