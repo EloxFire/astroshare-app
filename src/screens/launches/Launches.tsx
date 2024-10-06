@@ -8,6 +8,7 @@ import { useLaunchData } from "../../contexts/LaunchContext";
 import SimpleButton from "../../components/commons/buttons/SimpleButton";
 import PageTitle from "../../components/commons/PageTitle";
 import LaunchCard from "../../components/cards/LaunchCard";
+import dayjs from "dayjs";
 
 export default function LaunchesScreen({ navigation }: any) {
 
@@ -22,6 +23,7 @@ export default function LaunchesScreen({ navigation }: any) {
       />
       <View style={globalStyles.screens.separator} />
       <ScrollView>
+        <SimpleButton disabled small text={`${i18n.t('launchesScreen.launchCards.lastUpdated')}`} />
         <View style={launcheScreenStyles.content}>
           {
             !launchContextLoading ?

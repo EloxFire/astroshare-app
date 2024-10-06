@@ -7,6 +7,7 @@ export const launchesScreenTranslations = {
     operator: 'Operator',
     launchPad: 'Launch Pad',
     client: 'Client',
-    noLaunches: 'No launches found...'
+    noLaunches: 'No launches found...',
+    lastUpdated: 'Updated every 30 minutes',
   }
 }

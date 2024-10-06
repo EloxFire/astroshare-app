@@ -24,15 +24,17 @@ import { i18n } from "../helpers/scripts/i18n";
 import { prettyDec, prettyRa } from "../helpers/scripts/astro/prettyCoords";
 import { convertDegreesDecToDMS } from "../helpers/scripts/astro/coords/convertDegreesDecToDms";
 import { convertDegreesRaToHMS } from "../helpers/scripts/astro/coords/convertDegreesRaToHMS";
+import {useSolarSystem} from "../contexts/SolarSystemContext";
 
 export default function PlanetDetails({ route, navigation }: any) {
 
+  const {planets} = useSolarSystem()
   const { currentUserLocation } = useSettings()
   const { selectedSpot, defaultAltitude } = useSpot()
   const { currentLCID, currentLocale } = useTranslation()
 
   const params = route.params;
-  const planet: GlobalPlanet = params.planet;
+  const planet: GlobalPlanet = planets.find((obj: GlobalPlanet) => obj.name === params.planet.name) as GlobalPlanet;
 
   const [selectedTimeBase, setSelectedTimeBase] = useState<'relative' | 'absolute'>('relative')
   const [favouritePlanets, setFavouritePlanets] = useState<GlobalPlanet[]>([])

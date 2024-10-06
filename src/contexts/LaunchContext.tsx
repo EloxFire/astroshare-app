@@ -30,9 +30,14 @@ export function LaunchDataContextProvider({ children }: LaunchContextProviderPro
   
   const getLaunchData= async () => {
     setLaunchContextLoading(true)
-    const launchesData = await axios.get(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/launches/upcoming`)
-    setLaunchData(launchesData.data.data)
-    setLaunchContextLoading(false)
+    try{
+      const launchesData = await axios.get(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/launches/upcoming`)
+      setLaunchData(launchesData.data.data)
+      setLaunchContextLoading(false)
+    }catch (e) {
+      console.log(e)
+      setLaunchContextLoading(false)
+    }
   }
 
   const values = {
