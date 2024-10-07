@@ -26,10 +26,19 @@ export function SpaceXContextProvider({ children }: SpaceXContextProviderProps) 
   
   
   const getSpacexData = async () => {
-    const constellation = await axios.get(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/spacex/starlink`)
-    const sl = await axios.get(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/spacex/starlink/launches/next`)    
-    setNextStarlinkLaunches(sl.data.data.results)
-    setConstellation(constellation.data.data)
+    try {
+      const constellation = await axios.get(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/spacex/starlink`)
+      setConstellation(constellation.data.data)
+    } catch (e) {
+      console.log("Sartlink constellation get error :", e)
+    }
+
+    // try {
+    //   const sl = await axios.get(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/spacex/starlink/launches/next`)
+    //   setNextStarlinkLaunches(sl.data.data.results)
+    // } catch (e) {
+    //   console.log("Sartlink next launches get error :", e)
+    // }
   }
 
   const values = {

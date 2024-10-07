@@ -6,16 +6,18 @@ import { getLaunchStatusColor } from '../../helpers/scripts/launches/getLaunchSt
 import DSOValues from "../commons/DSOValues";
 import dayjs from "dayjs";
 import {truncate} from "../../helpers/scripts/utils/formatters/truncate";
+import {routes} from "../../helpers/routes";
 
 interface LaunchCardProps {
   launch: any
   navigation: any
+  noFollow?: boolean
 }
 
-export default function LaunchCard({ launch, navigation }: LaunchCardProps): ReactNode {
+export default function LaunchCard({ launch, navigation, noFollow }: LaunchCardProps): ReactNode {
 
   return (
-    <TouchableOpacity style={launchCardStyles.card}>
+    <TouchableOpacity style={launchCardStyles.card} disabled={noFollow} onPress={() => navigation.navigate(routes.launchDetails.path, {launch: launch})}>
       <Image style={launchCardStyles.card.thumbnail} resizeMode='cover' source={{uri: launch.image.thumbnail_url}} />
       <View style={launchCardStyles.card.content}>
         <View style={launchCardStyles.card.content.header}>
@@ -29,11 +31,11 @@ export default function LaunchCard({ launch, navigation }: LaunchCardProps): Rea
           <Text style={[launchCardStyles.card.content.header.badge, {backgroundColor: getLaunchStatusColor(launch.status.id).backgroundColor, color: getLaunchStatusColor(launch.status.id).textColor }]}>{launch.status.abbrev}</Text>
         </View>
         <View style={launchCardStyles.card.content.body}>
-          <DSOValues small title={`${i18n.t('launchesScreen.launchCards.date')} ${launch.status.id !== 1 ? i18n.t('launchesScreen.launchCards.temporary') : ""}`} value={dayjs(launch.net).format("DD MMM YYYY")} />
-          <DSOValues small title={i18n.t('launchesScreen.launchCards.launcher')} value={launch.rocket.configuration.full_name} />
-          <DSOValues small title={i18n.t('launchesScreen.launchCards.operator')} value={truncate(launch.launch_service_provider.name, 25)} />
-          <DSOValues small title={i18n.t('launchesScreen.launchCards.launchPad')} value={truncate(launch.pad.name, 25)} />
-          <DSOValues small title={i18n.t('launchesScreen.launchCards.client')} value={launch.mission.agencies.length > 0 ? truncate(launch.mission.agencies[0].name, 25) : "N/A" } />
+          <DSOValues title={`${i18n.t('launchesScreen.launchCards.date')} ${launch.status.id === 2 || launch.status.id === 8 ? i18n.t('launchesScreen.launchCards.temporary') : ""}`} value={dayjs(launch.net).format("DD MMM YYYY")} />
+          <DSOValues title={i18n.t('launchesScreen.launchCards.launcher')} value={launch.rocket.configuration.full_name} />
+          <DSOValues title={i18n.t('launchesScreen.launchCards.operator')} value={truncate(launch.launch_service_provider.name, 20)} />
+          <DSOValues title={i18n.t('launchesScreen.launchCards.launchPad')} value={truncate(launch.pad.name, 20)} />
+          <DSOValues title={i18n.t('launchesScreen.launchCards.client')} value={launch.mission.agencies.length > 0 ? truncate(launch.mission.agencies[0].name, 20) : "N/A" } />
         </View>
       </View>
     </TouchableOpacity>

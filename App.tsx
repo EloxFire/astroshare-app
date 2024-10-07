@@ -47,6 +47,7 @@ import { SpaceXContextProvider } from "./src/contexts/SpaceXContext";
 import ChangelogScreen from "./src/screens/settings/Changelog";
 import LaunchesScreen from "./src/screens/launches/Launches";
 import { LaunchDataContextProvider } from "./src/contexts/LaunchContext";
+import LaunchDetails from "./src/screens/launches/LaunchDetails";
 
 dayjs.locale('fr');
 dayjs.extend(LocalizedFormat)
@@ -123,6 +124,7 @@ export default function App() {
                       <Stack.Screen name={routes.widgetsManager.path} component={WidgetManager} />
                       <Stack.Screen name={routes.changelogScreen.path} component={ChangelogScreen} />
                       <Stack.Screen name={routes.launchesScreen.path} component={LaunchesScreen} />
+                      <Stack.Screen name={routes.launchDetails.path} component={LaunchDetails} />
                     </Stack.Navigator>
                   </LaunchDataContextProvider>
                 </SpaceXContextProvider>

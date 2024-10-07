@@ -25,5 +25,6 @@ export const routes = {
   astroDataInfos: { path: 'AstroDataInfos', requirements: [] },
   widgetsManager: {path: 'WidgetsManager', requirements: []},
   changelogScreen: {path: 'ChangelogScreen', requirements: []},
-  launchesScreen: {path: 'LaunchesScreen', requirements: []}
+  launchesScreen: {path: 'LaunchesScreen', requirements: []},
+  launchDetails: {path: 'LaunchDetails', requirements: []},
 }
