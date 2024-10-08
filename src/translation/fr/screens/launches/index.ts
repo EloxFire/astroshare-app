@@ -20,6 +20,7 @@ export const launchesScreenTranslations = {
       name: "Nom",
       start: "Début",
       founder: "Fondateur",
+      description: "Description"
     },
     mission: {
       title: "La mission",
