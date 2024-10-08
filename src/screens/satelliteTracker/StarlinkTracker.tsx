@@ -22,10 +22,13 @@ import { issTrackerStyles } from '../../styles/screens/satelliteTracker/issTrack
 import { Asset } from 'expo-asset';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import * as FileSystem from 'expo-file-system';
+import {useLaunchData} from "../../contexts/LaunchContext";
+import {LaunchData} from "../../helpers/types/LaunchData";
 
 export default function StarlinkTracker({ navigation }: any) {
 
-  const { constellation, nextStarlinkLaunches} = useSpacex()
+  const { constellation} = useSpacex()
+  const {launchData} = useLaunchData()
 
   const [launchDetails, setLaunchDetails] = useState<number>(-1)
 
@@ -36,7 +39,6 @@ export default function StarlinkTracker({ navigation }: any) {
   const earthMeshRef = useRef<THREE.Mesh | null>(null);
 
   const earthRadius = 6371;  // Earth radius in km
-
 
   const earthRef = useRef<THREE.Mesh | null>(null)
 
@@ -279,8 +281,8 @@ export default function StarlinkTracker({ navigation }: any) {
                 <Text style={globalStyles.sections.title}>{i18n.t('satelliteTracker.starlinkTracker.launches.title')}</Text>
                 <View style={starlinkTrackerStyles.content.launches.list}>
                   {
-                    nextStarlinkLaunches.length > 0 ?
-                    nextStarlinkLaunches.map((launch: any, launch_index: number) => (
+                    launchData.length > 0 ?
+                      launchData.filter((l: LaunchData) => l.slug.includes('starlink')).map((launch: LaunchData, launch_index: number) => (
                       <View key={launch_index} style={starlinkTrackerStyles.content.launches.list.launch}>
                         <Text style={starlinkTrackerStyles.content.launches.list.launch.title}>{launch.name.split('|')[1].trim()}</Text>
                         <View style={starlinkTrackerStyles.content.launches.list.launch.infos}>
@@ -310,7 +312,7 @@ export default function StarlinkTracker({ navigation }: any) {
                             </View>
                             <View style={starlinkTrackerStyles.content.launches.list.launch.infos.info}>
                               <Text style={starlinkTrackerStyles.content.launches.list.launch.infos.info.label}>{i18n.t('satelliteTracker.starlinkTracker.launches.launch.type')}</Text>
-                              <Text style={starlinkTrackerStyles.content.launches.list.launch.infos.info.value}>{launch.launch_service_provider.type}</Text>
+                              <Text style={starlinkTrackerStyles.content.launches.list.launch.infos.info.value}>{launch.launch_service_provider.type.name}</Text>
                             </View>
                           </View>
                         }
