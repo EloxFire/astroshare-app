@@ -42,5 +42,10 @@ export const settingsTranslations = {
       title: "À propos",
       subtitle: "// Version, contact, légal"
     }
+  },
+  categories: {
+    general: "Général",
+    appearance: "Personnalisation",
+    infos: "Informations et sécurité"
   }
 }
