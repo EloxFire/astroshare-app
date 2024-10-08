@@ -66,14 +66,15 @@ export default function GlobalSummary({ noHeader }: GlobalSummaryProps) {
 
     const bands = getTwilightBandsForDay(date, observer)
 
+    // console.log(bands)
     setBackgroundColor(backgroundFromTwilightBands(bands))
 
     let vp: GlobalPlanet[] = [];
     planets.forEach((planet: GlobalPlanet) => {
       const target: EquatorialCoordinate = { ra: planet.ra, dec: planet.dec }
-      const isAbove = isBodyAboveHorizon(date, observer, target, horizonAngle)
+      const isAbove = isBodyAboveHorizon(new Date(), observer, target, horizonAngle)
 
-      if (!isAbove && planet.name !== 'Earth') {
+      if (isAbove && planet.name !== 'Earth') {
         vp.push(planet)
       }
     })
@@ -87,6 +88,7 @@ export default function GlobalSummary({ noHeader }: GlobalSummaryProps) {
     const currentBand = twilightBands.find(band => now > band.interval.from && now < band.interval.to)
     if (!currentBand) return app_colors.white_no_opacity
 
+    console.log(currentBand)
     switch (currentBand.name) {
       case 'Civil':
         return twilightBandsBackgrounds.Civil

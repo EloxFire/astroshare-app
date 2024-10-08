@@ -56,7 +56,6 @@ export default function LaunchDetails({ route, navigation }: LaunchCardProps): R
                   <DSOValues title={i18n.t('launchesScreen.details.mission.name')} value={launch.mission.name}/>
                   <DSOValues title={i18n.t('launchesScreen.details.mission.type')} value={launch.mission.type}/>
                   <DSOValues title={i18n.t('launchesScreen.details.mission.flightProfile')} value={launch.mission.orbit.name}/>
-
                   <Text style={launchDetailsStyles.content.missionCard.subtitle}>{i18n.t('launchesScreen.details.mission.description')}</Text>
                   <Text style={launchDetailsStyles.content.missionCard.description}>{launch.mission.description}</Text>
               </View>
@@ -68,7 +67,7 @@ export default function LaunchDetails({ route, navigation }: LaunchCardProps): R
                   <Text style={launchDetailsStyles.content.programCard.title}>{i18n.t('launchesScreen.details.program.title')}</Text>
                   <DSOValues title={i18n.t('launchesScreen.details.program.name')} value={launch.program[0].name}/>
                   <DSOValues title={i18n.t('launchesScreen.details.program.start')} value={dayjs(launch.program[0].start_date).format('DD/MM/YYYY')}/>
-                  <DSOValues title={i18n.t('launchesScreen.details.program.founder')} value={launch.program[0].agencies[0].name}/>
+                  <DSOValues title={i18n.t('launchesScreen.details.program.founder')} value={launch.program[0].agencies[0].name.length > 30 ? launch.program[0].agencies[0].abbrev : launch.program[0].agencies[0].name}/>
 
                   <Text style={launchDetailsStyles.content.programCard.subtitle}>{i18n.t('launchesScreen.details.program.description')}</Text>
                   <Text style={launchDetailsStyles.content.programCard.description}>{launch.program[0].description}</Text>
