@@ -105,13 +105,13 @@ export default function GlobalSummary({ noHeader }: GlobalSummaryProps) {
 
   return (
     <View style={{ marginTop: noHeader ? 0 : 10, marginBottom: 20 }}>
-      {
-        !noHeader &&
-        <View>
-          <Text style={globalStyles.sections.title}>{i18n.t('common.other.overview')}</Text>
-          <Text style={[globalStyles.sections.subtitle, { marginBottom: 0 }]}>{i18n.t('widgets.homeWidgets.live.title')}</Text>
-        </View>
-      }
+      {/*{*/}
+      {/*  !noHeader &&*/}
+      {/*  <View>*/}
+      {/*    <Text style={globalStyles.sections.title}>{i18n.t('common.other.overview')}</Text>*/}
+      {/*    <Text style={[globalStyles.sections.subtitle, { marginBottom: 0 }]}>{i18n.t('widgets.homeWidgets.live.title')}</Text>*/}
+      {/*  </View>*/}
+      {/*}*/}
       <ImageBackground source={loading ? undefined : backgroundColor} imageStyle={globalSummaryStyles.container.backgroundPicture} resizeMode='cover' style={[globalSummaryStyles.container, { justifyContent: loading ? 'center' : 'space-between' }]}>
         {
           loading ?

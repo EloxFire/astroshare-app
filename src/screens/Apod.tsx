@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { Dimensions, Image, ScrollView, Text, View } from 'react-native'
+import {Dimensions, Image, ImageBackground, ScrollView, Text, View} from 'react-native'
 import { globalStyles } from '../styles/global'
 import { apodStyles } from '../styles/screens/apod'
 import { showToast } from '../helpers/scripts/showToast'
@@ -66,7 +66,7 @@ export default function Apod({ navigation }: any) {
                 />
               :
               apod?.media_type === 'image' && (
-                <Image source={{ uri: apod?.url }} style={{ width: Dimensions.get('screen').width, height: Dimensions.get('screen').width, marginVertical: 10 }} resizeMode='contain' />
+                <Image source={{ uri: apod?.url }} style={{width: Dimensions.get('screen').width, height: Dimensions.get('screen').width, marginVertical: 10}} resizeMode='contain' />
               )
           }
 

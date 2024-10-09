@@ -16,7 +16,8 @@ export const issTrackerTranslations = {
     title: "Carte 2D interactive",
     button: "Re-centrer",
   },
-  nextPasses: {
-    title: "Prochains passages (48h)",
+  nextLaunches: {
+    title: "Prochains lancements vers l'ISS",
+    noLaunches: "Aucune mission de ravitaillement à venir ou lancements habités vers l'ISS",
   }
 }

@@ -16,7 +16,6 @@ import PageTitle from '../../components/commons/PageTitle'
 import { app_colors } from '../../helpers/constants'
 import { getSatelliteCoordsFromTLE } from '../../helpers/scripts/astro/coords/getSatelliteCoordsFromTLE'
 import { degToRad } from 'three/src/math/MathUtils'
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import ToggleButton from '../../components/commons/buttons/ToggleButton'
 import { issTrackerStyles } from '../../styles/screens/satelliteTracker/issTracker'
 import DSOValues from '../../components/commons/DSOValues'
@@ -27,23 +26,22 @@ import { mapStyle } from '../../helpers/mapJsonStyle'
 import SimpleButton from '../../components/commons/buttons/SimpleButton'
 import * as FileSystem from 'expo-file-system';
 import { Asset } from 'expo-asset';
-import { getNextIssPasses, IssPass } from '../../helpers/scripts/utils/satellites/getNextIssPasses'
-import { useSettings } from '../../contexts/AppSettingsContext'
-import IssPassCard from '../../components/cards/IssPassCard'
-import { isNight } from '@observerly/astrometry'
+import { IssPass } from '../../helpers/scripts/utils/satellites/getNextIssPasses'
+import {useLaunchData} from "../../contexts/LaunchContext";
+import {LaunchData} from "../../helpers/types/LaunchData";
+import LaunchCard from "../../components/cards/LaunchCard";
 
 export default function IssTracker({ navigation }: any) {
 
   const {currentLocale} = useTranslation()
-  const {currentUserLocation} = useSettings()
+  const {launchData} = useLaunchData()
 
   // THREE RELATED OBJECTS
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
   const sceneRef = useRef<THREE.Scene | null>(null);
   const rendererRef = useRef<ExpoTHREE.Renderer | null>(null);
   const earthMeshRef = useRef<THREE.Mesh | null>(null);
-  const issMeshRef = useRef<THREE.Points | null>(null);
-  
+
   const earthRadius = 6371;  // Earth radius in km
   
   const [issPosition, setIssPosition] = useState<any>(null)
@@ -53,10 +51,8 @@ export default function IssTracker({ navigation }: any) {
   const [focusIss, setFocusIss] = useState(true)
 
   const [issPasses, setIssPasses] = useState<IssPass[]>([])
-
   const mapRef = useRef(null)
-  const youtubePlayerRef = useRef(null)
-  
+
   const focusIssRef = useRef(focusIss);
 
   useEffect(() => {
@@ -97,13 +93,6 @@ export default function IssTracker({ navigation }: any) {
         dms_lon: convertDDtoDMS(position.data.data.longitude, position.data.data.longitude).dms_lon,
         country: name.country
       }
-
-      // const passes: IssPass[] = getNextIssPasses(currentUserLocation.lat, currentUserLocation.lon, 341, [tle.data.data.line1.trim(), tle.data.data.line2.trim()])
-      // if(passes){
-      //   setIssPasses(passes)
-      // }else {
-      //   setIssPasses([])
-      // }
       
 
       setIssPosition(iss)
@@ -402,19 +391,20 @@ const centerIss = () => {
                   }
                 </MapView>
               </View>
-              {/* <View style={issTrackerStyles.content.nextPasses}>
-                <Text style={issTrackerStyles.content.liveStats.title}>{i18n.t('satelliteTracker.issTracker.nextPasses.title')}</Text>
+
+              <View style={issTrackerStyles.content.liveStats}>
+                <Text style={issTrackerStyles.content.liveStats.title}>{i18n.t('satelliteTracker.issTracker.nextLaunches.title')}</Text>
                 {
-                  issPasses.length > 0 ?
-                  issPasses.map((pass, index) => {
-                    if(isNight(new Date(pass.startTime), {latitude: currentUserLocation.lat, longitude: currentUserLocation.lon})){
-                      return <IssPassCard key={index} pass={pass} navigation={navigation} />
-                    }
+                  launchData.filter((l: LaunchData)=> (l.mission.name.includes('CRS') && l.mission.type.includes('Resupply'))).length > 0 ?
+                  launchData.filter((l: LaunchData)=> (l.mission.name.includes('CRS') && l.mission.type.includes('Resupply'))).map((launch: LaunchData, index: number) => {
+                    return(
+                      <LaunchCard launch={launch} navigation={navigation} key={index} />
+                    )
                   })
-                  :
-                  <Text>Pas de passage à votre position dans les 48 prochaines heures</Text>
+                    :
+                    <SimpleButton text={i18n.t('satelliteTracker.issTracker.nextLaunches.noLaunches')} disabled fullWidth />
                 }
-              </View> */}
+              </View>
             </View>
           </ScrollView>
         </View>

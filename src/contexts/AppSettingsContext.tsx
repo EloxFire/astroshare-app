@@ -7,12 +7,10 @@ import { getLocationName } from '../helpers/api/getLocationFromCoords'
 import { showToast } from '../helpers/scripts/showToast'
 import { app_colors, storageKeys } from '../helpers/constants'
 import { getData, storeData } from '../helpers/storage'
-import { routes } from '../helpers/routes'
 import { isFirstLaunch } from '../helpers/scripts/checkFirstLaunch'
 import * as Location from 'expo-location'
 import Toast from 'react-native-root-toast';
 import NetInfo from '@react-native-community/netinfo';
-import { Night } from 'react-native-color-matrix-image-filters'
 import { HomeWidget } from '../helpers/types/HomeWidget'
 
 const AppSettingsContext = createContext<any>({})
