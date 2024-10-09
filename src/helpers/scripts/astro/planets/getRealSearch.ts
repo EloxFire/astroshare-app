@@ -4,12 +4,15 @@ export const getRealSearch = (searchString: string): string => {
   switch (searchString.toLowerCase()) {
     // Planets
     case 'mercure':
+      return 'Mercury';
     case 'mercury':
       return 'Mercury';
     case 'vénus':
+      return 'Venus';
     case 'venus':
       return 'Venus';
     case 'terre':
+      return 'Earth';
     case 'earth':
       return 'Earth';
     case 'mars':
@@ -17,6 +20,7 @@ export const getRealSearch = (searchString: string): string => {
     case 'jupiter':
       return 'Jupiter';
     case 'saturne':
+      return 'Saturn';
     case 'saturn':
       return 'Saturn';
     case 'uranus':
