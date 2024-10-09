@@ -88,7 +88,7 @@ export default function GlobalSummary({ noHeader }: GlobalSummaryProps) {
     const currentBand = twilightBands.find(band => now > band.interval.from && now < band.interval.to)
     if (!currentBand) return app_colors.white_no_opacity
 
-    console.log(currentBand)
+    // console.log(currentBand)
     switch (currentBand.name) {
       case 'Civil':
         return twilightBandsBackgrounds.Civil

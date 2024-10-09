@@ -1,28 +1,27 @@
 export const aboutTranslations = {
   app: {
-    title: "Application",
-    version: "Version :",
-    lastUpdate: "Dernière mise à jour :",
+    title: "Astroshare c'est quoi ?",
+    description: "Astroshare est né de ma passion pour l'astronomie et du souhait de la rendre accessible à tous. Quand j'ai découvert cet univers, j'étais seul, sans aide pour utiliser mon matériel. Aujourd'hui, membre d'une association (les AAAOV), je peux apprendre auprès de personnes expérimentées. Cependant, beaucoup n'ont pas cette chance. C'est pourquoi j'ai créé Astroshare, un site qui offre aux amateurs d'astronomie, débutants ou confirmés, des ressources et outils faciles d'accès pour apprendre de manière ludique."
+  },
+  version: {
+    title: "Version",
+    description: "Vous utilisez la version {{version}} d'Astroshare",
+    lastUpdate: "Dernière mise à jour : {{date}}"
   },
   contact: {
     title: "Contact",
-    description: "Pour tout renseignement, ou afin de reporter un bug, merci de me contacter directement par mail à l'adresse suivante :",
   },
   legal: {
     title: "Mentions légales",
-    editor: "Éditeur : Enzo Avagliano",
-    address: "Siège social : 36 rue Mignet, 13100 Aix-en-Provence, France",
-    phone: "Téléphone : 06.69.07.42.59",
-    siret: "SIRET : 89122657300014"
+    editor: "Éditeur :\nEnzo Avagliano",
+    address: "Siège social :\n36 rue Mignet, 13100 Aix-en-Provence, France",
+    phone: "Téléphone :\n06.69.07.42.59",
+    siret: "SIRET :\n89122657300014"
   },
   privacy: {
     title: "Politique de confidentialité",
-    description: "La politique de confidentialité est accessible via le lien suivant :",
-    linkTitle: "Politique de confidentialité",
   },
   license: {
-    title: "License",
-    subtitle: "MIT License",
-    description: "Copyright (©) $year Enzo Avagliano",
+    title: "MIT License",
   }
 }

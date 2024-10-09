@@ -99,6 +99,7 @@ export const launchDetailsStyles = {
         fontSize: 14,
         fontFamily: 'GilroyRegular',
         color: app_colors.white,
+        textAlign: 'justify' as 'justify',
       }
     },
 
@@ -136,6 +137,7 @@ export const launchDetailsStyles = {
         fontSize: 14,
         fontFamily: 'GilroyRegular',
         color: app_colors.white,
+        textAlign: 'justify' as 'justify',
       }
     }
   }
