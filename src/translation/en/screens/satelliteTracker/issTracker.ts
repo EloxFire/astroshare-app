@@ -16,4 +16,8 @@ export const issTrackerTranslations = {
     title: "Interactive 2D map",
     button: "Re-center",
   },
+  nextLaunches: {
+    title: "Next launches to the ISS",
+    noLaunches: "No upcoming resupply missions or crewed launches to the ISS",
+  }
 }

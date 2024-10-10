@@ -34,11 +34,19 @@ export default function AstroDataInfos({ navigation }: any) {
             <Text style={[globalStyles.sections.text, { marginBottom: 10 }]}>{i18n.t('astroDataInfos.planets.text1')}</Text>
           </View>
           <View style={globalStyles.globalContainer}>
+            <Text style={globalStyles.sections.title}>{i18n.t('astroDataInfos.launchData.title')}</Text>
+            <Text style={[globalStyles.sections.text, { marginBottom: 10 }]}>{i18n.t('astroDataInfos.launchData.text1')}</Text>
+          </View>
+          <View style={globalStyles.globalContainer}>
             <Text style={globalStyles.sections.title}>{i18n.t('astroDataInfos.satellites.title')}</Text>
             <View style={{ marginBottom: 0 }}>
               <Text style={[globalStyles.sections.text, { marginTop: 10, textTransform: 'uppercase', fontFamily: 'GilroyBlack' }]}>{i18n.t('astroDataInfos.satellites.iss.title')}</Text>
               <Text style={[globalStyles.sections.text, { marginBottom: 10 }]}>{i18n.t('astroDataInfos.satellites.iss.text1')}</Text>
               <Text style={[globalStyles.sections.text, { marginBottom: 10 }]}>{i18n.t('astroDataInfos.satellites.iss.text2')}</Text>
+            </View>
+            <View style={{ marginBottom: 0 }}>
+              <Text style={[globalStyles.sections.text, { marginTop: 10, textTransform: 'uppercase', fontFamily: 'GilroyBlack' }]}>{i18n.t('astroDataInfos.satellites.iss.title')}</Text>
+              <Text style={[globalStyles.sections.text, { marginBottom: 10 }]}>{i18n.t('astroDataInfos.satellites.starlink.text1')}</Text>
             </View>
           </View>
           <View style={globalStyles.globalContainer}>

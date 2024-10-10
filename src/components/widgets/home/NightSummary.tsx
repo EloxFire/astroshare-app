@@ -139,13 +139,13 @@ export default function NightSummary({ noHeader }: NightSummaryProps) {
 
   return (
     <View style={{ marginTop: noHeader ? 0 : 10, marginBottom: 20 }}>
-      {
-        !noHeader &&
-        <View>
-          <Text style={globalStyles.sections.title}>{i18n.t('common.other.overview')}</Text>
-          <Text style={[globalStyles.sections.subtitle, { marginBottom: 0 }]}>{i18n.t('widgets.homeWidgets.night.title')}</Text>
-        </View>
-      }
+      {/*{*/}
+      {/*  !noHeader &&*/}
+      {/*  <View>*/}
+      {/*    <Text style={globalStyles.sections.title}>{i18n.t('common.other.overview')}</Text>*/}
+      {/*    <Text style={[globalStyles.sections.subtitle, { marginBottom: 0 }]}>{i18n.t('widgets.homeWidgets.night.title')}</Text>*/}
+      {/*  </View>*/}
+      {/*}*/}
       <ImageBackground source={loading ? undefined : require('../../../../assets/icons/astro/bands/NIGHT.png')} imageStyle={nightSummaryStyles.container.backgroundPicture} resizeMode='cover' style={[nightSummaryStyles.container, { justifyContent: loading ? 'center' : 'flex-start' }]}>
         {
           loading ?

@@ -24,7 +24,7 @@ export function SolarSystemProvider({ children }: SolarSystemProviderProps) {
     getPlanets()
     const interval = setInterval(() => {
       getPlanets()
-    }, 60000)
+    }, 20000)
 
     return () => clearInterval(interval)
   }, [currentUserLocation])
@@ -33,27 +33,15 @@ export function SolarSystemProvider({ children }: SolarSystemProviderProps) {
     getMoon()
     const interval = setInterval(() => {
       getMoon()
-    }, 60000)
+    }, 20000)
 
     return () => clearInterval(interval)
   }, [currentUserLocation])
 
   const getPlanets = () => {
     if (!currentUserLocation) return;
-    const planets = getPlanetaryPositions(new Date(), { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon })
-    let system = planets;
-
-
-    const globalEarthItem = earth as GlobalPlanet
-    globalEarthItem.ra = 0
-    globalEarthItem.dec = 0
-    globalEarthItem.alt = 0
-    globalEarthItem.az = 0
-    globalEarthItem.λ = 0
-    globalEarthItem.β = 0
-
-    system.splice(2, 0, earth as GlobalPlanet)
-    setPlanets(system)
+    setPlanets(getPlanetaryPositions(new Date(), { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }))
+    // console.log(JSON.stringify(getPlanetaryPositions(new Date(), { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }), null, 2))
   }
 
   const getMoon = () => {

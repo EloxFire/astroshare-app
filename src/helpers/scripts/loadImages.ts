@@ -68,11 +68,6 @@ export const moonIcons: any = {
   'Waning Crescent': require('../../../assets/icons/astro/moon/Waning Crescent.png'),
 }
 
-export const issFeedImages: any = {
-  'fr': require('../../../assets/images/iss_feed_error_fr.png'),
-  'en': require('../../../assets/images/iss_feed_error_en.png'),
-}
-
 export const localizedWhiteLogo: any = {
   'fr': require('../../../assets/logos/fr/logo_white.png'),
   'en': require('../../../assets/logos/en/logo_white.png'),

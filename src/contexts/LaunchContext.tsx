@@ -1,6 +1,9 @@
 import React, {ReactNode, createContext, useContext, useEffect, useState, Context} from 'react'
 import axios from 'axios'
 import { LaunchData } from '../helpers/types/LaunchData'
+import {storeData} from "../helpers/storage";
+import {storageKeys} from "../helpers/constants";
+import dayjs, {Dayjs} from "dayjs";
 
 const LaunchContext: Context<any> = createContext<any>({})
 
@@ -16,13 +19,14 @@ export function LaunchDataContextProvider({ children }: LaunchContextProviderPro
 
   const [launchData, setLaunchData] = useState<LaunchData[]>([])
   const [launchContextLoading, setLaunchContextLoading] = useState<boolean>(true)
+  const [launchDataLastUpdate, setLaunchDataLastUpdate] = useState<Dayjs>(dayjs())
 
   useEffect(() => {
     getLaunchData()
 
     const interval = setInterval(() => {
       getLaunchData()
-    }, 600000)
+    }, 300000)
 
     return () => clearInterval(interval)
   }, [])
@@ -30,14 +34,21 @@ export function LaunchDataContextProvider({ children }: LaunchContextProviderPro
   
   const getLaunchData= async () => {
     setLaunchContextLoading(true)
-    const launchesData = await axios.get(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/launches/upcoming`)
-    setLaunchData(launchesData.data.data)
-    setLaunchContextLoading(false)
+    try{
+      const launchesData = await axios.get(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/launches/upcoming`)
+      setLaunchData(launchesData.data.data)
+      setLaunchContextLoading(false)
+      setLaunchDataLastUpdate(dayjs())
+    }catch (e) {
+      console.log(e)
+      setLaunchContextLoading(false)
+    }
   }
 
   const values = {
     launchData,
-    launchContextLoading
+    launchContextLoading,
+    launchDataLastUpdate
   }
 
   return (

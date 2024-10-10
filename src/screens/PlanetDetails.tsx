@@ -5,7 +5,17 @@ import { objectDetailsStyles } from "../styles/screens/objectDetails";
 import { astroImages } from "../helpers/scripts/loadImages";
 import { useSettings } from "../contexts/AppSettingsContext";
 import PageTitle from "../components/commons/PageTitle";
-import { EquatorialCoordinate, GeographicCoordinate, getBodyNextRise, getBodyNextSet, isBodyAboveHorizon, isBodyVisibleForNight, isTransitInstance, Planet } from "@observerly/astrometry";
+import {
+  convertEquatorialToHorizontal,
+  EquatorialCoordinate,
+  GeographicCoordinate,
+  getBodyNextRise,
+  getBodyNextSet,
+  isBodyAboveHorizon,
+  isBodyVisibleForNight,
+  isTransitInstance,
+  Planet
+} from "@observerly/astrometry";
 import DSOValues from "../components/commons/DSOValues";
 import { GlobalPlanet } from "../helpers/types/GlobalPlanet";
 import { getObject, storeObject } from "../helpers/storage";
@@ -24,15 +34,17 @@ import { i18n } from "../helpers/scripts/i18n";
 import { prettyDec, prettyRa } from "../helpers/scripts/astro/prettyCoords";
 import { convertDegreesDecToDMS } from "../helpers/scripts/astro/coords/convertDegreesDecToDms";
 import { convertDegreesRaToHMS } from "../helpers/scripts/astro/coords/convertDegreesRaToHMS";
+import {useSolarSystem} from "../contexts/SolarSystemContext";
 
 export default function PlanetDetails({ route, navigation }: any) {
 
+  const {planets} = useSolarSystem()
   const { currentUserLocation } = useSettings()
   const { selectedSpot, defaultAltitude } = useSpot()
   const { currentLCID, currentLocale } = useTranslation()
 
   const params = route.params;
-  const planet: GlobalPlanet = params.planet;
+  const planet: GlobalPlanet = planets.find((obj: GlobalPlanet) => obj.name === params.planet.name) as GlobalPlanet;
 
   const [selectedTimeBase, setSelectedTimeBase] = useState<'relative' | 'absolute'>('relative')
   const [favouritePlanets, setFavouritePlanets] = useState<GlobalPlanet[]>([])
@@ -66,8 +78,9 @@ export default function PlanetDetails({ route, navigation }: any) {
     const target: EquatorialCoordinate = { ra: planet.ra, dec: planet.dec }
     const observer: GeographicCoordinate = { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }
     setIsVisible(isBodyAboveHorizon(new Date(), observer, target, horizonAngle))
-
     setWillRise(isBodyVisibleForNight(new Date(), observer, target, horizonAngle))
+
+    console.log(target)
 
     let rise = getBodyNextRise(new Date(), observer, target, horizonAngle)
     let set = getBodyNextSet(new Date(), observer, target, horizonAngle)

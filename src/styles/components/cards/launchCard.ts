@@ -9,11 +9,11 @@ export const launchCardStyles = {
     borderWidth: 1,
     borderRadius: 10,
     marginBottom: 20,
-    height: 165,
+    height: 180,
 
     thumbnail: {
-      height: 163,
-      width: 100,
+      height: 178,
+      width: 80,
       borderTopLeftRadius: 10,
       borderBottomLeftRadius: 10,
     },

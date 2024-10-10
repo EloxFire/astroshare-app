@@ -17,7 +17,16 @@ export const astroDataInfosTranslations = {
       title: "Station spatiale internationale (ISS)",
       text1: "Toutes les données relatives à l'ISS proviennent de l'API 'Where The Iss At (WTIA)' qui regroupe des données formattés en temps réel sur l'ISS.",
       text2: "WTIA utilise les données de la NASA, Space-track.com et CelesTrak.com pour fournir des informations précises sur la position de l'ISS.",
+    },
+    starlink: {
+      title: "Starlink",
+      text1: "Les données relatives à la visualisation du positionnement des satellites Starlink proviennent de l'API : starlinkapi (NPM)",
+      text2: "Les données des lancements de satellites Starlink proviennent de l'API : Launch Library 2 (The Space Devs)"
     }
+  },
+  launchData: {
+    title: "Données de lancements de fusées",
+    text1: "Toutes les données des lancements de fusées sont récupérées en temps réel depuis l'API : Launch Library 2 (The Space Devs)"
   },
   solarWeather: {
     title: "Météo solaire",

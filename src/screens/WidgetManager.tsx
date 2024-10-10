@@ -3,11 +3,12 @@ import { View, ScrollView, TouchableOpacity, Text } from 'react-native'
 import { i18n } from '../helpers/scripts/i18n'
 import { globalStyles } from '../styles/global'
 import { useSettings } from '../contexts/AppSettingsContext'
+import { HomeWidget } from '../helpers/types/HomeWidget'
+import { app_colors } from '../helpers/constants'
 import PageTitle from '../components/commons/PageTitle'
 import GlobalSummary from '../components/widgets/home/GlobalSummary'
-import { app_colors } from '../helpers/constants'
-import { HomeWidget } from '../helpers/types/HomeWidget'
 import NightSummary from '../components/widgets/home/NightSummary'
+import NextLaunchCountdownWidget from "../components/widgets/home/NextLaunchCountdownWidget";
 
 export default function WidgetManager({ navigation }: any) {
 
@@ -34,6 +35,7 @@ export default function WidgetManager({ navigation }: any) {
                   <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
                     {widget === 'Live' && <Text style={{ fontSize: 16, textTransform: 'uppercase', fontFamily: 'GilroyBlack', color: app_colors.white }}>Aperçu du ciel en direct</Text>}
                     {widget === 'Night' && <Text style={{ fontSize: 16, textTransform: 'uppercase', fontFamily: 'GilroyBlack', color: app_colors.white }}>Aperçu de la nuit</Text>}
+                    {widget === 'NextLaunchCountdown' && <Text style={{ fontSize: 16, textTransform: 'uppercase', fontFamily: 'GilroyBlack', color: app_colors.white }}>Aperçu prochain lancement de fusée</Text>}
                     {widget === 'None' && <Text style={{ fontSize: 16, textTransform: 'uppercase', fontFamily: 'GilroyBlack', color: app_colors.white }}>Aucun widget</Text>}
                     <View style={{ borderRadius: 100, width: 20, height: 20, backgroundColor: app_colors.white, display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
                       <View style={{ borderRadius: 100, width: 18, height: 18, backgroundColor: app_colors.black, display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
@@ -41,8 +43,9 @@ export default function WidgetManager({ navigation }: any) {
                       </View>
                     </View>
                   </View>
-                  {widget === 'Live' && <GlobalSummary noHeader />}
-                  {widget === 'Night' && <NightSummary noHeader />}
+                  {widget === 'Live' && <GlobalSummary />}
+                  {widget === 'Night' && <NightSummary />}
+                  {widget === 'NextLaunchCountdown' && <NextLaunchCountdownWidget />}
                   {widget === 'None' && <></>}
 
                 </TouchableOpacity>

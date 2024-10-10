@@ -22,6 +22,7 @@ import utc from 'dayjs/plugin/utc'
 import tz from 'dayjs/plugin/timezone'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import LocalizedFormat from 'dayjs/plugin/localizedFormat'
+import Duration from 'dayjs/plugin/duration'
 import SolarWeather from "./src/screens/SolarWeather";
 import ScopeAlignment from "./src/screens/ScopeAlignment";
 import 'dayjs/locale/fr'
@@ -50,9 +51,11 @@ import { LaunchDataContextProvider } from "./src/contexts/LaunchContext";
 import * as Notifications from 'expo-notifications';
 import {registerForPushNotificationsAsync} from "./src/helpers/scripts/notifications/registerPushNotifications";
 import {storeData} from "./src/helpers/storage";
+import LaunchDetails from "./src/screens/launches/LaunchDetails";
 
 dayjs.locale('fr');
 dayjs.extend(LocalizedFormat)
+dayjs.extend(Duration)
 dayjs.extend(utc)
 dayjs.extend(tz)
 dayjs.extend(relativeTime)
@@ -149,6 +152,7 @@ export default function App() {
                       <Stack.Screen name={routes.widgetsManager.path} component={WidgetManager} />
                       <Stack.Screen name={routes.changelogScreen.path} component={ChangelogScreen} />
                       <Stack.Screen name={routes.launchesScreen.path} component={LaunchesScreen} />
+                      <Stack.Screen name={routes.launchDetails.path} component={LaunchDetails} />
                     </Stack.Navigator>
                   </LaunchDataContextProvider>
                 </SpaceXContextProvider>
