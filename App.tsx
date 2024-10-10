@@ -122,7 +122,9 @@ export default function App() {
                       <Stack.Screen name={routes.issTracker.path} component={IssTracker} />
                       <Stack.Screen name={routes.starlinkTracker.path} component={StarlinkTracker} />
                       <Stack.Screen name={routes.favorites.path} component={FavouritesScreen} />
-                      <Stack.Screen name={routes.skymapgenerator.path} component={SkyMapGenerator} />
+                      <Stack.Screen name={routes.skymapSelection.path} component={SkyMapSelection} />
+                      <Stack.Screen name={routes.planetarium.path} component={Planetarium} />
+                      <Stack.Screen name={routes.flatSkymap.path} component={SkyMapGenerator} />
                       <Stack.Screen name={routes.language.path} component={LanguageSelection} />
                       <Stack.Screen name={routes.sellScreen.path} component={SellScreen} />
                       <Stack.Screen name={routes.transitScreen.path} component={TransitsScreen} />
@@ -131,7 +133,6 @@ export default function App() {
                       <Stack.Screen name={routes.changelogScreen.path} component={ChangelogScreen} />
                       <Stack.Screen name={routes.launchesScreen.path} component={LaunchesScreen} />
                       <Stack.Screen name={routes.launchDetails.path} component={LaunchDetails} />
-                      <Stack.Screen name={routes.skymapSelection.path} component={SkyMapSelection} />
                     </Stack.Navigator>
                   </LaunchDataContextProvider>
                 </SpaceXContextProvider>

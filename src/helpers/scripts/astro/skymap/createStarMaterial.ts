@@ -21,7 +21,8 @@ const texturePaths: { [key: string]: string } = {
 // Function to get or create material based on star type
 export const getStarMaterial = (star: Star): THREE.PointsMaterial => {
   const starType = star.sp_type ? star.sp_type[0] : 'A'; // Default to 'A' if type is missing
-  const starOpacity = mapRange(star.V, 0, 6, 0.5, 1); // Map star magnitude to opacity
+  // const starOpacity = mapRange(star.V, 0, 6, 0.5, 1); // Map star magnitude to opacity
+  const starOpacity = 1;
 
   // Check if material already exists for the star type in the cache
   if (!starMaterials[starType]) {

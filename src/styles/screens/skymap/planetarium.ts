@@ -38,6 +38,24 @@ export const planetariumStyles = {
         tintColor: app_colors.white,
         transform: [{ rotate: '90deg' }]
       }
+    },
+
+    infos: {
+      position: 'absolute' as 'absolute',
+      top: StatusBar.currentHeight! + 10,
+      right: 10,
+      backgroundColor: app_colors.white_no_opacity,
+      paddingVertical: 5,
+      paddingHorizontal: 10,
+      borderRadius: 10,
+      display: 'flex' as 'flex',
+      flexDirection: 'row' as 'row',
+      alignItems: 'center' as 'center',
+      zIndex: 10,
+      color: app_colors.white,
+      fontSize: 15,
+      whiteSpace: 'pre-line' as 'pre-line',
+      textAlign: 'right' as 'right',
     }
   }
 }
