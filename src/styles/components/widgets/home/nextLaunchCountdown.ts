@@ -5,7 +5,7 @@ export const nextLaunchCountdownWidgetStyles = {
     width: '100%' as '100%',
     height: 120,
     borderWidth: 1,
-    borderColor: app_colors.white_forty,
+    borderColor: app_colors.white_twenty,
     borderRadius: 10,
     marginVertical: 10,
     overflow: 'hidden' as 'hidden',
