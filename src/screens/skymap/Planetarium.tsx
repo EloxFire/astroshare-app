@@ -29,10 +29,6 @@ export default function Planetarium({ navigation }: any) {
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
   const sceneRef = useRef<THREE.Scene | null>(null);
   const rendererRef = useRef<ExpoTHREE.Renderer | null>(null);
-
-  // Add THREE axis helper to the scene
-  
-  
   
   const _onContextCreate = async (gl: ExpoWebGLRenderingContext) => {
     const { drawingBufferWidth, drawingBufferHeight } = gl;
@@ -48,8 +44,7 @@ export default function Planetarium({ navigation }: any) {
     renderer.setClearColor(0x080808); // Background color
     
     camera.position.set(0, 0, 0); // Camera positioned at the origin
-    const axesHelper = new THREE.AxesHelper(5);
-    
+
     // Store them in refs
     cameraRef.current = camera;
     sceneRef.current = scene;
@@ -57,8 +52,7 @@ export default function Planetarium({ navigation }: any) {
     
     // Group stars by their material type for efficient rendering
     const materialGroups: { [key: string]: { positions: Float32Array, geometry: THREE.BufferGeometry } } = {};
-    sceneRef.current.add(axesHelper);
-    
+
     // Iterate over the stars and group them by material type
     starsCatalog.forEach((star: Star, index: number) => {
       const { alt, az } = convertEquatorialToHorizontal(new Date(), { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }, { ra: star.ra, dec: star.dec });
@@ -96,13 +90,14 @@ export default function Planetarium({ navigation }: any) {
       scene.add(stars);
     });
 
+    // Creation du sol
     const Groundgeometry = new THREE.SphereGeometry(1, 64, 64, Math.PI, Math.PI, 0, Math.PI);
     let material = new THREE.MeshBasicMaterial({ color: 0xff0000, transparent: true, opacity: 0.5 });
     material.side = THREE.BackSide;
     let ground = new THREE.Mesh(Groundgeometry, material);
     let vec = getGlobePosition(currentUserLocation.lat, currentUserLocation.lon);
 
-    camera.rotateX(90)
+    camera.rotateX(90) // Pour que le sol soit perpendiculaire à la camera (mais ca donne une soucis sur la rotation de la camera, a voir)
     scene.add(ground);
 
     // Animation loop to render the scene
@@ -188,10 +183,9 @@ export default function Planetarium({ navigation }: any) {
         <View style={planetariumStyles.container}>
           <TouchableOpacity style={planetariumStyles.container.backButton} onPress={() => navigation.goBack()}>
             <Image style={planetariumStyles.container.backButton.icon} source={require('../../../assets/icons/FiChevronDown.png')} />
-            <Text style={planetariumStyles.container.backButton.text}>
-              Retour stars: {starsCatalog.length} | Camera width: {cameraWidth}
-            </Text>
+            <Text style={planetariumStyles.container.backButton.text}>Retour</Text>
           </TouchableOpacity>
+          <Text style={planetariumStyles.container.infos}>stars: {starsCatalog.length}{'\n'}Tu peux afficher des infos ici avec \n </Text>
           <GLView style={{ flex: 1 }} onContextCreate={_onContextCreate} />
         </View>
       </GestureDetector>
