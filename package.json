@@ -1,6 +1,6 @@
 {
   "name": "astroshare-app",
-  "version": "v1.0.0",
+  "version": "v1.3.1",
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
     "start": "expo start",
@@ -22,6 +22,8 @@
     "@react-native-masked-view/masked-view": "0.3.1",
     "@react-navigation/native": "^6.1.18",
     "@react-navigation/native-stack": "^6.11.0",
+    "@react-three/drei": "^9.114.0",
+    "@react-three/fiber": "^8.17.8",
     "axios": "^1.7.3",
     "country-flag-icons": "^1.5.13",
     "dayjs": "^1.11.12",
@@ -31,8 +33,9 @@
     "expo-clipboard": "~6.0.3",
     "expo-dev-client": "~4.0.23",
     "expo-device": "~6.0.2",
+    "expo-file-system": "~17.0.1",
     "expo-font": "~12.0.9",
-    "expo-gl": "^14.0.2",
+    "expo-gl": "~14.0.2",
     "expo-image": "~1.12.13",
     "expo-linking": "~6.3.1",
     "expo-localization": "~15.0.3",
@@ -48,6 +51,7 @@
     "react-native": "0.74.5",
     "react-native-color-matrix-image-filters": "^7.0.1",
     "react-native-easy-grid": "^0.2.2",
+    "react-native-element-dropdown": "^2.12.1",
     "react-native-gesture-handler": "~2.16.1",
     "react-native-maps": "1.14.0",
     "react-native-purchases": "^8.1.0",
@@ -60,6 +64,7 @@
     "react-native-youtube": "^2.0.2",
     "react-native-youtube-iframe": "^2.3.0",
     "satellite.js": "^5.0.0",
+    "starlinkapi": "^1.0.0",
     "three": "^0.168.0",
     "tle.js": "^4.9.0",
     "translate-google-api": "^1.0.4"

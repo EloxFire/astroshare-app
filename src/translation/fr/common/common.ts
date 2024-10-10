@@ -10,7 +10,7 @@ export const commonTranslations = {
     invalidStar: "Nom de la étoile invalide",
     unknownError: "Une erreur inconnue est survenue...",
     simple: "##Erreur##",
-    unkonwn: "Inconnu",
+    unknown: "Inconnu",
     other: "Other",
     noPlanets: "Aucune planète visible",
   },

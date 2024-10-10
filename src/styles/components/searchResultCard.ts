@@ -9,7 +9,7 @@ export const searchResultCardStyles = {
     borderWidth: 1,
     borderColor: app_colors.white_no_opacity,
     width: 250,
-    height: 210,
+    height: 230,
     display: 'flex' as 'flex',
     flexDirection: 'column' as 'column',
     justifyContent: 'space-between' as 'space-between',

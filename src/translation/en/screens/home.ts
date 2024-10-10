@@ -39,6 +39,10 @@ export const homeTranslations = {
     skymap_generator: {
       title: "Skymap",
       subtitle: "// Skymap in real-time"
+    },
+    launches_screen: {
+      title: "Launches",
+      subtitle: "// Upcoming launches"
     }
   }
 }

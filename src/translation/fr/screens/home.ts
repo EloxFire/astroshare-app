@@ -39,6 +39,10 @@ export const homeTranslations = {
     skymap_generator: {
       title: "Carte du ciel",
       subtitle: "// Carte du ciel en direct"
+    },
+    launches_screen: {
+      title: "Lancements",
+      subtitle: "// Prochains lancements de fusées"
     }
   }
 }

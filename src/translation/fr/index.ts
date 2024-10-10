@@ -3,6 +3,7 @@ import { commonTranslations } from "./common/common";
 import { constellationsNamesTranslations } from "./common/constellations";
 import { languagesTranslations } from "./common/languages";
 import { objectTypesTranslations } from "./common/objectTypes";
+import { spaceStuffTranslations } from "./common/spaceStuff";
 import { resultCardsTranslations } from "./components/cards/resultCards";
 import { homeSearchModuleTranslations } from "./components/forms/homeSearchModule";
 import { locationHeaderTranslations } from "./components/locationHeader";
@@ -21,11 +22,13 @@ import { onboardingTranslations } from "./screens/onboarding";
 import { satelliteTrackerTranslations } from "./screens/satelliteTracker";
 import { scopeAlignmentTranslation } from "./screens/scopeAlignment";
 import { settingsTranslations } from "./screens/settings";
+import { changelogScreenTranslations } from "./screens/settings/changelog";
 import { skymapGeneratorTranslations } from "./screens/skymapGenerator";
 import { solarWeatherTranslations } from "./screens/solarWeather";
 import { transitsTranslations } from "./screens/transits";
 import { viewpointsManagerTranslations } from "./screens/viewpointsManager";
 import { weatherTranslation } from "./screens/weather";
+import {launchesScreenTranslations} from "./screens/launches";
 
 export const frTranslations = {
   onboarding: onboardingTranslations,
@@ -55,5 +58,8 @@ export const frTranslations = {
   objectTypes: objectTypesTranslations,
   astroDataInfos: astroDataInfosTranslations,
   about: aboutTranslations,
-  widgets: widgetsTranslations
+  widgets: widgetsTranslations,
+  spaceStuff: spaceStuffTranslations,
+  changelog: changelogScreenTranslations,
+  launchesScreen: launchesScreenTranslations,
 }

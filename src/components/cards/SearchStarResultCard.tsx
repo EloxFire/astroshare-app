@@ -51,10 +51,10 @@ export default function SearchStarResultCard({ star, navigation }: SearchPlanetR
           <Image style={searchResultCardStyles.card.image} source={astroImages['BRIGHTSTAR']} />
         </View>
         <View style={searchResultCardStyles.card.body}>
-          <DSOValues small title="Constellation" value={getConstellationName(getConstellation({ ra: star.ra, dec: star.dec })?.abbreviation || "Inconnu")} />
-          <DSOValues small title="Magnitude" value={star.V.toString() || star.B.toString()} />
-          <DSOValues small title="Ascension droite" value={convertDegreesRaToHMS(star.ra)} />
-          <DSOValues small title="Déclinaison" value={convertDegreesDecToDMS(star.dec)} />
+          <DSOValues small title={i18n.t('detailsPages.stars.labels.constellation')} value={getConstellationName(getConstellation({ ra: star.ra, dec: star.dec })?.abbreviation || "Inconnu")} />
+          <DSOValues small title={i18n.t('detailsPages.stars.labels.magnitude')} value={star.V.toString() || star.B.toString()} />
+          <DSOValues small title={i18n.t('detailsPages.stars.labels.rightAscension')} value={convertDegreesRaToHMS(star.ra)} />
+          <DSOValues small title={i18n.t('detailsPages.stars.labels.declination')} value={convertDegreesDecToDMS(star.dec)} />
         </View>
         <View style={searchResultCardStyles.card.footer}>
           <Text style={[searchResultCardStyles.card.footer.chip, { backgroundColor: isVisible ? app_colors.green_eighty : app_colors.red_eighty }]}>{isVisible ? i18n.t('common.visibility.visible') : i18n.t('common.visibility.notVisible')}</Text>

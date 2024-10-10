@@ -20,14 +20,14 @@ export const formatCelsius = (degree: number, lang: string) => {
   return formatter.format(degree);
 }
 
-// NOT WORKING
-export const formatOrdinal = (number: number, lang: string) => {
+// Create a formater to display seconds in minutes
+export const formatMinutes = (seconds: number, lang: string) => {
   const formatter = new Intl.NumberFormat(lang, {
     style: 'unit',
-    unit: 'ordinal',
+    unit: 'minute',
     unitDisplay: 'short',
     maximumFractionDigits: 0
   });
   
-  return formatter.format(number);
+  return formatter.format(seconds / 60);
 }

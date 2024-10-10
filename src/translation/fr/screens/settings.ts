@@ -6,6 +6,10 @@ export const settingsTranslations = {
       title: "Mode nuit",
       subtitle: "// Filtre nocturne (Expérimental)"
     },
+    changelog: {
+      title: "Notes de mise à jour",
+      subtitle: "// Découvrez les dernières nouveautés"
+    },
     cellularData: {
       title: "Données cellulaires",
       subtitle: "// Désactivez les données celulaires"
@@ -38,5 +42,10 @@ export const settingsTranslations = {
       title: "À propos",
       subtitle: "// Version, contact, légal"
     }
+  },
+  categories: {
+    general: "Général",
+    appearance: "Personnalisation",
+    infos: "Informations et sécurité"
   }
 }

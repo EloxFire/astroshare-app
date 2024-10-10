@@ -18,6 +18,7 @@ import dayjs, { Dayjs } from 'dayjs'
 import { prettyDec, prettyRa } from '../../helpers/scripts/astro/prettyCoords'
 import { i18n } from '../../helpers/scripts/i18n'
 import DSOValues from '../commons/DSOValues'
+import { getObjectType } from '../../helpers/scripts/astro/getObjectType'
 
 interface SearchResultCardProps {
   object: DSO
@@ -76,10 +77,11 @@ export default function SearchResultCard({ object, navigation }: SearchResultCar
           <Image style={searchResultCardStyles.card.image} source={astroImages[object.type.toUpperCase()]} />
         </View>
         <View style={searchResultCardStyles.card.body}>
-          <DSOValues small title="Magnitude" value={(object.b_mag || object.v_mag).toString()} />
-          <DSOValues small title="Constellation" value={getConstellationName(object.const)} />
-          <DSOValues small title="Ascension droite" value={prettyRa(object.ra)} />
-          <DSOValues small title="Déclinaison" value={prettyDec(object.dec)} />
+          <DSOValues small title={i18n.t('detailsPages.dso.labels.magnitude')} value={(object.b_mag || object.v_mag).toString()} />
+          <DSOValues small title={i18n.t('detailsPages.dso.labels.constellation')} value={getConstellationName(object.const)} />
+          <DSOValues small title={i18n.t('detailsPages.dso.labels.rightAscension')} value={prettyRa(object.ra)} />
+          <DSOValues small title={i18n.t('detailsPages.dso.labels.declination')} value={prettyDec(object.dec)} />
+          <DSOValues small title={i18n.t('detailsPages.dso.labels.type')} value={getObjectType(object)} />
         </View>
         <View style={searchResultCardStyles.card.footer}>
           <Text style={[searchResultCardStyles.card.footer.chip, { backgroundColor: isVisible ? app_colors.green_eighty : app_colors.red_eighty }]}>{isVisible ? i18n.t('common.visibility.visible') : i18n.t('common.visibility.notVisible')}</Text>

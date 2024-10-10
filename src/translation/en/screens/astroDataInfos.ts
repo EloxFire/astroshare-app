@@ -11,12 +11,21 @@ export const astroDataInfosTranslations = {
     title: "Planets",
     text1: "All data related to planets is the result of astronomical calculations made with the help of an independent tool: Observerly",
   },
+  launchData: {
+    title: "Rocket Launch Data",
+    text1: "All rocket launch data is retrieved in real time from the API: Launch Library 2 (The Space Devs)"
+  },
   satellites: {
     title: "Satellites",
     iss: {
       title: "International Space Station (ISS)",
       text1: "All data related to the ISS comes from the 'Where The Iss At (WTIA)' API, which provides real-time formatted data on the ISS.",
       text2: "WTIA uses data from NASA, Space-track.com, and CelesTrack.com to provide accurate information on the position of the ISS.",
+    },
+    starlink: {
+      title: "Starlink",
+      text1: "Data related to the visualization of the positioning of Starlink satellites comes from the API: starlinkapi (NPM)",
+      text2: "Data on Starlink satellite launches comes from the API: Launch Library 2 (The Space Devs)"
     }
   },
   solarWeather: {

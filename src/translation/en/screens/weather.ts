@@ -1,17 +1,15 @@
-import { temperature } from "react-native-color-matrix-image-filters";
-
 export const weatherTranslation = {
-  input_placeholder: "Rechercher une ville",
-  reset_button: "Retour à %{city}",
+  input_placeholder: "Search a city",
+  reset_button: "Back to %{city}",
   legend: {
-    title: "Légende",
-    temperature: "Température",
-    feels_like: "Ressenti",
-    humidity: "Humidité",
-    clouds: "Nuages",
-    wind: "Vent",
-    wind_direction: "Direction du vent",
-    max_temp: "Température maximale",
-    min_temp: "Température minimale",
+    title: "Legend",
+    temperature: "Temperature",
+    feels_like: "Feels like",
+    humidity: "Humidity",
+    clouds: "Clouds",
+    wind: "Wind",
+    wind_direction: "Wind direction",
+    max_temp: "Max temperature",
+    min_temp: "Min temperature",
   }
 }

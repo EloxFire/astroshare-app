@@ -22,7 +22,7 @@ export default function TutorialScreen({ navigation }: any) {
 
   const onPressPrevious = () => {
     if (currentStep === 0) {
-      navigation.push(routes.home.path)
+      navigation.goBack()
     } else {
       setCurrentStep(currentStep - 1)
     }

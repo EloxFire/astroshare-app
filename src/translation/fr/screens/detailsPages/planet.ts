@@ -22,9 +22,13 @@ export const planetTranslations = {
     position: "Position",
     symbol: "Symbole",
     distanceSun: "Distance du Soleil",
+    rightAscension: "Ascension droite",
+    declination: "Déclinaison",
+    characteristic: "Caractéristique",
     short: {
       surfaceTemperature: "Temp (surface)",
       naturalSatellites: "Satellites",
+      inclination: "Inclinaison axe",
     }
   },
   units: {

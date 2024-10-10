@@ -1,8 +1,9 @@
-import { weatherTranslation } from "../fr/screens/weather";
+import { weatherTranslation } from "./screens/weather";
 import { commonTranslations } from "./common/common";
 import { constellationsNamesTranslations } from "./common/constellations";
 import { languagesTranslations } from "./common/languages";
 import { objectTypesTranslations } from "./common/objectTypes";
+import { spaceStuffTranslations } from "./common/spaceStuff";
 import { resultCardsTranslations } from "./components/cards/resultCards";
 import { homeSearchModuleTranslations } from "./components/forms/homeSearchModule";
 import { locationHeaderTranslations } from "./components/locationHeader";
@@ -27,6 +28,8 @@ import { skymapGeneratorTranslations } from "./screens/skymap/skymapGenerator";
 import { solarWeatherTranslations } from "./screens/solarWeather";
 import { tutorialScreen } from "./screens/tutorialScreen";
 import { viewpointsManagerTranslations } from "./screens/viewpointsManager";
+import { changelogScreenTranslations } from "./screens/settings/changelog";
+import {launchesScreenTranslations} from "./screens/launches";
 
 export const enTranslations = {
   onboarding: onboardingTranslations,
@@ -56,5 +59,8 @@ export const enTranslations = {
   objectTypes: objectTypesTranslations,
   astroDataInfos: astroDataInfosTranslations,
   about: aboutTranslations,
-  widgets: widgetsTranslations
+  widgets: widgetsTranslations,
+  spaceStuff: spaceStuffTranslations,
+  changelog: changelogScreenTranslations,
+  launchesScreen: launchesScreenTranslations
 }

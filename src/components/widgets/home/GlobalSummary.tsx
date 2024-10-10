@@ -16,6 +16,7 @@ import { GlobalPlanet } from "../../../helpers/types/GlobalPlanet";
 import { globalSummaryStyles } from "../../../styles/components/widgets/home/globalSummary";
 import { globalStyles } from "../../../styles/global";
 import { app_colors } from "../../../helpers/constants";
+import { isNightPastTwelve } from "../../../helpers/scripts/astro/transits/isNightPastTwelve";
 
 interface GlobalSummaryProps {
   noHeader?: boolean
@@ -34,10 +35,22 @@ export default function GlobalSummary({ noHeader }: GlobalSummaryProps) {
 
   useEffect(() => {
     getInfos()
+
+    const interval = setInterval(() => {
+      getInfos()
+    }, 60000)
+
+    return () => clearInterval(interval)
   }, [currentUserLocation, planets])
 
-  const getInfos = async () => {
-    if (!currentUserLocation) return;
+  const getInfos = async (): Promise<void> => {
+    if(!currentUserLocation) return;
+    const nightPastTwelve: boolean = isNightPastTwelve(new Date(), { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon })
+
+    // If isNightPastTwelve is true, we need to set the date to the previous day
+    const date = new Date()
+    date.setDate(date.getDate() - (nightPastTwelve ? 1 : 0))    
+    if (!currentUserLocation) return;    
 
     const altitude = selectedSpot ? selectedSpot.equipments.altitude : defaultAltitude;
     const observer: GeographicCoordinate = { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }
@@ -51,14 +64,16 @@ export default function GlobalSummary({ noHeader }: GlobalSummaryProps) {
       showToast({ message: 'Erreur lors de la récupération de la météo', type: 'error' })
     }
 
-    const bands = getTwilightBandsForDay(new Date(), observer)
+    const bands = getTwilightBandsForDay(date, observer)
 
+    // console.log(bands)
     setBackgroundColor(backgroundFromTwilightBands(bands))
 
     let vp: GlobalPlanet[] = [];
     planets.forEach((planet: GlobalPlanet) => {
       const target: EquatorialCoordinate = { ra: planet.ra, dec: planet.dec }
       const isAbove = isBodyAboveHorizon(new Date(), observer, target, horizonAngle)
+
       if (isAbove && planet.name !== 'Earth') {
         vp.push(planet)
       }
@@ -73,6 +88,7 @@ export default function GlobalSummary({ noHeader }: GlobalSummaryProps) {
     const currentBand = twilightBands.find(band => now > band.interval.from && now < band.interval.to)
     if (!currentBand) return app_colors.white_no_opacity
 
+    // console.log(currentBand)
     switch (currentBand.name) {
       case 'Civil':
         return twilightBandsBackgrounds.Civil
@@ -89,13 +105,13 @@ export default function GlobalSummary({ noHeader }: GlobalSummaryProps) {
 
   return (
     <View style={{ marginTop: noHeader ? 0 : 10, marginBottom: 20 }}>
-      {
-        !noHeader &&
-        <View>
-          <Text style={globalStyles.sections.title}>{i18n.t('common.other.overview')}</Text>
-          <Text style={[globalStyles.sections.subtitle, { marginBottom: 0 }]}>{i18n.t('widgets.homeWidgets.live.title')}</Text>
-        </View>
-      }
+      {/*{*/}
+      {/*  !noHeader &&*/}
+      {/*  <View>*/}
+      {/*    <Text style={globalStyles.sections.title}>{i18n.t('common.other.overview')}</Text>*/}
+      {/*    <Text style={[globalStyles.sections.subtitle, { marginBottom: 0 }]}>{i18n.t('widgets.homeWidgets.live.title')}</Text>*/}
+      {/*  </View>*/}
+      {/*}*/}
       <ImageBackground source={loading ? undefined : backgroundColor} imageStyle={globalSummaryStyles.container.backgroundPicture} resizeMode='cover' style={[globalSummaryStyles.container, { justifyContent: loading ? 'center' : 'space-between' }]}>
         {
           loading ?
@@ -126,7 +142,7 @@ export default function GlobalSummary({ noHeader }: GlobalSummaryProps) {
                   {
                     visiblePlanets.length > 0 ?
                       visiblePlanets.map((planet: GlobalPlanet, index: number) => (
-                        <View key={index} style={globalSummaryStyles.container.currentSkyContainer.planets.planet}>
+                        <View key={`planet-${index}-${planet.name}`} style={globalSummaryStyles.container.currentSkyContainer.planets.planet}>
                           <Image style={globalSummaryStyles.container.currentSkyContainer.planets.planet.icon} source={astroImages[planet.name.toUpperCase()]} />
                           <Text style={globalSummaryStyles.container.currentSkyContainer.planets.planet.name}>{i18n.t(`common.planets.${planet.name}`)}</Text>
                         </View>
