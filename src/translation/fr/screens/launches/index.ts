@@ -28,6 +28,10 @@ export const launchesScreenTranslations = {
       type: "Type",
       flightProfile: "Profil de vol",
       description: "Description"
+    },
+    notificationButton: {
+      add: "Ajouter un rappel",
+      remove: "Supprimer le rappel"
     }
   }
 }

@@ -29,6 +29,7 @@ import { tutorialScreen } from "./screens/tutorialScreen";
 import { viewpointsManagerTranslations } from "./screens/viewpointsManager";
 import { changelogScreenTranslations } from "./screens/settings/changelog";
 import {launchesScreenTranslations} from "./screens/launches";
+import {notificationsTranslations} from "./common/notifications";
 
 export const enTranslations = {
   onboarding: onboardingTranslations,
@@ -61,5 +62,6 @@ export const enTranslations = {
   widgets: widgetsTranslations,
   spaceStuff: spaceStuffTranslations,
   changelog: changelogScreenTranslations,
-  launchesScreen: launchesScreenTranslations
+  launchesScreen: launchesScreenTranslations,
+  notifications: notificationsTranslations
 }
