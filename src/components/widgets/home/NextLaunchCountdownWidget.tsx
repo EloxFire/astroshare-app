@@ -67,21 +67,25 @@ export default function NextLaunchCountdownWidget(): ReactNode {
                 }
               </View>
               <View style={nextLaunchCountdownWidgetStyles.widget.content.body}>
-                <View style={nextLaunchCountdownWidgetStyles.widget.content.body.info}>
-                  <Image source={require('../../../../assets/icons/FiOrbit.png')} style={nextLaunchCountdownWidgetStyles.widget.content.body.info.icon} />
-                  <Text style={nextLaunchCountdownWidgetStyles.widget.content.body.info.value}>{launch?.mission.orbit.name}</Text>
+                <View style={{display: 'flex', flexDirection: 'column', gap: 5, flex: 1}}>
+                  <View style={nextLaunchCountdownWidgetStyles.widget.content.body.info}>
+                    <Image source={require('../../../../assets/icons/FiOrbit.png')} style={nextLaunchCountdownWidgetStyles.widget.content.body.info.icon} />
+                    <Text style={nextLaunchCountdownWidgetStyles.widget.content.body.info.value}>{launch?.mission.orbit.name}</Text>
+                  </View>
+                  <View style={nextLaunchCountdownWidgetStyles.widget.content.body.info}>
+                    <Image source={require('../../../../assets/icons/FiSatellite.png')} style={nextLaunchCountdownWidgetStyles.widget.content.body.info.icon} />
+                    <Text style={nextLaunchCountdownWidgetStyles.widget.content.body.info.value}>{launch?.mission.type}</Text>
+                  </View>
                 </View>
-                <View style={nextLaunchCountdownWidgetStyles.widget.content.body.info}>
-                  <Image source={require('../../../../assets/icons/FiPayload.png')} style={nextLaunchCountdownWidgetStyles.widget.content.body.info.icon} />
-                  <Text style={nextLaunchCountdownWidgetStyles.widget.content.body.info.value}>{launch?.mission.type}</Text>
-                </View>
-                <View style={nextLaunchCountdownWidgetStyles.widget.content.body.info}>
-                  <Image source={require('../../../../assets/icons/FiStarship.png')} style={nextLaunchCountdownWidgetStyles.widget.content.body.info.icon} />
-                  <Text style={nextLaunchCountdownWidgetStyles.widget.content.body.info.value}>{launch?.rocket.configuration.full_name}</Text>
-                </View>
-                <View style={nextLaunchCountdownWidgetStyles.widget.content.body.info}>
-                  <Image source={require('../../../../assets/icons/FiLaunchpad.png')} style={nextLaunchCountdownWidgetStyles.widget.content.body.info.icon} />
-                  <Text style={nextLaunchCountdownWidgetStyles.widget.content.body.info.value}>{launch?.pad.name ? truncate(launch?.pad.name, 15) : 'N/A'}</Text>
+                <View style={{display: 'flex', flexDirection: 'column', gap: 5, flex: 1}}>
+                  <View style={nextLaunchCountdownWidgetStyles.widget.content.body.info}>
+                    <Image source={require('../../../../assets/icons/FiRocket.png')} style={nextLaunchCountdownWidgetStyles.widget.content.body.info.icon} />
+                    <Text style={nextLaunchCountdownWidgetStyles.widget.content.body.info.value}>{launch?.rocket.configuration.full_name}</Text>
+                  </View>
+                  <View style={nextLaunchCountdownWidgetStyles.widget.content.body.info}>
+                    <Image source={require('../../../../assets/icons/FiPinMap.png')} style={nextLaunchCountdownWidgetStyles.widget.content.body.info.icon} />
+                    <Text style={nextLaunchCountdownWidgetStyles.widget.content.body.info.value}>{launch?.pad.name ? truncate(launch?.pad.name, 25) : 'N/A'}</Text>
+                  </View>
                 </View>
               </View>
             </View>

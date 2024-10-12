@@ -73,13 +73,13 @@ export const nextLaunchCountdownWidgetStyles = {
 
         info:{
           display: 'flex' as 'flex',
-          flexDirection: 'column' as 'column',
+          flexDirection: 'row' as 'row',
+          alignItems: 'center' as 'center',
           gap: 5,
-          justifyContent: 'center' as 'center',
 
           icon: {
-            width: 20,
-            height: 20,
+            width: 18,
+            height: 18,
           },
 
           value: {
