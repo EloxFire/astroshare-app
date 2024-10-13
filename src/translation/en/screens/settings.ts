@@ -19,7 +19,7 @@ export const settingsTranslations = {
       subtitle: "// Configure your favorite observation locations"
     },
     widgets: {
-      title: "Homepage customization",
+      title: "Customization",
       subtitle: "// Configure your widgets"
     },
     tutorial: {

@@ -7,6 +7,7 @@ import { app_colors } from '../helpers/constants';
 import { useSettings } from '../contexts/AppSettingsContext';
 import { isFirstLaunch } from '../helpers/scripts/checkFirstLaunch';
 import { i18n } from '../helpers/scripts/i18n';
+import { useLaunchData } from '../contexts/LaunchContext';
 import LocationHeader from '../components/LocationHeader';
 import AppHeader from '../components/commons/AppHeader';
 import BigButton from '../components/commons/buttons/BigButton';
@@ -14,7 +15,6 @@ import BannerHandler from '../components/banners/BannerHandler';
 import ToolButton from '../components/commons/buttons/ToolButton';
 import HomeSearchModule from '../components/forms/HomeSearchModule';
 import HomeWidgetDisplay from '../components/widgets/HomeWidgetDisplay';
-import { useLaunchData } from '../contexts/LaunchContext';
 
 export default function Home({ navigation }: any) {
   const { hasInternetConnection, currentUserLocation } = useSettings()

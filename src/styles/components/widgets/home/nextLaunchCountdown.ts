@@ -55,6 +55,7 @@ export const nextLaunchCountdownWidgetStyles = {
 
       badge: {
         borderRadius: 30,
+        paddingHorizontal: 10,
         color: app_colors.white,
         backgroundColor: app_colors.white_no_opacity,
         fontSize: 12,

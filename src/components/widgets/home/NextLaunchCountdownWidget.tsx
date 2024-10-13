@@ -19,8 +19,15 @@ export default function NextLaunchCountdownWidget(): ReactNode {
 
   useEffect(() => {
     if(launchData){
-      setLaunch(launchData[0])
-      setLoading(false)
+      if(launchData[0]){
+        if(launchData[0].status.id === 3){
+          setLaunch(launchData[1])
+          setLoading(false)
+        }else{
+          setLaunch(launchData[0])
+          setLoading(false)
+        }
+      }
     }
   }, [launchData])
 

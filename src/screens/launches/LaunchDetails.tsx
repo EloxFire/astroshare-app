@@ -11,6 +11,7 @@ import DSOValues from "../../components/commons/DSOValues";
 import PageTitle from "../../components/commons/PageTitle";
 import {scheduleNotification, unScheduleNotification} from "../../helpers/scripts/notifications/sendNotification";
 import {showToast} from "../../helpers/scripts/showToast";
+import {getTimeFromLaunch} from "../../helpers/scripts/utils/getTimeFromLaunch";
 
 interface LaunchCardProps {
   route: any
@@ -38,22 +39,15 @@ export default function LaunchDetails({ route, navigation }: LaunchCardProps): R
   }
 
   useEffect(() => {
-    getTimeFromLaunch()
+    setCountdown(getTimeFromLaunch(dayjs(launch.net).toDate()))
 
     const interval = setInterval(() => {
-      getTimeFromLaunch()
+      setCountdown(getTimeFromLaunch(dayjs(launch.net).toDate()))
     }, 1000)
 
     return () => clearInterval(interval)
   }, [launch])
 
-  const getTimeFromLaunch = () => {
-    if(launch){
-      const diff = dayjs(launch.net).diff(dayjs(), 'second')
-      const timer = dayjs.duration(diff, 'seconds').format('D[j] HH[h] mm[m] ss[s]')
-      setCountdown(timer)
-    }
-  }
 
   const handleNotification = async () => {
     if(isNotificationPlanned){
@@ -109,7 +103,7 @@ export default function LaunchDetails({ route, navigation }: LaunchCardProps): R
               <DSOValues title={i18n.t('launchesScreen.launchCards.launcher')} value={launch.rocket.configuration.full_name} />
               <DSOValues title={i18n.t('launchesScreen.launchCards.operator')} value={launch.launch_service_provider.name.length > 30 ? launch.launch_service_provider.abbrev : truncate(launch.launch_service_provider.name, 30)} />
               <DSOValues title={i18n.t('launchesScreen.launchCards.launchPad')} value={truncate(launch.pad.name, 30)} />
-              <DSOValues title={i18n.t('launchesScreen.launchCards.client')} value={launch.mission.agencies.length > 0 ? truncate(launch.mission.agencies[0].name, 30) : i18n.t('common.errors.unknown') } />
+              <DSOValues title={i18n.t('launchesScreen.launchCards.client')} value={launch.mission.agencies.length > 0 ? launch.mission.agencies[0].name.length > 30 ? launch.mission.agencies[0].abbrev : truncate(launch.mission.agencies[0].name, 30) : i18n.t('common.errors.unknown') } />
               <View style={launchDetailsStyles.content.mainCard.body.statusContainer}>
                 <DSOValues title={i18n.t('launchesScreen.details.status')} value={launch.status.name} wideChip chipValue chipColor={getLaunchStatusColor(launch.status.id).backgroundColor} chipForegroundColor={getLaunchStatusColor(launch.status.id).textColor} />
               </View>
