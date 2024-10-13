@@ -1,37 +1,25 @@
 import React, { useState } from 'react'
-import { Image, ScrollView, Text, View } from 'react-native'
+import { ScrollView, Text, View } from 'react-native'
 import { viewPointsManagerStyles } from '../styles/screens/viewPointsManager'
-import { showToast } from '../helpers/scripts/showToast'
 import { globalStyles } from '../styles/global'
 import { TViewPoint } from '../helpers/types/ViewPoint'
 import { useSpot } from '../contexts/ObservationSpotContext'
+import { i18n } from '../helpers/scripts/i18n'
 import SimpleButton from '../components/commons/buttons/SimpleButton'
 import PageTitle from '../components/commons/PageTitle'
 import ViewPoint from '../components/ViewPoint'
 import AddSpotModal from '../components/modals/AddSpotModal'
 import DeleteSpotModal from '../components/modals/DeleteSpotModal'
-import { i18n } from '../helpers/scripts/i18n'
-import { viewpointsManagerTranslations } from '../translation/en/screens/viewpointsManager'
 import ScreenInfo from '../components/ScreenInfo'
+import DisclaimerBar from "../components/banners/DisclaimerBar";
 
 export default function ViewPointsManager({ navigation }: any) {
 
-  const { deleteSpot, viewPoints, selectedSpot } = useSpot()
+  const { viewPoints, selectedSpot } = useSpot()
 
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false)
   const [isDeleteModalVisible, setDeleteModalVisible] = useState<boolean>(false)
 
-
-
-  const handleSpotDeletion = (spotTitle: string) => {
-    try {
-      deleteSpot(spotTitle)
-      showToast({ message: 'Lieu d\'observation supprimé', type: 'success' })
-      setDeleteModalVisible(false)
-    } catch (error) {
-      showToast({ message: 'Erreur lors de la suppression du lieu d\'observation', type: 'error' })
-    }
-  }
 
   return (
     <View style={globalStyles.body}>
@@ -39,6 +27,7 @@ export default function ViewPointsManager({ navigation }: any) {
       {isDeleteModalVisible && <DeleteSpotModal onClose={() => setDeleteModalVisible(false)} />}
       <PageTitle navigation={navigation} title={i18n.t('viewpointsManager.title')} subtitle={i18n.t('viewpointsManager.subtitle')} />
       <View style={globalStyles.screens.separator} />
+      <DisclaimerBar message={i18n.t('viewpointsManager.disclaimer')} type={'info'} />
       <View style={viewPointsManagerStyles.content}>
         <View style={{ display: 'flex', flexDirection: 'row', gap: 10, justifyContent: 'center' }}>
           <SimpleButton text={i18n.t('viewpointsManager.addViewPoint')} icon={require('../../assets/icons/FiPlus.png')} onPress={() => setIsModalVisible(true)} />

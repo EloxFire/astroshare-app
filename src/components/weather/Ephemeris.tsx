@@ -50,7 +50,7 @@ export default function Ephemeris({ weather }: EphemerisProps) {
         {
           twilightBands &&
           twilightBands.map((band: any, index: number) => {
-            if(dayjs(band.from).isBefore(dayjs().hour(12).minute(0).second(0))){
+            if(dayjs(band.interval.from).isBefore(dayjs().hour(12).minute(0).second(0))){
               return (
                 <DSOValues chipValue key={`twilight-band-${index}`} title={i18n.t(`ephemerisBar.twilightBands.dawn.${band.name.toLowerCase()}`)} value={`${dayjs(band.interval.from).format('HH:mm').replace(':', 'h')} → ${dayjs(band.interval.to).format('HH:mm').replace(':', 'h')}`} chipColor={app_colors.white_twenty} />
               )

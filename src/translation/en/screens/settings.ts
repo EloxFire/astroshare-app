@@ -16,7 +16,7 @@ export const settingsTranslations = {
     },
     favoritesViewPoints: {
       title: "Observation locations",
-      subtitle: "// Configure your favorite observation locations"
+      subtitle: "// Manage your favorite viewpoints"
     },
     widgets: {
       title: "Customization",

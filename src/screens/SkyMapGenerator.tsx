@@ -8,15 +8,15 @@ import { convertEquatorialToHorizontal, isBodyAboveHorizon, hercules, lyra, drac
 import { Circle, G, Image, Line, Mask, Polyline, Rect, Svg, Text as SvgText } from 'react-native-svg';
 import { constellationsAsterisms } from '../helpers/scripts/astro/constellationsAsterisms'
 import { app_colors } from '../helpers/constants'
+import { i18n } from '../helpers/scripts/i18n'
+import { useSolarSystem } from '../contexts/SolarSystemContext'
+import { GlobalPlanet } from '../helpers/types/GlobalPlanet'
+import { astroImages, moonIcons } from '../helpers/scripts/loadImages'
 import PageTitle from '../components/commons/PageTitle'
 import DSOValues from '../components/commons/DSOValues'
 import ToggleButton from '../components/commons/buttons/ToggleButton'
 import dayjs from 'dayjs'
 import axios from 'axios'
-import { i18n } from '../helpers/scripts/i18n'
-import { useSolarSystem } from '../contexts/SolarSystemContext'
-import { GlobalPlanet } from '../helpers/types/GlobalPlanet'
-import { astroImages, moonIcons } from '../helpers/scripts/loadImages'
 
 
 export default function SkyMapGenerator({ navigation }: any) {
@@ -244,7 +244,7 @@ export default function SkyMapGenerator({ navigation }: any) {
               const y = (screenWidth / 2) + r * Math.cos(theta); // Remarquez le signe moins ici
 
               return (
-                <>
+                <View key={index}>
                   <Image href={astroImages[planet.name.toUpperCase()]} key={`planet-${index}`} x={x} y={y} width={15} height={15} />
                   <SvgText
                     key={`name-planet-${planet.name}`}
@@ -257,7 +257,7 @@ export default function SkyMapGenerator({ navigation }: any) {
                   >
                     {planet.name}
                   </SvgText>
-                </>
+                </View>
               );
             })
           }

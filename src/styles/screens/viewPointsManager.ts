@@ -4,6 +4,7 @@ export const viewPointsManagerStyles = {
   content: {
     display: 'flex' as 'flex',
     flexDirection: 'column' as 'column',
+    marginTop: 10,
     
     title: {
       color: app_colors.white,
