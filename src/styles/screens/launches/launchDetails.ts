@@ -5,6 +5,7 @@ export const launchDetailsStyles = {
     display: 'flex' as 'flex',
     flexDirection: 'column' as 'column',
     paddingBottom: 50,
+    gap: 20,
 
     mainCard: {
       display: 'flex' as 'flex',
@@ -39,7 +40,7 @@ export const launchDetailsStyles = {
         subtitleContainer:{
           display: 'flex' as 'flex',
           flexDirection: 'row' as 'row',
-          marginBottom: 20,
+          // marginBottom: 20,
 
           subtitle: {
             fontSize: 16,
@@ -72,7 +73,6 @@ export const launchDetailsStyles = {
       borderColor: app_colors.white_no_opacity,
       borderRadius: 10,
       padding: 10,
-      marginTop: 20,
       borderWidth: 1,
 
       title: {
@@ -110,7 +110,6 @@ export const launchDetailsStyles = {
       borderColor: app_colors.white_no_opacity,
       borderRadius: 10,
       padding: 10,
-      marginTop: 20,
       borderWidth: 1,
 
       title: {
@@ -138,6 +137,41 @@ export const launchDetailsStyles = {
         fontFamily: 'GilroyRegular',
         color: app_colors.white,
         textAlign: 'justify' as 'justify',
+      }
+    },
+
+    notificationButtonContainer: {
+      display: 'flex' as 'flex',
+      flexDirection: 'row' as 'row',
+      justifyContent: 'center' as 'center',
+      alignItems: 'center' as 'center',
+      gap: 10,
+      marginTop: 10,
+
+      button: {
+        display: 'flex' as 'flex',
+        flexDirection: 'row' as 'row',
+        alignItems: 'center' as 'center',
+        justifyContent: 'center' as 'center',
+        gap: 10,
+        backgroundColor: app_colors.white,
+        padding: 3,
+        borderRadius: 10,
+        width: '60%' as '60%',
+
+        image: {
+          width: 20,
+          height: 20,
+          tintColor: app_colors.black,
+        },
+
+        text: {
+          fontSize: 15,
+          fontFamily: 'GilroyRegular',
+          color: app_colors.black,
+          padding: 5,
+          borderRadius: 5,
+        }
       }
     }
   }

@@ -5,8 +5,8 @@ import {useLaunchData} from "../../../contexts/LaunchContext";
 import {LaunchData} from "../../../helpers/types/LaunchData";
 import dayjs from "dayjs";
 import {truncate} from "../../../helpers/scripts/utils/formatters/truncate";
-import {launchCardStyles} from "../../../styles/components/cards/launchCard";
 import {getLaunchStatusColor} from "../../../helpers/scripts/launches/getLaunchStatusColor";
+import {getTimeFromLaunch} from "../../../helpers/scripts/utils/getTimeFromLaunch";
 
 
 export default function NextLaunchCountdownWidget(): ReactNode {
@@ -25,22 +25,18 @@ export default function NextLaunchCountdownWidget(): ReactNode {
   }, [launchData])
 
   useEffect(() => {
-    getTimeFromLaunch()
+    if(launch){
+      setCountdown(getTimeFromLaunch(dayjs(launch.net).toDate()))
 
-    const interval = setInterval(() => {
-      getTimeFromLaunch()
-    }, 1000)
+      const interval = setInterval(() => {
+        setCountdown(getTimeFromLaunch(dayjs(launch.net).toDate()))
+      }, 1000)
 
-    return () => clearInterval(interval)
+      return () => clearInterval(interval)
+    }
   }, [launch])
 
-  const getTimeFromLaunch = () => {
-    if(launch){
-      const diff = dayjs(launch.net).diff(dayjs(), 'second')
-      const timer = dayjs.duration(diff, 'seconds').format('D[j] HH[h] mm[m] ss[s]')
-      setCountdown(timer)
-    }
-  }
+
 
   return (
     <View style={nextLaunchCountdownWidgetStyles.widget}>

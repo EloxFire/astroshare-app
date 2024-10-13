@@ -45,7 +45,6 @@ export function ObservationSpotProvider({ children }: ObservationSpotProviderPro
       Barometer.addListener((result) => {
         const paPressure = result.pressure * 100
         const altitude = 44330 * (1 - Math.pow(paPressure / 101325, 1 / 5.255))
-        console.log('Altitude', altitude);
 
         setDefaultAltitude(`${Math.round(altitude)}m`)
       })
