@@ -8,7 +8,7 @@
       "distribution": "internal",
       "env": {
         "EXPO_PUBLIC_ASTROSHARE_API_URL":"https://api.astroshare.fr",
-        "EXPO_PUBLIC_APP_VERSION":"v1.4.2",
+        "EXPO_PUBLIC_APP_VERSION":"v1.4.3",
         "EXPO_PUBLIC_LAST_UPDATE":"2024-10-14",
         "GOOGLE_MAPS_API_KEY":"AIzaSyBIHiqhKWwweIvQF36R8eFiYpM5G5LOWpU"
       }
@@ -21,7 +21,7 @@
       "distribution": "internal",
       "env": {
         "EXPO_PUBLIC_ASTROSHARE_API_URL":"https://api.astroshare.fr",
-        "EXPO_PUBLIC_APP_VERSION":"v1.4.2",
+        "EXPO_PUBLIC_APP_VERSION":"v1.4.3",
         "EXPO_PUBLIC_LAST_UPDATE":"2024-10-14",
         "GOOGLE_MAPS_API_KEY":"AIzaSyBIHiqhKWwweIvQF36R8eFiYpM5G5LOWpU"
       }
@@ -29,7 +29,7 @@
     "production": {
       "env": {
         "EXPO_PUBLIC_ASTROSHARE_API_URL":"https://api.astroshare.fr",
-        "EXPO_PUBLIC_APP_VERSION":"v1.4.2",
+        "EXPO_PUBLIC_APP_VERSION":"v1.4.3",
         "EXPO_PUBLIC_LAST_UPDATE":"2024-10-14",
         "GOOGLE_MAPS_API_KEY":"AIzaSyBIHiqhKWwweIvQF36R8eFiYpM5G5LOWpU"
       }
