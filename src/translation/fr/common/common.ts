@@ -10,6 +10,7 @@ export const commonTranslations = {
     invalidStar: "Nom de la étoile invalide",
     unknownError: "Une erreur inconnue est survenue...",
     simple: "##Erreur##",
+    unknownStar: "Pas de nom",
     unknown: "Inconnu",
     other: "Other",
     noPlanets: "Aucune planète visible",
@@ -56,6 +57,12 @@ export const commonTranslations = {
     nextRise: "Prochain lever",
     nextSet: "Prochain coucher",
     altitude: "Altitude",
+  },
+  observation: {
+    title: "Observation",
+    nakedEye: "À l'œil nu",
+    binoculars: "Jumelles",
+    telescope: "Télescope",
   },
   planets: {
     Sun: "Soleil",
