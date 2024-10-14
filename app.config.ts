@@ -26,6 +26,8 @@ module.exports = {
     },
     permissions: [
       "android.permission.ACCESS_FINE_LOCATION",
+      "android.permission.SCHEDULE_EXACT_ALARM", // For android 12+ to schedule notifications
+
     ],
     blockedPermissions: [
       "android.permission.ACTIVITY_RECOGNITION",
