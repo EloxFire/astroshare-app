@@ -160,7 +160,7 @@ export default function SkyMapGenerator({ navigation }: any) {
                 const endY = (screenWidth / 2) + endR * Math.cos(endTheta);
 
                 return (
-                  <Line key={`constell-${constellationIndex}-${segmentIndex}`} x1={startX} y1={startY} x2={endX} y2={endY} stroke={app_colors.red_eighty} strokeWidth="1" fill="none" />
+                  <Line key={`constellation-${constellationIndex}-${segmentIndex}`} x1={startX} y1={startY} x2={endX} y2={endY} stroke={app_colors.red_eighty} strokeWidth="1" fill="none" />
                 );
               }).filter(Boolean); // Filter out any null values
             })
@@ -182,7 +182,7 @@ export default function SkyMapGenerator({ navigation }: any) {
               }
 
               return (
-                <>
+                <View key={index} >
                   <Circle key={`star-${index}`} cx={x} cy={y} r="0.5" fill={app_colors.white_eighty} />
                   {
                     showStarsName && star.V < 3 &&
@@ -198,7 +198,7 @@ export default function SkyMapGenerator({ navigation }: any) {
                       {star.ids.split('|').filter(id => id.includes('NAME'))}
                     </SvgText>
                   }
-                </>
+                </View>
               );
             })
           }
@@ -263,7 +263,7 @@ export default function SkyMapGenerator({ navigation }: any) {
           }
           {
             (showPlanets && moonCoords && !starCatalogLoading) && (
-              <>
+              <View>
                 <Image href={moonIcons[moonCoords.phase]} x={moonX} y={moonY} width={12} height={12} />
                 <SvgText
                   key={`the-moon`}
@@ -276,7 +276,7 @@ export default function SkyMapGenerator({ navigation }: any) {
                 >
                   {i18n.t('common.planets.Moon')}
                 </SvgText>
-              </>
+              </View>
             )
           }
         </G>
