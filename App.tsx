@@ -68,8 +68,8 @@ const Stack = createNativeStackNavigator();
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
-    shouldPlaySound: false,
-    shouldSetBadge: false,
+    shouldPlaySound: true,
+    shouldSetBadge: true,
   }),
 });
 
@@ -101,7 +101,7 @@ export default function App() {
 
   useEffect(() => {
     (async() => {
-      if(expoPushToken !== ''){
+      if(expoPushToken !== '' && expoPushToken !== null && expoPushToken !== undefined) {
         await storeData('expoPushToken', expoPushToken)
         console.log('Token stored')
       }

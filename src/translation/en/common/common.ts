@@ -14,6 +14,7 @@ export const commonTranslations = {
     unknown: "Unknown",
     other: "Other",
     noPlanets: "No planets visible",
+    noPushToken: "Error while scheduling notification : No push token",
   },
   loadings: {
     simple: "Loading...",

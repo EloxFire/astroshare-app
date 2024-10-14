@@ -28,6 +28,10 @@ export const launchesScreenTranslations = {
       type: "Type",
       flightProfile: "Flight profile",
       description: "Description"
+    },
+    notificationButton: {
+      add: "Add a reminder",
+      remove: "Remove reminder"
     }
   }
 }

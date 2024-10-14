@@ -15,7 +15,7 @@ export const scheduleNotification = async(notification: NotificationProps) => {
   const expoPushToken = await getData('expoPushToken');
 
   if(!expoPushToken){
-    showToast({message: i18n.t('common.errors.unknown'), type: 'error', duration: 3000});
+    showToast({message: i18n.t('common.errors.noPushToken'), type: 'error', duration: 3000});
     return;
   }
 

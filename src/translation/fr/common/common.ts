@@ -13,6 +13,7 @@ export const commonTranslations = {
     unknown: "Inconnu",
     other: "Other",
     noPlanets: "Aucune planète visible",
+    noPushToken: "Erreur lors de la planification de la notification : Pas de jeton",
   },
   loadings: {
     simple: "Chargement...",
