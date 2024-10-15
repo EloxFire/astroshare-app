@@ -107,20 +107,20 @@ export default function LaunchDetails({ route, navigation }: LaunchCardProps): R
               <View style={launchDetailsStyles.content.mainCard.body.statusContainer}>
                 <DSOValues title={i18n.t('launchesScreen.details.status')} value={launch.status.name} wideChip chipValue chipColor={getLaunchStatusColor(launch.status.id).backgroundColor} chipForegroundColor={getLaunchStatusColor(launch.status.id).textColor} />
               </View>
-              {
-                launch.status.id === 1 &&
-                  <View style={launchDetailsStyles.content.notificationButtonContainer}>
-                      <TouchableOpacity style={launchDetailsStyles.content.notificationButtonContainer.button} onPress={() => handleNotification()}>
-                        {
-                          isNotificationPlanned ?
-                            <Image source={require('../../../assets/icons/FiBellOff.png')} style={launchDetailsStyles.content.notificationButtonContainer.button.image} />
-                            :
-                            <Image source={require('../../../assets/icons/FiBell.png')} style={launchDetailsStyles.content.notificationButtonContainer.button.image} />
-                        }
-                          <Text style={launchDetailsStyles.content.notificationButtonContainer.button.text}>{isNotificationPlanned ? i18n.t('launchesScreen.details.notificationButton.remove') : i18n.t('launchesScreen.details.notificationButton.add')}</Text>
-                      </TouchableOpacity>
-                  </View>
-              }
+              {/*{*/}
+              {/*  launch.status.id === 1 &&*/}
+              {/*    <View style={launchDetailsStyles.content.notificationButtonContainer}>*/}
+              {/*        <TouchableOpacity style={launchDetailsStyles.content.notificationButtonContainer.button} onPress={() => handleNotification()}>*/}
+              {/*          {*/}
+              {/*            isNotificationPlanned ?*/}
+              {/*              <Image source={require('../../../assets/icons/FiBellOff.png')} style={launchDetailsStyles.content.notificationButtonContainer.button.image} />*/}
+              {/*              :*/}
+              {/*              <Image source={require('../../../assets/icons/FiBell.png')} style={launchDetailsStyles.content.notificationButtonContainer.button.image} />*/}
+              {/*          }*/}
+              {/*            <Text style={launchDetailsStyles.content.notificationButtonContainer.button.text}>{isNotificationPlanned ? i18n.t('launchesScreen.details.notificationButton.remove') : i18n.t('launchesScreen.details.notificationButton.add')}</Text>*/}
+              {/*        </TouchableOpacity>*/}
+              {/*    </View>*/}
+              {/*}*/}
             </View>
           </View>
 

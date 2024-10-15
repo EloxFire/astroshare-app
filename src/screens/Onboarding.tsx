@@ -10,7 +10,6 @@ import { useSettings } from '../contexts/AppSettingsContext'
 import { StackActions } from '@react-navigation/native';
 import { languageSelectionStyles } from '../styles/screens/languageSelection'
 import { i18n } from '../helpers/scripts/i18n'
-import { app_colors } from '../helpers/constants'
 import getUnicodeFlagIcon from 'country-flag-icons/unicode'
 
 
@@ -55,6 +54,7 @@ export default function Onboarding({ navigation }: any) {
         <Text style={onboardingStyles.listText}>{i18n.t('onboarding.listText2')}</Text>
         <Text style={onboardingStyles.listText}>{i18n.t('onboarding.listText3')}</Text>
         <Text style={onboardingStyles.listText}>{i18n.t('onboarding.listText4')}</Text>
+        <Text style={onboardingStyles.listText}>{i18n.t('onboarding.listText5')}</Text>
       </View>
       <Text style={[onboardingStyles.text, { marginTop: 30 }]}>{i18n.t('onboarding.messageShown')}</Text>
       <TouchableOpacity style={comingSoonStyles.button} onPress={() => handleAccept()} disabled={!isFirstLaunch}>

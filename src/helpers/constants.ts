@@ -48,6 +48,7 @@ export const storageKeys = {
     data: 'launchesData',
   },
   notificationsId: 'notificationsId',
+  pushToken: 'pushToken',
 }
 
 export const sunImagesSrcWavelengths = {

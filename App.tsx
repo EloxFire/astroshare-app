@@ -52,6 +52,7 @@ import * as Notifications from 'expo-notifications';
 import {registerForPushNotificationsAsync} from "./src/helpers/scripts/notifications/registerPushNotifications";
 import {storeData} from "./src/helpers/storage";
 import LaunchDetails from "./src/screens/launches/LaunchDetails";
+import {storageKeys} from "./src/helpers/constants";
 
 dayjs.locale('fr');
 dayjs.extend(LocalizedFormat)
@@ -102,7 +103,7 @@ export default function App() {
   useEffect(() => {
     (async() => {
       if(expoPushToken !== '' && expoPushToken !== null && expoPushToken !== undefined) {
-        await storeData('expoPushToken', expoPushToken)
+        await storeData(storageKeys.pushToken, expoPushToken)
         console.log('Token stored')
       }
     })()

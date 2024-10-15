@@ -3,7 +3,7 @@ import { ScrollView, Text, View } from 'react-native'
 import { globalStyles } from '../styles/global'
 import { homeStyles } from '../styles/screens/home';
 import { routes } from '../helpers/routes';
-import { app_colors } from '../helpers/constants';
+import {app_colors, storageKeys} from '../helpers/constants';
 import { useSettings } from '../contexts/AppSettingsContext';
 import { isFirstLaunch } from '../helpers/scripts/checkFirstLaunch';
 import { i18n } from '../helpers/scripts/i18n';
@@ -15,10 +15,13 @@ import BannerHandler from '../components/banners/BannerHandler';
 import ToolButton from '../components/commons/buttons/ToolButton';
 import HomeSearchModule from '../components/forms/HomeSearchModule';
 import HomeWidgetDisplay from '../components/widgets/HomeWidgetDisplay';
+import {getData} from "../helpers/storage";
 
 export default function Home({ navigation }: any) {
   const { hasInternetConnection, currentUserLocation } = useSettings()
   const { launchContextLoading } = useLaunchData()
+
+  const [pushToken, setPushToken] = React.useState<string | null>(null)
 
   useEffect(() => {
     (async () => {
@@ -26,6 +29,14 @@ export default function Home({ navigation }: any) {
       if (firstLaunch) {
         navigation.push(routes.onboarding.path)
       }
+    })()
+  }, [])
+
+  useEffect(() => {
+    (async () => {
+      const token = await getData(storageKeys.pushToken);
+      if(!token) return;
+      setPushToken(token)
     })()
   }, [])
 
@@ -37,6 +48,7 @@ export default function Home({ navigation }: any) {
       <HomeSearchModule navigation={navigation} />
       <ScrollView style={{ borderTopWidth: 1, borderTopColor: app_colors.white_twenty }}>
         <HomeWidgetDisplay />
+        <Text style={{color: 'white', fontSize: 15}}>{pushToken}</Text>
         <View style={homeStyles.toolsSuggestions}>
           <Text style={globalStyles.sections.title}>{i18n.t('home.tools.title')}</Text>
           <Text style={globalStyles.sections.subtitle}>{i18n.t('home.tools.subtitle')}</Text>
