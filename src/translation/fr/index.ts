@@ -30,6 +30,7 @@ import { viewpointsManagerTranslations } from "./screens/viewpointsManager";
 import { weatherTranslation } from "./screens/weather";
 import {launchesScreenTranslations} from "./screens/launches";
 import {notificationsTranslations} from "./common/notifications";
+import {skymapTranslations} from "./screens/skymap";
 
 export const frTranslations = {
   onboarding: onboardingTranslations,
@@ -49,7 +50,8 @@ export const frTranslations = {
   moonPhases: moonPhasesTranslation,
   solarWeather: solarWeatherTranslations,
   satelliteTracker: satelliteTrackerTranslations,
-  skymapGenerator: skymapGeneratorTranslations,
+  // skymapGenerator: skymapGeneratorTranslations,
+  skymap: skymapTranslations,
   viewpointsManager: viewpointsManagerTranslations,
   resultCards: resultCardsTranslations,
   favouriteScreen: favouriteScreenTranslations,
