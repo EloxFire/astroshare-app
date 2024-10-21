@@ -4,19 +4,28 @@ import { globalStyles } from '../../styles/global'
 import { Star } from '../../helpers/types/Star'
 import { useSettings } from '../../contexts/AppSettingsContext'
 import { calculateHorizonAngle } from '../../helpers/scripts/astro/calculateHorizonAngle'
-import { convertEquatorialToHorizontal, isBodyAboveHorizon, hercules, lyra, draco, cepheus, getPlanetaryPositions } from '@observerly/astrometry'
+import {
+  convertEquatorialToHorizontal,
+  isBodyAboveHorizon,
+  hercules,
+  lyra,
+  draco,
+  cepheus,
+  getPlanetaryPositions,
+  Constellation
+} from '@observerly/astrometry'
 import { Circle, G, Image, Line, Mask, Polyline, Rect, Svg, Text as SvgText } from 'react-native-svg';
-import { constellationsAsterisms } from '../helpers/scripts/astro/constellationsAsterisms'
-import { app_colors } from '../helpers/constants'
-import { i18n } from '../helpers/scripts/i18n'
-import { useSolarSystem } from '../contexts/SolarSystemContext'
-import { GlobalPlanet } from '../helpers/types/GlobalPlanet'
-import { astroImages, moonIcons } from '../helpers/scripts/loadImages'
-import PageTitle from '../components/commons/PageTitle'
-import DSOValues from '../components/commons/DSOValues'
-import ToggleButton from '../components/commons/buttons/ToggleButton'
 import dayjs from 'dayjs'
 import axios from 'axios'
+import {useSolarSystem} from "../../contexts/SolarSystemContext";
+import PageTitle from "../../components/commons/PageTitle";
+import {i18n} from "../../helpers/scripts/i18n";
+import {app_colors} from "../../helpers/constants";
+import {constellationsAsterisms} from "../../helpers/scripts/astro/constellationsAsterisms";
+import {GlobalPlanet} from "../../helpers/types/GlobalPlanet";
+import {astroImages, moonIcons} from "../../helpers/scripts/loadImages";
+import DSOValues from "../../components/commons/DSOValues";
+import ToggleButton from "../../components/commons/buttons/ToggleButton";
 
 
 export default function SkyMapGenerator({ navigation }: any) {
@@ -139,7 +148,7 @@ export default function SkyMapGenerator({ navigation }: any) {
 
           {
             starsToDisplay.length > 0 && showConstellations &&
-            constellationsAsterisms.flatMap((constellation, constellationIndex) => {
+            constellationsAsterisms.flatMap((constellation: any, constellationIndex: number) => {
               // @ts-ignore
               return constellation.features[0].geometry.coordinates.map((segment: any, segmentIndex: any) => {
                 if (segment.length < 2) return null;

@@ -8,10 +8,12 @@ import ToolButton from '../../components/commons/buttons/ToolButton'
 import PageTitle from '../../components/commons/PageTitle'
 import ScreenInfo from '../../components/ScreenInfo'
 import { useSettings } from '../../contexts/AppSettingsContext'
+import {useStarCatalog} from "../../contexts/StarsContext";
 
 export default function SkyMapSelection({ navigation }: any) {
 
   const {currentUserLocation} = useSettings()
+  const {starCatalogLoading} = useStarCatalog()
 
   return (
     <View style={globalStyles.body}>
@@ -24,7 +26,7 @@ export default function SkyMapSelection({ navigation }: any) {
       <ScrollView>
         <View style={satelliteTrackerHomeStyles.buttons}>
           <ToolButton text={i18n.t('skymap.buttons.flatmap.title')} subtitle={i18n.t('skymap.buttons.flatmap.subtitle')} image={require('../../../assets/images/tools/flatmap.png')} onPress={() => navigation.navigate(routes.flatSkymap.path)} />
-          <ToolButton disabled={!currentUserLocation} text={i18n.t('skymap.buttons.planetarium.title')} subtitle={i18n.t('skymap.buttons.planetarium.subtitle')} image={require('../../../assets/images/tools/flatmap.png')} onPress={() => navigation.navigate(routes.planetarium.path)} />
+          <ToolButton disabled={!currentUserLocation || starCatalogLoading} text={i18n.t('skymap.buttons.planetarium.title')} subtitle={i18n.t('skymap.buttons.planetarium.subtitle')} image={require('../../../assets/images/tools/flatmap.png')} onPress={() => navigation.navigate(routes.planetarium.path)} />
         </View>
         <ScreenInfo image={require('../../../assets/icons/FiCompass.png')} text={i18n.t('skymap.info')} />
       </ScrollView>

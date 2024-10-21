@@ -48,7 +48,6 @@ export default function Home({ navigation }: any) {
       <HomeSearchModule navigation={navigation} />
       <ScrollView style={{ borderTopWidth: 1, borderTopColor: app_colors.white_twenty }}>
         <HomeWidgetDisplay />
-        <Text style={{color: 'white', fontSize: 15}}>{pushToken}</Text>
         <View style={homeStyles.toolsSuggestions}>
           <Text style={globalStyles.sections.title}>{i18n.t('home.tools.title')}</Text>
           <Text style={globalStyles.sections.subtitle}>{i18n.t('home.tools.subtitle')}</Text>
