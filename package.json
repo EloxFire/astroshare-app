@@ -45,7 +45,7 @@
     "expo-sensors": "~13.0.9",
     "expo-status-bar": "~1.12.1",
     "expo-three": "^8.0.0",
-    "firebase": "^11.0.0",
+    "firebase": "^10.14.1",
     "i18n-js": "^4.4.3",
     "lottie-react-native": "6.7.0",
     "lpf": "^1.0.0",

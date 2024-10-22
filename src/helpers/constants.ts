@@ -51,6 +51,12 @@ export const storageKeys = {
   pushToken: 'pushToken',
 }
 
+export const firebaseCollections = {
+  categories: "Categories",
+  ressources: "Ressources",
+  gallery: "Gallery",
+}
+
 export const sunImagesSrcWavelengths = {
   'HMI_IC': 'https://sdo.gsfc.nasa.gov/assets/img/latest/latest_512_HMIIC.jpg',
   'AIA_193': 'https://sdo.gsfc.nasa.gov/assets/img/latest/latest_512_0193.jpg',

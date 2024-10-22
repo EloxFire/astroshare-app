@@ -38,7 +38,6 @@ export const registerForPushNotificationsAsync = async () => {
           projectId: Constants.expoConfig?.extra?.eas.projectId,
         })
       ).data;
-      console.log(pushTokenString);
       // showToast({message: ``, type: 'success', duration: 3000});
       return pushTokenString;
     } catch (e: unknown) {
