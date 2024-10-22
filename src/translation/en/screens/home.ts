@@ -7,6 +7,10 @@ export const homeTranslations = {
     title: "Other tools",
     subtitle: "Explore beyond limits !"
   },
+  ressources: {
+    title: "Learn",
+    subtitle: "Stay informed and learn new things"
+  },
   buttons: {
     weather: {
       title: "Real-time weather",
@@ -43,6 +47,10 @@ export const homeTranslations = {
     launches_screen: {
       title: "Launches",
       subtitle: "// Upcoming launches"
+    },
+    ressources: {
+      title: "Ressources",
+      subtitle: "// Resources to help you"
     }
   }
 }

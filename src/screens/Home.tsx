@@ -59,6 +59,13 @@ export default function Home({ navigation }: any) {
             <BigButton disabled={!hasInternetConnection} navigation={navigation} targetScreen={routes.solarWeather.path} text={i18n.t('home.buttons.solar_weather.title')} subtitle={i18n.t('home.buttons.solar_weather.subtitle')} icon={require('../../assets/icons/SolarWind.png')} />
           </View>
         </View>
+        <View style={[homeStyles.nasaTools, {marginBottom: 0}]}>
+          <Text style={globalStyles.sections.title}>{i18n.t('home.ressources.title')}</Text>
+          <Text style={globalStyles.sections.subtitle}>{i18n.t('home.ressources.subtitle')}</Text>
+          <View style={homeStyles.nasaTools.buttons}>
+            <ToolButton disabled={!hasInternetConnection} navigation={navigation} targetScreen={routes.apod.path} text={i18n.t('home.buttons.ressources.title')} subtitle={i18n.t('home.buttons.ressources.subtitle')} image={require('../../assets/images/tools/ressources.png')} />
+          </View>
+        </View>
         <View style={homeStyles.nasaTools}>
           <Text style={globalStyles.sections.title}>{i18n.t('home.other_tools.title')}</Text>
           <Text style={globalStyles.sections.subtitle}>{i18n.t('home.other_tools.subtitle')}</Text>

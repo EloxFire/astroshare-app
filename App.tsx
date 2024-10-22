@@ -56,6 +56,7 @@ import {storageKeys} from "./src/helpers/constants";
 import SkyMapSelection from "./src/screens/skymap/SkyMapSelection";
 import Planetarium from "./src/screens/skymap/Planetarium";
 import { StarsContextProvider } from "./src/contexts/StarsContext";
+import './firebaseConfig';
 
 dayjs.locale('fr');
 dayjs.extend(LocalizedFormat)
