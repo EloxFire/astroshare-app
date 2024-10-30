@@ -1,7 +1,7 @@
-import React, { ReactNode, createContext, useContext, useEffect, useState } from 'react'
+import React, {ReactNode, createContext, useContext, useEffect, useState, useMemo} from 'react'
 import { Ressource } from "../helpers/types/ressources/Ressource";
 import { Category } from "../helpers/types/ressources/Category";
-import { collection, getDocs, getFirestore } from 'firebase/firestore';
+import { collection, getDocs, getFirestore } from 'firebase/firestore/lite';
 import { firebaseCollections } from "../helpers/constants";
 import { app } from "../../firebaseConfig";
 
@@ -35,7 +35,10 @@ export function RessourcesContextProvider({ children }: RessourcesContextProvide
     const fetchData = async () => {
       setRessourcesLoading(true); // Déclenche le chargement
       try {
-        const categories = await getCategories();
+        const categories: Category[] = await getCategories();
+        const ressources: Ressource[] = await getRessources();
+
+        setRessources(ressources);
         setCategories(categories);
       } catch (error) {
         console.error("Error fetching categories: ", error);
@@ -48,24 +51,36 @@ export function RessourcesContextProvider({ children }: RessourcesContextProvide
   }, []);
 
   // https://stackoverflow.com/questions/77466938/firebase-firestore-error-abi49-0-0-com-facebook-react-bridge-readablenativemap
+  // WORKAROUND by ChatGPT : Firebase en mode lite. Par contre, c'est de la lecture seule
   const getCategories = async () => {
     try {
       console.log('Getting categories');
       const db = getFirestore(app);
-      const categoriesCol = collection(db, "Categories");
-      const categoriesSnapshot = await getDocs(categoriesCol); // Vérifier cette ligne
+      const categoriesCol = collection(db, firebaseCollections.categories);
+      const categoriesSnapshot = await getDocs(categoriesCol);
       const categoriesList = categoriesSnapshot.docs.map(doc => doc.data());
       return categoriesList as Category[];
     } catch (error) {
-      console.error('Error fetching categories: ', error); // Capturer et afficher l'erreur
+      console.error('Error fetching categories: ', error);
       return [];
     }
   }
 
   const getRessources = async () => {
+    try {
+      console.log('Getting all ressources');
+      const db = getFirestore(app);
+      const ressourcesCol = collection(db, firebaseCollections.ressources);
+      const ressourcesSnapshot = await getDocs(ressourcesCol);
+      const ressourcesList = ressourcesSnapshot.docs.map(doc => doc.data());
+      return ressourcesList as Ressource[];
+    } catch (error) {
+      console.error('Error fetching ressources: ', error);
+      return [];
+    }
   }
 
-  const values = React.useMemo(() => ({
+  const values = useMemo(() => ({
     ressources,
     categories,
     ressourcesLoading

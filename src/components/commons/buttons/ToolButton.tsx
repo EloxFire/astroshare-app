@@ -11,6 +11,7 @@ interface BigButtonProps {
   image?: ImageSourcePropType
   navigation?: any
   targetScreen?: string
+  routeParams?: any
   hasCheckbox?: boolean
   isPremium?: boolean
   isChecked?: boolean
@@ -18,11 +19,15 @@ interface BigButtonProps {
   onPress?: () => void
 }
 
-export default function ToolButton({ text, image, navigation, targetScreen, subtitle, hasCheckbox, isChecked, onPress, disabled, isPremium }: BigButtonProps) {
+export default function ToolButton({ text, image, navigation, targetScreen, subtitle, routeParams,hasCheckbox, isChecked, onPress, disabled, isPremium }: BigButtonProps) {
 
   const handleNavigation = () => {
     if (!navigation || !targetScreen) return;
-    navigation.push(targetScreen)
+    if(routeParams) {
+      navigation.push(targetScreen, routeParams)
+    }else{
+      navigation.push(targetScreen)
+    }
   }
 
   const handleButtonPress = () => {

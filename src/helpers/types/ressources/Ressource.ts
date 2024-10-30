@@ -5,7 +5,7 @@ export type Ressource = {
   slug: string;
   category: string;
   downloadNames: string[];
-  level: string;
+  level: number | string;
   description: string;
   visibility: boolean;
   mardownContent?: string;
