@@ -30,6 +30,21 @@ export const ressourceStyles = {
         display: 'flex' as 'flex',
         flexDirection: 'column' as 'column',
         gap: 10,
+      },
+
+      downloadButton: {
+        backgroundColor: app_colors.white,
+        padding: 10,
+        borderRadius: 5,
+        display: 'flex' as 'flex',
+        flexDirection: 'row' as 'row',
+        justifyContent: 'center' as 'center',
+        alignItems: 'center' as 'center',
+        margin: 10,
+
+        label: {
+          fontFamily: 'GilroyBlack',
+        }
       }
     },
 
