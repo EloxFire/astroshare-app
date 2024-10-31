@@ -6,6 +6,7 @@ export const useFonts = async () =>
     'GilroyBlack': require('../../assets/fonts/Gilroy-Black.ttf'),
     'GilroyMedium': require('../../assets/fonts/Gilroy-Medium.ttf'),
     'GilroyRegular': require('../../assets/fonts/Gilroy-Regular.ttf'),
+    'GilroyRegularItalic': require('../../assets/fonts/Gilroy-RegularItalic.ttf'),
   });
 
 export default useFonts;

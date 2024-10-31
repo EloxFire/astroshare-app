@@ -1,5 +1,5 @@
 export const ressourceCategoryScreenTranslations = {
   title: "La catégorie :",
   description: "Description de la catégorie :",
-  availableRessources: "Ressources disponibles :"
+  availableRessources: "Ressources trouvées :"
 }

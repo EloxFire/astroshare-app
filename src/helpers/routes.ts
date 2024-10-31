@@ -30,5 +30,6 @@ export const routes = {
   launchesScreen: {path: 'LaunchesScreen', requirements: []},
   launchDetails: {path: 'LaunchDetails', requirements: []},
   ressources: {path: 'RessourcesScreen', requirements: []},
+  ressource: {path: 'RessourceScreen', requirements: []},
   categoryScreen: {path: 'RessourcesCategory', requirements: []},
 }

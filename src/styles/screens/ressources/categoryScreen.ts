@@ -4,6 +4,7 @@ export const categoriesScreenStyles = {
   content: {
     display: 'flex' as 'flex',
     flexDirection: 'column' as 'column',
+    paddingBottom: 50,
 
     categoryHeader:{
       display: 'flex' as 'flex',
