@@ -29,4 +29,7 @@ export const routes = {
   changelogScreen: {path: 'ChangelogScreen', requirements: []},
   launchesScreen: {path: 'LaunchesScreen', requirements: []},
   launchDetails: {path: 'LaunchDetails', requirements: []},
+  ressources: {path: 'RessourcesScreen', requirements: []},
+  ressource: {path: 'RessourceScreen', requirements: []},
+  categoryScreen: {path: 'RessourcesCategory', requirements: []},
 }

@@ -27,6 +27,7 @@ export const app_colors = {
   gold_eighty: '#FFBA1580',
   blue: '#061e92',
   blue_twenty: '##061e9220',
+  warning: '#FFA500',
 }
 
 export const Polaris = {
@@ -49,6 +50,12 @@ export const storageKeys = {
   },
   notificationsId: 'notificationsId',
   pushToken: 'pushToken',
+}
+
+export const firebaseCollections = {
+  categories: "Categories",
+  ressources: "Ressources",
+  gallery: "Gallery",
 }
 
 export const sunImagesSrcWavelengths = {

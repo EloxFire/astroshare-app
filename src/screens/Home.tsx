@@ -16,10 +16,12 @@ import ToolButton from '../components/commons/buttons/ToolButton';
 import HomeSearchModule from '../components/forms/HomeSearchModule';
 import HomeWidgetDisplay from '../components/widgets/HomeWidgetDisplay';
 import {getData} from "../helpers/storage";
+import {useRessources} from "../contexts/RessourcesContext";
 
 export default function Home({ navigation }: any) {
   const { hasInternetConnection, currentUserLocation } = useSettings()
   const { launchContextLoading } = useLaunchData()
+  const {ressourcesLoading} = useRessources()
 
   const [pushToken, setPushToken] = React.useState<string | null>(null)
 
@@ -57,6 +59,13 @@ export default function Home({ navigation }: any) {
             <BigButton disabled={!hasInternetConnection || !currentUserLocation} navigation={navigation} targetScreen={routes.moonPhases.path} text={i18n.t('home.buttons.moon_phases.title')} subtitle={i18n.t('home.buttons.moon_phases.subtitle')} icon={require('../../assets/icons/FiMoon.png')} />
              {/*<BigButton disabled={!hasInternetConnection || !currentUserLocation} navigation={navigation} targetScreen={routes.transitScreen.path} text={i18n.t('home.buttons.transits.title')} subtitle={i18n.t('home.buttons.transits.subtitle')} icon={require('../../assets/icons/FiTransit.png')} />*/}
             <BigButton disabled={!hasInternetConnection} navigation={navigation} targetScreen={routes.solarWeather.path} text={i18n.t('home.buttons.solar_weather.title')} subtitle={i18n.t('home.buttons.solar_weather.subtitle')} icon={require('../../assets/icons/SolarWind.png')} />
+          </View>
+        </View>
+        <View style={[homeStyles.nasaTools, {marginBottom: 0}]}>
+          <Text style={globalStyles.sections.title}>{i18n.t('home.ressources.title')}</Text>
+          <Text style={globalStyles.sections.subtitle}>{i18n.t('home.ressources.subtitle')}</Text>
+          <View style={homeStyles.nasaTools.buttons}>
+            <ToolButton disabled={!hasInternetConnection || ressourcesLoading} navigation={navigation} targetScreen={routes.ressources.path} text={i18n.t('home.buttons.ressources.title')} subtitle={i18n.t('home.buttons.ressources.subtitle')} image={require('../../assets/images/tools/ressources.png')} />
           </View>
         </View>
         <View style={homeStyles.nasaTools}>

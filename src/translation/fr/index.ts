@@ -31,6 +31,7 @@ import { weatherTranslation } from "./screens/weather";
 import {launchesScreenTranslations} from "./screens/launches";
 import {notificationsTranslations} from "./common/notifications";
 import {skymapTranslations} from "./screens/skymap";
+import {ressourcesScreenTranslations} from "./screens/ressources";
 
 export const frTranslations = {
   onboarding: onboardingTranslations,
@@ -65,5 +66,6 @@ export const frTranslations = {
   spaceStuff: spaceStuffTranslations,
   changelog: changelogScreenTranslations,
   launchesScreen: launchesScreenTranslations,
-  notifications: notificationsTranslations
+  notifications: notificationsTranslations,
+  ressourcesScreen: ressourcesScreenTranslations
 }
