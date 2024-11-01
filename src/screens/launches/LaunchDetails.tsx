@@ -9,7 +9,6 @@ import {getData, removeData, storeData} from "../../helpers/storage";
 import dayjs from "dayjs";
 import DSOValues from "../../components/commons/DSOValues";
 import PageTitle from "../../components/commons/PageTitle";
-import {scheduleNotification, unScheduleNotification} from "../../helpers/scripts/notifications/sendNotification";
 import {showToast} from "../../helpers/scripts/showToast";
 import {getTimeFromLaunch} from "../../helpers/scripts/utils/getTimeFromLaunch";
 
@@ -49,32 +48,32 @@ export default function LaunchDetails({ route, navigation }: LaunchCardProps): R
   }, [launch])
 
 
-  const handleNotification = async () => {
-    if(isNotificationPlanned){
-      // Remove notification
-      const notificationId = await getData(`notification_${launch.id}`)
-      if(notificationId){
-        await unScheduleNotification(notificationId)
-        await removeData(`notification_${launch.id}`)
-        setIsNotificationPlanned(false)
-        showToast({message: i18n.t('notifications.successRemove'), type: 'success', duration: 4000})
-      }
-    } else {
-      // Add notification
-      const notif = await scheduleNotification({
-        title: i18n.t('notifications.launches.title', {timeTo: countdown}),
-        body: i18n.t('notifications.launches.body', {launch_name: launch.name}),
-        data: launch,
-        date: dayjs(launch.net).subtract(1, 'hour').toDate()
-      })
-
-      if(notif){
-        setIsNotificationPlanned(true)
-        await storeData(`notification_${launch.id}`, notif)
-        showToast({message: i18n.t('notifications.successSchedule'), type: 'success', duration: 4000})
-      }
-    }
-  }
+  // const handleNotification = async () => {
+  //   if(isNotificationPlanned){
+  //     // Remove notification
+  //     const notificationId = await getData(`notification_${launch.id}`)
+  //     if(notificationId){
+  //       await unScheduleNotification(notificationId)
+  //       await removeData(`notification_${launch.id}`)
+  //       setIsNotificationPlanned(false)
+  //       showToast({message: i18n.t('notifications.successRemove'), type: 'success', duration: 4000})
+  //     }
+  //   } else {
+  //     // Add notification
+  //     const notif = await scheduleNotification({
+  //       title: i18n.t('notifications.launches.title', {timeTo: countdown}),
+  //       body: i18n.t('notifications.launches.body', {launch_name: launch.name}),
+  //       data: launch,
+  //       date: dayjs(launch.net).subtract(1, 'hour').toDate()
+  //     })
+  //
+  //     if(notif){
+  //       setIsNotificationPlanned(true)
+  //       await storeData(`notification_${launch.id}`, notif)
+  //       showToast({message: i18n.t('notifications.successSchedule'), type: 'success', duration: 4000})
+  //     }
+  //   }
+  // }
 
   return (
     <View style={globalStyles.body}>

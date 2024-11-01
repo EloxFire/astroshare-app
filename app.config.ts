@@ -24,10 +24,10 @@ module.exports = {
       foregroundImage: "./assets/adaptive-icon.png",
       backgroundColor: "#000000"
     },
+    "googleServicesFile": "./android/app/google-services.json",
     permissions: [
       "android.permission.ACCESS_FINE_LOCATION",
       "android.permission.SCHEDULE_EXACT_ALARM", // For android 12+ to schedule notifications
-
     ],
     blockedPermissions: [
       "android.permission.ACTIVITY_RECOGNITION",

@@ -48,19 +48,16 @@ import { SpaceXContextProvider } from "./src/contexts/SpaceXContext";
 import ChangelogScreen from "./src/screens/settings/Changelog";
 import LaunchesScreen from "./src/screens/launches/Launches";
 import { LaunchDataContextProvider } from "./src/contexts/LaunchContext";
-import * as Notifications from 'expo-notifications';
-import {registerForPushNotificationsAsync} from "./src/helpers/scripts/notifications/registerPushNotifications";
-import {storeData} from "./src/helpers/storage";
 import LaunchDetails from "./src/screens/launches/LaunchDetails";
-import {storageKeys} from "./src/helpers/constants";
 import SkyMapSelection from "./src/screens/skymap/SkyMapSelection";
 import Planetarium from "./src/screens/skymap/Planetarium";
 import { StarsContextProvider } from "./src/contexts/StarsContext";
 import RessourcesScreen from "./src/screens/ressources/RessourcesScreen";
 import {RessourcesContextProvider} from "./src/contexts/RessourcesContext";
-import './firebaseConfig';
 import CategoryScreen from "./src/screens/ressources/CategoryScreen";
 import RessourceScreen from "./src/screens/ressources/RessourceScreen";
+import './firebaseConfig';
+import {usePushNotifications} from "./src/hooks/usePushNotifications";
 
 dayjs.locale('fr');
 dayjs.extend(LocalizedFormat)
@@ -74,17 +71,13 @@ dayjs().format('L LT')
 
 const Stack = createNativeStackNavigator();
 
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: true,
-    shouldSetBadge: true,
-  }),
-});
-
 export default function App() {
+  const {expoPushToken, notification} = usePushNotifications();
+
+  console.log('expoPushToken', expoPushToken?.data);
+  console.log('notification', JSON.stringify(notification, undefined, 2));
+
   const [appIsReady, setAppIsReady] = useState(false);
-  const [expoPushToken, setExpoPushToken] = useState('');
 
   useEffect(() => {
     async function prepare() {
@@ -102,20 +95,6 @@ export default function App() {
     prepare();
   }, []);
 
-  useEffect(() => {
-    registerForPushNotificationsAsync()
-      .then(token => setExpoPushToken(token ?? ''))
-      .catch((error: any) => setExpoPushToken(`${error}`));
-  }, []);
-
-  useEffect(() => {
-    (async() => {
-      if(expoPushToken !== '' && expoPushToken !== null && expoPushToken !== undefined) {
-        await storeData(storageKeys.pushToken, expoPushToken)
-        console.log('Token stored')
-      }
-    })()
-  }, [expoPushToken])
 
   if (!appIsReady) {
     return (
