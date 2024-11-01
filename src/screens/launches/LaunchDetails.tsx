@@ -11,6 +11,10 @@ import DSOValues from "../../components/commons/DSOValues";
 import PageTitle from "../../components/commons/PageTitle";
 import {showToast} from "../../helpers/scripts/showToast";
 import {getTimeFromLaunch} from "../../helpers/scripts/utils/getTimeFromLaunch";
+import {
+  scheduleLocalNotification,
+  unScheduleNotification
+} from "../../helpers/scripts/notifications/scheduleLocalNotification";
 
 interface LaunchCardProps {
   route: any
@@ -48,32 +52,32 @@ export default function LaunchDetails({ route, navigation }: LaunchCardProps): R
   }, [launch])
 
 
-  // const handleNotification = async () => {
-  //   if(isNotificationPlanned){
-  //     // Remove notification
-  //     const notificationId = await getData(`notification_${launch.id}`)
-  //     if(notificationId){
-  //       await unScheduleNotification(notificationId)
-  //       await removeData(`notification_${launch.id}`)
-  //       setIsNotificationPlanned(false)
-  //       showToast({message: i18n.t('notifications.successRemove'), type: 'success', duration: 4000})
-  //     }
-  //   } else {
-  //     // Add notification
-  //     const notif = await scheduleNotification({
-  //       title: i18n.t('notifications.launches.title', {timeTo: countdown}),
-  //       body: i18n.t('notifications.launches.body', {launch_name: launch.name}),
-  //       data: launch,
-  //       date: dayjs(launch.net).subtract(1, 'hour').toDate()
-  //     })
-  //
-  //     if(notif){
-  //       setIsNotificationPlanned(true)
-  //       await storeData(`notification_${launch.id}`, notif)
-  //       showToast({message: i18n.t('notifications.successSchedule'), type: 'success', duration: 4000})
-  //     }
-  //   }
-  // }
+  const handleNotification = async () => {
+    if(isNotificationPlanned){
+      // Remove notification
+      const notificationId = await getData(`notification_${launch.id}`)
+      if(notificationId){
+        await unScheduleNotification(notificationId)
+        await removeData(`notification_${launch.id}`)
+        setIsNotificationPlanned(false)
+        showToast({message: i18n.t('notifications.successRemove'), type: 'success', duration: 4000})
+      }
+    } else {
+      // Add notification
+      const notif = await scheduleLocalNotification({
+        title: i18n.t('notifications.launches.title', {timeTo: countdown}),
+        body: i18n.t('notifications.launches.body', {launch_name: launch.name}),
+        data: launch,
+        date: dayjs().add(10, 'second').toDate()
+      })
+
+      if(notif){
+        setIsNotificationPlanned(true)
+        await storeData(`notification_${launch.id}`, notif)
+        showToast({message: i18n.t('notifications.successSchedule'), type: 'success', duration: 4000})
+      }
+    }
+  }
 
   return (
     <View style={globalStyles.body}>
@@ -106,20 +110,20 @@ export default function LaunchDetails({ route, navigation }: LaunchCardProps): R
               <View style={launchDetailsStyles.content.mainCard.body.statusContainer}>
                 <DSOValues title={i18n.t('launchesScreen.details.status')} value={launch.status.name} wideChip chipValue chipColor={getLaunchStatusColor(launch.status.id).backgroundColor} chipForegroundColor={getLaunchStatusColor(launch.status.id).textColor} />
               </View>
-              {/*{*/}
-              {/*  launch.status.id === 1 &&*/}
-              {/*    <View style={launchDetailsStyles.content.notificationButtonContainer}>*/}
-              {/*        <TouchableOpacity style={launchDetailsStyles.content.notificationButtonContainer.button} onPress={() => handleNotification()}>*/}
-              {/*          {*/}
-              {/*            isNotificationPlanned ?*/}
-              {/*              <Image source={require('../../../assets/icons/FiBellOff.png')} style={launchDetailsStyles.content.notificationButtonContainer.button.image} />*/}
-              {/*              :*/}
-              {/*              <Image source={require('../../../assets/icons/FiBell.png')} style={launchDetailsStyles.content.notificationButtonContainer.button.image} />*/}
-              {/*          }*/}
-              {/*            <Text style={launchDetailsStyles.content.notificationButtonContainer.button.text}>{isNotificationPlanned ? i18n.t('launchesScreen.details.notificationButton.remove') : i18n.t('launchesScreen.details.notificationButton.add')}</Text>*/}
-              {/*        </TouchableOpacity>*/}
-              {/*    </View>*/}
-              {/*}*/}
+              {
+                launch.status.id === 1 &&
+                  <View style={launchDetailsStyles.content.notificationButtonContainer}>
+                      <TouchableOpacity style={launchDetailsStyles.content.notificationButtonContainer.button} onPress={() => handleNotification()}>
+                        {
+                          isNotificationPlanned ?
+                            <Image source={require('../../../assets/icons/FiBellOff.png')} style={launchDetailsStyles.content.notificationButtonContainer.button.image} />
+                            :
+                            <Image source={require('../../../assets/icons/FiBell.png')} style={launchDetailsStyles.content.notificationButtonContainer.button.image} />
+                        }
+                          <Text style={launchDetailsStyles.content.notificationButtonContainer.button.text}>{isNotificationPlanned ? i18n.t('launchesScreen.details.notificationButton.remove') : i18n.t('launchesScreen.details.notificationButton.add')}</Text>
+                      </TouchableOpacity>
+                  </View>
+              }
             </View>
           </View>
 

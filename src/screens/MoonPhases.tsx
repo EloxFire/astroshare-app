@@ -5,8 +5,6 @@ import { moonPhasesStyles } from '../styles/screens/moonPhases'
 import { getBodyNextRise, getBodyNextSet, getLunarAge, getLunarDistance, getLunarElongation, getLunarEquatorialCoordinate, getLunarIllumination, getLunarPhase, isFullMoon, isNewMoon, isTransitInstance } from '@observerly/astrometry'
 import { moonIcons } from '../helpers/scripts/loadImages'
 import { app_colors } from '../helpers/constants'
-import { useSpot } from '../contexts/ObservationSpotContext'
-import { extractNumbers } from '../helpers/scripts/extractNumbers'
 import { calculateHorizonAngle } from '../helpers/scripts/astro/calculateHorizonAngle'
 import { useSettings } from '../contexts/AppSettingsContext'
 import dayjs from 'dayjs'
@@ -15,6 +13,7 @@ import SimpleButton from '../components/commons/buttons/SimpleButton'
 import PageTitle from '../components/commons/PageTitle'
 import DSOValues from '../components/commons/DSOValues'
 import { i18n } from '../helpers/scripts/i18n'
+import {useTranslation} from "../hooks/useTranslation";
 
 interface MoonData {
   phase: string,
@@ -33,6 +32,9 @@ export default function MoonPhases({ navigation }: any) {
 
   // const { selectedSpot, defaultAltitude } = useSpot()
   const { currentUserLocation } = useSettings()
+  const {currentLocale} = useTranslation()
+
+  dayjs().locale(currentLocale)
 
   const [date, setDate] = useState<Date>(new Date())
   const [moonData, setMoonData] = useState<MoonData | null>(null)
@@ -157,7 +159,11 @@ export default function MoonPhases({ navigation }: any) {
             selectedView &&
             <View>
               <View style={moonPhasesStyles.content.phaseContainer}>
-                <Text style={moonPhasesStyles.content.title}>{i18n.t('moonPhases.title', { date: dayjs(date).format('DD MMMM YYYY') })}</Text>
+                <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                  <SimpleButton small icon={require('../../assets/icons/FiChevronLeft.png')} onPress={() => setDate(dayjs(date).subtract(1, 'day').toDate())} />
+                  <Text style={moonPhasesStyles.content.title}>{i18n.t('moonPhases.title', { date: dayjs(date).format('DD MMMM YYYY') })}</Text>
+                  <SimpleButton small icon={require('../../assets/icons/FiChevronRight.png')} onPress={() => setDate(dayjs(date).add(1, 'day').toDate())} />
+                </View>
                 <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10 }}>
                   <TouchableOpacity onPress={() => setIsDateModalVisible(true)} style={moonPhasesStyles.content.selectButton}>
                     <Text style={moonPhasesStyles.content.selectButton.text}>{i18n.t('moonPhases.select_date')}</Text>

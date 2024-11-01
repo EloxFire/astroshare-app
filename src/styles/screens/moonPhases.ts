@@ -1,4 +1,3 @@
-import { counterEvent } from "react-native/Libraries/Performance/Systrace";
 import { app_colors } from "../../helpers/constants";
 import { Dimensions } from "react-native";
 
@@ -12,7 +11,6 @@ export const moonPhasesStyles = {
       fontFamily: 'GilroyBlack',
       fontSize: 22,
       color: app_colors.white,
-      marginBottom: 5,
       textTransform: 'uppercase' as 'uppercase',
       alignSelf: 'center' as 'center'
     },
