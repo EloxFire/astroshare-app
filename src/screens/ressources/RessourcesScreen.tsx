@@ -10,6 +10,7 @@ import ToolButton from "../../components/commons/buttons/ToolButton";
 import {routes} from "../../helpers/routes";
 import ScreenInfo from "../../components/ScreenInfo";
 import InputWithIcon from "../../components/forms/InputWithIcon";
+import SimpleButton from "../../components/commons/buttons/SimpleButton";
 
 function RessourcesScreen({navigation}: any) {
 
@@ -31,9 +32,8 @@ function RessourcesScreen({navigation}: any) {
       <PageTitle navigation={navigation} title={i18n.t('home.buttons.ressources.title')} subtitle={i18n.t('home.buttons.ressources.subtitle')} />
       <View style={globalStyles.screens.separator} />
       <ScrollView>
-        <InputWithIcon placeholder={"Recherchez une catégorie"} changeEvent={(e) => setSearch(e)} search={() => {}} icon={require('../../../assets/icons/FiSearch.png')} value={search}/>
+        <InputWithIcon placeholder={i18n.t('ressourcesScreen.searchPlaceholder')} changeEvent={(e) => setSearch(e)} search={() => {}} icon={require('../../../assets/icons/FiSearch.png')} value={search}/>
         <View style={ressourcesScreenStyles.content}>
-          {/*<Text style={ressourcesScreenStyles.content.title}>Sélectionnez une catégorie</Text>*/}
           {
             list.length > 0 ?
               list.map((category: Category, index: number) => {
@@ -48,7 +48,7 @@ function RessourcesScreen({navigation}: any) {
                     image={{uri: category.image}}
                   />
                 )
-              }) : <Text>{i18n.t('home.buttons.ressources.noRessources')}</Text>
+              }) : <SimpleButton disabled text={i18n.t('ressourcesScreen.noCategories')} />
           }
           <ScreenInfo image={require('../../../assets/icons/FiInfo.png')} text={i18n.t('ressourcesScreen.infoText')} />
         </View>

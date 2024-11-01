@@ -13,6 +13,7 @@ import {getRessourceLevel} from "../../helpers/scripts/ressources/getRessourceLe
 import {getRessourcesTags} from "../../helpers/scripts/ressources/getRessourcesTags";
 import {routes} from "../../helpers/routes";
 import ScreenInfo from "../../components/ScreenInfo";
+import SimpleButton from "../../components/commons/buttons/SimpleButton";
 
 function CategoryScreen({route, navigation}: any) {
 
@@ -44,9 +45,10 @@ function CategoryScreen({route, navigation}: any) {
               <DSOValues title={i18n.t('ressourcesScreen.categoryScreen.availableRessources')} value={ressourcesList.length} />
             </View>
             <View>
-              <InputWithIcon placeholder={"Rechercher une ressource, un mot clé"} changeEvent={(e) => setSearch(e)} search={() => {}} icon={require('../../../assets/icons/FiSearch.png')} value={search}/>
+              <InputWithIcon placeholder={i18n.t('ressourcesScreen.categoryScreen.searchPlaceholder')} changeEvent={(e) => setSearch(e)} search={() => {}} icon={require('../../../assets/icons/FiSearch.png')} value={search}/>
             </View>
             {
+              ressourcesList.length === 0 ? <SimpleButton disabled text={i18n.t('ressourcesScreen.categoryScreen.noRessources')} /> :
               ressourcesList.map((ressource: Ressource, index: number) => {
                 return (
                   <TouchableOpacity key={index} style={categoriesScreenStyles.content.ressourceCard} onPress={() => navigation.navigate(routes.ressource.path, {ressource: ressource})}>

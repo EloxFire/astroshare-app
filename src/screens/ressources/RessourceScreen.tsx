@@ -16,9 +16,13 @@ import * as Sharing from 'expo-sharing';
 import readingTime from 'reading-time/lib/reading-time';
 import dayjs from "dayjs";
 import {showToast} from "../../helpers/scripts/showToast";
+import {i18n} from "../../helpers/scripts/i18n";
+import DisclaimerBar from "../../components/banners/DisclaimerBar";
+import {useTranslation} from "../../hooks/useTranslation";
 
 function CategoryScreen({route, navigation}: any) {
   const ressource: Ressource = route.params.ressource;
+  const {currentLocale} = useTranslation()
 
   const [readingStats, setReadingStats] = useState<any>({});
 
@@ -54,11 +58,11 @@ function CategoryScreen({route, navigation}: any) {
       const f = await downloadResumable.downloadAsync();
 
       if(!f){
-        showToast({message: "Échec du téléchargement", type: "error"});
+        showToast({message: i18n.t('ressourcesScreen.ressourceScreen.errors.download'), type: "error"});
         return;
       }
 
-      showToast({ message: "Téléchargement terminé", type: "success" });
+      showToast({ message: i18n.t('ressourcesScreen.ressourceScreen.download.success'), type: "success" });
 
       // Proposer à l'utilisateur de visualiser le fichier si la plateforme le permet
       if (Platform.OS === 'ios' || Platform.OS === 'android') {
@@ -66,11 +70,11 @@ function CategoryScreen({route, navigation}: any) {
         if (canShare) {
           await Sharing.shareAsync(f.uri);
         } else {
-          showToast({ message: "La visualisation immédiate n'est pas supportée sur cet appareil", type: "error" });
+          showToast({ message: i18n.t('ressourcesScreen.ressourceScreen.errors.overviewNoSupport'), type: "error" });
         }
       }
     } catch (error) {
-      showToast({ message: "Échec du téléchargement", type: "error" });
+      showToast({ message: i18n.t('ressourcesScreen.ressourceScreen.error.download'), type: "error" });
     }
   };
 
@@ -81,17 +85,21 @@ function CategoryScreen({route, navigation}: any) {
       <ScrollView>
           <ScrollView>
             <View style={ressourceStyles.content}>
+              {
+                currentLocale !== 'fr' &&
+                <DisclaimerBar message={"This ressource is only available in French."} type={"warning"}/>
+              }
               <View style={ressourceStyles.content.infoBox}>
                 <ImageBackground source={{uri: ressource.filePreview}} style={ressourceStyles.content.infoBox.imageContainer} imageStyle={ressourceStyles.content.infoBox.imageContainer.image}/>
                 <View style={ressourceStyles.content.infoBox.body}>
-                  <DSOValues title={"Niveau"} value={getRessourceLevel(ressource).element}/>
-                  <DSOValues title={"Tags"} value={getRessourcesTags(ressource)}/>
-                  <DSOValues title={"Temps de lecture"} value={`${Math.ceil(dayjs.duration(readingStats.time).asMinutes())} min`}/>
+                  <DSOValues title={i18n.t('ressourcesScreen.ressourceScreen.level')} value={getRessourceLevel(ressource).element}/>
+                  <DSOValues title={i18n.t('ressourcesScreen.ressourceScreen.tags')} value={getRessourcesTags(ressource)}/>
+                  <DSOValues title={i18n.t('ressourcesScreen.ressourceScreen.readingTime')} value={`${Math.ceil(dayjs.duration(readingStats.time).asMinutes())} min`}/>
                 </View>
                 {
                   ressource.files && ressource.files.length > 0 &&
                     <TouchableOpacity style={ressourceStyles.content.infoBox.downloadButton} onPress={handleDownload}>
-                        <Text style={ressourceStyles.content.infoBox.downloadButton.label}>Télécharger {ressource.type === 'pdf' ? "le document" : "la fiche mémo"}</Text>
+                        <Text style={ressourceStyles.content.infoBox.downloadButton.label}>{`${i18n.t('ressourcesScreen.ressourceScreen.download.main')} ${ressource.type === 'pdf' ? i18n.t('ressourcesScreen.ressourceScreen.download.pdf') : i18n.t('ressourcesScreen.ressourceScreen.download.memo')}`}</Text>
                     </TouchableOpacity>
                 }
               </View>
