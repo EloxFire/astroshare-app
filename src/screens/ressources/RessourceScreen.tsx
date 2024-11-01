@@ -11,7 +11,7 @@ import DSOValues from "../../components/commons/DSOValues";
 import {getRessourceLevel} from "../../helpers/scripts/ressources/getRessourceLevel";
 import {getRessourcesTags} from "../../helpers/scripts/ressources/getRessourcesTags";
 import * as FileSystem from 'expo-file-system';
-import * as IntentLauncher from 'expo-intent-launcher';
+import * as Sharing from 'expo-sharing';
 // @ts-ignore
 import readingTime from 'reading-time/lib/reading-time';
 import dayjs from "dayjs";
@@ -25,49 +25,54 @@ function CategoryScreen({route, navigation}: any) {
   useEffect(() => {
     if(ressource.type !==  'pdf'){
       const stats = readingTime(ressource.mardownContent!);
-      console.log(stats);
       setReadingStats(stats);
     }
   }, []);
 
   const handleDownload = async () => {
-    if(!ressource.files || ressource.files.length === 0) {
-      console.log("No file to download");
-      return;
-    }
-    const fileName = ressource.downloadNames[0];
-    const fileUrl = ressource.files[0];
-    const permissions = await FileSystem.StorageAccessFramework.requestDirectoryPermissionsAsync();
-    if(!permissions.granted){
-      showToast({message: "Vous devez autoriser l'accès au stockage pour télécharger le fichier", type: "error"});
-      return;
-    }
-
     try {
-      const response = await FileSystem.downloadAsync(fileUrl, `${permissions.directoryUri}/${fileName}`);
-
-      try{
-        if (Platform.OS === "android") {
-          const permissions = await FileSystem.StorageAccessFramework.requestDirectoryPermissionsAsync();
-          if (permissions.granted) {
-            const base64 = await FileSystem.readAsStringAsync(response.uri, {encoding: FileSystem.EncodingType.Base64});
-            await FileSystem.StorageAccessFramework.createFileAsync(permissions.directoryUri, fileName, response.headers['content-type'])
-              .then(async (uri) => {
-                await FileSystem.writeAsStringAsync(uri, base64, {encoding: FileSystem.EncodingType.Base64});
-              })
-              .catch(e => console.log(e));
-          } else {
-            showToast({message: "IOS not supported", type: "error"});
-          }
-        }
-      } catch (e) {
-        showToast({message: "Une erreur est survenue lors de la création du fichier", type: "error"});
+      // Vérifier s'il y a des fichiers disponibles
+      if (!ressource.files || ressource.files.length === 0) {
+        console.log("No file to download");
+        return;
       }
-    } catch (e) {
-      console.log(e)
-      showToast({message: "Une erreur est survenue lors du téléchargement du fichier", type: "error"});
+
+      // Nom du fichier pour le stockage local
+      let fileName = ressource.downloadNames[0].replaceAll(':', '').replaceAll(' ', '_').replaceAll('__', '_');
+      if (!fileName.endsWith('.pdf')) {
+        fileName = `${fileName}.pdf`;
+      }
+
+      // URL du fichier PDF
+      const fileUrl = ressource.files[0];
+
+      // Emplacement de téléchargement dans le répertoire de documents
+      const fileUri = `${FileSystem.documentDirectory}${fileName}`;
+
+      // Télécharger le fichier
+      const downloadResumable = FileSystem.createDownloadResumable(fileUrl, fileUri);
+      const f = await downloadResumable.downloadAsync();
+
+      if(!f){
+        showToast({message: "Échec du téléchargement", type: "error"});
+        return;
+      }
+
+      showToast({ message: "Téléchargement terminé", type: "success" });
+
+      // Proposer à l'utilisateur de visualiser le fichier si la plateforme le permet
+      if (Platform.OS === 'ios' || Platform.OS === 'android') {
+        const canShare = await Sharing.isAvailableAsync();
+        if (canShare) {
+          await Sharing.shareAsync(f.uri);
+        } else {
+          showToast({ message: "La visualisation immédiate n'est pas supportée sur cet appareil", type: "error" });
+        }
+      }
+    } catch (error) {
+      showToast({ message: "Échec du téléchargement", type: "error" });
     }
-  }
+  };
 
   return (
     <View style={globalStyles.body}>
@@ -93,7 +98,7 @@ function CategoryScreen({route, navigation}: any) {
               {
                 ressource.type !== 'pdf' &&
                   <View style={ressourceStyles.content.markdownContent}>
-                      <Markdown style={markdownStyles.global} rules={markdownRules} debugPrintTree>{ressource.mardownContent}</Markdown>
+                      <Markdown style={markdownStyles.global} rules={markdownRules}>{ressource.mardownContent}</Markdown>
                   </View>
               }
             </View>
