@@ -44,9 +44,9 @@ function CategoryScreen({route, navigation}: any) {
 
       // Nom du fichier pour le stockage local
       let fileName = ressource.downloadNames[0].replaceAll(':', '').replaceAll(' ', '_').replaceAll('__', '_');
-      if (!fileName.endsWith('.pdf')) {
-        fileName = `${fileName}.pdf`;
-      }
+      // if (!fileName.endsWith('.pdf')) {
+      //   fileName = `${fileName}.pdf`;
+      // }
 
       // URL du fichier PDF
       const fileUrl = ressource.files[0];
