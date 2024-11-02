@@ -65,10 +65,10 @@ export default function LaunchDetails({ route, navigation }: LaunchCardProps): R
     } else {
       // Add notification
       const notif = await scheduleLocalNotification({
-        title: i18n.t('notifications.launches.title', {timeTo: countdown}),
-        body: i18n.t('notifications.launches.body', {launch_name: launch.name}),
+        title: i18n.t('notifications.launches.title', {mission_name: launch.name.split('|')[1].trim()}),
+        body: i18n.t('notifications.launches.body', {mission_name: launch.name.split('|')[1].trim(), operator_name: launch.launch_service_provider.name.length > 30 ? launch.launch_service_provider.abbrev : truncate(launch.launch_service_provider.name, 30)}),
         data: launch,
-        date: dayjs().add(10, 'second').toDate()
+        date: dayjs(launch.net).subtract(30, 'minutes').toDate(),
       })
 
       if(notif){
