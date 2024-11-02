@@ -329,6 +329,7 @@ const centerIss = () => {
               </View>
               <View style={starlinkTrackerStyles.content.glviewContainer}>
                 <Text style={issTrackerStyles.content.liveStats.title}>{i18n.t('satelliteTracker.issTracker.3dMap.title')}</Text>
+                <Text style={issTrackerStyles.content.liveStats.subtitle}>{i18n.t('satelliteTracker.issTracker.3dMap.subtitle')}</Text>
                 <GestureDetector gesture={pan}>
                   <GLView style={starlinkTrackerStyles.content.glviewContainer.glview} onContextCreate={_onContextCreate} />
                 </GestureDetector>
@@ -336,6 +337,7 @@ const centerIss = () => {
               </View>
               <View style={issTrackerStyles.content.mapContainer}> 
                 <Text style={issTrackerStyles.content.liveStats.title}>{i18n.t('satelliteTracker.issTracker.2dMap.title')}</Text>
+                <Text style={issTrackerStyles.content.liveStats.subtitle}>{i18n.t('satelliteTracker.issTracker.2dMap.subtitle')}</Text>
                 <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
                   <SimpleButton text={i18n.t('satelliteTracker.issTracker.2dMap.button')} onPress={centerIss} icon={require('../../../assets/icons/FiIss.png')} />
                 </View>
@@ -393,7 +395,7 @@ const centerIss = () => {
               </View>
 
               <View style={issTrackerStyles.content.liveStats}>
-                <Text style={issTrackerStyles.content.liveStats.title}>{i18n.t('satelliteTracker.issTracker.nextLaunches.title')}</Text>
+                <Text style={[issTrackerStyles.content.liveStats.title, {marginBottom: 10}]}>{i18n.t('satelliteTracker.issTracker.nextLaunches.title')}</Text>
                 {
                   launchData.filter((l: LaunchData)=> (l.mission.name.includes('CRS') && l.mission.type.includes('Resupply'))).length > 0 ?
                   launchData.filter((l: LaunchData)=> (l.mission.name.includes('CRS') && l.mission.type.includes('Resupply'))).map((launch: LaunchData, index: number) => {

@@ -10,10 +10,12 @@ export const issTrackerTranslations = {
   },
   '3dMap': {
     title: "Carte 3D interactive",
+    subtitle: "Mis à jour toutes les 5 secondes",
     button: "Suivre l'ISS",
   },
   '2dMap': {
     title: "Carte 2D interactive",
+    subtitle: "Mis à jour toutes les 5 secondes",
     button: "Re-centrer",
   },
   nextLaunches: {

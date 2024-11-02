@@ -95,7 +95,7 @@ export default function LaunchDetails({ route, navigation }: LaunchCardProps): R
               <Text style={launchDetailsStyles.content.mainCard.body.title}>{launch.name.split('|')[0].trim()}</Text>
               <View style={launchDetailsStyles.content.mainCard.body.subtitleContainer}>
                 <Text style={launchDetailsStyles.content.mainCard.body.subtitleContainer.subtitle}>Mission : </Text>
-                <Text style={launchDetailsStyles.content.mainCard.body.subtitleContainer.subtitle_text}>{launch.name.split('|')[1].trim()}</Text>
+                <Text style={launchDetailsStyles.content.mainCard.body.subtitleContainer.subtitle_text}>{launch.name.split('|')[1].trim().length > 38 ? truncate(launch.name.split('|')[1].trim(), 38) :  launch.name.split('|')[1].trim()}</Text>
               </View>
               <View style={[launchDetailsStyles.content.mainCard.body.subtitleContainer, {marginBottom: 20}]}>
                 <Text style={launchDetailsStyles.content.mainCard.body.subtitleContainer.subtitle}>T- </Text>

@@ -1,4 +1,4 @@
-import { Dimensions, StatusBar } from "react-native";
+import { Dimensions } from "react-native";
 import { app_colors } from "../../../helpers/constants";
 
 export const issTrackerStyles = {
@@ -16,20 +16,27 @@ export const issTrackerStyles = {
       padding: 10,
       display: 'flex' as 'flex',
       flexDirection: 'column' as 'column',
+      gap: 3,
 
       title: {
         color: app_colors.white,
         fontSize: 20,
         fontFamily: 'GilroyBlack',
         textTransform: 'uppercase' as 'uppercase',
-        marginBottom: 10
       },
+
+      subtitle: {
+        color: app_colors.white,
+        fontSize: 10,
+        fontFamily: 'AuxMono',
+        marginBottom: 10,
+        opacity: 0.5,
+      }
     },
 
     mapContainer: {
       display: 'flex' as 'flex',
       flexDirection: 'column' as 'column',
-      gap: 10,
       borderWidth: 1,
       borderColor: app_colors.white_no_opacity,
       backgroundColor: app_colors.white_no_opacity,
@@ -37,6 +44,7 @@ export const issTrackerStyles = {
       padding: 10,
 
       map: {
+        marginTop: 10,
         width: Dimensions.get('screen').width - 40,
         height: Dimensions.get('screen').width - 40,
       }

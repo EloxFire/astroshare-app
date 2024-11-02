@@ -19,6 +19,7 @@ import {showToast} from "../../helpers/scripts/showToast";
 import {i18n} from "../../helpers/scripts/i18n";
 import DisclaimerBar from "../../components/banners/DisclaimerBar";
 import {useTranslation} from "../../hooks/useTranslation";
+import {truncate} from "../../helpers/scripts/utils/formatters/truncate";
 
 function CategoryScreen({route, navigation}: any) {
   const ressource: Ressource = route.params.ressource;
@@ -80,7 +81,7 @@ function CategoryScreen({route, navigation}: any) {
 
   return (
     <View style={globalStyles.body}>
-      <PageTitle navigation={navigation} title={ressource.name} subtitle={ressource.subtitle} />
+      <PageTitle navigation={navigation} title={ressource.name} subtitle={ressource.subtitle ? truncate(ressource.subtitle, 40) : ""} />
       <View style={globalStyles.screens.separator} />
       <ScrollView>
           <ScrollView>

@@ -76,7 +76,6 @@ export const starlinkTrackerStyles = {
       list: {
         display: 'flex' as 'flex',
         flexDirection: 'column' as 'column',
-        gap: 10,
         marginTop: 10,
 
         launch: {

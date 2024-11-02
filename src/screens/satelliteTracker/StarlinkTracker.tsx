@@ -1,6 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { useTranslation } from '../../hooks/useTranslation'
-import { ActivityIndicator, Dimensions, ScrollView, Text, View } from 'react-native'
+import React, { useRef, useState } from 'react'
+import { ScrollView, Text, View } from 'react-native'
 import { globalStyles } from '../../styles/global'
 import { i18n } from '../../helpers/scripts/i18n'
 import { starlinkTrackerStyles } from '../../styles/screens/satelliteTracker/starlinkTracker'
@@ -14,13 +13,10 @@ import { Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-g
 import { useSpacex } from '../../contexts/SpaceXContext'
 import { getSatelliteCoordsFromTLE } from '../../helpers/scripts/astro/coords/getSatelliteCoordsFromTLE'
 import SimpleButton from '../../components/commons/buttons/SimpleButton'
-import dayjs from 'dayjs'
-import { getLaunchStatus } from '../../helpers/scripts/astro/launchApi/getLaunchStatus'
 import { degToRad } from 'three/src/math/MathUtils'
 import DSOValues from '../../components/commons/DSOValues'
 import { issTrackerStyles } from '../../styles/screens/satelliteTracker/issTracker'
 import { Asset } from 'expo-asset';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import * as FileSystem from 'expo-file-system';
 import {useLaunchData} from "../../contexts/LaunchContext";
 import {LaunchData} from "../../helpers/types/LaunchData";
@@ -272,7 +268,7 @@ export default function StarlinkTracker({ navigation }: any) {
                 <DSOValues title={i18n.t('satelliteTracker.starlinkTracker.stats.inactive')} value={constellation.satcat_missing_tle.length} />
               </View>
                 <View style={starlinkTrackerStyles.content.glviewContainer}>
-                  <Text style={issTrackerStyles.content.liveStats.title}>{i18n.t('satelliteTracker.starlinkTracker.3dMap.title')}</Text>
+                  <Text style={[issTrackerStyles.content.liveStats.title, {marginBottom: 10}]}>{i18n.t('satelliteTracker.starlinkTracker.3dMap.title')}</Text>
                   <SimpleButton small icon={require('../../../assets/icons/FiRepeat.png')} text={i18n.t('satelliteTracker.starlinkTracker.3dMap.button')} onPress={() => updateSatellitesPosition(constellation.satellites)} />
                   <GestureDetector gesture={gestures}>
                     <GLView style={[starlinkTrackerStyles.content.glviewContainer.glview, {marginTop: 10}]} onContextCreate={_onContextCreate} />
