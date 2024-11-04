@@ -58,6 +58,7 @@ import CategoryScreen from "./src/screens/ressources/CategoryScreen";
 import RessourceScreen from "./src/screens/ressources/RessourceScreen";
 import './firebaseConfig';
 import {usePushNotifications} from "./src/hooks/usePushNotifications";
+import ObservationPlannerScreen from "./src/screens/observationPlanner/ObservationPlannerScreen";
 
 dayjs.locale('fr');
 dayjs.extend(LocalizedFormat)
@@ -148,6 +149,7 @@ export default function App() {
                           <Stack.Screen name={routes.ressources.path} component={RessourcesScreen} />
                           <Stack.Screen name={routes.categoryScreen.path} component={CategoryScreen} />
                           <Stack.Screen name={routes.ressource.path} component={RessourceScreen} />
+                          <Stack.Screen name={routes.observationPlanner.path} component={ObservationPlannerScreen} />
                         </Stack.Navigator>
                       </RessourcesContextProvider>
                     </LaunchDataContextProvider>

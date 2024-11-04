@@ -12,6 +12,10 @@ export const homeTranslations = {
     subtitle: "Stay informed and learn new things"
   },
   buttons: {
+    observationPlanner: {
+      title: "Plan observations",
+      subtitle: "// Prepare your sessions"
+    },
     weather: {
       title: "Real-time weather",
       subtitle: "// It's time to take a look at the sky !"

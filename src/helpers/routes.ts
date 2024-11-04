@@ -32,4 +32,5 @@ export const routes = {
   ressources: {path: 'RessourcesScreen', requirements: []},
   ressource: {path: 'RessourceScreen', requirements: []},
   categoryScreen: {path: 'RessourcesCategory', requirements: []},
+  observationPlanner: {path: 'ObservationPlannerScreen', requirements: []},
 }

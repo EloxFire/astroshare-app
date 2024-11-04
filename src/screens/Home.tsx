@@ -54,6 +54,7 @@ export default function Home({ navigation }: any) {
           <Text style={globalStyles.sections.title}>{i18n.t('home.tools.title')}</Text>
           <Text style={globalStyles.sections.subtitle}>{i18n.t('home.tools.subtitle')}</Text>
           <View style={homeStyles.toolsSuggestions.buttons}>
+            {/*<BigButton disabled={!hasInternetConnection || !currentUserLocation} navigation={navigation} targetScreen={routes.observationPlanner.path} text={i18n.t('home.buttons.observationPlanner.title')} subtitle={i18n.t('home.buttons.observationPlanner.subtitle')} icon={require('../../assets/icons/FiCalendar.png')} />*/}
             <BigButton disabled={!hasInternetConnection || !currentUserLocation} navigation={navigation} targetScreen={routes.weather.path} text={i18n.t('home.buttons.weather.title')} subtitle={i18n.t('home.buttons.weather.subtitle')} icon={require('../../assets/icons/FiSun.png')} />
             <BigButton disabled={!currentUserLocation} navigation={navigation} targetScreen={routes.scopeAlignment.path} text={i18n.t('home.buttons.scope_alignment.title')} subtitle={i18n.t('home.buttons.scope_alignment.subtitle')} icon={require('../../assets/icons/FiCompass.png')} />
             <BigButton disabled={!hasInternetConnection || !currentUserLocation} navigation={navigation} targetScreen={routes.moonPhases.path} text={i18n.t('home.buttons.moon_phases.title')} subtitle={i18n.t('home.buttons.moon_phases.subtitle')} icon={require('../../assets/icons/FiMoon.png')} />
