@@ -14,6 +14,7 @@ import {getRessourcesTags} from "../../helpers/scripts/ressources/getRessourcesT
 import {routes} from "../../helpers/routes";
 import ScreenInfo from "../../components/ScreenInfo";
 import SimpleButton from "../../components/commons/buttons/SimpleButton";
+import {truncate} from "../../helpers/scripts/utils/formatters/truncate";
 
 function CategoryScreen({route, navigation}: any) {
 
@@ -34,7 +35,7 @@ function CategoryScreen({route, navigation}: any) {
 
   return (
     <View style={globalStyles.body}>
-      <PageTitle navigation={navigation} title={category.name} subtitle={category.description} />
+      <PageTitle navigation={navigation} title={category.name} subtitle={category.description.length > 50 ? truncate(category.description, 50) : ""} />
       <View style={globalStyles.screens.separator} />
       <ScrollView>
         <View style={categoriesScreenStyles.content}>

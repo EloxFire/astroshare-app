@@ -81,7 +81,7 @@ function CategoryScreen({route, navigation}: any) {
 
   return (
     <View style={globalStyles.body}>
-      <PageTitle navigation={navigation} title={ressource.name} subtitle={ressource.subtitle ? truncate(ressource.subtitle, 40) : ""} />
+      <PageTitle navigation={navigation} title={ressource.name} subtitle={ressource.subtitle ? truncate(ressource.subtitle, 50) : ""} />
       <View style={globalStyles.screens.separator} />
       <ScrollView>
           <ScrollView>

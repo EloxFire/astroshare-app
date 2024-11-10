@@ -76,7 +76,6 @@ export default function App() {
   const {expoPushToken, notification} = usePushNotifications();
 
   console.log('expoPushToken', expoPushToken?.data);
-  console.log('notification', JSON.stringify(notification, undefined, 2));
 
   const [appIsReady, setAppIsReady] = useState(false);
 
