@@ -1,6 +1,6 @@
 import {Ressource} from "../../types/ressources/Ressource";
 import {ReactNode} from "react";
-import {Text, View} from "react-native";
+import {ScrollView, Text, View} from "react-native";
 import {app_colors} from "../../constants";
 
 export const getRessourcesTags = (ressource: Ressource): ReactNode => {
@@ -27,7 +27,7 @@ export const getRessourcesTags = (ressource: Ressource): ReactNode => {
     )
   })
 
-  return <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 5, flexWrap: 'wrap'}}>
-    {tagsElements}
-  </View>
+  return <ScrollView horizontal>
+    <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 5}}>{tagsElements}</View>
+  </ScrollView>
 }
