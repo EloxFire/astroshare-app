@@ -138,7 +138,6 @@ export default function App() {
                           <Stack.Screen name={routes.planetarium.path} component={Planetarium} />
                           <Stack.Screen name={routes.flatSkymap.path} component={SkyMapGenerator} />
                           <Stack.Screen name={routes.language.path} component={LanguageSelection} />
-                          <Stack.Screen name={routes.sellScreen.path} component={SellScreen} />
                           <Stack.Screen name={routes.transitScreen.path} component={TransitsScreen} />
                           <Stack.Screen name={routes.astroDataInfos.path} component={AstroDataInfos} />
                           <Stack.Screen name={routes.widgetsManager.path} component={WidgetManager} />
@@ -149,6 +148,7 @@ export default function App() {
                           <Stack.Screen name={routes.categoryScreen.path} component={CategoryScreen} />
                           <Stack.Screen name={routes.ressource.path} component={RessourceScreen} />
                           <Stack.Screen name={routes.observationPlanner.path} component={ObservationPlannerScreen} />
+                          <Stack.Screen name={routes.sellScreen.path} component={SellScreen} />
                         </Stack.Navigator>
                       </RessourcesContextProvider>
                     </LaunchDataContextProvider>
