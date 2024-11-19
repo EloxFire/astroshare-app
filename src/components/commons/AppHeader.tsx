@@ -84,6 +84,12 @@ export default function AppHeader({ navigation }: any) {
         <TouchableOpacity onPress={() => handleProfilePress()}>
           <Image source={require('../../../assets/icons/FiUser.png')} style={{ width: 20, height: 20, tintColor: app_colors.gold }} />
         </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.push(routes.sellScreen.path)}>
+          <Image source={require('../../../assets/icons/FiUnlock.png')} style={{ width: 20, height: 20, tintColor: app_colors.gold }} />
+        </TouchableOpacity>
+        {/*<TouchableOpacity onPress={() => {}}>*/}
+        {/*  <Image source={require('../../../assets/icons/FiUser.png')} style={{ width: 20, height: 20, tintColor: app_colors.gold }} />*/}
+        {/*</TouchableOpacity>*/}
         {
           showTutorial &&
           <Animated.View style={{ transform: [{ scale: interpolated }] }}>

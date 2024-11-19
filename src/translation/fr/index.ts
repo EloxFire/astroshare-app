@@ -33,6 +33,7 @@ import {notificationsTranslations} from "./common/notifications";
 import {skymapTranslations} from "./screens/skymap";
 import {ressourcesScreenTranslations} from "./screens/ressources";
 import {observationPlannerTranslations} from "./screens/observationPlanner";
+import {proTranslations} from "./screens/pro";
 import {authScreensTranslations} from "./screens/auth";
 
 export const frTranslations = {
@@ -71,5 +72,6 @@ export const frTranslations = {
   notifications: notificationsTranslations,
   ressourcesScreen: ressourcesScreenTranslations,
   obsevrationPlanner: observationPlannerTranslations,
+  pro: proTranslations,
   auth: authScreensTranslations
 }
