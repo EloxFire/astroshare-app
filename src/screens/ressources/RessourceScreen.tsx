@@ -20,6 +20,7 @@ import {i18n} from "../../helpers/scripts/i18n";
 import DisclaimerBar from "../../components/banners/DisclaimerBar";
 import {useTranslation} from "../../hooks/useTranslation";
 import {truncate} from "../../helpers/scripts/utils/formatters/truncate";
+import SimpleButton from "../../components/commons/buttons/SimpleButton";
 
 function CategoryScreen({route, navigation}: any) {
   const ressource: Ressource = route.params.ressource;
@@ -104,6 +105,10 @@ function CategoryScreen({route, navigation}: any) {
                     </TouchableOpacity>
                 }
               </View>
+              {
+                ressource.type === 'pdf' &&
+                <DisclaimerBar message={"Cette ressource est disponible uniquement en téléchargement"} type={"info"}/>
+              }
               {
                 ressource.type !== 'pdf' &&
                   <View style={ressourceStyles.content.markdownContent}>

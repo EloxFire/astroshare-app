@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react'
-import { Text, View } from 'react-native'
+import {ScrollView, Text, View} from 'react-native'
 import { objectDetailsStyles } from '../../styles/screens/objectDetails'
 import { app_colors } from '../../helpers/constants'
 
@@ -17,12 +17,19 @@ export default function DSOValues({ title, value, chipValue, chipColor, small, w
   return (
     <View style={objectDetailsStyles.dsoValues}>
       <Text style={[objectDetailsStyles.dsoValues.title, { fontSize: small ? 10 : 12 }]}>{title}</Text>
-      {
-        (chipValue && !small) ?
-          <Text style={[objectDetailsStyles.dsoValues.chip, { backgroundColor: chipColor ? chipColor : app_colors.white_forty, width: wideChip ? 160 : 130, color: chipForegroundColor ? chipForegroundColor : app_colors.white }]}>{value}</Text>
-          :
-          <Text style={[objectDetailsStyles.dsoValues.value, { fontSize: small ? 12 : 15 }]}>{value}</Text>
-      }
+      <ScrollView style={{marginLeft: 30, backgroundColor: 'transparent'}} contentContainerStyle={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end'}}>
+        {
+          typeof value !== 'object' ?
+          (chipValue && !small) ?
+            <Text style={[objectDetailsStyles.dsoValues.chip, { backgroundColor: chipColor ? chipColor : app_colors.white_forty, width: wideChip ? 160 : 130, color: chipForegroundColor ? chipForegroundColor : app_colors.white }]}>{value}</Text>
+            :
+            <Text style={[objectDetailsStyles.dsoValues.value, { fontSize: small ? 12 : 15 }]}>{value}</Text>
+            :
+            <View>
+              {value}
+            </View>
+        }
+      </ScrollView>
     </View>
   )
 }
