@@ -4,7 +4,7 @@ dotenv.config();
 module.exports = {
   name: "Astroshare",
   slug: "astroshare-app",
-  version: "v1.5.0",
+  version: "v1.5.1",
   orientation: "portrait",
   icon: "./assets/icon.png",
   userInterfaceStyle: "light",
@@ -39,7 +39,7 @@ module.exports = {
       }
     },
     package: "fr.eavagliano.astroshare",
-    versionCode: 37
+    versionCode: 38
   },
   web: {
     favicon: "./assets/favicon.png"
