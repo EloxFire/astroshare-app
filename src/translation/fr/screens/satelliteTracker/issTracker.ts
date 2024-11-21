@@ -8,6 +8,9 @@ export const issTrackerTranslations = {
     country: "Pays (survol)",
     unknown: "Inconnu"
   },
+  nextPasses: {
+    title: "Prochains passages",
+  },
   '3dMap': {
     title: "Carte 3D interactive",
     subtitle: "Mis à jour toutes les 5 secondes",
