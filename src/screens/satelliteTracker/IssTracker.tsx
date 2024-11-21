@@ -26,7 +26,6 @@ import { mapStyle } from '../../helpers/mapJsonStyle'
 import SimpleButton from '../../components/commons/buttons/SimpleButton'
 import * as FileSystem from 'expo-file-system';
 import { Asset } from 'expo-asset';
-import { IssPass } from '../../helpers/scripts/utils/satellites/getNextIssPasses'
 import {useLaunchData} from "../../contexts/LaunchContext";
 import {LaunchData} from "../../helpers/types/LaunchData";
 import LaunchCard from "../../components/cards/LaunchCard";
@@ -58,6 +57,23 @@ export default function IssTracker({ navigation }: any) {
   const [issPassesLoading, setIssPassesLoading] = useState(true)
   const [issPasses, setIssPasses] = useState<IssPass[]>([])
   const mapRef = useRef(null)
+
+  const fakePass: IssPass = {
+    startAz: 45,
+    startAzCompass: "NE",
+    startEl: 10,
+    startUTC: 1672531200,
+    maxAz: 90,
+    maxAzCompass: "E",
+    maxEl: 45,
+    maxUTC: 1672531800,
+    endAz: 135,
+    endAzCompass: "SE",
+    endEl: 10,
+    endUTC: 1672532400,
+    mag: 2.5,
+    duration: 600
+  }
 
   const focusIssRef = useRef(focusIss);
 
