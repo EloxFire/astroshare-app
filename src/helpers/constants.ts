@@ -50,6 +50,7 @@ export const storageKeys = {
   },
   notificationsId: 'notificationsId',
   pushToken: 'pushToken',
+  issPasses: 'issPasses'
   auth: {
     accessToken: 'access_token',
     refreshToken: 'refresh_token',
