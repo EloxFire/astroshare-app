@@ -50,6 +50,7 @@ export const storageKeys = {
   },
   notificationsId: 'notificationsId',
   pushToken: 'pushToken',
+  issPasses: 'issPasses'
 }
 
 export const firebaseCollections = {

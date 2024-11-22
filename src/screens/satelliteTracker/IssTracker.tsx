@@ -13,7 +13,7 @@ import * as THREE from 'three'
 import * as ExpoTHREE from 'expo-three'
 import axios from 'axios'
 import PageTitle from '../../components/commons/PageTitle'
-import { app_colors } from '../../helpers/constants'
+import {app_colors, storageKeys} from '../../helpers/constants'
 import { getSatelliteCoordsFromTLE } from '../../helpers/scripts/astro/coords/getSatelliteCoordsFromTLE'
 import { degToRad } from 'three/src/math/MathUtils'
 import ToggleButton from '../../components/commons/buttons/ToggleButton'
@@ -30,11 +30,16 @@ import { IssPass } from '../../helpers/scripts/utils/satellites/getNextIssPasses
 import {useLaunchData} from "../../contexts/LaunchContext";
 import {LaunchData} from "../../helpers/types/LaunchData";
 import LaunchCard from "../../components/cards/LaunchCard";
+import {getObject, storeObject} from "../../helpers/storage";
+import IssPassCard from "../../components/cards/IssPassCard";
+import {useSettings} from "../../contexts/AppSettingsContext";
 
 export default function IssTracker({ navigation }: any) {
 
   const {currentLocale} = useTranslation()
   const {launchData} = useLaunchData()
+  const {currentUserLocation} = useSettings()
+
 
   // THREE RELATED OBJECTS
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
@@ -50,6 +55,7 @@ export default function IssTracker({ navigation }: any) {
   const [loading, setLoading] = useState(true)
   const [focusIss, setFocusIss] = useState(true)
 
+  const [issPassesLoading, setIssPassesLoading] = useState(true)
   const [issPasses, setIssPasses] = useState<IssPass[]>([])
   const mapRef = useRef(null)
 
@@ -70,6 +76,10 @@ export default function IssTracker({ navigation }: any) {
   }, [])
 
   useEffect(() => {
+    handleIssPasses()
+  }, [currentUserLocation])
+
+  useEffect(() => {
     if (!mapRef.current) return
     // @ts-ignore
     mapRef.current.animateToRegion({
@@ -79,6 +89,46 @@ export default function IssTracker({ navigation }: any) {
       longitudeDelta: 100,
     })
   }, [loading])
+
+  const handleIssPasses = async () => {
+    const storedPasses = await getObject(storageKeys.issPasses);
+    console.log(storedPasses)
+
+    if(storedPasses){
+      const parsedPasses = JSON.parse(storedPasses);
+      const areSomePassesOver = parsedPasses.some((pass: IssPass) => new Date(pass.endTime) > new Date());
+
+      if(areSomePassesOver){
+        fetchIssPasses()
+      }else{
+        console.log('Fetching ISS passes from Local Storage')
+        setIssPasses(parsedPasses.passes)
+        setIssPassesLoading(false)
+      }
+    }else{
+      fetchIssPasses()
+    }
+  }
+
+  const fetchIssPasses = async () => {
+    if(!currentUserLocation) return
+    try {
+      console.log('Fetching ISS passes from API')
+      const response = await axios.get(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/iss/passes`, {
+        params: {
+          latitude: currentUserLocation.lat,
+          longitude: currentUserLocation.lon,
+          altitude: 341
+        }
+      })
+      setIssPasses(response.data.passes)
+      await storeObject(storageKeys.issPasses, JSON.stringify(response.data.data))
+      setIssPassesLoading(false)
+    } catch (error) {
+      console.log(`[iss] Error fetching ISS passes: ${error}`)
+      setIssPassesLoading(false)
+    }
+  }
 
   const getIssData = async () => {
     try {
@@ -326,6 +376,19 @@ const centerIss = () => {
                 <DSOValues title={i18n.t('satelliteTracker.issTracker.stats.altitude')} value={issPosition ? `${issPosition.altitude.toFixed(2)} Km` : <ActivityIndicator size={'small'} color={app_colors.white} animating />} />
                 <DSOValues title={i18n.t('satelliteTracker.issTracker.stats.speed')} value={issPosition ? `${issPosition.velocity.toFixed(2)} Km/h` : <ActivityIndicator size={'small'} color={app_colors.white} animating />} />
                 <DSOValues title={i18n.t('satelliteTracker.issTracker.stats.country')} value={issPosition ? `${getCountryByCode(issPosition.country, currentLocale)} - ${getCountryFlag(issPosition.country === i18n.t('satelliteTracker.issTracker.stats.unknown') ? 'ZZ' : issPosition.country )}` : <ActivityIndicator size={'small'} color={app_colors.white} animating />} />
+              </View>
+              <View style={issTrackerStyles.content.liveStats}>
+                <Text style={issTrackerStyles.content.liveStats.title}>{i18n.t('satelliteTracker.issTracker.stats.title')}</Text>
+                {
+                  issPassesLoading ?
+                    <ActivityIndicator size={'small'} color={app_colors.white} animating /> :
+                      issPasses.length > 0 ?
+                        issPasses.map((pass: IssPass, index: number) => {
+                          return (
+                              <IssPassCard pass={pass} navigation={navigation} key={index} />
+                          )
+                        }) : <SimpleButton text={"Pas de passages de l'ISS dans les 10 prochains jours"} disabled fullWidth />
+                }
               </View>
               <View style={starlinkTrackerStyles.content.glviewContainer}>
                 <Text style={issTrackerStyles.content.liveStats.title}>{i18n.t('satelliteTracker.issTracker.3dMap.title')}</Text>
