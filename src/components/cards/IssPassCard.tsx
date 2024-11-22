@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react'
 import { Text, TouchableOpacity, View } from 'react-native'
 import { issPassCardStyles } from '../../styles/components/cards/issPassCard'
+import { IssPass } from '../../helpers/scripts/utils/satellites/getNextIssPasses'
 import dayjs from 'dayjs';
 import { useTranslation } from '../../hooks/useTranslation';
 import { formatMinutes } from '../../helpers/scripts/utils/formatters/formaters';
