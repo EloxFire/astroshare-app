@@ -15,6 +15,10 @@ import {
   scheduleLocalNotification,
   unScheduleNotification
 } from "../../helpers/scripts/notifications/scheduleLocalNotification";
+import {launchCardStyles} from "../../styles/components/cards/launchCard";
+import {localizedNoRocketImage, localizedNoRocketImageSmall} from "../../helpers/scripts/loadImages";
+import {useTranslation} from "../../hooks/useTranslation";
+import {app_colors} from "../../helpers/constants";
 
 interface LaunchCardProps {
   route: any
@@ -24,6 +28,7 @@ interface LaunchCardProps {
 export default function LaunchDetails({ route, navigation }: LaunchCardProps): ReactNode {
 
   const { launch } = route.params;
+  const {currentLocale} = useTranslation()
   const [isNotificationPlanned, setIsNotificationPlanned] = useState(false);
   const [countdown, setCountdown] = useState<string>('00:00:00:00') // DD:HH:mm:ss
 
@@ -90,7 +95,12 @@ export default function LaunchDetails({ route, navigation }: LaunchCardProps): R
       <ScrollView>
         <View style={launchDetailsStyles.content}>
           <View style={launchDetailsStyles.content.mainCard}>
-            <Image style={launchDetailsStyles.content.mainCard.thumbnail} resizeMode='cover' source={{uri: launch.image.image_url}} />
+            {
+              launch.image ?
+                <Image style={launchDetailsStyles.content.mainCard.thumbnail} resizeMode='cover' source={{uri: launch.image.image_url}} />
+                :
+                <Image style={[launchDetailsStyles.content.mainCard.thumbnail, {borderColor: app_colors.white_no_opacity, borderWidth: 1}]} resizeMode='cover' source={{uri: localizedNoRocketImage[currentLocale]}} />
+            }
             <View style={launchDetailsStyles.content.mainCard.body}>
               <Text style={launchDetailsStyles.content.mainCard.body.title}>{launch.name.split('|')[0].trim()}</Text>
               <View style={launchDetailsStyles.content.mainCard.body.subtitleContainer}>

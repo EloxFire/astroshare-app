@@ -7,6 +7,8 @@ import DSOValues from "../commons/DSOValues";
 import dayjs from "dayjs";
 import {truncate} from "../../helpers/scripts/utils/formatters/truncate";
 import {routes} from "../../helpers/routes";
+import {localizedNoRocketImageSmall} from "../../helpers/scripts/loadImages";
+import {useTranslation} from "../../hooks/useTranslation";
 
 interface LaunchCardProps {
   launch: any
@@ -16,9 +18,16 @@ interface LaunchCardProps {
 
 export default function LaunchCard({ launch, navigation, noFollow }: LaunchCardProps): ReactNode {
 
+  const {currentLocale} = useTranslation()
+
   return (
     <TouchableOpacity style={launchCardStyles.card} disabled={noFollow} onPress={() => navigation.navigate(routes.launchDetails.path, {launch: launch})}>
-      <Image style={launchCardStyles.card.thumbnail} resizeMode='cover' source={{uri: launch.image.thumbnail_url}} />
+      {
+        launch.image ?
+        <Image style={launchCardStyles.card.thumbnail} resizeMode='cover' source={{uri: launch.image.thumbnail_url}} />
+          :
+        <Image style={launchCardStyles.card.thumbnail} resizeMode='cover' source={localizedNoRocketImageSmall[currentLocale]} />
+      }
       <View style={launchCardStyles.card.content}>
         <View style={launchCardStyles.card.content.header}>
           <View>

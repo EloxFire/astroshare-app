@@ -92,3 +92,13 @@ export const localizedForecastPlaceholders: any = {
   'fr': require('../../../assets/images/placeholders/fr/forecast.png'),
   'en': require('../../../assets/images/placeholders/en/forecast.png'),
 }
+
+export const localizedNoRocketImageSmall: any = {
+  'fr': require('../../../assets/images/placeholders/fr/launchCardSmall.png'),
+  'en': require('../../../assets/images/placeholders/en/launchCardSmall.png'),
+}
+
+export const localizedNoRocketImage: any = {
+  'fr': 'https://i.postimg.cc/cCdLq2ZH/no-Rocket-Fr.png',
+  'en': 'https://i.postimg.cc/Sx126S4G/no-Rocket-En.png',
+}
