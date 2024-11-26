@@ -1,6 +1,7 @@
 {
   "cli": {
-    "version": ">= 7.6.2"
+    "version": ">= 7.6.2",
+    "appVersionSource": "remote"
   },
   "build": {
     "development": {
@@ -31,8 +32,9 @@
         "EXPO_PUBLIC_ASTROSHARE_API_URL":"https://api.astroshare.fr",
         "EXPO_PUBLIC_APP_VERSION":"v1.5.2",
         "EXPO_PUBLIC_LAST_UPDATE":"2024-11-23",
-        "GOOGLE_MAPS_API_KEY":"AIzaSyBIHiqhKWwweIvQF36R8eFiYpM5G5LOWpU"
-      }
+        "GOOGLE_MAPS_API_KEY":"AIzaSyBIHiqhKWwweIvQF36R8eFiYpM5G5LOWpU",
+      },
+      "autoIncrement": true
     }
   },
   "submit": {
