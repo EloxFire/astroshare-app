@@ -32,6 +32,8 @@ import LaunchCard from "../../components/cards/LaunchCard";
 import {getObject, storeObject} from "../../helpers/storage";
 import IssPassCard from "../../components/cards/IssPassCard";
 import {useSettings} from "../../contexts/AppSettingsContext";
+import {IssPass} from "../../helpers/types/IssPass";
+import dayjs from "dayjs";
 
 export default function IssTracker({ navigation }: any) {
 
@@ -107,17 +109,19 @@ export default function IssTracker({ navigation }: any) {
   }, [loading])
 
   const handleIssPasses = async () => {
+    console.log('Handling ISS passes')
     const storedPasses = await getObject(storageKeys.issPasses);
-    console.log(storedPasses)
 
     if(storedPasses){
+      console.log("Found ISS passes in Local Storage")
       const parsedPasses = JSON.parse(storedPasses);
-      const areSomePassesOver = parsedPasses.some((pass: IssPass) => new Date(pass.endTime) > new Date());
+      const areSomePassesOver = parsedPasses.passes.some((pass: IssPass) => dayjs.unix(pass.endUTC) < dayjs());
 
       if(areSomePassesOver){
+        console.log('Some passes are over, fetching new passes')
         fetchIssPasses()
       }else{
-        console.log('Fetching ISS passes from Local Storage')
+        console.log('Restoring passes from local storage')
         setIssPasses(parsedPasses.passes)
         setIssPassesLoading(false)
       }
@@ -129,16 +133,17 @@ export default function IssTracker({ navigation }: any) {
   const fetchIssPasses = async () => {
     if(!currentUserLocation) return
     try {
-      console.log('Fetching ISS passes from API')
+      console.log('Fetching ISS passes API')
       const response = await axios.get(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/iss/passes`, {
         params: {
           latitude: currentUserLocation.lat,
           longitude: currentUserLocation.lon,
-          altitude: 341
+          altitude: 0
         }
       })
       setIssPasses(response.data.passes)
-      await storeObject(storageKeys.issPasses, JSON.stringify(response.data.data))
+      console.log('Storing ISS passes in local storage')
+      await storeObject(storageKeys.issPasses, JSON.stringify(response.data))
       setIssPassesLoading(false)
     } catch (error) {
       console.log(`[iss] Error fetching ISS passes: ${error}`)
