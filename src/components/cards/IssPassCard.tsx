@@ -32,7 +32,7 @@ export default function IssPassCard({ pass, navigation }: IssPassCardProps) {
       </View>
       <DSOValues title='Début' value={dayjs.unix(pass.startUTC).format('HH:mm:ss')} />
       <DSOValues title='Fin' value={dayjs.unix(pass.endUTC).format('HH:mm:ss')} />
-      <DSOValues title='Durée' value={passLength} />
+      <DSOValues title='Durée' value={dayjs.duration(pass.duration, 'seconds').format('mm:ss')} />
     </TouchableOpacity>
   )
 }
