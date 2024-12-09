@@ -8,8 +8,11 @@ import { app_colors, storageKeys } from '../../helpers/constants'
 import { isFirstLaunch } from '../../helpers/scripts/checkFirstLaunch'
 import { i18n } from '../../helpers/scripts/i18n'
 import { localizedWhiteLogo } from '../../helpers/scripts/loadImages'
+import {useAuth} from "../../contexts/AuthContext";
 
 export default function AppHeader({ navigation }: any) {
+
+  const {loginUser, currentUser} = useAuth()
 
   const isFocused = useIsFocused();
   const [hasFavs, setHasFavs] = useState(false)
@@ -59,6 +62,15 @@ export default function AppHeader({ navigation }: any) {
     outputRange: [1.2, 1]
   });
 
+  const handleProfilePress = () => {
+    console.log('currentUser', currentUser)
+    if(currentUser){
+      navigation.push(routes.auth.profile.path)
+    }else{
+      navigation.push(routes.auth.login.path)
+    }
+  }
+
   return (
     <View style={appHeaderStyles.container}>
       <Image style={appHeaderStyles.container.logo}
@@ -69,9 +81,9 @@ export default function AppHeader({ navigation }: any) {
         {/*<TouchableOpacity onPress={() => sendPushNotification()}>*/}
         {/*  <Image source={require('../../../assets/icons/FiUnlock.png')} style={{ width: 20, height: 20, tintColor: app_colors.gold }} />*/}
         {/*</TouchableOpacity>*/}
-        {/*<TouchableOpacity onPress={() => {}}>*/}
-        {/*  <Image source={require('../../../assets/icons/FiUser.png')} style={{ width: 20, height: 20, tintColor: app_colors.gold }} />*/}
-        {/*</TouchableOpacity>*/}
+        <TouchableOpacity onPress={() => handleProfilePress()}>
+          <Image source={require('../../../assets/icons/FiUser.png')} style={{ width: 20, height: 20, tintColor: app_colors.gold }} />
+        </TouchableOpacity>
         {
           showTutorial &&
           <Animated.View style={{ transform: [{ scale: interpolated }] }}>

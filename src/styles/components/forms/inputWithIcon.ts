@@ -14,8 +14,9 @@ export const inputWithIconStyles = {
     flex: 1,
     
     inputIcon: {
-      marginRight: 5,
+      marginRight: 10,
       maxHeight: 20,
+      maxWidth: 20,
     },
 
     input: {

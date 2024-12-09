@@ -33,6 +33,7 @@ import {notificationsTranslations} from "./common/notifications";
 import {skymapTranslations} from "./screens/skymap";
 import {ressourcesScreenTranslations} from "./screens/ressources";
 import {observationPlannerTranslations} from "./screens/observationPlanner";
+import {authScreensTranslations} from "./screens/auth";
 
 export const frTranslations = {
   onboarding: onboardingTranslations,
@@ -69,5 +70,6 @@ export const frTranslations = {
   launchesScreen: launchesScreenTranslations,
   notifications: notificationsTranslations,
   ressourcesScreen: ressourcesScreenTranslations,
-  obsevrationPlanner: observationPlannerTranslations
+  obsevrationPlanner: observationPlannerTranslations,
+  auth: authScreensTranslations
 }

@@ -50,6 +50,11 @@ export const storageKeys = {
   },
   notificationsId: 'notificationsId',
   pushToken: 'pushToken',
+  auth: {
+    accessToken: 'access_token',
+    refreshToken: 'refresh_token',
+    user: 'user',
+  }
 }
 
 export const firebaseCollections = {

@@ -12,6 +12,7 @@ import { localizedForecastPlaceholders, localizedImagePlaceholders, localizedVid
 import { i18n } from '../helpers/scripts/i18n'
 import PageTitle from '../components/commons/PageTitle'
 import SimpleButton from '../components/commons/buttons/SimpleButton'
+import DisclaimerBar from "../components/banners/DisclaimerBar";
 
 export default function SolarWeather({ navigation }: any) {
 
@@ -148,6 +149,7 @@ export default function SolarWeather({ navigation }: any) {
           <View style={solarWeatherStyles.container}>
             <Text style={solarWeatherStyles.container.title}>{i18n.t('solarWeather.containers.sunspots')}</Text>
             <Text style={solarWeatherStyles.container.subtitle}>Source : NASA / SoHO (Solar and Heliospheric Observatory)</Text>
+            <DisclaimerBar message={"Service temporairement indisponible."} type={"error"}/>
             <Image placeholder={localizedImagePlaceholders[i18n.locale]} source={{ uri: "https://soho.nascom.nasa.gov/data/synoptic/sunspots_earth/mdi_sunspots.jpg" + '?' + new Date() }} style={solarWeatherStyles.sunImage} />
           </View>
 

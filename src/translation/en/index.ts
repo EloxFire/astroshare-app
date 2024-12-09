@@ -32,6 +32,7 @@ import { changelogScreenTranslations } from "./screens/settings/changelog";
 import {launchesScreenTranslations} from "./screens/launches";
 import {notificationsTranslations} from "./common/notifications";
 import {ressourcesScreenTranslations} from "./screens/ressources";
+import {authScreensTranslations} from "./screens/auth";
 
 export const enTranslations = {
   onboarding: onboardingTranslations,
@@ -66,5 +67,6 @@ export const enTranslations = {
   changelog: changelogScreenTranslations,
   launchesScreen: launchesScreenTranslations,
   notifications: notificationsTranslations,
-  ressourcesScreen: ressourcesScreenTranslations
+  ressourcesScreen: ressourcesScreenTranslations,
+  auth: authScreensTranslations,
 }

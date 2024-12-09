@@ -33,4 +33,11 @@ export const routes = {
   ressource: {path: 'RessourceScreen', requirements: []},
   categoryScreen: {path: 'RessourcesCategory', requirements: []},
   observationPlanner: {path: 'ObservationPlannerScreen', requirements: []},
+  auth: {
+    login: { path: 'Login', requirements: [] },
+    register: { path: 'Register', requirements: [] },
+    profile: { path: 'Profile', requirements: [] },
+    passwordRecovery: { path: 'PasswordRecovery', requirements: [] },
+    passwordReset: { path: 'PasswordReset', requirements: [] },
+  }
 }
