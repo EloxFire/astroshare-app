@@ -1,11 +1,12 @@
 import { app_colors } from "../../../helpers/constants";
-import {Dimensions} from "react-native";
+import {Dimensions, StatusBar} from "react-native";
 
 export const sellScreenStyles = {
   content: {
     display: 'flex' as 'flex',
     flexDirection: 'column' as 'column',
     paddingTop: 50,
+    marginBottom: 80,
 
     title: {
       color: app_colors.white,

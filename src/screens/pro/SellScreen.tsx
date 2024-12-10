@@ -34,6 +34,11 @@ export default function SellScreen({ navigation }: any) {
       image: require('../../../assets/images/tools/isstransit.png')
     },
     {
+      name: "Lieux d'observation",
+      description: "Gérez et ajouter des lieux d'observation. Effectuez des simulations de visibilité à différents endroits.",
+      image: require('../../../assets/images/tools/skymap.png')
+    },
+    {
       name: "Et bien plus !",
       description: "Astroshare est mis à jour régulièrement avec de nouvelles fonctionnalités.",
       image: require('../../../assets/images/tools/skymap.png')
@@ -42,21 +47,21 @@ export default function SellScreen({ navigation }: any) {
   ]
 
   return (
-    <View style={globalStyles.body}>
-      <Image style={sellScreenStyles.backgroundImage} source={require('../../../assets/images/tools/ressources.png')}/>
-      <LinearGradient
-        // Background Linear Gradient
-        colors={['rgba(0,0,0,1)', 'transparent']}
-        style={sellScreenStyles.backgroundImage.filter}
-        locations={[0, 1]}
-      />
-
-      <View style={pageTitleStyles.container}>
-        <TouchableOpacity onPress={() => navigation.push(routes.home.path)}>
-          <Image style={pageTitleStyles.container.icon} source={require('../../../assets/icons/FiChevronDown.png')}/>
-        </TouchableOpacity>
-      </View>
+    <View style={[globalStyles.body, {paddingTop: 0}]}>
       <ScrollView>
+        <Image style={sellScreenStyles.backgroundImage} source={require('../../../assets/images/tools/ressources.png')}/>
+        <LinearGradient
+          // Background Linear Gradient
+          colors={['rgba(0,0,0,1)', 'transparent']}
+          style={sellScreenStyles.backgroundImage.filter}
+          locations={[0, 1]}
+        />
+
+        <View style={pageTitleStyles.container}>
+          <TouchableOpacity onPress={() => navigation.push(routes.home.path)}>
+            <Image style={pageTitleStyles.container.icon} source={require('../../../assets/icons/FiChevronDown.png')}/>
+          </TouchableOpacity>
+        </View>
         <View style={sellScreenStyles.content}>
           <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
             <Text style={sellScreenStyles.content.title}>Astroshare</Text>
