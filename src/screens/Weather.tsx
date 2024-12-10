@@ -76,7 +76,7 @@ export default function Weather({ navigation }: any) {
       <PageTitle navigation={navigation} title={i18n.t('home.buttons.weather.title')} subtitle={i18n.t('home.buttons.weather.subtitle')} />
       <View style={globalStyles.screens.separator} />
       <View style={weatherStyles.content.inputContainer}>
-        <InputWithIcon icon={require('../../assets/icons/FiSearch.png')} placeholder={i18n.t('weather.input_placeholder')} changeEvent={(text: string) => setSearchString(text)} search={() => searchWeather()} value={searchString} />
+        <InputWithIcon type={'text'} icon={require('../../assets/icons/FiSearch.png')} placeholder={i18n.t('weather.input_placeholder')} changeEvent={(text: string) => setSearchString(text)} search={() => searchWeather()} value={searchString} />
       </View>
       {
         searchedCity &&

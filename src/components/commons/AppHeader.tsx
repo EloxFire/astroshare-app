@@ -9,6 +9,7 @@ import { isFirstLaunch } from '../../helpers/scripts/checkFirstLaunch'
 import { i18n } from '../../helpers/scripts/i18n'
 import { localizedWhiteLogo } from '../../helpers/scripts/loadImages'
 import {useAuth} from "../../contexts/AuthContext";
+import ProBadge from "../badges/ProBadge";
 
 export default function AppHeader({ navigation }: any) {
 
@@ -78,12 +79,8 @@ export default function AppHeader({ navigation }: any) {
         resizeMode='contain'
       />
       <View style={appHeaderStyles.container.buttons}>
-        <TouchableOpacity style={appHeaderStyles.container.buttons.pro} onPress={() => navigation.push(routes.sellScreen.path)}>
-          <Image style={appHeaderStyles.container.buttons.pro.star1} source={require('../../../assets/icons/customStar.png')} />
-          <Image style={appHeaderStyles.container.buttons.pro.star2} source={require('../../../assets/icons/customStar.png')} />
-          <Image style={appHeaderStyles.container.buttons.pro.star3} source={require('../../../assets/icons/customStar.png')} />
-          <Image style={appHeaderStyles.container.buttons.pro.star4} source={require('../../../assets/icons/customStar.png')} />
-          <Text style={{color: app_colors.white, fontSize: 12, fontWeight: 'bold'}}>PRO</Text>
+        <TouchableOpacity onPress={() => navigation.push(routes.sellScreen.path)}>
+          <ProBadge additionalStyles={{marginRight: 5}}/>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => handleProfilePress()}>
           <Image source={require('../../../assets/icons/FiUser.png')} style={{ width: 20, height: 20 }} />

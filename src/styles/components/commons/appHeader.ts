@@ -20,44 +20,6 @@ export const appHeaderStyles = {
       justifyContent: 'space-between' as 'space-between',
       alignItems: 'center' as 'center',
       gap: 15,
-
-      pro:{
-        position: 'relative' as 'relative',
-        marginRight: 5,
-
-        star1:{
-          position: 'absolute' as 'absolute',
-          left: -8,
-          top: -3,
-          width: 7,
-          height: 7,
-        },
-
-        star2:{
-          position: 'absolute' as 'absolute',
-          left: 20,
-          top: -5,
-          width: 5,
-          height: 5,
-
-        },
-
-        star3:{
-          position: 'absolute' as 'absolute',
-          left: 25,
-          top: 0,
-          width: 8,
-          height: 8,
-        },
-
-        star4:{
-          position: 'absolute' as 'absolute',
-          left: 5,
-          top: 15,
-          width: 5,
-          height: 5,
-        }
-      }
     },
 
     tutorialButton: {
