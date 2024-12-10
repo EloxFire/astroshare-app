@@ -110,6 +110,7 @@ export default function HomeSearchModule({ navigation }: HomeSearchModuleProps) 
           icon={require('../../../assets/icons/FiSearch.png')}
           search={() => handleSearch()}
           value={searchString}
+          type={'text'}
         />
       </View>
       {

@@ -23,8 +23,8 @@ export const app_colors = {
   green_eighty: '#00FF0080',
   turquoise: '#488f9d',
   turquoise_sixty: '#488f9d60',
-  gold: '#CCCCCC',
-  gold_eighty: '#FFBA1580',
+  gold: '#D2AF26',
+  gold_eighty: '#D2AF2680',
   blue: '#061e92',
   blue_twenty: '##061e9220',
   warning: '#FFA500',
@@ -50,6 +50,7 @@ export const storageKeys = {
   },
   notificationsId: 'notificationsId',
   pushToken: 'pushToken',
+  issPasses: 'issPasses',
   auth: {
     accessToken: 'access_token',
     refreshToken: 'refresh_token',
