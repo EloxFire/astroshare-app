@@ -1,5 +1,5 @@
-import React from 'react'
-import {ScrollView, Text, View, TouchableOpacity, FlatList} from 'react-native'
+import React, {useState} from 'react'
+import {ScrollView, Text, View, TouchableOpacity} from 'react-native'
 import { globalStyles } from '../../styles/global'
 import { sellScreenStyles } from '../../styles/screens/pro/sellScreen'
 import {pageTitleStyles} from "../../styles/components/commons/pageTitle";
@@ -9,8 +9,12 @@ import {LinearGradient} from "expo-linear-gradient";
 import ProFeatureCard from "../../components/cards/ProFeatureCard";
 import {ProFeature} from "../../helpers/types/ProFeature";
 import ProBadge from "../../components/badges/ProBadge";
+import ProOfferCard from "../../components/cards/ProOfferCard";
+import {i18n} from "../../helpers/scripts/i18n";
 
 export default function SellScreen({ navigation }: any) {
+
+  const [activeOffer, setActiveOffer] = useState<'monthly' | 'yearly'>('yearly')
 
   const hilightFeature: ProFeature[] = [
     {
@@ -47,8 +51,8 @@ export default function SellScreen({ navigation }: any) {
   ]
 
   return (
-    <View style={[globalStyles.body, {paddingTop: 0}]}>
-      <ScrollView>
+    <View style={[globalStyles.body, {paddingTop: 0, paddingHorizontal: 0}]}>
+      <ScrollView contentContainerStyle={{paddingHorizontal: 10}}>
         <Image style={sellScreenStyles.backgroundImage} source={require('../../../assets/images/tools/ressources.png')}/>
         <LinearGradient
           // Background Linear Gradient
@@ -67,31 +71,30 @@ export default function SellScreen({ navigation }: any) {
             <Text style={sellScreenStyles.content.title}>Astroshare</Text>
             <ProBadge additionalStyles={{transform: [{scale: 2.8}], marginLeft: 30}}/>
           </View>
-          <Text style={sellScreenStyles.content.subtitle}>Explorez encore plus loin !</Text>
+          <Text style={sellScreenStyles.content.subtitle}>{i18n.t('pro.sellScreen.subtitle')}</Text>
           <View style={sellScreenStyles.content.offers}>
-            <View style={sellScreenStyles.content.offers.offerCard}>
-              <View style={sellScreenStyles.content.offers.offerCard.leftContainer}>
-                <ProBadge additionalStyles={{transform: [{scale: 2}]}}/>
-              </View>
-              <View style={sellScreenStyles.content.offers.offerCard.rightContainer}>
-                <Text style={sellScreenStyles.content.offers.offerCard.rightContainer.offerPrice}>2.49€</Text>
-                <Text style={sellScreenStyles.content.offers.offerCard.rightContainer.offerName}>Abonnement mensuel</Text>
-              </View>
-            </View>
-
-            <View style={sellScreenStyles.content.offers.offerCard}>
-              <View style={sellScreenStyles.content.offers.offerCard.leftContainer}>
-                <ProBadge additionalStyles={{transform: [{scale: 2}]}}/>
-              </View>
-              <View style={sellScreenStyles.content.offers.offerCard.rightContainer}>
-                <Text style={sellScreenStyles.content.offers.offerCard.rightContainer.offerPrice}>23.90€</Text>
-                <Text style={sellScreenStyles.content.offers.offerCard.rightContainer.offerName}>Abonnement annuel</Text>
-              </View>
-              <View>
-                <Text style={sellScreenStyles.content.offers.offerCard.discountBadge}>économisez -20%</Text>
-              </View>
-            </View>
+            <ProOfferCard
+              onClick={() => setActiveOffer('monthly')}
+              active={activeOffer === "monthly"}
+              price={2.49}
+              type={i18n.t('pro.sellScreen.offers.monthly')}
+              hasDiscount={false}
+              badgeText={''}
+              description={i18n.t('pro.sellScreen.offers.monthlyDescription')}
+            />
+            <ProOfferCard
+              onClick={() => setActiveOffer('yearly')}
+              active={activeOffer === "yearly"}
+              price={23.90}
+              type={i18n.t('pro.sellScreen.offers.yearly')}
+              hasDiscount={true}
+              badgeText={i18n.t('pro.sellScreen.offers.discount')}
+              description={i18n.t('pro.sellScreen.offers.yearlyDescription')}
+            />
           </View>
+          <TouchableOpacity style={sellScreenStyles.content.offers.button}>
+            <Text style={sellScreenStyles.content.offers.button.text}>{i18n.t('pro.sellScreen.offers.proceedToPayment')}</Text>
+          </TouchableOpacity>
           <View style={sellScreenStyles.content.features}>
             <Text style={sellScreenStyles.content.features.title}>Des fonctionnalités exclusives :</Text>
             {

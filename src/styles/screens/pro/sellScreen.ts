@@ -43,23 +43,42 @@ export const sellScreenStyles = {
 
     offers: {
       display: 'flex' as 'flex',
-      flexDirection: 'column' as 'column',
-      alignItems: 'center' as 'center',
+      flexDirection: 'row' as 'row',
+      justifyContent: 'space-between' as 'space-between',
       marginTop: 40,
       gap: 10,
 
+      button: {
+        backgroundColor: app_colors.white,
+        padding: 10,
+        borderRadius: 10,
+        marginTop: 20,
+
+        text:{
+          textAlign: 'center' as 'center',
+          fontFamily: 'GilroyBlack' as 'GilroyBlack',
+          fontSize: 16,
+          color: app_colors.black,
+        }
+      },
+
       offerCard: {
-        width: Dimensions.get('window').width - 20,
-        height: 60,
+        position: 'relative' as 'relative',
+        padding: 10,
+        paddingTop: 25,
+        width: (Dimensions.get('window').width / 2) - 20,
+        height: 200,
         backgroundColor: app_colors.white_no_opacity,
         borderRadius: 10,
         display: 'flex' as 'flex',
-        flexDirection: 'row' as 'row',
+        flexDirection: 'column' as 'column',
         justifyContent: 'space-between' as 'space-between',
         borderWidth: 1,
         borderColor: app_colors.white_twenty,
 
-        discountBadge:{
+        discountBadge: {
+          position: 'absolute' as 'absolute',
+          right: 0,
           backgroundColor: app_colors.red,
           color: app_colors.white,
           padding: 5,
@@ -68,34 +87,17 @@ export const sellScreenStyles = {
           fontFamily: 'GilroyBlack' as 'GilroyBlack',
           fontSize: 10,
         },
-
-        leftContainer: {
-          display: 'flex' as 'flex',
-          flexDirection: 'column' as 'column',
-          alignItems: 'center' as 'center',
-          justifyContent: 'center' as 'center',
-          width: '25%' as '25%',
+        offerName: {
+          color: app_colors.white,
+          opacity: .5,
+          fontSize: 12,
+          fontFamily: 'GilroyRegular' as 'GilroyRegular',
         },
 
-        rightContainer: {
-          display: 'flex' as 'flex',
-          flexDirection: 'column' as 'column',
-          paddingLeft: 30,
-          flex: 1,
-          justifyContent: 'center' as 'center',
-
-          offerName: {
-            color: app_colors.white,
-            opacity: .5,
-            fontSize: 12,
-            fontFamily: 'GilroyRegular' as 'GilroyRegular',
-          },
-
-          offerPrice: {
-            color: app_colors.white,
-            fontSize: 25,
-            fontFamily: 'GilroyBlack' as 'GilroyBlack',
-          }
+        offerPrice: {
+          color: app_colors.white,
+          fontSize: 35,
+          fontFamily: 'GilroyBlack' as 'GilroyBlack',
         }
       }
     }
