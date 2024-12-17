@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Image, ImageSourcePropType, Text, TouchableOpacity, View } from 'react-native'
 import { bigButtonStyles } from '../../../styles/components/commons/buttons/bigButton'
-import { EFeatureRequirements } from '../../../helpers/types/FeatureRequirements'
-import { useSettings } from '../../../contexts/AppSettingsContext'
-import { app_colors } from '../../../helpers/constants'
+import ProBadge from "../../badges/ProBadge";
 
 interface BigButtonProps {
   text: string
@@ -53,10 +51,7 @@ export default function BigButton({ text, icon, navigation, targetScreen, subtit
       }
       {
         isPremium &&
-        <Image
-          source={require('../../../../assets/icons/FiLock.png')}
-          style={[bigButtonStyles.button.icon, { tintColor: app_colors.gold }]}
-        />
+        <ProBadge additionalStyles={{marginRight: 10, transform: [{scale: 1.2}]}}/>
       }
     </TouchableOpacity>
   )

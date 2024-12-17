@@ -34,7 +34,7 @@ export const homeTranslations = {
     },
     transits: {
       title: "Transits & Éclipses",
-      subtitle: "// Calculez les transits de corps célestes"
+      subtitle: "// Calcul de transits et conjonctions"
     },
     apod: {
       title: "APOD",

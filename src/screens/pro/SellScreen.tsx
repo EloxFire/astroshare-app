@@ -1,5 +1,5 @@
 import React, {useState} from 'react'
-import {ScrollView, Text, View, TouchableOpacity} from 'react-native'
+import {ScrollView, Text, View, TouchableOpacity, StatusBar} from 'react-native'
 import { globalStyles } from '../../styles/global'
 import { sellScreenStyles } from '../../styles/screens/pro/sellScreen'
 import {pageTitleStyles} from "../../styles/components/commons/pageTitle";
@@ -52,7 +52,7 @@ export default function SellScreen({ navigation }: any) {
 
   return (
     <View style={[globalStyles.body, {paddingTop: 0, paddingHorizontal: 0}]}>
-      <ScrollView contentContainerStyle={{paddingHorizontal: 10}}>
+      <ScrollView contentContainerStyle={{paddingHorizontal: 10, paddingTop: StatusBar.currentHeight ? StatusBar.currentHeight + 20 : 20}}>
         <Image style={sellScreenStyles.backgroundImage} source={require('../../../assets/images/tools/ressources.png')}/>
         <LinearGradient
           // Background Linear Gradient

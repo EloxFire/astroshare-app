@@ -63,6 +63,7 @@ import {AuthContextProvider} from "./src/contexts/AuthContext";
 import LoginScreen from "./src/screens/auth/LoginScreen";
 import RegisterScreen from "./src/screens/auth/RegisterScreen";
 import ProfileScreen from "./src/screens/auth/Profile";
+import PlanetaryConjunctionScreen from "./src/screens/transits/PlanetaryConjunctionScreen";
 
 dayjs.locale('fr');
 dayjs.extend(LocalizedFormat)
@@ -136,7 +137,10 @@ export default function App() {
                             <Stack.Screen name={routes.moonPhases.path} component={MoonPhases} />
                             <Stack.Screen name={routes.solarWeather.path} component={SolarWeather} />
                             <Stack.Screen name={routes.apod.path} component={Apod} />
-                            <Stack.Screen name={routes.transitScreen.path} component={TransitsScreen} />
+
+                            {/*TRANSITS SCREENS*/}
+                            <Stack.Screen name={routes.transits.home.path} component={TransitsScreen} />
+                            <Stack.Screen name={routes.transits.planetary.path} component={PlanetaryConjunctionScreen} />
 
                             {/*SETTINGS SCREENS*/}
                             <Stack.Screen name={routes.settings.path} component={Settings} />

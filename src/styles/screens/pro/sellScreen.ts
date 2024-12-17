@@ -5,8 +5,8 @@ export const sellScreenStyles = {
   content: {
     display: 'flex' as 'flex',
     flexDirection: 'column' as 'column',
-    paddingTop: 50,
     marginBottom: 80,
+    paddingTop: 50,
 
     title: {
       color: app_colors.white,

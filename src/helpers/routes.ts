@@ -23,7 +23,6 @@ export const routes = {
   spaceXDataScreen: { path: 'SpaceXDataScreen', requirements: [] },
   favorites: { path: 'FavoritesScreen', requirements: [] },
   sellScreen: { path: 'SellScreen', requirements: [] },
-  transitScreen: { path: 'TransitScreen', requirements: [] },
   astroDataInfos: { path: 'AstroDataInfos', requirements: [] },
   widgetsManager: {path: 'WidgetsManager', requirements: []},
   changelogScreen: {path: 'ChangelogScreen', requirements: []},
@@ -39,5 +38,15 @@ export const routes = {
     profile: { path: 'Profile', requirements: [] },
     passwordRecovery: { path: 'PasswordRecovery', requirements: [] },
     passwordReset: { path: 'PasswordReset', requirements: [] },
+  },
+  transits: {
+    home: {
+      path: "TransitScreen",
+      requirements: []
+    },
+    planetary: {
+      path: "PlanetaryConjunctionScreen",
+      requirements: []
+    }
   }
 }
