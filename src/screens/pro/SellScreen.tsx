@@ -18,8 +18,8 @@ export default function SellScreen({ navigation }: any) {
 
   const hilightFeature: ProFeature[] = [
     {
-      name: "Carte du ciel 3D",
-      description: "Profitez d'un planétarium 3D complet, directement dans votre poche !",
+      name: "Planétarium 3D avancé",
+      description: "Simulez le FOV de votre matériel et plus encore avec le planétarium 3D avancé.",
       image: require('../../../assets/images/tools/skymap.png')
     },
     {
