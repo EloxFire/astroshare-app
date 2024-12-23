@@ -107,7 +107,7 @@ export default function App() {
         <Text style={loadingSplashStyles.container.text}>Chargement...</Text>
       </View>);
   }
-
+ console.log(" ")
   return (
     <RootSiblingParent>
       <NavigationContainer>
