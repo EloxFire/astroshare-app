@@ -11,10 +11,11 @@ interface InputWithIconProps {
   icon?: ImageSourcePropType
   value: string
   type: 'text' | 'password'
+  keyboardType?: 'numeric' | 'default'
   additionalStyles?: any
 }
 
-export default function InputWithIcon({ placeholder, changeEvent, icon, search, value, type, additionalStyles }: InputWithIconProps) {
+export default function InputWithIcon({ placeholder, changeEvent, icon, search, value, type, additionalStyles, keyboardType }: InputWithIconProps) {
   return (
     <View style={[inputWithIconStyles.inputContainer, additionalStyles]}>
       <TextInput
@@ -25,6 +26,7 @@ export default function InputWithIcon({ placeholder, changeEvent, icon, search, 
         underlineColorAndroid="transparent"
         placeholderTextColor="#FFFFFF60"
         value={value}
+        keyboardType={keyboardType || 'default'}
       />
       {icon && search &&
         <TouchableOpacity onPress={() => search()}>

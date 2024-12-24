@@ -2,12 +2,16 @@ import React from 'react'
 import {Image, Text, TextInput, TouchableOpacity, View} from 'react-native'
 import {conjunctionModalStyles} from "../../styles/components/modals/conjunctionModal";
 import InputWithIcon from "../forms/InputWithIcon";
+import {isConjunction} from "@observerly/astrometry";
 
-interface AddSpotModalProps {
+interface ConjunctionFiltersModalProps {
   onClose: () => void
+  onSelectPeriod: (period: {value: number, designation: string}) => void
+  onSelectCustomPeriod: (from: Date, to: Date) => void
 }
 
-export default function ConjunctionFiltersModal({ onClose }: AddSpotModalProps) {
+
+export default function ConjunctionFiltersModal({ onClose }: ConjunctionFiltersModalProps) {
   return (
     <View style={conjunctionModalStyles.modal}>
      <View  style={conjunctionModalStyles.modal.content}>

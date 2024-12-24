@@ -4,16 +4,7 @@ import { globalStyles } from '../../styles/global'
 import { Star } from '../../helpers/types/Star'
 import { useSettings } from '../../contexts/AppSettingsContext'
 import { calculateHorizonAngle } from '../../helpers/scripts/astro/calculateHorizonAngle'
-import {
-  convertEquatorialToHorizontal,
-  isBodyAboveHorizon,
-  hercules,
-  lyra,
-  draco,
-  cepheus,
-  getPlanetaryPositions,
-  Constellation
-} from '@observerly/astrometry'
+import {convertEquatorialToHorizontal, isBodyAboveHorizon} from '@observerly/astrometry'
 import { Circle, G, Image, Line, Mask, Polyline, Rect, Svg, Text as SvgText } from 'react-native-svg';
 import dayjs from 'dayjs'
 import axios from 'axios'
@@ -148,9 +139,9 @@ export default function SkyMapGenerator({ navigation }: any) {
 
           {
             starsToDisplay.length > 0 && showConstellations &&
-            constellationsAsterisms.flatMap((constellation: any, constellationIndex: number) => {
+            constellationsAsterisms.map((constellation: any, constellationIndex: number) => {
               // @ts-ignore
-              return constellation.features[0].geometry.coordinates.map((segment: any, segmentIndex: any) => {
+              return constellation.feature.features[0].geometry.coordinates.map((segment: any, segmentIndex: any) => {
                 if (segment.length < 2) return null;
 
                 const start = segment[0];
@@ -215,7 +206,8 @@ export default function SkyMapGenerator({ navigation }: any) {
           {
             starsToDisplay.length > 0 && showConstellations && showConstellationsName &&
             constellationsAsterisms.map((constellation, constellationIndex) => {
-              const centrum = constellation.features[0].properties?.centrum;
+              if(!constellation) return null;
+              const centrum = constellation.feature.features[0].properties?.centrum;
               if (!centrum) return null;
 
               const coords = convertEquatorialToHorizontal(currentTime, { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }, { ra: centrum.ra, dec: centrum.dec });
@@ -224,7 +216,7 @@ export default function SkyMapGenerator({ navigation }: any) {
               const centerX = (screenWidth / 2) + centerR * Math.sin(centerTheta);
               const centerY = (screenWidth / 2) + centerR * Math.cos(centerTheta);
 
-              const name = constellation.features[0].properties?.name || `Constellation ${constellationIndex}`;
+              const name = constellation.feature.features[0].properties?.name || `Constellation ${constellationIndex}`;
 
               return (
                 <SvgText
