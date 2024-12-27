@@ -399,16 +399,17 @@ const centerIss = () => {
                 <DSOValues title={i18n.t('satelliteTracker.issTracker.stats.country')} value={issPosition ? `${getCountryByCode(issPosition.country, currentLocale)} - ${getCountryFlag(issPosition.country === i18n.t('satelliteTracker.issTracker.stats.unknown') ? 'ZZ' : issPosition.country )}` : <ActivityIndicator size={'small'} color={app_colors.white} animating />} />
               </View>
               <View style={issTrackerStyles.content.liveStats}>
-                <Text style={issTrackerStyles.content.liveStats.title}>{i18n.t('satelliteTracker.issTracker.stats.title')}</Text>
+                <Text style={issTrackerStyles.content.liveStats.title}>{i18n.t('satelliteTracker.issTracker.nextPasses.title')}</Text>
+                <Text style={issTrackerStyles.content.liveStats.title}>{i18n.t('satelliteTracker.issTracker.nextPasses.subtitle')}</Text>
                 {
                   issPassesLoading ?
                     <ActivityIndicator size={'small'} color={app_colors.white} animating /> :
                       issPasses.length > 0 ?
                         issPasses.map((pass: IssPass, index: number) => {
                           return (
-                              <IssPassCard pass={pass} navigation={navigation} key={index} />
+                              <IssPassCard pass={pass} navigation={navigation} key={index} passIndex={index} />
                           )
-                        }) : <SimpleButton text={"Pas de passages de l'ISS dans les 10 prochains jours"} disabled fullWidth />
+                        }) : <SimpleButton text={i18n.t('satelliteTracker.issTracker.nextPasses.noPasses')} disabled fullWidth />
                 }
               </View>
               <View style={starlinkTrackerStyles.content.glviewContainer}>

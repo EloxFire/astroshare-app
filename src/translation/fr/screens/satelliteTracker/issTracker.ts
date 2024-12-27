@@ -10,6 +10,9 @@ export const issTrackerTranslations = {
   },
   nextPasses: {
     title: "Prochains passages",
+    subtitle: "Votre position : ",
+    loading: "Chargement des prochains passages...",
+    noPasses: "Aucun passage de l'ISS prévu dans les 10 prochains jours",
   },
   '3dMap': {
     title: "Carte 3D interactive",
