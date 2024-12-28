@@ -1,0 +1,31 @@
+import React from "react";
+import {ImageBackground, ImageSourcePropType, Text, TouchableOpacity, View} from "react-native";
+import {proLockerStyles} from "../../styles/components/cards/proLocker";
+import ProBadge from "../badges/ProBadge";
+import {app_colors} from "../../helpers/constants";
+import {routes} from "../../helpers/routes";
+
+interface ProLockerProps {
+  navigation: any;
+  image: ImageSourcePropType;
+}
+
+export default function ProLocker({ navigation, image }: ProLockerProps) {
+
+  return (
+    <ImageBackground blurRadius={15} resizeMode={"cover"} source={image} imageStyle={proLockerStyles.locker.image} style={proLockerStyles.locker}>
+      <View style={proLockerStyles.locker.image.dark} />
+      <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', marginBottom: 15}}>
+        <Text style={proLockerStyles.locker.title}>Astroshare</Text>
+        <ProBadge additionalStyles={{transform: [{scale: 2.1}], marginLeft: 22}}/>
+      </View>
+      <Text style={proLockerStyles.locker.text}>Voici une fonctionnalité Astroshare Pro.</Text>
+      <Text style={proLockerStyles.locker.text}>Mettez à niveau votre application pour y accéder !</Text>
+
+      <TouchableOpacity onPress={() => navigation.push(routes.sellScreen.path)} style={proLockerStyles.locker.button}>
+        <Text style={proLockerStyles.locker.button.text}>Passer à Astroshare</Text>
+        <ProBadge additionalStyles={{marginLeft: 4, marginRight: 10}} customColor={app_colors.black}/>
+      </TouchableOpacity>
+    </ImageBackground>
+  );
+}

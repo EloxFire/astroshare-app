@@ -62,7 +62,7 @@ export default function SellScreen({ navigation }: any) {
         />
 
         <View style={pageTitleStyles.container}>
-          <TouchableOpacity onPress={() => navigation.push(routes.home.path)}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
             <Image style={pageTitleStyles.container.icon} source={require('../../../assets/icons/FiChevronDown.png')}/>
           </TouchableOpacity>
         </View>
