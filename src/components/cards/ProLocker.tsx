@@ -8,13 +8,14 @@ import {routes} from "../../helpers/routes";
 interface ProLockerProps {
   navigation: any;
   image: ImageSourcePropType;
+  darker?: boolean;
 }
 
-export default function ProLocker({ navigation, image }: ProLockerProps) {
+export default function ProLocker({ navigation, image, darker }: ProLockerProps) {
 
   return (
     <ImageBackground blurRadius={15} resizeMode={"cover"} source={image} imageStyle={proLockerStyles.locker.image} style={proLockerStyles.locker}>
-      <View style={proLockerStyles.locker.image.dark} />
+      <View style={[proLockerStyles.locker.image.dark, {backgroundColor: darker ? app_colors.black_eighty : app_colors.black_sixty}]} />
       <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', marginBottom: 15}}>
         <Text style={proLockerStyles.locker.title}>Astroshare</Text>
         <ProBadge additionalStyles={{transform: [{scale: 2.1}], marginLeft: 22}}/>

@@ -21,7 +21,6 @@ export const proLockerStyles = {
         left: 0,
         width: '100%' as '100%',
         height: '100%' as '100%',
-        backgroundColor: app_colors.black_sixty,
         borderRadius: 10
       }
     },

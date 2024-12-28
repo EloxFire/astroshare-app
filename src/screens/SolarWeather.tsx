@@ -13,6 +13,7 @@ import { i18n } from '../helpers/scripts/i18n'
 import PageTitle from '../components/commons/PageTitle'
 import SimpleButton from '../components/commons/buttons/SimpleButton'
 import DisclaimerBar from "../components/banners/DisclaimerBar";
+import ProLocker from "../components/cards/ProLocker";
 
 export default function SolarWeather({ navigation }: any) {
 
@@ -164,6 +165,27 @@ export default function SolarWeather({ navigation }: any) {
             <Text style={solarWeatherStyles.container.title}>{i18n.t('solarWeather.containers.southernAurora')}</Text>
             <Text style={solarWeatherStyles.container.subtitle}>Source : NOAA Space Weather Prediction Center</Text>
             <Image placeholder={localizedForecastPlaceholders[i18n.locale]} source={{ uri: "https://services.swpc.noaa.gov/images/animations/ovation/south/latest.jpg" + '?' + new Date() }} style={solarWeatherStyles.sunImage} />
+          </View>
+
+          {/* KP INDEXES CONTAINER */}
+          <View style={solarWeatherStyles.container}>
+            <Text style={solarWeatherStyles.container.title}>{i18n.t('solarWeather.containers.kpIndexes')}</Text>
+            <Text style={[solarWeatherStyles.container.subtitle, {marginBottom: 10}]}>Source : NASA / SoHO (Solar and Heliospheric Observatory)</Text>
+            <ProLocker darker navigation={navigation} image={require('../../assets/images/tools/sun.png')} />
+          </View>
+
+          {/* SOLAR WINDS CONTAINER */}
+          <View style={solarWeatherStyles.container}>
+            <Text style={solarWeatherStyles.container.title}>{i18n.t('solarWeather.containers.solarWinds')}</Text>
+            <Text style={[solarWeatherStyles.container.subtitle, {marginBottom: 10}]}>Source : NASA / SoHO (Solar and Heliospheric Observatory)</Text>
+            <ProLocker darker navigation={navigation} image={require('../../assets/images/tools/sun.png')} />
+          </View>
+
+          {/* SOLAR ACTIVITY CONTAINER */}
+          <View style={solarWeatherStyles.container}>
+            <Text style={solarWeatherStyles.container.title}>{i18n.t('solarWeather.containers.solarActivity')}</Text>
+            <Text style={[solarWeatherStyles.container.subtitle, {marginBottom: 10}]}>Source : NASA / SoHO (Solar and Heliospheric Observatory)</Text>
+            <ProLocker darker navigation={navigation} image={require('../../assets/images/tools/sun.png')} />
           </View>
         </View>
       </ScrollView>
