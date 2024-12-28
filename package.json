@@ -78,7 +78,8 @@
     "translate-google-api": "^1.0.4",
     "typescript": "~5.3.3",
     "uuid": "^10.0.0",
-    "expo-linear-gradient": "~13.0.2"
+    "expo-linear-gradient": "~13.0.2",
+    "expo-blur": "~13.0.2"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

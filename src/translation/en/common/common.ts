@@ -58,6 +58,7 @@ export const commonTranslations = {
   visibility: {
     title: "Visibility",
     visible: "Visible",
+    partiallyVisible: "Partially visible",
     notVisible: "Not visible",
     error: "Error while calculating visibility",
     nextRise: "Next rise time",

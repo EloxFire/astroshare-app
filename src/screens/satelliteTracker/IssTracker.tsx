@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { ActivityIndicator, ScrollView, Text, View } from 'react-native'
+import {ActivityIndicator, ScrollView, Text, TouchableOpacity, View} from 'react-native'
 import { convertDDtoDMS } from '../../helpers/scripts/convertDDtoDMSCoords'
 import { getLocationName } from '../../helpers/api/getLocationFromCoords'
 import { getCountryByCode } from '../../helpers/scripts/utils/getCountryByCode'
@@ -34,6 +34,10 @@ import IssPassCard from "../../components/cards/IssPassCard";
 import {useSettings} from "../../contexts/AppSettingsContext";
 import {IssPass} from "../../helpers/types/IssPass";
 import dayjs from "dayjs";
+import {getWeather} from "../../helpers/api/getWeather";
+import {conjunctionCardStyles} from "../../styles/components/cards/conjunctionCard";
+import {BlurView} from "expo-blur";
+import ProBadge from "../../components/badges/ProBadge";
 
 export default function IssTracker({ navigation }: any) {
 
@@ -55,6 +59,7 @@ export default function IssTracker({ navigation }: any) {
   const [issTle, setIssTle] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [focusIss, setFocusIss] = useState(true)
+  const [passesWeather, setPassesWeather] = useState<any[]>([])
 
   const [issPassesLoading, setIssPassesLoading] = useState(true)
   const [issPasses, setIssPasses] = useState<IssPass[]>([])
@@ -95,6 +100,15 @@ export default function IssTracker({ navigation }: any) {
 
   useEffect(() => {
     handleIssPasses()
+  }, [currentUserLocation])
+
+  useEffect(() => {
+    // Get weather for the pass
+    if(!currentUserLocation) return;
+    (async () => {
+      const weather = await getWeather(currentUserLocation.lat, currentUserLocation.lon)
+      setPassesWeather(weather.daily)
+    })()
   }, [currentUserLocation])
 
   useEffect(() => {
@@ -398,19 +412,24 @@ const centerIss = () => {
                 <DSOValues title={i18n.t('satelliteTracker.issTracker.stats.speed')} value={issPosition ? `${issPosition.velocity.toFixed(2)} Km/h` : <ActivityIndicator size={'small'} color={app_colors.white} animating />} />
                 <DSOValues title={i18n.t('satelliteTracker.issTracker.stats.country')} value={issPosition ? `${getCountryByCode(issPosition.country, currentLocale)} - ${getCountryFlag(issPosition.country === i18n.t('satelliteTracker.issTracker.stats.unknown') ? 'ZZ' : issPosition.country )}` : <ActivityIndicator size={'small'} color={app_colors.white} animating />} />
               </View>
-              <View style={issTrackerStyles.content.liveStats}>
-                <Text style={issTrackerStyles.content.liveStats.title}>{i18n.t('satelliteTracker.issTracker.nextPasses.title')}</Text>
-                <Text style={issTrackerStyles.content.liveStats.title}>{i18n.t('satelliteTracker.issTracker.nextPasses.subtitle')}</Text>
-                {
-                  issPassesLoading ?
-                    <ActivityIndicator size={'small'} color={app_colors.white} animating /> :
-                      issPasses.length > 0 ?
-                        issPasses.map((pass: IssPass, index: number) => {
-                          return (
-                              <IssPassCard pass={pass} navigation={navigation} key={index} passIndex={index} />
-                          )
-                        }) : <SimpleButton text={i18n.t('satelliteTracker.issTracker.nextPasses.noPasses')} disabled fullWidth />
-                }
+              <View style={issTrackerStyles.content.nextPasses}>
+                <Text style={issTrackerStyles.content.nextPasses.title}>{i18n.t('satelliteTracker.issTracker.nextPasses.title')}</Text>
+                <Text style={issTrackerStyles.content.nextPasses.subtitle}>{i18n.t('satelliteTracker.issTracker.nextPasses.subtitle')}{currentUserLocation.common_name}</Text>
+                <View style={issTrackerStyles.content.nextPasses.container}>
+                  {
+                    issPassesLoading ?
+                      <ActivityIndicator size={'small'} color={app_colors.white} animating /> :
+                        issPasses.length > 0 ?
+                          issPasses.slice(0, 4).map((pass: IssPass, index: number) => {
+                            return (
+                                <IssPassCard pass={pass} navigation={navigation} key={index} passIndex={index} weather={passesWeather} />
+                            )
+                          }) : <SimpleButton text={i18n.t('satelliteTracker.issTracker.nextPasses.noPasses')} disabled fullWidth />
+                  }
+                  <TouchableOpacity style={conjunctionCardStyles.card.body.planetariumRedirect}>
+                    <Text style={conjunctionCardStyles.card.body.planetariumRedirect.text}>{i18n.t('satelliteTracker.issTracker.nextPasses.seeMore')}</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
               <View style={starlinkTrackerStyles.content.glviewContainer}>
                 <Text style={issTrackerStyles.content.liveStats.title}>{i18n.t('satelliteTracker.issTracker.3dMap.title')}</Text>

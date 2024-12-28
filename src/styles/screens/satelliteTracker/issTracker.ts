@@ -34,6 +34,58 @@ export const issTrackerStyles = {
       }
     },
 
+    nextPasses: {
+      backgroundColor: app_colors.white_no_opacity,
+      borderColor: app_colors.white_no_opacity,
+      borderWidth: 1,
+      borderRadius: 10,
+      padding: 10,
+      display: 'flex' as 'flex',
+      flexDirection: 'column' as 'column',
+      gap: 3,
+
+      container: {
+        position: 'relative' as 'relative',
+
+        premiumLocker:{
+          position: 'absolute' as 'absolute',
+          height: '100%' as '100%',
+          width: '100%' as '100%',
+          borderRadius: 10,
+          zIndex: 2,
+          display: 'flex' as 'flex',
+          flexDirection: 'column' as 'column',
+          justifyContent: 'center' as 'center',
+          alignItems: 'center' as 'center',
+
+          title: {
+            zIndex: 3,
+            position: 'absolute' as 'absolute',
+            color: app_colors.white,
+            fontSize: 20,
+            fontFamily: 'GilroyBlack',
+            textTransform: 'uppercase' as 'uppercase',
+          }
+        },
+      },
+
+
+      title: {
+        color: app_colors.white,
+        fontSize: 20,
+        fontFamily: 'GilroyBlack',
+        textTransform: 'uppercase' as 'uppercase',
+      },
+
+      subtitle: {
+        color: app_colors.white,
+        fontSize: 10,
+        fontFamily: 'AuxMono',
+        marginBottom: 10,
+        opacity: 0.5,
+      }
+    },
+
     mapContainer: {
       display: 'flex' as 'flex',
       flexDirection: 'column' as 'column',
@@ -49,13 +101,5 @@ export const issTrackerStyles = {
         height: Dimensions.get('screen').width - 40,
       }
     },
-
-    nextPasses: {
-      borderWidth : 1,
-      borderColor: app_colors.white_no_opacity,
-      backgroundColor: app_colors.white_no_opacity,
-      borderRadius: 10,
-      padding: 10,
-    }
   },
 }

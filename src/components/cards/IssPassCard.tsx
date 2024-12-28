@@ -1,26 +1,24 @@
 import React, {useEffect, useState} from 'react'
-import {Image, Text, TouchableOpacity, View} from 'react-native'
+import {ActivityIndicator, Image, Text, TouchableOpacity, View} from 'react-native'
 import { issPassCardStyles } from '../../styles/components/cards/issPassCard'
 import dayjs from 'dayjs';
-import { useTranslation } from '../../hooks/useTranslation';
 import {IssPass} from "../../helpers/types/IssPass";
-import {getWeather} from "../../helpers/api/getWeather";
-import {useSettings} from "../../contexts/AppSettingsContext";
 import {weatherImages} from "../../helpers/scripts/loadImages";
+import {capitalize} from "../../helpers/scripts/utils/formatters/capitalize";
+import {getWindDir} from "../../helpers/scripts/getWindDir";
+import {determineIssVisibility} from "../../helpers/scripts/astro/determineIssVisibility";
 
 interface IssPassCardProps {
   pass: IssPass;
   passIndex: number;
   navigation: any;
+  weather: any;
 }
 
-export default function IssPassCard({ pass, passIndex, navigation }: IssPassCardProps) {
-
-  const {currentLocale} = useTranslation()
-  const {currentUserLocation} = useSettings()
+export default function IssPassCard({ pass, passIndex, navigation, weather }: IssPassCardProps) {
 
   const [passLength, setPassLength] = useState<string>('')
-  const [passesWeather, setPassesWeather] = useState<any[]>([])
+  const [isWeatherAccurate, setIsWeatherAccurate] = useState<boolean>(false)
 
   // https://api.n2yo.com/rest/v1/satellite/visualpasses/25544/43.5314643/5.4508237/341/1/45/&apiKey=SQCWS8-7VQKED-JG2RHW-5DGF
   useEffect(() => {
@@ -31,35 +29,53 @@ export default function IssPassCard({ pass, passIndex, navigation }: IssPassCard
   }, []);
 
   useEffect(() => {
-    // Get weather for the pass
-    if(!currentUserLocation) return;
-    (async () => {
-      const weather = await getWeather(currentUserLocation.lat, currentUserLocation.lon)
-      setPassesWeather(weather.daily)
-    })()
-  }, [currentUserLocation])
-
-  useEffect(() => {
-    console.log(passesWeather)
-  }, [passesWeather])
+    const weatherDateLimit = dayjs().add(3, 'day').unix()
+    const passDate = dayjs.unix(pass.startUTC).unix()
+    setIsWeatherAccurate(dayjs.unix(passDate).isBefore(dayjs.unix(weatherDateLimit)))
+  }, []);
 
   return (
     <TouchableOpacity style={issPassCardStyles.card}>
-      <View>
-        {/*<Image style={{width: 30, height: 30}} source={weatherImages[passesWeather[passIndex].icon]}/>*/}
-        <Text style={[issPassCardStyles.card.text, {alignSelf: 'center'}]}>ISS</Text>
+      <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center', gap: 10}}>
+        <Text style={issPassCardStyles.card.title}>{dayjs.unix(pass.startUTC).format('DD MMM YYYY')}</Text>
+        <Text style={[issPassCardStyles.card.subtitle, {backgroundColor: determineIssVisibility(pass.maxEl, weather[passIndex]?.weather[0].icon).backgroundColor, color: determineIssVisibility(pass.maxEl, weather[passIndex]?.weather[0].icon).foregroundColor}]}>{determineIssVisibility(pass.maxEl, weather[passIndex]?.weather[0].icon, pass.startUTC).text}</Text>
       </View>
-      <View>
-        <Text style={issPassCardStyles.card.text}>{dayjs.unix(pass.startUTC).format('HH:mm')}</Text>
-        <Text style={issPassCardStyles.card.text}>{dayjs.unix(pass.startUTC).format('HH:mm')}</Text>
-      </View>
-      <View>
-        <Text style={issPassCardStyles.card.text}>{passLength}</Text>
-        <Text style={issPassCardStyles.card.text}>{pass.maxEl.toFixed(2)}°</Text>
-      </View>
-      <View>
-        <Text style={issPassCardStyles.card.text}>{pass.startAz.toFixed(2)}°</Text>
-        <Text style={issPassCardStyles.card.text}>{pass.maxAz.toFixed(2)}°</Text>
+
+      <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
+        <View style={issPassCardStyles.card.column}>
+          <Image style={issPassCardStyles.card.weatherIcon} source={isWeatherAccurate ? weatherImages[weather[passIndex]?.weather[0].icon] : require('../../../assets/icons/FiIss.png')}/>
+          {/*<Text style={issPassCardStyles.card.title}>{weather[passIndex]?.weather[0].icon}</Text>*/}
+        </View>
+        <View style={issPassCardStyles.card.column}>
+          <View style={issPassCardStyles.card.row}>
+            <Image style={issPassCardStyles.card.icon} source={require('../../../assets/icons/FiSunrise.png')}/>
+            <Text style={issPassCardStyles.card.text}>{dayjs.unix(pass.startUTC).format('HH:mm')}</Text>
+          </View>
+          <View style={issPassCardStyles.card.row}>
+            <Image style={issPassCardStyles.card.icon} source={require('../../../assets/icons/FiSunset.png')}/>
+            <Text style={issPassCardStyles.card.text}>{dayjs.unix(pass.endUTC).format('HH:mm')}</Text>
+          </View>
+        </View>
+        <View style={issPassCardStyles.card.column}>
+          <View style={issPassCardStyles.card.row}>
+            <Image style={issPassCardStyles.card.icon} source={require('../../../assets/icons/FiClock.png')}/>
+            <Text style={issPassCardStyles.card.text}>{passLength}</Text>
+          </View>
+          <View style={issPassCardStyles.card.row}>
+            <Image style={issPassCardStyles.card.icon} source={require('../../../assets/icons/FiSun.png')}/>
+            <Text style={issPassCardStyles.card.text}>{pass.mag}</Text>
+          </View>
+        </View>
+        <View style={issPassCardStyles.card.column}>
+          <View style={issPassCardStyles.card.row}>
+            <Image style={issPassCardStyles.card.icon} source={require('../../../assets/icons/FiCompass.png')}/>
+            <Text style={issPassCardStyles.card.text}>{pass.startAz.toFixed(2)}° ({pass.startAzCompass})</Text>
+          </View>
+          <View style={issPassCardStyles.card.row}>
+            <Image style={issPassCardStyles.card.icon} source={require('../../../assets/icons/FiAngleRight.png')}/>
+            <Text style={issPassCardStyles.card.text}>{pass.maxEl.toFixed(2)}°</Text>
+          </View>
+        </View>
       </View>
     </TouchableOpacity>
   )
