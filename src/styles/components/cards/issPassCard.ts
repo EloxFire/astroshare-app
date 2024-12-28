@@ -8,7 +8,7 @@ export const issPassCardStyles = {
     backgroundColor: app_colors.white_no_opacity,
     borderRadius: 10,
     padding: 10,
-    marginBottom: 5,
+    // marginBottom: 5,
     display: 'flex' as 'flex',
     flexDirection: 'column' as 'column',
     gap: 10,

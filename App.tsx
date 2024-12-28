@@ -64,6 +64,7 @@ import LoginScreen from "./src/screens/auth/LoginScreen";
 import RegisterScreen from "./src/screens/auth/RegisterScreen";
 import ProfileScreen from "./src/screens/auth/Profile";
 import PlanetaryConjunctionScreen from "./src/screens/transits/PlanetaryConjunctionScreen";
+import IssPasses from "./src/screens/satelliteTracker/IssPasses";
 
 dayjs.locale('fr');
 dayjs.extend(LocalizedFormat)
@@ -156,6 +157,7 @@ export default function App() {
                             <Stack.Screen name={routes.satelliteTracker.path} component={SatelliteTracker} />
                             <Stack.Screen name={routes.issTracker.path} component={IssTracker} />
                             <Stack.Screen name={routes.starlinkTracker.path} component={StarlinkTracker} />
+                            <Stack.Screen name={routes.satellitesTrackers.issPasses.path} component={IssPasses} />
 
                             {/*MAP SCREENS*/}
                             <Stack.Screen name={routes.skymapSelection.path} component={SkyMapSelection} />

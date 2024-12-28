@@ -27,6 +27,10 @@ export const determineIssVisibility = (maxElevation: number, weatherIcon: string
 
   const weatherCondition = weatherIcons[weatherIcon]
 
+  if(!weatherIcon || !maxElevation){
+    return {backgroundColor: 'transparent', foregroundColor: 'transparent', text: ""};
+  }
+
   if(maxElevation < 20){
     return {backgroundColor: app_colors.red, foregroundColor: app_colors.white, text: i18n.t('common.visibility.notVisible')};
   }else if(maxElevation > 20 && (weatherCondition === 'clear sky' || weatherCondition === 'few clouds')){

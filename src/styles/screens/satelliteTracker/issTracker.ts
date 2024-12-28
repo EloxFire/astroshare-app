@@ -46,6 +46,9 @@ export const issTrackerStyles = {
 
       container: {
         position: 'relative' as 'relative',
+        display: 'flex' as 'flex',
+        flexDirection: 'column' as 'column',
+        gap: 10,
 
         premiumLocker:{
           position: 'absolute' as 'absolute',

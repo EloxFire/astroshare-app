@@ -32,6 +32,13 @@ export const routes = {
   ressource: {path: 'RessourceScreen', requirements: []},
   categoryScreen: {path: 'RessourcesCategory', requirements: []},
   observationPlanner: {path: 'ObservationPlannerScreen', requirements: []},
+
+  satellitesTrackers: {
+    home: { path: 'SatelliteTrackerScreen', requirements: [] },
+    issTracker: { path: 'IssTrackerScreen', requirements: [] },
+    issPasses: { path: "IssPasses", requirements: []},
+    starlinkTracker: { path: 'StarlinkTrackerScreen', requirements: [] },
+  },
   auth: {
     login: { path: 'Login', requirements: [] },
     register: { path: 'Register', requirements: [] },

@@ -38,6 +38,7 @@ import {getWeather} from "../../helpers/api/getWeather";
 import {conjunctionCardStyles} from "../../styles/components/cards/conjunctionCard";
 import {BlurView} from "expo-blur";
 import ProBadge from "../../components/badges/ProBadge";
+import {routes} from "../../helpers/routes";
 
 export default function IssTracker({ navigation }: any) {
 
@@ -108,6 +109,7 @@ export default function IssTracker({ navigation }: any) {
     (async () => {
       const weather = await getWeather(currentUserLocation.lat, currentUserLocation.lon)
       setPassesWeather(weather.daily)
+      console.log(weather.daily[6].weather[0])
     })()
   }, [currentUserLocation])
 
@@ -426,7 +428,7 @@ const centerIss = () => {
                             )
                           }) : <SimpleButton text={i18n.t('satelliteTracker.issTracker.nextPasses.noPasses')} disabled fullWidth />
                   }
-                  <TouchableOpacity style={conjunctionCardStyles.card.body.planetariumRedirect}>
+                  <TouchableOpacity onPress={() => navigation.push(routes.satellitesTrackers.issPasses.path, {passes: issPasses, weather: passesWeather})} style={conjunctionCardStyles.card.body.planetariumRedirect}>
                     <Text style={conjunctionCardStyles.card.body.planetariumRedirect.text}>{i18n.t('satelliteTracker.issTracker.nextPasses.seeMore')}</Text>
                   </TouchableOpacity>
                 </View>

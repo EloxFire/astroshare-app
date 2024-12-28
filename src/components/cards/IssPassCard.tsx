@@ -19,6 +19,7 @@ export default function IssPassCard({ pass, passIndex, navigation, weather }: Is
 
   const [passLength, setPassLength] = useState<string>('')
   const [isWeatherAccurate, setIsWeatherAccurate] = useState<boolean>(false)
+  const [visibilityBadge, setVisibilityBadge] = useState<any>({})
 
   // https://api.n2yo.com/rest/v1/satellite/visualpasses/25544/43.5314643/5.4508237/341/1/45/&apiKey=SQCWS8-7VQKED-JG2RHW-5DGF
   useEffect(() => {
@@ -34,11 +35,18 @@ export default function IssPassCard({ pass, passIndex, navigation, weather }: Is
     setIsWeatherAccurate(dayjs.unix(passDate).isBefore(dayjs.unix(weatherDateLimit)))
   }, []);
 
+  useEffect(() => {
+    if(passIndex <= 6){
+      const badge = determineIssVisibility(pass.maxEl, weather[passIndex]?.weather[0].icon, pass.startUTC)
+      setVisibilityBadge(badge)
+    }
+  }, []);
+
   return (
     <TouchableOpacity style={issPassCardStyles.card}>
       <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center', gap: 10}}>
         <Text style={issPassCardStyles.card.title}>{dayjs.unix(pass.startUTC).format('DD MMM YYYY')}</Text>
-        <Text style={[issPassCardStyles.card.subtitle, {backgroundColor: determineIssVisibility(pass.maxEl, weather[passIndex]?.weather[0].icon).backgroundColor, color: determineIssVisibility(pass.maxEl, weather[passIndex]?.weather[0].icon).foregroundColor}]}>{determineIssVisibility(pass.maxEl, weather[passIndex]?.weather[0].icon, pass.startUTC).text}</Text>
+        <Text style={[issPassCardStyles.card.subtitle, {backgroundColor: visibilityBadge.backgroundColor, color: visibilityBadge.foregroundColor}]}>{visibilityBadge.text}</Text>
       </View>
 
       <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
