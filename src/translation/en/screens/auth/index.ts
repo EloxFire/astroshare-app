@@ -19,7 +19,14 @@ export const authScreensTranslations = {
     createdAt: 'Creation date',
     updatedAt: 'Last update',
     downloadedRessources: 'Downloaded resources',
+    accountRole: 'Account status',
     logout: 'Logout',
+    roles: {
+      admin: "Administrator",
+      member: "Unsubscribed",
+      subscriber: "Subscriber",
+      unknown: "Unknown",
+    }
   },
   placeholders: {
     email: "Email",

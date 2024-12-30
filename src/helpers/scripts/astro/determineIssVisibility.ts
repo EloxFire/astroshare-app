@@ -1,6 +1,5 @@
 import {app_colors} from "../../constants";
 import {i18n} from "../i18n";
-import {getNight} from "@observerly/astrometry";
 
 export const determineIssVisibility = (maxElevation: number, weatherIcon: string, passStart?: number) => {
   const weatherIcons: any = {
@@ -31,7 +30,7 @@ export const determineIssVisibility = (maxElevation: number, weatherIcon: string
     return {backgroundColor: 'transparent', foregroundColor: 'transparent', text: ""};
   }
 
-  if(maxElevation < 20){
+  if(maxElevation < 20 || (weatherCondition === 'shower rain' || weatherCondition === 'rain' || weatherCondition === 'thunderstorm' || weatherCondition === 'snow' || weatherCondition === 'mist')){
     return {backgroundColor: app_colors.red, foregroundColor: app_colors.white, text: i18n.t('common.visibility.notVisible')};
   }else if(maxElevation > 20 && (weatherCondition === 'clear sky' || weatherCondition === 'few clouds')){
     return {backgroundColor: app_colors.green, foregroundColor: app_colors.black, text: i18n.t('common.visibility.visible')};

@@ -52,6 +52,13 @@ export const profileScreenStyles = {
       }
     },
 
+    body: {
+      display: 'flex' as 'flex',
+      flexDirection: 'column' as 'column',
+      gap: 5,
+      marginBottom: 15,
+    },
+
     button: {
       display: 'flex' as 'flex',
       flexDirection: 'column' as 'column',

@@ -36,8 +36,6 @@ import {IssPass} from "../../helpers/types/IssPass";
 import dayjs from "dayjs";
 import {getWeather} from "../../helpers/api/getWeather";
 import {conjunctionCardStyles} from "../../styles/components/cards/conjunctionCard";
-import {BlurView} from "expo-blur";
-import ProBadge from "../../components/badges/ProBadge";
 import {routes} from "../../helpers/routes";
 import ProLocker from "../../components/cards/ProLocker";
 
@@ -55,7 +53,7 @@ export default function IssTracker({ navigation }: any) {
   const earthMeshRef = useRef<THREE.Mesh | null>(null);
 
   const earthRadius = 6371;  // Earth radius in km
-  
+
   const [issPosition, setIssPosition] = useState<any>(null)
   const [trajectoryPoints, setTrajectoryPoints] = useState<any>(null)
   const [issTle, setIssTle] = useState<any>(null)
@@ -181,7 +179,7 @@ export default function IssTracker({ navigation }: any) {
         dms_lon: convertDDtoDMS(position.data.data.longitude, position.data.data.longitude).dms_lon,
         country: name.country
       }
-      
+
 
       setIssPosition(iss)
       setTrajectoryPoints(trajectoryPoints.data.data)
@@ -285,16 +283,16 @@ export default function IssTracker({ navigation }: any) {
   const updateIssPosition = async (doesIssNeedFocus: boolean) => {
     const response = await axios.get(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/iss/tle`)
     const tle = [response.data.data.header.trim(), response.data.data.line1.trim(), response.data.data.line2.trim()]
-  
+
     const issGeometry = new THREE.BufferGeometry();
     const positions = new Float32Array(3);
-  
+
     // Récupérer les coordonnées du satellite
     if(tle){
       const position = await getSatelliteCoordsFromTLE(tle);
       if (position) {
         const radius = earthRadius + position.altitude;
-    
+
         // Convertir les angles de latitude et longitude de degrés en radians
         const latRad = position.latitude;
         const lonRad = position.longitude;
@@ -303,7 +301,7 @@ export default function IssTracker({ navigation }: any) {
         const x = radius * Math.cos(latRad) * Math.sin(lonRad);
         const z = radius * Math.cos(latRad) * Math.cos(lonRad);
         const y = radius * Math.sin(latRad);
-    
+
         positions[0] = x;
         positions[1] = y;
         positions[2] = z;
@@ -314,21 +312,21 @@ export default function IssTracker({ navigation }: any) {
         }
       }
     }
-  
+
     // Mettre à jour les attributs de la géométrie
     issGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
     issGeometry.computeBoundingSphere(); // Optionnel pour améliorer les performances de rendu
-  
+
     const satelliteMaterial = new THREE.PointsMaterial({ color: app_colors.red, size: 100 });
     const satelliteMesh = new THREE.Points(issGeometry, satelliteMaterial);
-  
+
     // Si un ancien mesh de satellites existe, le retirer avant d'ajouter le nouveau
     const existingMesh = sceneRef.current?.children.find(child => child instanceof THREE.Points);
     if (existingMesh) {
       sceneRef.current?.remove(existingMesh);
     }
-  
-    if (sceneRef.current) { 
+
+    if (sceneRef.current) {
       sceneRef.current.add(satelliteMesh);
     }
   };
@@ -336,15 +334,15 @@ export default function IssTracker({ navigation }: any) {
   let oldX = 0.0, oldY = 0.0;
   let polarAngle = Math.PI / 2;  // Angle vertical (hauteur)
   let azimuthalAngle = 0;  // Angle horizontal (autour de l'axe Y)
-  const rotationSpeed = 0.005;  
+  const rotationSpeed = 0.005;
   let distanceFromEarth = 11500;  // Distance fixe de la caméra par rapport à la Terre
-  
+
   // Fonction pour mettre à jour la position de la caméra autour de la Terre
   const updateCameraPosition = (camera: THREE.PerspectiveCamera) => {
     const x = distanceFromEarth * Math.sin(polarAngle) * Math.cos(azimuthalAngle);
     const y = distanceFromEarth * Math.cos(polarAngle);
     const z = distanceFromEarth * Math.sin(polarAngle) * Math.sin(azimuthalAngle);
-    
+
     camera.position.set(x, y, z);
     if(earthMeshRef.current){
       camera.lookAt(earthMeshRef.current.position);  // La caméra regarde toujours la Terre
@@ -419,20 +417,20 @@ const centerIss = () => {
                 <Text style={issTrackerStyles.content.nextPasses.title}>{i18n.t('satelliteTracker.issTracker.nextPasses.title')}</Text>
                 <Text style={issTrackerStyles.content.nextPasses.subtitle}>{i18n.t('satelliteTracker.issTracker.nextPasses.subtitle')}{currentUserLocation.common_name}</Text>
                 <View style={issTrackerStyles.content.nextPasses.container}>
-                  {/*{*/}
-                  {/*  issPassesLoading ?*/}
-                  {/*    <ActivityIndicator size={'small'} color={app_colors.white} animating /> :*/}
-                  {/*      issPasses.length > 0 ?*/}
-                  {/*        issPasses.slice(0, 4).map((pass: IssPass, index: number) => {*/}
-                  {/*          return (*/}
-                  {/*              <IssPassCard pass={pass} navigation={navigation} key={index} passIndex={index} weather={passesWeather} />*/}
-                  {/*          )*/}
-                  {/*        }) : <SimpleButton text={i18n.t('satelliteTracker.issTracker.nextPasses.noPasses')} disabled fullWidth />*/}
-                  {/*}*/}
-                  {/*<TouchableOpacity onPress={() => navigation.push(routes.satellitesTrackers.issPasses.path, {passes: issPasses, weather: passesWeather})} style={conjunctionCardStyles.card.body.planetariumRedirect}>*/}
-                  {/*  <Text style={conjunctionCardStyles.card.body.planetariumRedirect.text}>{i18n.t('satelliteTracker.issTracker.nextPasses.seeMore')}</Text>*/}
-                  {/*</TouchableOpacity>*/}
-                  <ProLocker navigation={navigation} image={require('../../../assets/images/tools/isstracker.png')}/>
+                  {
+                    issPassesLoading ?
+                      <ActivityIndicator size={'small'} color={app_colors.white} animating /> :
+                        issPasses.length > 0 ?
+                          issPasses.slice(0, 4).map((pass: IssPass, index: number) => {
+                            return (
+                                <IssPassCard pass={pass} navigation={navigation} key={index} passIndex={index} weather={passesWeather} />
+                            )
+                          }) : <SimpleButton text={i18n.t('satelliteTracker.issTracker.nextPasses.noPasses')} disabled fullWidth />
+                  }
+                  <TouchableOpacity onPress={() => navigation.push(routes.satellitesTrackers.issPasses.path, {passes: issPasses, weather: passesWeather})} style={conjunctionCardStyles.card.body.planetariumRedirect}>
+                    <Text style={conjunctionCardStyles.card.body.planetariumRedirect.text}>{i18n.t('satelliteTracker.issTracker.nextPasses.seeMore')}</Text>
+                  </TouchableOpacity>
+                  {/*<ProLocker navigation={navigation} image={require('../../../assets/images/tools/isstracker.png')}/>*/}
                 </View>
               </View>
               <View style={starlinkTrackerStyles.content.glviewContainer}>
@@ -443,7 +441,7 @@ const centerIss = () => {
                 </GestureDetector>
                 <ToggleButton title={i18n.t('satelliteTracker.issTracker.3dMap.button')} toggled={focusIss} onToggle={() => setFocusIss(!focusIss)} />
               </View>
-              <View style={issTrackerStyles.content.mapContainer}> 
+              <View style={issTrackerStyles.content.mapContainer}>
                 <Text style={issTrackerStyles.content.liveStats.title}>{i18n.t('satelliteTracker.issTracker.2dMap.title')}</Text>
                 <Text style={issTrackerStyles.content.liveStats.subtitle}>{i18n.t('satelliteTracker.issTracker.2dMap.subtitle')}</Text>
                 <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
