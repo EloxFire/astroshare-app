@@ -24,11 +24,13 @@
     "@react-navigation/native-stack": "^6.11.0",
     "@react-three/drei": "^9.114.0",
     "@react-three/fiber": "^8.17.8",
+    "@stripe/stripe-react-native": "^0.41.0",
     "axios": "^1.7.3",
     "country-flag-icons": "^1.5.13",
     "dayjs": "^1.11.12",
     "expo": "~51.0.25",
     "expo-av": "~14.0.6",
+    "expo-blur": "~13.0.2",
     "expo-build-properties": "~0.12.5",
     "expo-clipboard": "~6.0.3",
     "expo-constants": "~16.0.2",
@@ -39,6 +41,7 @@
     "expo-gl": "~14.0.2",
     "expo-image": "~1.12.13",
     "expo-intent-launcher": "~11.0.1",
+    "expo-linear-gradient": "~13.0.2",
     "expo-linking": "~6.3.1",
     "expo-localization": "~15.0.3",
     "expo-location": "~17.0.1",
@@ -77,9 +80,7 @@
     "tle.js": "^4.9.0",
     "translate-google-api": "^1.0.4",
     "typescript": "~5.3.3",
-    "uuid": "^10.0.0",
-    "expo-linear-gradient": "~13.0.2",
-    "expo-blur": "~13.0.2"
+    "uuid": "^10.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

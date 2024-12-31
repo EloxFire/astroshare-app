@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import {ScrollView, Text, View, TouchableOpacity, StatusBar} from 'react-native'
 import { globalStyles } from '../../styles/global'
 import { sellScreenStyles } from '../../styles/screens/pro/sellScreen'
@@ -11,10 +11,12 @@ import {ProFeature} from "../../helpers/types/ProFeature";
 import ProBadge from "../../components/badges/ProBadge";
 import ProOfferCard from "../../components/cards/ProOfferCard";
 import {i18n} from "../../helpers/scripts/i18n";
+import { StripeProvider } from '@stripe/stripe-react-native';
 
 export default function SellScreen({ navigation }: any) {
 
   const [activeOffer, setActiveOffer] = useState<'monthly' | 'yearly'>('yearly')
+  const [publishableKey, setPublishableKey] = useState('');
 
   const hilightFeature: ProFeature[] = [
     {
@@ -47,64 +49,80 @@ export default function SellScreen({ navigation }: any) {
       description: "Astroshare est mis à jour régulièrement avec de nouvelles fonctionnalités.",
       image: require('../../../assets/images/tools/skymap.png')
     },
-
   ]
 
-  return (
-    <View style={[globalStyles.body, {paddingTop: 0, paddingHorizontal: 0}]}>
-      <ScrollView contentContainerStyle={{paddingHorizontal: 10, paddingTop: StatusBar.currentHeight ? StatusBar.currentHeight + 20 : 20}}>
-        <Image style={sellScreenStyles.backgroundImage} source={require('../../../assets/images/tools/ressources.png')}/>
-        <LinearGradient
-          // Background Linear Gradient
-          colors={['rgba(0,0,0,1)', 'transparent']}
-          style={sellScreenStyles.backgroundImage.filter}
-          locations={[0, 1]}
-        />
 
-        <View style={pageTitleStyles.container}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Image style={pageTitleStyles.container.icon} source={require('../../../assets/icons/FiChevronDown.png')}/>
-          </TouchableOpacity>
-        </View>
-        <View style={sellScreenStyles.content}>
-          <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
-            <Text style={sellScreenStyles.content.title}>Astroshare</Text>
-            <ProBadge additionalStyles={{transform: [{scale: 2.8}], marginLeft: 30}}/>
+  // STRIPE RELATED PREP CODE
+  const fetchPublishableKey = async () => {
+    // const key = await fetchKey(); // fetch key from your server here
+    // setPublishableKey(key);
+  };
+
+  useEffect(() => {
+    fetchPublishableKey();
+  }, []);
+
+  return (
+    <StripeProvider
+      publishableKey={publishableKey}
+      merchantIdentifier="merchant.identifier" // required for Apple Pay
+      urlScheme="your-url-scheme" // required for 3D Secure and bank redirects
+    >
+      <View style={[globalStyles.body, {paddingTop: 0, paddingHorizontal: 0}]}>
+        <ScrollView contentContainerStyle={{paddingHorizontal: 10, paddingTop: StatusBar.currentHeight ? StatusBar.currentHeight + 20 : 20}}>
+          <Image style={sellScreenStyles.backgroundImage} source={require('../../../assets/images/tools/ressources.png')}/>
+          <LinearGradient
+            // Background Linear Gradient
+            colors={['rgba(0,0,0,1)', 'transparent']}
+            style={sellScreenStyles.backgroundImage.filter}
+            locations={[0, 1]}
+          />
+
+          <View style={pageTitleStyles.container}>
+            <TouchableOpacity onPress={() => navigation.goBack()}>
+              <Image style={pageTitleStyles.container.icon} source={require('../../../assets/icons/FiChevronDown.png')}/>
+            </TouchableOpacity>
           </View>
-          <Text style={sellScreenStyles.content.subtitle}>{i18n.t('pro.sellScreen.subtitle')}</Text>
-          <View style={sellScreenStyles.content.offers}>
-            <ProOfferCard
-              onClick={() => setActiveOffer('monthly')}
-              active={activeOffer === "monthly"}
-              price={2.49}
-              type={i18n.t('pro.sellScreen.offers.monthly')}
-              hasDiscount={false}
-              badgeText={''}
-              description={i18n.t('pro.sellScreen.offers.monthlyDescription')}
-            />
-            <ProOfferCard
-              onClick={() => setActiveOffer('yearly')}
-              active={activeOffer === "yearly"}
-              price={23.90}
-              type={i18n.t('pro.sellScreen.offers.yearly')}
-              hasDiscount={true}
-              badgeText={i18n.t('pro.sellScreen.offers.discount')}
-              description={i18n.t('pro.sellScreen.offers.yearlyDescription')}
-            />
+          <View style={sellScreenStyles.content}>
+            <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+              <Text style={sellScreenStyles.content.title}>Astroshare</Text>
+              <ProBadge additionalStyles={{transform: [{scale: 2.8}], marginLeft: 30}}/>
+            </View>
+            <Text style={sellScreenStyles.content.subtitle}>{i18n.t('pro.sellScreen.subtitle')}</Text>
+            <View style={sellScreenStyles.content.offers}>
+              <ProOfferCard
+                onClick={() => setActiveOffer('monthly')}
+                active={activeOffer === "monthly"}
+                price={2.49}
+                type={i18n.t('pro.sellScreen.offers.monthly')}
+                hasDiscount={false}
+                badgeText={''}
+                description={i18n.t('pro.sellScreen.offers.monthlyDescription')}
+              />
+              <ProOfferCard
+                onClick={() => setActiveOffer('yearly')}
+                active={activeOffer === "yearly"}
+                price={23.90}
+                type={i18n.t('pro.sellScreen.offers.yearly')}
+                hasDiscount={true}
+                badgeText={i18n.t('pro.sellScreen.offers.discount')}
+                description={i18n.t('pro.sellScreen.offers.yearlyDescription')}
+              />
+            </View>
+            <TouchableOpacity style={sellScreenStyles.content.offers.button}>
+              <Text style={sellScreenStyles.content.offers.button.text}>{i18n.t('pro.sellScreen.offers.proceedToPayment')}</Text>
+            </TouchableOpacity>
+            <View style={sellScreenStyles.content.features}>
+              <Text style={sellScreenStyles.content.features.title}>Des fonctionnalités exclusives :</Text>
+              {
+                hilightFeature.map((feature, index) => {
+                  return <ProFeatureCard key={index} feature={feature}/>
+                })
+              }
+            </View>
           </View>
-          <TouchableOpacity style={sellScreenStyles.content.offers.button}>
-            <Text style={sellScreenStyles.content.offers.button.text}>{i18n.t('pro.sellScreen.offers.proceedToPayment')}</Text>
-          </TouchableOpacity>
-          <View style={sellScreenStyles.content.features}>
-            <Text style={sellScreenStyles.content.features.title}>Des fonctionnalités exclusives :</Text>
-            {
-              hilightFeature.map((feature, index) => {
-                return <ProFeatureCard key={index} feature={feature}/>
-              })
-            }
-          </View>
-        </View>
-      </ScrollView>
-    </View>
+        </ScrollView>
+      </View>
+    </StripeProvider>
   )
 }

@@ -40,7 +40,7 @@ export default function IssPassCard({ pass, passIndex, navigation, weather }: Is
       const badge = determineIssVisibility(pass.maxEl, weather[passIndex]?.weather[0].icon, pass.startUTC)
       setVisibilityBadge(badge)
     }
-  }, []);
+  }, [weather]);
 
   return (
     <TouchableOpacity style={issPassCardStyles.card}>
