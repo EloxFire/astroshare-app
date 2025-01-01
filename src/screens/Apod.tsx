@@ -42,7 +42,7 @@ export default function Apod({ navigation }: any) {
       <ScrollView>
         <View style={apodStyles.content}>
           <Text style={apodStyles.content.title}>{apod?.title.replace(/(\r\n|\n|\r)/gm, "") || i18n.t('common.loadings.simple')}</Text>
-          {apod?.copyright && <Text style={[apodStyles.content.text, { color: app_colors.white_eighty }]}>Copyright : {apod?.copyright.replace(/(\r\n|\n|\r)/gm, "") || i18n.t('common.loadings.simple')}</Text>}
+          {apod?.copyright && <Text style={[apodStyles.content.text, { color: app_colors.white_eighty, textAlign: 'center' }]}>Copyright : {apod?.copyright.replace(/(\r\n|\n|\r)/gm, "") || i18n.t('common.loadings.simple')}</Text>}
           <Text style={[apodStyles.content.text, { color: app_colors.white_eighty, marginTop: 5 }]}>Date : {apod?.date ? dayjs(apod?.date).format('DD/MM/YYYY') : i18n.t('common.loadings.simple')}</Text>
           {
             apod?.media_type === 'video' ?
