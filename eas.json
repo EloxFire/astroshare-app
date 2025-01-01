@@ -22,8 +22,8 @@
       "distribution": "internal",
       "env": {
         "EXPO_PUBLIC_ASTROSHARE_API_URL":"https://api.astroshare.fr",
-        "EXPO_PUBLIC_APP_VERSION":"v1.5.2",
-        "EXPO_PUBLIC_LAST_UPDATE":"2024-11-23",
+        "EXPO_PUBLIC_APP_VERSION":"v1.6.0 (preview)",
+        "EXPO_PUBLIC_LAST_UPDATE":"2024-12-31",
         "GOOGLE_MAPS_API_KEY":"AIzaSyBIHiqhKWwweIvQF36R8eFiYpM5G5LOWpU"
       }
     },

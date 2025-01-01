@@ -1,9 +1,8 @@
-import React, {useEffect, useState} from 'react'
+import React, {useState} from 'react'
 import {ScrollView, Text, View, TouchableOpacity, StatusBar} from 'react-native'
 import { globalStyles } from '../../styles/global'
 import { sellScreenStyles } from '../../styles/screens/pro/sellScreen'
 import {pageTitleStyles} from "../../styles/components/commons/pageTitle";
-import {routes} from "../../helpers/routes";
 import {Image} from "expo-image";
 import {LinearGradient} from "expo-linear-gradient";
 import ProFeatureCard from "../../components/cards/ProFeatureCard";
@@ -11,12 +10,10 @@ import {ProFeature} from "../../helpers/types/ProFeature";
 import ProBadge from "../../components/badges/ProBadge";
 import ProOfferCard from "../../components/cards/ProOfferCard";
 import {i18n} from "../../helpers/scripts/i18n";
-import { StripeProvider } from '@stripe/stripe-react-native';
 
 export default function SellScreen({ navigation }: any) {
 
   const [activeOffer, setActiveOffer] = useState<'monthly' | 'yearly'>('yearly')
-  const [publishableKey, setPublishableKey] = useState('');
 
   const hilightFeature: ProFeature[] = [
     {
@@ -51,23 +48,7 @@ export default function SellScreen({ navigation }: any) {
     },
   ]
 
-
-  // STRIPE RELATED PREP CODE
-  const fetchPublishableKey = async () => {
-    // const key = await fetchKey(); // fetch key from your server here
-    // setPublishableKey(key);
-  };
-
-  useEffect(() => {
-    fetchPublishableKey();
-  }, []);
-
   return (
-    <StripeProvider
-      publishableKey={publishableKey}
-      merchantIdentifier="merchant.identifier" // required for Apple Pay
-      urlScheme="your-url-scheme" // required for 3D Secure and bank redirects
-    >
       <View style={[globalStyles.body, {paddingTop: 0, paddingHorizontal: 0}]}>
         <ScrollView contentContainerStyle={{paddingHorizontal: 10, paddingTop: StatusBar.currentHeight ? StatusBar.currentHeight + 20 : 20}}>
           <Image style={sellScreenStyles.backgroundImage} source={require('../../../assets/images/tools/ressources.png')}/>
@@ -123,6 +104,5 @@ export default function SellScreen({ navigation }: any) {
           </View>
         </ScrollView>
       </View>
-    </StripeProvider>
   )
 }
