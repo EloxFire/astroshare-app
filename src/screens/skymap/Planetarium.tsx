@@ -15,8 +15,17 @@ import { getEffectiveAngularResolution } from '../../helpers/scripts/astro/skyma
 import { convertAltAzToXYZ } from '../../helpers/scripts/astro/coords/convertAltAzToXYZ';
 import { getEuclideanDistance } from '../../helpers/scripts/astro/skymap/getEuclideanDistance';
 import { getFovFromAngularResolution } from '../../helpers/scripts/astro/skymap/getFovFromAngularResolution';
-import { getGlobePosition } from './getGlobePosition';
+import { getGlobePosition } from '../../helpers/scripts/astro/skymap/getGlobePosition';
+import { MultiplyMatrices } from '../../helpers/scripts/astro/skymap/MultiplyMatrices';
+import { drawCircle } from '../../helpers/scripts/astro/skymap/drawCircle';
+import { createGrid } from '../../helpers/scripts/astro/skymap/createGrid';
+import { drawConstellations } from '../../helpers/scripts/astro/skymap/drawConstellations';
+import { createGround } from '../../helpers/scripts/astro/skymap/createGround';
+// import { Inertia } from '../../helpers/scripts/astro/skymap/Inertia';
 
+let IsInertia = false;
+let oldX = 0.0, oldY = 0.0;
+let Vx = 0.0, Vy = 0.0;
 export default function Planetarium({ navigation }: any) {
 
   const { currentUserLocation } = useSettings();
@@ -29,34 +38,34 @@ export default function Planetarium({ navigation }: any) {
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
   const sceneRef = useRef<THREE.Scene | null>(null);
   const rendererRef = useRef<ExpoTHREE.Renderer | null>(null);
-  
+
   const _onContextCreate = async (gl: ExpoWebGLRenderingContext) => {
     const { drawingBufferWidth, drawingBufferHeight } = gl;
     setCameraWidth(drawingBufferWidth);
     setCameraHeight(drawingBufferHeight);
-    
+
     // Initialize scene, camera, and renderer
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(90, drawingBufferWidth / drawingBufferHeight, 0.1, 50000);
+    const camera = new THREE.PerspectiveCamera(90, drawingBufferWidth / drawingBufferHeight, 0.1, 100);
     const renderer = new ExpoTHREE.Renderer({ gl });
-    
+
     renderer.setSize(drawingBufferWidth, drawingBufferHeight);
     renderer.setClearColor(0x080808); // Background color
-    
+
     camera.position.set(0, 0, 0); // Camera positioned at the origin
 
     // Store them in refs
     cameraRef.current = camera;
     sceneRef.current = scene;
     rendererRef.current = renderer;
-    
+
     // Group stars by their material type for efficient rendering
     const materialGroups: { [key: string]: { positions: Float32Array, geometry: THREE.BufferGeometry } } = {};
 
     // Iterate over the stars and group them by material type
     starsCatalog.forEach((star: Star, index: number) => {
       const { alt, az } = convertEquatorialToHorizontal(new Date(), { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }, { ra: star.ra, dec: star.dec });
-      const { x, y, z } = convertAltAzToXYZ(alt, az, 5);
+      const { x, y, z } = convertAltAzToXYZ(alt, az, 3 + 1.2 * star.V);
 
       // Get the material for the star
       const starType = star.sp_type ? star.sp_type[0] : 'A';
@@ -90,19 +99,22 @@ export default function Planetarium({ navigation }: any) {
       scene.add(stars);
     });
 
-    // Creation du sol
-    const Groundgeometry = new THREE.SphereGeometry(1, 64, 64, Math.PI, Math.PI, 0, Math.PI);
-    let material = new THREE.MeshBasicMaterial({ color: 0xff0000, transparent: true, opacity: 0.5 });
-    material.side = THREE.BackSide;
-    let ground = new THREE.Mesh(Groundgeometry, material);
-    let vec = getGlobePosition(currentUserLocation.lat, currentUserLocation.lon);
+
+
+    /////
+    scene.add(createGrid(0.8, 0x0000ff));
+    drawConstellations();
+    ////
 
     camera.rotateX(90) // Pour que le sol soit perpendiculaire à la camera (mais ca donne une soucis sur la rotation de la camera, a voir)
-    scene.add(ground);
+    scene.add(createGround());
 
     // Animation loop to render the scene
     const animate = () => {
       requestAnimationFrame(animate);
+      if (IsInertia) {
+        Inertia();
+      }
       // ground.lookAt(getGlobePosition(currentUserLocation.lat, currentUserLocation.lon));
       if (rendererRef.current && sceneRef.current && cameraRef.current) {
         rendererRef.current.render(sceneRef.current, cameraRef.current);
@@ -114,52 +126,84 @@ export default function Planetarium({ navigation }: any) {
     animate();
   };
 
-  let oldX = 0.0, oldY = 0.0;
+
+
   const pan = Gesture.Pan()
-  .onStart(() => {
-    console.log('onStart');
-    oldX = 0;
-    oldY = 0;
-  })
-  .onChange((e) => {
-    const camera = cameraRef.current; // Access camera from ref
+    .onBegin(() => {
+      IsInertia = false;
+    })
+    .onStart(() => {
+      // console.log('onStart');
+      oldX = 0;
+      oldY = 0;
+      Vx = 0;
+      Vy = 0;
+    })
+    .onChange((e) => {
+      const camera = cameraRef.current; // Access camera from ref
+      if (camera) {
+        camera.rotateY(getEffectiveAngularResolution(camera.getEffectiveFOV(), cameraWidth) * (e.translationX - oldX));
+        camera.rotateX(getEffectiveAngularResolution(camera.getEffectiveFOV(), cameraWidth) * (e.translationY - oldY));
+        oldX = e.translationX;
+        oldY = e.translationY;
+        Vx = e.velocityX;
+        Vy = e.velocityY;
+        camera.updateProjectionMatrix();
+      } else {
+        console.log("camera is undefined");
+      }
+    })
+    .onEnd(() => {
+      IsInertia = true;
+    });
+
+  const Inertia = () => {
+    const camera = cameraRef.current;
+    const Wdth = 1440;
     if (camera) {
-      camera.rotateY(getEffectiveAngularResolution(camera.getEffectiveFOV(), cameraWidth) * (e.translationX - oldX));
-      camera.rotateX(getEffectiveAngularResolution(camera.getEffectiveFOV(), cameraWidth) * (e.translationY - oldY));
-      oldX = e.translationX;
-      oldY = e.translationY;
-      camera.updateProjectionMatrix();
-    } else {
-      console.log("camera is undefined");
+      camera.rotateY(getEffectiveAngularResolution(camera.getEffectiveFOV(), Wdth) * Vx * 0.01);
+      camera.rotateX(getEffectiveAngularResolution(camera.getEffectiveFOV(), Wdth) * Vy * 0.01);
+      Vx = Vx * 0.98;
+      Vy = Vy * 0.98;
+      if (Math.abs(Vx) < 0.1) {
+        Vx = 0;
+      }
+      if (Math.abs(Vy) < 0.1) {
+        Vy = 0;
+      }
+      if (Vy == 0 && Vx == 0) {
+        IsInertia = false;
+      }
+      return camera.updateProjectionMatrix();
     }
-  });
+  }
 
   let startAngle: number;
   const pinch = Gesture.Pinch()
-  .onTouchesDown((e) => {
-    const camera = cameraRef.current; // Access camera from ref
-    if(!camera) return;
-    if (e.numberOfTouches == 2) {
-      let startDistance = getEuclideanDistance(e.allTouches[0].x, e.allTouches[0].y, e.allTouches[1].x, e.allTouches[1].y); //distance initiale en pixel entre les deux doigts
-      startAngle = startDistance * getEffectiveAngularResolution(camera.getEffectiveFOV(), cameraWidth); //angle entre les deux point celeste pointé par les doigts
-    }
-  })
-  .onTouchesMove((e) => {
-    const camera = cameraRef.current; // Access camera from ref
-    if(!camera) return;
-    if (e.numberOfTouches == 2) {
-      let currentDistance = getEuclideanDistance(e.allTouches[0].x, e.allTouches[0].y, e.allTouches[1].x, e.allTouches[1].y);
-      let newAngularResolution = startAngle / currentDistance;
-      let newFOV = getFovFromAngularResolution(newAngularResolution, cameraWidth);
-      if (newFOV < 0.01) {
-        newFOV = 0.01;
-      } else if (newFOV > 120) {
-        newFOV = 120;
+    .onTouchesDown((e) => {
+      const camera = cameraRef.current; // Access camera from ref
+      if (!camera) return;
+      if (e.numberOfTouches == 2) {
+        let startDistance = getEuclideanDistance(e.allTouches[0].x, e.allTouches[0].y, e.allTouches[1].x, e.allTouches[1].y); //distance initiale en pixel entre les deux doigts
+        startAngle = startDistance * getEffectiveAngularResolution(camera.getEffectiveFOV(), cameraWidth); //angle entre les deux point celeste pointé par les doigts
       }
-      camera.fov = newFOV;
-      camera.updateProjectionMatrix();
-    }
-  });
+    })
+    .onTouchesMove((e) => {
+      const camera = cameraRef.current; // Access camera from ref
+      if (!camera) return;
+      if (e.numberOfTouches == 2) {
+        let currentDistance = getEuclideanDistance(e.allTouches[0].x, e.allTouches[0].y, e.allTouches[1].x, e.allTouches[1].y);
+        let newAngularResolution = startAngle / currentDistance;
+        let newFOV = getFovFromAngularResolution(newAngularResolution, cameraWidth);
+        if (newFOV < 0.01) {
+          newFOV = 0.01;
+        } else if (newFOV > 120) {
+          newFOV = 120;
+        }
+        camera.fov = newFOV;
+        camera.updateProjectionMatrix();
+      }
+    });
 
   let actualRotation: number;
   const rotation = Gesture.Rotation()
@@ -175,11 +219,40 @@ export default function Planetarium({ navigation }: any) {
     })
     .simultaneousWithExternalGesture(pinch);
 
-  const gestures = Gesture.Simultaneous(pinch, pan);
+  const singleTap = Gesture.Tap()
+    .maxDuration(250)
+    .onStart((e) => {
+      const camera = cameraRef.current;
+      const scene = sceneRef.current;
+      if (camera && scene) {
+        const raycaster = new THREE.Raycaster();
+        raycaster.near = 1.1;
+        raycaster.params.Points.threshold = 0.02*Math.sqrt(camera.getEffectiveFOV()^(2.3)+10);
+        raycaster.far = 100;
+        const pointer = new THREE.Vector2();
+        console.log('Single tap!');
+        pointer.x = (e.x / window.innerWidth) * 2 - 1;
+        pointer.y = - (e.y / window.innerHeight) * 2 + 1;
+        raycaster.setFromCamera(pointer, camera);
+        const intersects = raycaster.intersectObjects(scene.children);
+        if (typeof intersects[0] !== 'undefined') {
+          console.log(starsCatalog[intersects[0].index!.toString()]);
+          // let n = parseInt(intersects[0].index!.toString());
+          // console.log(n);
+          camera.updateProjectionMatrix();
+        } else {
+
+        }
+      }
+    });
+
+  const gestures = Gesture.Simultaneous(pinch, rotation, pan);
+  const taps = Gesture.Exclusive(singleTap);
+  const composed = Gesture.Race(gestures, taps);
 
   return (
     <GestureHandlerRootView>
-      <GestureDetector gesture={gestures}>
+      <GestureDetector gesture={composed}>
         <View style={planetariumStyles.container}>
           <TouchableOpacity style={planetariumStyles.container.backButton} onPress={() => navigation.goBack()}>
             <Image style={planetariumStyles.container.backButton.icon} source={require('../../../assets/icons/FiChevronDown.png')} />
