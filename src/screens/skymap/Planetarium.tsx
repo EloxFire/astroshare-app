@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { Text, TouchableOpacity, View, Dimensions } from 'react-native';
 import { planetariumStyles } from '../../styles/screens/skymap/planetarium';
 import { Image } from 'expo-image';
 import { Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -21,7 +21,7 @@ import { drawCircle } from '../../helpers/scripts/astro/skymap/drawCircle';
 import { createGrid } from '../../helpers/scripts/astro/skymap/createGrid';
 import { drawConstellations } from '../../helpers/scripts/astro/skymap/drawConstellations';
 import { createGround } from '../../helpers/scripts/astro/skymap/createGround';
-// import { Inertia } from '../../helpers/scripts/astro/skymap/Inertia';
+import { convertSphericalToCartesian } from '../../helpers/scripts/astro/skymap/convertSphericalToCartesian';
 
 let IsInertia = false;
 let oldX = 0.0, oldY = 0.0;
@@ -64,8 +64,7 @@ export default function Planetarium({ navigation }: any) {
 
     // Iterate over the stars and group them by material type
     starsCatalog.forEach((star: Star, index: number) => {
-      const { alt, az } = convertEquatorialToHorizontal(new Date(), { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }, { ra: star.ra, dec: star.dec });
-      const { x, y, z } = convertAltAzToXYZ(alt, az, 3 + 1.2 * star.V);
+      const { x, y, z } = convertSphericalToCartesian(3 + 1.2 * star.V, star.ra, star.dec);
 
       // Get the material for the star
       const starType = star.sp_type ? star.sp_type[0] : 'A';
@@ -159,10 +158,9 @@ export default function Planetarium({ navigation }: any) {
 
   const Inertia = () => {
     const camera = cameraRef.current;
-    const Wdth = 1440;
     if (camera) {
-      camera.rotateY(getEffectiveAngularResolution(camera.getEffectiveFOV(), Wdth) * Vx * 0.01);
-      camera.rotateX(getEffectiveAngularResolution(camera.getEffectiveFOV(), Wdth) * Vy * 0.01);
+      camera.rotateY(getEffectiveAngularResolution(camera.getEffectiveFOV(), Dimensions.get('window').width) * Vx * 0.01);
+      camera.rotateX(getEffectiveAngularResolution(camera.getEffectiveFOV(), Dimensions.get('window').width) * Vy * 0.01);
       Vx = Vx * 0.98;
       Vy = Vy * 0.98;
       if (Math.abs(Vx) < 0.1) {
