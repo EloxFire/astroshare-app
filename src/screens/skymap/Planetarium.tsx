@@ -26,6 +26,7 @@ import { convertSphericalToCartesian } from '../../helpers/scripts/astro/skymap/
 let IsInertia = false;
 let oldX = 0.0, oldY = 0.0;
 let Vx = 0.0, Vy = 0.0;
+let camWdth = 0;
 export default function Planetarium({ navigation }: any) {
 
   const { currentUserLocation } = useSettings();
@@ -43,6 +44,7 @@ export default function Planetarium({ navigation }: any) {
     const { drawingBufferWidth, drawingBufferHeight } = gl;
     setCameraWidth(drawingBufferWidth);
     setCameraHeight(drawingBufferHeight);
+    camWdth = drawingBufferWidth;
 
     // Initialize scene, camera, and renderer
     const scene = new THREE.Scene();
@@ -97,7 +99,6 @@ export default function Planetarium({ navigation }: any) {
       const stars = new THREE.Points(geometry, starMaterial);
       scene.add(stars);
     });
-
 
 
     /////
@@ -159,8 +160,8 @@ export default function Planetarium({ navigation }: any) {
   const Inertia = () => {
     const camera = cameraRef.current;
     if (camera) {
-      camera.rotateY(getEffectiveAngularResolution(camera.getEffectiveFOV(), Dimensions.get('window').width) * Vx * 0.01);
-      camera.rotateX(getEffectiveAngularResolution(camera.getEffectiveFOV(), Dimensions.get('window').width) * Vy * 0.01);
+      camera.rotateY(getEffectiveAngularResolution(camera.getEffectiveFOV(),camWdth) * Vx * 0.01);
+      camera.rotateX(getEffectiveAngularResolution(camera.getEffectiveFOV(),camWdth) * Vy * 0.01);
       Vx = Vx * 0.98;
       Vy = Vy * 0.98;
       if (Math.abs(Vx) < 0.1) {
