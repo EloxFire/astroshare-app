@@ -8,7 +8,7 @@ import { useSettings } from '../../contexts/AppSettingsContext';
 import * as THREE from "three";
 import * as ExpoTHREE from "expo-three";
 import { Star } from '../../helpers/types/Star';
-import { convertEquatorialToHorizontal } from '@observerly/astrometry';
+import { constellations, convertEquatorialToHorizontal } from '@observerly/astrometry';
 import { getStarMaterial } from '../../helpers/scripts/astro/skymap/createStarMaterial';
 import { useStarCatalog } from '../../contexts/StarsContext';
 import { getEffectiveAngularResolution } from '../../helpers/scripts/astro/skymap/getEffectiveAngularResolution';
@@ -103,7 +103,8 @@ export default function Planetarium({ navigation }: any) {
 
     /////
     scene.add(createGrid(0.8, 0x0000ff));
-    drawConstellations();
+    let Constellations=drawConstellations();
+    scene.add(Constellations);
     ////
 
     camera.rotateX(90) // Pour que le sol soit perpendiculaire à la camera (mais ca donne une soucis sur la rotation de la camera, a voir)

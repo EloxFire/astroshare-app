@@ -2,7 +2,7 @@ import { THREE } from "expo-three";
 import { drawCircle } from "./drawCircle";
 
 export const createGrid = (r: number,color:number) => {
-    const radius = 1;
+    const radius = 20;
     let group = new THREE.Group();
     for (let i = -Math.PI / 2 + Math.PI / 18; i < Math.PI / 2; i = i + Math.PI / 18) {
         let radiusVec = new THREE.Vector3(radius * Math.cos(i), 0, 0);
