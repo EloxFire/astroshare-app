@@ -3,7 +3,8 @@ import { MultiplyMatrices } from "./MultiplyMatrices";
 
 export const drawCircle = (radius: THREE.Vector3, position: THREE.Vector3, rotAxis: THREE.Vector3, color:number) => {
     const material = new THREE.LineBasicMaterial({
-        color: color
+        color: color,
+        transparent: true
     });
     let points = [];
     const axis = rotAxis.normalize();

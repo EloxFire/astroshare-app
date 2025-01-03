@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Text, TouchableOpacity, View, Dimensions } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 import { planetariumStyles } from '../../styles/screens/skymap/planetarium';
 import { Image } from 'expo-image';
 import { Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -8,28 +8,26 @@ import { useSettings } from '../../contexts/AppSettingsContext';
 import * as THREE from "three";
 import * as ExpoTHREE from "expo-three";
 import { Star } from '../../helpers/types/Star';
-import { constellations, convertEquatorialToHorizontal } from '@observerly/astrometry';
 import { getStarMaterial } from '../../helpers/scripts/astro/skymap/createStarMaterial';
 import { useStarCatalog } from '../../contexts/StarsContext';
 import { getEffectiveAngularResolution } from '../../helpers/scripts/astro/skymap/getEffectiveAngularResolution';
-import { convertAltAzToXYZ } from '../../helpers/scripts/astro/coords/convertAltAzToXYZ';
 import { getEuclideanDistance } from '../../helpers/scripts/astro/skymap/getEuclideanDistance';
 import { getFovFromAngularResolution } from '../../helpers/scripts/astro/skymap/getFovFromAngularResolution';
-import { getGlobePosition } from '../../helpers/scripts/astro/skymap/getGlobePosition';
-import { MultiplyMatrices } from '../../helpers/scripts/astro/skymap/MultiplyMatrices';
-import { drawCircle } from '../../helpers/scripts/astro/skymap/drawCircle';
-import { createGrid } from '../../helpers/scripts/astro/skymap/createGrid';
+import { createEquatorialGrid } from '../../helpers/scripts/astro/skymap/createEquatorialGrid';
 import { drawConstellations } from '../../helpers/scripts/astro/skymap/drawConstellations';
 import { createGround } from '../../helpers/scripts/astro/skymap/createGround';
 import { convertSphericalToCartesian } from '../../helpers/scripts/astro/skymap/convertSphericalToCartesian';
+import { getGlobePosition } from '../../helpers/scripts/astro/skymap/getGlobePosition';
 
 let IsInertia = false;
 let oldX = 0.0, oldY = 0.0;
 let Vx = 0.0, Vy = 0.0;
 let camWdth = 0;
+let EquatorialGrid:any;
 export default function Planetarium({ navigation }: any) {
 
   const { currentUserLocation } = useSettings();
+  const { lat, lon } = currentUserLocation;
   const { starsCatalog } = useStarCatalog();
 
   const [cameraWidth, setCameraWidth] = useState<number>(0);
@@ -102,20 +100,27 @@ export default function Planetarium({ navigation }: any) {
 
 
     /////
-    scene.add(createGrid(0.8, 0x0000ff));
-    let Constellations=drawConstellations();
+    EquatorialGrid = createEquatorialGrid(0x0000ff);
+    EquatorialGrid.grid2.visible = false;
+    EquatorialGrid.grid3.visible = false;
+    scene.add(EquatorialGrid.grid1);
+    scene.add(EquatorialGrid.grid2);
+    scene.add(EquatorialGrid.grid3);
+    let Constellations = drawConstellations();
     scene.add(Constellations);
     ////
 
-    camera.rotateX(90) // Pour que le sol soit perpendiculaire à la camera (mais ca donne une soucis sur la rotation de la camera, a voir)
-    scene.add(createGround());
-
+    // camera.rotateX(90) // Pour que le sol soit perpendiculaire à la camera (mais ca donne une soucis sur la rotation de la camera, a voir)
+    let ground=createGround();
+    ground.lookAt(getGlobePosition(currentUserLocation.lat, currentUserLocation.lon));
+    scene.add(ground);
     // Animation loop to render the scene
     const animate = () => {
       requestAnimationFrame(animate);
       if (IsInertia) {
         Inertia();
       }
+      ground.lookAt(getGlobePosition(currentUserLocation.lat, currentUserLocation.lon));
       // ground.lookAt(getGlobePosition(currentUserLocation.lat, currentUserLocation.lon));
       if (rendererRef.current && sceneRef.current && cameraRef.current) {
         rendererRef.current.render(sceneRef.current, cameraRef.current);
@@ -161,8 +166,8 @@ export default function Planetarium({ navigation }: any) {
   const Inertia = () => {
     const camera = cameraRef.current;
     if (camera) {
-      camera.rotateY(getEffectiveAngularResolution(camera.getEffectiveFOV(),camWdth) * Vx * 0.01);
-      camera.rotateX(getEffectiveAngularResolution(camera.getEffectiveFOV(),camWdth) * Vy * 0.01);
+      camera.rotateY(getEffectiveAngularResolution(camera.getEffectiveFOV(), camWdth) * Vx * 0.01);
+      camera.rotateX(getEffectiveAngularResolution(camera.getEffectiveFOV(), camWdth) * Vy * 0.01);
       Vx = Vx * 0.98;
       Vy = Vy * 0.98;
       if (Math.abs(Vx) < 0.1) {
@@ -200,6 +205,21 @@ export default function Planetarium({ navigation }: any) {
         } else if (newFOV > 120) {
           newFOV = 120;
         }
+        if (newFOV > 50) {
+          EquatorialGrid.grid1.visible = true;
+          EquatorialGrid.grid2.visible = false;
+          EquatorialGrid.grid3.visible = false;
+        }
+        if (newFOV <= 50 && newFOV > 10) {
+          EquatorialGrid.grid1.visible = false;
+          EquatorialGrid.grid2.visible = true;
+          EquatorialGrid.grid3.visible = false;
+        }
+        if (newFOV <= 10) {
+          EquatorialGrid.grid1.visible = false;
+          EquatorialGrid.grid2.visible = false;
+          EquatorialGrid.grid3.visible = true;
+        }
         camera.fov = newFOV;
         camera.updateProjectionMatrix();
       }
@@ -227,7 +247,7 @@ export default function Planetarium({ navigation }: any) {
       if (camera && scene) {
         const raycaster = new THREE.Raycaster();
         raycaster.near = 1.1;
-        raycaster.params.Points.threshold = 0.02*Math.sqrt(camera.getEffectiveFOV()^(2.3)+10);
+        raycaster.params.Points.threshold = 0.02 * Math.sqrt(camera.getEffectiveFOV() ^ (2.3) + 10);
         raycaster.far = 100;
         const pointer = new THREE.Vector2();
         console.log('Single tap!');
