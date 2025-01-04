@@ -33,6 +33,7 @@ export default function PlanetariumUI({ navigation, infoType, infos }: Planetari
 
     if(infos){
       console.log("INFOOOOOOOOOOOOS", infos);
+      console.log("SP_TYPE", infos.sp_type);
     }
 
     return () => clearInterval(interval);
