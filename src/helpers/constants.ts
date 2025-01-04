@@ -2,9 +2,12 @@
 export const app_colors = {
   black: '#000000',
   black_modal: 'rgba(0,0,0,0.90)',
+  black_skymap: 'rgba(0,0,0,0.92)',
   black_eighty: '#00000080',
   black_sixty: '#00000060',
   black_forty: '#00000040',
+  black_twenty: '#00000020',
+  black_ten: '#00000010',
   white: '#FFFFFF',
   white_no_opacity: '#FFFFFF0D',
   white_twenty: '#FFFFFF20',

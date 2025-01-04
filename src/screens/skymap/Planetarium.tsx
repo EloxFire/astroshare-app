@@ -18,6 +18,7 @@ import { drawConstellations } from '../../helpers/scripts/astro/skymap/drawConst
 import { createGround } from '../../helpers/scripts/astro/skymap/createGround';
 import { convertSphericalToCartesian } from '../../helpers/scripts/astro/skymap/convertSphericalToCartesian';
 import { getGlobePosition } from '../../helpers/scripts/astro/skymap/getGlobePosition';
+import PlanetariumUI from "../../components/skymap/PlanetariumUI";
 
 let IsInertia = false;
 let oldX = 0.0, oldY = 0.0;
@@ -37,6 +38,9 @@ export default function Planetarium({ navigation }: any) {
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
   const sceneRef = useRef<THREE.Scene | null>(null);
   const rendererRef = useRef<ExpoTHREE.Renderer | null>(null);
+
+  const [currentTapInfos, setCurrentTapInfos] = useState<any>(null);
+  const [currentTapType, setCurrentTapType] = useState<'constellation' | 'star' | 'planet' | 'dso' | null>('star');
 
   const _onContextCreate = async (gl: ExpoWebGLRenderingContext) => {
     const { drawingBufferWidth, drawingBufferHeight } = gl;
@@ -250,18 +254,19 @@ export default function Planetarium({ navigation }: any) {
         raycaster.params.Points.threshold = 0.02 * Math.sqrt(camera.getEffectiveFOV() ^ (2.3) + 10);
         raycaster.far = 100;
         const pointer = new THREE.Vector2();
-        console.log('Single tap!');
+        // console.log('Single tap!');
         pointer.x = (e.x / window.innerWidth) * 2 - 1;
         pointer.y = - (e.y / window.innerHeight) * 2 + 1;
         raycaster.setFromCamera(pointer, camera);
         const intersects = raycaster.intersectObjects(scene.children);
         if (typeof intersects[0] !== 'undefined') {
-          console.log(starsCatalog[intersects[0].index!.toString()]);
+          // console.log(starsCatalog[intersects[0].index!.toString()]);
+          setCurrentTapInfos(starsCatalog[intersects[0].index!.toString()]);
           // let n = parseInt(intersects[0].index!.toString());
           // console.log(n);
           camera.updateProjectionMatrix();
         } else {
-
+          setCurrentTapInfos(null);
         }
       }
     });
@@ -274,12 +279,8 @@ export default function Planetarium({ navigation }: any) {
     <GestureHandlerRootView>
       <GestureDetector gesture={composed}>
         <View style={planetariumStyles.container}>
-          <TouchableOpacity style={planetariumStyles.container.backButton} onPress={() => navigation.goBack()}>
-            <Image style={planetariumStyles.container.backButton.icon} source={require('../../../assets/icons/FiChevronDown.png')} />
-            <Text style={planetariumStyles.container.backButton.text}>Retour</Text>
-          </TouchableOpacity>
-          <Text style={planetariumStyles.container.infos}>stars: {starsCatalog.length}{'\n'}Tu peux afficher des infos ici avec \n </Text>
           <GLView style={{ flex: 1 }} onContextCreate={_onContextCreate} />
+          <PlanetariumUI navigation={navigation} infos={currentTapInfos} infoType={currentTapType} />
         </View>
       </GestureDetector>
     </GestureHandlerRootView>

@@ -4,7 +4,7 @@ import { Star } from "../../../types/Star";
 
 const starMaterials: { [key: string]: THREE.PointsMaterial } = {};
 
-const texturePaths: { [key: string]: string } = {
+export const texturePaths: { [key: string]: string } = {
   M: require('../../../../../assets/images/planetarium/stars/M.png'),
   K: require('../../../../../assets/images/planetarium/stars/K.png'),
   G: require('../../../../../assets/images/planetarium/stars/G.png'),
