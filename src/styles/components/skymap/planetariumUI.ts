@@ -35,6 +35,18 @@ export const planetariumUIStyles = {
       }
     },
 
+    layersModal: {
+      backgroundColor: app_colors.black_sixty,
+      borderRadius: 10,
+      padding: 10,
+      position: 'absolute' as 'absolute',
+      top: StatusBar.currentHeight! + 50,
+      right: 10,
+      zIndex: 10,
+      height: 150,
+      width: 250
+    },
+
     layerButton: {
       position: 'absolute' as 'absolute',
       top: StatusBar.currentHeight! + 10,
@@ -91,8 +103,6 @@ export const planetariumUIStyles = {
         alignItems: 'center' as 'center',
         backgroundColor: app_colors.black_sixty,
         borderRadius: 10,
-        // borderWidth: 1,
-        // borderColor: app_colors.white_forty,
         marginTop: 5,
         paddingHorizontal: 10,
 
@@ -105,6 +115,12 @@ export const planetariumUIStyles = {
           color: app_colors.white,
           fontSize: 20,
           fontFamily: 'GilroyBlack'
+        },
+
+        subtitle: {
+          color: app_colors.white,
+          fontSize: 15,
+          fontFamily: 'GilroyRegular'
         }
       }
     }

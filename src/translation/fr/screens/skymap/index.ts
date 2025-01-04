@@ -6,11 +6,11 @@ export const skymapTranslations = {
   subTitle: "// Explorez le ciel",
   buttons: {
     flatmap: {
-      title: "Carte du ciel 2D",
+      title: "Carte du ciel",
       subtitle: "// Repérez vous rapidement dans le ciel"
     },
     planetarium: {
-      title: "Carte 3D (Bientôt disponible)",
+      title: "Planétarium 3D",
       subtitle: "// Visualisez le ciel en 3D"
     }
   },

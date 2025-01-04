@@ -19,7 +19,7 @@ export default function PlanetariumUI({ navigation, infoType, infos }: Planetari
   const {currentUserLocation} = useSettings();
   const [currentTime, setCurrentTime] = useState<string>(dayjs().format('HH:mm'));
   const [isNightTime, setIsNightTime] = useState<boolean>(false);
-  const [starImage, setStarImage] = useState<ImageSourcePropType>(require('../../../assets/images/planetarium/stars/A.png'));
+  const [showLayerModal, setShowLayerModal] = useState<boolean>(false);
 
   const updateClock = () => {
     setCurrentTime(dayjs().format('HH:mm'));
@@ -32,7 +32,7 @@ export default function PlanetariumUI({ navigation, infoType, infos }: Planetari
     }, 1000);
 
     if(infos){
-      console.log("INFOOOOOOOOOOOOOOOS", infos);
+      console.log("INFOOOOOOOOOOOOS", infos);
     }
 
     return () => clearInterval(interval);
@@ -46,9 +46,20 @@ export default function PlanetariumUI({ navigation, infoType, infos }: Planetari
         {/*<Text style={planetariumUIStyles.container.backButton.text}>Retour</Text>*/}
       </TouchableOpacity>
 
-      <TouchableOpacity style={planetariumUIStyles.container.layerButton} onPress={() => navigation.navigate(routes.skymapSelection.path)}>
+      <TouchableOpacity style={planetariumUIStyles.container.layerButton} onPress={() => setShowLayerModal(!showLayerModal)}>
         <Image style={planetariumUIStyles.container.layerButton.icon} source={require('../../../assets/icons/FiLayers.png')} />
       </TouchableOpacity>
+
+      {
+        showLayerModal && (
+          <View style={planetariumUIStyles.container.layersModal}>
+            <TouchableOpacity>
+              <Image style={planetariumUIStyles.container.backButton.icon} source={require('../../../assets/icons/FiChevronDown.png')} />
+              <Text style={planetariumUIStyles.container.backButton.icon}>Constellations</Text>
+            </TouchableOpacity>
+          </View>
+        )
+      }
 
       <View style={planetariumUIStyles.container.generalInfosBar}>
         <View style={planetariumUIStyles.container.generalInfosBar.header}>
@@ -59,7 +70,10 @@ export default function PlanetariumUI({ navigation, infoType, infos }: Planetari
         {infos && (
           <View style={planetariumUIStyles.container.generalInfosBar.body}>
             <Image style={planetariumUIStyles.container.generalInfosBar.body.image} source={texturePaths[infos.sp_type[0]] as ImageSourcePropType} />
-            <Text style={planetariumUIStyles.container.generalInfosBar.body.title}>{getBrightStarName(infos.ids)}</Text>
+            <View style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-end'}}>
+              <Text style={planetariumUIStyles.container.generalInfosBar.body.title}>{getBrightStarName(infos.ids)}</Text>
+              <Text style={planetariumUIStyles.container.generalInfosBar.body.subtitle}>{getBrightStarName(infos.ids)}</Text>
+            </View>
           </View>
         )}
       </View>
