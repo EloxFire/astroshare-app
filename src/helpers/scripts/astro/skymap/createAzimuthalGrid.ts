@@ -1,7 +1,7 @@
 import { THREE } from "expo-three";
 import { drawCircle } from "./drawCircle";
 
-export const createEquatorialGrid = (color: number) => {
+export const createAzimuthalGrid = (color: number) => {
     const radius = 0.8;
 
     let grid1 = new THREE.Group();
@@ -15,7 +15,7 @@ export const createEquatorialGrid = (color: number) => {
         grid1.add(drawCircle(radiusVec, positionVec, axisVec, color));
     }
 
-    for (let j = -Math.PI / 2; j < Math.PI / 2; j = j + Math.PI / 12) {
+    for (let j = -Math.PI / 2; j < Math.PI / 2; j = j + Math.PI / 18) {
         let radiusVec = new THREE.Vector3(0, 0, radius);
         let positionVec = new THREE.Vector3(0, 0, 0);
         let axisVec = new THREE.Vector3(Math.cos(j), Math.sin(j), 0);
@@ -29,7 +29,7 @@ export const createEquatorialGrid = (color: number) => {
         grid2.add(drawCircle(radiusVec, positionVec, axisVec, color));
     }
 
-    for (let j = -Math.PI / 2; j < Math.PI / 2; j = j + Math.PI / 24) {
+    for (let j = -Math.PI / 2; j < Math.PI / 2; j = j + Math.PI / 36) {
         let radiusVec = new THREE.Vector3(0, 0, radius);
         let positionVec = new THREE.Vector3(0, 0, 0);
         let axisVec = new THREE.Vector3(Math.cos(j), Math.sin(j), 0);
@@ -43,7 +43,7 @@ export const createEquatorialGrid = (color: number) => {
         grid3.add(drawCircle(radiusVec, positionVec, axisVec, color));
     }
 
-    for (let j = -Math.PI / 2; j < Math.PI / 2; j = j + Math.PI / (12 * 6)) {
+    for (let j = -Math.PI / 2; j < Math.PI / 2; j = j + Math.PI / 180) {
         let radiusVec = new THREE.Vector3(0, 0, radius);
         let positionVec = new THREE.Vector3(0, 0, 0);
         let axisVec = new THREE.Vector3(Math.cos(j), Math.sin(j), 0);

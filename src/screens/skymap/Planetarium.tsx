@@ -19,12 +19,14 @@ import { createGround } from '../../helpers/scripts/astro/skymap/createGround';
 import { convertSphericalToCartesian } from '../../helpers/scripts/astro/skymap/convertSphericalToCartesian';
 import { getGlobePosition } from '../../helpers/scripts/astro/skymap/getGlobePosition';
 import PlanetariumUI from "../../components/skymap/PlanetariumUI";
+import { createAzimuthalGrid } from '../../helpers/scripts/astro/skymap/createAzimuthalGrid';
 
 let IsInertia = false;
 let oldX = 0.0, oldY = 0.0;
 let Vx = 0.0, Vy = 0.0;
 let camWdth = 0;
-let EquatorialGrid:any;
+let EquatorialGrid: any;
+let AzimuthalGrid: any;
 export default function Planetarium({ navigation }: any) {
 
   const { currentUserLocation } = useSettings();
@@ -110,12 +112,22 @@ export default function Planetarium({ navigation }: any) {
     scene.add(EquatorialGrid.grid1);
     scene.add(EquatorialGrid.grid2);
     scene.add(EquatorialGrid.grid3);
+    AzimuthalGrid = createAzimuthalGrid(0x00ff00);
+    AzimuthalGrid.grid2.visible = false;
+    AzimuthalGrid.grid3.visible = false;
+    Object.keys(AzimuthalGrid).forEach(key => {
+      AzimuthalGrid[key].lookAt(getGlobePosition(currentUserLocation.lat, currentUserLocation.lon));
+    });
+    scene.add(AzimuthalGrid.grid1);
+    scene.add(AzimuthalGrid.grid2);
+    scene.add(AzimuthalGrid.grid3);
+
     let Constellations = drawConstellations();
     scene.add(Constellations);
     ////
 
     // camera.rotateX(90) // Pour que le sol soit perpendiculaire à la camera (mais ca donne une soucis sur la rotation de la camera, a voir)
-    let ground=createGround();
+    let ground = createGround();
     ground.lookAt(getGlobePosition(currentUserLocation.lat, currentUserLocation.lon));
     scene.add(ground);
     // Animation loop to render the scene
@@ -125,7 +137,9 @@ export default function Planetarium({ navigation }: any) {
         Inertia();
       }
       ground.lookAt(getGlobePosition(currentUserLocation.lat, currentUserLocation.lon));
-      // ground.lookAt(getGlobePosition(currentUserLocation.lat, currentUserLocation.lon));
+      Object.keys(AzimuthalGrid).forEach(key => {
+        AzimuthalGrid[key].lookAt(getGlobePosition(currentUserLocation.lat, currentUserLocation.lon));
+      });
       if (rendererRef.current && sceneRef.current && cameraRef.current) {
         rendererRef.current.render(sceneRef.current, cameraRef.current);
         gl.endFrameEXP(); // Required for Expo's GL context
@@ -213,16 +227,28 @@ export default function Planetarium({ navigation }: any) {
           EquatorialGrid.grid1.visible = true;
           EquatorialGrid.grid2.visible = false;
           EquatorialGrid.grid3.visible = false;
+
+          AzimuthalGrid.grid1.visible = true;
+          AzimuthalGrid.grid2.visible = false;
+          AzimuthalGrid.grid3.visible = false;
         }
         if (newFOV <= 50 && newFOV > 10) {
           EquatorialGrid.grid1.visible = false;
           EquatorialGrid.grid2.visible = true;
           EquatorialGrid.grid3.visible = false;
+
+          AzimuthalGrid.grid1.visible = false;
+          AzimuthalGrid.grid2.visible = true;
+          AzimuthalGrid.grid3.visible = false;
         }
         if (newFOV <= 10) {
           EquatorialGrid.grid1.visible = false;
           EquatorialGrid.grid2.visible = false;
           EquatorialGrid.grid3.visible = true;
+
+          AzimuthalGrid.grid1.visible = false;
+          AzimuthalGrid.grid2.visible = false;
+          AzimuthalGrid.grid3.visible = true;
         }
         camera.fov = newFOV;
         camera.updateProjectionMatrix();
