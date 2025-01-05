@@ -20,6 +20,8 @@ import { convertSphericalToCartesian } from '../../helpers/scripts/astro/skymap/
 import { getGlobePosition } from '../../helpers/scripts/astro/skymap/getGlobePosition';
 import PlanetariumUI from "../../components/skymap/PlanetariumUI";
 import { createAzimuthalGrid } from '../../helpers/scripts/astro/skymap/createAzimuthalGrid';
+import { createPointerMaterial } from '../../helpers/scripts/astro/skymap/createPointerMaterial';
+import { createPointerTextures } from '../../helpers/scripts/astro/skymap/createPointerTextures';
 
 let IsInertia = false;
 let oldX = 0.0, oldY = 0.0;
@@ -27,6 +29,15 @@ let Vx = 0.0, Vy = 0.0;
 let camWdth = 0;
 let EquatorialGrid: any;
 let AzimuthalGrid: any;
+const pointerUICoos = [];
+pointerUICoos.push(0, 1, 0);
+const pointergeometry = new THREE.BufferGeometry();
+pointergeometry.setAttribute('position', new THREE.Float32BufferAttribute(pointerUICoos, 3));
+const pointermaterial = createPointerMaterial();
+const pointerUI = new THREE.Points(pointergeometry, pointermaterial);
+pointerUI.visible = false;
+
+
 export default function Planetarium({ navigation }: any) {
 
   const { currentUserLocation } = useSettings();
@@ -104,6 +115,11 @@ export default function Planetarium({ navigation }: any) {
       scene.add(stars);
     });
 
+    pointerUI.frustumCulled = false;
+    const pointerTextures = createPointerTextures();
+    pointerUI.material.map = pointerTextures[0];
+    scene.add(pointerUI);
+    let i = 1;
 
     /////
     EquatorialGrid = createEquatorialGrid(0x0000ff);
@@ -118,9 +134,10 @@ export default function Planetarium({ navigation }: any) {
     Object.keys(AzimuthalGrid).forEach(key => {
       AzimuthalGrid[key].lookAt(getGlobePosition(currentUserLocation.lat, currentUserLocation.lon));
     });
-    scene.add(AzimuthalGrid.grid1);
-    scene.add(AzimuthalGrid.grid2);
-    scene.add(AzimuthalGrid.grid3);
+
+    // scene.add(AzimuthalGrid.grid1);
+    // scene.add(AzimuthalGrid.grid2);
+    // scene.add(AzimuthalGrid.grid3);
 
     let Constellations = drawConstellations();
     scene.add(Constellations);
@@ -130,12 +147,22 @@ export default function Planetarium({ navigation }: any) {
     let ground = createGround();
     ground.lookAt(getGlobePosition(currentUserLocation.lat, currentUserLocation.lon));
     scene.add(ground);
+
     // Animation loop to render the scene
     const animate = () => {
       requestAnimationFrame(animate);
       if (IsInertia) {
         Inertia();
       }
+
+      if (i == 45) {
+        pointerUI.material.map = pointerTextures[i];
+        i = 0;
+      } else {
+        pointerUI.material.map = pointerTextures[i];
+        i = i + 1;
+      }
+
       ground.lookAt(getGlobePosition(currentUserLocation.lat, currentUserLocation.lon));
       Object.keys(AzimuthalGrid).forEach(key => {
         AzimuthalGrid[key].lookAt(getGlobePosition(currentUserLocation.lat, currentUserLocation.lon));
@@ -286,13 +313,17 @@ export default function Planetarium({ navigation }: any) {
         raycaster.setFromCamera(pointer, camera);
         const intersects = raycaster.intersectObjects(scene.children);
         if (typeof intersects[0] !== 'undefined') {
-          // console.log(starsCatalog[intersects[0].index!.toString()]);
+          let pointerCoos = convertSphericalToCartesian(0.5, parseFloat(starsCatalog[intersects[0].index!.toString()].ra), parseFloat(starsCatalog[intersects[0].index!.toString()].dec));
+          let g = pointerUI.geometry;
+          let p = g.getAttribute('position');
+          p.setXYZ(0, pointerCoos.x, pointerCoos.y, pointerCoos.z);
+          p.needsUpdate = true;
+          pointerUI.visible = true;
           setCurrentTapInfos(starsCatalog[intersects[0].index!.toString()]);
-          // let n = parseInt(intersects[0].index!.toString());
-          // console.log(n);
           camera.updateProjectionMatrix();
         } else {
           setCurrentTapInfos(null);
+          pointerUI.visible = false;
         }
       }
     });
