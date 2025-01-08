@@ -38,12 +38,15 @@ import {getWeather} from "../../helpers/api/getWeather";
 import {conjunctionCardStyles} from "../../styles/components/cards/conjunctionCard";
 import {routes} from "../../helpers/routes";
 import ProLocker from "../../components/cards/ProLocker";
+import {isProUser} from "../../helpers/scripts/auth/checkUserRole";
+import {useAuth} from "../../contexts/AuthContext";
 
 export default function IssTracker({ navigation }: any) {
 
   const {currentLocale} = useTranslation()
   const {launchData} = useLaunchData()
   const {currentUserLocation} = useSettings()
+  const {currentUser} = useAuth()
 
 
   // THREE RELATED OBJECTS
@@ -64,23 +67,6 @@ export default function IssTracker({ navigation }: any) {
   const [issPassesLoading, setIssPassesLoading] = useState(true)
   const [issPasses, setIssPasses] = useState<IssPass[]>([])
   const mapRef = useRef(null)
-
-  const fakePass: IssPass = {
-    startAz: 45,
-    startAzCompass: "NE",
-    startEl: 10,
-    startUTC: 1672531200,
-    maxAz: 90,
-    maxAzCompass: "E",
-    maxEl: 45,
-    maxUTC: 1672531800,
-    endAz: 135,
-    endAzCompass: "SE",
-    endEl: 10,
-    endUTC: 1672532400,
-    mag: 2.5,
-    duration: 600
-  }
 
   const focusIssRef = useRef(focusIss);
 
@@ -416,22 +402,28 @@ const centerIss = () => {
               <View style={issTrackerStyles.content.nextPasses}>
                 <Text style={issTrackerStyles.content.nextPasses.title}>{i18n.t('satelliteTracker.issTracker.nextPasses.title')}</Text>
                 <Text style={issTrackerStyles.content.nextPasses.subtitle}>{i18n.t('satelliteTracker.issTracker.nextPasses.subtitle')}{currentUserLocation.common_name}</Text>
-                <View style={issTrackerStyles.content.nextPasses.container}>
-                  {
-                    issPassesLoading ?
-                      <ActivityIndicator size={'small'} color={app_colors.white} animating /> :
-                        issPasses.length > 0 ?
-                          issPasses.slice(0, 4).map((pass: IssPass, index: number) => {
-                            return (
-                                <IssPassCard pass={pass} navigation={navigation} key={index} passIndex={index} weather={passesWeather} />
-                            )
-                          }) : <SimpleButton text={i18n.t('satelliteTracker.issTracker.nextPasses.noPasses')} disabled fullWidth />
-                  }
-                  <TouchableOpacity onPress={() => navigation.push(routes.satellitesTrackers.issPasses.path, {passes: issPasses, weather: passesWeather})} style={conjunctionCardStyles.card.body.planetariumRedirect}>
-                    <Text style={conjunctionCardStyles.card.body.planetariumRedirect.text}>{i18n.t('satelliteTracker.issTracker.nextPasses.seeMore')}</Text>
-                  </TouchableOpacity>
-                  {/*<ProLocker navigation={navigation} image={require('../../../assets/images/tools/isstracker.png')}/>*/}
-                </View>
+                {
+                  currentUser && isProUser(currentUser) ?
+                    <>
+                      <View style={issTrackerStyles.content.nextPasses.container}>
+                        {
+                          issPassesLoading ?
+                            <ActivityIndicator size={'small'} color={app_colors.white} animating /> :
+                            issPasses.length > 0 ?
+                              issPasses.slice(0, 4).map((pass: IssPass, index: number) => {
+                                return (
+                                  <IssPassCard pass={pass} navigation={navigation} key={index} passIndex={index} weather={passesWeather} />
+                                )
+                              }) : <SimpleButton text={i18n.t('satelliteTracker.issTracker.nextPasses.noPasses')} disabled fullWidth />
+                        }
+                        <TouchableOpacity onPress={() => navigation.push(routes.satellitesTrackers.issPasses.path, {passes: issPasses, weather: passesWeather})} style={conjunctionCardStyles.card.body.planetariumRedirect}>
+                          <Text style={conjunctionCardStyles.card.body.planetariumRedirect.text}>{i18n.t('satelliteTracker.issTracker.nextPasses.seeMore')}</Text>
+                        </TouchableOpacity>
+                      </View>
+                    </> :
+                  <ProLocker navigation={navigation} image={require('../../../assets/images/tools/isstracker.png')}/>
+                }
+
               </View>
               <View style={starlinkTrackerStyles.content.glviewContainer}>
                 <Text style={issTrackerStyles.content.liveStats.title}>{i18n.t('satelliteTracker.issTracker.3dMap.title')}</Text>

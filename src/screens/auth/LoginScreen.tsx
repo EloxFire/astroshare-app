@@ -1,5 +1,5 @@
-import React, {useState} from "react";
-import {Image, ScrollView, Text, TouchableOpacity, View} from "react-native";
+import React, {useEffect, useState} from "react";
+import {ActivityIndicator, Image, ScrollView, Text, TouchableOpacity, View} from "react-native";
 import {globalStyles} from "../../styles/global";
 import {i18n} from "../../helpers/scripts/i18n";
 import {authStyles} from "../../styles/screens/auth/auth";
@@ -10,6 +10,7 @@ import {localizedWhiteLogo} from "../../helpers/scripts/loadImages";
 import {routes} from "../../helpers/routes";
 import {pageTitleStyles} from "../../styles/components/commons/pageTitle";
 import {showToast} from "../../helpers/scripts/showToast";
+import {app_colors} from "../../helpers/constants";
 
 export default function LoginScreen({ navigation }: any) {
 
@@ -19,18 +20,20 @@ export default function LoginScreen({ navigation }: any) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   const handleFormSubmit = async () => {
-
     if(email === "" || password === ""){
       showToast({message: i18n.t('auth.errors.missingField'), type: 'error'})
       return;
     }
 
     try{
+      setLoading(true)
       await loginUser(email, password)
       navigation.push(routes.auth.profile.path)
     } catch (e) {
+      setLoading(false)
       showToast({message: i18n.t('auth.errors.generic'), type: 'error'})
     }
   }
@@ -78,6 +81,7 @@ export default function LoginScreen({ navigation }: any) {
 
             <TouchableOpacity style={authStyles.content.form.button} onPress={handleFormSubmit}>
               <Text style={authStyles.content.form.button.text}>{i18n.t('auth.login.submit')}</Text>
+              {loading && <ActivityIndicator size={"small"} color={app_colors.black} />}
             </TouchableOpacity>
           </View>
         </View>

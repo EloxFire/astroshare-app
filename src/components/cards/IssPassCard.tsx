@@ -7,6 +7,7 @@ import {weatherImages} from "../../helpers/scripts/loadImages";
 import {capitalize} from "../../helpers/scripts/utils/formatters/capitalize";
 import {getWindDir} from "../../helpers/scripts/getWindDir";
 import {determineIssVisibility} from "../../helpers/scripts/astro/determineIssVisibility";
+import {app_colors} from "../../helpers/constants";
 
 interface IssPassCardProps {
   pass: IssPass;
@@ -30,7 +31,7 @@ export default function IssPassCard({ pass, passIndex, navigation, weather }: Is
   }, []);
 
   useEffect(() => {
-    const weatherDateLimit = dayjs().add(3, 'day').unix()
+    const weatherDateLimit = dayjs().add(6, 'days').unix()
     const passDate = dayjs.unix(pass.startUTC).unix()
     setIsWeatherAccurate(dayjs.unix(passDate).isBefore(dayjs.unix(weatherDateLimit)))
   }, []);
@@ -47,12 +48,12 @@ export default function IssPassCard({ pass, passIndex, navigation, weather }: Is
       <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center', gap: 10}}>
         <Text style={issPassCardStyles.card.title}>{dayjs.unix(pass.startUTC).format('DD MMM YYYY')}</Text>
         <Text style={[issPassCardStyles.card.subtitle, {backgroundColor: visibilityBadge.backgroundColor, color: visibilityBadge.foregroundColor}]}>{visibilityBadge.text}</Text>
+        {!isWeatherAccurate && <Image style={issPassCardStyles.card.noWeather} source={require('../../../assets/icons/FiCloudOff.png')}/>}
       </View>
 
       <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
         <View style={issPassCardStyles.card.column}>
           <Image style={issPassCardStyles.card.weatherIcon} source={isWeatherAccurate ? weatherImages[weather[passIndex]?.weather[0].icon] : require('../../../assets/icons/FiIss.png')}/>
-          {/*<Text style={issPassCardStyles.card.title}>{weather[passIndex]?.weather[0].icon}</Text>*/}
         </View>
         <View style={issPassCardStyles.card.column}>
           <View style={issPassCardStyles.card.row}>

@@ -53,12 +53,14 @@ export const authStyles = {
       },
 
       button: {
+        display: 'flex' as 'flex',
+        flexDirection: 'row' as 'row',
+        justifyContent: 'center' as 'center',
+        alignItems: 'center' as 'center',
+        gap: 10,
         backgroundColor: app_colors.white,
         padding: 10,
         borderRadius: 10,
-        display: 'flex' as 'flex',
-        justifyContent: 'center' as 'center',
-        alignItems: 'center' as 'center',
         marginTop: 40,
 
         text: {

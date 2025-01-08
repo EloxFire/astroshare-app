@@ -42,6 +42,7 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
       }else{
         console.log('[Auth] Token still valid')
         const user: User = await getObject(storageKeys.auth.user);
+        console.log('[Auth] User found :', user.email)
         setCurrentUser(user)
       }
     }

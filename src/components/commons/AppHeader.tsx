@@ -10,10 +10,11 @@ import { i18n } from '../../helpers/scripts/i18n'
 import { localizedWhiteLogo } from '../../helpers/scripts/loadImages'
 import {useAuth} from "../../contexts/AuthContext";
 import ProBadge from "../badges/ProBadge";
+import {isProUser} from "../../helpers/scripts/auth/checkUserRole";
 
 export default function AppHeader({ navigation }: any) {
 
-  const {loginUser, currentUser} = useAuth()
+  const {currentUser} = useAuth()
 
   const isFocused = useIsFocused();
   const [hasFavs, setHasFavs] = useState(false)
@@ -29,6 +30,10 @@ export default function AppHeader({ navigation }: any) {
       setHasFavs(favsObjects && favsObjects.length > 0 || favsPlanets && favsPlanets.length > 0 || favsStars && favsStars.length > 0)
     })()
   }, [isFocused])
+
+  useEffect(() => {
+    console.log('currentUser', currentUser)
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -79,12 +84,18 @@ export default function AppHeader({ navigation }: any) {
         resizeMode='contain'
       />
       <View style={appHeaderStyles.container.buttons}>
-        <TouchableOpacity onPress={() => navigation.push(routes.sellScreen.path)}>
-          <ProBadge additionalStyles={{marginRight: 5}}/>
-        </TouchableOpacity>
+        {
+          (!currentUser || !isProUser(currentUser)) && (
+            <TouchableOpacity onPress={() => navigation.push(routes.sellScreen.path)}>
+              <ProBadge additionalStyles={{marginRight: 5}}/>
+            </TouchableOpacity>
+          )
+        }
+
         <TouchableOpacity onPress={() => handleProfilePress()}>
           <Image source={require('../../../assets/icons/FiUser.png')} style={{ width: 20, height: 20 }} />
         </TouchableOpacity>
+
         {
           showTutorial &&
           <Animated.View style={{ transform: [{ scale: interpolated }] }}>

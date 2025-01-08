@@ -11,6 +11,7 @@ import {authStyles} from "../../styles/screens/auth/auth";
 import {routes} from "../../helpers/routes";
 import {app_colors} from "../../helpers/constants";
 import ProLocker from "../../components/cards/ProLocker";
+import {isProUser} from "../../helpers/scripts/auth/checkUserRole";
 
 export default function ProfileScreen({ navigation }: any) {
 
@@ -34,12 +35,15 @@ export default function ProfileScreen({ navigation }: any) {
     }
   }
 
+  if(!currentUser) return (<></>)
+
   return (
     <View style={globalStyles.body}>
       <PageTitle
         navigation={navigation}
         title={i18n.t('auth.profile.title')}
         subtitle={i18n.t('auth.profile.subtitle')}
+        backRoute={routes.home.path}
       />
       <View style={globalStyles.screens.separator} />
       <ScrollView>
@@ -62,7 +66,7 @@ export default function ProfileScreen({ navigation }: any) {
           </View>
 
           {
-            currentUser.role !== 'subscriber' &&
+            !isProUser(currentUser) &&
             <ProLocker navigation={navigation} image={require('../../../assets/images/tools/apod.png')} darker small />
           }
 

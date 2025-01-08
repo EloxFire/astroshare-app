@@ -12,9 +12,6 @@ import {useStarCatalog} from "../../contexts/StarsContext";
 
 export default function SkyMapSelection({ navigation }: any) {
 
-  const {currentUserLocation} = useSettings()
-  const {starCatalogLoading} = useStarCatalog()
-
   return (
     <View style={globalStyles.body}>
       <PageTitle

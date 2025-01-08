@@ -41,6 +41,12 @@ export const issPassCardStyles = {
       fontFamily: 'GilroyRegular',
     },
 
+    noWeather: {
+      width: 15,
+      height: 15,
+      marginLeft: 'auto' as 'auto',
+    },
+
     weatherIcon: {
       width: 30,
       height: 30,
