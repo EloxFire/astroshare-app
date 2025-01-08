@@ -151,6 +151,9 @@ export default function App() {
                             <Stack.Screen name={routes.widgetsManager.path} component={WidgetManager} />
                             <Stack.Screen name={routes.favoritesViewPoints.path} component={ViewPointsManager} />
                             <Stack.Screen name={routes.about.path} component={About} />
+
+                            {/*MARKETING SCREENS*/}
+                            <Stack.Screen name={routes.sellScreen.path} component={SellScreen} />
                             <Stack.Screen name={routes.sellScreen.path} component={SellScreen} />
 
                             {/*SATELLITE TRACKING SCREENS*/}
