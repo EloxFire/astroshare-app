@@ -8,7 +8,10 @@ import { useSettings } from '../../contexts/AppSettingsContext';
 import * as THREE from "three";
 import * as ExpoTHREE from "expo-three";
 import { Star } from '../../helpers/types/Star';
-import { getStarMaterial } from '../../helpers/scripts/astro/skymap/createStarMaterial';
+import {
+  getStarMaterial, groupStarsByMagnitude,
+  groupStarsBySpectralType
+} from '../../helpers/scripts/astro/skymap/createStarMaterial';
 import { useStarCatalog } from '../../contexts/StarsContext';
 import { getEffectiveAngularResolution } from '../../helpers/scripts/astro/skymap/getEffectiveAngularResolution';
 import { getEuclideanDistance } from '../../helpers/scripts/astro/skymap/getEuclideanDistance';
@@ -63,7 +66,7 @@ export default function Planetarium({ navigation }: any) {
 
     // Initialize scene, camera, and renderer
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(90, drawingBufferWidth / drawingBufferHeight, 0.1, 100);
+    const camera = new THREE.PerspectiveCamera(90, drawingBufferWidth / drawingBufferHeight, 0.1, 10000);
     const renderer = new ExpoTHREE.Renderer({ gl });
 
     renderer.setSize(drawingBufferWidth, drawingBufferHeight);
@@ -76,21 +79,49 @@ export default function Planetarium({ navigation }: any) {
     sceneRef.current = scene;
     rendererRef.current = renderer;
 
+    const groupedBySpectralType = groupStarsBySpectralType(starsCatalog);
+    console.log(groupedBySpectralType);
+
+    Object.entries(groupedBySpectralType).forEach(([key, value]) => {
+      // For each spectral type group, group by magnitude then create a Points object for each group, and the stars will have a size based on their magnitude
+      const groupedByMagnitude = groupStarsByMagnitude(value);
+      Object.entries(groupedByMagnitude).forEach(([mag, stars]) => {
+        console.log(`Magnitude: ${mag}, Number of stars: ${stars.length}`);
+        // Create the geometry and material for the stars in the group based on their magnitude
+        const starsGroup = new THREE.Group();
+        stars.forEach((star, index) => {
+          const geometry = new THREE.BufferGeometry();
+          const positions = new Float32Array(stars.length * 3);
+          const { x, y, z } = convertSphericalToCartesian(1000, star.ra, star.dec);
+          const i3 = index * 3;
+          positions[i3] = x;
+          positions[i3 + 1] = y;
+          positions[i3 + 2] = z;
+          geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+          const material = getStarMaterial(star);
+          const newStar = new THREE.Points(geometry, material);
+          starsGroup.add(newStar);
+        });
+        scene.add(starsGroup);
+      });
+    })
+
+
     // Group stars by their material type for efficient rendering
     // const materialGroups: { [key: string]: { positions: Float32Array, geometry: THREE.BufferGeometry } } = {};
 
     // Iterate over the stars and group them by material type
-    const starsGroup= new THREE.Group();
-    starsCatalog.slice(0,1000).forEach((star: Star, index: number) => {
-      const {x,y,z} = convertSphericalToCartesian(10, star.ra, star.dec);
+    // const starsGroup= new THREE.Group();
+    // starsCatalog.forEach((star: Star, index: number) => {
+    //   const {x,y,z} = convertSphericalToCartesian(10, star.ra, star.dec);
 
       // Get the material for the star
       // const starType = star.sp_type ? star.sp_type[0] : 'A';
-      const geometry = new THREE.BufferGeometry();
-      geometry.setAttribute('position',new THREE.Float32BufferAttribute( [x,y,z], 3 ))
-      const material = getStarMaterial(star);
-      const newStar = new THREE.Points(geometry,material);
-      starsGroup.add(newStar);
+      // const geometry = new THREE.BufferGeometry();
+      // geometry.setAttribute('position',new THREE.Float32BufferAttribute( [x,y,z], 3 ))
+      // const material = getStarMaterial(star);
+      // const newStar = new THREE.Points(geometry,material);
+      // starsGroup.add(newStar);
 
       // Check if this material group exists, if not, create it
       // if (!materialGroups[starType]) {
@@ -106,7 +137,7 @@ export default function Planetarium({ navigation }: any) {
       // positions[i3] = x;
       // positions[i3 + 1] = y;
       // positions[i3 + 2] = z;
-    });
+    // });
 
     // Now create Points objects for each material group and add them to the scene
     // Object.keys(materialGroups).forEach((starType) => {
@@ -122,7 +153,7 @@ export default function Planetarium({ navigation }: any) {
     //   scene.add(stars);
     // });
 
-    scene.add(starsGroup);
+    // scene.add(starsGroup);
 
 
     pointerUI.frustumCulled = false;
