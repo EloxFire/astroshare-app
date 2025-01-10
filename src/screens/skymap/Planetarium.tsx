@@ -111,17 +111,17 @@ export default function Planetarium({ navigation }: any) {
     // const materialGroups: { [key: string]: { positions: Float32Array, geometry: THREE.BufferGeometry } } = {};
 
     // Iterate over the stars and group them by material type
-    // const starsGroup= new THREE.Group();
-    // starsCatalog.forEach((star: Star, index: number) => {
-    //   const {x,y,z} = convertSphericalToCartesian(10, star.ra, star.dec);
+    const starsGroup= new THREE.Group();
+    starsCatalog.slice(0,1000).forEach((star: Star, index: number) => {
+      const {x,y,z} = convertSphericalToCartesian(10, star.ra, star.dec);
 
       // Get the material for the star
       // const starType = star.sp_type ? star.sp_type[0] : 'A';
-      // const geometry = new THREE.BufferGeometry();
-      // geometry.setAttribute('position',new THREE.Float32BufferAttribute( [x,y,z], 3 ))
-      // const material = getStarMaterial(star);
-      // const newStar = new THREE.Points(geometry,material);
-      // starsGroup.add(newStar);
+      const geometry = new THREE.BufferGeometry();
+      geometry.setAttribute('position',new THREE.Float32BufferAttribute( [x,y,z], 3 ))
+      const material = getStarMaterial(star);
+      const newStar = new THREE.Points(geometry,material);
+      starsGroup.add(newStar);
 
       // Check if this material group exists, if not, create it
       // if (!materialGroups[starType]) {
@@ -137,7 +137,7 @@ export default function Planetarium({ navigation }: any) {
       // positions[i3] = x;
       // positions[i3 + 1] = y;
       // positions[i3 + 2] = z;
-    // });
+    });
 
     // Now create Points objects for each material group and add them to the scene
     // Object.keys(materialGroups).forEach((starType) => {
@@ -152,6 +152,9 @@ export default function Planetarium({ navigation }: any) {
     //   stars.material.size
     //   scene.add(stars);
     // });
+
+    scene.add(starsGroup);
+
 
     pointerUI.frustumCulled = false;
     const pointerTextures = createPointerTextures();
