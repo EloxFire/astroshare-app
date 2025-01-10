@@ -2,7 +2,6 @@ import ExpoTHREE from "expo-three";
 import * as THREE from "three";
 import { Star } from "../../../types/Star";
 
-const starMaterials: { [key: string]: THREE.PointsMaterial } = {};
 
 export const texturePaths: { [key: string]: string } = {
   M: require('../../../../../assets/images/planetarium/stars/M.png'),
@@ -19,25 +18,28 @@ export const getStarMaterial = (star: Star): THREE.PointsMaterial => {
   const starType = star.sp_type ? star.sp_type[0] : 'A'; // Default to 'A' if type is missing
   // const starOpacity = mapRange(star.V, 0, 6, 0.5, 1); // Map star magnitude to opacity
   const starOpacity = 1;
+  const a=21;
+  const b=0.05;
+  const c=0.5;
+  const d=12;
+  const f=20;
+  const StarSize = (a-d*Math.acos(-b*star.V+c))/f;
 
   // Check if material already exists for the star type in the cache
-  if (!starMaterials[starType]) {
-    // Get the texture path from the mapping, or default to 'A' texture
-    const texturePath = texturePaths[starType] || texturePaths['A'];
 
-    // Create and cache the material
-    starMaterials[starType] = new THREE.PointsMaterial({
-      map: new ExpoTHREE.TextureLoader().load(texturePath),
-      color: "white", 
-      vertexColors: false,
-      size: 0.05, 
-      sizeAttenuation: true, 
-      transparent: true, 
-      blending: THREE.NormalBlending, 
-      depthTest: false, 
-      opacity: starOpacity, 
-    });
-  }
+  // Get the texture path from the mapping, or default to 'A' texture
+  const texturePath = texturePaths[starType] || texturePaths['A'];
 
-  return starMaterials[starType];
+  // Create and cache the material
+  return new THREE.PointsMaterial({
+    map: new ExpoTHREE.TextureLoader().load(texturePath),
+    color: "white",
+    vertexColors: false,
+    size: StarSize,
+    sizeAttenuation: true,
+    transparent: true,
+    blending: THREE.NormalBlending,
+    depthTest: false,
+    opacity: starOpacity,
+  });
 };
