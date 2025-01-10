@@ -49,30 +49,25 @@ export function groupStarsByMagnitude(stars: Star[]) {
 
 export const getStarMaterial = (star: Star): THREE.PointsMaterial => {
   const starType = star.sp_type ? star.sp_type[0] : 'A'; // Default to 'A' if type is missing
-  // const starOpacity = mapRange(star.V, 0, 6, 0.5, 1); // Map star magnitude to opacity
-  const starOpacity = 1;
-  const a=21;
-  const b=0.05;
-  const c=0.5;
-  const d=12;
-  const f=20;
-  const StarSize = (a-d*Math.acos(-b*star.V+c))/f;
-
-  // Check if material already exists for the star type in the cache
 
   // Get the texture path from the mapping, or default to 'A' texture
   const texturePath = texturePaths[starType] || texturePaths['A'];
+
+  // Calculate star size based on star.V value
+  const a = -10;
+  const b = 120;
+  const starSize = a*star.V+b;
 
   // Create and cache the material
   return new THREE.PointsMaterial({
     map: new ExpoTHREE.TextureLoader().load(texturePath),
     color: "white",
     vertexColors: false,
-    size: StarSize,
+    size: starSize,
     sizeAttenuation: true,
     transparent: true,
     blending: THREE.NormalBlending,
     depthTest: false,
-    opacity: starOpacity,
+    opacity: 1,
   });
 };
