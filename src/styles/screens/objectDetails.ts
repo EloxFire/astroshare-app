@@ -1,4 +1,3 @@
-import { tint } from "react-native-color-matrix-image-filters";
 import { app_colors } from "../../helpers/constants";
 
 export const objectDetailsStyles = {

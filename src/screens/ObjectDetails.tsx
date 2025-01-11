@@ -38,6 +38,8 @@ export default function ObjectDetails({ route, navigation }: any) {
   const [favouriteObjects, setFavouriteObjects] = useState<DSO[]>([])
 
   useEffect(() => {
+    console.log(object.image_url)
+
     const altitude = selectedSpot ? selectedSpot.equipments.altitude : defaultAltitude;
     const degRa = convertHMSToDegreeFromString(object.ra)
     const degDec = convertDMSToDegreeFromString(object.dec)
@@ -102,7 +104,7 @@ export default function ObjectDetails({ route, navigation }: any) {
       <ScrollView>
         <Text style={objectDetailsStyles.content.title}>{getObjectName(object, 'all', true).toUpperCase()}</Text>
         <Text style={objectDetailsStyles.content.subtitle}>{object.common_names.split(',')[0]}</Text>
-        <Image style={objectDetailsStyles.content.image} source={astroImages[object.type.toUpperCase()]} />
+        <Image style={objectDetailsStyles.content.image} source={object.image_url !== "" ? {uri: object.image_url} : astroImages[object.type.toUpperCase()]} />
         <View style={objectDetailsStyles.content.dsoInfos}>
           <DSOValues title={i18n.t('detailsPages.dso.labels.magnitude')} value={object.b_mag || object.v_mag} />
           <DSOValues title={i18n.t('detailsPages.dso.labels.constellation')} value={getConstellationName(object.const)} />

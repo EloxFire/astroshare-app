@@ -65,6 +65,8 @@ import RegisterScreen from "./src/screens/auth/RegisterScreen";
 import ProfileScreen from "./src/screens/auth/Profile";
 import PlanetaryConjunctionScreen from "./src/screens/transits/PlanetaryConjunctionScreen";
 import IssPasses from "./src/screens/satelliteTracker/IssPasses";
+import PaywallScreen from "./src/screens/pro/PaywallScreen";
+import CelestialBodyOverview from "./src/screens/celestialBodies/CelestialBodyOverview";
 
 dayjs.locale('fr');
 dayjs.extend(LocalizedFormat)
@@ -129,6 +131,7 @@ export default function App() {
 
                             {/*APP SCREENS*/}
                             <Stack.Screen name={routes.home.path} component={Home} />
+                            <Stack.Screen name={routes.celestialBodies.details.path} component={CelestialBodyOverview} />
                             <Stack.Screen name={routes.objectDetails.path} component={ObjectDetails} />
                             <Stack.Screen name={routes.planetDetails.path} component={PlanetDetails} />
                             <Stack.Screen name={routes.brightStarDetails.path} component={BrightStarDetails} />
@@ -154,7 +157,7 @@ export default function App() {
 
                             {/*MARKETING SCREENS*/}
                             <Stack.Screen name={routes.sellScreen.path} component={SellScreen} />
-                            <Stack.Screen name={routes.sellScreen.path} component={SellScreen} />
+                            <Stack.Screen name={routes.pro.paywallScreen.path} component={PaywallScreen} />
 
                             {/*SATELLITE TRACKING SCREENS*/}
                             <Stack.Screen name={routes.satelliteTracker.path} component={SatelliteTracker} />

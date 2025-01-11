@@ -67,7 +67,7 @@ export default function SearchResultCard({ object, navigation }: SearchResultCar
 
 
   return (
-    <TouchableOpacity onPress={() => navigation.push(routes.objectDetails.path, { object: object })}>
+    <TouchableOpacity onPress={() => navigation.push(routes.celestialBodies.details.path, { object: object })}>
       <View style={searchResultCardStyles.card}>
         <View style={searchResultCardStyles.card.header}>
           <View>

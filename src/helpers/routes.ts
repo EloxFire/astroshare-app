@@ -33,6 +33,12 @@ export const routes = {
   categoryScreen: {path: 'RessourcesCategory', requirements: []},
   observationPlanner: {path: 'ObservationPlannerScreen', requirements: []},
 
+  celestialBodies: {
+    details: {
+      path: "CelestialBodyOverview",
+      requirements: []
+    }
+  },
   satellitesTrackers: {
     home: { path: 'SatelliteTrackerScreen', requirements: [] },
     issTracker: { path: 'IssTrackerScreen', requirements: [] },
@@ -45,6 +51,12 @@ export const routes = {
     profile: { path: 'Profile', requirements: [] },
     passwordRecovery: { path: 'PasswordRecovery', requirements: [] },
     passwordReset: { path: 'PasswordReset', requirements: [] },
+  },
+  pro: {
+    paywallScreen:{
+      path: "PaywallScreen",
+      requirements: []
+    }
   },
   transits: {
     home: {
