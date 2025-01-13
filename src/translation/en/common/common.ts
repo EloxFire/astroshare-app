@@ -29,6 +29,12 @@ export const commonTranslations = {
     last_quarter: "Last Quarter",
     waning_crescent: "Last Crescent",
   },
+  objects: {
+    types: {
+      star: "Star",
+      planet: "Planet",
+    }
+  },
   other: {
     yes: "Yes",
     no: "No",

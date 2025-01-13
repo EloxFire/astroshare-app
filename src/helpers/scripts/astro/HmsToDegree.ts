@@ -1,13 +1,13 @@
 import { showToast } from "../showToast";
 
-export const convertHMSToDegreeFromString = (decString: string) => {
+export const convertHMSToDegreeFromString = (decString: string): number => {
   // Expression régulière pour extraire les parties de la chaîne
   const regex = /(\d+):(\d+):([\d.]+)/;
   const match = decString.match(regex);
 
   if (!match) {
     showToast({ message: 'Format D:M:S invalide', type: 'error' });
-    return;
+    return 0;
   }
 
   // Extraction des degrés, minutes et secondes à partir de la chaîne
@@ -19,5 +19,5 @@ export const convertHMSToDegreeFromString = (decString: string) => {
   const decimalDegree = 15 * (hour + (minutes / 60) + (seconds / 3600));
 
   // Retourner la valeur positive ou négative en fonction de l'input
-  return decimalDegree;
+  return decimalDegree || 0;
 };

@@ -1,13 +1,13 @@
 import { showToast } from "../showToast";
 
-export const convertDMSToDegreeFromString = (decString: string) => {
+export const convertDMSToDegreeFromString = (decString: string): number => {
   // Expression régulière pour extraire les parties de la chaîne
   const regex = /([+-]?\d+):(\d+):([\d.]+)/;
   const match = decString.match(regex);
 
   if (!match) {
     showToast({ message: 'Format D:M:S invalide', type: 'error' });
-    return;
+    return 0;
   }
 
   // Extraction des degrés, minutes et secondes à partir de la chaîne

@@ -1,46 +1,27 @@
 import React, { useEffect, useState } from "react";
-import {DSO} from "../../helpers/types/DSO";
-import {getObject, storeObject} from "../../helpers/storage";
-import {storageKeys} from "../../helpers/constants";
 import {globalStyles} from "../../styles/global";
 import PageTitle from "../../components/commons/PageTitle";
-import {ScrollView, View} from "react-native";
+import {Image, ScrollView, Text, TouchableOpacity, View} from "react-native";
 import {i18n} from "../../helpers/scripts/i18n";
 import {celestialBodiesOverviewStyles} from "../../styles/screens/celestialBodies/celestialBodies";
+import {getDSOIcon} from "../../helpers/scripts/astro/objects/getObjectIcon";
+import {getObjectName} from "../../helpers/scripts/astro/objects/getObjectName";
+import {getObjectType} from "../../helpers/scripts/astro/objects/getObjectType";
+import SimpleBadge from "../../components/badges/SimpleBadge";
+import {computeObject} from "../../helpers/scripts/astro/objects/computeObject";
+import {useSettings} from "../../contexts/AppSettingsContext";
+import {ComputedObjectInfos} from "../../helpers/types/objects/ComputedObjectInfos";
 
 export default function CelestialBodyOverview({ route, navigation }: any) {
 
+  const {currentUserLocation} = useSettings()
   const { object, isVisible } = route.params;
-
-  const [favouriteObjects, setFavouriteObjects] = useState<DSO[]>([])
-
+  const [objectInfos, setObjectInfos] = useState<ComputedObjectInfos | null>(null);
 
   useEffect(() => {
-    (async () => {
-      const favs = await getObject(storageKeys.favouriteObjects)
-      if (!favs) return
-      setFavouriteObjects(favs)
-    })()
+    const observer = { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }
+    setObjectInfos(computeObject({ object, observer, altitude: 341 }));
   }, [])
-
-  const updateFavList = async (newList: DSO[]) => {
-    await storeObject(storageKeys.favouriteObjects, newList)
-  }
-
-  const handleFavorite = async () => {
-    if (favouriteObjects.some(obj => obj.name === object.name)) {
-      console.log("remove")
-      const favs = favouriteObjects.filter(obj => obj.name !== object.name)
-      setFavouriteObjects(favs)
-      await updateFavList(favs)
-
-    } else {
-      console.log("add")
-      const favs = [...favouriteObjects, object]
-      setFavouriteObjects(favs)
-      await updateFavList(favs)
-    }
-  }
 
   return (
     <View style={globalStyles.body}>
@@ -51,7 +32,36 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
       />
       <View style={globalStyles.screens.separator} />
       <ScrollView style={celestialBodiesOverviewStyles.content}>
-        <View style={celestialBodiesOverviewStyles.content.header}></View>
+        <View style={celestialBodiesOverviewStyles.content.header}>
+          <View>
+            <Image source={getDSOIcon(object)} style={celestialBodiesOverviewStyles.content.header.icon} />
+          </View>
+          <View style={celestialBodiesOverviewStyles.content.header.infos}>
+            <View>
+              <Text style={celestialBodiesOverviewStyles.content.header.infos.title}>{getObjectName(object, 'all', true)}</Text>
+              <Text style={celestialBodiesOverviewStyles.content.header.infos.subtitle}>{getObjectType(object)}</Text>
+            </View>
+              {
+                objectInfos && (
+                 <View style={celestialBodiesOverviewStyles.content.header.infos.badges}>
+                    <SimpleBadge
+                      text={objectInfos.visibilityInfos.visibilityLabel}
+                      icon={objectInfos.visibilityInfos.visibilityIcon}
+                      backgroundColor={objectInfos.visibilityInfos.visibilityBackgroundColor}
+                      foregroundColor={objectInfos.visibilityInfos.visibilityForegroundColor}
+                    />
+                    <SimpleBadge
+                      noBorder
+                      text={objectInfos.visibilityInfos.visibilityLabel}
+                      icon={objectInfos.visibilityInfos.visibilityIcon}
+                      backgroundColor={objectInfos.visibilityInfos.visibilityBackgroundColor}
+                      foregroundColor={objectInfos.visibilityInfos.visibilityForegroundColor}
+                    />
+                  </View>
+                )
+              }
+          </View>
+        </View>
       </ScrollView>
     </View>
   );

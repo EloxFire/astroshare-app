@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { globalStyles } from "../styles/global";
-import { getObjectName } from "../helpers/scripts/astro/getObjectName";
+import { getObjectName } from "../helpers/scripts/astro/objects/getObjectName";
 import { objectDetailsStyles } from "../styles/screens/objectDetails";
 import { astroImages } from "../helpers/scripts/loadImages";
 import { getConstellationName } from "../helpers/scripts/getConstellationName";
 import { app_colors, storageKeys } from "../helpers/constants";
-import { getObjectType } from "../helpers/scripts/astro/getObjectType";
+import { getObjectType } from "../helpers/scripts/astro/objects/getObjectType";
 import { convertHMSToDegreeFromString } from "../helpers/scripts/astro/HmsToDegree";
 import { convertDMSToDegreeFromString } from "../helpers/scripts/astro/DmsToDegree";
 import { calculateHorizonAngle } from "../helpers/scripts/astro/calculateHorizonAngle";

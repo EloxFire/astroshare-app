@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Image, Text, TouchableOpacity, View } from 'react-native'
 import { searchResultCardStyles } from '../../styles/components/searchResultCard'
 import { DSO } from '../../helpers/types/DSO'
-import { getObjectName } from '../../helpers/scripts/astro/getObjectName'
+import { getObjectName } from '../../helpers/scripts/astro/objects/getObjectName'
 import { astroImages } from '../../helpers/scripts/loadImages'
 import { getConstellationName } from '../../helpers/scripts/getConstellationName'
 import { EquatorialCoordinate, GeographicCoordinate, TransitInstance, getBodyNextRise, getBodyNextSet, isBodyAboveHorizon, isBodyCircumpolar, isBodyVisibleForNight, isTransitInstance } from '@observerly/astrometry'
@@ -18,7 +18,7 @@ import dayjs, { Dayjs } from 'dayjs'
 import { prettyDec, prettyRa } from '../../helpers/scripts/astro/prettyCoords'
 import { i18n } from '../../helpers/scripts/i18n'
 import DSOValues from '../commons/DSOValues'
-import { getObjectType } from '../../helpers/scripts/astro/getObjectType'
+import { getObjectType } from '../../helpers/scripts/astro/objects/getObjectType'
 
 interface SearchResultCardProps {
   object: DSO

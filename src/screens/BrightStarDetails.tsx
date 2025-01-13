@@ -103,7 +103,7 @@ export default function BrightStarDetails({ route, navigation }: any) {
         <Image style={objectDetailsStyles.content.image} source={astroImages['BRIGHTSTAR']} />
         <View style={objectDetailsStyles.content.dsoInfos}>
           <DSOValues title={i18n.t('detailsPages.stars.labels.constellation')} value={getConstellationName(getConstellation({ ra: star.ra, dec: star.dec })?.abbreviation || "Inconnu")} />
-          <DSOValues title={i18n.t('detailsPages.stars.labels.magnitude')} value={star.V.toString() || star.B.toString()} />
+          <DSOValues title={i18n.t('detailsPages.stars.labels.magnitude')} value={star.V.toString() || star.V.toString()} />
           <DSOValues title={i18n.t('detailsPages.stars.labels.rightAscension')} value={convertDegreesRaToHMS(star.ra)} />
           <DSOValues title={i18n.t('detailsPages.stars.labels.declination')} value={convertDegreesDecToDMS(star.dec)} />
         </View>
