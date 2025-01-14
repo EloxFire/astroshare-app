@@ -40,6 +40,7 @@ import {routes} from "../../helpers/routes";
 import ProLocker from "../../components/cards/ProLocker";
 import {isProUser} from "../../helpers/scripts/auth/checkUserRole";
 import {useAuth} from "../../contexts/AuthContext";
+import { propagate, twoline2satrec, gstime, EciVec3 } from "satellite.js";
 
 export default function IssTracker({ navigation }: any) {
 
@@ -205,6 +206,57 @@ export default function IssTracker({ navigation }: any) {
     }
   };
 
+  function isEciVec3(obj: any): obj is EciVec3<number> {
+    return obj && typeof obj.x === "number" && typeof obj.y === "number" && typeof obj.z === "number";
+  }
+
+  const calculateOrbitPoints = (tle: string[], earthRadius: number): THREE.Vector3[] => {
+    const satrec = twoline2satrec(tle[0], tle[1]); // Convert TLE to satellite record
+    const numPoints = 500; // Augmenter le nombre de points pour plus de densité
+    const points: THREE.Vector3[] = [];
+    const periodMinutes = (1440 / satrec.no); // Orbital period in minutes
+    const stepMinutes = periodMinutes / numPoints; // Time step for each point
+
+    for (let i = 0; i <= numPoints; i++) {
+      const time = new Date(); // Current time
+      time.setMinutes(time.getMinutes() + i * stepMinutes);
+
+      const positionAndVelocity = propagate(satrec, time);
+
+      if (positionAndVelocity && isEciVec3(positionAndVelocity.position)) {
+        const { x, y, z } = positionAndVelocity.position;
+
+        // Convert to THREE.js coordinates
+        const scale = earthRadius / 6378.137; // Scale from satellite.js (Earth radius in km)
+        const point = new THREE.Vector3(x * scale, z * scale, -y * scale);
+        points.push(point);
+      }
+    }
+
+    return points;
+  };
+
+  const addOrbitPoints = (scene: THREE.Scene, points: THREE.Vector3[]) => {
+    const geometry = new THREE.BufferGeometry();
+    const positions = new Float32Array(points.length * 3);
+
+    for (let i = 0; i < points.length; i++) {
+      positions[i * 3] = points[i].x;
+      positions[i * 3 + 1] = points[i].y;
+      positions[i * 3 + 2] = points[i].z;
+    }
+
+    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+    const material = new THREE.PointsMaterial({
+      color: 0xff0000, // Red color
+      size: 20, // Taille des points
+    });
+
+    const pointsObject = new THREE.Points(geometry, material);
+    scene.add(pointsObject);
+  };
+
   const _onContextCreate = async (gl: ExpoWebGLRenderingContext) => {
     const { drawingBufferWidth, drawingBufferHeight } = gl;
 
@@ -238,7 +290,18 @@ export default function IssTracker({ navigation }: any) {
       earthMeshRef.current = earth;
     }
 
+    // console.log('Loading ISS trajectory points...');
+    // const tle: any = await axios.get(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/iss/tle`)
+    //
+    // // Ajouter la trajectoire orbitale
+    // if (tle.data.data) {
+    //   console.log('Calculating ISS orbit points...');
+    //   const orbitPoints = calculateOrbitPoints([tle.data.data.line1, tle.data.data.line2], earthRadius);
+    //   addOrbitPoints(scene, orbitPoints);
+    // }
+
     updateIssPosition(focusIss);
+
 
     const animate = () => {
       requestAnimationFrame(animate);
