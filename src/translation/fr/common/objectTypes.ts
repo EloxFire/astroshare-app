@@ -1,5 +1,5 @@
 export const objectTypesTranslations = {
-  "cln": "Amas globulaire",
+  "cln": "Nébuleuse + Amas",
   "drkn": "Nébuleuse sombre",
   "g": "Galaxie",
   "gcl": "Amas globulaire",

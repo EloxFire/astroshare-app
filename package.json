@@ -27,6 +27,8 @@
     "@stripe/stripe-react-native": "^0.41.0",
     "axios": "^1.7.3",
     "country-flag-icons": "^1.5.13",
+    "d3-scale": "^4.0.2",
+    "d3-shape": "^3.2.0",
     "dayjs": "^1.11.12",
     "expo": "~51.0.25",
     "expo-av": "~14.0.6",
@@ -84,6 +86,8 @@
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
+    "@types/d3-scale": "^4.0.8",
+    "@types/d3-shape": "^3.1.7",
     "@types/react": "~18.2.79",
     "@types/three": "^0.168.0",
     "@types/uuid": "^10.0.0",

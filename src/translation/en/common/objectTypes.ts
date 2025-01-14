@@ -1,5 +1,5 @@
 export const objectTypesTranslations = {
-  "cln": "Globular Cluster",
+  "cln": "Nebula + Star cluster",
   "drkn": "Dark nebula",
   "g": "Galaxy",
   "gcl": "Globular Cluster",

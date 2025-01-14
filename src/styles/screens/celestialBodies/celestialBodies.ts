@@ -6,6 +6,13 @@ export const celestialBodiesOverviewStyles = {
     flexDirection: 'column' as 'column',
     gap: 20,
 
+    sectionTitle: {
+      fontSize: 15,
+      fontFamily: 'GilroyBlack',
+      color: app_colors.white,
+      textTransform: 'uppercase' as 'uppercase',
+    },
+
     header: {
       display: 'flex' as 'flex',
       flexDirection: 'row' as 'row',
@@ -53,6 +60,51 @@ export const celestialBodiesOverviewStyles = {
           gap: 5,
         }
       }
+    },
+
+    positionContainer: {
+      backgroundColor: app_colors.white_no_opacity,
+      borderColor: app_colors.white_no_opacity,
+      borderWidth: 1,
+      padding: 10,
+      borderRadius: 10,
+
+      content: {
+        display: 'flex' as 'flex',
+        flexDirection: 'row' as 'row',
+        justifyContent: 'space-between' as 'space-between',
+
+        position: {
+          display: 'flex' as 'flex',
+          flexDirection: 'column' as 'column',
+        },
+
+        constel: {
+          // backgroundColor: 'red',
+          display: 'flex' as 'flex',
+          flexDirection: 'column' as 'column',
+          justifyContent: 'center' as 'center',
+          alignItems: 'flex-end' as 'flex-end',
+          width: '30%' as  '30%',
+          gap: 10,
+          marginTop: 10,
+          flex: 1,
+
+          image: {
+            width: 80,
+            height: 80,
+            tintColor: app_colors.white,
+          }
+        }
+      },
+    },
+
+    visibilityContainer: {
+      backgroundColor: app_colors.white_no_opacity,
+      borderColor: app_colors.white_no_opacity,
+      borderWidth: 1,
+      padding: 10,
+      borderRadius: 10,
     }
   }
 }

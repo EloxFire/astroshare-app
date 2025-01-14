@@ -42,7 +42,7 @@ export default function SimpleBadge({text, backgroundColor, foregroundColor, ico
 
   return (
     <View style={badgeStyles.badge}>
-      {icon && <Image style={badgeStyles.icon} source={icon} />}
+      {icon && <Image style={badgeStyles.icon} source={icon} resizeMode={"contain"} />}
       <Text style={badgeStyles.text}>{text}</Text>
     </View>
   )
