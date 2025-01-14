@@ -24,7 +24,7 @@ export default function VisibilityGraph({ visibilityGraph }: VisibilityGraphProp
   // Générer les échelles pour les axes
   const xScale = scaleLinear()
     .domain([0, hours.length - 1]) // Indices des heures
-    .range([0, WIDTH]); // Largeur du graphique
+    .range([22, WIDTH]); // Largeur du graphique
 
   const yScale = scaleLinear()
     .domain([minAltitude, maxAltitude]) // Altitudes min/max étendues
@@ -41,17 +41,17 @@ export default function VisibilityGraph({ visibilityGraph }: VisibilityGraphProp
 
   return (
     <View style={{ height: HEIGHT + 40, width: "100%", marginTop: 20 }}>
-      <Svg height={HEIGHT + 40} width={WIDTH + 40}>
+      <Svg height={HEIGHT + 40} width={WIDTH}>
         {/* Axe X */}
-        <Line x1={40} y1={HEIGHT} x2={WIDTH + 40} y2={HEIGHT} stroke="gray" strokeWidth={1} />
+        <Line x1={22} y1={HEIGHT} x2={WIDTH} y2={HEIGHT} stroke="gray" strokeWidth={1} />
         {/* Axe Y */}
-        <Line x1={40} y1={0} x2={40} y2={HEIGHT} stroke="gray" strokeWidth={1} />
+        <Line x1={22} y1={0} x2={22} y2={HEIGHT} stroke="gray" strokeWidth={1} />
 
         {/* Ligne en pointillés à l'heure actuelle */}
         <Line
-          x1={xScale(hours.length / 2) + 40}
+          x1={xScale(hours.length / 2)}
           y1={0}
-          x2={xScale(hours.length / 2) + 40}
+          x2={xScale(hours.length / 2)}
           y2={HEIGHT}
           stroke="gray"
           strokeWidth={1}
@@ -62,7 +62,7 @@ export default function VisibilityGraph({ visibilityGraph }: VisibilityGraphProp
         {hours.map((hour, index) => (
           <SvgText
             key={`hour-${index}`}
-            x={xScale(index) + 40} // Décalage pour marge
+            x={xScale(index)} // Décalage pour marge
             y={HEIGHT + 15} // Sous l'axe X
             fill="gray"
             fontSize="10"
@@ -77,9 +77,9 @@ export default function VisibilityGraph({ visibilityGraph }: VisibilityGraphProp
           <React.Fragment key={`altitude-${index}`}>
             {/* Ligne de la graduation */}
             <Line
-              x1={40}
+              x1={22}
               y1={yScale(altitude)}
-              x2={WIDTH + 40}
+              x2={WIDTH}
               y2={yScale(altitude)}
               stroke={altitude === 0 ? "red" : "gray"} // Ligne rouge pour 0
               strokeWidth={altitude === 0 ? 1.5 : 0.5}
@@ -87,11 +87,11 @@ export default function VisibilityGraph({ visibilityGraph }: VisibilityGraphProp
             />
             {/* Label de la graduation */}
             <SvgText
-              x={30} // Décalage pour marge
+              x={0} // Décalage pour marge
               y={yScale(altitude) + 5} // Ajuster pour centrer le texte
               fill="gray"
               fontSize="10"
-              textAnchor="end"
+              textAnchor="start"
             >
               {altitude}°
             </SvgText>

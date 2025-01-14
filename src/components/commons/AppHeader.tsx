@@ -32,7 +32,7 @@ export default function AppHeader({ navigation }: any) {
   }, [isFocused])
 
   useEffect(() => {
-    console.log('currentUser', currentUser)
+    console.log('App header currentUser', currentUser)
   }, []);
 
   useEffect(() => {

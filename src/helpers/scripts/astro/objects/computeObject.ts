@@ -15,10 +15,17 @@ import {ComputedObjectInfos} from "../../../types/objects/ComputedObjectInfos";
 import {app_colors} from "../../../constants";
 import dayjs, {Dayjs} from "dayjs";
 import {i18n} from "../../i18n";
+import {formatCelsius, formatKm, formatYears} from "../../utils/formatters/formaters";
+import {getPlanetPosition} from "./getPlanetPosition";
+import {planetsSizes} from "../planets/sizes";
+import {planetTemps} from "../planets/temps";
+import {planetSatellites} from "../planets/satellites";
+import {getPlanetMagnitude} from "./getPlanetMagnitude";
 
 interface ComputeObjectProps {
   object: DSO | Star | GlobalPlanet;
   observer: GeographicCoordinate;
+  lang: string;
   altitude?: number;
 }
 
@@ -39,6 +46,8 @@ export const computeObject = (props: ComputeObjectProps): ComputedObjectInfos | 
   const target: EquatorialCoordinate = {ra: degRa, dec: degDec}
   const isCurrentlyVisible: boolean = isBodyAboveHorizon(new Date(), props.observer, target, horizonAngle)
   const isVisibleThisNight: boolean = isBodyVisibleForNight(new Date(), props.observer, target, horizonAngle)
+  const objectCurrentAltitude: number = convertEquatorialToHorizontal(new Date(), props.observer, target).alt;
+  const objectCurrentAzimuth: number = convertEquatorialToHorizontal(new Date(), props.observer, target).az;
 
 
   // GESTION MAGNITUDE SELON TYPE D'OBJET
@@ -51,10 +60,10 @@ export const computeObject = (props: ComputeObjectProps): ComputedObjectInfos | 
       objectMagnitude = (props.object as Star).V;
       break;
     case "Planet":
-      objectMagnitude = 0;
+      objectMagnitude = getPlanetMagnitude((props.object as GlobalPlanet).name);
       break;
     default:
-      objectMagnitude = 0;
+      objectMagnitude = 10000;
   }
 
   // GESTION BADGES VISIBILITE INSTRUMENTS
@@ -85,7 +94,7 @@ export const computeObject = (props: ComputeObjectProps): ComputedObjectInfos | 
   // I need to get the object altitude every 1 hour.
   const objectAltitudes: number[] = [];
   const altitudesHours: string[] = [];
-  const now: Dayjs = dayjs().minute() > 30 ? dayjs().endOf('hour') : dayjs().startOf('hour');
+  const now: Dayjs = dayjs()
   const H: number = 6; // Number of hours to compute visibility graph
   for (let i = -H; i <= H; i++) {
     const date: Dayjs = now.add(i, 'hour');
@@ -95,13 +104,47 @@ export const computeObject = (props: ComputeObjectProps): ComputedObjectInfos | 
   }
 
 
+  // GESTION DES INFORMATIONS SUPLÉMENTAIRES (si dispo)
+  // Seul les DSO ont des infos supplémentaires
+  let dsoAdditionalInfos: ComputedObjectInfos['dsoAdditionalInfos'] = undefined;
+  if(objectFamily === 'DSO') {
+    dsoAdditionalInfos = {
+      image: (props.object as DSO).image_url !== "" ? {uri: (props.object as DSO).image_url} : require('../../../../../assets/icons/astro/OTHER.png'),
+      distance: (props.object as DSO).distance ? `${(props.object as DSO).distance} ${(props.object as DSO).dist_unit}` : 'N/A',
+      dimensions: (props.object as DSO).dimensions || 'N/A',
+      discovered_by: (props.object as DSO).discovered_by || 'N/A',
+      discovery_year: (props.object as DSO).discovery_year || 'N/A',
+      apparent_size: (props.object as DSO).apparent_size || 'N/A',
+      age: formatYears((props.object as DSO).age, props.lang)
+    }
+  }
+
+  let planetAdditionalInfos: ComputedObjectInfos['planetAdditionalInfos'] = undefined;
+  if(objectFamily === 'Planet') {
+    planetAdditionalInfos = {
+      symbol: (props.object as GlobalPlanet).symbol,
+      solarSystemPosition: getPlanetPosition((props.object as GlobalPlanet).name) + '/8',
+      inclination: (props.object as GlobalPlanet).i.toFixed(2) + '°',
+      mass: (props.object as GlobalPlanet).name === 'Earth' ? (9.972e24 + " Kg").toString() : (props.object as GlobalPlanet).m.toFixed(2) + i18n.t('detailsPages.planets.units.mass'),
+      orbitalPeriod: (props.object as GlobalPlanet).name === 'Earth' ? "365.25 jours" : (props.object as GlobalPlanet).T.toFixed(2) + " " + i18n.t('detailsPages.planets.units.orbitalPeriod'),
+      distanceToSun: (props.object as GlobalPlanet).a.toFixed(2) + " " + i18n.t('detailsPages.planets.units.distanceSun'),
+      diameter: formatKm(planetsSizes[(props.object as GlobalPlanet).name.toUpperCase()], props.lang).toString(),
+      surfaceTemperature: formatCelsius(planetTemps[(props.object as GlobalPlanet).name.toUpperCase()], props.lang).toString(),
+      naturalSatellites: planetSatellites[(props.object as GlobalPlanet).name.toUpperCase()]
+    }
+  }
+
+
+
   return {
     base: {
       family: objectFamily,
       common_name: objectFamily === 'DSO' ? (props.object as DSO).common_names.split(',')[0] : '',
       ra: props.object.ra,
       dec: props.object.dec,
-      mag: objectMagnitude
+      mag: objectFamily === 'Planet' ? objectMagnitude + ' (max)' : objectMagnitude,
+      alt: objectCurrentAltitude.toFixed(2) + '°',
+      az: Math.round(objectCurrentAzimuth) + '°',
     },
     visibilityInfos: {
       isCurrentlyVisible: isCurrentlyVisible,
@@ -120,6 +163,8 @@ export const computeObject = (props: ComputeObjectProps): ComputedObjectInfos | 
         hours: altitudesHours
       }
     },
+    dsoAdditionalInfos: dsoAdditionalInfos,
+    planetAdditionalInfos: planetAdditionalInfos,
     error: '',
   }
 }

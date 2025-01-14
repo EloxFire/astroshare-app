@@ -11,8 +11,6 @@ import { app_colors } from '../../helpers/constants'
 import { calculateHorizonAngle } from '../../helpers/scripts/astro/calculateHorizonAngle'
 import { Star } from '../../helpers/types/Star'
 import { getBrightStarName } from '../../helpers/scripts/astro/objects/getBrightStarName'
-import { prettyDec, prettyRa } from '../../helpers/scripts/astro/prettyCoords'
-import { convertDDtoDMS } from '../../helpers/scripts/convertDDtoDMSCoords'
 import { convertDegreesRaToHMS } from '../../helpers/scripts/astro/coords/convertDegreesRaToHMS'
 import { convertDegreesDecToDMS } from '../../helpers/scripts/astro/coords/convertDegreesDecToDms'
 import { getConstellationName } from '../../helpers/scripts/getConstellationName'
@@ -42,7 +40,7 @@ export default function SearchStarResultCard({ star, navigation }: SearchPlanetR
   }, [currentUserLocation])
 
   return (
-    <TouchableOpacity onPress={() => navigation.push(routes.brightStarDetails.path, { star: star, visible: isVisible })}>
+    <TouchableOpacity onPress={() => navigation.push(routes.celestialBodies.details.path, { object: star })}>
       <View style={searchResultCardStyles.card}>
         <View style={searchResultCardStyles.card.header}>
           <View>
@@ -52,7 +50,7 @@ export default function SearchStarResultCard({ star, navigation }: SearchPlanetR
         </View>
         <View style={searchResultCardStyles.card.body}>
           <DSOValues small title={i18n.t('detailsPages.stars.labels.constellation')} value={getConstellationName(getConstellation({ ra: star.ra, dec: star.dec })?.abbreviation || "Inconnu")} />
-          <DSOValues small title={i18n.t('detailsPages.stars.labels.magnitude')} value={star.V.toString() || star.B.toString()} />
+          <DSOValues small title={i18n.t('detailsPages.stars.labels.magnitude')} value={star.V.toString() || star.V.toString()} />
           <DSOValues small title={i18n.t('detailsPages.stars.labels.rightAscension')} value={convertDegreesRaToHMS(star.ra)} />
           <DSOValues small title={i18n.t('detailsPages.stars.labels.declination')} value={convertDegreesDecToDMS(star.dec)} />
         </View>

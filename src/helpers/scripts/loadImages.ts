@@ -121,6 +121,8 @@ export const constellationsImages: any = {
   'Sco': require('../../../assets/icons/astro/constellations/SCORPIUS.png'),
   'Sct': require('../../../assets/icons/astro/constellations/SCUTUM.png'),
   'Ser': require('../../../assets/icons/astro/constellations/SERPENS.png'),
+  'Se1': require('../../../assets/icons/astro/constellations/SERPENS.png'),
+  'Se2': require('../../../assets/icons/astro/constellations/SERPENS.png'),
   'Sex': require('../../../assets/icons/astro/constellations/SEXTANS.png'),
   'Sge': require('../../../assets/icons/astro/constellations/SAGITTA.png'),
   'Sgr': require('../../../assets/icons/astro/constellations/SAGITTARIUS.png'),
@@ -134,7 +136,19 @@ export const constellationsImages: any = {
   'Vel': require('../../../assets/icons/astro/constellations/VELA.png'),
   'Vir': require('../../../assets/icons/astro/constellations/VIRGO.png'),
   'Vol': require('../../../assets/icons/astro/constellations/VOLANS.png'),
-  'Vul': require('../../../assets/icons/astro/constellations/VULPECULA.png')
+  'Vul': require('../../../assets/icons/astro/constellations/VULPECULA.png'),
+  'OTHER': require('../../../assets/icons/astro/OTHER.png'),
+}
+
+export const planetsImages: any = {
+  'MERCURY': require('../../../assets/images/planets/mercury.jpg'),
+  'VENUS': require('../../../assets/images/planets/venus.jpg'),
+  'EARTH': require('../../../assets/images/planets/earth.jpg'),
+  'MARS': require('../../../assets/images/planets/mars.jpg'),
+  'JUPITER': require('../../../assets/images/planets/jupiter.jpg'),
+  'SATURN': require('../../../assets/images/planets/saturn.jpg'),
+  'URANUS': require('../../../assets/images/planets/uranus.jpg'),
+  'NEPTUNE': require('../../../assets/images/planets/neptune.jpg'),
 }
 
 export const twilightBandsBackgrounds: any = {

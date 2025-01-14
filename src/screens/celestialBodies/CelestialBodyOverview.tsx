@@ -11,7 +11,7 @@ import SimpleBadge from "../../components/badges/SimpleBadge";
 import {computeObject} from "../../helpers/scripts/astro/objects/computeObject";
 import {useSettings} from "../../contexts/AppSettingsContext";
 import {ComputedObjectInfos} from "../../helpers/types/objects/ComputedObjectInfos";
-import {astroImages, constellationsImages} from "../../helpers/scripts/loadImages";
+import {astroImages, constellationsImages, planetsImages} from "../../helpers/scripts/loadImages";
 import {app_colors} from "../../helpers/constants";
 import {getObjectFamily} from "../../helpers/scripts/astro/objects/getObjectFamily";
 import {getConstellationName} from "../../helpers/scripts/getConstellationName";
@@ -21,16 +21,25 @@ import {prettyRa} from "../../helpers/scripts/astro/prettyCoords";
 import {convertDegreesRaToHMS} from "../../helpers/scripts/astro/coords/convertDegreesRaToHMS";
 import {convertDegreesDecToDMS} from "../../helpers/scripts/astro/coords/convertDegreesDecToDms";
 import VisibilityGraph from "../../components/graphs/VisibilityGraph";
+import {useTranslation} from "../../hooks/useTranslation";
+import {planetsOrder} from "../../helpers/scripts/astro/planets/order";
+import {formatCelsius, formatKm} from "../../helpers/scripts/utils/formatters/formaters";
+import {planetsSizes} from "../../helpers/scripts/astro/planets/sizes";
+import {planetTemps} from "../../helpers/scripts/astro/planets/temps";
+import {planetSatellites} from "../../helpers/scripts/astro/planets/satellites";
+import {GlobalPlanet} from "../../helpers/types/GlobalPlanet";
+import {getConstellation} from "@observerly/astrometry";
 
 export default function CelestialBodyOverview({ route, navigation }: any) {
 
+  const {currentLocale} = useTranslation()
   const {currentUserLocation} = useSettings()
   const { object } = route.params;
   const [objectInfos, setObjectInfos] = useState<ComputedObjectInfos | null>(null);
 
   useEffect(() => {
     const observer = { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }
-    setObjectInfos(computeObject({ object, observer, altitude: 341 }));
+    setObjectInfos(computeObject({ object, observer, lang: currentLocale, altitude: 341 }));
   }, [])
 
   return (
@@ -62,21 +71,39 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
                 />
                 {
                   getObjectFamily(object) === 'DSO' && object.m !== "" && (
-                    <SimpleBadge
-                      text={object.name}
-                    />
+                    <>
+                      <SimpleBadge
+                        text={object.name}
+                      />
+                      <SimpleBadge
+                        text={object.const}
+                        icon={astroImages['CONSTELLATION']}
+                        iconColor={app_colors.white}
+                      />
+                    </>
+
                   )
                 }
-                <SimpleBadge
-                  text={object.const}
-                  icon={astroImages['CONSTELLATION']}
-                  iconColor={app_colors.white}
-                />
                 {
                   objectInfos.base.common_name !== "" && (
                     <SimpleBadge
                       text={object.type}
                     />
+                  )
+                }
+                {
+                  getObjectFamily(object) !== 'DSO' && objectInfos && (
+                    <>
+                      <SimpleBadge
+                        text={objectInfos.base.alt}
+                        icon={require('../../../assets/icons/FiAngleRight.png')}
+                      />
+                      <SimpleBadge
+                        text={objectInfos.base.az}
+                        icon={require('../../../assets/icons/FiCompass.png')}
+                      />
+                    </>
+
                   )
                 }
               </View>
@@ -90,31 +117,67 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
           <Text style={celestialBodiesOverviewStyles.content.sectionTitle}>Informations générales</Text>
 
           <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
-            <View style={{width: '70%', paddingTop: 10, display: 'flex', flexDirection: "column", justifyContent: 'space-between'}}>
+            <View style={{width: getObjectFamily(object) === 'Planet' ? '100%' : '70%', paddingTop: 10, display: 'flex', flexDirection: "column", justifyContent: 'space-between'}}>
               <View>
-                <DSOValues small title={i18n.t('detailsPages.dso.labels.type')} value={getObjectType(object)} />
-                <DSOValues small title={i18n.t('detailsPages.dso.labels.rightAscension')} value={typeof(object.ra) === 'number' ? convertDegreesRaToHMS(object.ra) : prettyRa(object.ra)} />
-                <DSOValues small title={i18n.t('detailsPages.dso.labels.declination')} value={typeof(object.dec) === 'number' ? convertDegreesDecToDMS(object.dec) : prettyRa(object.dec)} />
-                <DSOValues small title={i18n.t('detailsPages.dso.labels.magnitude')} value={objectInfos?.base.mag} />
+                <DSOValues small={getObjectFamily(object) !== 'Planet'} title={i18n.t('detailsPages.dso.labels.type')} value={getObjectType(object)} />
+                <DSOValues small={getObjectFamily(object) !== 'Planet'} title={i18n.t('detailsPages.dso.labels.rightAscension')} value={typeof(object.ra) === 'number' ? convertDegreesRaToHMS(object.ra) : prettyRa(object.ra)} />
+                <DSOValues small={getObjectFamily(object) !== 'Planet'} title={i18n.t('detailsPages.dso.labels.declination')} value={typeof(object.dec) === 'number' ? convertDegreesDecToDMS(object.dec) : prettyRa(object.dec)} />
+                <DSOValues small={getObjectFamily(object) !== 'Planet'} title={i18n.t('detailsPages.dso.labels.magnitude')} value={objectInfos?.base.mag} />
+                {
+                  getObjectFamily(object) === 'Planet' && objectInfos?.planetAdditionalInfos && (
+                    <>
+                      <DSOValues small={getObjectFamily(object) !== 'Planet'} title={i18n.t('detailsPages.planets.labels.symbol')} value={objectInfos.planetAdditionalInfos.symbol} />
+                      <DSOValues small={getObjectFamily(object) !== 'Planet'} title={i18n.t('detailsPages.planets.labels.position')} value={objectInfos.planetAdditionalInfos.solarSystemPosition} />
+                      <DSOValues small={getObjectFamily(object) !== 'Planet'} title={i18n.t('detailsPages.planets.labels.inclination')} value={objectInfos.planetAdditionalInfos.inclination} />
+                      <DSOValues small={getObjectFamily(object) !== 'Planet'} title={i18n.t('detailsPages.planets.labels.mass')} value={objectInfos.planetAdditionalInfos.mass} />
+                      <DSOValues small={getObjectFamily(object) !== 'Planet'} title={i18n.t('detailsPages.planets.labels.orbitalPeriod')} value={objectInfos.planetAdditionalInfos.orbitalPeriod} />
+                      <DSOValues small={getObjectFamily(object) !== 'Planet'} title={i18n.t('detailsPages.planets.labels.distanceSun')} value={objectInfos.planetAdditionalInfos.distanceToSun} />
+                      <DSOValues small={getObjectFamily(object) !== 'Planet'} title={i18n.t('detailsPages.planets.labels.diameter')} value={objectInfos.planetAdditionalInfos.diameter} />
+                      <DSOValues small={getObjectFamily(object) !== 'Planet'} title={i18n.t('detailsPages.planets.labels.short.surfaceTemperature')} value={objectInfos.planetAdditionalInfos.surfaceTemperature} />
+                      <DSOValues small={getObjectFamily(object) !== 'Planet'} title={i18n.t('detailsPages.planets.labels.short.naturalSatellites')} value={objectInfos.planetAdditionalInfos.naturalSatellites} />
+                    </>
+                  )
+                }
               </View>
 
-              <View>
+              <View style={{marginTop: 10}}>
                 <SimpleButton text={"Voir dans le planétarium"} fullWidth backgroundColor={app_colors.white} small textColor={app_colors.black} />
               </View>
             </View>
 
-            <View style={celestialBodiesOverviewStyles.content.positionContainer.content.constel}>
-              <View>
-                <View style={{padding: 5, borderWidth: 1, borderColor: app_colors.white_twenty, borderRadius: 10}}>
-                  <Image resizeMode={"contain"} source={constellationsImages[object.const]} style={celestialBodiesOverviewStyles.content.positionContainer.content.constel.image} />
+            {
+              getObjectFamily(object) !== 'Planet' &&
+              <View style={[celestialBodiesOverviewStyles.content.positionContainer.content.constel, {justifyContent: getObjectFamily(object) === 'Planet' ? 'flex-start' : 'center'}]}>
+                <View>
+                  <View style={{padding: 5, borderWidth: 1, borderColor: app_colors.white_twenty, borderRadius: 10, display: 'flex', justifyContent: 'center'}}>
+                    {
+                      getObjectFamily(object) === 'DSO' && (
+                        <Image resizeMode={"contain"} source={constellationsImages[object.const]} style={celestialBodiesOverviewStyles.content.positionContainer.content.constel.image} />
+                      )
+                    }
+                    {
+                      getObjectFamily(object) === 'Star' && (
+                        <Image resizeMode={"contain"} source={constellationsImages[getConstellation({ ra: object.ra, dec: object.dec })?.abbreviation || "OTHER"]} style={celestialBodiesOverviewStyles.content.positionContainer.content.constel.image} />
+                      )
+                    }
+                  </View>
+                  {
+                    getObjectFamily(object) === 'DSO' && (
+                      <Text style={[celestialBodiesOverviewStyles.content.sectionTitle, {textAlign: 'center', marginTop: 10}]}>{getConstellationName(object.const)}</Text>
+                    )
+                  }
+                  {
+                    getObjectFamily(object) === 'Star' && (
+                      <Text style={[celestialBodiesOverviewStyles.content.sectionTitle, {textAlign: 'center', marginTop: 10}]}>{getConstellationName(getConstellation({ ra: object.ra, dec: object.dec })?.abbreviation || "OTHER")}</Text>
+                    )
+                  }
                 </View>
-                <Text style={[celestialBodiesOverviewStyles.content.sectionTitle, {textAlign: 'center', marginTop: 10}]}>{getConstellationName(object.const)}</Text>
               </View>
-            </View>
+            }
           </View>
         </View>
 
-        <View style={celestialBodiesOverviewStyles.content.visibilityContainer}>
+        <View style={[celestialBodiesOverviewStyles.content.visibilityContainer, {marginBottom: getObjectFamily(object) === 'Planet' ? 50 : 0 }]}>
           <Text style={celestialBodiesOverviewStyles.content.sectionTitle}>Visibilité</Text>
           <View style={{paddingTop: 10}}>
             {
@@ -131,6 +194,26 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
             />
           </View>
         </View>
+
+        {
+          objectInfos && objectInfos.dsoAdditionalInfos && (
+            <View style={celestialBodiesOverviewStyles.content.moreContainer}>
+              <Text style={celestialBodiesOverviewStyles.content.sectionTitle}>{getObjectName(object, 'all', true)} en détails</Text>
+
+              <View style={celestialBodiesOverviewStyles.content.moreContainer.infos}>
+                <Image resizeMode={"contain"} source={objectInfos.dsoAdditionalInfos.image} style={{width: 80, height: 80, borderRadius: 10, borderWidth: 1, borderColor: app_colors.white_twenty}} />
+                <View style={{flex: 1}}>
+                  <DSOValues title={"Discovered by"} value={objectInfos.dsoAdditionalInfos.discovered_by}/>
+                  <DSOValues title={"Discovery year"} value={objectInfos.dsoAdditionalInfos.discovery_year}/>
+                  <DSOValues title={"Distance"} value={objectInfos.dsoAdditionalInfos.distance}/>
+                  <DSOValues title={"Dimensions"} value={objectInfos.dsoAdditionalInfos.dimensions}/>
+                  <DSOValues title={"Apparent size"} value={objectInfos.dsoAdditionalInfos.apparent_size}/>
+                  <DSOValues title={"Age"} value={objectInfos.dsoAdditionalInfos.age}/>
+                </View>
+              </View>
+            </View>
+          )
+        }
       </ScrollView>
     </View>
   );

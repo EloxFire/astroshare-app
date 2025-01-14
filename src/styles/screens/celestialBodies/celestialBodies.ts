@@ -18,7 +18,7 @@ export const celestialBodiesOverviewStyles = {
       flexDirection: 'row' as 'row',
       justifyContent: 'center' as 'center',
       alignItems: 'center' as 'center',
-      gap: 20,
+      gap: 10,
       backgroundColor: app_colors.white_no_opacity,
       borderColor: app_colors.white_no_opacity,
       borderWidth: 1,
@@ -89,6 +89,7 @@ export const celestialBodiesOverviewStyles = {
           gap: 10,
           marginTop: 10,
           flex: 1,
+          paddingLeft: 10,
 
           image: {
             width: 80,
@@ -105,6 +106,23 @@ export const celestialBodiesOverviewStyles = {
       borderWidth: 1,
       padding: 10,
       borderRadius: 10,
+    },
+
+    moreContainer: {
+      backgroundColor: app_colors.white_no_opacity,
+      borderColor: app_colors.white_no_opacity,
+      borderWidth: 1,
+      padding: 10,
+      borderRadius: 10,
+      marginBottom: 50,
+
+      infos: {
+        display: 'flex' as 'flex',
+        flexDirection: 'row' as 'row',
+        justifyContent: 'space-between' as 'space-between',
+        marginTop: 10,
+        gap: 10,
+      }
     }
   }
 }

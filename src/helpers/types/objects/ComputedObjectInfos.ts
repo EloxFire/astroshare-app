@@ -7,7 +7,9 @@ export type ComputedObjectInfos = {
     common_name: string;
     ra: string | number;
     dec: string | number;
-    mag: number | string
+    mag: number | string;
+    alt: string;
+    az: string;
   },
   visibilityInfos: {
     isCurrentlyVisible: boolean;
@@ -40,6 +42,26 @@ export type ComputedObjectInfos = {
       altitudes: number[];
       hours: string[];
     };
+  },
+  dsoAdditionalInfos?: {
+    image: ImageSourcePropType | {uri: string};
+    distance: string;
+    dimensions: string;
+    discovered_by: string;
+    discovery_year: string;
+    apparent_size: string;
+    age: number | string
+  },
+  planetAdditionalInfos?: {
+    symbol: string;
+    solarSystemPosition: string;
+    inclination: string;
+    mass: string;
+    orbitalPeriod: string;
+    distanceToSun: string;
+    diameter: string;
+    surfaceTemperature: string;
+    naturalSatellites: string;
   }
   error: string;
 }
