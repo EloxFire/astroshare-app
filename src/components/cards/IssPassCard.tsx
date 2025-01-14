@@ -21,6 +21,7 @@ export default function IssPassCard({ pass, passIndex, navigation, weather }: Is
   const [passLength, setPassLength] = useState<string>('')
   const [isWeatherAccurate, setIsWeatherAccurate] = useState<boolean>(false)
   const [visibilityBadge, setVisibilityBadge] = useState<any>({})
+  const [passWeatherIndex, setPassWeatherIndex] = useState<number>(0)
 
   // https://api.n2yo.com/rest/v1/satellite/visualpasses/25544/43.5314643/5.4508237/341/1/45/&apiKey=SQCWS8-7VQKED-JG2RHW-5DGF
   useEffect(() => {
@@ -33,7 +34,13 @@ export default function IssPassCard({ pass, passIndex, navigation, weather }: Is
   useEffect(() => {
     const weatherDateLimit = dayjs().add(6, 'days').unix()
     const passDate = dayjs.unix(pass.startUTC).unix()
-    setIsWeatherAccurate(dayjs.unix(passDate).isBefore(dayjs.unix(weatherDateLimit)))
+    const weatherAccurate = dayjs.unix(pass.startUTC).isBefore(dayjs.unix(weatherDateLimit))
+    setIsWeatherAccurate(weatherAccurate)
+
+    if(weatherAccurate){
+      const weatherIndex = weather.findIndex((w: any) => dayjs.unix(w.dt).isSame(dayjs.unix(pass.startUTC), 'day'))
+      setPassWeatherIndex(weatherIndex)
+    }
   }, []);
 
   useEffect(() => {
@@ -53,7 +60,7 @@ export default function IssPassCard({ pass, passIndex, navigation, weather }: Is
 
       <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
         <View style={issPassCardStyles.card.column}>
-          <Image style={issPassCardStyles.card.weatherIcon} source={isWeatherAccurate ? weatherImages[weather[passIndex]?.weather[0].icon] : require('../../../assets/icons/FiIss.png')}/>
+          <Image style={issPassCardStyles.card.weatherIcon} source={isWeatherAccurate ? weatherImages[weather[passWeatherIndex]?.weather[0].icon] : require('../../../assets/icons/FiIss.png')}/>
         </View>
         <View style={issPassCardStyles.card.column}>
           <View style={issPassCardStyles.card.row}>
