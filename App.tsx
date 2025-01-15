@@ -14,7 +14,6 @@ import Settings from "./src/screens/Settings";
 import Weather from "./src/screens/Weather";
 import dayjs from "dayjs";
 import About from "./src/screens/About";
-import ObjectDetails from "./src/screens/ObjectDetails";
 import Apod from "./src/screens/Apod";
 import MoonPhases from "./src/screens/MoonPhases";
 import ViewPointsManager from "./src/screens/ViewPointsManager";
@@ -31,9 +30,7 @@ import Onboarding from "./src/screens/Onboarding";
 import SatelliteTracker from "./src/screens/satelliteTracker/SatelliteTracker";
 import SkyMapGenerator from "./src/screens/skymap/SkyMapGenerator";
 import FavouritesScreen from "./src/screens/FavouritesScreen";
-import PlanetDetails from "./src/screens/PlanetDetails";
 import { SolarSystemProvider } from "./src/contexts/SolarSystemContext";
-import BrightStarDetails from "./src/screens/BrightStarDetails";
 import TutorialScreen from "./src/screens/TutorialScreen";
 import { TranslationProvider } from "./src/hooks/useTranslation";
 import './src/helpers/scripts/i18n/index';
@@ -132,9 +129,6 @@ export default function App() {
                             {/*APP SCREENS*/}
                             <Stack.Screen name={routes.home.path} component={Home} />
                             <Stack.Screen name={routes.celestialBodies.details.path} component={CelestialBodyOverview} />
-                            <Stack.Screen name={routes.objectDetails.path} component={ObjectDetails} />
-                            <Stack.Screen name={routes.planetDetails.path} component={PlanetDetails} />
-                            <Stack.Screen name={routes.brightStarDetails.path} component={BrightStarDetails} />
                             <Stack.Screen name={routes.favorites.path} component={FavouritesScreen} />
                             <Stack.Screen name={routes.scopeAlignment.path} component={ScopeAlignment} />
                             <Stack.Screen name={routes.weather.path} component={Weather} />

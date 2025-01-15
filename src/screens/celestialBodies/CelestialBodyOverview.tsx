@@ -12,7 +12,7 @@ import {computeObject} from "../../helpers/scripts/astro/objects/computeObject";
 import {useSettings} from "../../contexts/AppSettingsContext";
 import {ComputedObjectInfos} from "../../helpers/types/objects/ComputedObjectInfos";
 import {astroImages, constellationsImages, planetsImages} from "../../helpers/scripts/loadImages";
-import {app_colors} from "../../helpers/constants";
+import {app_colors, storageKeys} from "../../helpers/constants";
 import {getObjectFamily} from "../../helpers/scripts/astro/objects/getObjectFamily";
 import {getConstellationName} from "../../helpers/scripts/getConstellationName";
 import DSOValues from "../../components/commons/DSOValues";
@@ -22,13 +22,11 @@ import {convertDegreesRaToHMS} from "../../helpers/scripts/astro/coords/convertD
 import {convertDegreesDecToDMS} from "../../helpers/scripts/astro/coords/convertDegreesDecToDms";
 import VisibilityGraph from "../../components/graphs/VisibilityGraph";
 import {useTranslation} from "../../hooks/useTranslation";
-import {planetsOrder} from "../../helpers/scripts/astro/planets/order";
-import {formatCelsius, formatKm} from "../../helpers/scripts/utils/formatters/formaters";
-import {planetsSizes} from "../../helpers/scripts/astro/planets/sizes";
-import {planetTemps} from "../../helpers/scripts/astro/planets/temps";
-import {planetSatellites} from "../../helpers/scripts/astro/planets/satellites";
-import {GlobalPlanet} from "../../helpers/types/GlobalPlanet";
 import {getConstellation} from "@observerly/astrometry";
+import {getObject, storeObject} from "../../helpers/storage";
+import {GlobalPlanet} from "../../helpers/types/GlobalPlanet";
+import {DSO} from "../../helpers/types/DSO";
+import {Star} from "../../helpers/types/Star";
 
 export default function CelestialBodyOverview({ route, navigation }: any) {
 
@@ -36,11 +34,40 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
   const {currentUserLocation} = useSettings()
   const { object } = route.params;
   const [objectInfos, setObjectInfos] = useState<ComputedObjectInfos | null>(null);
+  const [favouriteObjects, setFavouriteObjects] = useState<(GlobalPlanet | DSO | Star)[]>([]);
 
   useEffect(() => {
     const observer = { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }
     setObjectInfos(computeObject({ object, observer, lang: currentLocale, altitude: 341 }));
   }, [])
+
+
+  useEffect(() => {
+    (async () => {
+      const favs = await getObject(storageKeys.favouritePlanets)
+      if (!favs) return
+      favouriteObjects(favs)
+    })()
+  }, [])
+
+  const updateFavList = async (newList: GlobalPlanet[]) => {
+    await storeObject(storageKeys.favouritePlanets, newList)
+  }
+
+  const handleFavorite = async () => {
+    if (favouritePlanets.some(obj => obj.name === planet.name)) {
+      console.log("remove")
+      const favs = favouritePlanets.filter(obj => obj.name !== planet.name)
+      setFavouritePlanets(favs)
+      await updateFavList(favs)
+
+    } else {
+      console.log("add")
+      const favs = [...favouritePlanets, planet]
+      setFavouritePlanets(favs)
+      await updateFavList(favs)
+    }
+  }
 
   return (
     <View style={globalStyles.body}>
@@ -52,6 +79,12 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
       <View style={globalStyles.screens.separator} />
       <ScrollView style={celestialBodiesOverviewStyles.content} contentContainerStyle={{gap: 10}}>
         <View style={celestialBodiesOverviewStyles.content.header}>
+          <View style={{position: 'absolute', top: 10, right: 10, zIndex: 10}}>
+            <SimpleButton
+              icon={require('../../../assets/icons/FiHeart.png')}
+              onPress={() => handleFavorite()}
+            />
+          </View>
           <View>
             <Image source={getDSOIcon(object)} style={celestialBodiesOverviewStyles.content.header.icon} />
           </View>

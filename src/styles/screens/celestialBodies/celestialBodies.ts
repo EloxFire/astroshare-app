@@ -14,6 +14,7 @@ export const celestialBodiesOverviewStyles = {
     },
 
     header: {
+      position: 'relative' as 'relative',
       display: 'flex' as 'flex',
       flexDirection: 'row' as 'row',
       justifyContent: 'center' as 'center',
