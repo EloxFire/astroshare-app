@@ -9,8 +9,11 @@ import PageTitle from '../../components/commons/PageTitle'
 import ScreenInfo from '../../components/ScreenInfo'
 import { useSettings } from '../../contexts/AppSettingsContext'
 import {useStarCatalog} from "../../contexts/StarsContext";
+import DisclaimerBar from "../../components/banners/DisclaimerBar";
 
 export default function SkyMapSelection({ navigation }: any) {
+
+  const { starCatalogLoading, starsLoaded, starsTotal, starsLoadedPercentage } = useStarCatalog();
 
   return (
     <View style={globalStyles.body}>
@@ -21,9 +24,14 @@ export default function SkyMapSelection({ navigation }: any) {
       />
       <View style={globalStyles.screens.separator} />
       <ScrollView>
+        {
+          starCatalogLoading && (
+            <DisclaimerBar message={`Chargement du catalogue d'étoiles en cours... Merci de patienter (${starsLoaded}/${starsTotal}) ${starsLoadedPercentage}%`} type={"info"} />
+          )
+        }
         <View style={satelliteTrackerHomeStyles.buttons}>
-          <ToolButton text={i18n.t('skymap.buttons.flatmap.title')} subtitle={i18n.t('skymap.buttons.flatmap.subtitle')} image={require('../../../assets/images/tools/skymap.png')} onPress={() => navigation.navigate(routes.flatSkymap.path)} />
-          <ToolButton isPremium text={i18n.t('skymap.buttons.planetarium.title')} subtitle={i18n.t('skymap.buttons.planetarium.subtitle')} image={require('../../../assets/images/tools/skymap.png')} onPress={() => navigation.navigate(routes.planetarium.path)} />
+          <ToolButton disabled={starCatalogLoading} text={i18n.t('skymap.buttons.flatmap.title')} subtitle={i18n.t('skymap.buttons.flatmap.subtitle')} image={require('../../../assets/images/tools/skymap.png')} onPress={() => navigation.navigate(routes.flatSkymap.path)} />
+          <ToolButton disabled={starCatalogLoading} isPremium text={i18n.t('skymap.buttons.planetarium.title')} subtitle={i18n.t('skymap.buttons.planetarium.subtitle')} image={require('../../../assets/images/tools/skymap.png')} onPress={() => navigation.navigate(routes.planetarium.path)} />
         </View>
         <ScreenInfo image={require('../../../assets/icons/FiCompass.png')} text={i18n.t('skymap.info')} />
       </ScrollView>

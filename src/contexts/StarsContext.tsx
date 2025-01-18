@@ -14,6 +14,9 @@ interface StarsContextProviderProps {
 
 export function StarsContextProvider({ children }: StarsContextProviderProps) {
   const [starsCatalog, setStarsCatalog] = useState<Star[]>([]);
+  const [starsLoaded, setStarsLoaded] = useState<number>(0);
+  const [starsTotal, setStarsTotal] = useState<number>(0);
+  const [starsLoadedPercentage, setStarsLoadedPercentage] = useState<number>(0);
   const [starCatalogLoading, setStarCatalogLoading] = useState<boolean>(true);
 
   useEffect(() => {
@@ -28,6 +31,7 @@ export function StarsContextProvider({ children }: StarsContextProviderProps) {
     let currentPage = 1;
     let hasMore = true;
 
+    setStarCatalogLoading(true);
     try {
       while (hasMore) {
         console.log(`Fetching page ${currentPage}`);
@@ -37,11 +41,14 @@ export function StarsContextProvider({ children }: StarsContextProviderProps) {
           }
         );
 
-        const { data, currentPage: page, totalPages } = response.data;
+        const { data, currentPage: page, totalPages, totalDocuments } = response.data;
 
         allStars = [...allStars, ...data];
         currentPage = page + 1;
         hasMore = page < totalPages;
+        setStarsTotal(totalDocuments);
+        setStarsLoaded(allStars.length);
+        setStarsLoadedPercentage(Math.round((allStars.length / totalDocuments) * 100));
       }
 
       setStarsCatalog(allStars);
@@ -56,6 +63,9 @@ export function StarsContextProvider({ children }: StarsContextProviderProps) {
   const values = {
     starsCatalog,
     starCatalogLoading,
+    starsLoaded,
+    starsTotal,
+    starsLoadedPercentage
   };
 
   return <StarsContext.Provider value={values}>{children}</StarsContext.Provider>;
