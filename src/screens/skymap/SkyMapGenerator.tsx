@@ -17,15 +17,15 @@ import {GlobalPlanet} from "../../helpers/types/GlobalPlanet";
 import {astroImages, moonIcons} from "../../helpers/scripts/loadImages";
 import DSOValues from "../../components/commons/DSOValues";
 import ToggleButton from "../../components/commons/buttons/ToggleButton";
+import {useStarCatalog} from "../../contexts/StarsContext";
 
 
 export default function SkyMapGenerator({ navigation }: any) {
 
   const { currentUserLocation } = useSettings()
   const { planets, moonCoords } = useSolarSystem()
+  const {starsCatalog, starCatalogLoading} = useStarCatalog();
 
-  const [starCatalog, setStarCatalog] = useState<Star[]>([])
-  const [starCatalogLoading, setStarCatalogLoading] = useState(true)
   const [currentTime, setCurrentTime] = useState(new Date())
 
   const [showConstellations, setShowConstellations] = useState(true)
@@ -38,9 +38,6 @@ export default function SkyMapGenerator({ navigation }: any) {
 
   const [starsToDisplay, setStarsToDisplay] = useState<Star[]>([])
 
-  useEffect(() => {
-    getStarCatalog()
-  }, [])
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -51,8 +48,10 @@ export default function SkyMapGenerator({ navigation }: any) {
   }, [])
 
   useEffect(() => {
+    getStarsAboveHorizon(starsCatalog)
+
     const interval = setInterval(() => {
-      getStarsAboveHorizon(starCatalog)
+      getStarsAboveHorizon(starsCatalog)
     }, 60000)
 
     return () => clearInterval(interval)
@@ -66,28 +65,20 @@ export default function SkyMapGenerator({ navigation }: any) {
     setCurrentTime(new Date())
   }
 
-  const getStarCatalog = async () => {
-    const stars = await axios.get(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/stars`);
-    setStarCatalog(stars.data.data)
-    setStarCatalogLoading(false)
-
-    getStarsAboveHorizon(stars.data.data)
-  }
-
   const getStarsAboveHorizon = (stars: Star[]) => {
     if (stars.length === 0) return;
 
     const candidates: Star[] = []
     stars.forEach((star: Star) => {
+      if((star.V < 4.8 && star.V > 0) || star.ids.includes('alf UMi')){
+        const { ra, dec } = star
+        const { lat, lon } = currentUserLocation
+        const horizonAngle = calculateHorizonAngle(341)
 
-      const { ra, dec } = star
-      const { lat, lon } = currentUserLocation
-      const horizonAngle = calculateHorizonAngle(341)
-
-      const isAboveHorizon = isBodyAboveHorizon(new Date(), { latitude: lat, longitude: lon }, { ra: ra, dec: dec }, horizonAngle)
-      // if ((isAboveHorizon && star.V > 5.7) || star.ids.includes('alf UMi')) {
-      if ((isAboveHorizon && star.V < 4.8 && star.V > 0) || star.ids.includes('alf UMi')) {
-        candidates.push(star)
+        const isAboveHorizon = isBodyAboveHorizon(new Date(), { latitude: lat, longitude: lon }, { ra: ra, dec: dec }, horizonAngle)
+        if (isAboveHorizon) {
+          candidates.push(star)
+        }
       }
     })
 

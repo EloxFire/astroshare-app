@@ -64,6 +64,7 @@
     "react-native-easy-grid": "^0.2.2",
     "react-native-element-dropdown": "^2.12.1",
     "react-native-gesture-handler": "~2.16.1",
+    "react-native-gifted-charts": "^1.4.54",
     "react-native-maps": "1.14.0",
     "react-native-markdown-display": "^7.0.2",
     "react-native-purchases": "^8.1.0",
