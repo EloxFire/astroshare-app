@@ -1,9 +1,11 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {View, Dimensions, ScrollView, Text} from 'react-native';
 import {kpIndexGraphStyles} from "../../styles/components/graphs/kpIndex";
 import {app_colors} from "../../helpers/constants";
 import {getGeomagneticStormInfos} from "../../helpers/scripts/astro/getGeomagneticStormInfos";
 import dayjs from "dayjs";
+import {KpIndexData} from "../../helpers/types/KpIndexData";
+import {getKpIndex} from "../../helpers/api/getKpIndex";
 
 interface KpData {
   time_tag: string;
@@ -14,10 +16,8 @@ interface KpData {
 
 
 const KpChart: React.FC = () => {
-  const SCREEN_WIDTH = Dimensions.get('window').width;
-  const PADDING = 20;
-  const WIDTH = SCREEN_WIDTH - (PADDING * 5);
-  const HEIGHT = 300;
+
+  const [data, setData] = useState<KpIndexData[]>([]);
 
   const legendItems = [
     {label: 'G0', color: app_colors.green, textColor: app_colors.black},
@@ -28,62 +28,44 @@ const KpChart: React.FC = () => {
     {label: 'G5', color: app_colors.violet, textColor: app_colors.black},
   ]
 
-  const data = [
-    {
-      time_tag: "2020-01-01 00:00:00",
-      Kp: "4",
-      a_running: "0",
-      station_count: "0"
-    },
-    {
-      time_tag: "2020-01-01 03:00:00",
-      Kp: "2",
-      a_running: "0",
-      station_count: "0"
-    },
-    {
-      time_tag: "2020-01-01 06:00:00",
-      Kp: "2.67",
-      a_running: "0",
-      station_count: "0"
-    },
-    {
-      time_tag: "2020-01-01 09:00:00",
-      Kp: "2",
-      a_running: "0",
-      station_count: "0"
-    },
-    {
-      time_tag: "2020-01-01 12:00:00",
-      Kp: "2.67",
-      a_running: "0",
-      station_count: "0"
-    },
-    {
-      time_tag: "2020-01-01 15:00:00",
-      Kp: "2.33",
-      a_running: "0",
-      station_count: "0"
-    },
-    {
-      time_tag: "2020-01-01 18:00:00",
-      Kp: "2.33",
-      a_running: "0",
-      station_count: "0"
-    },
-    {
-      time_tag: "2020-01-01 21:00:00",
-      Kp: "2.33",
-      a_running: "0",
-      station_count: "0"
-    },
-    {
-      time_tag: "2020-01-02 00:00:00",
-      Kp: "2.33",
-      a_running: "0",
-      station_count: "0"
-    }
-  ]
+  const KpChartTimes = ["00:00", "03:00", "06:00", "09:00", "12:00", "15:00", "18:00", "21:00", "00:00", "03:00"];
+
+  useEffect(() => {
+    console.log("Fetching Kp Indexes...");
+
+    const fetchKpData = async () => {
+      try {
+        const KpData: KpIndexData[] = await getKpIndex();
+        const dummyData: KpIndexData[] = [];
+        const now = new Date();
+        const todayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0); // Date du jour à 00h00
+
+        for (let i = 0; i < 9; i++) {
+          const time = new Date(todayMidnight);
+          time.setHours(time.getHours() + i * 3);
+
+          dummyData.push({
+            time_tag: time.toISOString(),
+            Kp: 0,
+            a_running: 0,
+            station_count: 0,
+          });
+        }
+
+        const usedDummyData: KpIndexData[] = dummyData.slice(KpData.length)
+
+        const fullData: KpIndexData[] = KpData.concat(usedDummyData);
+
+        console.log("Fulldata :", fullData)
+
+        setData(fullData.splice(0, 10));
+      } catch (error) {
+        console.error("Erreur lors de la récupération des données Kp Index :", error);
+      }
+    };
+
+    fetchKpData()
+  }, []);
 
 
   return (
@@ -120,18 +102,8 @@ const KpChart: React.FC = () => {
         }
       </View>
       <View style={kpIndexGraphStyles.container.graph}>
-        <View style={kpIndexGraphStyles.container.graph.bottomGraph.xAxis}>
-          {
-            data.map((item, index) => {
-              return (
-                <Text style={kpIndexGraphStyles.container.graph.bottomGraph.xAxis.values} key={index}>{`${dayjs(item.time_tag).format('D MMM')}`}</Text>
-              )
-            })
-          }
-        </View>
         <View style={kpIndexGraphStyles.container.graph.topGraph}>
           <View style={kpIndexGraphStyles.container.graph.topGraph.yAxis}>
-          {/* SCALE */}
             {
               Array.from({length: 10}).map((_, index) => {
                 return (
@@ -144,9 +116,18 @@ const KpChart: React.FC = () => {
             {
               data.map((item, index) => {
                 return (
-                  <View key={index} style={{flex: 1, height: `${(parseFloat(item.Kp) / 9) * 100}%`, backgroundColor: getGeomagneticStormInfos(parseFloat(item.Kp)).color}}>
-                    <Text style={[kpIndexGraphStyles.container.graph.topGraph.yAxis.values, {color: app_colors.black, textAlign: 'center'}]}>{item.Kp}</Text>
-                  </View>
+                  <>
+                    <View key={index} style={{flex:1, height: `${(item.Kp / 9) * 100}%`, backgroundColor: getGeomagneticStormInfos(item.Kp).color}}>
+                      <Text style={[kpIndexGraphStyles.container.graph.topGraph.yAxis.values, {color: app_colors.black, textAlign: 'center'}]}>{item.Kp}</Text>
+                    </View>
+                    {
+                      index === data.length - 1 && (
+                        <View key={index + "bis"} style={{flex: 1, height: `0%`, backgroundColor: getGeomagneticStormInfos(item.Kp).color}}>
+                          <Text style={[kpIndexGraphStyles.container.graph.topGraph.yAxis.values, {color: app_colors.black, textAlign: 'center'}]}>{item.Kp}</Text>
+                        </View>
+                      )
+                    }
+                  </>
                 )
               })
             }
@@ -154,9 +135,9 @@ const KpChart: React.FC = () => {
         </View>
         <View style={kpIndexGraphStyles.container.graph.bottomGraph.xAxis}>
           {
-            data.map((item, index) => {
+            KpChartTimes.map((item, index) => {
               return (
-                <Text style={kpIndexGraphStyles.container.graph.bottomGraph.xAxis.values} key={index}>{`${dayjs(item.time_tag).format('HH:mm')}`}</Text>
+                <Text style={kpIndexGraphStyles.container.graph.bottomGraph.xAxis.values} key={index}>{item}</Text>
               )
             })
           }

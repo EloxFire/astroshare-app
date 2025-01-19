@@ -16,6 +16,9 @@ import ProLocker from "../components/cards/ProLocker";
 import {useAuth} from "../contexts/AuthContext";
 import {isProUser} from "../helpers/scripts/auth/checkUserRole";
 import KpChart from "../components/graphs/KpChart";
+import {getKpIndex} from "../helpers/api/getKpIndex";
+import {KpIndexData} from "../helpers/types/KpIndexData";
+import SimpleGauge from "../components/graphs/SimpleGauge";
 
 export default function SolarWeather({ navigation }: any) {
 
@@ -34,7 +37,6 @@ export default function SolarWeather({ navigation }: any) {
   const [isCmeImageMode, setIsCmeImageMode] = useState<boolean>(true)
   const [currentCmeImageFilter, setCurrentCmeImageFilter] = useState<ECmeFilters>('C2' as ECmeFilters)
   const [currentCmeImageUrl, setCurrentCmeImageUrl] = useState<string | undefined>("")
-
 
   useEffect(() => {
     handleChangeSunImage(currentImageFilter, 'img')
@@ -175,6 +177,7 @@ export default function SolarWeather({ navigation }: any) {
           <View style={solarWeatherStyles.container}>
             <Text style={solarWeatherStyles.container.title}>{i18n.t('solarWeather.containers.kpIndexes')}</Text>
             <Text style={[solarWeatherStyles.container.subtitle, {marginBottom: 10}]}>Source : SWPC (Space Weather Prediction Center) / NOAA (National Oceanic and Atmospheric Administration)</Text>
+            <Text style={[solarWeatherStyles.container.subtitle, {marginBottom: 10}]}>Les horaires suivantes sont en UTC</Text>
             {
               isProUser(currentUser) ?
                 <KpChart />
