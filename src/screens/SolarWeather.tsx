@@ -12,13 +12,10 @@ import { localizedForecastPlaceholders, localizedImagePlaceholders, localizedVid
 import { i18n } from '../helpers/scripts/i18n'
 import PageTitle from '../components/commons/PageTitle'
 import SimpleButton from '../components/commons/buttons/SimpleButton'
-import DisclaimerBar from "../components/banners/DisclaimerBar";
 import ProLocker from "../components/cards/ProLocker";
 import {useAuth} from "../contexts/AuthContext";
 import {isProUser} from "../helpers/scripts/auth/checkUserRole";
-import KPBarChart from "../components/graphs/KpBarChart";
-import {Line, Path, Svg} from "react-native-svg";
-import {Text as SvgText} from "react-native-svg/lib/typescript/ReactNativeSVG";
+import KpChart from "../components/graphs/KpChart";
 
 export default function SolarWeather({ navigation }: any) {
 
@@ -177,10 +174,10 @@ export default function SolarWeather({ navigation }: any) {
           {/* KP INDEXES CONTAINER */}
           <View style={solarWeatherStyles.container}>
             <Text style={solarWeatherStyles.container.title}>{i18n.t('solarWeather.containers.kpIndexes')}</Text>
-            <Text style={[solarWeatherStyles.container.subtitle, {marginBottom: 10}]}>Source : NASA / SoHO (Solar and Heliospheric Observatory)</Text>
+            <Text style={[solarWeatherStyles.container.subtitle, {marginBottom: 10}]}>Source : SWPC (Space Weather Prediction Center) / NOAA (National Oceanic and Atmospheric Administration)</Text>
             {
               isProUser(currentUser) ?
-                <KPBarChart data={data} />
+                <KpChart />
                 :
               <ProLocker darker navigation={navigation} image={require('../../assets/images/tools/sun.png')} />
             }

@@ -27,6 +27,23 @@ export const app_colors = {
   green_eighty: '#00FF0080',
   turquoise: '#488f9d',
   turquoise_sixty: '#488f9d60',
+  yellow: '#FFFF00',
+  yellow_forty: '#FFFF0040',
+  yellow_sixty: '#FFFF0060',
+  yellow_eighty: '#FFFF0080',
+  orange: '#FFA500',
+  orange_forty: '#FFA50040',
+  orange_sixty: '#FFA50060',
+  orange_eighty: '#FFA50080',
+  darkorange: '#FF8C00',
+  darkorange_forty: '#FF8C0040',
+  darkorange_sixty: '#FF8C0060',
+  darkorange_eighty: '#FF8C0080',
+  violet: '#8A2BE2',
+  violet_forty: '#8A2BE240',
+  violet_sixty: '#8A2BE260',
+  violet_eighty: '#8A2BE280',
+
   gold: '#D2AF26',
   gold_eighty: '#D2AF2680',
   blue: '#061e92',
@@ -60,6 +77,33 @@ export const storageKeys = {
     refreshToken: 'refresh_token',
     user: 'user',
   }
+}
+
+export const geomagneticStormLevelsLongLabels = {
+  G0: 'G0 - Aucune tempête',
+  G1: 'G1 - Tempête mineure',
+  G2: 'G2 - Tempête modérée',
+  G3: 'G3 - Tempête forte',
+  G4: 'G4 - Tempête sévère',
+  G5: 'G5 - Tempête extrême',
+}
+
+export const geomagneticStormLevelsShortLabels = {
+  G0: 'G0',
+  G1: 'G1',
+  G2: 'G2',
+  G3: 'G3',
+  G4: 'G4',
+  G5: 'G5',
+}
+
+export const geomagneticStormLevelsColors = {
+  G0: app_colors.green,
+  G1: app_colors.yellow,
+  G2: app_colors.orange,
+  G3: app_colors.darkorange,
+  G4: app_colors.red,
+  G5: app_colors.violet,
 }
 
 export const firebaseCollections = {
