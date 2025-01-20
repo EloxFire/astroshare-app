@@ -16,9 +16,10 @@ import ProLocker from "../components/cards/ProLocker";
 import {useAuth} from "../contexts/AuthContext";
 import {isProUser} from "../helpers/scripts/auth/checkUserRole";
 import KpChart from "../components/graphs/KpChart";
-import {getKpIndex} from "../helpers/api/getKpIndex";
-import {KpIndexData} from "../helpers/types/KpIndexData";
-import SimpleGauge from "../components/graphs/SimpleGauge";
+import LineGraph from "../components/graphs/LineGraph";
+import {SolarWindData} from "../helpers/types/SolarWindData";
+import {getSolarWindData} from "../helpers/api/getSolarWindData";
+import {isFirstLaunch} from "../helpers/scripts/checkFirstLaunch";
 
 export default function SolarWeather({ navigation }: any) {
 
@@ -37,6 +38,17 @@ export default function SolarWeather({ navigation }: any) {
   const [isCmeImageMode, setIsCmeImageMode] = useState<boolean>(true)
   const [currentCmeImageFilter, setCurrentCmeImageFilter] = useState<ECmeFilters>('C2' as ECmeFilters)
   const [currentCmeImageUrl, setCurrentCmeImageUrl] = useState<string | undefined>("")
+
+  const [solarWindData, setSolarWindData] = useState<SolarWindData[]>([])
+
+  useEffect(() => {
+    (async () => {
+      const data = await getSolarWindData();
+      if(data) {
+        setSolarWindData(data);
+      }
+    })()
+  }, [])
 
   useEffect(() => {
     handleChangeSunImage(currentImageFilter, 'img')
@@ -189,15 +201,27 @@ export default function SolarWeather({ navigation }: any) {
           {/* SOLAR WINDS CONTAINER */}
           <View style={solarWeatherStyles.container}>
             <Text style={solarWeatherStyles.container.title}>{i18n.t('solarWeather.containers.solarWinds')}</Text>
-            <Text style={[solarWeatherStyles.container.subtitle, {marginBottom: 10}]}>Source : NASA / SoHO (Solar and Heliospheric Observatory)</Text>
-            <ProLocker darker navigation={navigation} image={require('../../assets/images/tools/sun.png')} />
-          </View>
-
-          {/* SOLAR ACTIVITY CONTAINER */}
-          <View style={solarWeatherStyles.container}>
-            <Text style={solarWeatherStyles.container.title}>{i18n.t('solarWeather.containers.solarActivity')}</Text>
-            <Text style={[solarWeatherStyles.container.subtitle, {marginBottom: 10}]}>Source : NASA / SoHO (Solar and Heliospheric Observatory)</Text>
-            <ProLocker darker navigation={navigation} image={require('../../assets/images/tools/sun.png')} />
+            <Text style={[solarWeatherStyles.container.subtitle, {marginBottom: 10}]}>Source : SWPC (Space Weather Prediction Center) / NOAA (National Oceanic and Atmospheric Administration)</Text>
+            <Text style={[solarWeatherStyles.container.subtitle, {marginBottom: 10}]}>Les horaires suivantes sont en UTC</Text>
+            {
+              isProUser(currentUser) ?
+                <>
+                  {
+                    solarWindData.length !== 0 && (
+                      <>
+                        <Text style={[solarWeatherStyles.container.title, {fontSize: 15, marginBottom: 10}]}>Vitesse (Km/h)</Text>
+                        <LineGraph yMin={300} yMax={800} data={solarWindData} field={"speed"} lineColor={app_colors.turquoise} leftMargin={45}/>
+                        <Text style={[solarWeatherStyles.container.title, {fontSize: 15, marginBottom: 10}]}>Densité (p/cm³)</Text>
+                        <LineGraph yMin={-4} yMax={10} data={solarWindData} field={"density"} lineColor={app_colors.green}/>
+                        <Text style={[solarWeatherStyles.container.title, {fontSize: 15, marginBottom: 10}]}>Température (°K)</Text>
+                        <LineGraph shortNumbers yMin={-90000} yMax={600000} data={solarWindData} field={"temperature"} lineColor={app_colors.orange} leftMargin={65}/>
+                      </>
+                    )
+                  }
+                </>
+                :
+                <ProLocker darker navigation={navigation} image={require('../../assets/images/tools/sun.png')} />
+            }
           </View>
         </View>
       </ScrollView>

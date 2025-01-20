@@ -47,7 +47,10 @@ export const app_colors = {
   gold: '#D2AF26',
   gold_eighty: '#D2AF2680',
   blue: '#061e92',
-  blue_twenty: '##061e9220',
+  blue_eighty: '#061e9280',
+  blue_sixty: '#061e9260',
+  blue_forty: '#061e9240',
+  blue_twenty: '#061e9220',
   warning: '#FFA500',
 }
 

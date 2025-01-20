@@ -20,6 +20,21 @@ export const formatCelsius = (degree: number, lang: string) => {
   return formatter.format(degree);
 }
 
+// Create a formatter for short notation and add 'K' for Kelvin manually
+export const formatKelvinShort = (kelvin: number, lang: string) => {
+  console.log("formatKelvinShort", kelvin, lang);
+
+  // Use Intl.NumberFormat for compact notation
+  const formatter = new Intl.NumberFormat(lang, {
+    style: 'decimal', // Default style as 'unit' with 'kelvin' is unsupported
+    maximumFractionDigits: 0,
+    notation: "compact",
+  });
+
+  // Format the number and append 'K' for Kelvin
+  return `${formatter.format(kelvin)} °K`;
+};
+
 // Create a formater to display seconds in minutes
 export const formatMinutes = (seconds: number, lang: string) => {
   const formatter = new Intl.NumberFormat(lang, {

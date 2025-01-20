@@ -28,7 +28,7 @@ const KpChart: React.FC = () => {
     {label: 'G5', color: app_colors.violet, textColor: app_colors.black},
   ]
 
-  const KpChartTimes = ["00:00", "03:00", "06:00", "09:00", "12:00", "15:00", "18:00", "21:00", "00:00", "03:00"];
+  const KpChartTimes = ["00:00", "03:00", "06:00", "09:00", "12:00", "15:00", "18:00", "21:00", "00:00"];
 
   useEffect(() => {
     console.log("Fetching Kp Indexes...");
@@ -55,8 +55,6 @@ const KpChart: React.FC = () => {
         const usedDummyData: KpIndexData[] = dummyData.slice(KpData.length)
 
         const fullData: KpIndexData[] = KpData.concat(usedDummyData);
-
-        console.log("Fulldata :", fullData)
 
         setData(fullData.splice(0, 10));
       } catch (error) {
@@ -120,13 +118,6 @@ const KpChart: React.FC = () => {
                     <View key={index} style={{flex:1, height: `${(item.Kp / 9) * 100}%`, backgroundColor: getGeomagneticStormInfos(item.Kp).color}}>
                       <Text style={[kpIndexGraphStyles.container.graph.topGraph.yAxis.values, {color: app_colors.black, textAlign: 'center'}]}>{item.Kp}</Text>
                     </View>
-                    {
-                      index === data.length - 1 && (
-                        <View key={index + "bis"} style={{flex: 1, height: `0%`, backgroundColor: getGeomagneticStormInfos(item.Kp).color}}>
-                          <Text style={[kpIndexGraphStyles.container.graph.topGraph.yAxis.values, {color: app_colors.black, textAlign: 'center'}]}>{item.Kp}</Text>
-                        </View>
-                      )
-                    }
                   </>
                 )
               })
