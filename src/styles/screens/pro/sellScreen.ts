@@ -113,7 +113,7 @@ export const sellScreenStyles = {
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
 
-    filter:{
+    bgFilter:{
       position: 'absolute' as 'absolute',
       top: 0,
       left: 0,

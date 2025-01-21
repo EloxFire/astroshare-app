@@ -22,7 +22,6 @@ export const formatCelsius = (degree: number, lang: string) => {
 
 // Create a formatter for short notation and add 'K' for Kelvin manually
 export const formatKelvinShort = (kelvin: number, lang: string) => {
-  console.log("formatKelvinShort", kelvin, lang);
 
   // Use Intl.NumberFormat for compact notation
   const formatter = new Intl.NumberFormat(lang, {

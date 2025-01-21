@@ -214,7 +214,7 @@ export default function SolarWeather({ navigation }: any) {
                         <Text style={[solarWeatherStyles.container.title, {fontSize: 15, marginBottom: 10}]}>Densité (p/cm³)</Text>
                         <LineGraph yMin={-4} yMax={10} data={solarWindData} field={"density"} lineColor={app_colors.green}/>
                         <Text style={[solarWeatherStyles.container.title, {fontSize: 15, marginBottom: 10}]}>Température (°K)</Text>
-                        <LineGraph shortNumbers yMin={-90000} yMax={600000} data={solarWindData} field={"temperature"} lineColor={app_colors.orange} leftMargin={65}/>
+                        <LineGraph shortNumbers yMin={0} yMax={600000} data={solarWindData} field={"temperature"} lineColor={app_colors.orange} leftMargin={55}/>
                       </>
                     )
                   }

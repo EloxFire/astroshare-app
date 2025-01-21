@@ -9,6 +9,8 @@ import PageTitle from '../components/commons/PageTitle'
 import GlobalSummary from '../components/widgets/home/GlobalSummary'
 import NightSummary from '../components/widgets/home/NightSummary'
 import NextLaunchCountdownWidget from "../components/widgets/home/NextLaunchCountdownWidget";
+import DisclaimerBar from "../components/banners/DisclaimerBar";
+import {Image} from "expo-image";
 
 export default function WidgetManager({ navigation }: any) {
 
@@ -27,27 +29,23 @@ export default function WidgetManager({ navigation }: any) {
       />
       <View style={globalStyles.screens.separator} />
       <ScrollView>
+        <DisclaimerBar message={i18n.t('widgetsManager.disclaimer')} type={'info'}/>
         <View style={{ paddingTop: 20 }}>
           {
             Object.keys(HomeWidget).map((widget, index) => {
               return (
-                <TouchableOpacity key={`widget-${index}`} onPress={() => handleWidget(widget)} style={{ display: 'flex', flexDirection: 'column', marginBottom: 50, borderTopWidth: 1, borderTopColor: app_colors.white_twenty, paddingTop: 10 }}>
+                <TouchableOpacity key={`widget-${index}`} onPress={() => handleWidget(widget)} style={{ display: 'flex', flexDirection: 'column', marginBottom: 10, borderTopWidth: 1, backgroundColor: app_colors.white_twenty, padding: 10, borderRadius: 10, borderColor: app_colors.white_twenty, borderWidth: 1 }}>
                   <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+                    {widget === 'None' && <Text style={{ fontSize: 16, textTransform: 'uppercase', fontFamily: 'GilroyBlack', color: app_colors.white }}>Aucun widget</Text>}
                     {widget === 'Live' && <Text style={{ fontSize: 16, textTransform: 'uppercase', fontFamily: 'GilroyBlack', color: app_colors.white }}>Aperçu du ciel en direct</Text>}
                     {widget === 'Night' && <Text style={{ fontSize: 16, textTransform: 'uppercase', fontFamily: 'GilroyBlack', color: app_colors.white }}>Aperçu de la nuit</Text>}
                     {widget === 'NextLaunchCountdown' && <Text style={{ fontSize: 16, textTransform: 'uppercase', fontFamily: 'GilroyBlack', color: app_colors.white }}>Aperçu prochain lancement de fusée</Text>}
-                    {widget === 'None' && <Text style={{ fontSize: 16, textTransform: 'uppercase', fontFamily: 'GilroyBlack', color: app_colors.white }}>Aucun widget</Text>}
-                    <View style={{ borderRadius: 100, width: 20, height: 20, backgroundColor: app_colors.white, display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-                      <View style={{ borderRadius: 100, width: 18, height: 18, backgroundColor: app_colors.black, display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-                        {selectedHomeWidget === widget && <View style={{ borderRadius: 100, width: 12, height: 12, backgroundColor: app_colors.white }} />}
-                      </View>
-                    </View>
+                    <Image source={selectedHomeWidget === widget ? require('../../assets/icons/FiToggleFilled.png') : require('../../assets/icons/FiToggleEmpty.png')} style={{ width: 30, height: 30 }} />
                   </View>
+                  {widget === 'None' && <></>}
                   {widget === 'Live' && <GlobalSummary />}
                   {widget === 'Night' && <NightSummary />}
                   {widget === 'NextLaunchCountdown' && <NextLaunchCountdownWidget />}
-                  {widget === 'None' && <></>}
-
                 </TouchableOpacity>
               )
             })

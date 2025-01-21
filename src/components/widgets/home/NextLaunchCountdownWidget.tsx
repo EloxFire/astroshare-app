@@ -53,8 +53,8 @@ export default function NextLaunchCountdownWidget(): ReactNode {
             <ActivityIndicator size="small" color="white" />
           </View>
           :
-          <ImageBackground source={{uri: launch?.image.image_url}} blurRadius={10} style={nextLaunchCountdownWidgetStyles.widget.backgroundImage}>
-            <View style={nextLaunchCountdownWidgetStyles.widget.backgroundImage.filter} pointerEvents={'none'}/>
+          <ImageBackground source={{uri: launch?.image.image_url}} blurRadius={10} style={nextLaunchCountdownWidgetStyles.widget.bgImage}>
+            <View style={nextLaunchCountdownWidgetStyles.widget.bgImage.bgFilter} pointerEvents={'none'}/>
             <View style={nextLaunchCountdownWidgetStyles.widget.content}>
               <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
                 <View>

@@ -55,7 +55,7 @@ export default function SellScreen({ navigation }: any) {
           <LinearGradient
             // Background Linear Gradient
             colors={['rgba(0,0,0,1)', 'transparent']}
-            style={sellScreenStyles.backgroundImage.filter}
+            style={sellScreenStyles.backgroundImage.bgFilter}
             locations={[0, 1]}
           />
 

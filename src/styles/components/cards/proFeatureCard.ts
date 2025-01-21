@@ -19,7 +19,7 @@ export const proFeatureCardStyles = {
       borderRadius: 10,
     },
 
-    filter: {
+    bgFilter: {
       position: 'absolute' as 'absolute',
       top: 0,
       left: 0,

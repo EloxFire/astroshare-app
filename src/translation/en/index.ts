@@ -33,6 +33,7 @@ import {launchesScreenTranslations} from "./screens/launches";
 import {notificationsTranslations} from "./common/notifications";
 import {ressourcesScreenTranslations} from "./screens/ressources";
 import {authScreensTranslations} from "./screens/auth";
+import {widgetManagerTranslations} from "./screens/widgetManager";
 
 export const enTranslations = {
   onboarding: onboardingTranslations,
@@ -69,4 +70,5 @@ export const enTranslations = {
   notifications: notificationsTranslations,
   ressourcesScreen: ressourcesScreenTranslations,
   auth: authScreensTranslations,
+  widgetsManager: widgetManagerTranslations
 }
