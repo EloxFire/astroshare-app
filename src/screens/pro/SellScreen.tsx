@@ -10,9 +10,12 @@ import {ProFeature} from "../../helpers/types/ProFeature";
 import ProBadge from "../../components/badges/ProBadge";
 import ProOfferCard from "../../components/cards/ProOfferCard";
 import {i18n} from "../../helpers/scripts/i18n";
+import {useAuth} from "../../contexts/AuthContext";
+import {routes} from "../../helpers/routes";
 
 export default function SellScreen({ navigation }: any) {
 
+  const {currentUser} = useAuth()
   const [activeOffer, setActiveOffer] = useState<'monthly' | 'yearly'>('yearly')
 
   const hilightFeature: ProFeature[] = [
@@ -90,9 +93,16 @@ export default function SellScreen({ navigation }: any) {
                 description={i18n.t('pro.sellScreen.offers.yearlyDescription')}
               />
             </View>
-            <TouchableOpacity style={sellScreenStyles.content.offers.button}>
-              <Text style={sellScreenStyles.content.offers.button.text}>{i18n.t('pro.sellScreen.offers.proceedToPayment')}</Text>
-            </TouchableOpacity>
+            {
+              currentUser ?
+                <TouchableOpacity style={sellScreenStyles.content.offers.button}>
+                  <Text style={sellScreenStyles.content.offers.button.text}>{i18n.t('pro.sellScreen.offers.proceedToPayment')}</Text>
+                </TouchableOpacity>
+                :
+                <TouchableOpacity style={sellScreenStyles.content.offers.button} onPress={() => navigation.push(routes.auth.login.path)}>
+                  <Text style={sellScreenStyles.content.offers.button.text}>{i18n.t('pro.sellScreen.noUser')}</Text>
+                </TouchableOpacity>
+            }
             <View style={sellScreenStyles.content.features}>
               <Text style={sellScreenStyles.content.features.title}>Des fonctionnalités exclusives :</Text>
               {

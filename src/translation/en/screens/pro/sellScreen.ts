@@ -1,5 +1,6 @@
 export const sellScreenTranslations = {
   subtitle: 'Explore even further !',
+  noUser: "Log in to proceed to purchase",
   offers: {
     monthly: "Monthly subscription",
     yearly: "Annual subscription",

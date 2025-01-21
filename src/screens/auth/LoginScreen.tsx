@@ -28,14 +28,17 @@ export default function LoginScreen({ navigation }: any) {
       return;
     }
 
+    setLoading(true)
     try{
-      setLoading(true)
       await loginUser(email, password)
-      navigation.push(routes.auth.profile.path)
+      setLoading(false)
     } catch (e) {
+      console.log("Error while logging in", e)
       setLoading(false)
       showToast({message: i18n.t('auth.errors.generic'), type: 'error'})
     }
+
+    navigation.push(routes.auth.profile.path)
   }
 
   return (
@@ -79,7 +82,7 @@ export default function LoginScreen({ navigation }: any) {
             {/*  <Text style={authStyles.content.forgotPassword}>{i18n.t('auth.login.forgotPassword')}</Text>*/}
             {/*</TouchableOpacity>*/}
 
-            <TouchableOpacity style={authStyles.content.form.button} onPress={handleFormSubmit}>
+            <TouchableOpacity style={authStyles.content.form.button} onPress={() => handleFormSubmit()}>
               <Text style={authStyles.content.form.button.text}>{i18n.t('auth.login.submit')}</Text>
               {loading && <ActivityIndicator size={"small"} color={app_colors.black} />}
             </TouchableOpacity>
