@@ -51,6 +51,9 @@ module.exports = {
   },
   plugins: [
     [
+      "expo-font"
+    ],
+    [
       'expo-notifications',
       {
         "icon": "./assets/icon.png",
