@@ -56,6 +56,7 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
         password
       })
       console.log('[Auth] User logged in :', userToLog.data.user.email)
+      console.log('[Auth] Access token :', userToLog.data.accessToken)
       await storeData(storageKeys.auth.refreshToken, userToLog.data.refreshToken)
       await storeData(storageKeys.auth.accessToken, userToLog.data.accessToken)
       await storeObject(storageKeys.auth.user, userToLog.data.user)

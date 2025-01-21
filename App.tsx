@@ -64,6 +64,8 @@ import PlanetaryConjunctionScreen from "./src/screens/transits/PlanetaryConjunct
 import IssPasses from "./src/screens/satelliteTracker/IssPasses";
 import PaywallScreen from "./src/screens/pro/PaywallScreen";
 import CelestialBodyOverview from "./src/screens/celestialBodies/CelestialBodyOverview";
+import {app_colors} from "./src/helpers/constants";
+import * as SystemUI from 'expo-system-ui';
 
 dayjs.locale('fr');
 dayjs.extend(LocalizedFormat)
@@ -87,6 +89,7 @@ export default function App() {
   useEffect(() => {
     async function prepare() {
       try {
+        await SystemUI.setBackgroundColorAsync(app_colors.black)
         await useFonts()
         console.log('Fonts loaded');
       } catch (e) {
