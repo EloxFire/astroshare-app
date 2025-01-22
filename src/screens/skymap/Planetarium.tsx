@@ -79,7 +79,7 @@ export default function Planetarium({ navigation }: any) {
     sceneRef.current = scene;
     rendererRef.current = renderer;
 
-    const groupedBySpectralType = groupStarsBySpectralType(starsCatalog);
+    const groupedBySpectralType = groupStarsBySpectralType(starsCatalog.slice(0, 1000));
     console.log(groupedBySpectralType);
 
     Object.entries(groupedBySpectralType).forEach(([key, value]) => {
