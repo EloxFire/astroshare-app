@@ -162,13 +162,6 @@ export default function Planetarium({ navigation }: any) {
     scene.add(pointerUI);
     let i = 1;
 
-
-    pointerUI.frustumCulled = false;
-    const pointerTextures = createPointerTextures();
-    pointerUI.material.map = pointerTextures[0];
-    scene.add(pointerUI);
-    let i = 1;
-
     /////
     EquatorialGrid = createEquatorialGrid(0x0000ff);
     EquatorialGrid.grid2.visible = false;
