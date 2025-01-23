@@ -7,6 +7,7 @@
     "build:apk": "eas build --platform android --profile preview",
     "build:production": "eas build --platform android --profile production",
     "build:dev": "eas build --platform android --profile development",
+    "build:dev:local": "eas build --platform android --profile development --local",
     "eas-build-pre-install": "npm config set legacy-peer-deps true",
     "prebuild": "npx expo prebuild",
     "android": "expo run:android",

@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import {ScrollView, Text, View, TouchableOpacity, StatusBar} from 'react-native'
 import { globalStyles } from '../../styles/global'
 import { sellScreenStyles } from '../../styles/screens/pro/sellScreen'
@@ -12,11 +12,15 @@ import ProOfferCard from "../../components/cards/ProOfferCard";
 import {i18n} from "../../helpers/scripts/i18n";
 import {useAuth} from "../../contexts/AuthContext";
 import {routes} from "../../helpers/routes";
+import {initPaymentSheet, presentPaymentSheet, StripeProvider} from "@stripe/stripe-react-native";
+import axios from "axios";
 
 export default function SellScreen({ navigation }: any) {
 
   const {currentUser} = useAuth()
   const [activeOffer, setActiveOffer] = useState<'monthly' | 'yearly'>('yearly')
+  const [stripePublishableKey, setStripePublishableKey] = useState<string>('')
+  const [paymentLoading, setPaymentLoading] = useState<boolean>(false)
 
   const hilightFeature: ProFeature[] = [
     {
@@ -51,7 +55,92 @@ export default function SellScreen({ navigation }: any) {
     },
   ]
 
+  useEffect(() => {
+    initStripe()
+  }, []);
+
+  const initStripe = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/stripe/stripetoken`,
+        {
+          headers: {
+            Authorization: process.env.EXPO_PUBLIC_ADMIN_KEY, // Pass the adminKey in the Authorization header
+          },
+        }
+      );
+      console.log("Test", response.data.publishableKey)
+      setStripePublishableKey(response.data.publishableKey)
+    } catch (e) {
+      console.log("Error", e)
+    }
+  }
+
+  const createPayment = async () => {
+    try {
+      const response = await axios.post(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/stripe/create-payment-intent`, {},
+        {
+          headers: {
+            Authorization: process.env.EXPO_PUBLIC_ADMIN_KEY, // Pass the adminKey in the Authorization header
+          },
+        })
+      const { paymentIntent, ephemeralKey, customer } = response.data
+
+      return {
+        paymentIntent,
+        ephemeralKey,
+        customer,
+      };
+    }catch (e) {
+      console.log("Error", e)
+    }
+  }
+
+  const handlePayment = async () => {
+    if(stripePublishableKey === ''){
+      console.log("Stripe publishable key is not set")
+      return;
+    }
+
+    try {
+      const response = await createPayment()
+
+      if(!response){
+        console.log("Error while creating payment")
+        return;
+      }
+
+      const { error } = await initPaymentSheet({
+        merchantDisplayName: "Example, Inc.",
+        customerId: response.customer,
+        customerEphemeralKeySecret: response.ephemeralKey,
+        paymentIntentClientSecret: response.paymentIntent,
+        // Set `allowsDelayedPaymentMethods` to true if your business can handle payment
+        //methods that complete payment after a delay, like SEPA Debit and Sofort.
+        allowsDelayedPaymentMethods: true,
+        defaultBillingDetails: {
+          name: 'Jane Doe',
+        }
+      });
+      if (!error) {
+        setPaymentLoading(true);
+
+        const {error} = await presentPaymentSheet()
+        if(error) {
+          console.log("Error presenting payment sheet", error)
+        }
+      }
+    }catch (e) {
+      console.log("Error", e)
+    }
+  }
+
   return (
+    <StripeProvider
+      publishableKey={stripePublishableKey}
+      merchantIdentifier={"astroshare.fr"}
+      urlScheme={"astroshare"}
+    >
       <View style={[globalStyles.body, {paddingTop: 0, paddingHorizontal: 0}]}>
         <ScrollView contentContainerStyle={{paddingHorizontal: 10, paddingTop: StatusBar.currentHeight ? StatusBar.currentHeight + 20 : 20}}>
           <Image style={sellScreenStyles.backgroundImage} source={require('../../../assets/images/tools/ressources.png')}/>
@@ -95,7 +184,7 @@ export default function SellScreen({ navigation }: any) {
             </View>
             {
               currentUser ?
-                <TouchableOpacity style={sellScreenStyles.content.offers.button}>
+                <TouchableOpacity style={sellScreenStyles.content.offers.button} onPress={() => handlePayment()}>
                   <Text style={sellScreenStyles.content.offers.button.text}>{i18n.t('pro.sellScreen.offers.proceedToPayment')}</Text>
                 </TouchableOpacity>
                 :
@@ -114,5 +203,6 @@ export default function SellScreen({ navigation }: any) {
           </View>
         </ScrollView>
       </View>
+    </StripeProvider>
   )
 }

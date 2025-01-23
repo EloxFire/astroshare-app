@@ -8,7 +8,7 @@ module.exports = {
   orientation: "portrait",
   icon: "./assets/icon.png",
   userInterfaceStyle: "light",
-  owner: "eloxfire",
+  owner: "Enzo Avagliano",
   splash: {
     image: "./assets/splash.png",
     resizeMode: "contain",
@@ -17,7 +17,7 @@ module.exports = {
   assetBundlePatterns: ["**/*"],
   ios: {
     supportsTablet: true,
-    bundleIdentifier: 'fr.eavagliano.astroshare'
+    bundleIdentifier: process.env.EXPO_PUBLIC_ENV === "production" ? "fr.eavagliano.astroshare" : "fr.eavagliano.astroshare.dev",
   },
   android: {
     adaptiveIcon: {
@@ -38,7 +38,7 @@ module.exports = {
         apiKey: process.env.GOOGLE_MAPS_API_KEY
       }
     },
-    package: "fr.eavagliano.astroshare",
+    package: process.env.EXPO_PUBLIC_ENV === "production" ? "fr.eavagliano.astroshare" : "fr.eavagliano.astroshare.dev",
     versionCode: 39
   },
   web: {
