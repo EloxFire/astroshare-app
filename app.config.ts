@@ -17,7 +17,7 @@ module.exports = {
   assetBundlePatterns: ["**/*"],
   ios: {
     supportsTablet: true,
-    bundleIdentifier: process.env.EXPO_PUBLIC_ENV === "production" ? "fr.eavagliano.astroshare" : "fr.eavagliano.astroshare.dev",
+    bundleIdentifier: "fr.eavagliano.astroshare",
   },
   android: {
     adaptiveIcon: {
@@ -38,8 +38,7 @@ module.exports = {
         apiKey: process.env.GOOGLE_MAPS_API_KEY
       }
     },
-    package: process.env.EXPO_PUBLIC_ENV === "production" ? "fr.eavagliano.astroshare" : "fr.eavagliano.astroshare.dev",
-    versionCode: 39
+    package: "fr.eavagliano.astroshare"
   },
   web: {
     favicon: "./assets/favicon.png"
