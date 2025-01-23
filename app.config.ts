@@ -8,7 +8,7 @@ module.exports = {
   orientation: "portrait",
   icon: "./assets/icon.png",
   userInterfaceStyle: "light",
-  owner: "Enzo Avagliano",
+  owner: "eloxfire",
   splash: {
     image: "./assets/splash.png",
     resizeMode: "contain",
@@ -24,7 +24,7 @@ module.exports = {
       foregroundImage: "./assets/adaptive-icon.png",
       backgroundColor: "#000000"
     },
-    "googleServicesFile": process.env.GOOGLE_SERVICES_JSON || "./android/app/google-services.json",
+    "googleServicesFile": process.env.GOOGLE_SERVICES_JSON || "./android/app/DEVgoogle-services.json",
     permissions: [
       "android.permission.ACCESS_FINE_LOCATION",
       "android.permission.SCHEDULE_EXACT_ALARM", // For android 12+ to schedule notifications
