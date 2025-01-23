@@ -34,7 +34,9 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
   const {currentUserLocation} = useSettings()
   const { object } = route.params;
   const [objectInfos, setObjectInfos] = useState<ComputedObjectInfos | null>(null);
-  const [favouriteObjects, setFavouriteObjects] = useState<(GlobalPlanet | DSO | Star)[]>([]);
+  const [favouritePlanets, setFavouritePlanets] = useState<GlobalPlanet[]>([]);
+  const [favouriteDSO, setFavouriteDSO] = useState<DSO[]>([]);
+  const [favouriteStars, setFavouriteStars] = useState<Star[]>([]);
 
   useEffect(() => {
     const observer = { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }
@@ -44,28 +46,73 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
 
   useEffect(() => {
     (async () => {
-      const favs = await getObject(storageKeys.favouritePlanets)
-      if (!favs) return
-      favouriteObjects(favs)
+      const favsPlanets = await getObject(storageKeys.favouritePlanets)
+      const favsDSO = await getObject(storageKeys.favouriteObjects)
+      const favsStars = await getObject(storageKeys.favouriteStars)
+
+      if(favsPlanets) setFavouritePlanets(favsPlanets)
+      if(favsDSO) setFavouriteDSO(favsDSO)
+      if(favsStars) setFavouriteStars(favsStars)
     })()
   }, [])
 
-  const updateFavList = async (newList: GlobalPlanet[]) => {
-    await storeObject(storageKeys.favouritePlanets, newList)
+  const checkIsFav = () => {
+    switch (getObjectFamily(object)) {
+      case 'Planet':
+        return favouritePlanets.find(planet => planet.name === object.name)
+      case 'DSO':
+        return favouriteDSO.find(dso => dso.name === object.name)
+      case 'Star':
+        return favouriteStars.find(star => star.ids === object.ids)
+    }
+  }
+
+  const updateFavLists = async (newList: GlobalPlanet[] | DSO[] | Star[], type: string) => {
+    switch (type) {
+      case 'Planet':
+        await storeObject(storageKeys.favouritePlanets, newList)
+        break;
+      case 'DSO':
+        await storeObject(storageKeys.favouriteObjects, newList)
+        break;
+      case 'Star':
+        await storeObject(storageKeys.favouriteStars, newList)
+        break;
+    }
   }
 
   const handleFavorite = async () => {
-    if (favouritePlanets.some(obj => obj.name === planet.name)) {
-      console.log("remove")
-      const favs = favouritePlanets.filter(obj => obj.name !== planet.name)
-      setFavouritePlanets(favs)
-      await updateFavList(favs)
-
-    } else {
-      console.log("add")
-      const favs = [...favouritePlanets, planet]
-      setFavouritePlanets(favs)
-      await updateFavList(favs)
+    switch (getObjectFamily(object)) {
+      case 'Planet':
+        if(favouritePlanets.find(planet => planet.name === object.name)){
+          const newList = favouritePlanets.filter(planet => planet.name !== object.name)
+          setFavouritePlanets(newList)
+          await updateFavLists(newList, 'Planet')
+        }else{
+          setFavouritePlanets([...favouritePlanets, object])
+          await updateFavLists([...favouritePlanets, object], 'Planet')
+        }
+        break;
+      case 'DSO':
+        if(favouriteDSO.find(dso => dso.name === object.name)){
+          const newList = favouriteDSO.filter(dso => dso.name !== object.name)
+          setFavouriteDSO(newList)
+          await updateFavLists(newList, 'DSO')
+        }else{
+          setFavouriteDSO([...favouriteDSO, object])
+          await updateFavLists([...favouriteDSO, object], 'DSO')
+        }
+        break;
+      case 'Star':
+        if(favouriteStars.find(star => star.ids === object.ids)){
+          const newList = favouriteStars.filter(star => star.ids !== object.ids)
+          setFavouriteStars(newList)
+          await updateFavLists(newList, 'Star')
+        }else{
+          setFavouriteStars([...favouriteStars, object])
+          await updateFavLists([...favouriteStars, object], 'Star')
+        }
+        break;
     }
   }
 
@@ -81,7 +128,8 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
         <View style={celestialBodiesOverviewStyles.content.header}>
           <View style={{position: 'absolute', top: 10, right: 10, zIndex: 10}}>
             <SimpleButton
-              icon={require('../../../assets/icons/FiHeart.png')}
+              iconColor={checkIsFav() ? app_colors.red : app_colors.white}
+              icon={checkIsFav() ? require('../../../assets/icons/FiHeartFill.png') : require('../../../assets/icons/FiHeart.png')}
               onPress={() => handleFavorite()}
             />
           </View>
@@ -174,7 +222,7 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
               </View>
 
               <View style={{marginTop: 10}}>
-                <SimpleButton text={"Voir dans le planétarium"} fullWidth backgroundColor={app_colors.white} small textColor={app_colors.black} />
+                <SimpleButton disabled text={"Voir dans le planétarium\n(bientôt disponible)"} fullWidth backgroundColor={app_colors.white} small textColor={app_colors.black} />
               </View>
             </View>
 

@@ -66,6 +66,7 @@ export const searchResultCardStyles = {
     footer: {
       display: 'flex' as 'flex',
       flexDirection: 'row' as 'row',
+      justifyContent: 'space-between' as 'space-between',
 
       chip:{
         paddingVertical: 2,

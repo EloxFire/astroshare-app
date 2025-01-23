@@ -29,7 +29,6 @@ export const celestialBodiesOverviewStyles = {
       icon: {
         width: 80,
         height: 80,
-        borderWidth: 1,
       },
 
       infos: {

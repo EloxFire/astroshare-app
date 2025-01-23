@@ -85,6 +85,7 @@ export default function SearchResultCard({ object, navigation }: SearchResultCar
         </View>
         <View style={searchResultCardStyles.card.footer}>
           <Text style={[searchResultCardStyles.card.footer.chip, { backgroundColor: isVisible ? app_colors.green_eighty : app_colors.red_eighty }]}>{isVisible ? i18n.t('common.visibility.visible') : i18n.t('common.visibility.notVisible')}</Text>
+          <Text style={[searchResultCardStyles.card.footer.chip, { backgroundColor: app_colors.white_forty, color: app_colors.white }]}>{i18n.t('common.other.more')}</Text>
         </View>
       </View>
     </TouchableOpacity>

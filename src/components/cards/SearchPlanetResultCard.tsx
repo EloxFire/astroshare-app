@@ -5,7 +5,7 @@ import { routes } from '../../helpers/routes'
 import { EquatorialCoordinate, GeographicCoordinate, isBodyAboveHorizon, Planet } from '@observerly/astrometry'
 import { GlobalPlanet } from '../../helpers/types/GlobalPlanet'
 import DSOValues from '../commons/DSOValues'
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useSettings } from '../../contexts/AppSettingsContext'
 import { app_colors } from '../../helpers/constants'
 import { calculateHorizonAngle } from '../../helpers/scripts/astro/calculateHorizonAngle'
@@ -67,6 +67,7 @@ export default function SearchPlanetResultCard({ planet, navigation }: SearchPla
         </View>
         <View style={searchResultCardStyles.card.footer}>
           <Text style={[searchResultCardStyles.card.footer.chip, { backgroundColor: isVisible ? app_colors.green_eighty : app_colors.red_eighty }]}>{isVisible ? i18n.t('common.visibility.visible') : i18n.t('common.visibility.notVisible')}</Text>
+          <Text style={[searchResultCardStyles.card.footer.chip, { backgroundColor: app_colors.white_forty, color: app_colors.white }]}>{i18n.t('common.other.more')}</Text>
         </View>
       </View>
     </TouchableOpacity>

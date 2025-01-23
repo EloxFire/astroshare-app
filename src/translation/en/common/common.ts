@@ -44,6 +44,7 @@ export const commonTranslations = {
     removeFav: "Remove from favorites",
     addFav: "Add to favorites",
     overview: "Overview",
+    more: "See more"
   },
   time: {
     time: "Time",
