@@ -14,11 +14,32 @@ import {useAuth} from "../../contexts/AuthContext";
 import {routes} from "../../helpers/routes";
 import {initPaymentSheet, presentPaymentSheet, StripeProvider} from "@stripe/stripe-react-native";
 import axios from "axios";
+import {ProPackage} from "../../helpers/types/ProPackage";
 
 export default function SellScreen({ navigation }: any) {
 
+  const proPackages: ProPackage[] = [
+    {
+      title: i18n.t('pro.sellScreen.offers.monthlyTitle'),
+      description: i18n.t('pro.sellScreen.offers.monthlyDescription'),
+      price: 2.49,
+      stripePrice: 249,
+      displayType: i18n.t('pro.sellScreen.offers.monthly'),
+      type: 'monthly'
+    },
+    {
+      title: i18n.t('pro.sellScreen.offers.yearlyTitle'),
+      description: i18n.t('pro.sellScreen.offers.yearlyDescription'),
+      price: 23.90,
+      stripePrice: 2390,
+      displayType: i18n.t('pro.sellScreen.offers.yearly'),
+      type: 'yearly'
+    },
+  ]
+
   const {currentUser} = useAuth()
   const [activeOffer, setActiveOffer] = useState<'monthly' | 'yearly'>('yearly')
+  const [selectedOffer, setSelectedOffer] = useState<ProPackage | null>(proPackages.find(proPackage => proPackage.type === activeOffer) || null)
   const [stripePublishableKey, setStripePublishableKey] = useState<string>('')
   const [paymentLoading, setPaymentLoading] = useState<boolean>(false)
 
@@ -78,7 +99,9 @@ export default function SellScreen({ navigation }: any) {
 
   const createPayment = async () => {
     try {
-      const response = await axios.post(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/stripe/create-payment-intent`, {},
+      const response = await axios.post(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/stripe/create-payment-intent`, {
+          amount: selectedOffer?.stripePrice,
+        },
         {
           headers: {
             Authorization: process.env.EXPO_PUBLIC_ADMIN_KEY, // Pass the adminKey in the Authorization header
@@ -92,7 +115,7 @@ export default function SellScreen({ navigation }: any) {
         customer,
       };
     }catch (e) {
-      console.log("Error", e)
+      console.log("[ERROR] Error while creating payement intent", e)
     }
   }
 
@@ -106,32 +129,44 @@ export default function SellScreen({ navigation }: any) {
       const response = await createPayment()
 
       if(!response){
-        console.log("Error while creating payment")
+        console.log("[ERROR] Error creating payment")
         return;
       }
 
       const { error } = await initPaymentSheet({
-        merchantDisplayName: "Example, Inc.",
+        merchantDisplayName: "Astroshare",
         customerId: response.customer,
         customerEphemeralKeySecret: response.ephemeralKey,
         paymentIntentClientSecret: response.paymentIntent,
-        // Set `allowsDelayedPaymentMethods` to true if your business can handle payment
-        //methods that complete payment after a delay, like SEPA Debit and Sofort.
-        allowsDelayedPaymentMethods: true,
+        allowsDelayedPaymentMethods: false, // SEPA or credit payment
         defaultBillingDetails: {
-          name: 'Jane Doe',
-        }
+          name: currentUser.username,
+          email: currentUser.email,
+        },
+        style: 'alwaysDark',
+        returnURL: 'astroshare://payment',
       });
       if (!error) {
         setPaymentLoading(true);
 
         const {error} = await presentPaymentSheet()
         if(error) {
-          console.log("Error presenting payment sheet", error)
+          console.log("[ERROR] Error while trying to present payment sheet to user", error)
         }
+
+        await axios.post(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/stripe/updateUser`, {
+          userId: currentUser.uid,
+          subscriptionType: selectedOffer?.type,
+          subscriptionPrice: selectedOffer?.price,
+        }, {
+          headers: {
+            Authorization: process.env.EXPO_PUBLIC_ADMIN_KEY, // Pass the adminKey in the Authorization header
+          }
+        })
+        setPaymentLoading(false);
       }
     }catch (e) {
-      console.log("Error", e)
+      console.log("[ERROR] Error in payment process", e)
     }
   }
 
@@ -163,24 +198,23 @@ export default function SellScreen({ navigation }: any) {
             </View>
             <Text style={sellScreenStyles.content.subtitle}>{i18n.t('pro.sellScreen.subtitle')}</Text>
             <View style={sellScreenStyles.content.offers}>
-              <ProOfferCard
-                onClick={() => setActiveOffer('monthly')}
-                active={activeOffer === "monthly"}
-                price={2.49}
-                type={i18n.t('pro.sellScreen.offers.monthly')}
-                hasDiscount={false}
-                badgeText={''}
-                description={i18n.t('pro.sellScreen.offers.monthlyDescription')}
-              />
-              <ProOfferCard
-                onClick={() => setActiveOffer('yearly')}
-                active={activeOffer === "yearly"}
-                price={23.90}
-                type={i18n.t('pro.sellScreen.offers.yearly')}
-                hasDiscount={true}
-                badgeText={i18n.t('pro.sellScreen.offers.discount')}
-                description={i18n.t('pro.sellScreen.offers.yearlyDescription')}
-              />
+              {
+                proPackages.map((proPackage, index) => {
+                  return <ProOfferCard
+                    key={index}
+                    onClick={() => {
+                      setActiveOffer(proPackage.type as 'monthly' | 'yearly');
+                      setSelectedOffer(proPackage)
+                    }}
+                    active={activeOffer === proPackage.type}
+                    price={proPackage.price}
+                    type={proPackage.displayType}
+                    hasDiscount={proPackage.type === 'yearly'}
+                    badgeText={proPackage.type === 'yearly' ? i18n.t('pro.sellScreen.offers.discount') : ''}
+                    description={proPackage.description}
+                  />
+                })
+              }
             </View>
             {
               currentUser ?
