@@ -15,6 +15,7 @@ import { Star } from '../helpers/types/Star'
 import PlanetCardLite from '../components/cards/PlanetCardLite'
 import BrightStarCardLite from '../components/cards/BrightStarCardLite'
 import ScreenInfo from '../components/ScreenInfo'
+import CelestialBodyCardLite from "../components/cards/CelestialBodyCardLite";
 
 export default function FavouritesScreen({ navigation }: any) {
 
@@ -82,7 +83,7 @@ export default function FavouritesScreen({ navigation }: any) {
                   {
                     objects.length > 0 ?
                       objects.map((object: DSO, index: number) => {
-                        return <ObjectCardLite key={index} object={object} navigation={navigation} />
+                        return <CelestialBodyCardLite key={index} object={object} navigation={navigation} />
                       }) :
                       <View>
                         <Text style={favouriteScreenStyles.noFavsBadge}>{i18n.t('favouriteScreen.dso.noFavs')}</Text>
