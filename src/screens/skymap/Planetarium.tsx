@@ -8,10 +8,7 @@ import { useSettings } from '../../contexts/AppSettingsContext';
 import * as THREE from "three";
 import * as ExpoTHREE from "expo-three";
 import { Star } from '../../helpers/types/Star';
-import {
-  getStarMaterial, groupStarsByMagnitude,
-  groupStarsBySpectralType
-} from '../../helpers/scripts/astro/skymap/createStarMaterial';
+import { getStarMaterial } from '../../helpers/scripts/astro/skymap/createStarMaterial';
 import { useStarCatalog } from '../../contexts/StarsContext';
 import { getEffectiveAngularResolution } from '../../helpers/scripts/astro/skymap/getEffectiveAngularResolution';
 import { getEuclideanDistance } from '../../helpers/scripts/astro/skymap/getEuclideanDistance';
@@ -79,82 +76,20 @@ export default function Planetarium({ navigation }: any) {
     sceneRef.current = scene;
     rendererRef.current = renderer;
 
-    const groupedBySpectralType = groupStarsBySpectralType(starsCatalog.slice(0, 1000));
-    console.log(groupedBySpectralType);
-
-    Object.entries(groupedBySpectralType).forEach(([key, value]) => {
-      // For each spectral type group, group by magnitude then create a Points object for each group, and the stars will have a size based on their magnitude
-      const groupedByMagnitude = groupStarsByMagnitude(value);
-      Object.entries(groupedByMagnitude).forEach(([mag, stars]) => {
-        console.log(`Magnitude: ${mag}, Number of stars: ${stars.length}`);
-        // Create the geometry and material for the stars in the group based on their magnitude
-        const starsGroup = new THREE.Group();
-        stars.forEach((star, index) => {
-          const geometry = new THREE.BufferGeometry();
-          const positions = new Float32Array(stars.length * 3);
-          const { x, y, z } = convertSphericalToCartesian(1000, star.ra, star.dec);
-          const i3 = index * 3;
-          positions[i3] = x;
-          positions[i3 + 1] = y;
-          positions[i3 + 2] = z;
-          geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-          const material = getStarMaterial(star);
-          const newStar = new THREE.Points(geometry, material);
-          starsGroup.add(newStar);
-        });
-        scene.add(starsGroup);
-      });
+    const stars: number[] = [];
+    const starSize: number[] = [];
+    const geometry = new THREE.BufferGeometry();
+    const material = getStarMaterial();
+    starsCatalog.forEach((star: Star) => {
+      const { x, y, z } = convertSphericalToCartesian(10, star.ra, star.dec);
+      stars.push(x, y, z);
+      starSize.push(1 - star.V * 0.1);
     })
-
-
-    // Group stars by their material type for efficient rendering
-    // const materialGroups: { [key: string]: { positions: Float32Array, geometry: THREE.BufferGeometry } } = {};
-
-    // Iterate over the stars and group them by material type
-    // const starsGroup= new THREE.Group();
-    // starsCatalog.forEach((star: Star, index: number) => {
-    //   const {x,y,z} = convertSphericalToCartesian(10, star.ra, star.dec);
-
-      // Get the material for the star
-      // const starType = star.sp_type ? star.sp_type[0] : 'A';
-      // const geometry = new THREE.BufferGeometry();
-      // geometry.setAttribute('position',new THREE.Float32BufferAttribute( [x,y,z], 3 ))
-      // const material = getStarMaterial(star);
-      // const newStar = new THREE.Points(geometry,material);
-      // starsGroup.add(newStar);
-
-      // Check if this material group exists, if not, create it
-      // if (!materialGroups[starType]) {
-      //   const positions = new Float32Array(starsCatalog.length * 3); // 3 values per star (x, y, z)
-      //   const geometry = new THREE.BufferGeometry();
-      //   geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-      //   materialGroups[starType] = { positions, geometry };
-      // }
-
-      // Add this star's position to the appropriate material group
-      // const { positions } = materialGroups[starType];
-      // const i3 = index * 3;
-      // positions[i3] = x;
-      // positions[i3 + 1] = y;
-      // positions[i3 + 2] = z;
-    // });
-
-    // Now create Points objects for each material group and add them to the scene
-    // Object.keys(materialGroups).forEach((starType) => {
-    //   const { positions, geometry } = materialGroups[starType];
-
-    //   // Update geometry with positions
-    //   geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-
-    //   // Create Points object and add it to the scene
-    //   const starMaterial = getStarMaterial({ sp_type: starType } as Star); // Get material by type
-    //   const stars = new THREE.Points(geometry, starMaterial);
-    //   stars.material.size
-    //   scene.add(stars);
-    // });
-
-    // scene.add(starsGroup);
-
+    geometry.setAttribute('position', new THREE.Float32BufferAttribute(stars, 3));
+    geometry.setAttribute('size', new THREE.Float32BufferAttribute(starSize, 1));
+    const starsCloud = new THREE.Points(geometry, material);
+    starsCloud.frustumCulled = false;
+    scene.add(starsCloud);
 
     pointerUI.frustumCulled = false;
     const pointerTextures = createPointerTextures();
@@ -166,9 +101,9 @@ export default function Planetarium({ navigation }: any) {
     EquatorialGrid = createEquatorialGrid(0x0000ff);
     EquatorialGrid.grid2.visible = false;
     EquatorialGrid.grid3.visible = false;
-    // scene.add(EquatorialGrid.grid1);
-    // scene.add(EquatorialGrid.grid2);
-    // scene.add(EquatorialGrid.grid3);
+    scene.add(EquatorialGrid.grid1);
+    scene.add(EquatorialGrid.grid2);
+    scene.add(EquatorialGrid.grid3);
     AzimuthalGrid = createAzimuthalGrid(0x00ff00);
     AzimuthalGrid.grid2.visible = false;
     AzimuthalGrid.grid3.visible = false;
@@ -176,9 +111,9 @@ export default function Planetarium({ navigation }: any) {
       AzimuthalGrid[key].lookAt(getGlobePosition(currentUserLocation.lat, currentUserLocation.lon));
     });
 
-    // scene.add(AzimuthalGrid.grid1);
-    // scene.add(AzimuthalGrid.grid2);
-    // scene.add(AzimuthalGrid.grid3);
+    scene.add(AzimuthalGrid.grid1);
+    scene.add(AzimuthalGrid.grid2);
+    scene.add(AzimuthalGrid.grid3);
 
     let Constellations = drawConstellations();
     scene.add(Constellations);
@@ -360,10 +295,10 @@ export default function Planetarium({ navigation }: any) {
           p.setXYZ(0, pointerCoos.x, pointerCoos.y, pointerCoos.z);
           p.needsUpdate = true;
           pointerUI.visible = true;
-          setCurrentTapInfos(starsCatalog[intersects[0].index!.toString()]);
+          // setCurrentTapInfos(starsCatalog[intersects[0].index!.toString()]);
           camera.updateProjectionMatrix();
         } else {
-          setCurrentTapInfos(null);
+          // setCurrentTapInfos(null);
           pointerUI.visible = false;
         }
       }
