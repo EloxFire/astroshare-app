@@ -19,7 +19,7 @@ interface LineGraphProps {
 
 const LineGraph: React.FC<LineGraphProps> = ({ data, field, lineColor, leftMargin, yMin, yMax, shortNumbers }) => {
 
-  const {currentLCID} = useTranslation()
+  const { currentLCID } = useTranslation();
 
   const SCREEN_WIDTH = Dimensions.get("screen").width;
   const WIDTH = SCREEN_WIDTH - 20; // Largeur du graphique
@@ -29,8 +29,29 @@ const LineGraph: React.FC<LineGraphProps> = ({ data, field, lineColor, leftMargi
   const TOP_MARGIN = 10; // Réduire la marge en haut
   const BOTTOM_MARGIN = 20; // Marge pour les labels X
 
-  // Extraire les valeurs du champ
-  const values = data.map((item) => item[field]);
+  // Fonction pour détecter les valeurs invalides
+  const isValidNumber = (value: any): boolean => {
+    return typeof value === "number" && !isNaN(value) && isFinite(value);
+  };
+
+  // Filtrer les données corrompues
+  const validData = data.filter((item) => isValidNumber(item[field]));
+
+  // Extraire les valeurs du champ après filtrage
+  const values = validData.map((item) => item[field]);
+
+  if (values.length === 0) {
+    // Si aucune donnée valide, ne pas afficher le graphique
+    return (
+      <View style={styles.container}>
+        <Svg width={WIDTH} height={HEIGHT}>
+          <SvgText x={WIDTH / 2} y={HEIGHT / 2} fontSize={14} fill={app_colors.red} textAnchor="middle">
+            Pas de données valides
+          </SvgText>
+        </Svg>
+      </View>
+    );
+  }
 
   // Calculer les valeurs minimale et maximale automatiques
   const computedYMin = yMin !== undefined ? yMin : Math.min(...values);
@@ -44,7 +65,7 @@ const LineGraph: React.FC<LineGraphProps> = ({ data, field, lineColor, leftMargi
 
   // Configurer les échelles pour les axes
   const xScale = scaleLinear()
-    .domain([0, data.length - 1]) // Indices des données
+    .domain([0, validData.length - 1]) // Indices des données filtrées
     .range([LEFT_MARGIN, WIDTH - RIGHT_MARGIN]); // Espace horizontal
 
   const yScale = scaleLinear()
@@ -61,7 +82,7 @@ const LineGraph: React.FC<LineGraphProps> = ({ data, field, lineColor, leftMargi
   const pathData = lineGenerator(values) || "";
 
   // Filtrer les heures pour afficher uniquement celles correspondant aux 30 minutes
-  const filteredTimestamps = data.filter((item) => {
+  const filteredTimestamps = validData.filter((item) => {
     const minutes = new Date(item.time_tag).getMinutes();
     return minutes === 0 || minutes === 30; // Heures pile ou demi-heures
   });
@@ -112,7 +133,7 @@ const LineGraph: React.FC<LineGraphProps> = ({ data, field, lineColor, leftMargi
 
         {/* Labels des heures sur l'axe X */}
         {filteredTimestamps.map((item, index) => {
-          const originalIndex = data.findIndex((d) => d.time_tag === item.time_tag);
+          const originalIndex = validData.findIndex((d) => d.time_tag === item.time_tag);
           const x = xScale(originalIndex);
           const label = item.time_tag.split(" ")[1].slice(0, 5); // Afficher hh:mm
           return (

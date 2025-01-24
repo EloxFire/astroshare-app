@@ -3,7 +3,6 @@ import {View, Dimensions, ScrollView, Text} from 'react-native';
 import {kpIndexGraphStyles} from "../../styles/components/graphs/kpIndex";
 import {app_colors} from "../../helpers/constants";
 import {getGeomagneticStormInfos} from "../../helpers/scripts/astro/getGeomagneticStormInfos";
-import dayjs from "dayjs";
 import {KpIndexData} from "../../helpers/types/KpIndexData";
 import {getKpIndex} from "../../helpers/api/getKpIndex";
 
@@ -18,6 +17,7 @@ interface KpData {
 const KpChart: React.FC = () => {
 
   const [data, setData] = useState<KpIndexData[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
   const legendItems = [
     {label: 'G0', color: app_colors.green, textColor: app_colors.black},
@@ -56,7 +56,9 @@ const KpChart: React.FC = () => {
 
         const fullData: KpIndexData[] = KpData.concat(usedDummyData);
 
+        // console.log("Full data : ", fullData);
         setData(fullData.splice(0, 10));
+        setLoading(false);
       } catch (error) {
         console.error("Erreur lors de la récupération des données Kp Index :", error);
       }
@@ -67,73 +69,83 @@ const KpChart: React.FC = () => {
 
 
   return (
-    <View style={kpIndexGraphStyles.container}>
-      <View style={kpIndexGraphStyles.container.legend}>
-        {
-          legendItems.map((item, index) => {
+    <View>
+      {
+        !loading ? (
+          <>
+            <View style={kpIndexGraphStyles.container}>
+              <View style={kpIndexGraphStyles.container.legend}>
+                {
+                  legendItems.map((item, index) => {
 
-            const itemStyles = {
-              container: {
-                display: 'flex' as 'flex',
-                flexDirection: 'row' as 'row',
-                flex: 1,
-              },
-              text: {
-                color: item.textColor || 'white',
-                backgroundColor: item.color,
-                flex: 1,
-                textAlign: "center" as "center",
-                borderTopLeftRadius: index === 0 ? 5 : 0,
-                borderBottomLeftRadius: index === 0 ? 5 : 0,
-                borderTopRightRadius: index === legendItems.length - 1 ? 5 : 0,
-                borderBottomRightRadius: index === legendItems.length - 1 ? 5 : 0,
-              }
-            }
+                    const itemStyles = {
+                      container: {
+                        display: 'flex' as 'flex',
+                        flexDirection: 'row' as 'row',
+                        flex: 1,
+                      },
+                      text: {
+                        color: item.textColor || 'white',
+                        backgroundColor: item.color,
+                        flex: 1,
+                        textAlign: "center" as "center",
+                        borderTopLeftRadius: index === 0 ? 5 : 0,
+                        borderBottomLeftRadius: index === 0 ? 5 : 0,
+                        borderTopRightRadius: index === legendItems.length - 1 ? 5 : 0,
+                        borderBottomRightRadius: index === legendItems.length - 1 ? 5 : 0,
+                      }
+                    }
 
 
-            return (
-              <View key={index} style={itemStyles.container}>
-                <Text style={itemStyles.text}>{item.label}</Text>
+                    return (
+                      <View key={"label-key" + index} style={itemStyles.container}>
+                        <Text style={itemStyles.text}>{item.label}</Text>
+                      </View>
+                    )
+                  })
+                }
               </View>
-            )
-          })
-        }
-      </View>
-      <View style={kpIndexGraphStyles.container.graph}>
-        <View style={kpIndexGraphStyles.container.graph.topGraph}>
-          <View style={kpIndexGraphStyles.container.graph.topGraph.yAxis}>
-            {
-              Array.from({length: 10}).map((_, index) => {
-                return (
-                  <Text style={kpIndexGraphStyles.container.graph.topGraph.yAxis.values} key={index}>{9 - index}</Text>
-                )
-              })
-            }
-          </View>
-          <View style={kpIndexGraphStyles.container.graph.topGraph.dataContainer}>
-            {
-              data.map((item, index) => {
-                return (
-                  <>
-                    <View key={index} style={{flex:1, height: `${(item.Kp / 9) * 100}%`, backgroundColor: getGeomagneticStormInfos(item.Kp).color}}>
-                      <Text style={[kpIndexGraphStyles.container.graph.topGraph.yAxis.values, {color: app_colors.black, textAlign: 'center'}]}>{item.Kp}</Text>
-                    </View>
-                  </>
-                )
-              })
-            }
-          </View>
-        </View>
-        <View style={kpIndexGraphStyles.container.graph.bottomGraph.xAxis}>
-          {
-            KpChartTimes.map((item, index) => {
-              return (
-                <Text style={kpIndexGraphStyles.container.graph.bottomGraph.xAxis.values} key={index}>{item}</Text>
-              )
-            })
-          }
-        </View>
-      </View>
+              <View style={kpIndexGraphStyles.container.graph}>
+                <View style={kpIndexGraphStyles.container.graph.topGraph}>
+                  <View style={kpIndexGraphStyles.container.graph.topGraph.yAxis}>
+                    {
+                      Array.from({length: 10}).map((_, index) => {
+                        return (
+                          <Text style={kpIndexGraphStyles.container.graph.topGraph.yAxis.values} key={"scale-key-" + index}>{9 - index}</Text>
+                        )
+                      })
+                    }
+                  </View>
+                  <View style={kpIndexGraphStyles.container.graph.topGraph.dataContainer}>
+                    {
+                      data.map((item, index) => {
+                        return (
+                          <>
+                            <View key={"value-key-" + index} style={{flex:1, height: `${(item.Kp / 9) * 100}%`, backgroundColor: getGeomagneticStormInfos(item.Kp).color}}>
+                              <Text style={[kpIndexGraphStyles.container.graph.topGraph.yAxis.values, {color: app_colors.black, textAlign: 'center'}]}>{item.Kp}</Text>
+                            </View>
+                          </>
+                        )
+                      })
+                    }
+                  </View>
+                </View>
+                <View style={kpIndexGraphStyles.container.graph.bottomGraph.xAxis}>
+                  {
+                    KpChartTimes.map((item, index) => {
+                      return (
+                        <Text style={kpIndexGraphStyles.container.graph.bottomGraph.xAxis.values} key={"time-key-" + index}>{item}</Text>
+                      )
+                    })
+                  }
+                </View>
+              </View>
+            </View>
+          </>
+        ) : (
+          <Text>Loading...</Text>
+        )
+      }
     </View>
   );
 };
