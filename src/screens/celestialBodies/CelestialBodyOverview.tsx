@@ -4,7 +4,7 @@ import PageTitle from "../../components/commons/PageTitle";
 import {Image, ScrollView, Text, TouchableOpacity, View} from "react-native";
 import {i18n} from "../../helpers/scripts/i18n";
 import {celestialBodiesOverviewStyles} from "../../styles/screens/celestialBodies/celestialBodies";
-import {getDSOIcon} from "../../helpers/scripts/astro/objects/getObjectIcon";
+import {getObjectIcon} from "../../helpers/scripts/astro/objects/getObjectIcon";
 import {getObjectName} from "../../helpers/scripts/astro/objects/getObjectName";
 import {getObjectType} from "../../helpers/scripts/astro/objects/getObjectType";
 import SimpleBadge from "../../components/badges/SimpleBadge";
@@ -134,7 +134,7 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
             />
           </View>
           <View>
-            <Image source={getDSOIcon(object)} style={celestialBodiesOverviewStyles.content.header.icon} />
+            <Image source={getObjectIcon(object)} style={celestialBodiesOverviewStyles.content.header.icon} />
           </View>
           <View style={celestialBodiesOverviewStyles.content.header.infos}>
             <View>

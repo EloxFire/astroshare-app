@@ -6,8 +6,6 @@ import { getObjectName } from '../../helpers/scripts/astro/objects/getObjectName
 import { objectCardLiteStyles } from '../../styles/components/cards/objectCardLite'
 import { astroImages } from '../../helpers/scripts/loadImages'
 import { getConstellationName } from '../../helpers/scripts/getConstellationName'
-import { prettyDec, prettyRa } from '../../helpers/scripts/astro/prettyCoords'
-import { getObjectType } from '../../helpers/scripts/astro/objects/getObjectType'
 import { routes } from '../../helpers/routes'
 import {useSettings} from "../../contexts/AppSettingsContext";
 import {useSpot} from "../../contexts/ObservationSpotContext";
@@ -44,7 +42,7 @@ export default function ObjectCardLite({ object, navigation }: ObjectCardLitePro
   }, [])
 
   return (
-    <TouchableOpacity onPress={() => navigation.push(routes.objectDetails.path, { object: object })} style={objectCardLiteStyles.card}>
+    <TouchableOpacity onPress={() => navigation.push(routes.celestialBodies.details.path, { object: object })} style={objectCardLiteStyles.card}>
       <View style={[objectCardLiteStyles.card.visibility, {backgroundColor: isVisible ? app_colors.green : app_colors.red}]}/>
       <Image style={objectCardLiteStyles.card.image} source={astroImages[object.type.toUpperCase()]} />
       <View style={objectCardLiteStyles.card.infos}>

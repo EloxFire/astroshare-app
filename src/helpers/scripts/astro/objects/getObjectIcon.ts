@@ -4,7 +4,7 @@ import {Star} from "../../../types/Star";
 import {GlobalPlanet} from "../../../types/GlobalPlanet";
 import {getObjectFamily} from "./getObjectFamily";
 
-export const getDSOIcon = (object: DSO | Star | GlobalPlanet) => {
+export const getObjectIcon = (object: DSO | Star | GlobalPlanet) => {
   const objectFamily = getObjectFamily(object)
 
   switch (objectFamily) {

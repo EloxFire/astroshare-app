@@ -108,7 +108,7 @@ export default function LaunchDetails({ route, navigation }: LaunchCardProps): R
                 <Text style={launchDetailsStyles.content.mainCard.body.subtitleContainer.subtitle_text}>{launch.name.split('|')[1].trim().length > 38 ? truncate(launch.name.split('|')[1].trim(), 38) :  launch.name.split('|')[1].trim()}</Text>
               </View>
               <View style={[launchDetailsStyles.content.mainCard.body.subtitleContainer, {marginBottom: 20}]}>
-                <Text style={launchDetailsStyles.content.mainCard.body.subtitleContainer.subtitle}>T- </Text>
+                <Text style={launchDetailsStyles.content.mainCard.body.subtitleContainer.subtitle}>T{dayjs(launch.net).isBefore(dayjs()) ? "+" : "-"} </Text>
                 <Text style={launchDetailsStyles.content.mainCard.body.subtitleContainer.subtitle_text}>{countdown}</Text>
               </View>
               <DSOValues title={`${i18n.t('launchesScreen.launchCards.date')} ${launch.status.id === 2 || launch.status.id === 8 ? i18n.t('launchesScreen.launchCards.temporary') : ""}`} value={dayjs(launch.net).format("DD MMM YYYY")} />

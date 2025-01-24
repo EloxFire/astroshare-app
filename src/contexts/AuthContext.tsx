@@ -25,7 +25,10 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
   }, [])
 
   const checkUser = async () => {
-    const token = await getData(storageKeys.auth.accessToken);
+    const token = await getData(storageKeys.auth.refreshToken);
+
+    console.log('[Auth] Checking user')
+    console.log('[Auth] Refresh token :', token)
 
     if(!token){
       console.log('[Auth] No token found')
