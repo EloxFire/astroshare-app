@@ -101,7 +101,7 @@ export default function FavouritesScreen({ navigation }: any) {
                   {
                     planets.length > 0 ?
                       planets.map((planet: GlobalPlanet, index: number) => {
-                        return <PlanetCardLite key={index} planet={planet} navigation={navigation} />
+                        return <CelestialBodyCardLite key={index} object={planet} navigation={navigation} />
                       })
                       :
                       <View>
@@ -120,7 +120,7 @@ export default function FavouritesScreen({ navigation }: any) {
                   {
                     stars.length > 0 ?
                       stars.map((star: Star, index: number) => {
-                        return <BrightStarCardLite key={index} star={star} navigation={navigation} />
+                        return <CelestialBodyCardLite key={index} object={star} navigation={navigation} />
                       })
                       :
                       <View>

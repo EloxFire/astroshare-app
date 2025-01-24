@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react'
-import { TouchableOpacity } from 'react-native'
+import {Text, TouchableOpacity, View} from 'react-native'
 import { objectCardLiteStyles } from '../../styles/components/cards/objectCardLite'
 import { routes } from '../../helpers/routes'
 import { Star } from '../../helpers/types/Star'
@@ -9,6 +9,13 @@ import {computeObject} from "../../helpers/scripts/astro/objects/computeObject";
 import {useTranslation} from "../../hooks/useTranslation";
 import {GlobalPlanet} from "../../helpers/types/GlobalPlanet";
 import {DSO} from "../../helpers/types/DSO";
+import {Image} from "expo-image";
+import {getObjectIcon} from "../../helpers/scripts/astro/objects/getObjectIcon";
+import {getObjectName} from "../../helpers/scripts/astro/objects/getObjectName";
+import SimpleBadge from "../badges/SimpleBadge";
+import {getObjectFamily} from "../../helpers/scripts/astro/objects/getObjectFamily";
+import {app_colors} from "../../helpers/constants";
+import {astroImages} from "../../helpers/scripts/loadImages";
 
 interface CelestialBodyCardLiteProps {
   object: Star | DSO | GlobalPlanet
@@ -28,7 +35,59 @@ export default function CelestialBodyCardLite({ object, navigation }: CelestialB
 
   return (
     <TouchableOpacity onPress={() => navigation.push(routes.celestialBodies.details.path, { object: object })} style={objectCardLiteStyles.card}>
+      <Image source={getObjectIcon(object)} style={objectCardLiteStyles.card.icon} />
+      <View style={objectCardLiteStyles.card.data}>
+        <Text style={objectCardLiteStyles.card.data.title}>{getObjectName(object, 'all', true)}</Text>
+        {
+          objectInfos && (
+            <View style={objectCardLiteStyles.card.data.badges}>
+              <SimpleBadge
+                text={objectInfos.visibilityInfos.visibilityLabel}
+                icon={objectInfos.visibilityInfos.visibilityIcon}
+                backgroundColor={objectInfos.visibilityInfos.visibilityBackgroundColor}
+                foregroundColor={objectInfos.visibilityInfos.visibilityForegroundColor}
+              />
+              {
+                getObjectFamily(object) === 'DSO' && object.m !== "" && (
+                  <>
+                    <SimpleBadge
+                      text={object.name}
+                    />
+                    <SimpleBadge
+                      text={object.const}
+                      icon={astroImages['CONSTELLATION']}
+                      iconColor={app_colors.white}
+                    />
+                  </>
 
+                )
+              }
+              {
+                objectInfos.base.common_name !== "" && (
+                  <SimpleBadge
+                    text={object.type}
+                  />
+                )
+              }
+              {
+                getObjectFamily(object) !== 'DSO' && objectInfos && (
+                  <>
+                    <SimpleBadge
+                      text={objectInfos.base.alt}
+                      icon={require('../../../assets/icons/FiAngleRight.png')}
+                    />
+                    <SimpleBadge
+                      text={objectInfos.base.az}
+                      icon={require('../../../assets/icons/FiCompass.png')}
+                    />
+                  </>
+
+                )
+              }
+            </View>
+          )
+        }
+      </View>
     </TouchableOpacity>
   )
 }
