@@ -8,10 +8,14 @@ import { i18n } from "../helpers/scripts/i18n";
 import * as Linking from 'expo-linking';
 import PageTitle from "../components/commons/PageTitle";
 import BigButton from "../components/commons/buttons/BigButton";
+import ToolButton from "../components/commons/buttons/ToolButton";
+import {useAuth} from "../contexts/AuthContext";
+import {isProUser} from "../helpers/scripts/auth/checkUserRole";
 
 export default function Settings({ navigation }: any) {
 
   const { isNightMode, handleNightMode, isCellularDataEnabled, handleCellularData } = useSettings()
+  const {currentUser} = useAuth()
 
   return (
     <View style={globalStyles.body}>
@@ -27,6 +31,7 @@ export default function Settings({ navigation }: any) {
           <BigButton icon={require('../../assets/icons/FiEye.png')} text={i18n.t('settings.buttons.nightMode.title')} subtitle={i18n.t('settings.buttons.nightMode.subtitle')} hasCheckbox isChecked={isNightMode} onPress={() => handleNightMode()} />
           <BigButton icon={require('../../assets/icons/FiTranslation.png')} text={i18n.t('settings.buttons.language.title')} subtitle={i18n.t('settings.buttons.language.subtitle')} targetScreen={routes.language.path} navigation={navigation} />
           <BigButton icon={require('../../assets/icons/FiLifeBuoy.png')} text={i18n.t('settings.buttons.tutorial.title')} subtitle={i18n.t('settings.buttons.tutorial.subtitle')} targetScreen={routes.tutorial.path} navigation={navigation} />
+          {!isProUser(currentUser) && <ToolButton image={require('../../assets/images/tools/apod.png')} isPremium navigation={navigation} targetScreen={routes.sellScreen.path} text={i18n.t('settings.buttons.pro.title')} subtitle={i18n.t('settings.buttons.pro.subtitle')}/>}
           <Text style={settingsStyles.content.categoryTitle}>{i18n.t('settings.categories.appearance')}</Text>
           <BigButton icon={require('../../assets/icons/FiWidget.png')} text={i18n.t('settings.buttons.widgets.title')} subtitle={i18n.t('settings.buttons.widgets.subtitle')} navigation={navigation} targetScreen={routes.widgetsManager.path} />
           <BigButton icon={require('../../assets/icons/FiViewPoint.png')} text={i18n.t('settings.buttons.favoritesViewPoints.title')} subtitle={i18n.t('settings.buttons.favoritesViewPoints.subtitle')} navigation={navigation} targetScreen={routes.favoritesViewPoints.path} />

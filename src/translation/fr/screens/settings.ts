@@ -26,6 +26,10 @@ export const settingsTranslations = {
       title: "Tutoriel",
       subtitle: "// Découvrez comment utiliser l'application"
     },
+    pro: {
+      title: "Astroshare Pro",
+      subtitle: "// Explorez encore plus loin !"
+    },
     data: {
       title: "Données astronomiques",
       subtitle: "// D'ou proviennent les données affichées ?"

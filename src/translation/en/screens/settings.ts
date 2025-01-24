@@ -26,6 +26,10 @@ export const settingsTranslations = {
       title: "Tutorial",
       subtitle: "// Discover how to use the application"
     },
+    pro: {
+      title: "Astroshare Pro",
+      subtitle: "// Explore even further!"
+    },
     data: {
       title: "Astronomical data",
       subtitle: "// Where do the displayed data come from?"

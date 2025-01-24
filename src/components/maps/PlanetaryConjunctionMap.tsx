@@ -19,14 +19,7 @@ interface PlanetaryConjunctionMapProps {
   targetNames: string[]; // Noms des astres en conjonction
 }
 
-export default function PlanetaryConjunctionMap({
-                                                  ra,
-                                                  dec,
-                                                  width,
-                                                  height,
-                                                  conjunctionDate,
-                                                  targetNames,
-                                                }: PlanetaryConjunctionMapProps) {
+export default function PlanetaryConjunctionMap({ra, dec, width, height, conjunctionDate, targetNames,}: PlanetaryConjunctionMapProps) {
   const { currentUserLocation } = useSettings();
   const { starsCatalog } = useStarCatalog();
   const [positions, setPositions] = useState<any[]>([]);
@@ -322,7 +315,7 @@ export default function PlanetaryConjunctionMap({
   return (
     <View style={{ borderRadius: 10, overflow: "hidden", borderWidth: 1, borderColor: app_colors.white_twenty }}>
       <Svg width={width} height={height} style={{ backgroundColor: "black" }}>
-        {starsCatalog.map((star: Star, index: number) => {
+        {starsCatalog.slice(0, 6000).map((star: Star, index: number) => {
           const { x, y } = getPosition(star.ra, star.dec);
 
           if (!isNaN(x) && !isNaN(y) && x >= 0 && x <= width && y >= 0 && y <= height) {
