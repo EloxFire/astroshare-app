@@ -1,5 +1,24 @@
 import * as THREE from "three";
 
+
+export function getStarColor(code: string): number {
+  const spectralTypes = ['O', 'B', 'A', 'F', 'G', 'K', 'M'];
+  const type = code[0]; // Lettre (O, B, A, etc.)
+  const number = parseInt(code[1]); // Chiffre (0 à 9)
+
+  const typeIndex = spectralTypes.indexOf(type);
+  if (typeIndex === -1 || isNaN(number) || number < 0 || number > 9) {
+    throw new Error('Code stellaire invalide : ' + code);
+  }
+
+  const totalTypes = spectralTypes.length;
+  const typeScale = typeIndex / (totalTypes - 1);
+  const numberScale = number / 9;
+
+  return (typeScale + numberScale / totalTypes);
+}
+
+
 export const getStarMaterial = (): THREE.ShaderMaterial => {
   const uniform = {
   };
@@ -7,18 +26,20 @@ export const getStarMaterial = (): THREE.ShaderMaterial => {
   const vertexShader = `
 	attribute float size;
   varying vec4 vPos;
-  
+  attribute vec4 color;
+  varying vec4 vColor;
 	void main() {
+    vColor=color;
 		vPos = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
 		gl_Position = vPos;
-    gl_PointSize=100.*size;
+    gl_PointSize=size;
 	}
 `
   const fragmentShader = `
   varying vec4 vPos;
+  varying vec4 vColor;
   uniform sampler2D pointTexture;
   void main() {
-    // (fragCoord-.5*iResolution.xy)/iResolution.y
     vec2 uv = (gl_PointCoord-.5*1.)/1.;
 
     vec4 col = vec4(0);
@@ -27,7 +48,7 @@ export const getStarMaterial = (): THREE.ShaderMaterial => {
     float m = .01/d;
     
     col += m;
-    col += vec4(1,.5,.0,1.)*.01/d;
+    col += vColor*.01/d;
 
     gl_FragColor = col;
   }`;

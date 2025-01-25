@@ -8,7 +8,7 @@ import { useSettings } from '../../contexts/AppSettingsContext';
 import * as THREE from "three";
 import * as ExpoTHREE from "expo-three";
 import { Star } from '../../helpers/types/Star';
-import { getStarMaterial } from '../../helpers/scripts/astro/skymap/createStarMaterial';
+import { getStarColor, getStarMaterial } from '../../helpers/scripts/astro/skymap/createStarMaterial';
 import { useStarCatalog } from '../../contexts/StarsContext';
 import { getEffectiveAngularResolution } from '../../helpers/scripts/astro/skymap/getEffectiveAngularResolution';
 import { getEuclideanDistance } from '../../helpers/scripts/astro/skymap/getEuclideanDistance';
@@ -78,15 +78,18 @@ export default function Planetarium({ navigation }: any) {
 
     const stars: number[] = [];
     const starSize: number[] = [];
+    const starColor: number[] = [];
     const geometry = new THREE.BufferGeometry();
     const material = getStarMaterial();
     starsCatalog.forEach((star: Star) => {
       const { x, y, z } = convertSphericalToCartesian(10, star.ra, star.dec);
       stars.push(x, y, z);
-      starSize.push(1 - star.V * 0.1);
+      starSize.push(300 * Math.exp(-star.V / 3));
+      starColor.push(0.0,0.5,1.0,1.0);
     })
     geometry.setAttribute('position', new THREE.Float32BufferAttribute(stars, 3));
     geometry.setAttribute('size', new THREE.Float32BufferAttribute(starSize, 1));
+    geometry.setAttribute('color', new THREE.Float32BufferAttribute(starColor, 4));
     const starsCloud = new THREE.Points(geometry, material);
     starsCloud.frustumCulled = false;
     scene.add(starsCloud);
