@@ -86,7 +86,7 @@ export default function Planetarium({ navigation }: any) {
       stars.push(x, y, z);
       starSize.push(300 * Math.exp(-star.V / 3));
       const indice = getStarColor(star.sp_type);
-      starColor.push(2 * indice ** 2, 0.5 / (100 * (indice - 0.5) ** 2 + 1), 1.5 * (indice - 1) ** 2, 1.0);
+      starColor.push(2 * indice ** 2, 0.5 / (100 * (indice - 0.5) ** 2 + 1), 2 * (indice - 1) ** 2, 1.0);
     })
     geometry.setAttribute('position', new THREE.Float32BufferAttribute(stars, 3));
     geometry.setAttribute('size', new THREE.Float32BufferAttribute(starSize, 1));
