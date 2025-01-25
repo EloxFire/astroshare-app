@@ -85,7 +85,8 @@ export default function Planetarium({ navigation }: any) {
       const { x, y, z } = convertSphericalToCartesian(10, star.ra, star.dec);
       stars.push(x, y, z);
       starSize.push(300 * Math.exp(-star.V / 3));
-      starColor.push(0.0,0.5,1.0,1.0);
+      const indice = getStarColor(star.sp_type);
+      starColor.push(indice, 0.5, 1.0 - indice, 1.0);
     })
     geometry.setAttribute('position', new THREE.Float32BufferAttribute(stars, 3));
     geometry.setAttribute('size', new THREE.Float32BufferAttribute(starSize, 1));
@@ -104,9 +105,9 @@ export default function Planetarium({ navigation }: any) {
     EquatorialGrid = createEquatorialGrid(0x0000ff);
     EquatorialGrid.grid2.visible = false;
     EquatorialGrid.grid3.visible = false;
-    scene.add(EquatorialGrid.grid1);
-    scene.add(EquatorialGrid.grid2);
-    scene.add(EquatorialGrid.grid3);
+    // scene.add(EquatorialGrid.grid1);
+    // scene.add(EquatorialGrid.grid2);
+    // scene.add(EquatorialGrid.grid3);
     AzimuthalGrid = createAzimuthalGrid(0x00ff00);
     AzimuthalGrid.grid2.visible = false;
     AzimuthalGrid.grid3.visible = false;
@@ -114,9 +115,9 @@ export default function Planetarium({ navigation }: any) {
       AzimuthalGrid[key].lookAt(getGlobePosition(currentUserLocation.lat, currentUserLocation.lon));
     });
 
-    scene.add(AzimuthalGrid.grid1);
-    scene.add(AzimuthalGrid.grid2);
-    scene.add(AzimuthalGrid.grid3);
+    // scene.add(AzimuthalGrid.grid1);
+    // scene.add(AzimuthalGrid.grid2);
+    // scene.add(AzimuthalGrid.grid3);
 
     let Constellations = drawConstellations();
     scene.add(Constellations);
