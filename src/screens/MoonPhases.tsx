@@ -2,7 +2,20 @@ import React, { useEffect, useState } from 'react'
 import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import { globalStyles } from '../styles/global'
 import { moonPhasesStyles } from '../styles/screens/moonPhases'
-import { getBodyNextRise, getBodyNextSet, getLunarAge, getLunarDistance, getLunarElongation, getLunarEquatorialCoordinate, getLunarIllumination, getLunarPhase, isFullMoon, isNewMoon, isTransitInstance } from '@observerly/astrometry'
+import {
+  getBodyNextRise,
+  getBodyNextSet,
+  getLunarAge,
+  getLunarDistance,
+  getLunarElongation,
+  getLunarEquatorialCoordinate,
+  getLunarIllumination,
+  getLunarPhase,
+  getNextFullMoon, getNextNewMoon,
+  isFullMoon,
+  isNewMoon,
+  isTransitInstance
+} from '@observerly/astrometry'
 import { moonIcons } from '../helpers/scripts/loadImages'
 import { app_colors } from '../helpers/constants'
 import { calculateHorizonAngle } from '../helpers/scripts/astro/calculateHorizonAngle'
@@ -132,6 +145,8 @@ export default function MoonPhases({ navigation }: any) {
       const age = Math.floor(getLunarAge(formatedDate).age)
       const moonrise = getMoonRiseAndSet(formatedDate).moonrise
       const moonset = getMoonRiseAndSet(formatedDate).moonset
+      const nextFullMoon = getNextFullMoon(formatedDate)
+      const nextNewMoon = getNextNewMoon(formatedDate)
 
       monthInfos.push({
         date: dayDate.format("DD MMM"),
@@ -143,7 +158,9 @@ export default function MoonPhases({ navigation }: any) {
         fullMoon: fullMoon,
         age: age,
         moonrise: moonrise,
-        moonset: moonset
+        moonset: moonset,
+        newFullMoon: nextFullMoon,
+        newNewMoon: nextNewMoon
       })
     }
     setMoonMonthInfos(monthInfos)
