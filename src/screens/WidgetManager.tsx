@@ -34,7 +34,7 @@ export default function WidgetManager({ navigation }: any) {
           {
             Object.keys(HomeWidget).map((widget, index) => {
               return (
-                <TouchableOpacity key={`widget-${index}`} onPress={() => handleWidget(widget)} style={{ display: 'flex', flexDirection: 'column', marginBottom: 10, borderTopWidth: 1, backgroundColor: app_colors.white_twenty, padding: 10, borderRadius: 10, borderColor: app_colors.white_twenty, borderWidth: 1 }}>
+                <TouchableOpacity key={`widget-${index}`} onPress={() => handleWidget(widget)} style={{ display: 'flex', flexDirection: 'column', marginBottom: 10, borderTopWidth: 1, backgroundColor: app_colors.white_no_opacity, padding: 10, borderRadius: 10, borderColor: app_colors.white_twenty, borderWidth: 1 }}>
                   <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
                     {widget === 'None' && <Text style={{ fontSize: 16, textTransform: 'uppercase', fontFamily: 'GilroyBlack', color: app_colors.white }}>Aucun widget</Text>}
                     {widget === 'Live' && <Text style={{ fontSize: 16, textTransform: 'uppercase', fontFamily: 'GilroyBlack', color: app_colors.white }}>Aperçu du ciel en direct</Text>}

@@ -5,7 +5,6 @@ import {routes} from "../../helpers/routes";
 import {useSettings} from "../../contexts/AppSettingsContext";
 import dayjs from "dayjs";
 import {getBrightStarName} from "../../helpers/scripts/astro/objects/getBrightStarName";
-import {texturePaths} from "../../helpers/scripts/astro/skymap/createStarMaterial";
 import {isNight} from "@observerly/astrometry";
 
 interface PlanetariumUIProps {
@@ -70,7 +69,7 @@ export default function PlanetariumUI({ navigation, infoType, infos }: Planetari
         </View>
         {infos && (
           <View style={planetariumUIStyles.container.generalInfosBar.body}>
-            <Image style={planetariumUIStyles.container.generalInfosBar.body.image} source={texturePaths[infos.sp_type[0]] as ImageSourcePropType} />
+            {/*<Image style={planetariumUIStyles.container.generalInfosBar.body.image} source={texturePaths[infos.sp_type[0]] as ImageSourcePropType} />*/}
             <View style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-end'}}>
               <Text style={planetariumUIStyles.container.generalInfosBar.body.title}>{getBrightStarName(infos.ids)}</Text>
               <Text style={planetariumUIStyles.container.generalInfosBar.body.subtitle}>{getBrightStarName(infos.ids)}</Text>
