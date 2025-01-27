@@ -131,7 +131,7 @@ export default function Planetarium({ navigation }: any) {
     // camera.rotateX(90) // Pour que le sol soit perpendiculaire à la camera (mais ca donne une soucis sur la rotation de la camera, a voir)
     let ground = createGround();
     ground.lookAt(getGlobePosition(currentUserLocation.lat, currentUserLocation.lon));
-    ground.renderOrder=1;
+    ground.renderOrder = 1;
     scene.add(ground);
 
     // Animation loop to render the scene
@@ -327,23 +327,31 @@ export default function Planetarium({ navigation }: any) {
       const scene = sceneRef.current;
       if (camera && scene) {
         const raycaster = new THREE.Raycaster();
-        raycaster.near = 1.1;
-        raycaster.params.Points.threshold = 0.02 * Math.sqrt(camera.getEffectiveFOV() ^ (2) + 5);
-        raycaster.far = 100;
+        raycaster.near = 9;
+        raycaster.params.Points.threshold = 0.002 * camera.getEffectiveFOV();
+        raycaster.far = 11;
         const pointer = new THREE.Vector2();
         // console.log('Single tap!');
         pointer.x = (e.x / window.innerWidth) * 2 - 1;
         pointer.y = - (e.y / window.innerHeight) * 2 + 1;
         raycaster.setFromCamera(pointer, camera);
         const intersects = raycaster.intersectObjects(scene.children);
+        let Vmin = 30.0;
+        let index = '0';
         if (typeof intersects[0] !== 'undefined') {
-          let pointerCoos = convertSphericalToCartesian(0.5, parseFloat(starsCatalog[intersects[0].index!.toString()].ra), parseFloat(starsCatalog[intersects[0].index!.toString()].dec));
+          intersects.forEach((value, i) => {
+            if (Vmin > parseFloat(starsCatalog[intersects[i].index!.toString()].V)){
+              index=intersects[i].index!.toString();
+              Vmin=parseFloat(starsCatalog[intersects[i].index!.toString()].V);
+            }
+          })
+          let pointerCoos = convertSphericalToCartesian(0.5, parseFloat(starsCatalog[index].ra), parseFloat(starsCatalog[index].dec));
           let g = pointerUI.geometry;
           let p = g.getAttribute('position');
           p.setXYZ(0, pointerCoos.x, pointerCoos.y, pointerCoos.z);
           p.needsUpdate = true;
           pointerUI.visible = true;
-          // setCurrentTapInfos(starsCatalog[intersects[0].index!.toString()]);
+          // setCurrentTapInfos(starsCatalog[idex]);
           camera.updateProjectionMatrix();
         } else {
           // setCurrentTapInfos(null);
