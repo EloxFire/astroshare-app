@@ -145,8 +145,6 @@ export default function MoonPhases({ navigation }: any) {
       const age = Math.floor(getLunarAge(formatedDate).age)
       const moonrise = getMoonRiseAndSet(formatedDate).moonrise
       const moonset = getMoonRiseAndSet(formatedDate).moonset
-      const nextFullMoon = getNextFullMoon(formatedDate)
-      const nextNewMoon = getNextNewMoon(formatedDate)
 
       monthInfos.push({
         date: dayDate.format("DD MMM"),
@@ -159,8 +157,6 @@ export default function MoonPhases({ navigation }: any) {
         age: age,
         moonrise: moonrise,
         moonset: moonset,
-        newFullMoon: nextFullMoon,
-        newNewMoon: nextNewMoon
       })
     }
     setMoonMonthInfos(monthInfos)
@@ -172,91 +168,105 @@ export default function MoonPhases({ navigation }: any) {
       <View style={globalStyles.screens.separator} />
       <ScrollView>
         <View style={moonPhasesStyles.content}>
-          {
-            selectedView &&
-            <View>
-              <View style={moonPhasesStyles.content.phaseContainer}>
-                <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-                  <SimpleButton small icon={require('../../assets/icons/FiChevronLeft.png')} onPress={() => setDate(dayjs(date).subtract(1, 'day').toDate())} />
-                  <Text style={moonPhasesStyles.content.title}>{i18n.t('moonPhases.title', { date: dayjs(date).format('DD MMMM YYYY') })}</Text>
-                  <SimpleButton small icon={require('../../assets/icons/FiChevronRight.png')} onPress={() => setDate(dayjs(date).add(1, 'day').toDate())} />
-                </View>
-                <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10 }}>
-                  <TouchableOpacity onPress={() => setIsDateModalVisible(true)} style={moonPhasesStyles.content.selectButton}>
-                    <Text style={moonPhasesStyles.content.selectButton.text}>{i18n.t('moonPhases.select_date')}</Text>
-                  </TouchableOpacity>
-                  <SimpleButton icon={require('../../assets/icons/FiRepeat.png')} small onPress={() => setDate(new Date())} />
-                </View>
-
-                {
-                  isDateModalVisible &&
-                  <DateTimePicker
-                    value={date}
-                    mode='date'
-                    display='default'
-                    onChange={(event, selectedDate) => {
-                      if (event.type === 'dismissed') {
-                        setIsDateModalVisible(false)
-                      }
-                      if (event.type === 'set' && selectedDate) {
-                        setIsDateModalVisible(false)
-                        setDate(selectedDate)
-                      }
-                    }}
-                  />
-                }
-
-                {moonData && <Image source={moonIcons[moonData.phase]} style={{ height: 200, width: 200, alignSelf: 'center', marginVertical: 20 }} resizeMode='contain' />}
-                <Text style={moonPhasesStyles.content.title}>{moonData ? moonPhasesList[moonData.phase] : i18n.t('common.loadings.simple')}</Text>
-              </View>
-
-              <View style={moonPhasesStyles.content.valuesContainer}>
-                <DSOValues title={i18n.t('moonPhases.pills.rise_time')} value={moonData ? moonData.moonrise : i18n.t('common.loadings.simple')} chipValue chipColor={app_colors.grey} />
-                <DSOValues title={i18n.t('moonPhases.pills.set_time')} value={moonData ? moonData.moonset : i18n.t('common.loadings.simple')} chipValue chipColor={app_colors.grey} />
-                <DSOValues title={i18n.t('moonPhases.pills.illumination')} value={moonData ? moonData.illumination + '%' : i18n.t('common.loadings.simple')} chipValue chipColor={app_colors.grey} />
-                <DSOValues title={i18n.t('moonPhases.pills.distance')} value={moonData ? formatter.format(moonData.distance) : i18n.t('common.loadings.simple')} chipValue chipColor={app_colors.grey} />
-                <DSOValues title={i18n.t('moonPhases.pills.elongation')} value={moonData ? moonData.elongation! + '°' : i18n.t('common.loadings.simple')} chipValue chipColor={app_colors.grey} />
-                <DSOValues title={i18n.t('moonPhases.pills.age')} value={moonData ? moonData.age! + ' ' + i18n.t('common.other.days') : i18n.t('common.loadings.simple')} chipValue chipColor={app_colors.grey} />
-                <DSOValues title={i18n.t('moonPhases.pills.new_moon')} value={moonData ? moonData.newMoon ? i18n.t('common.other.yes') : i18n.t('common.other.no') : i18n.t('common.loadings.simple')} chipValue chipColor={moonData?.newMoon! ? app_colors.green_eighty : app_colors.grey} />
-                <DSOValues title={i18n.t('moonPhases.pills.full_moon')} value={moonData ? moonData.fullMoon ? i18n.t('common.other.yes') : i18n.t('common.other.no') : i18n.t('common.loadings.simple')} chipValue chipColor={moonData?.fullMoon! ? app_colors.green_eighty : app_colors.grey} />
-              </View>
+          <View style={moonPhasesStyles.content.header}>
+            <View style={moonPhasesStyles.content.header.transitCard}>
+              <Image source={require('../../assets/icons/FiMoonrise.png')} style={moonPhasesStyles.content.header.transitCard.icon} />
+              <Text style={moonPhasesStyles.content.header.transitCard.text}>{i18n.t('moonPhases.pills.rise_time')}</Text>
             </View>
-          }
+          </View>
+          <View style={moonPhasesStyles.content.body}>
 
-          {
-            !selectedView &&
-            <View>
-              <SimpleButton icon={require('../../assets/icons/FiCalendar.png')} text={selectedView ? i18n.t('moonPhases.calendar.button.more') : i18n.t('moonPhases.calendar.button.less')} onPress={() => setSelectedView(!selectedView)} />
-              <View style={moonPhasesStyles.content.calendarHeader}>
-                <SimpleButton icon={require('../../assets/icons/FiChevronLeft.png')} onPress={() => setSelectedMonth(selectedMonth - 1)} />
-                <Text style={moonPhasesStyles.content.title}>{dayjs().month(selectedMonth).format('MMMM YYYY')}</Text>
-                <SimpleButton icon={require('../../assets/icons/FiChevronRight.png')} onPress={() => setSelectedMonth(selectedMonth + 1)} />
-              </View>
-              <View style={moonPhasesStyles.content.calendar}>
-                {
-                  moonMonthInfos.map((day: any, index: number) => {
-                    return (
-                      <View key={index} style={moonPhasesStyles.content.calendar.day}>
-                        <Text style={moonPhasesStyles.content.calendar.day.title}>{day.date}</Text>
-                        <Image source={moonIcons[day.phase]} style={{ height: 70, width: 70, alignSelf: 'center', marginVertical: 10 }} resizeMode='contain' />
-                        <DSOValues small title={i18n.t('moonPhases.calendar.pills.rise_time')} value={day.moonrise} />
-                        <DSOValues small title={i18n.t('moonPhases.calendar.pills.set_time')} value={day.moonset} />
-                        <DSOValues small title={i18n.t('moonPhases.calendar.pills.illumination')} value={day.illumination} />
-                        <DSOValues small title={i18n.t('moonPhases.calendar.pills.distance')} value={formatter.format(day.distance)} />
-                        <DSOValues small title={i18n.t('moonPhases.calendar.pills.elongation')} value={day.elongation + '°'} />
-                        <DSOValues small title={i18n.t('moonPhases.calendar.pills.age')} value={day.age + ' ' + i18n.t('common.other.days')} />
-                        <DSOValues small title={i18n.t('moonPhases.calendar.pills.new_moon')} value={day.newMoon ? i18n.t('common.other.yes') : i18n.t('common.other.no')} />
-                        <DSOValues small title={i18n.t('moonPhases.calendar.pills.full_moon')} value={day.fullMoon ? i18n.t('common.other.yes') : i18n.t('common.other.no')} />
-                      </View>
-                    )
-                  })
-                }
-              </View>
-            </View>
-          }
+          </View>
+          <View style={moonPhasesStyles.content.footer}>
 
-          <SimpleButton icon={require('../../assets/icons/FiCalendar.png')} text={selectedView ? i18n.t('moonPhases.calendar.button.more') : i18n.t('moonPhases.calendar.button.less')} onPress={() => setSelectedView(!selectedView)} />
+          </View>
         </View>
+        {/*<View style={moonPhasesStyles.content}>*/}
+        {/*  {*/}
+        {/*    selectedView &&*/}
+        {/*    <View>*/}
+        {/*      <View style={moonPhasesStyles.content.phaseContainer}>*/}
+        {/*        <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>*/}
+        {/*          <SimpleButton small icon={require('../../assets/icons/FiChevronLeft.png')} onPress={() => setDate(dayjs(date).subtract(1, 'day').toDate())} />*/}
+        {/*          <Text style={moonPhasesStyles.content.title}>{i18n.t('moonPhases.title', { date: dayjs(date).format('DD MMMM YYYY') })}</Text>*/}
+        {/*          <SimpleButton small icon={require('../../assets/icons/FiChevronRight.png')} onPress={() => setDate(dayjs(date).add(1, 'day').toDate())} />*/}
+        {/*        </View>*/}
+        {/*        <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10 }}>*/}
+        {/*          <TouchableOpacity onPress={() => setIsDateModalVisible(true)} style={moonPhasesStyles.content.selectButton}>*/}
+        {/*            <Text style={moonPhasesStyles.content.selectButton.text}>{i18n.t('moonPhases.select_date')}</Text>*/}
+        {/*          </TouchableOpacity>*/}
+        {/*          <SimpleButton icon={require('../../assets/icons/FiRepeat.png')} small onPress={() => setDate(new Date())} />*/}
+        {/*        </View>*/}
+
+        {/*        {*/}
+        {/*          isDateModalVisible &&*/}
+        {/*          <DateTimePicker*/}
+        {/*            value={date}*/}
+        {/*            mode='date'*/}
+        {/*            display='default'*/}
+        {/*            onChange={(event, selectedDate) => {*/}
+        {/*              if (event.type === 'dismissed') {*/}
+        {/*                setIsDateModalVisible(false)*/}
+        {/*              }*/}
+        {/*              if (event.type === 'set' && selectedDate) {*/}
+        {/*                setIsDateModalVisible(false)*/}
+        {/*                setDate(selectedDate)*/}
+        {/*              }*/}
+        {/*            }}*/}
+        {/*          />*/}
+        {/*        }*/}
+
+        {/*        {moonData && <Image source={moonIcons[moonData.phase]} style={{ height: 200, width: 200, alignSelf: 'center', marginVertical: 20 }} resizeMode='contain' />}*/}
+        {/*        <Text style={moonPhasesStyles.content.title}>{moonData ? moonPhasesList[moonData.phase] : i18n.t('common.loadings.simple')}</Text>*/}
+        {/*      </View>*/}
+
+        {/*      <View style={moonPhasesStyles.content.valuesContainer}>*/}
+        {/*        <DSOValues title={i18n.t('moonPhases.pills.rise_time')} value={moonData ? moonData.moonrise : i18n.t('common.loadings.simple')} chipValue chipColor={app_colors.grey} />*/}
+        {/*        <DSOValues title={i18n.t('moonPhases.pills.set_time')} value={moonData ? moonData.moonset : i18n.t('common.loadings.simple')} chipValue chipColor={app_colors.grey} />*/}
+        {/*        <DSOValues title={i18n.t('moonPhases.pills.illumination')} value={moonData ? moonData.illumination + '%' : i18n.t('common.loadings.simple')} chipValue chipColor={app_colors.grey} />*/}
+        {/*        <DSOValues title={i18n.t('moonPhases.pills.distance')} value={moonData ? formatter.format(moonData.distance) : i18n.t('common.loadings.simple')} chipValue chipColor={app_colors.grey} />*/}
+        {/*        <DSOValues title={i18n.t('moonPhases.pills.elongation')} value={moonData ? moonData.elongation! + '°' : i18n.t('common.loadings.simple')} chipValue chipColor={app_colors.grey} />*/}
+        {/*        <DSOValues title={i18n.t('moonPhases.pills.age')} value={moonData ? moonData.age! + ' ' + i18n.t('common.other.days') : i18n.t('common.loadings.simple')} chipValue chipColor={app_colors.grey} />*/}
+        {/*        <DSOValues title={i18n.t('moonPhases.pills.new_moon')} value={moonData ? moonData.newMoon ? i18n.t('common.other.yes') : i18n.t('common.other.no') : i18n.t('common.loadings.simple')} chipValue chipColor={moonData?.newMoon! ? app_colors.green_eighty : app_colors.grey} />*/}
+        {/*        <DSOValues title={i18n.t('moonPhases.pills.full_moon')} value={moonData ? moonData.fullMoon ? i18n.t('common.other.yes') : i18n.t('common.other.no') : i18n.t('common.loadings.simple')} chipValue chipColor={moonData?.fullMoon! ? app_colors.green_eighty : app_colors.grey} />*/}
+        {/*      </View>*/}
+        {/*    </View>*/}
+        {/*  }*/}
+
+        {/*  {*/}
+        {/*    !selectedView &&*/}
+        {/*    <View>*/}
+        {/*      <SimpleButton icon={require('../../assets/icons/FiCalendar.png')} text={selectedView ? i18n.t('moonPhases.calendar.button.more') : i18n.t('moonPhases.calendar.button.less')} onPress={() => setSelectedView(!selectedView)} />*/}
+        {/*      <View style={moonPhasesStyles.content.calendarHeader}>*/}
+        {/*        <SimpleButton icon={require('../../assets/icons/FiChevronLeft.png')} onPress={() => setSelectedMonth(selectedMonth - 1)} />*/}
+        {/*        <Text style={moonPhasesStyles.content.title}>{dayjs().month(selectedMonth).format('MMMM YYYY')}</Text>*/}
+        {/*        <SimpleButton icon={require('../../assets/icons/FiChevronRight.png')} onPress={() => setSelectedMonth(selectedMonth + 1)} />*/}
+        {/*      </View>*/}
+        {/*      <View style={moonPhasesStyles.content.calendar}>*/}
+        {/*        {*/}
+        {/*          moonMonthInfos.map((day: any, index: number) => {*/}
+        {/*            return (*/}
+        {/*              <View key={index} style={moonPhasesStyles.content.calendar.day}>*/}
+        {/*                <Text style={moonPhasesStyles.content.calendar.day.title}>{day.date}</Text>*/}
+        {/*                <Image source={moonIcons[day.phase]} style={{ height: 70, width: 70, alignSelf: 'center', marginVertical: 10 }} resizeMode='contain' />*/}
+        {/*                <DSOValues small title={i18n.t('moonPhases.calendar.pills.rise_time')} value={day.moonrise} />*/}
+        {/*                <DSOValues small title={i18n.t('moonPhases.calendar.pills.set_time')} value={day.moonset} />*/}
+        {/*                <DSOValues small title={i18n.t('moonPhases.calendar.pills.illumination')} value={day.illumination} />*/}
+        {/*                <DSOValues small title={i18n.t('moonPhases.calendar.pills.distance')} value={formatter.format(day.distance)} />*/}
+        {/*                <DSOValues small title={i18n.t('moonPhases.calendar.pills.elongation')} value={day.elongation + '°'} />*/}
+        {/*                <DSOValues small title={i18n.t('moonPhases.calendar.pills.age')} value={day.age + ' ' + i18n.t('common.other.days')} />*/}
+        {/*                <DSOValues small title={i18n.t('moonPhases.calendar.pills.new_moon')} value={day.newMoon ? i18n.t('common.other.yes') : i18n.t('common.other.no')} />*/}
+        {/*                <DSOValues small title={i18n.t('moonPhases.calendar.pills.full_moon')} value={day.fullMoon ? i18n.t('common.other.yes') : i18n.t('common.other.no')} />*/}
+        {/*              </View>*/}
+        {/*            )*/}
+        {/*          })*/}
+        {/*        }*/}
+        {/*      </View>*/}
+        {/*    </View>*/}
+        {/*  }*/}
+
+        {/*  <SimpleButton icon={require('../../assets/icons/FiCalendar.png')} text={selectedView ? i18n.t('moonPhases.calendar.button.more') : i18n.t('moonPhases.calendar.button.less')} onPress={() => setSelectedView(!selectedView)} />*/}
+        {/*</View>*/}
       </ScrollView>
     </View>
   )
