@@ -33,6 +33,7 @@ export const commonTranslations = {
     types: {
       star: "Star",
       planet: "Planet",
+      moon: "Moon",
     }
   },
   other: {

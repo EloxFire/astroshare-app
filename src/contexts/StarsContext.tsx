@@ -33,8 +33,8 @@ export function StarsContextProvider({ children }: StarsContextProviderProps) {
 
     setStarCatalogLoading(true);
     try {
+      console.log(`Starting to fetch stars... (This may take a while)`);
       while (hasMore) {
-        console.log(`Fetching page ${currentPage}`);
         const response = await axios.get(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/stars`,
           {
             params: { maxMag: 10, page: currentPage },

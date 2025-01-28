@@ -21,17 +21,20 @@ export const moonPhasesStyles = {
       transitCard: {
         display: 'flex' as 'flex',
         flexDirection: 'column' as 'column',
+        alignItems: 'center' as 'center',
 
         icon: {
-          width: 50,
-          height: 50,
+          width: 30,
+          height: 30,
           resizeMode: 'contain' as 'contain'
         },
 
         text: {
-          fontSize: 12,
+          marginTop: 5,
+          fontSize: 16,
           fontFamily: 'GilroyRegular',
-          color: app_colors.white
+          color: app_colors.white,
+          textAlign: 'center' as 'center'
         }
       }
     },
