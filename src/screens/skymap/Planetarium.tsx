@@ -21,6 +21,7 @@ import PlanetariumUI from "../../components/skymap/PlanetariumUI";
 import { createAzimuthalGrid } from '../../helpers/scripts/astro/skymap/createAzimuthalGrid';
 import { createPointerMaterial } from '../../helpers/scripts/astro/skymap/createPointerMaterial';
 import { createPointerTextures } from '../../helpers/scripts/astro/skymap/createPointerTextures';
+import { constellations } from '@observerly/astrometry';
 
 let IsInertia = false;
 let oldX = 0.0, oldY = 0.0;
@@ -98,11 +99,13 @@ export default function Planetarium({ navigation }: any) {
     geometry.setAttribute('color', new THREE.Float32BufferAttribute(starColor, 4));
     const starsCloud = new THREE.Points(geometry, material);
     starsCloud.frustumCulled = false;
+    starsCloud.renderOrder=0;
     scene.add(starsCloud);
 
     pointerUI.frustumCulled = false;
     const pointerTextures = createPointerTextures();
     pointerUI.material.map = pointerTextures[0];
+    pointerUI.renderOrder=1;
     scene.add(pointerUI);
     let i = 1;
 
@@ -125,13 +128,14 @@ export default function Planetarium({ navigation }: any) {
     // scene.add(AzimuthalGrid.grid3);
 
     Constellations = drawConstellations();
+    Constellations.renderOrder=2;
     scene.add(Constellations);
     ////
 
     // camera.rotateX(90) // Pour que le sol soit perpendiculaire à la camera (mais ca donne une soucis sur la rotation de la camera, a voir)
     let ground = createGround();
     ground.lookAt(getGlobePosition(currentUserLocation.lat, currentUserLocation.lon));
-    ground.renderOrder = 1;
+    ground.renderOrder = 2;
     scene.add(ground);
 
     // Animation loop to render the scene
@@ -328,7 +332,7 @@ export default function Planetarium({ navigation }: any) {
       if (camera && scene) {
         const raycaster = new THREE.Raycaster();
         raycaster.near = 9;
-        raycaster.params.Points.threshold = 0.002 * camera.getEffectiveFOV();
+        raycaster.params.Points.threshold = 0.0015 * camera.getEffectiveFOV();
         raycaster.far = 11;
         const pointer = new THREE.Vector2();
         // console.log('Single tap!');

@@ -15,8 +15,8 @@ export const drawConstellations = () => {
             let points = [];
             const start = segment[0];
             const end = segment[1];
-            points.push(convertSphericalToCartesian(15, start[0], start[1]));
-            points.push(convertSphericalToCartesian(15, end[0], end[1]));
+            points.push(convertSphericalToCartesian(8, start[0], start[1]));
+            points.push(convertSphericalToCartesian(8, end[0], end[1]));
             const geometry = new THREE.BufferGeometry().setFromPoints(points);
             const line = new THREE.Line(geometry, material);
             group.add(line);
