@@ -11,9 +11,15 @@ interface PlanetariumUIProps {
   navigation: any;
   infos: any | null;
   infoType: 'constellation' | 'star' | 'planet' | 'dso'  | null;
+  onShowEqGrid: () => void;
+  onShowConstellations: () => void;
+  onShowAzGrid: () => void;
+  onShowGround: () => void;
+  onShowPlanets: () => void;
+  onShowDSO: () => void;
 }
 
-export default function PlanetariumUI({ navigation, infoType, infos }: PlanetariumUIProps) {
+export default function PlanetariumUI({ navigation, infoType, infos, onShowGround, onShowConstellations, onShowAzGrid, onShowEqGrid, onShowDSO, onShowPlanets }: PlanetariumUIProps) {
 
   const {currentUserLocation} = useSettings();
   const [currentTime, setCurrentTime] = useState<string>(dayjs().format('HH:mm'));
@@ -53,9 +59,25 @@ export default function PlanetariumUI({ navigation, infoType, infos }: Planetari
       {
         showLayerModal && (
           <View style={planetariumUIStyles.container.layersModal}>
-            <TouchableOpacity>
-              <Image style={planetariumUIStyles.container.backButton.icon} source={require('../../../assets/icons/FiChevronDown.png')} />
-              <Text style={planetariumUIStyles.container.backButton.icon}>Constellations</Text>
+            <TouchableOpacity style={planetariumUIStyles.container.layersModal.button} onPress={() => onShowConstellations()}>
+              <Image style={planetariumUIStyles.container.layersModal.button.icon} source={require('../../../assets/icons/FiConstellation.png')} />
+              <Text style={planetariumUIStyles.container.layersModal.button.text}>Constel</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={planetariumUIStyles.container.layersModal.button} onPress={() => onShowEqGrid()}>
+              <Image style={planetariumUIStyles.container.layersModal.button.icon} source={require('../../../assets/icons/FiEqGrid.png')} />
+              <Text style={planetariumUIStyles.container.layersModal.button.text}>Grille EQ</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={planetariumUIStyles.container.layersModal.button} onPress={() => onShowAzGrid()}>
+              <Image style={planetariumUIStyles.container.layersModal.button.icon} source={require('../../../assets/icons/FiAzGrid.png')} />
+              <Text style={planetariumUIStyles.container.layersModal.button.text}>Grille AZ</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={planetariumUIStyles.container.layersModal.button} onPress={() => onShowPlanets()}>
+              <Image style={planetariumUIStyles.container.layersModal.button.icon} source={require('../../../assets/icons/FiPlanet.png')} />
+              <Text style={planetariumUIStyles.container.layersModal.button.text}>Planètes</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={planetariumUIStyles.container.layersModal.button} onPress={() => onShowDSO()}>
+              <Image style={planetariumUIStyles.container.layersModal.button.icon} source={require('../../../assets/icons/astro/DRKN.png')} />
+              <Text style={planetariumUIStyles.container.layersModal.button.text}>DSO</Text>
             </TouchableOpacity>
           </View>
         )

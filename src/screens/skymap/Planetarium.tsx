@@ -1,7 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 import { planetariumStyles } from '../../styles/screens/skymap/planetarium';
-import { Image } from 'expo-image';
 import { Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
 import { ExpoWebGLRenderingContext, GLView } from 'expo-gl';
 import { useSettings } from '../../contexts/AppSettingsContext';
@@ -29,6 +28,7 @@ let Vx = 0.0, Vy = 0.0;
 let camWdth = 0;
 let EquatorialGrid: any;
 let AzimuthalGrid: any;
+let Constellations: any;
 const pointerUICoos = [];
 pointerUICoos.push(0, 1, 0);
 const pointergeometry = new THREE.BufferGeometry();
@@ -54,6 +54,11 @@ export default function Planetarium({ navigation }: any) {
 
   const [currentTapInfos, setCurrentTapInfos] = useState<any>(null);
   const [currentTapType, setCurrentTapType] = useState<'constellation' | 'star' | 'planet' | 'dso' | null>('star');
+
+  const [showEqGrid, setShowEqGrid] = useState<boolean>(false);
+  const [showAzGrid, setShowAzGrid] = useState<boolean>(false);
+  const [showConstellations, setShowConstellations] = useState<boolean>(false);
+  const [showGround, setShowGround] = useState<boolean>(false);
 
   const _onContextCreate = async (gl: ExpoWebGLRenderingContext) => {
     const { drawingBufferWidth, drawingBufferHeight } = gl;
@@ -119,7 +124,7 @@ export default function Planetarium({ navigation }: any) {
     // scene.add(AzimuthalGrid.grid2);
     // scene.add(AzimuthalGrid.grid3);
 
-    let Constellations = drawConstellations();
+    Constellations = drawConstellations();
     scene.add(Constellations);
     ////
 
@@ -157,6 +162,44 @@ export default function Planetarium({ navigation }: any) {
     // Start the animation
     animate();
   };
+
+
+  const onShowEqGrid = () => {
+    if(showEqGrid){
+      sceneRef.current?.remove(EquatorialGrid.grid1);
+      sceneRef.current?.remove(EquatorialGrid.grid2);
+      sceneRef.current?.remove(EquatorialGrid.grid3);
+      setShowEqGrid(false);
+    }else{
+      sceneRef.current?.add(EquatorialGrid.grid1);
+      sceneRef.current?.add(EquatorialGrid.grid2);
+      sceneRef.current?.add(EquatorialGrid.grid3);
+      setShowEqGrid(true);
+    }
+  }
+
+  const onShowAzGrid = () => {
+    if(showAzGrid){
+      sceneRef.current?.remove(AzimuthalGrid.grid1);
+      sceneRef.current?.remove(AzimuthalGrid.grid2);
+      sceneRef.current?.remove(AzimuthalGrid.grid3);
+      setShowAzGrid(false);
+    }else{
+      sceneRef.current?.add(AzimuthalGrid.grid1);
+      sceneRef.current?.add(AzimuthalGrid.grid2);
+      sceneRef.current?.add(AzimuthalGrid.grid3);
+      setShowAzGrid(true);
+    }
+  }
+  const onShowConstellations = () => {
+    if(showConstellations){
+      sceneRef.current?.remove(Constellations);
+      setShowConstellations(false);
+    }else{
+      sceneRef.current?.add(Constellations);
+      setShowConstellations(true);
+    }
+  }
 
 
 
@@ -318,7 +361,15 @@ export default function Planetarium({ navigation }: any) {
       <GestureDetector gesture={composed}>
         <View style={planetariumStyles.container}>
           <GLView style={{ flex: 1 }} onContextCreate={_onContextCreate} />
-          <PlanetariumUI navigation={navigation} infos={currentTapInfos} infoType={currentTapType} />
+          <PlanetariumUI
+            navigation={navigation}
+            infos={currentTapInfos}
+            infoType={currentTapType}
+            onShowAzGrid={onShowAzGrid}
+            onShowConstellations={onShowConstellations}
+            onShowEqGrid={onShowEqGrid}
+            onShowGround={() => {}}
+          />
         </View>
       </GestureDetector>
     </GestureHandlerRootView>

@@ -21,6 +21,8 @@ export const planetariumUIStyles = {
       flexDirection: 'row' as 'row',
       alignItems: 'center' as 'center',
       zIndex: 10,
+      backgroundColor: app_colors.black_skymap,
+      padding: 8,
 
       text: {
         color: app_colors.white,
@@ -36,15 +38,43 @@ export const planetariumUIStyles = {
     },
 
     layersModal: {
-      backgroundColor: app_colors.black_sixty,
-      borderRadius: 10,
+      backgroundColor: app_colors.black_skymap,
       padding: 10,
       position: 'absolute' as 'absolute',
       top: StatusBar.currentHeight! + 50,
       right: 10,
       zIndex: 10,
-      height: 150,
-      width: 250
+      // height: 150,
+      width: 300,
+      gap: 20,
+      borderTopLeftRadius: 10,
+      borderBottomLeftRadius: 10,
+      borderBottomRightRadius: 10,
+      display: 'flex' as 'flex',
+      flexDirection: 'row' as 'row',
+      justifyContent: 'space-between' as 'space-between',
+      alignItems: 'flex-start' as 'flex-start',
+      flexWrap: 'wrap' as 'wrap',
+
+      button: {
+        display: 'flex' as 'flex',
+        flexDirection: 'column' as 'column',
+        alignItems: 'center' as 'center',
+        justifyContent: 'center' as 'center',
+        gap: 5,
+
+        icon: {
+          width: 30,
+          height: 30,
+          tintColor: app_colors.white_sixty,
+        },
+
+        text: {
+          color: app_colors.white_sixty,
+          fontFamily: 'GilroyRegular',
+          fontSize: 10
+        }
+      }
     },
 
     layerButton: {
@@ -55,6 +85,9 @@ export const planetariumUIStyles = {
       flexDirection: 'row' as 'row',
       alignItems: 'center' as 'center',
       zIndex: 10,
+      backgroundColor: app_colors.black_skymap,
+      padding: 8,
+      borderRadius: 10,
 
       text: {
         color: app_colors.white,

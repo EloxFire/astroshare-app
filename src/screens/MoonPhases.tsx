@@ -25,6 +25,8 @@ import {useTranslation} from "../hooks/useTranslation";
 import {ComputedMoonInfos} from "../helpers/types/objects/ComputedMoonInfos";
 import {computeMoon} from "../helpers/scripts/astro/objects/computeMoon";
 import MoonPreview from "../components/three/MoonPreview";
+import VisibilityGraph from "../components/graphs/VisibilityGraph";
+import MoonPhase from "../components/three/MoonPreview";
 
 interface MoonData {
   phase: string,
@@ -50,7 +52,9 @@ export default function MoonPhases({ navigation }: any) {
 
   useEffect(() => {
     const observer: GeographicCoordinate = {latitude: currentUserLocation.lat, longitude: currentUserLocation.lon}
-    setMoonData(computeMoon({date: new Date(), observer}))
+    const data: ComputedMoonInfos = computeMoon({date: new Date(), observer})
+    console.log(data)
+    setMoonData(data)
   }, [currentUserLocation])
 
   useEffect(() => {
@@ -86,10 +90,11 @@ export default function MoonPhases({ navigation }: any) {
             </View>
           </View>
           <View style={moonPhasesStyles.content.body}>
-            <MoonPreview size={Dimensions.get('window').width - 40}/>
+            {/*{moonData && <MoonPreview size={Dimensions.get('window').width - 40} phaseAngle={moonData?.data.phaseAngle} illumination={moonData?.data.illumination}/>}*/}
+            {moonData && <MoonPhase size={200} phase={0.30} isWaxing={false} />}
           </View>
           <View style={moonPhasesStyles.content.footer}>
-
+            {moonData && <VisibilityGraph visibilityGraph={moonData?.visibility.visibilityGraph}/>}
           </View>
         </View>
       </ScrollView>

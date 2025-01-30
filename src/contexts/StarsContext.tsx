@@ -35,7 +35,7 @@ export function StarsContextProvider({ children }: StarsContextProviderProps) {
     try {
       console.log(`Starting to fetch stars... (This may take a while)`);
       while (hasMore) {
-        const response = await axios.get(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/stars`,
+        const response = await axios.get(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/stars?totalLimit=6000`,
           {
             params: { maxMag: 10, page: currentPage },
           }

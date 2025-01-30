@@ -9,7 +9,7 @@ export type ComputedMoonInfos = {
   },
   data: {
     phase: string;
-    illumination: string;
+    illumination: number;
     distance: number;
     elongation: number;
     isNewMoon: boolean;

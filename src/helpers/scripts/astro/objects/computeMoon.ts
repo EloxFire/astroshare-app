@@ -70,7 +70,7 @@ export const computeMoon = ({date, observer}: computeMoonProps): ComputedMoonInf
 
   const currentMoonPhase: string = moonPhasesList[getLunarPhase(date)];
   const currentMoonAge: number =  Math.floor(getLunarAge(date).age);
-  const currentMoonIllumination: string = getLunarIllumination(date).toFixed(2)
+  const currentMoonIllumination: number = getLunarIllumination(date)
   const currentMoonDistance: number = Math.floor(getLunarDistance(date) / 1000)
   const currentMoonElongation: number = Math.floor(getLunarElongation(date))
   const isCurrentlyNewMoon: boolean = isNewMoon(date)
