@@ -30,6 +30,7 @@ let camWdth = 0;
 let EquatorialGrid: any;
 let AzimuthalGrid: any;
 let Constellations: any;
+let ground: any;
 const pointerUICoos = [];
 pointerUICoos.push(0, 1, 0);
 const pointergeometry = new THREE.BufferGeometry();
@@ -58,8 +59,8 @@ export default function Planetarium({ navigation }: any) {
 
   const [showEqGrid, setShowEqGrid] = useState<boolean>(false);
   const [showAzGrid, setShowAzGrid] = useState<boolean>(false);
-  const [showConstellations, setShowConstellations] = useState<boolean>(false);
-  const [showGround, setShowGround] = useState<boolean>(false);
+  const [showConstellations, setShowConstellations] = useState<boolean>(true);
+  const [showGround, setShowGround] = useState<boolean>(true);
 
   const _onContextCreate = async (gl: ExpoWebGLRenderingContext) => {
     const { drawingBufferWidth, drawingBufferHeight } = gl;
@@ -82,6 +83,7 @@ export default function Planetarium({ navigation }: any) {
     sceneRef.current = scene;
     rendererRef.current = renderer;
 
+    // Create stars
     const stars: number[] = [];
     const starSize: number[] = [];
     const starColor: number[] = [];
@@ -93,47 +95,55 @@ export default function Planetarium({ navigation }: any) {
       starSize.push(300 * Math.exp(-star.V / 3));
       const indice = getStarColor(star.sp_type);
       starColor.push(2 * indice ** 2, 0.5 / (100 * (indice - 0.5) ** 2 + 1), 2 * (indice - 1) ** 2, 1.0);
-    })
+    });
     geometry.setAttribute('position', new THREE.Float32BufferAttribute(stars, 3));
     geometry.setAttribute('size', new THREE.Float32BufferAttribute(starSize, 1));
     geometry.setAttribute('color', new THREE.Float32BufferAttribute(starColor, 4));
     const starsCloud = new THREE.Points(geometry, material);
     starsCloud.frustumCulled = false;
-    starsCloud.renderOrder=0;
+    starsCloud.renderOrder = 0;
     scene.add(starsCloud);
+
+    // Create a textured sphere for the sky
+    const textureLoader = new THREE.TextureLoader();
+    const skyTexture = textureLoader.load(
+      require("../../../assets/images/textures/milkyway.png")
+    );
+
+    const skyGeometry = new THREE.SphereGeometry(1000, 64, 64); // Sphere with radius 1000
+    const skyMaterial = new THREE.MeshBasicMaterial({
+      map: skyTexture,
+      side: THREE.BackSide, // Invert the sphere to make the inside visible
+    });
+    const skySphere = new THREE.Mesh(skyGeometry, skyMaterial);
+    skySphere.renderOrder = -1; // Ensure it renders behind everything else
+    scene.add(skySphere);
 
     pointerUI.frustumCulled = false;
     const pointerTextures = createPointerTextures();
     pointerUI.material.map = pointerTextures[0];
-    pointerUI.renderOrder=1;
+    pointerUI.renderOrder = 1;
     scene.add(pointerUI);
     let i = 1;
 
-    /////
+    ///// Grids and Constellations
     EquatorialGrid = createEquatorialGrid(0x337eff);
     EquatorialGrid.grid2.visible = false;
     EquatorialGrid.grid3.visible = false;
-    // scene.add(EquatorialGrid.grid1);
-    // scene.add(EquatorialGrid.grid2);
-    // scene.add(EquatorialGrid.grid3);
+
     AzimuthalGrid = createAzimuthalGrid(0x4b33ff);
     AzimuthalGrid.grid2.visible = false;
     AzimuthalGrid.grid3.visible = false;
-    Object.keys(AzimuthalGrid).forEach(key => {
+
+    Object.keys(AzimuthalGrid).forEach((key) => {
       AzimuthalGrid[key].lookAt(getGlobePosition(currentUserLocation.lat, currentUserLocation.lon));
     });
 
-    // scene.add(AzimuthalGrid.grid1);
-    // scene.add(AzimuthalGrid.grid2);
-    // scene.add(AzimuthalGrid.grid3);
-
     Constellations = drawConstellations();
-    Constellations.renderOrder=2;
+    Constellations.renderOrder = 2;
     scene.add(Constellations);
-    ////
 
-    // camera.rotateX(90) // Pour que le sol soit perpendiculaire à la camera (mais ca donne une soucis sur la rotation de la camera, a voir)
-    let ground = createGround();
+    ground = createGround();
     ground.lookAt(getGlobePosition(currentUserLocation.lat, currentUserLocation.lon));
     ground.renderOrder = 100;
     scene.add(ground);
@@ -156,9 +166,10 @@ export default function Planetarium({ navigation }: any) {
       }
 
       ground.lookAt(getGlobePosition(currentUserLocation.lat, currentUserLocation.lon));
-      Object.keys(AzimuthalGrid).forEach(key => {
+      Object.keys(AzimuthalGrid).forEach((key) => {
         AzimuthalGrid[key].lookAt(getGlobePosition(currentUserLocation.lat, currentUserLocation.lon));
       });
+
       if (rendererRef.current && sceneRef.current && cameraRef.current) {
         rendererRef.current.render(sceneRef.current, cameraRef.current);
         gl.endFrameEXP(); // Required for Expo's GL context
@@ -168,6 +179,7 @@ export default function Planetarium({ navigation }: any) {
     // Start the animation
     animate();
   };
+
 
 
   const onShowEqGrid = () => {
@@ -204,6 +216,16 @@ export default function Planetarium({ navigation }: any) {
     }else{
       sceneRef.current?.add(Constellations);
       setShowConstellations(true);
+    }
+  }
+
+  const onShowGround = () => {
+    if(showGround){
+      sceneRef.current?.remove(ground);
+      setShowGround(false);
+    }else{
+      sceneRef.current?.add(ground);
+      setShowGround(true);
     }
   }
 
@@ -371,24 +393,23 @@ export default function Planetarium({ navigation }: any) {
   const composed = Gesture.Race(gestures, taps);
 
   return (
-    <GestureHandlerRootView>
-      <GestureDetector gesture={composed}>
-        <View style={planetariumStyles.container}>
-          <GLView style={{ flex: 1 }} onContextCreate={_onContextCreate} />
-          <PlanetariumUI
-            navigation={navigation}
-            infos={currentTapInfos}
-            infoType={currentTapType}
-            onShowAzGrid={onShowAzGrid}
-            onShowConstellations={onShowConstellations}
-            onShowEqGrid={onShowEqGrid}
-            onShowGround={() => {}}
-            onShowPlanets={() => {}}
-            onShowDSO={() => {}}
-            onCenterObject={() => {}}
-          />
-        </View>
-      </GestureDetector>
-    </GestureHandlerRootView>
+      <GestureHandlerRootView>
+        <PlanetariumUI
+          navigation={navigation}
+          infos={currentTapInfos}
+          onShowAzGrid={onShowAzGrid}
+          onShowConstellations={onShowConstellations}
+          onShowEqGrid={onShowEqGrid}
+          onShowGround={onShowGround}
+          onShowPlanets={() => {}}
+          onShowDSO={() => {}}
+          onCenterObject={() => {}}
+        />
+        <GestureDetector gesture={composed}>
+          <View style={planetariumStyles.container}>
+            <GLView style={{ flex: 1 }} onContextCreate={_onContextCreate} />
+          </View>
+        </GestureDetector>
+      </GestureHandlerRootView>
   );
 }

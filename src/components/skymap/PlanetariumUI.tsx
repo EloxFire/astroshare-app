@@ -62,6 +62,7 @@ export default function PlanetariumUI({ navigation, infos, onShowGround, onShowC
   }, []);
 
   useEffect(() => {
+    setCurrentInfoTab(0);
     if(infos){
       const observer: GeographicCoordinate = {latitude: currentUserLocation.lat, longitude: currentUserLocation.lon};
       setObjectInfos(computeObject({object: infos, observer, lang: currentLocale, altitude: 341 }));
