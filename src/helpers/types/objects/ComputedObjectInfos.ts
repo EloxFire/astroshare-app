@@ -5,6 +5,7 @@ export type ComputedObjectInfos = {
   base:{
     family: "DSO" | "Star" | "Planet" | "Other";
     common_name: string;
+    icon: ImageSourcePropType;
     ra: string | number;
     dec: string | number;
     mag: number | string;

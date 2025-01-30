@@ -21,6 +21,9 @@ import {planetsSizes} from "../planets/sizes";
 import {planetTemps} from "../planets/temps";
 import {planetSatellites} from "../planets/satellites";
 import {getPlanetMagnitude} from "./getPlanetMagnitude";
+import {getBrightStarName} from "./getBrightStarName";
+import {getObjectIcon} from "./getObjectIcon";
+import {ImageSourcePropType} from "react-native";
 
 interface ComputeObjectProps {
   object: DSO | Star | GlobalPlanet;
@@ -45,6 +48,19 @@ export const computeObject = (props: ComputeObjectProps): ComputedObjectInfos | 
       console.log('[computeObject] Error: could not convert ra and dec to degrees')
       return null;
     }
+
+    let objectName: string = '';
+    if(objectFamily === 'DSO'){
+      objectName = (props.object as DSO).common_names.split(',')[0];
+    }else if (objectFamily === 'Star'){
+      objectName = getBrightStarName((props.object as Star).ids);
+    }else if (objectFamily === 'Planet'){
+      objectName = (props.object as GlobalPlanet).name;
+    }else {
+      objectName = 'Unknown object';
+    }
+
+    let objectIcon: ImageSourcePropType = getObjectIcon(props.object);
 
     // VISIBILITE ACTUELLE ET POUR LA NUIT
     const target: EquatorialCoordinate = {ra: degRa, dec: degDec}
@@ -143,7 +159,8 @@ export const computeObject = (props: ComputeObjectProps): ComputedObjectInfos | 
     return {
       base: {
         family: objectFamily,
-        common_name: objectFamily === 'DSO' ? (props.object as DSO).common_names.split(',')[0] : '',
+        common_name: objectName,
+        icon: objectIcon,
         ra: props.object.ra,
         dec: props.object.dec,
         mag: objectFamily === 'Planet' ? objectMagnitude + ' (max)' : objectMagnitude,

@@ -11,7 +11,7 @@ export const createGround = () => {
   `
     const fragmentShader = `
     void main() {
-        vec4 col = vec4(.5,0.,0.,.3);  
+        vec4 col = vec4(0.,0.,0.,1.);  
         gl_FragColor = col;
     }`;
 

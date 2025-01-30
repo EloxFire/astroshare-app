@@ -131,12 +131,15 @@ export const planetariumUIStyles = {
 
       body: {
         display: 'flex' as 'flex',
-        flexDirection: 'row' as 'row',
+        flexDirection: 'column' as 'column',
         justifyContent: 'space-between' as 'space-between',
         alignItems: 'center' as 'center',
-        backgroundColor: app_colors.black_sixty,
+        backgroundColor: app_colors.black_skymap,
+        borderWidth: 1,
+        borderColor: app_colors.white_twenty,
         borderRadius: 10,
         marginTop: 5,
+        paddingVertical: 10,
         paddingHorizontal: 10,
 
         image: {

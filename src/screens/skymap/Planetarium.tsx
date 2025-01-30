@@ -110,13 +110,13 @@ export default function Planetarium({ navigation }: any) {
     let i = 1;
 
     /////
-    EquatorialGrid = createEquatorialGrid(0x0000ff);
+    EquatorialGrid = createEquatorialGrid(0x337eff);
     EquatorialGrid.grid2.visible = false;
     EquatorialGrid.grid3.visible = false;
     // scene.add(EquatorialGrid.grid1);
     // scene.add(EquatorialGrid.grid2);
     // scene.add(EquatorialGrid.grid3);
-    AzimuthalGrid = createAzimuthalGrid(0x00ff00);
+    AzimuthalGrid = createAzimuthalGrid(0x4b33ff);
     AzimuthalGrid.grid2.visible = false;
     AzimuthalGrid.grid3.visible = false;
     Object.keys(AzimuthalGrid).forEach(key => {
@@ -135,8 +135,10 @@ export default function Planetarium({ navigation }: any) {
     // camera.rotateX(90) // Pour que le sol soit perpendiculaire à la camera (mais ca donne une soucis sur la rotation de la camera, a voir)
     let ground = createGround();
     ground.lookAt(getGlobePosition(currentUserLocation.lat, currentUserLocation.lon));
-    ground.renderOrder = 2;
+    ground.renderOrder = 100;
     scene.add(ground);
+
+    camera.lookAt(getGlobePosition(currentUserLocation.lat, currentUserLocation.lon));
 
     // Animation loop to render the scene
     const animate = () => {
@@ -355,10 +357,10 @@ export default function Planetarium({ navigation }: any) {
           p.setXYZ(0, pointerCoos.x, pointerCoos.y, pointerCoos.z);
           p.needsUpdate = true;
           pointerUI.visible = true;
-          // setCurrentTapInfos(starsCatalog[idex]);
+          setCurrentTapInfos(starsCatalog[index]);
           camera.updateProjectionMatrix();
         } else {
-          // setCurrentTapInfos(null);
+          setCurrentTapInfos(null);
           pointerUI.visible = false;
         }
       }
@@ -381,6 +383,9 @@ export default function Planetarium({ navigation }: any) {
             onShowConstellations={onShowConstellations}
             onShowEqGrid={onShowEqGrid}
             onShowGround={() => {}}
+            onShowPlanets={() => {}}
+            onShowDSO={() => {}}
+            onCenterObject={() => {}}
           />
         </View>
       </GestureDetector>
