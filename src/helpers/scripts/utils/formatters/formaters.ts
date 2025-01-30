@@ -46,6 +46,17 @@ export const formatMinutes = (seconds: number, lang: string) => {
   return formatter.format(seconds / 60);
 }
 
+export const formatDays = (days: number, lang: string) => {
+  const formatter = new Intl.NumberFormat(lang, {
+    style: 'unit',
+    unit: 'day',
+    unitDisplay: 'short',
+    maximumFractionDigits: 0
+  });
+
+  return formatter.format(days);
+}
+
 // Create a formater to display years. Based on the numeric value, the formater will display "year", "years", "million years" or "billion years"
 export const formatYears = (years: number | string, lang: string) => {
 

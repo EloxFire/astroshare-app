@@ -5,12 +5,13 @@ export const moonPhasesStyles = {
   content: {
     display: 'flex' as 'flex',
     flexDirection: 'column' as 'column',
+    justifyContent: 'space-between' as 'space-between',
+    gap: 20,
     backgroundColor: app_colors.white_no_opacity,
     borderColor: app_colors.white_twenty,
     borderWidth: 1,
     borderRadius: 10,
     padding: 10,
-    paddingBottom: 80,
 
     header: {
       display: 'flex' as 'flex',
@@ -40,11 +41,68 @@ export const moonPhasesStyles = {
     },
 
     body: {
+      display: 'flex' as 'flex',
+      flexDirection: 'column' as 'column',
+      gap: 10,
 
+      moon: {
+        width: 210,
+        height: 210,
+        borderRadius: 105, // Pour avoir un cercle
+        backgroundColor: 'white', // Ajuste selon le design
+        shadowColor: 'black',
+        shadowOffset: { width: 3, height: 0 }, // Ombre vers la droite
+        shadowOpacity: 0.5, // Ajuste la transparence
+        shadowRadius: 5, // Effet de flou
+        elevation: 5, // Pour Android
+      },
+
+      phaseTitle: {
+        fontSize: 24,
+        fontFamily: 'GilroyBlack',
+        color: app_colors.white,
+        textAlign: 'center' as 'center',
+        textTransform: 'uppercase' as 'uppercase'
+      },
+
+      icon: {
+        width: 210,
+        height: 210,
+        resizeMode: 'contain' as 'contain',
+        alignSelf: 'center' as 'center'
+      },
+
+      infos: {
+        display: 'flex' as 'flex',
+        flexDirection: 'row' as 'row',
+        justifyContent: 'space-between' as 'space-between',
+        alignItems: 'center' as 'center',
+        marginTop: 20,
+
+        info: {
+          display: 'flex' as 'flex',
+          flexDirection: 'column' as 'column',
+          alignItems: 'center' as 'center',
+
+          label: {
+            fontSize: 10,
+            opacity: 0.5,
+            fontFamily: 'AuxMono',
+            color: app_colors.white,
+            textAlign: 'center' as 'center'
+          },
+
+          value: {
+            fontSize: 20,
+            fontFamily: 'GilroyBlack',
+            color: app_colors.white,
+            textAlign: 'center' as 'center'
+          }
+        }
+      }
     },
 
     footer: {
-
     }
   }
 }

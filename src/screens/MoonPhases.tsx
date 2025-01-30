@@ -1,22 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import {ActivityIndicator, Dimensions, Image, ScrollView, Text, TouchableOpacity, View} from 'react-native'
+import {ActivityIndicator, Image, ScrollView, Text, View, StyleSheet} from 'react-native'
 import { globalStyles } from '../styles/global'
 import { moonPhasesStyles } from '../styles/screens/moonPhases'
 import {
   GeographicCoordinate,
-  getBodyNextRise,
-  getBodyNextSet,
-  getLunarAge,
-  getLunarDistance,
-  getLunarElongation,
-  getLunarEquatorialCoordinate,
-  getLunarIllumination,
-  getLunarPhase,
-  isFullMoon,
-  isNewMoon,
-  isTransitInstance
 } from '@observerly/astrometry'
-import { calculateHorizonAngle } from '../helpers/scripts/astro/calculateHorizonAngle'
 import { useSettings } from '../contexts/AppSettingsContext'
 import dayjs from 'dayjs'
 import PageTitle from '../components/commons/PageTitle'
@@ -24,9 +12,8 @@ import { i18n } from '../helpers/scripts/i18n'
 import {useTranslation} from "../hooks/useTranslation";
 import {ComputedMoonInfos} from "../helpers/types/objects/ComputedMoonInfos";
 import {computeMoon} from "../helpers/scripts/astro/objects/computeMoon";
-import MoonPreview from "../components/three/MoonPreview";
 import VisibilityGraph from "../components/graphs/VisibilityGraph";
-import MoonPhase from "../components/three/MoonPreview";
+import {formatDays, formatKm} from "../helpers/scripts/utils/formatters/formaters";
 
 interface MoonData {
   phase: string,
@@ -44,7 +31,7 @@ interface MoonData {
 export default function MoonPhases({ navigation }: any) {
 
   const { currentUserLocation } = useSettings()
-  const {currentLocale} = useTranslation()
+  const {currentLocale, currentLCID} = useTranslation()
   dayjs().locale(currentLocale)
 
   const [moonData, setMoonData] = useState<ComputedMoonInfos | null>(null)
@@ -53,7 +40,6 @@ export default function MoonPhases({ navigation }: any) {
   useEffect(() => {
     const observer: GeographicCoordinate = {latitude: currentUserLocation.lat, longitude: currentUserLocation.lon}
     const data: ComputedMoonInfos = computeMoon({date: new Date(), observer})
-    console.log(data)
     setMoonData(data)
   }, [currentUserLocation])
 
@@ -89,13 +75,48 @@ export default function MoonPhases({ navigation }: any) {
               {moonData ? <Text style={moonPhasesStyles.content.header.transitCard.text}>{moonData.visibility.objectNextSet}</Text> : <ActivityIndicator size={"small"} />}
             </View>
           </View>
-          <View style={moonPhasesStyles.content.body}>
-            {/*{moonData && <MoonPreview size={Dimensions.get('window').width - 40} phaseAngle={moonData?.data.phaseAngle} illumination={moonData?.data.illumination}/>}*/}
-            {moonData && <MoonPhase size={200} phase={0.30} isWaxing={false} />}
-          </View>
-          <View style={moonPhasesStyles.content.footer}>
-            {moonData && <VisibilityGraph visibilityGraph={moonData?.visibility.visibilityGraph}/>}
-          </View>
+          {
+            moonData && (
+              <>
+                <View style={moonPhasesStyles.content.body}>
+                  <Text style={moonPhasesStyles.content.body.phaseTitle}>{moonData.data.phase}</Text>
+                  <Image source={moonData.base.icon} style={moonPhasesStyles.content.body.icon}/>
+                  {/*MOON PHASE HERE*/}
+                  <View style={moonPhasesStyles.content.body.infos}>
+                    <View>
+                      <Text style={moonPhasesStyles.content.body.infos.info.label}>{i18n.t('moonPhases.pills.illumination')}</Text>
+                      <Text style={moonPhasesStyles.content.body.infos.info.value}>{moonData.data.illumination.toFixed((2))}%</Text>
+                    </View>
+                    <View>
+                      <Text style={moonPhasesStyles.content.body.infos.info.label}>{i18n.t('moonPhases.pills.age')}</Text>
+                      <Text style={moonPhasesStyles.content.body.infos.info.value}>{formatDays(moonData.data.age, currentLCID)}</Text>
+                    </View>
+                    <View>
+                      <Text style={moonPhasesStyles.content.body.infos.info.label}>{i18n.t('moonPhases.pills.distance')}</Text>
+                      <Text style={moonPhasesStyles.content.body.infos.info.value}>{formatKm(moonData.data.distance, currentLCID)}</Text>
+                    </View>
+                  </View>
+                  <View style={moonPhasesStyles.content.body.infos}>
+                    <View>
+                      <Text style={moonPhasesStyles.content.body.infos.info.label}>{i18n.t('moonPhases.pills.full_moon')}</Text>
+                      <Text style={moonPhasesStyles.content.body.infos.info.value}>{dayjs(moonData.data.nextFullMoon).format('DD MMMM')}</Text>
+                    </View>
+                    <View>
+                      <Text style={moonPhasesStyles.content.body.infos.info.label}>{i18n.t('moonPhases.pills.new_moon')}</Text>
+                      <Text style={moonPhasesStyles.content.body.infos.info.value}>{dayjs(moonData.data.nextNewMoon).format('DD MMMM')}</Text>
+                    </View>
+                    <View>
+                      <Text style={moonPhasesStyles.content.body.infos.info.label}>{i18n.t('moonPhases.pills.elongation')}</Text>
+                      <Text style={moonPhasesStyles.content.body.infos.info.value}>{moonData.data.elongation}°</Text>
+                    </View>
+                  </View>
+                </View>
+                <View style={moonPhasesStyles.content.footer}>
+                  <VisibilityGraph visibilityGraph={moonData?.visibility.visibilityGraph}/>
+                </View>
+              </>
+            )
+          }
         </View>
       </ScrollView>
     </View>

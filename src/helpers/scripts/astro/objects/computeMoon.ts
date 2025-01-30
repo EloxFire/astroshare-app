@@ -15,6 +15,8 @@ import {ComputedMoonInfos} from "../../../types/objects/ComputedMoonInfos";
 import {i18n} from "../../i18n";
 import {app_colors} from "../../../constants";
 import dayjs, {Dayjs} from "dayjs";
+import {ImageSourcePropType} from "react-native";
+import {moonIcons} from "../../loadImages";
 
 interface computeMoonProps {
   date: Date;
@@ -69,6 +71,7 @@ export const computeMoon = ({date, observer}: computeMoonProps): ComputedMoonInf
   }
 
   const currentMoonPhase: string = moonPhasesList[getLunarPhase(date)];
+  const currentMoonIcon: ImageSourcePropType = moonIcons[getLunarPhase(date)]
   const currentMoonAge: number =  Math.floor(getLunarAge(date).age);
   const currentMoonIllumination: number = getLunarIllumination(date)
   const currentMoonDistance: number = Math.floor(getLunarDistance(date) / 1000)
@@ -89,6 +92,7 @@ export const computeMoon = ({date, observer}: computeMoonProps): ComputedMoonInf
       dec: moonEquatorialCoords.dec,
       alt: moonHorizontalCoords.alt,
       az: moonHorizontalCoords.az,
+      icon: currentMoonIcon
     },
     data: {
       phase: currentMoonPhase,

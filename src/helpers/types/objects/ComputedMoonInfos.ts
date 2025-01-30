@@ -1,3 +1,5 @@
+import {ImageSourcePropType} from "react-native";
+
 export type ComputedMoonInfos = {
   base: {
     family: string;
@@ -6,6 +8,7 @@ export type ComputedMoonInfos = {
     dec: number;
     alt: number;
     az: number;
+    icon: ImageSourcePropType
   },
   data: {
     phase: string;
