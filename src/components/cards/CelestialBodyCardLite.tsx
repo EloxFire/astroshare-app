@@ -48,13 +48,13 @@ export default function CelestialBodyCardLite({ object, navigation }: CelestialB
                 foregroundColor={objectInfos.visibilityInfos.visibilityForegroundColor}
               />
               {
-                getObjectFamily(object) === 'DSO' && object.m !== "" && (
+                getObjectFamily(object) === 'DSO' && (object as DSO).m !== "" && (
                   <>
                     <SimpleBadge
-                      text={object.name}
+                      text={((object) as DSO).name}
                     />
                     <SimpleBadge
-                      text={object.const}
+                      text={((object) as DSO).const}
                       icon={astroImages['CONSTELLATION']}
                       iconColor={app_colors.white}
                     />
@@ -65,7 +65,7 @@ export default function CelestialBodyCardLite({ object, navigation }: CelestialB
               {
                 objectInfos.base.common_name !== "" && (
                   <SimpleBadge
-                    text={object.type}
+                    text={((object) as DSO).type}
                   />
                 )
               }
