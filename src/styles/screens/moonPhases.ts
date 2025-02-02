@@ -69,7 +69,8 @@ export const moonPhasesStyles = {
         width: 210,
         height: 210,
         resizeMode: 'contain' as 'contain',
-        alignSelf: 'center' as 'center'
+        alignSelf: 'center' as 'center',
+        borderRadius: 210
       },
 
       infos: {

@@ -14,6 +14,7 @@ import {ComputedMoonInfos} from "../helpers/types/objects/ComputedMoonInfos";
 import {computeMoon} from "../helpers/scripts/astro/objects/computeMoon";
 import VisibilityGraph from "../components/graphs/VisibilityGraph";
 import {formatDays, formatKm} from "../helpers/scripts/utils/formatters/formaters";
+import {astroshareApi} from "../helpers/api";
 
 interface MoonData {
   phase: string,
@@ -36,6 +37,7 @@ export default function MoonPhases({ navigation }: any) {
 
   const [moonData, setMoonData] = useState<ComputedMoonInfos | null>(null)
   const [currentDate, setCurrentDate] = useState(dayjs())
+  const [moonImageUrl, setMoonImageUrl] = useState<undefined | {uri: string }>(undefined)
 
   useEffect(() => {
     const observer: GeographicCoordinate = {latitude: currentUserLocation.lat, longitude: currentUserLocation.lon}
@@ -54,6 +56,13 @@ export default function MoonPhases({ navigation }: any) {
       clearInterval(interval)
     }
   }, [])
+
+  useEffect(() => {
+    (async () => {
+      const url = await astroshareApi.get('/moon/illustration')
+      setMoonImageUrl({uri: url.data})
+    })()
+  }, []);
 
   return (
     <View style={globalStyles.body}>
@@ -80,7 +89,7 @@ export default function MoonPhases({ navigation }: any) {
               <>
                 <View style={moonPhasesStyles.content.body}>
                   <Text style={moonPhasesStyles.content.body.phaseTitle}>{moonData.data.phase}</Text>
-                  <Image source={moonData.base.icon} style={moonPhasesStyles.content.body.icon}/>
+                  <Image source={moonImageUrl} style={moonPhasesStyles.content.body.icon}/>
                   {/*MOON PHASE HERE*/}
                   <View style={moonPhasesStyles.content.body.infos}>
                     <View>
