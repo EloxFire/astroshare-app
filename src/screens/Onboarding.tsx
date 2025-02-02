@@ -17,16 +17,16 @@ export default function Onboarding({ navigation }: any) {
 
   const { refreshCurrentUserLocation } = useSettings()
 
-  // useEffect(() => {
-  //   (async () => {
-  //     const firstTime = await isFirstLaunch();
-  //     if (!firstTime) {
-  //       navigation.dispatch(
-  //         StackActions.replace(routes.home.path)
-  //       );
-  //     }
-  //   })()
-  // }, [])
+  useEffect(() => {
+    (async () => {
+      const firstTime = await isFirstLaunch();
+      if (!firstTime) {
+        navigation.dispatch(
+          StackActions.replace(routes.home.path)
+        );
+      }
+    })()
+  }, [])
 
   const changeLocale = async (code: string) => {
     i18n.locale = code
