@@ -1,5 +1,5 @@
-import React, { useState, useRef } from 'react';
-import {Dimensions, Text, TouchableOpacity, View} from 'react-native';
+import React, {useState, useRef, useEffect} from 'react';
+import {ActivityIndicator, Text, View} from 'react-native';
 import { planetariumStyles } from '../../styles/screens/skymap/planetarium';
 import { Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
 import { ExpoWebGLRenderingContext, GLView } from 'expo-gl';
@@ -21,8 +21,10 @@ import PlanetariumUI from "../../components/skymap/PlanetariumUI";
 import { createAzimuthalGrid } from '../../helpers/scripts/astro/skymap/createAzimuthalGrid';
 import { createPointerMaterial } from '../../helpers/scripts/astro/skymap/createPointerMaterial';
 import { createPointerTextures } from '../../helpers/scripts/astro/skymap/createPointerTextures';
-import { constellations } from '@observerly/astrometry';
-import {pointCamera} from "../../helpers/scripts/astro/skymap/pointCamera";
+import {app_colors} from "../../helpers/constants";
+import {getObjectFamily} from "../../helpers/scripts/astro/objects/getObjectFamily";
+import {convertHMSToDegreeFromString} from "../../helpers/scripts/astro/HmsToDegree";
+import {convertDMSToDegreeFromString} from "../../helpers/scripts/astro/DmsToDegree";
 
 let IsInertia = false;
 let oldX = 0.0, oldY = 0.0;
@@ -41,14 +43,15 @@ const pointerUI = new THREE.Points(pointergeometry, pointermaterial);
 pointerUI.visible = false;
 
 
-export default function Planetarium({ navigation }: any) {
+export default function Planetarium({ route, navigation }: any) {
 
   const { currentUserLocation } = useSettings();
-  const { lat, lon } = currentUserLocation;
   const { starsCatalog } = useStarCatalog();
 
   const [cameraWidth, setCameraWidth] = useState<number>(0);
   const [cameraHeight, setCameraHeight] = useState<number>(0);
+
+  const [planetariumLoading, setPlanetariumLoading] = useState<boolean>(true);
 
   // Use refs for THREE-related objects to keep their state across renders
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
@@ -56,12 +59,33 @@ export default function Planetarium({ navigation }: any) {
   const rendererRef = useRef<ExpoTHREE.Renderer | null>(null);
 
   const [currentTapInfos, setCurrentTapInfos] = useState<any>(null);
-  const [currentTapType, setCurrentTapType] = useState<'constellation' | 'star' | 'planet' | 'dso' | null>('star');
 
   const [showEqGrid, setShowEqGrid] = useState<boolean>(false);
   const [showAzGrid, setShowAzGrid] = useState<boolean>(false);
   const [showConstellations, setShowConstellations] = useState<boolean>(true);
   const [showGround, setShowGround] = useState<boolean>(true);
+
+  useEffect(() => {
+    const defaultObject = route.params?.defaultObject;
+    if(defaultObject){
+      const { ra, dec } = defaultObject;
+
+      let formatedRa = typeof ra === 'string' ? convertHMSToDegreeFromString(ra) : ra;
+      let formatedDec = typeof dec === 'string' ? convertDMSToDegreeFromString(dec) : dec;
+
+      let pointerCoos = convertSphericalToCartesian(0.5, parseFloat(formatedRa), parseFloat(formatedDec));
+      let g = pointerUI.geometry;
+      let p = g.getAttribute('position');
+      p.setXYZ(0, pointerCoos.x, pointerCoos.y, pointerCoos.z);
+      p.needsUpdate = true;
+      pointerUI.visible = true;
+      setCurrentTapInfos(defaultObject);
+      cameraRef.current?.lookAt(new THREE.Vector3(
+        ...Object.values(convertSphericalToCartesian(10, formatedRa, formatedDec))
+      ));
+    }
+  }, [planetariumLoading]);
+
 
   const _onContextCreate = async (gl: ExpoWebGLRenderingContext) => {
     const { drawingBufferWidth, drawingBufferHeight } = gl;
@@ -149,7 +173,10 @@ export default function Planetarium({ navigation }: any) {
     ground.renderOrder = 100;
     scene.add(ground);
 
-    camera.lookAt(getGlobePosition(currentUserLocation.lat, currentUserLocation.lon));
+    camera.lookAt(convertSphericalToCartesian(10, 90, 90));
+
+    setPlanetariumLoading(false);
+    console.log('Planetarium loaded!');
 
     // Animation loop to render the scene
     const animate = () => {
@@ -394,25 +421,34 @@ export default function Planetarium({ navigation }: any) {
   const composed = Gesture.Race(gestures, taps);
 
   return (
-      <GestureHandlerRootView>
-        <PlanetariumUI
-          navigation={navigation}
-          infos={currentTapInfos}
-          onShowAzGrid={onShowAzGrid}
-          onShowConstellations={onShowConstellations}
-          onShowEqGrid={onShowEqGrid}
-          onShowGround={onShowGround}
-          onShowPlanets={() => {}}
-          onShowDSO={() => {}}
-          onCenterObject={() => {cameraRef.current!.lookAt(new THREE.Vector3(
-            ...Object.values(convertSphericalToCartesian(10, currentTapInfos.ra, currentTapInfos.dec))
-          ))}}
-        />
-        <GestureDetector gesture={composed}>
-          <View style={planetariumStyles.container}>
-            <GLView style={{ flex: 1 }} onContextCreate={_onContextCreate} />
-          </View>
-        </GestureDetector>
-      </GestureHandlerRootView>
+    <GestureHandlerRootView>
+      <PlanetariumUI
+        navigation={navigation}
+        infos={currentTapInfos}
+        onShowAzGrid={onShowAzGrid}
+        onShowConstellations={onShowConstellations}
+        onShowEqGrid={onShowEqGrid}
+        onShowGround={onShowGround}
+        onShowPlanets={() => {}}
+        onShowDSO={() => {}}
+        onCenterObject={() => {
+          const formatedRa = typeof currentTapInfos.ra === 'string' ? convertHMSToDegreeFromString(currentTapInfos.ra) : currentTapInfos.ra;
+          const formatedDec = typeof currentTapInfos.dec === 'string' ? convertDMSToDegreeFromString(currentTapInfos.dec) : currentTapInfos.dec;
+          cameraRef.current!.lookAt(new THREE.Vector3(
+          ...Object.values(convertSphericalToCartesian(10, formatedRa, formatedDec))
+        ))}}
+      />
+      <GestureDetector gesture={composed}>
+        <View style={planetariumStyles.container}>
+          <GLView style={{ flex: 1 }} onContextCreate={_onContextCreate} />
+          {planetariumLoading && (
+            <View style={planetariumStyles.loadingScreen}>
+              <ActivityIndicator size="large" color={app_colors.white} />
+              <Text style={{ color: app_colors.white }}>Loading...</Text>
+            </View>
+          )}
+        </View>
+      </GestureDetector>
+    </GestureHandlerRootView>
   );
 }

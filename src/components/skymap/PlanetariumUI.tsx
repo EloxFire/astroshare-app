@@ -85,7 +85,7 @@ export default function PlanetariumUI({ navigation, infos, onShowGround, onShowC
 
   return (
     <View style={planetariumUIStyles.container}>
-      <TouchableOpacity style={[planetariumUIStyles.container.uiButton, planetariumUIStyles.container.buttons.back]} onPress={() => navigation.navigate(routes.skymapSelection.path)}>
+      <TouchableOpacity style={[planetariumUIStyles.container.uiButton, planetariumUIStyles.container.buttons.back]} onPress={() => navigation.goBack()}>
         <Image style={[planetariumUIStyles.container.uiButton.icon, {transform: [{ rotate: '90deg' }]}]} source={require('../../../assets/icons/FiChevronDown.png')} />
       </TouchableOpacity>
       <TouchableOpacity style={planetariumUIStyles.container.uiButton} onPress={() => handleShowLayers()}>

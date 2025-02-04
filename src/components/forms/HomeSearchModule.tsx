@@ -40,7 +40,7 @@ export default function HomeSearchModule({ navigation }: HomeSearchModuleProps) 
       return;
     }
 
-    if (searchString === '') return;
+    if (searchString === '' || !searchString) return;
 
     const formatedSearchString = searchString.trim().replaceAll('*', '');
 

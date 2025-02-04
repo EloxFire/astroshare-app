@@ -55,8 +55,8 @@ export const app_colors = {
 }
 
 export const Polaris = {
-  ra: "03:01:03.6",
-  dec: "+89:40:50.4",
+  ra: 37.954560670189856,
+  dec: 37.954560670189856,
 }
 
 export const storageKeys = {

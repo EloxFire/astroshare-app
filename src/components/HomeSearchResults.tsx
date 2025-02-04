@@ -34,8 +34,6 @@ export default function HomeSearchResults({ results, planetResults, onReset, nav
   const handleRenderItem = ({item}: {item: DSO | GlobalPlanet | Star}) => {
     const itemFamily = getObjectFamily(item)
 
-    console.log(itemFamily)
-
     switch (itemFamily) {
       case 'DSO':
         return <SearchResultCard object={item as DSO} navigation={navigation} />
@@ -80,37 +78,6 @@ export default function HomeSearchResults({ results, planetResults, onReset, nav
           renderItem={handleRenderItem}
           keyExtractor={item => `${item.dec}-${item.ra}`}
         />
-        {/*<ScrollView horizontal>*/}
-        {/*  {}*/}
-        {/*  <FlatList*/}
-        {/*    ref={planetFlatListRef}*/}
-        {/*    scrollEnabled={results.length > 1}*/}
-        {/*    horizontal*/}
-        {/*    data={planetResults}*/}
-        {/*    ListEmptyComponent={<></>}*/}
-        {/*    renderItem={({ item }) => <SearchPlanetResultCard planet={item} navigation={navigation} />}*/}
-        {/*    keyExtractor={item => item.name + item.ra}*/}
-        {/*  />*/}
-        {/*  <FlatList*/}
-        {/*    ref={flatListRef}*/}
-        {/*    scrollEnabled={results.length > 1}*/}
-        {/*    horizontal*/}
-        {/*    data={results}*/}
-        {/*    ListEmptyComponent={<></>}*/}
-        {/*    renderItem={({ item }) => <SearchResultCard object={item} navigation={navigation} />}*/}
-        {/*    keyExtractor={item => item.name + item.ra}*/}
-        {/*  />*/}
-        {/*  <FlatList*/}
-        {/*    ref={starFlatListRef}*/}
-        {/*    scrollEnabled={results.length > 1}*/}
-        {/*    horizontal*/}
-        {/*    data={starsResults}*/}
-        {/*    ListEmptyComponent={<></>}*/}
-        {/*    renderItem={({ item }) => <SearchStarResultCard star={item} navigation={navigation} />}*/}
-        {/*    keyExtractor={item => item.ids + item.ra}*/}
-        {/*  />*/}
-        {/*</ScrollView>*/}
-
       </SafeAreaView>
     </View>
   )

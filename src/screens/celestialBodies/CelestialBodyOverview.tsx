@@ -27,6 +27,7 @@ import {getObject, storeObject} from "../../helpers/storage";
 import {GlobalPlanet} from "../../helpers/types/GlobalPlanet";
 import {DSO} from "../../helpers/types/DSO";
 import {Star} from "../../helpers/types/Star";
+import {routes} from "../../helpers/routes";
 
 export default function CelestialBodyOverview({ route, navigation }: any) {
 
@@ -222,7 +223,13 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
               </View>
 
               <View style={{marginTop: 10}}>
-                <SimpleButton disabled text={"Voir dans le planétarium\n(bientôt disponible)"} fullWidth backgroundColor={app_colors.white} small textColor={app_colors.black} />
+                <SimpleButton
+                  text={`Voir dans le planétarium`}
+                  fullWidth backgroundColor={app_colors.white}
+                  small
+                  textColor={app_colors.black}
+                  onPress={() => navigation.push(routes.planetarium.path, {defaultObject: object})}
+                />
               </View>
             </View>
 
