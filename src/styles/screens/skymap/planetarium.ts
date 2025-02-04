@@ -1,4 +1,4 @@
-import { StatusBar } from "react-native";
+import {Dimensions, StatusBar} from "react-native";
 import { app_colors } from "../../../helpers/constants";
 
 export const planetariumStyles = {

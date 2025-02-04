@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from 'react'
 import { app_colors, cmeImageSrc, cmeVideoSrc, sunImagesSrcWavelengths, sunVideoSrcWavelengths } from '../helpers/constants'
 import { Dimensions, ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import { globalStyles } from '../styles/global'
-import { moonPhasesStyles } from '../styles/screens/moonPhases'
 import { solarWeatherStyles } from '../styles/screens/solarWeather'
 import { ESunFilter } from '../helpers/types/SunFilter'
 import { ResizeMode, Video } from 'expo-av'
@@ -19,7 +18,6 @@ import KpChart from "../components/graphs/KpChart";
 import LineGraph from "../components/graphs/LineGraph";
 import {SolarWindData} from "../helpers/types/SolarWindData";
 import {getSolarWindData} from "../helpers/api/getSolarWindData";
-import {isFirstLaunch} from "../helpers/scripts/checkFirstLaunch";
 
 export default function SolarWeather({ navigation }: any) {
 
@@ -82,7 +80,7 @@ export default function SolarWeather({ navigation }: any) {
       <PageTitle navigation={navigation} title={i18n.t('home.buttons.solar_weather.title')} subtitle={i18n.t('home.buttons.solar_weather.subtitle')} />
       <View style={globalStyles.screens.separator} />
       <ScrollView>
-        <View style={moonPhasesStyles.content}>
+        <View style={{backgroundColor: app_colors.white_no_opacity, padding: 10, borderRadius: 10}}>
           {/* SUN CONTAINER */}
           <View style={solarWeatherStyles.container}>
             <View style={{ display: 'flex', flexDirection: 'row' }}>
@@ -108,9 +106,9 @@ export default function SolarWeather({ navigation }: any) {
                   rate={2.0}
                   isLooping={true}
                   resizeMode={ResizeMode.CONTAIN}
-                  style={{ width: Dimensions.get('window').width - 40, height: Dimensions.get('window').width - 40, marginVertical: 10, borderRadius: 10, opacity: loadingImage ? .1 : 1, borderWidth: loadingImage ? 1 : 0, borderColor: app_colors.white_eighty }}
+                  style={{ width: Dimensions.get('window').width - 60, height: Dimensions.get('window').width - 60, marginVertical: 10, borderRadius: 10, opacity: loadingImage ? .1 : 1, borderWidth: loadingImage ? 1 : 0, borderColor: app_colors.white_eighty }}
                 >
-                  <Image placeholder={localizedVideoPlaceholders[i18n.locale]} style={{ width: Dimensions.get('window').width - 40, height: Dimensions.get('window').width - 40, marginVertical: 10, borderRadius: 10 }} />
+                  <Image placeholder={localizedVideoPlaceholders[i18n.locale]} style={{ width: Dimensions.get('window').width - 60, height: Dimensions.get('window').width - 60, marginVertical: 10, borderRadius: 10 }} />
                 </Video>
             }
             <View style={solarWeatherStyles.container.buttons}>
@@ -148,9 +146,9 @@ export default function SolarWeather({ navigation }: any) {
                   rate={1.0}
                   isLooping={true}
                   resizeMode={ResizeMode.CONTAIN}
-                  style={{ width: Dimensions.get('window').width - 40, height: Dimensions.get('window').width - 40, marginVertical: 10, borderRadius: 10, opacity: loadingCME ? .1 : 1, borderWidth: loadingCME ? 1 : 0, borderColor: app_colors.white_eighty }}
+                  style={{ width: Dimensions.get('window').width - 60, height: Dimensions.get('window').width - 60, marginVertical: 10, borderRadius: 10, opacity: loadingCME ? .1 : 1, borderWidth: loadingCME ? 1 : 0, borderColor: app_colors.white_eighty }}
                 >
-                  <Image placeholder={localizedVideoPlaceholders[i18n.locale]} style={{ width: Dimensions.get('window').width - 40, height: Dimensions.get('window').width - 40, marginVertical: 10, borderRadius: 10 }} />
+                  <Image placeholder={localizedVideoPlaceholders[i18n.locale]} style={{ width: Dimensions.get('window').width - 60, height: Dimensions.get('window').width - 60, marginVertical: 10, borderRadius: 10 }} />
                 </Video>
             }
             <View style={solarWeatherStyles.container.buttons}>

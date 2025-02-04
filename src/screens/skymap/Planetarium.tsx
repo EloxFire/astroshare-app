@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import {Dimensions, Text, TouchableOpacity, View} from 'react-native';
 import { planetariumStyles } from '../../styles/screens/skymap/planetarium';
 import { Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
 import { ExpoWebGLRenderingContext, GLView } from 'expo-gl';
@@ -22,6 +22,7 @@ import { createAzimuthalGrid } from '../../helpers/scripts/astro/skymap/createAz
 import { createPointerMaterial } from '../../helpers/scripts/astro/skymap/createPointerMaterial';
 import { createPointerTextures } from '../../helpers/scripts/astro/skymap/createPointerTextures';
 import { constellations } from '@observerly/astrometry';
+import {pointCamera} from "../../helpers/scripts/astro/skymap/pointCamera";
 
 let IsInertia = false;
 let oldX = 0.0, oldY = 0.0;
@@ -403,7 +404,9 @@ export default function Planetarium({ navigation }: any) {
           onShowGround={onShowGround}
           onShowPlanets={() => {}}
           onShowDSO={() => {}}
-          onCenterObject={() => {}}
+          onCenterObject={() => {cameraRef.current!.lookAt(new THREE.Vector3(
+            ...Object.values(convertSphericalToCartesian(10, currentTapInfos.ra, currentTapInfos.dec))
+          ))}}
         />
         <GestureDetector gesture={composed}>
           <View style={planetariumStyles.container}>

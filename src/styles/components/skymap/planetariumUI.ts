@@ -1,5 +1,11 @@
 import {app_colors} from "../../../helpers/constants";
-import {StatusBar} from "react-native";
+import {Dimensions, StatusBar} from "react-native";
+
+
+const DEFAULT_UI_BUTTON_SIZE = 50;
+const DEFAULT_UI_BUTTON_PADDING = 10;
+const DEFAULT_UI_BUTTON_BORDER_RADIUS = 10;
+const DEFAULT_UI_BUTTON_GAP = 10;
 
 export const planetariumUIStyles = {
   container: {
@@ -12,49 +18,23 @@ export const planetariumUIStyles = {
     paddingVertical: StatusBar.currentHeight!,
     paddingHorizontal: 10,
 
-    backButton: {
-      position: 'absolute' as 'absolute',
-      top: StatusBar.currentHeight! + 10,
-      left: 10,
-      borderRadius: 10,
-      display: 'flex' as 'flex',
-      flexDirection: 'row' as 'row',
-      alignItems: 'center' as 'center',
-      zIndex: 10,
-      backgroundColor: app_colors.black_skymap,
-      padding: 8,
-
-      text: {
-        color: app_colors.white,
-        fontSize: 15
-      },
-
-      icon: {
-        width: 30,
-        height: 30,
-        tintColor: app_colors.white_sixty,
-        transform: [{ rotate: '90deg' }]
-      }
-    },
-
     layersModal: {
       backgroundColor: app_colors.black_skymap,
       padding: 10,
       position: 'absolute' as 'absolute',
-      top: StatusBar.currentHeight! + 50,
-      right: 10,
+      top: StatusBar.currentHeight! + DEFAULT_UI_BUTTON_GAP,
+      right: 65,
       zIndex: 10,
-      // height: 150,
-      width: 300,
-      gap: 20,
-      borderTopLeftRadius: 10,
-      borderBottomLeftRadius: 10,
-      borderBottomRightRadius: 10,
+      width: 200,
+      gap: 10,
       display: 'flex' as 'flex',
+      borderRadius: 10,
       flexDirection: 'row' as 'row',
       justifyContent: 'space-between' as 'space-between',
-      alignItems: 'flex-start' as 'flex-start',
+      alignItems: 'center' as 'center',
       flexWrap: 'wrap' as 'wrap',
+      borderWidth: 1,
+      borderColor: app_colors.white_twenty,
 
       button: {
         display: 'flex' as 'flex',
@@ -62,6 +42,8 @@ export const planetariumUIStyles = {
         alignItems: 'center' as 'center',
         justifyContent: 'center' as 'center',
         gap: 5,
+        width: 50,
+        height: 50,
 
         icon: {
           width: 30,
@@ -77,7 +59,7 @@ export const planetariumUIStyles = {
       }
     },
 
-    layerButton: {
+    uiButton: {
       position: 'absolute' as 'absolute',
       top: StatusBar.currentHeight! + 10,
       right: 10,
@@ -88,6 +70,8 @@ export const planetariumUIStyles = {
       backgroundColor: app_colors.black_skymap,
       padding: 8,
       borderRadius: 10,
+      borderWidth: 1,
+      borderColor: app_colors.white_twenty,
 
       text: {
         color: app_colors.white,
@@ -98,6 +82,69 @@ export const planetariumUIStyles = {
         width: 30,
         height: 30,
         tintColor: app_colors.white_sixty,
+      }
+    },
+
+    buttons: {
+      back: {
+        left: 10,
+        right: 'auto' as 'auto',
+      },
+
+      search: {
+        top: StatusBar.currentHeight! + DEFAULT_UI_BUTTON_SIZE + DEFAULT_UI_BUTTON_PADDING + DEFAULT_UI_BUTTON_GAP,
+      }
+    },
+
+    searchContainer: {
+      position: 'absolute' as 'absolute',
+      top: StatusBar.currentHeight! + DEFAULT_UI_BUTTON_SIZE * 2 + DEFAULT_UI_BUTTON_PADDING * 2 + DEFAULT_UI_BUTTON_GAP,
+      right: Dimensions.get('window').width / 2 - ((Dimensions.get('window').width - 20) / 2),
+      zIndex: 10,
+      width: Dimensions.get('window').width - 20,
+
+      input: {
+        backgroundColor: app_colors.black_skymap,
+        borderRadius: 10,
+        borderWidth: 1,
+        borderColor: app_colors.white_twenty,
+        padding: 10,
+        color: app_colors.white,
+        fontSize: 15,
+        fontFamily: 'GilroyRegular',
+      },
+
+      categories: {
+        backgroundColor: app_colors.black_skymap,
+        borderRadius: 10,
+        borderWidth: 1,
+        borderColor: app_colors.white_twenty,
+        marginTop: 30,
+
+        separator: {
+          backgroundColor: app_colors.white_twenty,
+          height: 1
+        },
+
+        category: {
+          padding: 10,
+          display: 'flex' as 'flex',
+          flexDirection: 'row' as 'row',
+          justifyContent: 'space-between' as 'space-between',
+          alignItems: 'center' as 'center',
+
+          text: {
+            color: app_colors.white_sixty,
+            fontSize: 15,
+            fontFamily: 'GilroyRegular',
+          },
+
+          icon: {
+            width: 30,
+            height: 30,
+            tintColor: app_colors.white_sixty,
+          }
+        }
       }
     },
 

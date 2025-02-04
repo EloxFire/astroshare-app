@@ -1,10 +1,9 @@
 import React, {useEffect, useState} from "react";
-import {Image, ImageSourcePropType, Text, TouchableOpacity, View} from "react-native";
+import {Image, ImageSourcePropType, Text, TextInput, TouchableOpacity, View} from "react-native";
 import {planetariumUIStyles} from "../../styles/components/skymap/planetariumUI";
 import {routes} from "../../helpers/routes";
 import {useSettings} from "../../contexts/AppSettingsContext";
 import dayjs from "dayjs";
-import {getBrightStarName} from "../../helpers/scripts/astro/objects/getBrightStarName";
 import {GeographicCoordinate, isNight} from "@observerly/astrometry";
 import {ComputedObjectInfos} from "../../helpers/types/objects/ComputedObjectInfos";
 import {computeObject} from "../../helpers/scripts/astro/objects/computeObject";
@@ -23,6 +22,7 @@ import {convertDegreesRaToHMS} from "../../helpers/scripts/astro/coords/convertD
 import {prettyDec, prettyRa} from "../../helpers/scripts/astro/prettyCoords";
 import {convertDegreesDecToDMS} from "../../helpers/scripts/astro/coords/convertDegreesDecToDms";
 import {getObjectFamily} from "../../helpers/scripts/astro/objects/getObjectFamily";
+import InputWithIcon from "../forms/InputWithIcon";
 
 interface PlanetariumUIProps {
   navigation: any;
@@ -38,12 +38,13 @@ interface PlanetariumUIProps {
 
 export default function PlanetariumUI({ navigation, infos, onShowGround, onShowConstellations, onShowAzGrid, onShowEqGrid, onShowDSO, onShowPlanets, onCenterObject }: PlanetariumUIProps) {
 
-  const {starsCatalog } = useStarCatalog()
   const {currentUserLocation} = useSettings();
   const {currentLocale} = useTranslation();
   const [currentTime, setCurrentTime] = useState<string>(dayjs().format('HH:mm'));
   const [isNightTime, setIsNightTime] = useState<boolean>(false);
+
   const [showLayerModal, setShowLayerModal] = useState<boolean>(false);
+  const [showSearchBar, setShowSearchBar] = useState<boolean>(false);
 
   const [objectInfos, setObjectInfos] = useState<ComputedObjectInfos | null>(null);
   const [currentInfoTab, setCurrentInfoTab] = useState<number>(0);
@@ -71,17 +72,63 @@ export default function PlanetariumUI({ navigation, infos, onShowGround, onShowC
     }
   }, [infos]);
 
+  const handleShowSearch = () => {
+    setShowSearchBar(!showSearchBar);
+    setShowLayerModal(false);
+  }
+
+  const handleShowLayers = () => {
+    setShowLayerModal(!showLayerModal);
+    setShowSearchBar(false);
+  }
+
 
   return (
     <View style={planetariumUIStyles.container}>
-      <TouchableOpacity style={planetariumUIStyles.container.backButton} onPress={() => navigation.navigate(routes.skymapSelection.path)}>
-        <Image style={planetariumUIStyles.container.backButton.icon} source={require('../../../assets/icons/FiChevronDown.png')} />
-        {/*<Text style={planetariumUIStyles.container.backButton.text}>Retour</Text>*/}
+      <TouchableOpacity style={[planetariumUIStyles.container.uiButton, planetariumUIStyles.container.buttons.back]} onPress={() => navigation.navigate(routes.skymapSelection.path)}>
+        <Image style={[planetariumUIStyles.container.uiButton.icon, {transform: [{ rotate: '90deg' }]}]} source={require('../../../assets/icons/FiChevronDown.png')} />
+      </TouchableOpacity>
+      <TouchableOpacity style={planetariumUIStyles.container.uiButton} onPress={() => handleShowLayers()}>
+        <Image style={planetariumUIStyles.container.uiButton.icon} source={require('../../../assets/icons/FiLayers.png')} />
+      </TouchableOpacity>
+      <TouchableOpacity style={[planetariumUIStyles.container.uiButton, planetariumUIStyles.container.buttons.search]} onPress={() => handleShowSearch()}>
+        <Image style={planetariumUIStyles.container.uiButton.icon} source={require('../../../assets/icons/FiSearch.png')} />
       </TouchableOpacity>
 
-      <TouchableOpacity style={planetariumUIStyles.container.layerButton} onPress={() => setShowLayerModal(!showLayerModal)}>
-        <Image style={planetariumUIStyles.container.layerButton.icon} source={require('../../../assets/icons/FiLayers.png')} />
-      </TouchableOpacity>
+      {
+        showSearchBar && (
+          <View style={[planetariumUIStyles.container.searchContainer]}>
+            <TextInput
+              style={planetariumUIStyles.container.searchContainer.input}
+              placeholder={"Recherchez un objet"}
+              placeholderTextColor={app_colors.white_sixty}
+              keyboardType="default"
+            />
+
+            <View style={[planetariumUIStyles.container.searchContainer.categories]}>
+              <TouchableOpacity style={planetariumUIStyles.container.searchContainer.categories.category}>
+                <Text style={planetariumUIStyles.container.searchContainer.categories.category.text}>Vos favoris</Text>
+                <Image style={planetariumUIStyles.container.searchContainer.categories.category.icon} source={require('../../../assets/icons/FiChevronRight.png')} />
+              </TouchableOpacity>
+              <View  style={planetariumUIStyles.container.searchContainer.categories.separator}/>
+              <TouchableOpacity style={planetariumUIStyles.container.searchContainer.categories.category}>
+                <Text style={planetariumUIStyles.container.searchContainer.categories.category.text}>Objets du ciel profond</Text>
+                <Image style={planetariumUIStyles.container.searchContainer.categories.category.icon} source={require('../../../assets/icons/FiChevronRight.png')} />
+              </TouchableOpacity>
+              <View  style={planetariumUIStyles.container.searchContainer.categories.separator}/>
+              <TouchableOpacity style={planetariumUIStyles.container.searchContainer.categories.category}>
+                <Text style={planetariumUIStyles.container.searchContainer.categories.category.text}>Étoiles</Text>
+                <Image style={planetariumUIStyles.container.searchContainer.categories.category.icon} source={require('../../../assets/icons/FiChevronRight.png')} />
+              </TouchableOpacity>
+              <View  style={planetariumUIStyles.container.searchContainer.categories.separator}/>
+              <TouchableOpacity style={planetariumUIStyles.container.searchContainer.categories.category}>
+                <Text style={planetariumUIStyles.container.searchContainer.categories.category.text}>Planètes</Text>
+                <Image style={planetariumUIStyles.container.searchContainer.categories.category.icon} source={require('../../../assets/icons/FiChevronRight.png')} />
+              </TouchableOpacity>
+            </View>
+          </View>
+        )
+      }
 
       {
         showLayerModal && (

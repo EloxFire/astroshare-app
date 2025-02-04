@@ -79,7 +79,8 @@ export const storageKeys = {
     accessToken: 'access_token',
     refreshToken: 'refresh_token',
     user: 'user',
-  }
+  },
+  hiddenPremiumAccess: 'hasHiddenPremiumAccess',
 }
 
 export const geomagneticStormLevelsLongLabels = {
