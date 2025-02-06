@@ -26,6 +26,8 @@ export default function MoonInfos() {
   const [distance, setDistance] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true)
 
+  const [moonImageUrl, setMoonImageUrl] = useState<undefined | {uri: string }>({uri: `${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/moon/illustration`})
+
   const formatter = new Intl.NumberFormat("fr-FR", {
     style: 'unit',
     unit: 'kilometer',
@@ -74,7 +76,7 @@ export default function MoonInfos() {
 
   return (
     <View style={moonInfosStyles.container}>
-      <ImageBackground source={moonIcons[phase]} style={moonInfosStyles.container.illustration} />
+      <ImageBackground source={moonImageUrl} style={moonInfosStyles.container.illustration} />
       <View>
         {loading ? <Text>{i18n.t('common.loadings.simple')}</Text> : <Text style={moonInfosStyles.container.title}>{moonPhasesList[phase]}</Text>}
         <View style={moonInfosStyles.container.infos}>

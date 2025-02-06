@@ -100,7 +100,7 @@ export default function SellScreen({ navigation }: any) {
   const createPayment = async () => {
     try {
       const response = await axios.post(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/stripe/create-payment-intent`, {
-          amount: selectedOffer?.stripePrice,
+          subscriptionType: selectedOffer?.type,
         },
         {
           headers: {

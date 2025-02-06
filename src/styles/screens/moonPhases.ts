@@ -12,6 +12,7 @@ export const moonPhasesStyles = {
     borderWidth: 1,
     borderRadius: 10,
     padding: 10,
+    marginBottom: 80,
 
     header: {
       display: 'flex' as 'flex',
@@ -66,8 +67,8 @@ export const moonPhasesStyles = {
       },
 
       icon: {
-        width: 210,
-        height: 210,
+        width: Dimensions.get('window').width - 100,
+        height: Dimensions.get('window').width - 100,
         resizeMode: 'contain' as 'contain',
         alignSelf: 'center' as 'center',
         borderRadius: 210
@@ -76,7 +77,7 @@ export const moonPhasesStyles = {
       infos: {
         display: 'flex' as 'flex',
         flexDirection: 'row' as 'row',
-        justifyContent: 'space-between' as 'space-between',
+        justifyContent: 'space-evenly' as 'space-evenly',
         alignItems: 'center' as 'center',
         marginTop: 20,
 
@@ -90,14 +91,14 @@ export const moonPhasesStyles = {
             opacity: 0.5,
             fontFamily: 'AuxMono',
             color: app_colors.white,
-            textAlign: 'center' as 'center'
+            // textAlign: 'center' as 'center'
           },
 
           value: {
             fontSize: 20,
             fontFamily: 'GilroyBlack',
             color: app_colors.white,
-            textAlign: 'center' as 'center'
+            // textAlign: 'center' as 'center'
           }
         }
       }

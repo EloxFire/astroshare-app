@@ -37,7 +37,7 @@ export default function MoonPhases({ navigation }: any) {
 
   const [moonData, setMoonData] = useState<ComputedMoonInfos | null>(null)
   const [currentDate, setCurrentDate] = useState(dayjs())
-  const [moonImageUrl, setMoonImageUrl] = useState<undefined | {uri: string }>(undefined)
+  const [moonImageUrl, setMoonImageUrl] = useState<undefined | {uri: string }>({uri: `${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/moon/illustration`})
 
   useEffect(() => {
     const observer: GeographicCoordinate = {latitude: currentUserLocation.lat, longitude: currentUserLocation.lon}
@@ -56,13 +56,6 @@ export default function MoonPhases({ navigation }: any) {
       clearInterval(interval)
     }
   }, [])
-
-  useEffect(() => {
-    (async () => {
-      const url = await astroshareApi.get('/moon/illustration')
-      setMoonImageUrl({uri: url.data})
-    })()
-  }, []);
 
   return (
     <View style={globalStyles.body}>
