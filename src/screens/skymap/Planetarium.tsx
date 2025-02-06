@@ -86,6 +86,29 @@ export default function Planetarium({ route, navigation }: any) {
     }
   }, [planetariumLoading]);
 
+  useEffect(() => {
+
+    // Cleanup all ThreeJS related objects when unmounting
+    return () => {
+      if (sceneRef.current) {
+        sceneRef.current.traverse((object: any) => {
+          if (object.geometry) {
+            object.geometry.dispose();
+          }
+          if (object.material) {
+            object.material.dispose();
+          }
+          if(object.texture){
+            object.texture.dispose();
+          }
+        })
+      }
+      if (rendererRef.current) {
+        rendererRef.current.dispose();
+      }
+    }
+  }, []);
+
 
   const _onContextCreate = async (gl: ExpoWebGLRenderingContext) => {
     const { drawingBufferWidth, drawingBufferHeight } = gl;
