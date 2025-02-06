@@ -41,6 +41,8 @@ pointergeometry.setAttribute('position', new THREE.Float32BufferAttribute(pointe
 const pointermaterial = createPointerMaterial();
 const pointerUI = new THREE.Points(pointergeometry, pointermaterial);
 pointerUI.visible = false;
+let azAngle = 0;
+let altAngle = Math.PI/2;
 
 
 export default function Planetarium({ route, navigation }: any) {
@@ -196,7 +198,17 @@ export default function Planetarium({ route, navigation }: any) {
     ground.renderOrder = 100;
     scene.add(ground);
 
-    camera.lookAt(convertSphericalToCartesian(10, 90, 90));
+    let q11 = new THREE.Quaternion;
+    let q12 = new THREE.Quaternion;
+    let q13 = new THREE.Quaternion;
+    let Y1 = new THREE.Vector3(0, 0, 1);
+    let X1 = new THREE.Vector3(1, 0, 0);
+    q11.setFromAxisAngle(Y1, 0);
+    q12.setFromAxisAngle(X1, Math.PI / 2);
+    ground.getWorldQuaternion(q13);
+    let qtot1 = q13.multiply(q11).multiply(q12);
+    camera.setRotationFromQuaternion(qtot1.normalize());
+    //camera.lookAt(convertSphericalToCartesian(10, 90, 90));
 
     setPlanetariumLoading(false);
     console.log('Planetarium loaded!');
@@ -234,12 +246,12 @@ export default function Planetarium({ route, navigation }: any) {
 
 
   const onShowEqGrid = () => {
-    if(showEqGrid){
+    if (showEqGrid) {
       sceneRef.current?.remove(EquatorialGrid.grid1);
       sceneRef.current?.remove(EquatorialGrid.grid2);
       sceneRef.current?.remove(EquatorialGrid.grid3);
       setShowEqGrid(false);
-    }else{
+    } else {
       sceneRef.current?.add(EquatorialGrid.grid1);
       sceneRef.current?.add(EquatorialGrid.grid2);
       sceneRef.current?.add(EquatorialGrid.grid3);
@@ -248,12 +260,12 @@ export default function Planetarium({ route, navigation }: any) {
   }
 
   const onShowAzGrid = () => {
-    if(showAzGrid){
+    if (showAzGrid) {
       sceneRef.current?.remove(AzimuthalGrid.grid1);
       sceneRef.current?.remove(AzimuthalGrid.grid2);
       sceneRef.current?.remove(AzimuthalGrid.grid3);
       setShowAzGrid(false);
-    }else{
+    } else {
       sceneRef.current?.add(AzimuthalGrid.grid1);
       sceneRef.current?.add(AzimuthalGrid.grid2);
       sceneRef.current?.add(AzimuthalGrid.grid3);
@@ -261,20 +273,20 @@ export default function Planetarium({ route, navigation }: any) {
     }
   }
   const onShowConstellations = () => {
-    if(showConstellations){
+    if (showConstellations) {
       sceneRef.current?.remove(Constellations);
       setShowConstellations(false);
-    }else{
+    } else {
       sceneRef.current?.add(Constellations);
       setShowConstellations(true);
     }
   }
 
   const onShowGround = () => {
-    if(showGround){
+    if (showGround) {
       sceneRef.current?.remove(ground);
       setShowGround(false);
-    }else{
+    } else {
       sceneRef.current?.add(ground);
       setShowGround(true);
     }
@@ -296,8 +308,25 @@ export default function Planetarium({ route, navigation }: any) {
     .onChange((e) => {
       const camera = cameraRef.current; // Access camera from ref
       if (camera) {
-        camera.rotateY(getEffectiveAngularResolution(camera.getEffectiveFOV(), cameraWidth) * (e.translationX - oldX));
-        camera.rotateX(getEffectiveAngularResolution(camera.getEffectiveFOV(), cameraWidth) * (e.translationY - oldY));
+        let q1 = new THREE.Quaternion;
+        let q2 = new THREE.Quaternion;
+        let q3 = new THREE.Quaternion;
+        let newAzAngle = azAngle + getEffectiveAngularResolution(camera.getEffectiveFOV(), cameraWidth) * (e.translationX - oldX);
+        let Y = new THREE.Vector3(0, 0, 1);
+        q1.setFromAxisAngle(Y, newAzAngle);
+        let X = new THREE.Vector3(1, 0, 0);
+        let newAltAngle = altAngle + getEffectiveAngularResolution(camera.getEffectiveFOV(), cameraWidth) * (e.translationY - oldY);
+        if (newAltAngle > Math.PI) {
+          newAltAngle = Math.PI;
+        } else if (newAltAngle < 0) {
+          newAltAngle = 0;
+        }
+        q2.setFromAxisAngle(X, newAltAngle);
+        ground.getWorldQuaternion(q3);
+        let qtot = q3.multiply(q1).multiply(q2);
+        camera.setRotationFromQuaternion(qtot.normalize());
+        azAngle = newAzAngle;
+        altAngle = newAltAngle;
         oldX = e.translationX;
         oldY = e.translationY;
         Vx = e.velocityX;
@@ -314,8 +343,27 @@ export default function Planetarium({ route, navigation }: any) {
   const Inertia = () => {
     const camera = cameraRef.current;
     if (camera) {
-      camera.rotateY(getEffectiveAngularResolution(camera.getEffectiveFOV(), camWdth) * Vx * 0.01);
-      camera.rotateX(getEffectiveAngularResolution(camera.getEffectiveFOV(), camWdth) * Vy * 0.01);
+      let q1 = new THREE.Quaternion;
+      let q2 = new THREE.Quaternion;
+      let q3 = new THREE.Quaternion;
+      let newAzAngle = azAngle + getEffectiveAngularResolution(camera.getEffectiveFOV(), camWdth) * Vx * 0.01;
+      let Y = new THREE.Vector3(0, 0, 1);
+      q1.setFromAxisAngle(Y, newAzAngle);
+      let X = new THREE.Vector3(1, 0, 0);
+      let newAltAngle = altAngle + getEffectiveAngularResolution(camera.getEffectiveFOV(), camWdth) * Vy * 0.01;
+      if (newAltAngle > Math.PI) {
+        newAltAngle = Math.PI;
+      } else if (newAltAngle < 0) {
+        newAltAngle = 0;
+      }
+      q2.setFromAxisAngle(X, newAltAngle);
+      ground.getWorldQuaternion(q3);
+      let qtot = q3.multiply(q1).multiply(q2);
+      camera.setRotationFromQuaternion(qtot.normalize());
+      azAngle = newAzAngle;
+      altAngle = newAltAngle;
+      // camera.rotateY(getEffectiveAngularResolution(camera.getEffectiveFOV(), camWdth) * Vx * 0.01);
+      // camera.rotateX(getEffectiveAngularResolution(camera.getEffectiveFOV(), camWdth) * Vy * 0.01);
       Vx = Vx * 0.98;
       Vy = Vy * 0.98;
       if (Math.abs(Vx) < 0.1) {
@@ -419,9 +467,9 @@ export default function Planetarium({ route, navigation }: any) {
         let index = '0';
         if (typeof intersects[0] !== 'undefined') {
           intersects.forEach((value, i) => {
-            if (Vmin > parseFloat(starsCatalog[intersects[i].index!.toString()].V)){
-              index=intersects[i].index!.toString();
-              Vmin=parseFloat(starsCatalog[intersects[i].index!.toString()].V);
+            if (Vmin > parseFloat(starsCatalog[intersects[i].index!.toString()].V)) {
+              index = intersects[i].index!.toString();
+              Vmin = parseFloat(starsCatalog[intersects[i].index!.toString()].V);
             }
           })
           let pointerCoos = convertSphericalToCartesian(0.5, parseFloat(starsCatalog[index].ra), parseFloat(starsCatalog[index].dec));
@@ -439,7 +487,7 @@ export default function Planetarium({ route, navigation }: any) {
       }
     });
 
-  const gestures = Gesture.Simultaneous(pinch, rotation, pan);
+  const gestures = Gesture.Simultaneous(pinch, pan);
   const taps = Gesture.Exclusive(singleTap);
   const composed = Gesture.Race(gestures, taps);
 
