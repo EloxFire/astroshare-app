@@ -1,0 +1,26 @@
+diff --git a/node_modules/three/build/three.cjs b/node_modules/three/build/three.cjs
+index 49da42a..44af65e 100644
+--- a/node_modules/three/build/three.cjs
++++ b/node_modules/three/build/three.cjs
+@@ -43873,7 +43873,7 @@ function WebGLProgram( renderer, cacheKey, parameters, bindingStates ) {
+ 	function onFirstUse( self ) {
+ 
+ 		// check for link errors
+-		if ( renderer.debug.checkShaderErrors ) {
++		if ( renderer.debug.checkShaderErrors && program ) {
+ 
+ 			const programLog = gl.getProgramInfoLog( program ).trim();
+ 			const vertexLog = gl.getShaderInfoLog( glVertexShader ).trim();
+diff --git a/node_modules/three/src/renderers/webgl/WebGLProgram.js b/node_modules/three/src/renderers/webgl/WebGLProgram.js
+index f53af2d..31b50c7 100644
+--- a/node_modules/three/src/renderers/webgl/WebGLProgram.js
++++ b/node_modules/three/src/renderers/webgl/WebGLProgram.js
+@@ -916,7 +916,7 @@ function WebGLProgram( renderer, cacheKey, parameters, bindingStates ) {
+ 	function onFirstUse( self ) {
+ 
+ 		// check for link errors
+-		if ( renderer.debug.checkShaderErrors ) {
++		if ( renderer.debug.checkShaderErrors && program ) {
+ 
+ 			const programLog = gl.getProgramInfoLog( program ).trim();
+ 			const vertexLog = gl.getShaderInfoLog( glVertexShader ).trim();

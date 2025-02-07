@@ -93,8 +93,10 @@ export default function Planetarium({ route, navigation }: any) {
 
   useEffect(() => {
 
+    console.log('Planetarium mounted!');
     // Cleanup all ThreeJS related objects when unmounting
     return () => {
+      console.log('Cleaning up Planetarium...');
       if (sceneRef.current) {
         sceneRef.current.traverse((object: any) => {
           if (object.geometry) {
@@ -113,35 +115,6 @@ export default function Planetarium({ route, navigation }: any) {
       }
     }
   }, []);
-
-  // La fonction pour charger la texture de la Terre
-  const loadAndProcessMilkywayAsset = async () => {
-    try {
-      // Charger l'asset de la texture
-      const asset = Asset.fromModule(require('../../../assets/images/textures/milkyway.jpg'));
-      if (!asset.localUri) {
-        await asset.downloadAsync();
-      }
-
-      const { width, height } = asset;
-      const localUri = `${FileSystem.cacheDirectory}copied_texture.jpg`;
-      const fileInfo = await FileSystem.getInfoAsync(localUri);
-      if (!fileInfo.exists) {
-        await FileSystem.copyAsync({ from: asset.localUri!, to: localUri });
-      }
-
-      const copiedAsset = Asset.fromURI(`${localUri}`);
-      copiedAsset.height = height;
-      copiedAsset.width = width;
-      copiedAsset.localUri = localUri;
-
-      console.log('Asset de la voie lactée chargé !');
-
-      return ExpoTHREE.loadAsync(copiedAsset);
-    } catch (error) {
-      console.error('Erreur lors du chargement de l\'asset :', error);
-    }
-  };
 
 
   const _onContextCreate = async (gl: ExpoWebGLRenderingContext) => {
@@ -187,16 +160,13 @@ export default function Planetarium({ route, navigation }: any) {
     scene.add(starsCloud);
 
     // Texture de la voie lactée
-    const skyTexture = await loadAndProcessMilkywayAsset();
-    if (skyTexture) {
-      const milkywayGeometry = new THREE.SphereGeometry(1000, 128, 128);
-      const milkywayMaterial = new THREE.MeshBasicMaterial({ map: skyTexture, side: THREE.BackSide });
-      const milkyway = new THREE.Mesh(milkywayGeometry, milkywayMaterial);
+    const milkywayGeometry = new THREE.SphereGeometry(100, 64, 64);
+    const milkywayMaterial = new THREE.MeshBasicMaterial({ map: new ExpoTHREE.TextureLoader().load(require('../../../assets/images/textures/milkyway.png')), side: THREE.BackSide });
+    const milkyway = new THREE.Mesh(milkywayGeometry, milkywayMaterial);
 
-      milkyway.position.set(0, 0, 0);
-      milkyway.renderOrder = -1;
-      scene.add(milkyway);
-    }
+    milkyway.position.set(0, 0, 0);
+    milkyway.renderOrder = -1;
+    scene.add(milkyway);
 
     pointerUI.frustumCulled = false;
     const pointerTextures = createPointerTextures();
