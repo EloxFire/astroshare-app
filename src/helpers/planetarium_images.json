@@ -1,0 +1,29 @@
+{
+  "file": "planetarium_images.json",
+  "images": [
+    {
+      "imageCredits" : {"short" : "Starhopper","infoUrl": "https://commons.wikimedia.org/wiki/File:M013.jpg"},
+      "imageUrl" : "https://i.postimg.cc/3wJmpWD1/m13.png",
+      "worldCoords" : [[[250.6992,36.2385], [250.1458,36.2355], [250.1402,36.6821], [250.6964,36.6854]]],
+      "textureCoords" : [[[0,0], [1,0], [1,1], [0,1]]],
+      "minResolution" : 0.2169148018,
+      "maxBrightness" : 13.4
+    },
+    {
+      "imageCredits" : {"short" : "HG731GZ"},
+      "imageUrl" : "https://i.postimg.cc/y8W7ZH89/m42.png",
+      "worldCoords" : [[[86.083,-7.122], [82.8645,-7.5215], [82.4686,-4.3286], [85.6746,-3.9321]]],
+      "textureCoords" : [[[0,0], [1,0], [1,1], [0,1]]],
+      "minResolution" : 0.266023154,
+      "maxBrightness" : 12.5
+    },
+    {
+      "imageCredits": {"short" : "HG731GZ"},
+      "imageUrl" : "https://i.postimg.cc/rsJqSy4G/m45.png",
+      "worldCoords" : [[[57.8101,23.9301], [56.4627,23.0651], [55.5068,24.2933], [56.8609,25.1672]]],
+      "textureCoords" : [[[0,0], [1,0], [1,1], [0,1]]],
+      "minResolution" : 1.447520924,
+      "maxBrightness" : 12.5
+    }
+  ]
+}

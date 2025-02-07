@@ -1,5 +1,5 @@
-import React, {useState, useRef, useEffect} from 'react';
-import {ActivityIndicator, Text, View} from 'react-native';
+import React, { useState, useRef, useEffect } from 'react';
+import { ActivityIndicator, Text, View } from 'react-native';
 import { planetariumStyles } from '../../styles/screens/skymap/planetarium';
 import { Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
 import { ExpoWebGLRenderingContext, GLView } from 'expo-gl';
@@ -21,13 +21,15 @@ import PlanetariumUI from "../../components/skymap/PlanetariumUI";
 import { createAzimuthalGrid } from '../../helpers/scripts/astro/skymap/createAzimuthalGrid';
 import { createPointerMaterial } from '../../helpers/scripts/astro/skymap/createPointerMaterial';
 import { createPointerTextures } from '../../helpers/scripts/astro/skymap/createPointerTextures';
-import {app_colors} from "../../helpers/constants";
-import {getObjectFamily} from "../../helpers/scripts/astro/objects/getObjectFamily";
-import {convertHMSToDegreeFromString} from "../../helpers/scripts/astro/HmsToDegree";
-import {convertDMSToDegreeFromString} from "../../helpers/scripts/astro/DmsToDegree";
-import {degToRad} from "three/src/math/MathUtils";
-import {Asset} from "expo-asset";
+import { app_colors } from "../../helpers/constants";
+import { getObjectFamily } from "../../helpers/scripts/astro/objects/getObjectFamily";
+import { convertHMSToDegreeFromString } from "../../helpers/scripts/astro/HmsToDegree";
+import { convertDMSToDegreeFromString } from "../../helpers/scripts/astro/DmsToDegree";
+import { degToRad } from "three/src/math/MathUtils";
+import { Asset } from "expo-asset";
 import * as FileSystem from "expo-file-system";
+import planetariumImages from "../../helpers/planetarium_images.json"
+
 
 let IsInertia = false;
 let oldX = 0.0, oldY = 0.0;
@@ -45,7 +47,7 @@ const pointermaterial = createPointerMaterial();
 const pointerUI = new THREE.Points(pointergeometry, pointermaterial);
 pointerUI.visible = false;
 let azAngle = 0;
-let altAngle = Math.PI/2;
+let altAngle = Math.PI / 2;
 
 
 export default function Planetarium({ route, navigation }: any) {
@@ -72,7 +74,7 @@ export default function Planetarium({ route, navigation }: any) {
 
   useEffect(() => {
     const defaultObject = route.params?.defaultObject;
-    if(defaultObject){
+    if (defaultObject) {
       const { ra, dec } = defaultObject;
 
       let formatedRa = typeof ra === 'string' ? convertHMSToDegreeFromString(ra) : ra;
@@ -105,7 +107,7 @@ export default function Planetarium({ route, navigation }: any) {
           if (object.material) {
             object.material.dispose();
           }
-          if(object.texture){
+          if (object.texture) {
             object.texture.dispose();
           }
         })
@@ -165,8 +167,36 @@ export default function Planetarium({ route, navigation }: any) {
     const milkyway = new THREE.Mesh(milkywayGeometry, milkywayMaterial);
 
     milkyway.position.set(0, 0, 0);
+    if (milkywayMaterial.map) {
+      milkywayMaterial.map.flipY = false;
+    }
+    milkyway.setRotationFromQuaternion(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1, 0, 0), -Math.PI / 2));
     milkyway.renderOrder = -1;
     scene.add(milkyway);
+
+
+
+    planetariumImages.images.forEach((image) => {
+      const verticesBuffer: number[] = [];
+      const geometry = new THREE.BufferGeometry();
+      const indices = [
+        0, 1, 2, // first triangle
+        2, 3, 0 // second triangle
+      ];
+      image.worldCoords[0].forEach((imageVertex) => {
+        const { x, y, z } = convertSphericalToCartesian(11, imageVertex[0], imageVertex[1]);
+        verticesBuffer.push(x, y, z);
+      })
+      geometry.setAttribute('position', new THREE.Float32BufferAttribute(verticesBuffer, 3));
+      geometry.setIndex(indices);
+      const nebulaeMaterial = new THREE.MeshBasicMaterial({ map: new ExpoTHREE.TextureLoader().load(require("../../../assets/images/textures/m42.png")), side: THREE.DoubleSide, transparent: true, color: 0xffffff });
+      const nebulae = new THREE.Mesh(geometry, nebulaeMaterial);
+      scene.add(nebulae);
+    })
+
+    const light = new THREE.AmbientLight(0xffffff); // soft white light
+    scene.add(light);
+
 
     pointerUI.frustumCulled = false;
     const pointerTextures = createPointerTextures();
@@ -361,8 +391,6 @@ export default function Planetarium({ route, navigation }: any) {
       camera.setRotationFromQuaternion(qtot.normalize());
       azAngle = newAzAngle;
       altAngle = newAltAngle;
-      // camera.rotateY(getEffectiveAngularResolution(camera.getEffectiveFOV(), camWdth) * Vx * 0.01);
-      // camera.rotateX(getEffectiveAngularResolution(camera.getEffectiveFOV(), camWdth) * Vy * 0.01);
       Vx = Vx * 0.98;
       Vy = Vy * 0.98;
       if (Math.abs(Vx) < 0.1) {
@@ -499,14 +527,15 @@ export default function Planetarium({ route, navigation }: any) {
         onShowConstellations={onShowConstellations}
         onShowEqGrid={onShowEqGrid}
         onShowGround={onShowGround}
-        onShowPlanets={() => {}}
-        onShowDSO={() => {}}
+        onShowPlanets={() => { }}
+        onShowDSO={() => { }}
         onCenterObject={() => {
           const formatedRa = typeof currentTapInfos.ra === 'string' ? convertHMSToDegreeFromString(currentTapInfos.ra) : currentTapInfos.ra;
           const formatedDec = typeof currentTapInfos.dec === 'string' ? convertDMSToDegreeFromString(currentTapInfos.dec) : currentTapInfos.dec;
           cameraRef.current!.lookAt(new THREE.Vector3(
-          ...Object.values(convertSphericalToCartesian(10, formatedRa, formatedDec))
-        ))}}
+            ...Object.values(convertSphericalToCartesian(10, formatedRa, formatedDec))
+          ))
+        }}
       />
       <GestureDetector gesture={composed}>
         <View style={planetariumStyles.container}>

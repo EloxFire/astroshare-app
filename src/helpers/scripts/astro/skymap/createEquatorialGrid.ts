@@ -2,7 +2,7 @@ import { THREE } from "expo-three";
 import { drawCircle } from "./drawCircle";
 
 export const createEquatorialGrid = (color: number) => {
-    const radius = 0.8;
+    const radius = 1.2;
 
     let grid1 = new THREE.Group();
     let grid2 = new THREE.Group();
