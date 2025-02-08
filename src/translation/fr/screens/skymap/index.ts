@@ -14,7 +14,7 @@ export const skymapTranslations = {
       subtitle: "// Visualisez le ciel en 3D"
     }
   },
-  info: "Keep track of the sky with our skymap generator",
+  info: "Utilisez nos cartes du ciel pour vous repérer et explorer la voûte céleste.",
   flatmap: skymapGeneratorTranslations,
   planetarium: planetariumTranslations
 }

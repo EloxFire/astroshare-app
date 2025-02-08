@@ -14,7 +14,7 @@ export const skymapTranslations = {
       subtitle: "// Visualize the sky in 3D"
     }
   },
-  info: "Keep track of the sky with our skymap generator",
+  info: "Use our skymaps to locate yourself and explore the night sky.",
   flatmap: skymapGeneratorTranslations,
   planetarium: planetariumTranslations
 }

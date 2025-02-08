@@ -43,7 +43,7 @@ export default function LaunchCard({ launch, navigation, noFollow }: LaunchCardP
           <DSOValues title={`${i18n.t('launchesScreen.launchCards.date')} ${launch.status.id === 2 || launch.status.id === 8 ? i18n.t('launchesScreen.launchCards.temporary') : ""}`} value={dayjs(launch.net).format("DD MMM YYYY")} />
           <DSOValues title={i18n.t('launchesScreen.launchCards.launcher')} value={launch.rocket.configuration.full_name} />
           <DSOValues title={i18n.t('launchesScreen.launchCards.operator')} value={truncate(launch.launch_service_provider.name, 18)} />
-          <DSOValues title={i18n.t('launchesScreen.launchCards.launchPad')} value={truncate(launch.pad.name, 18)} />
+          <DSOValues title={i18n.t('launchesScreen.launchCards.launchPad')} value={truncate(launch.pad.name, 15)} />
           <DSOValues title={i18n.t('launchesScreen.launchCards.client')} value={launch.mission.agencies.length > 0 ? launch.mission.agencies[0].name.length > 25 ? launch.mission.agencies[0].abbrev : truncate(launch.mission.agencies[0].name, 25) : "N/A" } />
         </View>
       </View>

@@ -115,7 +115,7 @@ export default function SolarWeather({ navigation }: any) {
               {
                 Object.keys(ESunFilter).map((key: string) => {
                   return (
-                    <SimpleButton key={key} text={key} onPress={() => handleChangeSunImage(ESunFilter[key as keyof typeof ESunFilter], isImageMode ? 'img' : 'video')} active={key === currentImageFilter} />
+                    <SimpleButton small key={key} text={key} onPress={() => handleChangeSunImage(ESunFilter[key as keyof typeof ESunFilter], isImageMode ? 'img' : 'video')} active={key === currentImageFilter} />
                   )
                 })
               }
@@ -155,7 +155,7 @@ export default function SolarWeather({ navigation }: any) {
               {
                 Object.keys(ECmeFilters).map((key: string) => {
                   return (
-                    <SimpleButton key={key} text={key} onPress={() => handleChangeCMEImage(ECmeFilters[key as keyof typeof ECmeFilters], isCmeImageMode ? 'img' : 'video')} active={key === currentCmeImageFilter} />
+                    <SimpleButton small key={key} text={key} onPress={() => handleChangeCMEImage(ECmeFilters[key as keyof typeof ECmeFilters], isCmeImageMode ? 'img' : 'video')} active={key === currentCmeImageFilter} />
                   )
                 })
               }
@@ -208,11 +208,11 @@ export default function SolarWeather({ navigation }: any) {
                     solarWindData.length !== 0 && (
                       <>
                         <Text style={[solarWeatherStyles.container.title, {fontSize: 15, marginBottom: 10}]}>Vitesse (Km/h)</Text>
-                        <LineGraph yMin={300} yMax={800} data={solarWindData} field={"speed"} lineColor={app_colors.turquoise} leftMargin={45}/>
+                        <LineGraph yMin={100} yMax={800} data={solarWindData} field={"speed"} lineColor={app_colors.turquoise} leftMargin={55} rightMargin={10}/>
                         <Text style={[solarWeatherStyles.container.title, {fontSize: 15, marginBottom: 10}]}>Densité (p/cm³)</Text>
-                        <LineGraph yMin={-4} yMax={10} data={solarWindData} field={"density"} lineColor={app_colors.green}/>
+                        <LineGraph yMin={-4} yMax={10} data={solarWindData} field={"density"} lineColor={app_colors.green} leftMargin={55} rightMargin={10}/>
                         <Text style={[solarWeatherStyles.container.title, {fontSize: 15, marginBottom: 10}]}>Température (°K)</Text>
-                        <LineGraph shortNumbers yMin={0} yMax={600000} data={solarWindData} field={"temperature"} lineColor={app_colors.orange} leftMargin={55}/>
+                        <LineGraph shortNumbers yMin={-100000} yMax={600000} data={solarWindData} field={"temperature"} lineColor={app_colors.orange} leftMargin={65} rightMargin={10}/>
                       </>
                     )
                   }

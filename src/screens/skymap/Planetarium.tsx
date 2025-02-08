@@ -21,14 +21,12 @@ import PlanetariumUI from "../../components/skymap/PlanetariumUI";
 import { createAzimuthalGrid } from '../../helpers/scripts/astro/skymap/createAzimuthalGrid';
 import { createPointerMaterial } from '../../helpers/scripts/astro/skymap/createPointerMaterial';
 import { createPointerTextures } from '../../helpers/scripts/astro/skymap/createPointerTextures';
-import { app_colors } from "../../helpers/constants";
-import { getObjectFamily } from "../../helpers/scripts/astro/objects/getObjectFamily";
+import {app_colors, planetTextures} from "../../helpers/constants";
 import { convertHMSToDegreeFromString } from "../../helpers/scripts/astro/HmsToDegree";
 import { convertDMSToDegreeFromString } from "../../helpers/scripts/astro/DmsToDegree";
-import { degToRad } from "three/src/math/MathUtils";
-import { Asset } from "expo-asset";
-import * as FileSystem from "expo-file-system";
 import planetariumImages from "../../helpers/planetarium_images.json"
+import {useSolarSystem} from "../../contexts/SolarSystemContext";
+import {GlobalPlanet} from "../../helpers/types/GlobalPlanet";
 
 
 let IsInertia = false;
@@ -54,6 +52,7 @@ export default function Planetarium({ route, navigation }: any) {
 
   const { currentUserLocation } = useSettings();
   const { starsCatalog } = useStarCatalog();
+  const {planets, moonCoords} = useSolarSystem()
 
   const [cameraWidth, setCameraWidth] = useState<number>(0);
   const [cameraHeight, setCameraHeight] = useState<number>(0);
@@ -175,7 +174,7 @@ export default function Planetarium({ route, navigation }: any) {
     scene.add(milkyway);
 
 
-
+    // DSO IMAGES
     planetariumImages.images.forEach((image) => {
       const verticesBuffer: number[] = [];
       const uvBuffer: number[] = [];
@@ -205,35 +204,35 @@ export default function Planetarium({ route, navigation }: any) {
 
       // Définir le vertex shader
       const vertexShader = `
-    varying vec2 vUv;
-    void main() {
-      vUv = uv;
-      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-    }
-  `;
+        varying vec2 vUv;
+        void main() {
+          vUv = uv;
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }
+      `;
 
-      // Définir le fragment shader avec effet de fondu rectangulaire
-      const fragmentShader = `
-    uniform sampler2D map;
-    varying vec2 vUv;
-
-    void main() {
-      vec4 color = texture2D(map, vUv);
-
-      // Calculer la distance par rapport aux bords
-      float alpha = 1.0;
-      float border = 0.1; // Largeur de la bordure de fondu
-
-      if (vUv.x < border || vUv.x > (1.0 - border) || vUv.y < border || vUv.y > (1.0 - border)) {
-        // Appliquer un effet de fondu basé sur la distance par rapport aux bords
-        float dist = min(vUv.x, 1.0 - vUv.x);
-        dist = min(dist, min(vUv.y, 1.0 - vUv.y));
-        alpha = smoothstep(0.0, border, dist);
-      }
-
-      gl_FragColor = vec4(color.rgb, color.a * alpha);
-    }
-  `;
+          // Définir le fragment shader avec effet de fondu rectangulaire
+          const fragmentShader = `
+        uniform sampler2D map;
+        varying vec2 vUv;
+    
+        void main() {
+          vec4 color = texture2D(map, vUv);
+    
+          // Calculer la distance par rapport aux bords
+          float alpha = 1.0;
+          float border = 0.1; // Largeur de la bordure de fondu
+    
+          if (vUv.x < border || vUv.x > (1.0 - border) || vUv.y < border || vUv.y > (1.0 - border)) {
+            // Appliquer un effet de fondu basé sur la distance par rapport aux bords
+            float dist = min(vUv.x, 1.0 - vUv.x);
+            dist = min(dist, min(vUv.y, 1.0 - vUv.y));
+            alpha = smoothstep(0.0, border, dist);
+          }
+    
+          gl_FragColor = vec4(color.rgb, color.a * alpha);
+        }
+      `;
 
       const nebulaeMaterial = new THREE.ShaderMaterial({
         uniforms: {
@@ -248,6 +247,29 @@ export default function Planetarium({ route, navigation }: any) {
       const nebulae = new THREE.Mesh(geometry, nebulaeMaterial);
       scene.add(nebulae);
     });
+
+    // PLANETS TEXTURES
+    planets.forEach((planet: GlobalPlanet) => {
+      const { x, y, z } = convertSphericalToCartesian(10, planet.ra, planet.dec);
+      const geometry = new THREE.SphereGeometry(0.1, 32, 32);
+      const texture = new ExpoTHREE.TextureLoader().load(planetTextures[planet.name.toUpperCase()]);
+      const material = new THREE.MeshBasicMaterial({ map: texture});
+      const planetMesh = new THREE.Mesh(geometry, material);
+      planetMesh.position.set(x, y, z);
+      scene.add(planetMesh);
+    })
+
+    // MOON TEXTURE
+    const { x, y, z } = convertSphericalToCartesian(10, moonCoords.ra, moonCoords.dec);
+    const moonGeometry = new THREE.SphereGeometry(0.1, 32, 32);
+    const moonTexture = new ExpoTHREE.TextureLoader().load(planetTextures.MOON);
+    const moonNormalMap = new ExpoTHREE.TextureLoader().load(planetTextures.MOON_NORMAL);
+    const moonMaterial = new THREE.MeshStandardMaterial({ map: moonTexture, normalMap: moonNormalMap });
+    const moonMesh = new THREE.Mesh(moonGeometry, moonMaterial);
+    moonMesh.position.set(x, y, z);
+    scene.add(moonMesh);
+
+
 
     const light = new THREE.AmbientLight(0xffffff); // soft white light
     scene.add(light);

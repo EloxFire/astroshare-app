@@ -4,7 +4,7 @@ import {Dimensions} from "react-native";
 export const kpIndexGraphStyles = {
   container: {
     // backgroundColor: app_colors.red_eighty,
-    width: Dimensions.get('window').width - 40,
+    width: Dimensions.get('window').width - 60,
 
     legend: {
       display: 'flex' as 'flex',

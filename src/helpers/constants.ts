@@ -116,6 +116,19 @@ export const firebaseCollections = {
   gallery: "Gallery",
 }
 
+export const planetTextures: any = {
+  'MERCURY': "https://i.postimg.cc/YSJYM5Q6/mercury.png",
+  'VENUS': "https://i.postimg.cc/c4Z7KG2T/venus.png",
+  'EARTH': "https://i.postimg.cc/vBFgpWdX/earth.png",
+  'MARS': "https://i.postimg.cc/25qnpkLj/mars.png",
+  'JUPITER': "https://i.postimg.cc/7ZZgVMx2/jupiter.png",
+  'SATURN': "https://i.postimg.cc/15HGwYZS/saturn.png",
+  'URANUS': "https://i.postimg.cc/pdn5Gs3p/uranus.png",
+  'NEPTUNE': "https://i.postimg.cc/zDTSXGtV/neptune.png",
+  'MOON_NORMAL': "https://i.postimg.cc/VNyk6mHk/moon-normals.png",
+  'MOON': "https://i.postimg.cc/mgp76zD6/lune.png"
+}
+
 export const sunImagesSrcWavelengths = {
   'HMI_IC': 'https://sdo.gsfc.nasa.gov/assets/img/latest/latest_512_HMIIC.jpg',
   'AIA_193': 'https://sdo.gsfc.nasa.gov/assets/img/latest/latest_512_0193.jpg',

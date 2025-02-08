@@ -12,12 +12,13 @@ interface LineGraphProps {
   field: "density" | "speed" | "temperature"; // Champ à afficher
   lineColor?: string; // Couleur de la ligne
   leftMargin?: number;
+  rightMargin?: number;
   yMin?: number; // Valeur minimale personnalisée pour l'axe Y
   yMax?: number; // Valeur maximale personnalisée pour l'axe Y
   shortNumbers?: boolean; // Afficher les nombres en format court
 }
 
-const LineGraph: React.FC<LineGraphProps> = ({ data, field, lineColor, leftMargin, yMin, yMax, shortNumbers }) => {
+const LineGraph: React.FC<LineGraphProps> = ({ data, field, lineColor, leftMargin, rightMargin, yMin, yMax, shortNumbers }) => {
 
   const { currentLCID } = useTranslation();
 
@@ -25,7 +26,7 @@ const LineGraph: React.FC<LineGraphProps> = ({ data, field, lineColor, leftMargi
   const WIDTH = SCREEN_WIDTH - 20; // Largeur du graphique
   const HEIGHT = 150; // Hauteur du graphique
   const LEFT_MARGIN = leftMargin || 40; // Marge gauche pour les labels Y
-  const RIGHT_MARGIN = 20; // Réduire la marge à droite
+  const RIGHT_MARGIN = rightMargin ? rightMargin + 20 : 20; // Réduire la marge à droite
   const TOP_MARGIN = 10; // Réduire la marge en haut
   const BOTTOM_MARGIN = 20; // Marge pour les labels X
 
