@@ -1,3 +1,4 @@
+import {DSO} from "./types/DSO";
 
 export const app_colors = {
   black: '#000000',
@@ -163,4 +164,47 @@ export const cmeVideoSrc = {
 export const cmeImageDescription = {
   'C2': 'Courone intérieure',
   'C3': 'Champ large (32 diamètres solaires)',
+}
+
+export const sampleDSO: DSO = {
+  "name": "NGC1976",
+  "type": "Cl+N",
+  "ra": "05:35:16.48",
+  "dec": "-05:23:22.8",
+  "const": "Ori",
+  "maj_ax": 90,
+  "min_ax": 60,
+  "pos_ang": "",
+  "b_mag": 4,
+  "v_mag": 4,
+  "j_mag": "",
+  "h_mag": "",
+  "k_mag": "",
+  "surf_br": "",
+  "hubble": "",
+  "pax": "",
+  "pm_ra": 1.67,
+  "pm_dec": -0.3,
+  "rad_vel": 28,
+  "redshift": 0.000093,
+  "cstar_u_mag": "",
+  "cstar_b_mag": "",
+  "cstar_v_mag": "",
+  "m": 42,
+  "ngc": "",
+  "ic": "",
+  "cstar_name": "",
+  "identifiers": "LBN 974,MWSC 0582",
+  "common_names": "Great Orion Nebula,Orion Nebula",
+  "ned_notes": "",
+  "open_ngc_notes": "",
+  "sources": "Type:1|RA:1|Dec:1|Const:99|MajAx:9|MinAx:9|B-Mag:3|V-Mag:10|Pm-RA:2|Pm-Dec:2|RadVel:2|Redshift:2",
+  "image_url": "https://i.postimg.cc/y8W7ZH89/m42.png",
+  "distance": "",
+  "dist_unit": "",
+  "dimensions": "",
+  "discovered_by": "",
+  "discovery_year": "",
+  "apparent_size": "",
+  "age": ""
 }

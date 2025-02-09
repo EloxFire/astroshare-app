@@ -98,9 +98,10 @@ export const planetariumUIStyles = {
 
     searchContainer: {
       position: 'absolute' as 'absolute',
-      top: StatusBar.currentHeight! + DEFAULT_UI_BUTTON_SIZE * 2 + DEFAULT_UI_BUTTON_PADDING * 2 + DEFAULT_UI_BUTTON_GAP,
+      // top: StatusBar.currentHeight! + DEFAULT_UI_BUTTON_SIZE * 2 + DEFAULT_UI_BUTTON_PADDING * 2 + DEFAULT_UI_BUTTON_GAP,
+      top: StatusBar.currentHeight! + DEFAULT_UI_BUTTON_SIZE + DEFAULT_UI_BUTTON_PADDING + DEFAULT_UI_BUTTON_GAP,
       right: Dimensions.get('window').width / 2 - ((Dimensions.get('window').width - 20) / 2),
-      zIndex: 10,
+      zIndex: 9,
       width: Dimensions.get('window').width - 20,
 
       input: {
@@ -112,6 +113,17 @@ export const planetariumUIStyles = {
         color: app_colors.white,
         fontSize: 15,
         fontFamily: 'GilroyRegular',
+        height: 50,
+        width: (Dimensions.get('window').width - 20) - DEFAULT_UI_BUTTON_SIZE - DEFAULT_UI_BUTTON_PADDING,
+      },
+
+      results: {
+        backgroundColor: app_colors.black_skymap,
+        borderRadius: 10,
+        borderWidth: 1,
+        borderColor: app_colors.white_twenty,
+        marginTop: 10,
+        height: 200,
       },
 
       categories: {
@@ -119,7 +131,7 @@ export const planetariumUIStyles = {
         borderRadius: 10,
         borderWidth: 1,
         borderColor: app_colors.white_twenty,
-        marginTop: 30,
+        marginTop: 10,
 
         separator: {
           backgroundColor: app_colors.white_twenty,

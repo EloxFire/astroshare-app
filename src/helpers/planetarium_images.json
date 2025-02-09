@@ -833,6 +833,14 @@
       "textureCoords" : [[[0,0], [1,0], [1,1], [0,1]]],
       "minResolution" : 0.1111583072,
       "maxBrightness" : 13.4
+    },
+    {
+      "imageCredits": {"short" : "Dylan O'Donnell","infoUrl": "https://deography.com/the-sky-bridge-from-horsehead-to-orion/"},
+      "imageUrl" : "https://i.postimg.cc/fbXVsBZp/ic434.png",
+      "worldCoords" : [[[85.824,-3.8044], [83.8979,-2.9709], [84.7334,-1.0492], [86.6585,-1.8812]]],
+      "textureCoords" : [[[0,0], [1,0], [1,1], [0,1]]],
+      "minResolution" : 2.066023154,
+      "maxBrightness" : 14.5
     }
   ]
 }

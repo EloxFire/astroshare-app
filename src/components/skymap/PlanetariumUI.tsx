@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Image, ImageSourcePropType, Text, TextInput, TouchableOpacity, View} from "react-native";
+import {Image, ImageSourcePropType, ScrollView, Text, TextInput, TouchableOpacity, View} from "react-native";
 import {planetariumUIStyles} from "../../styles/components/skymap/planetariumUI";
 import {routes} from "../../helpers/routes";
 import {useSettings} from "../../contexts/AppSettingsContext";
@@ -15,7 +15,7 @@ import VisibilityGraph from "../graphs/VisibilityGraph";
 import {useStarCatalog} from "../../contexts/StarsContext";
 import SimpleButton from "../commons/buttons/SimpleButton";
 import SimpleBadge from "../badges/SimpleBadge";
-import {app_colors} from "../../helpers/constants";
+import {app_colors, sampleDSO} from "../../helpers/constants";
 import DSOValues from "../commons/DSOValues";
 import {i18n} from "../../helpers/scripts/i18n";
 import {convertDegreesRaToHMS} from "../../helpers/scripts/astro/coords/convertDegreesRaToHMS";
@@ -23,6 +23,8 @@ import {prettyDec, prettyRa} from "../../helpers/scripts/astro/prettyCoords";
 import {convertDegreesDecToDMS} from "../../helpers/scripts/astro/coords/convertDegreesDecToDms";
 import {getObjectFamily} from "../../helpers/scripts/astro/objects/getObjectFamily";
 import InputWithIcon from "../forms/InputWithIcon";
+import CelestialBodyCardLite from "../cards/CelestialBodyCardLite";
+import PlanetariumResultCard from "../cards/PlanetariumResultCard";
 
 interface PlanetariumUIProps {
   navigation: any;
@@ -45,6 +47,7 @@ export default function PlanetariumUI({ navigation, infos, onShowGround, onShowC
 
   const [showLayerModal, setShowLayerModal] = useState<boolean>(false);
   const [showSearchBar, setShowSearchBar] = useState<boolean>(false);
+  const [searchResults, setSearchResults] = useState<(Star | GlobalPlanet | DSO)[]>([]);
 
   const [objectInfos, setObjectInfos] = useState<ComputedObjectInfos | null>(null);
   const [currentInfoTab, setCurrentInfoTab] = useState<number>(0);
@@ -104,6 +107,25 @@ export default function PlanetariumUI({ navigation, infos, onShowGround, onShowC
               placeholderTextColor={app_colors.white_sixty}
               keyboardType="default"
             />
+
+            <ScrollView style={[planetariumUIStyles.container.searchContainer.results]}>
+              <PlanetariumResultCard object={sampleDSO} onPress={() => {}} />
+              <PlanetariumResultCard object={sampleDSO} onPress={() => {}} />
+              <PlanetariumResultCard object={sampleDSO} onPress={() => {}} />
+              <PlanetariumResultCard object={sampleDSO} onPress={() => {}} />
+              <PlanetariumResultCard object={sampleDSO} onPress={() => {}} />
+              <PlanetariumResultCard object={sampleDSO} onPress={() => {}} />
+              <PlanetariumResultCard object={sampleDSO} onPress={() => {}} />
+              <PlanetariumResultCard object={sampleDSO} onPress={() => {}} />
+              <PlanetariumResultCard object={sampleDSO} onPress={() => {}} />
+              <PlanetariumResultCard object={sampleDSO} onPress={() => {}} />
+              <PlanetariumResultCard object={sampleDSO} onPress={() => {}} />
+              <PlanetariumResultCard object={sampleDSO} onPress={() => {}} />
+              <PlanetariumResultCard object={sampleDSO} onPress={() => {}} />
+              <PlanetariumResultCard object={sampleDSO} onPress={() => {}} />
+              <PlanetariumResultCard object={sampleDSO} onPress={() => {}} />
+              <PlanetariumResultCard object={sampleDSO} onPress={() => {}} />
+            </ScrollView>
 
             <View style={[planetariumUIStyles.container.searchContainer.categories]}>
               <TouchableOpacity style={planetariumUIStyles.container.searchContainer.categories.category}>
