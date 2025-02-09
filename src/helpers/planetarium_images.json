@@ -841,6 +841,30 @@
       "textureCoords" : [[[0,0], [1,0], [1,1], [0,1]]],
       "minResolution" : 2.066023154,
       "maxBrightness" : 14.5
+    },
+    {
+      "imageCredits" : {"short" : "Aldeabaran66","infoUrl": "https://commons.wikimedia.org/wiki/File:IC1805_Heart_Nebula.jpg"},
+      "imageUrl" : "https://i.postimg.cc/rFPstvw7/ic1805.png",
+      "worldCoords" : [[[41.5392,59.7801], [35.3939,59.7675], [35.0505,62.857], [41.8329,62.8665]]],
+      "textureCoords" : [[[0,0], [1,0], [1,1], [0,1]]],
+      "minResolution" : 0.266023154,
+      "maxBrightness" : 14.0
+    },
+    {
+      "imageCredits" : {"short" : "Jeffjnet","infoUrl": "https://commons.wikimedia.org/wiki/File:IC1848_JeffJohnson.jpg"},
+      "imageUrl" : "https://i.postimg.cc/J4nt01Mb/ic1848.png",
+      "worldCoords" : [[[45.9953,59.2648], [41.717,59.2532], [41.5468,61.4411], [46.1228,61.4509]]],
+      "textureCoords" : [[[0,0], [1,0], [1,1], [0,1]]],
+      "minResolution" : 0.266023154,
+      "maxBrightness" : 14.0
+    },
+    {
+      "imageCredits": {"short" : "Maxime Spano"},
+      "imageUrl" : "https://i.postimg.cc/sx3m7Mwf/n869-884.png",
+      "worldCoords" : [[[36.2464, 56.6371], [34.2082, 56.4965], [33.9144, 57.6168], [36.01425, 57.7618]]],
+      "textureCoords" : [[[0,0], [1,0], [1,1], [0,1]]],
+      "minResolution" : 1.131608666,
+      "maxBrightness" : 12.8
     }
   ]
 }
