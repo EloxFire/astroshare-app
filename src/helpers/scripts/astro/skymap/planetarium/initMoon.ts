@@ -7,7 +7,7 @@ import {planetTextures} from "../../../../constants";
 export const initMoon = (scene: THREE.Scene, moon: (EquatorialCoordinate & HorizontalCoordinate & { phase: string })) => {
   console.log('[Planetarium] Initializing moon...')
 
-  const { x, y, z } = convertSphericalToCartesian(10, moon.ra, moon.dec);
+  const { x, y, z } = convertSphericalToCartesian(5, moon.ra, moon.dec);
   const moonGeometry = new THREE.SphereGeometry(0.1, 32, 32);
   const moonTexture = new ExpoTHREE.TextureLoader().load(planetTextures.MOON);
   const moonNormalMap = new ExpoTHREE.TextureLoader().load(planetTextures.MOON_NORMAL);

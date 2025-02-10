@@ -18,6 +18,9 @@ import {initDso} from "../../helpers/scripts/astro/skymap/planetarium/initDso";
 import {initPlanets} from "../../helpers/scripts/astro/skymap/planetarium/initPlanets";
 import {initMoon} from "../../helpers/scripts/astro/skymap/planetarium/initMoon";
 import {createEquatorialGrid} from "../../helpers/scripts/astro/skymap/createEquatorialGrid";
+import {initGround} from "../../helpers/scripts/astro/skymap/planetarium/initGround";
+import {placeCamera} from "../../helpers/scripts/astro/skymap/planetarium/placeCamera";
+import {initConstellations} from "../../helpers/scripts/astro/skymap/planetarium/initConstellations";
 
 export default function Planetarium({ route, navigation }: any) {
 
@@ -34,8 +37,10 @@ export default function Planetarium({ route, navigation }: any) {
   const milkyWayMeshRef = useRef<THREE.Mesh | null>(null);
   const starsMeshRef = useRef<THREE.Points | null>(null);
   const dsoMeshRef = useRef<THREE.Mesh[] | null>(null);
-  const planetsMeshRef = useRef<THREE.Mesh[] | null>(null);
+  const planetsMeshRef = useRef<THREE.Group | null>(null);
   const moonMeshRef = useRef<THREE.Mesh | null>(null);
+  const groundMeshRef = useRef<THREE.Mesh | null>(null);
+  const constellationsMeshRef = useRef<THREE.Group | null>(null);
 
   // PLANETARIUM GLOBAL VARIABLES
   const [equatorialGrid, setEquatorialGrid] = useState<{grid1: THREE.Group, grid2: THREE.Group, grid3: THREE.Group} | null>(null);
@@ -66,7 +71,11 @@ export default function Planetarium({ route, navigation }: any) {
     dsoMeshRef.current = initDso(sceneRef.current); // ADD DEEP SKY OBJECTS
     planetsMeshRef.current = initPlanets(sceneRef.current, planets); // ADD PLANETS
     moonMeshRef.current = initMoon(sceneRef.current, moonCoords); // ADD MOON
+    groundMeshRef.current = initGround(sceneRef.current, currentUserLocation.lat, currentUserLocation.lon); // ADD GROUND
+    constellationsMeshRef.current = initConstellations(sceneRef.current); // ADD CONSTELLATIONS
 
+    // Rotate camera locked on the Alt/Az axes
+    placeCamera(cameraRef.current, groundMeshRef.current); // PLACE CAMERA
 
     // ANIMATING SCENE
     animateScene(gl, sceneRef.current, cameraRef.current, rendererRef.current);

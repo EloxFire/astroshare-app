@@ -6,7 +6,7 @@ export const initMilkyWayBackground = (scene: THREE.Scene) => {
   const loader = new ExpoTHREE.TextureLoader();
   const texture = loader.load(require('../../../../../../assets/images/textures/milkyway.png'));
 
-  const milkyWayGeometry = new THREE.SphereGeometry(1000, 64, 64);
+  const milkyWayGeometry = new THREE.SphereGeometry(100, 64, 64);
   const milkyWayMaterial = new THREE.MeshBasicMaterial({ map: texture, side: THREE.BackSide });
   const milkyWayMesh = new THREE.Mesh(milkyWayGeometry, milkyWayMaterial);
 
