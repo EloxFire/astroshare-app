@@ -19,15 +19,9 @@ export default function NextLaunchCountdownWidget(): ReactNode {
 
   useEffect(() => {
     if(launchData){
-      if(launchData[0]){
-        if(launchData[0].status.id === 3){
-          setLaunch(launchData[1])
-          setLoading(false)
-        }else{
-          setLaunch(launchData[0])
-          setLoading(false)
-        }
-      }
+      const nextLaunches = launchData.filter((launch:LaunchData) => launch.status.id !== 3)
+      setLaunch(nextLaunches[0])
+      setLoading(false)
     }
   }, [launchData])
 
@@ -58,7 +52,7 @@ export default function NextLaunchCountdownWidget(): ReactNode {
             <View style={nextLaunchCountdownWidgetStyles.widget.content}>
               <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
                 <View>
-                  <Text style={nextLaunchCountdownWidgetStyles.widget.content.text}>{launch?.name}</Text>
+                  <Text style={nextLaunchCountdownWidgetStyles.widget.content.text}>{launch ? truncate(launch?.name, 38) : ""}</Text>
                   <View style={{display: 'flex', flexDirection: 'row'}}>
                     {/*<Text style={nextLaunchCountdownWidgetStyles.widget.content.countdown.sub}>T-0</Text>*/}
                     <Text style={nextLaunchCountdownWidgetStyles.widget.content.countdown}>{countdown}</Text>
