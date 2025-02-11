@@ -1,4 +1,4 @@
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   Gesture,
   GestureDetector,
@@ -128,6 +128,11 @@ export default function Planetarium({ route, navigation }: any) {
     oldCameraY = e.translationY;
     vX = e.velocityX;
     vY = e.velocityY;
+
+    console.log('Old camera X: ', oldCameraX, 'Old camera Y: ', oldCameraY, 'Velocity X: ', vX, 'Velocity Y: ', vY);
+    console.log('Az angle: ', azAngle, 'Alt angle: ', altAngle);
+
+
     cameraRef.current?.updateProjectionMatrix();
   }).onEnd(() => {
     cameraInertiaActiveRef.current = true; // Set inertia movement to true
