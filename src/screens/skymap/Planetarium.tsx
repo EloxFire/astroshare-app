@@ -1,11 +1,17 @@
 import React, {useRef, useState} from 'react';
-import {GestureDetector, GestureHandlerRootView} from 'react-native-gesture-handler';
+import {
+  Gesture,
+  GestureDetector,
+  GestureHandlerRootView, GestureUpdateEvent,
+  PanGesture, PanGestureHandlerEventPayload,
+  PinchGesture,
+  RotationGesture, TapGesture
+} from 'react-native-gesture-handler';
 import {useSettings} from "../../contexts/AppSettingsContext";
 import {useStarCatalog} from "../../contexts/StarsContext";
 import {useSolarSystem} from "../../contexts/SolarSystemContext";
 import * as THREE from "three";
 import * as ExpoTHREE from "expo-three";
-import PlanetariumUI from "../../components/skymap/PlanetariumUI";
 import {ActivityIndicator, Text, View} from "react-native";
 import {planetariumStyles} from "../../styles/screens/skymap/planetarium";
 import {ExpoWebGLRenderingContext, GLView} from "expo-gl";
@@ -17,10 +23,11 @@ import {initStars} from "../../helpers/scripts/astro/skymap/planetarium/initStar
 import {initDso} from "../../helpers/scripts/astro/skymap/planetarium/initDso";
 import {initPlanets} from "../../helpers/scripts/astro/skymap/planetarium/initPlanets";
 import {initMoon} from "../../helpers/scripts/astro/skymap/planetarium/initMoon";
-import {createEquatorialGrid} from "../../helpers/scripts/astro/skymap/createEquatorialGrid";
 import {initGround} from "../../helpers/scripts/astro/skymap/planetarium/initGround";
 import {placeCamera} from "../../helpers/scripts/astro/skymap/planetarium/placeCamera";
 import {initConstellations} from "../../helpers/scripts/astro/skymap/planetarium/initConstellations";
+import {handleBeginPan} from "../../helpers/scripts/astro/skymap/planetarium/gestures/pan/handleBeginPan";
+import {handleChangePan} from "../../helpers/scripts/astro/skymap/planetarium/gestures/pan/handleChangePan";
 
 export default function Planetarium({ route, navigation }: any) {
 
@@ -31,6 +38,8 @@ export default function Planetarium({ route, navigation }: any) {
 
   // GLOBAL STATES RELATED TO THE PLANETARIUM
   const [planetariumLoading, setPlanetariumLoading] = useState<boolean>(true);
+  const [cameraWidth, setCameraWidth] = useState<number>(0);
+  const [cameraHeight, setCameraHeight] = useState<number>(0);
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
   const sceneRef = useRef<THREE.Scene | null>(null);
   const rendererRef = useRef<ExpoTHREE.Renderer | null>(null);
@@ -42,8 +51,11 @@ export default function Planetarium({ route, navigation }: any) {
   const groundMeshRef = useRef<THREE.Mesh | null>(null);
   const constellationsMeshRef = useRef<THREE.Group | null>(null);
 
-  // PLANETARIUM GLOBAL VARIABLES
-  const [equatorialGrid, setEquatorialGrid] = useState<{grid1: THREE.Group, grid2: THREE.Group, grid3: THREE.Group} | null>(null);
+  const panGestureRef = useRef<PanGesture | null>(null);
+  const pinchGestureRef = useRef<PinchGesture | null>(null);
+  const rotationGestureRef = useRef<RotationGesture | null>(null);
+  const tapGestureRef = useRef<TapGesture | null>(null);
+
 
   // PLANETARIUM UI CUSTOMIZATION
   const [showEqGrid, setShowEqGrid] = useState<boolean>(false);
@@ -52,9 +64,18 @@ export default function Planetarium({ route, navigation }: any) {
   const [showGround, setShowGround] = useState<boolean>(true);
 
 
+  // GESTURES RELATED VARIABLES
+  const cameraInertiaActiveRef = useRef<boolean>(false);
+  let oldCameraX: number = 0.0, oldCameraY: number = 0.0;
+  let vX: number = 0.0, vY: number = 0.0;
+  let azAngle: number = 0.0, altAngle: number = Math.PI / 2;
+
+
   const _onContextCreate = async (gl: ExpoWebGLRenderingContext) => {
     const cameraWidth: number = gl.drawingBufferWidth;
     const cameraHeight: number = gl.drawingBufferHeight;
+    setCameraWidth(cameraWidth);
+    setCameraHeight(cameraHeight);
 
     const {scene, camera, renderer} = initPlanetariumScene(gl, cameraWidth, cameraHeight) // INITIALIZING SCENE
     sceneRef.current = scene;
@@ -81,6 +102,33 @@ export default function Planetarium({ route, navigation }: any) {
     animateScene(gl, sceneRef.current, cameraRef.current, rendererRef.current);
     setTimeout(() => setPlanetariumLoading(false), 2000);
   }
+
+  // GESTURE HANDLERS
+  panGestureRef.current = Gesture.Pan().onBegin(() => {
+    cameraInertiaActiveRef.current = handleBeginPan(cameraInertiaActiveRef.current); // Set inertia movement to false
+  }).onStart(() => {
+    oldCameraX = 0.0;
+    oldCameraY = 0.0;
+    vX = 0.0;
+    vY = 0.0;
+  }).onChange((e: GestureUpdateEvent<PanGestureHandlerEventPayload>) => {
+    const newValues = handleChangePan(e, cameraRef.current, groundMeshRef.current, panGestureRef.current, cameraWidth, oldCameraX, oldCameraY, azAngle, altAngle);
+    if(newValues){
+      azAngle = newValues.newAzAngle;
+      altAngle = newValues.newAltAngle;
+    }
+    oldCameraX = e.translationX;
+    oldCameraY = e.translationY;
+    vX = e.velocityX;
+    vY = e.velocityY;
+    cameraRef.current?.updateProjectionMatrix();
+  }).onEnd(() => {
+    cameraInertiaActiveRef.current = true; // Set inertia movement to true
+  })
+
+  pinchGestureRef.current = Gesture.Pinch().onTouchesDown(() => {}).onTouchesMove(() => {})
+  rotationGestureRef.current = Gesture.Rotation().onStart(() => {}).onChange(() => {}).simultaneousWithExternalGesture(pinchGestureRef.current)
+  tapGestureRef.current = Gesture.Tap().maxDuration(250).onStart(() => {})
 
   return (
     <GestureHandlerRootView>
