@@ -2,7 +2,7 @@ import React, {useRef, useState} from 'react';
 import {
   Gesture,
   GestureDetector,
-  GestureHandlerRootView, GestureUpdateEvent,
+  GestureHandlerRootView, GestureTouchEvent, GestureUpdateEvent,
   PanGesture, PanGestureHandlerEventPayload,
   PinchGesture,
   RotationGesture, TapGesture
@@ -28,6 +28,12 @@ import {placeCamera} from "../../helpers/scripts/astro/skymap/planetarium/placeC
 import {initConstellations} from "../../helpers/scripts/astro/skymap/planetarium/initConstellations";
 import {handleBeginPan} from "../../helpers/scripts/astro/skymap/planetarium/gestures/pan/handleBeginPan";
 import {handleChangePan} from "../../helpers/scripts/astro/skymap/planetarium/gestures/pan/handleChangePan";
+import {
+  handleTouchesDownPinch
+} from "../../helpers/scripts/astro/skymap/planetarium/gestures/pinch/handleTouchesDownPinch";
+import {
+  handleToucheMovePinch
+} from "../../helpers/scripts/astro/skymap/planetarium/gestures/pinch/handleToucheMovePinch";
 
 export default function Planetarium({ route, navigation }: any) {
 
@@ -53,7 +59,6 @@ export default function Planetarium({ route, navigation }: any) {
 
   const panGestureRef = useRef<PanGesture | null>(null);
   const pinchGestureRef = useRef<PinchGesture | null>(null);
-  const rotationGestureRef = useRef<RotationGesture | null>(null);
   const tapGestureRef = useRef<TapGesture | null>(null);
 
 
@@ -69,6 +74,7 @@ export default function Planetarium({ route, navigation }: any) {
   let oldCameraX: number = 0.0, oldCameraY: number = 0.0;
   let vX: number = 0.0, vY: number = 0.0;
   let azAngle: number = 0.0, altAngle: number = Math.PI / 2;
+  let startPinchAngle: number;
 
 
   const _onContextCreate = async (gl: ExpoWebGLRenderingContext) => {
@@ -99,7 +105,7 @@ export default function Planetarium({ route, navigation }: any) {
     placeCamera(cameraRef.current, groundMeshRef.current); // PLACE CAMERA
 
     // ANIMATING SCENE
-    animateScene(gl, sceneRef.current, cameraRef.current, rendererRef.current);
+    animateScene(gl, sceneRef.current, cameraRef.current, groundMeshRef.current, cameraWidth, azAngle, altAngle, vX, vY, rendererRef.current, cameraInertiaActiveRef.current);
     setTimeout(() => setPlanetariumLoading(false), 2000);
   }
 
@@ -126,9 +132,18 @@ export default function Planetarium({ route, navigation }: any) {
     cameraInertiaActiveRef.current = true; // Set inertia movement to true
   })
 
-  pinchGestureRef.current = Gesture.Pinch().onTouchesDown(() => {}).onTouchesMove(() => {})
-  rotationGestureRef.current = Gesture.Rotation().onStart(() => {}).onChange(() => {}).simultaneousWithExternalGesture(pinchGestureRef.current)
+  pinchGestureRef.current = Gesture.Pinch().onTouchesDown((e: GestureTouchEvent) => {
+    const angle = handleTouchesDownPinch(e, cameraRef.current, cameraWidth);
+    if(angle) startPinchAngle = angle;
+  }).onTouchesMove((e: GestureTouchEvent) => {
+    handleToucheMovePinch(e, cameraRef.current, cameraWidth, startPinchAngle);
+  })
+
   tapGestureRef.current = Gesture.Tap().maxDuration(250).onStart(() => {})
+
+  const gestures = Gesture.Simultaneous(panGestureRef.current, pinchGestureRef.current);
+  const taps = Gesture.Exclusive(tapGestureRef.current);
+  const composed = Gesture.Race(gestures, taps);
 
   return (
     <GestureHandlerRootView>
@@ -143,7 +158,7 @@ export default function Planetarium({ route, navigation }: any) {
       {/*  onShowDSO={() => { }}*/}
       {/*  onCenterObject={() => { }}*/}
       {/*/>*/}
-      {/*<GestureDetector gesture={undefined}>*/}
+      <GestureDetector gesture={composed}>
         <View style={planetariumStyles.container}>
           <GLView style={{ flex: 1 }} onContextCreate={_onContextCreate} />
           {planetariumLoading && (
@@ -153,7 +168,7 @@ export default function Planetarium({ route, navigation }: any) {
             </View>
           )}
         </View>
-      {/*</GestureDetector>*/}
+      </GestureDetector>
     </GestureHandlerRootView>
   );
 }
