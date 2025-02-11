@@ -2,10 +2,10 @@ import React, {useRef, useState} from 'react';
 import {
   Gesture,
   GestureDetector,
-  GestureHandlerRootView, GestureTouchEvent, GestureUpdateEvent,
+  GestureHandlerRootView, GestureStateChangeEvent, GestureTouchEvent, GestureUpdateEvent,
   PanGesture, PanGestureHandlerEventPayload,
   PinchGesture,
-  RotationGesture, TapGesture
+  RotationGesture, TapGesture, TapGestureHandlerEventPayload
 } from 'react-native-gesture-handler';
 import {useSettings} from "../../contexts/AppSettingsContext";
 import {useStarCatalog} from "../../contexts/StarsContext";
@@ -28,12 +28,11 @@ import {placeCamera} from "../../helpers/scripts/astro/skymap/planetarium/placeC
 import {initConstellations} from "../../helpers/scripts/astro/skymap/planetarium/initConstellations";
 import {handleBeginPan} from "../../helpers/scripts/astro/skymap/planetarium/gestures/pan/handleBeginPan";
 import {handleChangePan} from "../../helpers/scripts/astro/skymap/planetarium/gestures/pan/handleChangePan";
-import {
-  handleTouchesDownPinch
-} from "../../helpers/scripts/astro/skymap/planetarium/gestures/pinch/handleTouchesDownPinch";
-import {
-  handleToucheMovePinch
-} from "../../helpers/scripts/astro/skymap/planetarium/gestures/pinch/handleToucheMovePinch";
+import {handleTouchesDownPinch} from "../../helpers/scripts/astro/skymap/planetarium/gestures/pinch/handleTouchesDownPinch";
+import {handleToucheMovePinch} from "../../helpers/scripts/astro/skymap/planetarium/gestures/pinch/handleToucheMovePinch";
+import {handleStartTap} from "../../helpers/scripts/astro/skymap/planetarium/gestures/tap/handleStartTap";
+import {initPointer} from "../../helpers/scripts/astro/skymap/planetarium/initPointer";
+
 
 export default function Planetarium({ route, navigation }: any) {
 
@@ -56,6 +55,7 @@ export default function Planetarium({ route, navigation }: any) {
   const moonMeshRef = useRef<THREE.Mesh | null>(null);
   const groundMeshRef = useRef<THREE.Mesh | null>(null);
   const constellationsMeshRef = useRef<THREE.Group | null>(null);
+  const pointerMeshRef = useRef<THREE.Points | null>(null);
 
   const panGestureRef = useRef<PanGesture | null>(null);
   const pinchGestureRef = useRef<PinchGesture | null>(null);
@@ -100,6 +100,7 @@ export default function Planetarium({ route, navigation }: any) {
     moonMeshRef.current = initMoon(sceneRef.current, moonCoords); // ADD MOON
     groundMeshRef.current = initGround(sceneRef.current, currentUserLocation.lat, currentUserLocation.lon); // ADD GROUND
     constellationsMeshRef.current = initConstellations(sceneRef.current); // ADD CONSTELLATIONS
+    pointerMeshRef.current = initPointer(); // ADD POINTER
 
     // Rotate camera locked on the Alt/Az axes
     placeCamera(cameraRef.current, groundMeshRef.current); // PLACE CAMERA
@@ -133,13 +134,16 @@ export default function Planetarium({ route, navigation }: any) {
   })
 
   pinchGestureRef.current = Gesture.Pinch().onTouchesDown((e: GestureTouchEvent) => {
-    const angle = handleTouchesDownPinch(e, cameraRef.current, cameraWidth);
+    const angle: number | undefined = handleTouchesDownPinch(e, cameraRef.current, cameraWidth);
     if(angle) startPinchAngle = angle;
   }).onTouchesMove((e: GestureTouchEvent) => {
     handleToucheMovePinch(e, cameraRef.current, cameraWidth, startPinchAngle);
   })
 
-  tapGestureRef.current = Gesture.Tap().maxDuration(250).onStart(() => {})
+  tapGestureRef.current = Gesture.Tap().maxDuration(250).onStart((e: GestureStateChangeEvent<TapGestureHandlerEventPayload>) => {
+    // const raycast = handleStartTap(cameraRef.current, sceneRef.current, starsCatalog, e, pointerMeshRef.current);
+    console.log('Single tap!');
+  })
 
   const gestures = Gesture.Simultaneous(panGestureRef.current, pinchGestureRef.current);
   const taps = Gesture.Exclusive(tapGestureRef.current);

@@ -18,7 +18,7 @@ export const initPlanetariumScene = (glView: ExpoWebGLRenderingContext, sceneWid
   const aspect: number = sceneWidth / sceneHeight;
 
   const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(120, aspect, 0.1, 10000);
+  const camera = new THREE.PerspectiveCamera(90, aspect, 0.1, 10000);
   const renderer = new ExpoTHREE.Renderer({ gl: glView });
 
   const light = new THREE.AmbientLight(0xffffff); // soft white light
