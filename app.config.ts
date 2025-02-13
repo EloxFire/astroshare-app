@@ -4,7 +4,7 @@ dotenv.config();
 module.exports = {
   name: "Astroshare",
   slug: "astroshare-app",
-  version: "v1.5.2",
+  version: "v1.6.1 (preview)",
   orientation: "portrait",
   icon: "./assets/icon.png",
   userInterfaceStyle: "light",
@@ -25,6 +25,7 @@ module.exports = {
       backgroundColor: "#000000"
     },
     "googleServicesFile": process.env.GOOGLE_SERVICES_JSON || "./android/app/DEVgoogle-services.json",
+    versionCode: 40,
     permissions: [
       "android.permission.ACCESS_FINE_LOCATION",
       "android.permission.SCHEDULE_EXACT_ALARM", // For android 12+ to schedule notifications
