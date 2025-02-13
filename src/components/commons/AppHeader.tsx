@@ -85,18 +85,6 @@ export default function AppHeader({ navigation }: any) {
       />
       <View style={appHeaderStyles.container.buttons}>
         {
-          (!currentUser || !isProUser(currentUser)) && (
-            <TouchableOpacity onPress={() => navigation.push(routes.sellScreen.path)}>
-              <ProBadge additionalStyles={{marginRight: 5}}/>
-            </TouchableOpacity>
-          )
-        }
-
-        <TouchableOpacity onPress={() => handleProfilePress()}>
-          <Image source={require('../../../assets/icons/FiUser.png')} style={{ width: 20, height: 20 }} />
-        </TouchableOpacity>
-
-        {
           showTutorial &&
           <Animated.View style={{ transform: [{ scale: interpolated }] }}>
             <TouchableOpacity style={appHeaderStyles.container.tutorialButton} onPress={() => navigation.push(routes.tutorial.path)}>

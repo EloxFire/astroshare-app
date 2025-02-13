@@ -139,10 +139,6 @@ export default function App() {
                             <Stack.Screen name={routes.solarWeather.path} component={SolarWeather} />
                             <Stack.Screen name={routes.apod.path} component={Apod} />
 
-                            {/*TRANSITS SCREENS*/}
-                            <Stack.Screen name={routes.transits.home.path} component={TransitsScreen} />
-                            <Stack.Screen name={routes.transits.planetary.path} component={PlanetaryConjunctionScreen} />
-
                             {/*SETTINGS SCREENS*/}
                             <Stack.Screen name={routes.settings.path} component={Settings} />
                             <Stack.Screen name={routes.language.path} component={LanguageSelection} />
@@ -151,10 +147,6 @@ export default function App() {
                             <Stack.Screen name={routes.widgetsManager.path} component={WidgetManager} />
                             <Stack.Screen name={routes.favoritesViewPoints.path} component={ViewPointsManager} />
                             <Stack.Screen name={routes.about.path} component={About} />
-
-                            {/*MARKETING SCREENS*/}
-                            <Stack.Screen name={routes.sellScreen.path} component={SellScreen} />
-                            <Stack.Screen name={routes.pro.paywallScreen.path} component={PaywallScreen} />
 
                             {/*SATELLITE TRACKING SCREENS*/}
                             <Stack.Screen name={routes.satelliteTracker.path} component={SatelliteTracker} />

@@ -182,45 +182,6 @@ export default function SolarWeather({ navigation }: any) {
             <Text style={solarWeatherStyles.container.subtitle}>Source : NOAA Space Weather Prediction Center</Text>
             <Image placeholder={localizedForecastPlaceholders[i18n.locale]} source={{ uri: "https://services.swpc.noaa.gov/images/animations/ovation/south/latest.jpg" + '?' + new Date() }} style={solarWeatherStyles.sunImage} />
           </View>
-
-          {/* KP INDEXES CONTAINER */}
-          <View style={solarWeatherStyles.container}>
-            <Text style={solarWeatherStyles.container.title}>{i18n.t('solarWeather.containers.kpIndexes')}</Text>
-            <Text style={[solarWeatherStyles.container.subtitle, {marginBottom: 10}]}>Source : SWPC (Space Weather Prediction Center) / NOAA (National Oceanic and Atmospheric Administration)</Text>
-            <Text style={[solarWeatherStyles.container.subtitle, {marginBottom: 10}]}>Les horaires suivantes sont en UTC</Text>
-            {
-              isProUser(currentUser) ?
-                <KpChart />
-                :
-              <ProLocker darker navigation={navigation} image={require('../../assets/images/tools/sun.png')} />
-            }
-          </View>
-
-          {/* SOLAR WINDS CONTAINER */}
-          <View style={solarWeatherStyles.container}>
-            <Text style={solarWeatherStyles.container.title}>{i18n.t('solarWeather.containers.solarWinds')}</Text>
-            <Text style={[solarWeatherStyles.container.subtitle, {marginBottom: 10}]}>Source : SWPC (Space Weather Prediction Center) / NOAA (National Oceanic and Atmospheric Administration)</Text>
-            <Text style={[solarWeatherStyles.container.subtitle, {marginBottom: 10}]}>Les horaires suivantes sont en UTC</Text>
-            {
-              isProUser(currentUser) ?
-                <>
-                  {
-                    solarWindData.length !== 0 && (
-                      <>
-                        <Text style={[solarWeatherStyles.container.title, {fontSize: 15, marginBottom: 10}]}>Vitesse (Km/h)</Text>
-                        <LineGraph yMin={100} yMax={800} data={solarWindData} field={"speed"} lineColor={app_colors.turquoise} leftMargin={55} rightMargin={10}/>
-                        <Text style={[solarWeatherStyles.container.title, {fontSize: 15, marginBottom: 10}]}>Densité (p/cm³)</Text>
-                        <LineGraph yMin={-4} yMax={10} data={solarWindData} field={"density"} lineColor={app_colors.green} leftMargin={55} rightMargin={10}/>
-                        <Text style={[solarWeatherStyles.container.title, {fontSize: 15, marginBottom: 10}]}>Température (°K)</Text>
-                        <LineGraph shortNumbers yMin={-100000} yMax={600000} data={solarWindData} field={"temperature"} lineColor={app_colors.orange} leftMargin={65} rightMargin={10}/>
-                      </>
-                    )
-                  }
-                </>
-                :
-                <ProLocker darker navigation={navigation} image={require('../../assets/images/tools/sun.png')} />
-            }
-          </View>
         </View>
       </ScrollView>
     </View>

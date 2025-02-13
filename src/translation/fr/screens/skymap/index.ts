@@ -10,7 +10,7 @@ export const skymapTranslations = {
       subtitle: "// Repérez vous rapidement dans le ciel"
     },
     planetarium: {
-      title: "Planétarium 3D",
+      title: "Planétarium 3D (bientôt dispo)",
       subtitle: "// Visualisez le ciel en 3D"
     }
   },

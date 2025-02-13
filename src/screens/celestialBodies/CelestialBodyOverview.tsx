@@ -221,16 +221,6 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
                   )
                 }
               </View>
-
-              <View style={{marginTop: 10}}>
-                <SimpleButton
-                  text={`Voir dans le planétarium`}
-                  fullWidth backgroundColor={app_colors.white}
-                  small
-                  textColor={app_colors.black}
-                  onPress={() => navigation.push(routes.planetarium.path, {defaultObject: object})}
-                />
-              </View>
             </View>
 
             {
