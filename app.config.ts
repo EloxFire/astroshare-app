@@ -4,7 +4,7 @@ dotenv.config();
 module.exports = {
   name: "Astroshare",
   slug: "astroshare-app",
-  version: "v1.6.1 (preview)",
+  version: "v1.5.3",
   orientation: "portrait",
   icon: "./assets/icon.png",
   userInterfaceStyle: "light",
@@ -24,7 +24,7 @@ module.exports = {
       foregroundImage: "./assets/adaptive-icon.png",
       backgroundColor: "#000000"
     },
-    "googleServicesFile": process.env.GOOGLE_SERVICES_JSON || "./android/app/DEVgoogle-services.json",
+    "googleServicesFile": process.env.GOOGLE_SERVICES_JSON ?? "./android/app/DEVgoogle-services.json",
     versionCode: 40,
     permissions: [
       "android.permission.ACCESS_FINE_LOCATION",
