@@ -1,7 +1,7 @@
 import {
   convertEquatorialToHorizontal,
   EquatorialCoordinate,
-  GeographicCoordinate, getBodyNextRise, getBodyNextSet,
+  GeographicCoordinate, getBodyNextRise, getBodyNextSet, getBodyTransit,
   getLunarAge, getLunarAngularDiameter, getLunarDistance, getLunarElongation,
   getLunarEquatorialCoordinate,
   getLunarIllumination,
@@ -37,14 +37,12 @@ export const computeMoon = ({date, observer}: computeMoonProps): ComputedMoonInf
   const moonRise = getBodyNextRise(date, observer, moonEquatorialCoords, horizonAngle)
   const moonSet = getBodyNextSet(date, observer, moonEquatorialCoords, horizonAngle)
 
+
   let moonrise = i18n.t('common.errors.simple')
   let moonset = i18n.t('common.errors.simple')
-  if (isTransitInstance(moonRise)) {
-    moonRise.datetime < date ? moonrise = "Déjà levée" : moonrise = dayjs(moonRise.datetime).add(2, 'h').format('HH:mm').replace(':', 'h')
-  }
-
-  if (isTransitInstance(moonSet)) {
-    moonSet.datetime < date ? moonset = "Déjà couchée" : moonset = dayjs(moonSet.datetime).add(2, 'h').format('HH:mm').replace(':', 'h')
+  if (isTransitInstance(moonRise) && isTransitInstance(moonSet)) {
+    dayjs(moonSet.datetime).isBefore(dayjs(moonRise.datetime)) ? moonrise = "Déjà levée" : moonrise = dayjs(moonRise.datetime).add(2, 'h').format('HH:mm').replace(':', 'h')
+    moonset = dayjs(moonSet.datetime).add(2, 'h').format('HH:mm').replace(':', 'h')
   }
 
   // COMPUTE OBJECT VISIBILITY GRAPH.
