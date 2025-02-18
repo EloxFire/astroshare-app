@@ -14,7 +14,7 @@ export default function CalculationHome({ navigation }: any) {
         subtitle={i18n.t('home.buttons.calculations.subtitle')}
       />
       <View style={globalStyles.screens.separator} />
-      <View style={globalStyles.screens.separator} />
+      <View style={globalStyles.screens.separator}>
 
       </View>
     </View>
