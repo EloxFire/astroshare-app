@@ -116,10 +116,10 @@ export default function PlanetaryConjunctionScreen({ navigation }: any) {
           <View style={planetaryConjunctionStyles.content.row}>
             <SelectDropdown
               data={planetsList}
-              onSelect={(selectedFirstPlanet, index) => {
+              onSelect={(selectedFirstPlanet, index: number) => {
                 setSelectedPlanet1(selectedFirstPlanet.object ? selectedFirstPlanet.object : null);
               }}
-              renderButton={(selectedFirstPlanet, isOpened) => {
+              renderButton={(selectedFirstPlanet, isOpened: boolean) => {
                 if(selectedFirstPlanet) {
                   return (
                     <View style={[planetaryConjunctionStyles.content.parameters.dropdown, planetaryConjunctionStyles.content.parameters.dropdown.withIcon, {borderBottomLeftRadius: isOpened ? 0 : 10, borderBottomRightRadius: isOpened ? 0 : 10}]}>
