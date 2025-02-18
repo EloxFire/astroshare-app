@@ -10,7 +10,7 @@ export const planetaryConjunctionStyles = {
       justifyContent: 'space-between' as 'space-between',
       alignItems: 'center' as 'center',
       gap: 20,
-      marginBottom: 20,
+      marginBottom: 5,
     },
 
     parameters: {
@@ -18,7 +18,7 @@ export const planetaryConjunctionStyles = {
       flexDirection: 'column' as 'column',
       gap: 5,
       marginTop: 10,
-      marginBottom: 10,
+      marginBottom: 50,
 
       text: {
         fontFamily: 'GilroyRegular',

@@ -1,11 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { View, ScrollView, Text, TouchableOpacity, Image, NativeSyntheticEvent, NativeScrollEvent } from 'react-native';
+import React, {useEffect, useRef, useState} from 'react';
+import {View, Text, TouchableOpacity, Image, ActivityIndicator} from 'react-native';
 import { i18n } from '../../helpers/scripts/i18n';
 import { globalStyles } from '../../styles/global';
 import PageTitle from '../../components/commons/PageTitle';
 import {
   Conjunction,
-  findPlanetaryConjunctions,
   GeographicCoordinate,
   Interval, jupiter, mars,
   mercury, neptune,
@@ -40,13 +39,11 @@ export default function PlanetaryConjunctionScreen({ navigation }: any) {
   const [isEndDateModalVisible, setIsEndDateModalVisible] = useState<boolean>(false);
   const [loadingConjunctions, setLoadingConjunctions] = useState<boolean>(false);
 
+  const planetSelector1Ref = useRef<SelectDropdown>(null);
+  const planetSelector2Ref = useRef<SelectDropdown>(null);
 
-  useEffect(() => {
-    // searchConjunctions();
-  }, [currentUserLocation]);
 
   const searchConjunctions = () => {
-
     if(!selectedPlanet1 || !selectedPlanet2) {
       showToast({type: 'error', message: 'Veuillez sélectionner deux planètes'});
       return;
@@ -63,6 +60,7 @@ export default function PlanetaryConjunctionScreen({ navigation }: any) {
     }
 
     if (currentUserLocation) {
+      setLoadingConjunctions(true);
       setConjunctions(null);
       const separation = 3;
 
@@ -79,7 +77,6 @@ export default function PlanetaryConjunctionScreen({ navigation }: any) {
       const targets: [Planet, Planet] = [selectedPlanet1 as Planet, selectedPlanet2 as Planet];
 
       const c: Conjunction = getSpecificPlanetsConjunctions(targets, observer, interval, separation);
-      console.log(c)
       setConjunctions(c);
       setLoadingConjunctions(false);
     } else {
@@ -97,8 +94,19 @@ export default function PlanetaryConjunctionScreen({ navigation }: any) {
     {title: getObjectName(saturn as GlobalPlanet, 'all', true), object: saturn, icon: getObjectIcon(saturn as GlobalPlanet)},
     {title: getObjectName(uranus as GlobalPlanet, 'all', true), object: uranus, icon: getObjectIcon(uranus as GlobalPlanet)},
     {title: getObjectName(neptune as GlobalPlanet, 'all', true), object: neptune, icon: getObjectIcon(neptune as GlobalPlanet)},
-
   ]
+
+  const handleSearchButton = () => {
+    if(!conjunctions) {
+      searchConjunctions();
+    }else{
+      setSelectedPlanet1(null);
+      setSelectedPlanet2(null);
+      planetSelector1Ref.current?.reset()
+      planetSelector2Ref.current?.reset()
+      setConjunctions(null);
+    }
+  }
 
 
   return (
@@ -115,8 +123,9 @@ export default function PlanetaryConjunctionScreen({ navigation }: any) {
         <View style={planetaryConjunctionStyles.content.parameters}>
           <View style={planetaryConjunctionStyles.content.row}>
             <SelectDropdown
+              ref={planetSelector1Ref}
               data={planetsList}
-              onSelect={(selectedFirstPlanet, index: number) => {
+              onSelect={(selectedFirstPlanet) => {
                 setSelectedPlanet1(selectedFirstPlanet.object ? selectedFirstPlanet.object : null);
               }}
               renderButton={(selectedFirstPlanet, isOpened: boolean) => {
@@ -130,7 +139,7 @@ export default function PlanetaryConjunctionScreen({ navigation }: any) {
                 }else {
                   return (
                     <View style={[planetaryConjunctionStyles.content.parameters.dropdown, {borderBottomLeftRadius: isOpened ? 0 : 10, borderBottomRightRadius: isOpened ? 0 : 10}]}>
-                      <Text style={planetaryConjunctionStyles.content.parameters.dropdown.text}>Planète</Text>
+                      <Text style={planetaryConjunctionStyles.content.parameters.dropdown.text}>Planète 1</Text>
                     </View>
                   )
                 }
@@ -147,6 +156,7 @@ export default function PlanetaryConjunctionScreen({ navigation }: any) {
             />
             <Text style={planetaryConjunctionStyles.content.parameters.text}>et</Text>
             <SelectDropdown
+              ref={planetSelector2Ref}
               data={planetsList}
               onSelect={(selectedSecondPlanet) => {
                 setSelectedPlanet2(selectedSecondPlanet.object ? selectedSecondPlanet.object : null);
@@ -162,7 +172,7 @@ export default function PlanetaryConjunctionScreen({ navigation }: any) {
                 }else {
                   return (
                     <View style={[planetaryConjunctionStyles.content.parameters.dropdown, {borderBottomLeftRadius: isOpened ? 0 : 10, borderBottomRightRadius: isOpened ? 0 : 10}]}>
-                      <Text style={planetaryConjunctionStyles.content.parameters.dropdown.text}>Planète</Text>
+                      <Text style={planetaryConjunctionStyles.content.parameters.dropdown.text}>Planète 2</Text>
                     </View>
                   )
                 }
@@ -197,10 +207,9 @@ export default function PlanetaryConjunctionScreen({ navigation }: any) {
           </View>
           <View style={planetaryConjunctionStyles.content.row}>
             <SimpleButton
-              text={"Rechercher"}
+              text={conjunctions ? "Supprimer la recherche" : "Rechercher"}
               onPress={() => {
-                setLoadingConjunctions(true);
-                searchConjunctions();
+                handleSearchButton()
               }}
               backgroundColor={app_colors.white}
               textColor={app_colors.black}
@@ -251,8 +260,16 @@ export default function PlanetaryConjunctionScreen({ navigation }: any) {
         }
 
         {
+          loadingConjunctions && <ActivityIndicator size='large' color={app_colors.white} />
+        }
+
+
+        {
           !loadingConjunctions && conjunctions && (
-            <ConjunctionCard conjunction={conjunctions} />
+            <View style={{borderTopWidth: 1, borderTopColor: app_colors.white_twenty, paddingTop: 5}}>
+              <Text style={[planetaryConjunctionStyles.content.parameters.text, {marginBottom: 10, fontFamily: 'GilroyBlack'}]}>Prochaine conjonction</Text>
+              <ConjunctionCard conjunction={conjunctions} />
+            </View>
           )
         }
 

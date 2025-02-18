@@ -9,6 +9,8 @@ import { constellationsAsterisms } from "../../helpers/scripts/astro/constellati
 import { app_colors } from "../../helpers/constants";
 import { astroImages } from "../../helpers/scripts/loadImages";
 import {convertDegreesRaToHMS} from "../../helpers/scripts/astro/coords/convertDegreesRaToHMS";
+import {getObjectName} from "../../helpers/scripts/astro/objects/getObjectName";
+import {GlobalPlanet} from "../../helpers/types/GlobalPlanet";
 
 interface PlanetaryConjunctionMapProps {
   ra: number; // Ascension droite centrale
@@ -117,43 +119,43 @@ export default function PlanetaryConjunctionMap({ra, dec, width, height, conjunc
       );
 
       // Afficher les valeurs de déclinaison au bord gauche et droit
-      if (startCoords.x <= 0 || endCoords.x <= 0) {
-        const y = startCoords.x <= 0 ? startCoords.y : endCoords.y;
-        if (y >= 0 && y <= height) {
-          elements.push(
-            <SvgText
-              key={`declination-value-left-${index}`}
-              x={10}
-              y={y}
-              fill={app_colors.white}
-              fontSize="8"
-              textAnchor="start"
-              opacity={0.8}
-            >
-              {line.start.dec}°
-            </SvgText>
-          );
-        }
-      }
-
-      if (startCoords.x >= width || endCoords.x >= width) {
-        const y = startCoords.x >= width ? startCoords.y : endCoords.y;
-        if (y >= 0 && y <= height) {
-          elements.push(
-            <SvgText
-              key={`declination-value-right-${index}`}
-              x={width - 10}
-              y={y}
-              fill={app_colors.white}
-              fontSize="8"
-              textAnchor="end"
-              opacity={0.8}
-            >
-              {line.start.dec}°sss
-            </SvgText>
-          );
-        }
-      }
+      // if (startCoords.x <= 0 || endCoords.x <= 0) {
+      //   const y = startCoords.x <= 0 ? startCoords.y : endCoords.y;
+      //   if (y >= 0 && y <= height) {
+      //     elements.push(
+      //       <SvgText
+      //         key={`declination-value-left-${index}`}
+      //         x={10}
+      //         y={y}
+      //         fill={app_colors.white}
+      //         fontSize="8"
+      //         textAnchor="start"
+      //         opacity={0.8}
+      //       >
+      //         {line.start.dec}°
+      //       </SvgText>
+      //     );
+      //   }
+      // }
+      //
+      // if (startCoords.x >= width || endCoords.x >= width) {
+      //   const y = startCoords.x >= width ? startCoords.y : endCoords.y;
+      //   if (y >= 0 && y <= height) {
+      //     elements.push(
+      //       <SvgText
+      //         key={`declination-value-right-${index}`}
+      //         x={width - 10}
+      //         y={y}
+      //         fill={app_colors.white}
+      //         fontSize="8"
+      //         textAnchor="end"
+      //         opacity={0.8}
+      //       >
+      //         {line.start.dec}°sss
+      //       </SvgText>
+      //     );
+      //   }
+      // }
     });
 
     grid.rightAscensions.forEach((line, index) => {
@@ -173,44 +175,44 @@ export default function PlanetaryConjunctionMap({ra, dec, width, height, conjunc
         />
       );
 
-      // Afficher les valeurs d'ascension droite en haut et en bas
-      if (startCoords.y <= 0 || endCoords.y <= 0) {
-        const x = startCoords.y <= 0 ? startCoords.x : endCoords.x;
-        if (x >= 0 && x <= width) {
-          elements.push(
-            <SvgText
-              key={`rightAscension-value-top-${index}`}
-              x={x}
-              y={10}
-              fill={app_colors.white}
-              fontSize="8"
-              textAnchor="middle"
-              opacity={0.8}
-            >
-              {convertDegreesRaToHMS(line.start.ra).slice(3)}
-            </SvgText>
-          );
-        }
-      }
-
-      if (startCoords.y >= height || endCoords.y >= height) {
-        const x = startCoords.y >= height ? startCoords.x : endCoords.x;
-        if (x >= 0 && x <= width) {
-          elements.push(
-            <SvgText
-              key={`rightAscension-value-bottom-${index}`}
-              x={x}
-              y={height - 10}
-              fill={app_colors.white}
-              fontSize="8"
-              textAnchor="middle"
-              opacity={0.8}
-            >
-              {convertDegreesRaToHMS(line.start.ra).slice(3)}
-            </SvgText>
-          );
-        }
-      }
+      // // Afficher les valeurs d'ascension droite en haut et en bas
+      // if (startCoords.y <= 0 || endCoords.y <= 0) {
+      //   const x = startCoords.y <= 0 ? startCoords.x : endCoords.x;
+      //   if (x >= 0 && x <= width) {
+      //     elements.push(
+      //       <SvgText
+      //         key={`rightAscension-value-top-${index}`}
+      //         x={x}
+      //         y={10}
+      //         fill={app_colors.white}
+      //         fontSize="8"
+      //         textAnchor="middle"
+      //         opacity={0.8}
+      //       >
+      //         {convertDegreesRaToHMS(line.start.ra).slice(3)}
+      //       </SvgText>
+      //     );
+      //   }
+      // }
+      //
+      // if (startCoords.y >= height || endCoords.y >= height) {
+      //   const x = startCoords.y >= height ? startCoords.x : endCoords.x;
+      //   if (x >= 0 && x <= width) {
+      //     elements.push(
+      //       <SvgText
+      //         key={`rightAscension-value-bottom-${index}`}
+      //         x={x}
+      //         y={height - 10}
+      //         fill={app_colors.white}
+      //         fontSize="8"
+      //         textAnchor="middle"
+      //         opacity={0.8}
+      //       >
+      //         {convertDegreesRaToHMS(line.start.ra).slice(3)}
+      //       </SvgText>
+      //     );
+      //   }
+      // }
     });
 
     // 2. Dessiner les constellations
@@ -304,7 +306,7 @@ export default function PlanetaryConjunctionMap({ra, dec, width, height, conjunc
           fontSize="10"
           textAnchor="middle"
         >
-          {target.name}
+          {getObjectName(target as GlobalPlanet, 'all', true)}
         </SvgText>
       );
     });

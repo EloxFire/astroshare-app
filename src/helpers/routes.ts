@@ -55,6 +55,12 @@ export const routes = {
       requirements: []
     }
   },
+  calculations: {
+    home: {
+      path: "CalculationsScreen",
+      requirements: []
+    }
+  },
   transits: {
     home: {
       path: "TransitScreen",
