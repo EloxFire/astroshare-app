@@ -66,6 +66,7 @@ import PaywallScreen from "./src/screens/pro/PaywallScreen";
 import CelestialBodyOverview from "./src/screens/celestialBodies/CelestialBodyOverview";
 import {app_colors} from "./src/helpers/constants";
 import * as SystemUI from 'expo-system-ui';
+import CalculationHome from "./src/screens/calculations/CalculationHome";
 
 dayjs.locale('fr');
 dayjs.extend(LocalizedFormat)
@@ -138,6 +139,7 @@ export default function App() {
                             <Stack.Screen name={routes.moonPhases.path} component={MoonPhases} />
                             <Stack.Screen name={routes.solarWeather.path} component={SolarWeather} />
                             <Stack.Screen name={routes.apod.path} component={Apod} />
+                            <Stack.Screen name={routes.calculations.home.path} component={CalculationHome} />
 
                             {/*TRANSITS SCREENS*/}
                             <Stack.Screen name={routes.transits.home.path} component={TransitsScreen} />
@@ -169,7 +171,6 @@ export default function App() {
 
                             {/*PLANIFICATEUR*/}
                             <Stack.Screen name={routes.observationPlanner.path} component={ObservationPlannerScreen} />
-
 
                             {/*ROCKET LAUNCHES SCREENS*/}
                             <Stack.Screen name={routes.launchesScreen.path} component={LaunchesScreen} />

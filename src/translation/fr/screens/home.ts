@@ -36,6 +36,10 @@ export const homeTranslations = {
       title: "Transits & Éclipses",
       subtitle: "// Calcul de transits et conjonctions"
     },
+    calculations: {
+      title: "Calculateur",
+      subtitle: "// Votre calculateur astronomique"
+    },
     apod: {
       title: "APOD",
       subtitle: "// Image du jour de la NASA"

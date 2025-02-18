@@ -36,6 +36,10 @@ export const homeTranslations = {
       title: "Transits & Eclipses",
       subtitle: "// Calculate the transits of celestial bodies"
     },
+    calculations: {
+      title: "Calculator",
+      subtitle: "// Your astronomical calculator"
+    },
     apod: {
       title: "APOD",
       subtitle: "// Astronomy Picture of the Day"
