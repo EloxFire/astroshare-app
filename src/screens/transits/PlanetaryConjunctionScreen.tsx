@@ -23,15 +23,17 @@ import {app_colors} from "../../helpers/constants";
 import {getObjectIcon} from "../../helpers/scripts/astro/objects/getObjectIcon";
 import SimpleButton from "../../components/commons/buttons/SimpleButton";
 import DateTimePicker from '@react-native-community/datetimepicker';
+import {getSpecificPlanetsConjunctions} from "../../helpers/scripts/astro/objects/getSpecificPlanetsConjunctions";
+import {showToast} from "../../helpers/scripts/showToast";
 
 
 export default function PlanetaryConjunctionScreen({ navigation }: any) {
 
   const { currentUserLocation } = useSettings();
 
-  const [conjunctions, setConjunctions] = useState<Map<string, Conjunction> | null>(null);
-  const [selectedPlanet1, setSelectedPlanet1] = useState<string | null>(null);
-  const [selectedPlanet2, setSelectedPlanet2] = useState<string | null>(null);
+  const [conjunctions, setConjunctions] = useState<Conjunction | null | undefined>(null);
+  const [selectedPlanet1, setSelectedPlanet1] = useState<Planet | null>(null);
+  const [selectedPlanet2, setSelectedPlanet2] = useState<Planet | null>(null);
   const [startDate, setStartDate] = useState<Date>(dayjs().toDate());
   const [endDate, setEndDate] = useState<Date>(dayjs().add(3, "months").toDate());
   const [isStartDateModalVisible, setIsStartDateModalVisible] = useState<boolean>(false);
@@ -44,6 +46,22 @@ export default function PlanetaryConjunctionScreen({ navigation }: any) {
   }, [currentUserLocation]);
 
   const searchConjunctions = () => {
+
+    if(!selectedPlanet1 || !selectedPlanet2) {
+      showToast({type: 'error', message: 'Veuillez sélectionner deux planètes'});
+      return;
+    }
+
+    if(selectedPlanet1 === selectedPlanet2) {
+      showToast({type: 'error', message: 'Veuillez sélectionner deux planètes différentes'});
+      return;
+    }
+
+    if(dayjs(startDate).isAfter(dayjs(endDate))) {
+      showToast({type: 'error', message: 'La date de fin doit être après à la date de début'});
+      return;
+    }
+
     if (currentUserLocation) {
       setConjunctions(null);
       const separation = 3;
@@ -58,13 +76,11 @@ export default function PlanetaryConjunctionScreen({ navigation }: any) {
         longitude: currentUserLocation.lon,
       };
 
-      const c: Map<string, Conjunction> = findPlanetaryConjunctions(interval, observer, {
-        angularSeparationThreshold: separation,
-      });
+      const targets: [Planet, Planet] = [selectedPlanet1 as Planet, selectedPlanet2 as Planet];
 
-      // Order by date
-      const ordered = new Map([...c.entries()].sort((a, b) => a[1].datetime.getTime() - b[1].datetime.getTime()));
-      setConjunctions(ordered);
+      const c: Conjunction = getSpecificPlanetsConjunctions(targets, observer, interval, separation);
+      console.log(c)
+      setConjunctions(c);
       setLoadingConjunctions(false);
     } else {
       console.log('No location found');
@@ -73,14 +89,14 @@ export default function PlanetaryConjunctionScreen({ navigation }: any) {
   };
 
   const planetsList = [
-    {title: "Planète", icon: undefined},
-    {title: getObjectName(mercury as GlobalPlanet, 'all', true), icon: getObjectIcon(mercury as GlobalPlanet)},
-    {title: getObjectName(venus as GlobalPlanet, 'all', true), icon: getObjectIcon(venus as GlobalPlanet)},
-    {title: getObjectName(mars as GlobalPlanet, 'all', true), icon: getObjectIcon(mars as GlobalPlanet)},
-    {title: getObjectName(jupiter as GlobalPlanet, 'all', true), icon: getObjectIcon(jupiter as GlobalPlanet)},
-    {title: getObjectName(saturn as GlobalPlanet, 'all', true), icon: getObjectIcon(saturn as GlobalPlanet)},
-    {title: getObjectName(uranus as GlobalPlanet, 'all', true), icon: getObjectIcon(uranus as GlobalPlanet)},
-    {title: getObjectName(neptune as GlobalPlanet, 'all', true), icon: getObjectIcon(neptune as GlobalPlanet)},
+    {title: "Planète", object: null, icon: undefined},
+    {title: getObjectName(mercury as GlobalPlanet, 'all', true), object: mercury, icon: getObjectIcon(mercury as GlobalPlanet)},
+    {title: getObjectName(venus as GlobalPlanet, 'all', true), object: venus, icon: getObjectIcon(venus as GlobalPlanet)},
+    {title: getObjectName(mars as GlobalPlanet, 'all', true), object: mars, icon: getObjectIcon(mars as GlobalPlanet)},
+    {title: getObjectName(jupiter as GlobalPlanet, 'all', true), object: jupiter, icon: getObjectIcon(jupiter as GlobalPlanet)},
+    {title: getObjectName(saturn as GlobalPlanet, 'all', true), object: saturn, icon: getObjectIcon(saturn as GlobalPlanet)},
+    {title: getObjectName(uranus as GlobalPlanet, 'all', true), object: uranus, icon: getObjectIcon(uranus as GlobalPlanet)},
+    {title: getObjectName(neptune as GlobalPlanet, 'all', true), object: neptune, icon: getObjectIcon(neptune as GlobalPlanet)},
 
   ]
 
@@ -101,7 +117,7 @@ export default function PlanetaryConjunctionScreen({ navigation }: any) {
             <SelectDropdown
               data={planetsList}
               onSelect={(selectedFirstPlanet, index) => {
-                setSelectedPlanet1(selectedFirstPlanet.title ? selectedFirstPlanet.title : null);
+                setSelectedPlanet1(selectedFirstPlanet.object ? selectedFirstPlanet.object : null);
               }}
               renderButton={(selectedFirstPlanet, isOpened) => {
                 if(selectedFirstPlanet) {
@@ -133,7 +149,7 @@ export default function PlanetaryConjunctionScreen({ navigation }: any) {
             <SelectDropdown
               data={planetsList}
               onSelect={(selectedSecondPlanet) => {
-                setSelectedPlanet2(selectedSecondPlanet.title ? selectedSecondPlanet.title : null);
+                setSelectedPlanet2(selectedSecondPlanet.object ? selectedSecondPlanet.object : null);
               }}
               renderButton={(selectedSecondPlanet, isOpened: boolean) => {
                 if(selectedSecondPlanet) {
@@ -236,11 +252,17 @@ export default function PlanetaryConjunctionScreen({ navigation }: any) {
 
         {
           !loadingConjunctions && conjunctions && (
+            <ConjunctionCard conjunction={conjunctions} />
+          )
+        }
+
+        {
+          !loadingConjunctions && conjunctions === undefined && (
             <ScreenInfo image={require('../../../assets/icons/FiXCircle.png')} text={"Aucune conjonction trouvée avec les paramètres donnés..."}/>
           )
         }
         {
-          !loadingConjunctions && !conjunctions && (
+          !loadingConjunctions && conjunctions === null && (
             <ScreenInfo image={require('../../../assets/icons/FiTransit.png')} text={"Ajustez les paramètres pour trouver des conjonctions"}/>
           )
         }
