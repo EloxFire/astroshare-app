@@ -36,6 +36,7 @@ import {observationPlannerTranslations} from "./screens/observationPlanner";
 import {proTranslations} from "./screens/pro";
 import {authScreensTranslations} from "./screens/auth";
 import {widgetManagerTranslations} from "./screens/widgetManager";
+import {calculationsTranslations} from "./screens/calculations";
 
 export const frTranslations = {
   onboarding: onboardingTranslations,
@@ -75,5 +76,6 @@ export const frTranslations = {
   obsevrationPlanner: observationPlannerTranslations,
   pro: proTranslations,
   auth: authScreensTranslations,
-  widgetsManager: widgetManagerTranslations
+  widgetsManager: widgetManagerTranslations,
+  calculations: calculationsTranslations
 }

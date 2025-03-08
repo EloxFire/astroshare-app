@@ -229,6 +229,7 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
                   small
                   textColor={app_colors.black}
                   onPress={() => navigation.push(routes.planetarium.path, {defaultObject: object})}
+                  align={"center"}
                 />
               </View>
             </View>
