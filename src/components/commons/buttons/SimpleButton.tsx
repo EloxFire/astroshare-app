@@ -16,9 +16,10 @@ interface BigButtonProps {
   backgroundColor?: string
   activeBorderColor?: string
   align?: 'center' | 'flex-start' | 'flex-end' | 'space-between' | 'space-around' | 'space-evenly'
+  textAdditionalStyles?: any
 }
 
-export default function SimpleButton({ text, icon, onPress, disabled, small, iconColor, textColor, active, fullWidth, backgroundColor, activeBorderColor, align }: BigButtonProps) {
+export default function SimpleButton({ text, icon, onPress, disabled, small, iconColor, textColor, active, fullWidth, backgroundColor, activeBorderColor, align, textAdditionalStyles }: BigButtonProps) {
 
   const handleButtonPress = () => {
     if (disabled) return;
@@ -26,9 +27,9 @@ export default function SimpleButton({ text, icon, onPress, disabled, small, ico
   }
 
   const buttonAdditionalStyles = {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
+    display: 'flex' as 'flex',
+    flexDirection: 'row' as 'row',
+    alignItems: 'center' as 'center',
     width: fullWidth ? '100%' as '100%' : 'auto' as 'auto',
     opacity: disabled ? .5 : 1,
     padding: small ? 8 : 10,
@@ -38,10 +39,16 @@ export default function SimpleButton({ text, icon, onPress, disabled, small, ico
     justifyContent: align ? align : 'space-between' as 'space-between',
   }
 
+  const textCustomStyles = {
+    color: textColor ? textColor : app_colors.white_no_opacity,
+    textAlign: 'center' as 'center',
+    ...textAdditionalStyles
+  }
+
   return (
     <TouchableOpacity activeOpacity={.5} style={[simpleButtonStyles.button, buttonAdditionalStyles]} onPress={() => handleButtonPress()}>
       {icon && <Image source={icon} style={{ width: small ? 12 : 18, height: small ? 12 : 18, marginRight: text ? 10 : 0, tintColor: iconColor ? iconColor : app_colors.white }} />}
-      {text && <Text style={[simpleButtonStyles.button.text, { color: textColor ? textColor : app_colors.white, textAlign: 'center' }]}>{text}</Text>}
+      {text && <Text style={[simpleButtonStyles.button.text, textCustomStyles]}>{text}</Text>}
     </TouchableOpacity>
   )
 }

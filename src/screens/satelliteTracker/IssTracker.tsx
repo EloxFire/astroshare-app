@@ -466,7 +466,7 @@ const centerIss = () => {
                 <Text style={issTrackerStyles.content.nextPasses.title}>{i18n.t('satelliteTracker.issTracker.nextPasses.title')}</Text>
                 <Text style={issTrackerStyles.content.nextPasses.subtitle}>{i18n.t('satelliteTracker.issTracker.nextPasses.subtitle')}{currentUserLocation.common_name}</Text>
                 {
-                  currentUser && isProUser(currentUser) ?
+                  !currentUser && !isProUser(currentUser) ?
                     <>
                       <View style={issTrackerStyles.content.nextPasses.container}>
                         {
@@ -479,9 +479,15 @@ const centerIss = () => {
                                 )
                               }) : <SimpleButton text={i18n.t('satelliteTracker.issTracker.nextPasses.noPasses')} disabled fullWidth />
                         }
-                        <TouchableOpacity onPress={() => navigation.push(routes.satellitesTrackers.issPasses.path, {passes: issPasses, weather: passesWeather})} style={conjunctionCardStyles.card.body.planetariumRedirect}>
-                          <Text style={conjunctionCardStyles.card.body.planetariumRedirect.text}>{i18n.t('satelliteTracker.issTracker.nextPasses.seeMore')}</Text>
-                        </TouchableOpacity>
+                        <SimpleButton
+                          fullWidth
+                          backgroundColor={app_colors.white}
+                          textColor={app_colors.black}
+                          textAdditionalStyles={{fontFamily: 'GilroyBlack'}}
+                          align={'center'}
+                          text={i18n.t('satelliteTracker.issTracker.nextPasses.seeMore')}
+                          onPress={() => navigation.push(routes.satellitesTrackers.issPasses.path, {passes: issPasses, weather: passesWeather})}
+                        />
                       </View>
                     </> :
                   <ProLocker navigation={navigation} image={require('../../../assets/images/tools/isstracker.png')}/>
@@ -500,7 +506,12 @@ const centerIss = () => {
                 <Text style={issTrackerStyles.content.liveStats.title}>{i18n.t('satelliteTracker.issTracker.2dMap.title')}</Text>
                 <Text style={issTrackerStyles.content.liveStats.subtitle}>{i18n.t('satelliteTracker.issTracker.2dMap.subtitle')}</Text>
                 <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-                  <SimpleButton text={i18n.t('satelliteTracker.issTracker.2dMap.button')} onPress={centerIss} icon={require('../../../assets/icons/FiIss.png')} />
+                  <SimpleButton
+                    text={i18n.t('satelliteTracker.issTracker.2dMap.button')}
+                    onPress={centerIss} icon={require('../../../assets/icons/FiIss.png')}
+                    textColor={app_colors.white}
+                    align={'center'}
+                  />
                 </View>
                 <MapView
                   ref={mapRef}
@@ -565,7 +576,13 @@ const centerIss = () => {
                     )
                   })
                     :
-                    <SimpleButton text={i18n.t('satelliteTracker.issTracker.nextLaunches.noLaunches')} disabled fullWidth />
+                    <SimpleButton
+                      text={i18n.t('satelliteTracker.issTracker.nextLaunches.noLaunches')}
+                      disabled
+                      fullWidth
+                      textColor={app_colors.white}
+                      align={'center'}
+                    />
                 }
               </View>
             </View>
