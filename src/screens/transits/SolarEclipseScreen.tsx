@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import {ScrollView, View} from "react-native";
+import {ScrollView, Text, View} from "react-native";
 import {globalStyles} from "../../styles/global";
 import PageTitle from "../../components/commons/PageTitle";
 import {i18n} from "../../helpers/scripts/i18n";
@@ -9,29 +9,23 @@ import {app_colors} from "../../helpers/constants";
 import dayjs from "dayjs";
 import {getSolarEclipse, isSolarEclipse} from "@observerly/astrometry";
 import {useSettings} from "../../contexts/AppSettingsContext";
+import {astroshareApi} from "../../helpers/api";
 
 export default function SolarEclipseScreen({ navigation }: any) {
 
   const {currentUserLocation} = useSettings()
   const [loading, setLoading] = useState(false)
+  const [eclipses, setEclipses] = useState([])
 
-  const findNextEclipse = () => {
+  const findNextEclipse = async () => {
     setLoading(true)
 
-    const endDate = dayjs().add(6, 'months').toDate();
-    let startDate = new Date()
-    const observer = { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }
+    try {
+      const eclipses = await astroshareApi.get('/eclipses/solar', {params: {year: dayjs().year()}})
+      setEclipses(eclipses.data.response.data)
+    }catch (e) {
 
-    // While startDate is less than endDate
-    // Add 1 day to startDate
-
-    const isEclipse = getSolarEclipse(dayjs().add(30, 'days').toDate(), observer);
-    console.log(isEclipse)
-    // while (startDate < endDate) {
-    //   console.log(startDate, isEclipse)
-    //   startDate.setDate(startDate.getDate() + 1);
-    // }
-
+    }
     setLoading(false)
   }
 
@@ -54,6 +48,14 @@ export default function SolarEclipseScreen({ navigation }: any) {
             textAdditionalStyles={{fontFamily: 'GilroyBlack'}}
             onPress={() => findNextEclipse()}
           />
+
+          {eclipses.map((eclipse: any) => {
+            return (
+              <View key={eclipse.id}>
+                <Text style={{color: 'white'}}>{eclipse.calendarDate}</Text>
+              </View>
+            )
+          })}
         </View>
       </ScrollView>
     </View>
