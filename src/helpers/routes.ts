@@ -69,6 +69,10 @@ export const routes = {
     planetary: {
       path: "PlanetaryConjunctionScreen",
       requirements: []
+    },
+    solar: {
+      path: "SolarEclipseScreen",
+      requirements: []
     }
   }
 }

@@ -67,6 +67,7 @@ import CelestialBodyOverview from "./src/screens/celestialBodies/CelestialBodyOv
 import {app_colors} from "./src/helpers/constants";
 import * as SystemUI from 'expo-system-ui';
 import CalculationHome from "./src/screens/calculations/CalculationHome";
+import SolarEclipseScreen from "./src/screens/transits/SolarEclipseScreen";
 
 dayjs.locale('fr');
 dayjs.extend(LocalizedFormat)
@@ -144,6 +145,7 @@ export default function App() {
                             {/*TRANSITS SCREENS*/}
                             <Stack.Screen name={routes.transits.home.path} component={TransitsScreen} />
                             <Stack.Screen name={routes.transits.planetary.path} component={PlanetaryConjunctionScreen} />
+                            <Stack.Screen name={routes.transits.solar.path} component={SolarEclipseScreen} />
 
                             {/*SETTINGS SCREENS*/}
                             <Stack.Screen name={routes.settings.path} component={Settings} />
