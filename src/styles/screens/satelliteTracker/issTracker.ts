@@ -92,16 +92,10 @@ export const issTrackerStyles = {
     mapContainer: {
       display: 'flex' as 'flex',
       flexDirection: 'column' as 'column',
-      borderWidth: 1,
-      borderColor: app_colors.white_no_opacity,
-      backgroundColor: app_colors.white_no_opacity,
-      borderRadius: 10,
-      padding: 10,
+      flex: 1,
 
       map: {
-        marginTop: 10,
-        width: Dimensions.get('screen').width - 40,
-        height: Dimensions.get('screen').width - 40,
+        flex: 1
       }
     },
   },

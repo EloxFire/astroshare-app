@@ -70,9 +70,15 @@ export const routes = {
       path: "PlanetaryConjunctionScreen",
       requirements: []
     },
-    solar: {
-      path: "SolarEclipseScreen",
-      requirements: []
+    eclipses: {
+      solar: {
+        path: "SolarEclipsesScreen",
+        requirements: []
+      },
+      solarDetails: {
+        path: "SolarEclipseDetails",
+        requirements: []
+      }
     }
   }
 }

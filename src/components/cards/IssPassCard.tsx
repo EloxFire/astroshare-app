@@ -1,13 +1,10 @@
 import React, {useEffect, useState} from 'react'
-import {ActivityIndicator, Image, Text, TouchableOpacity, View} from 'react-native'
+import {Image, Text, TouchableOpacity, View} from 'react-native'
 import { issPassCardStyles } from '../../styles/components/cards/issPassCard'
 import dayjs from 'dayjs';
 import {IssPass} from "../../helpers/types/IssPass";
 import {weatherImages} from "../../helpers/scripts/loadImages";
-import {capitalize} from "../../helpers/scripts/utils/formatters/capitalize";
-import {getWindDir} from "../../helpers/scripts/getWindDir";
 import {determineIssVisibility} from "../../helpers/scripts/astro/determineIssVisibility";
-import {app_colors} from "../../helpers/constants";
 
 interface IssPassCardProps {
   pass: IssPass;

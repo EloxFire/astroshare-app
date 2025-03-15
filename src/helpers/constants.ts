@@ -208,3 +208,27 @@ export const sampleDSO: DSO = {
   "apparent_size": "",
   "age": ""
 }
+
+export const solarEclipseTypes: any = {
+  'NonCentralPartialEclipse': "Éclipse partielle",
+  'NonCentralHybridEclipse': "Éclipse totale ou annulaire",
+  'NonCentralTotalEclipse': "Éclipse totale",
+  'NonCentralAnnularEclipse': "Éclipse annulaire",
+  'CentralHybridEclipse': "Éclipse totale ou annulaire",
+  'CentralTotalEclipse': "Éclipse totale",
+  'CentralAnnularEclipse': "Éclipse annulaire",
+  'ObserverPartialEclipse': "Éclipse partielle",
+  'ObserverTotalEclipse': "Éclipse totale",
+  'ObserverAnnularEclipse': "Éclipse annulaire",
+}
+
+export const solarEclipseVisibilityLinesColors: any = {
+  'beginSunRise': app_colors.green,
+  'endSunSet': app_colors.red,
+  'beginSunSet': app_colors.red,
+  'endSunRise': app_colors.green,
+  'limitSouth': app_colors.yellow,
+  'limitNorth': app_colors.yellow,
+  'maximumSunRise': app_colors.orange,
+  'maximumSunSet': app_colors.orange,
+}
