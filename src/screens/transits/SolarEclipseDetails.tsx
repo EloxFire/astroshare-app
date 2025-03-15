@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useRef, useState} from "react";
 import { ActivityIndicator, Text, View } from "react-native";
 import { globalStyles } from "../../styles/global";
 import { SolarEclipse } from "../../helpers/types/eclipses/SolarEclipse";
 import { solarEclipseDetailsStyles } from "../../styles/screens/transits/solarEclipseDetails";
-import MapView, { Polygon, Polyline, PROVIDER_GOOGLE } from "react-native-maps";
+import MapView, {MapPressEvent, Polygon, Polyline, PROVIDER_GOOGLE} from "react-native-maps";
 import { mapStyle } from "../../helpers/mapJsonStyle";
 import { astroshareApi } from "../../helpers/api";
 import { useSettings } from "../../contexts/AppSettingsContext";
@@ -16,6 +16,8 @@ export default function SolarEclipseDetails({ navigation, route }: any) {
   const routeEclipse: SolarEclipse = route.params.eclipse;
 
   const [eclipse, setEclipse] = useState<SolarEclipse | null>(null);
+  const [localCircumstances, setLocalCircumstances] = useState<SolarEclipse | null>(null);
+  const mapRef = useRef(null)
 
   useEffect(() => {
     if (!routeEclipse.visibilityLines || !routeEclipse.visibilityLines.features) {
@@ -51,7 +53,19 @@ export default function SolarEclipseDetails({ navigation, route }: any) {
       polygonCoordinates.push(coordSet);
     })
     return polygonCoordinates;
-  };
+  }
+
+  const handleMapPress = async (event: MapPressEvent) => {
+    console.log(event.nativeEvent.coordinate);
+
+    try {
+      const eclipses = await astroshareApi.get('/eclipses/solar', {params: {year: eclipse?.calendarDate, observer: `${event.nativeEvent.coordinate.latitude},${event.nativeEvent.coordinate.longitude}`}})
+      console.log(eclipses.data[0])
+      setLocalCircumstances(eclipses.data[0])
+    }catch (e) {
+      console.log("Error while fetching solar eclipses")
+    }
+  }
 
   return (
     <View style={[globalStyles.body, { paddingHorizontal: 0, paddingTop: 0 }]}>
@@ -63,6 +77,8 @@ export default function SolarEclipseDetails({ navigation, route }: any) {
       ) : (
         <>
           <MapView
+            ref={mapRef}
+            onPress={(e) => handleMapPress(e)}
             provider={PROVIDER_GOOGLE}
             style={solarEclipseDetailsStyles.map}
             customMapStyle={mapStyle}
@@ -83,7 +99,7 @@ export default function SolarEclipseDetails({ navigation, route }: any) {
                     key={`path-${pathIndex}`}
                     coordinates={coordinates}
                     strokeColor="#0000FF"
-                    fillColor="rgba(0, 0, 0, 0.5)"
+                    fillColor="rgba(244, 244, 56, 0.1)"
                   />
                 );
             })}
@@ -101,10 +117,17 @@ export default function SolarEclipseDetails({ navigation, route }: any) {
             )}
           </MapView>
           <View style={solarEclipseDetailsStyles.content.overlay}>
-            <Text style={solarEclipseDetailsStyles.content.overlay.title}>{solarEclipseTypes[eclipse.type]} du {eclipse.calendarDate}</Text>
-            <DSOValues title={"Début (UTC)"} value={dayjs(eclipse.events.P1?.date).format('HH:mm:ss').replace(':', 'h').replace(':', 'm') + 's'}/>
-            <DSOValues title={"Maximum (UTC)"} value={dayjs(eclipse.events.greatest?.date).format('HH:mm:ss').replace(':', 'h').replace(':', 'm') + 's'}/>
-            <DSOValues title={"Fin (UTC)"} value={dayjs(eclipse.events.P4?.date).format('HH:mm:ss').replace(':', 'h').replace(':', 'm') + 's'}/>
+            <Text style={solarEclipseDetailsStyles.content.overlay.title}>{solarEclipseTypes[eclipse.type]} du {dayjs(eclipse.calendarDate).format('DD MMMM YYYY')}</Text>
+            {
+              !localCircumstances ?
+                <Text style={solarEclipseDetailsStyles.content.overlay.subtitle}>Sélectionnez un endroit sur la carte pour voir les conditions locales de l'éclipse </Text>
+                :
+                <>
+                  <DSOValues title={"Début (UTC)"} value={dayjs(localCircumstances.events.P1?.date).format('HH:mm:ss').replace(':', 'h').replace(':', 'm') + 's'}/>
+                  <DSOValues title={"Maximum (UTC)"} value={dayjs(localCircumstances.events.greatest?.date).format('HH:mm:ss').replace(':', 'h').replace(':', 'm') + 's'}/>
+                  <DSOValues title={"Fin (UTC)"} value={dayjs(localCircumstances.events.P4?.date).format('HH:mm:ss').replace(':', 'h').replace(':', 'm') + 's'}/>
+                </>
+            }
           </View>
         </>
       )}

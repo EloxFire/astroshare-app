@@ -54,6 +54,12 @@ export const solarEclipseDetailsStyles = {
         fontFamily: 'GilroyBlack',
         textTransform: 'uppercase' as 'uppercase',
         marginBottom: 10
+      },
+
+      subtitle: {
+        color: app_colors.white,
+        fontSize: 14,
+        fontFamily: 'GilroyRegular',
       }
     }
   },
