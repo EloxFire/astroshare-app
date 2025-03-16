@@ -1,15 +1,16 @@
 import React, {useEffect, useRef, useState} from "react";
-import { ActivityIndicator, Text, View } from "react-native";
+import {ActivityIndicator, ScrollView, Text, View} from "react-native";
 import { globalStyles } from "../../styles/global";
 import { SolarEclipse } from "../../helpers/types/eclipses/SolarEclipse";
 import { solarEclipseDetailsStyles } from "../../styles/screens/transits/solarEclipseDetails";
-import MapView, {MapPressEvent, Polygon, Polyline, PROVIDER_GOOGLE} from "react-native-maps";
+import MapView, {MapPressEvent, Marker, Polygon, Polyline, PROVIDER_GOOGLE} from "react-native-maps";
 import { mapStyle } from "../../helpers/mapJsonStyle";
 import { astroshareApi } from "../../helpers/api";
 import { useSettings } from "../../contexts/AppSettingsContext";
 import {solarEclipseTypes, solarEclipseVisibilityLinesColors} from "../../helpers/constants";
 import DSOValues from "../../components/commons/DSOValues";
 import dayjs from "dayjs";
+import {getLocationName} from "../../helpers/api/getLocationFromCoords";
 
 export default function SolarEclipseDetails({ navigation, route }: any) {
   const { currentUserLocation } = useSettings();
@@ -17,6 +18,10 @@ export default function SolarEclipseDetails({ navigation, route }: any) {
 
   const [eclipse, setEclipse] = useState<SolarEclipse | null>(null);
   const [localCircumstances, setLocalCircumstances] = useState<SolarEclipse | null>(null);
+  const [eclipseNotVisible, setEclipseNotVisible] = useState<boolean>(false);
+  const [selectedLocation, setSelectedLocation] = useState<{latitude: number, longitude: number} | null>(null);
+  const [selectedLocationName, setSelectedLocationName] = useState<string>('');
+  const [loadingCircumstances, setLoadingCircumstances] = useState<boolean>(false);
   const mapRef = useRef(null)
 
   useEffect(() => {
@@ -55,15 +60,38 @@ export default function SolarEclipseDetails({ navigation, route }: any) {
     return polygonCoordinates;
   }
 
-  const handleMapPress = async (event: MapPressEvent) => {
-    console.log(event.nativeEvent.coordinate);
+  const handleMapPress = async (event?: MapPressEvent | null, location?: {latitude: number, longitude: number}) => {
+    if (!event && !location) {
+      console.log("No event or location to fetch eclipse data for");
+      return;
+    }
+
+    setLoadingCircumstances(true);
+    let observer = '';
+    let coordinates = event ? event.nativeEvent.coordinate : location;
+
+    if (coordinates) {
+      const locationName = await getLocationName({ lat: coordinates.latitude, lon: coordinates.longitude });
+      setSelectedLocation(coordinates);
+      setSelectedLocationName(locationName.local_names.fr);
+      observer = `${coordinates.latitude},${coordinates.longitude}`;
+    }
 
     try {
-      const eclipses = await astroshareApi.get('/eclipses/solar', {params: {year: eclipse?.calendarDate, observer: `${event.nativeEvent.coordinate.latitude},${event.nativeEvent.coordinate.longitude}`}})
-      console.log(eclipses.data[0])
-      setLocalCircumstances(eclipses.data[0])
-    }catch (e) {
-      console.log("Error while fetching solar eclipses")
+      const response = await astroshareApi.get('/eclipses/solar', { params: { year: eclipse?.calendarDate, observer } });
+      const data = response.data[0];
+      console.log(data);
+      if (!data) {
+        setLocalCircumstances(null)
+        setEclipseNotVisible(true);
+      } else {
+        setLocalCircumstances(data);
+        setEclipseNotVisible(false);
+      }
+    } catch (e) {
+      console.log("Error while fetching solar eclipses");
+    } finally {
+      setLoadingCircumstances(false);
     }
   }
 
@@ -115,18 +143,71 @@ export default function SolarEclipseDetails({ navigation, route }: any) {
                 />
               ))
             )}
+
+            {
+              selectedLocation &&
+                <Marker
+                    coordinate={selectedLocation}
+                    title={selectedLocationName}
+                    image={require('../../../assets/icons/FiPinMap.png')}
+                    anchor={{ x: 0.5, y: 1 }}
+                    centerOffset={{ x: 0.5, y: 1 }}
+                />
+            }
           </MapView>
           <View style={solarEclipseDetailsStyles.content.overlay}>
-            <Text style={solarEclipseDetailsStyles.content.overlay.title}>{solarEclipseTypes[eclipse.type]} du {dayjs(eclipse.calendarDate).format('DD MMMM YYYY')}</Text>
+            <Text style={solarEclipseDetailsStyles.content.overlay.title}>{dayjs(eclipse.calendarDate).format('dddd DD MMMM YYYY')}</Text>
+            <Text style={solarEclipseDetailsStyles.content.overlay.subtitle}>{solarEclipseTypes[eclipse.type]}</Text>
             {
-              !localCircumstances ?
-                <Text style={solarEclipseDetailsStyles.content.overlay.subtitle}>Sélectionnez un endroit sur la carte pour voir les conditions locales de l'éclipse </Text>
-                :
-                <>
-                  <DSOValues title={"Début (UTC)"} value={dayjs(localCircumstances.events.P1?.date).format('HH:mm:ss').replace(':', 'h').replace(':', 'm') + 's'}/>
-                  <DSOValues title={"Maximum (UTC)"} value={dayjs(localCircumstances.events.greatest?.date).format('HH:mm:ss').replace(':', 'h').replace(':', 'm') + 's'}/>
-                  <DSOValues title={"Fin (UTC)"} value={dayjs(localCircumstances.events.P4?.date).format('HH:mm:ss').replace(':', 'h').replace(':', 'm') + 's'}/>
-                </>
+              !selectedLocation && !loadingCircumstances &&
+                <Text style={solarEclipseDetailsStyles.content.overlay.noEclipse}>Appuyez sur la carte pour obtenir les circonstances locales</Text>
+            }
+            {
+              eclipseNotVisible && !loadingCircumstances &&
+                <Text style={solarEclipseDetailsStyles.content.overlay.noEclipse}>L'éclipse n'est pas visible à cet endroit</Text>
+            }
+            {
+              loadingCircumstances &&
+                <ActivityIndicator size="small" color="white" />
+            }
+            {
+              localCircumstances && !loadingCircumstances &&
+                <ScrollView style={solarEclipseDetailsStyles.content.overlay.circumstances}>
+                  <Text style={solarEclipseDetailsStyles.content.overlay.circumstances.title}>Circonstances locales</Text>
+                  <View style={{display: 'flex', flexDirection: 'column', gap: 0}}>
+                    <DSOValues
+                      title={"Position"}
+                      value={selectedLocationName}
+                      chipValue
+                    />
+                    <DSOValues
+                      title={"Début"}
+                      value={dayjs(localCircumstances.events.P1?.date).format('HH:mm:ss').replace(':', 'h').replace(':', 'm') + 's'}
+                      chipValue
+                    />
+                    <DSOValues
+                      title={"Maximum"}
+                      value={dayjs(localCircumstances.events.greatest?.date).format('HH:mm:ss').replace(':', 'h').replace(':', 'm') + 's'}
+                      chipValue
+                    />
+                    <DSOValues
+                      title={"Fin"}
+                      value={dayjs(localCircumstances.events.P4?.date).format('HH:mm:ss').replace(':', 'h').replace(':', 'm') + 's'}
+                      chipValue
+                    />
+                    <DSOValues
+                      title={"Durée totale"}
+                      value={localCircumstances.duration.penumbral.replace(':', 'h').replace(':', 'm') + 's'}
+                      chipValue
+                    />
+                    <DSOValues
+                      title={"Obscuration"}
+                      value={localCircumstances.obscuration + "%"}
+                      chipValue
+                    />
+
+                  </View>
+                </ScrollView>
             }
           </View>
         </>

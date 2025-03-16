@@ -39,27 +39,60 @@ export const solarEclipseDetailsStyles = {
     overlay: {
       flex: 1,
       position: 'absolute' as 'absolute',
-      bottom: 50,
-      width: Dimensions.get('window').width - 20,
-      marginHorizontal: 10,
+      bottom: 0,
+      width: Dimensions.get('window').width,
       padding: 10,
+      paddingBottom: 30,
       backgroundColor: app_colors.black,
-      borderRadius: 10,
-      borderWidth: 1,
-      borderColor: app_colors.white_twenty,
+      // borderRadius: 10,
+      borderTopWidth: 1,
+      borderTopColor: app_colors.white_sixty,
+      borderRightWidth: 1,
+      maxHeight: 400,
 
       title: {
         color: app_colors.white,
-        fontSize: 18,
+        fontSize: 25,
         fontFamily: 'GilroyBlack',
         textTransform: 'uppercase' as 'uppercase',
-        marginBottom: 10
       },
 
       subtitle: {
         color: app_colors.white,
-        fontSize: 14,
+        fontSize: 18,
+        fontFamily: 'GilroyBlack',
+        textTransform: 'uppercase' as 'uppercase',
+        opacity: .5,
+      },
+
+      noEclipse: {
+        color: app_colors.white,
+        fontSize: 18,
         fontFamily: 'GilroyRegular',
+        marginTop: 10,
+        textAlign: 'center' as 'center',
+        borderTopWidth: 1,
+        borderTopColor: app_colors.white_twenty,
+        paddingTop: 10,
+        marginHorizontal: 20,
+
+      },
+
+      circumstances: {
+        display: "flex" as "flex",
+        flexDirection: "column" as "column",
+        borderTopWidth: 1,
+        borderTopColor: app_colors.white_twenty,
+        paddingTop: 10,
+        marginTop: 10,
+
+        title: {
+          color: app_colors.white,
+          fontSize: 15,
+          fontFamily: 'GilroyBlack',
+          textTransform: 'uppercase' as 'uppercase',
+          marginBottom: 10,
+        }
       }
     }
   },
