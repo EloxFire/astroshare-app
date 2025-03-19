@@ -69,6 +69,8 @@ import * as SystemUI from 'expo-system-ui';
 import CalculationHome from "./src/screens/calculations/CalculationHome";
 import SolarEclipsesScreen from "./src/screens/transits/SolarEclipsesScreen";
 import SolarEclipseDetails from "./src/screens/transits/SolarEclipseDetails";
+import LunarEclipsesScreen from "./src/screens/transits/LunarEclipsesScreen";
+import LunarEclipseDetails from "./src/screens/transits/LunarEclipseDetails";
 
 dayjs.locale('fr');
 dayjs.extend(LocalizedFormat)
@@ -148,6 +150,8 @@ export default function App() {
                             <Stack.Screen name={routes.transits.planetary.path} component={PlanetaryConjunctionScreen} />
                             <Stack.Screen name={routes.transits.eclipses.solar.path} component={SolarEclipsesScreen} />
                             <Stack.Screen name={routes.transits.eclipses.solarDetails.path} component={SolarEclipseDetails} />
+                            <Stack.Screen name={routes.transits.eclipses.lunar.path} component={LunarEclipsesScreen} />
+                            <Stack.Screen name={routes.transits.eclipses.lunarDetails.path} component={LunarEclipseDetails} />
 
                             {/*SETTINGS SCREENS*/}
                             <Stack.Screen name={routes.settings.path} component={Settings} />

@@ -78,6 +78,14 @@ export const routes = {
       solarDetails: {
         path: "SolarEclipseDetails",
         requirements: []
+      },
+      lunar: {
+        path: 'LunarEclipsesScreen',
+        requirements: []
+      },
+      lunarDetails: {
+        path: 'LunarEclipseDetails',
+        requirements: []
       }
     }
   }

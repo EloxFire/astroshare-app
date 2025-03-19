@@ -1,5 +1,5 @@
 import {app_colors} from "../../../helpers/constants";
-import {Dimensions} from "react-native";
+import {Dimensions, StatusBar} from "react-native";
 
 export const solarEclipseDetailsStyles = {
   content: {
@@ -44,11 +44,16 @@ export const solarEclipseDetailsStyles = {
       padding: 10,
       paddingBottom: 30,
       backgroundColor: app_colors.black,
-      // borderRadius: 10,
       borderTopWidth: 1,
       borderTopColor: app_colors.white_sixty,
       borderRightWidth: 1,
       maxHeight: 400,
+
+      backButton: {
+        position: 'absolute' as 'absolute',
+        top: StatusBar.currentHeight! + 10,
+        left: 10,
+      },
 
       title: {
         color: app_colors.white,

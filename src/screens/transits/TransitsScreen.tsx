@@ -19,8 +19,8 @@ export default function TransitsScreen({ navigation }: any) {
       <ScrollView>
         <View>
           <ToolButton targetScreen={routes.transits.planetary.path} navigation={navigation} text={i18n.t('transits.planetaryConjunction.title')} subtitle={i18n.t('transits.planetaryConjunction.subtitle')} image={require('../../../assets/images/tools/conjunction.png')} />
-          <ToolButton disabled isPremium navigation={navigation} text={i18n.t('transits.lunarEclipse.title')} subtitle={i18n.t('transits.lunarEclipse.subtitle')} image={require('../../../assets/images/tools/lunareclipse.png')} />
           <ToolButton targetScreen={routes.transits.eclipses.solar.path} isPremium navigation={navigation} text={i18n.t('transits.solarEclipse.title')} subtitle={i18n.t('transits.solarEclipse.subtitle')} image={require('../../../assets/images/tools/solareclipse.png')} />
+          <ToolButton targetScreen={routes.transits.eclipses.lunar.path} isPremium navigation={navigation} text={i18n.t('transits.lunarEclipse.title')} subtitle={i18n.t('transits.lunarEclipse.subtitle')} image={require('../../../assets/images/tools/lunareclipse.png')} />
           <ToolButton disabled isPremium navigation={navigation} text={i18n.t('transits.issTransit.title')} subtitle={i18n.t('transits.issTransit.subtitle')} image={require('../../../assets/images/tools/isstransit.png')} />
           <ScreenInfo text={i18n.t('transits.info')} image={require("../../../assets/icons/FiTransit.png")} />
         </View>

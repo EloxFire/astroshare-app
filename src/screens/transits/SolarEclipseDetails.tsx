@@ -7,10 +7,11 @@ import MapView, {MapPressEvent, Marker, Polygon, Polyline, PROVIDER_GOOGLE} from
 import { mapStyle } from "../../helpers/mapJsonStyle";
 import { astroshareApi } from "../../helpers/api";
 import { useSettings } from "../../contexts/AppSettingsContext";
-import {solarEclipseTypes, solarEclipseVisibilityLinesColors} from "../../helpers/constants";
+import {app_colors, solarEclipseTypes, solarEclipseVisibilityLinesColors} from "../../helpers/constants";
 import DSOValues from "../../components/commons/DSOValues";
 import dayjs from "dayjs";
 import {getLocationName} from "../../helpers/api/getLocationFromCoords";
+import SimpleButton from "../../components/commons/buttons/SimpleButton";
 
 export default function SolarEclipseDetails({ navigation, route }: any) {
   const { currentUserLocation } = useSettings();
@@ -155,6 +156,17 @@ export default function SolarEclipseDetails({ navigation, route }: any) {
                 />
             }
           </MapView>
+          <View style={solarEclipseDetailsStyles.content.overlay.backButton}>
+            <SimpleButton
+              text={"Retour"}
+              icon={require('../../../assets/icons/FiChevronLeft.png')}
+              onPress={() => navigation.goBack()}
+              backgroundColor={app_colors.black}
+              textColor={app_colors.white}
+              active
+              activeBorderColor={app_colors.white_twenty}
+            />
+          </View>
           <View style={solarEclipseDetailsStyles.content.overlay}>
             <Text style={solarEclipseDetailsStyles.content.overlay.title}>{dayjs(eclipse.calendarDate).format('dddd DD MMMM YYYY')}</Text>
             <Text style={solarEclipseDetailsStyles.content.overlay.subtitle}>{solarEclipseTypes[eclipse.type]}</Text>

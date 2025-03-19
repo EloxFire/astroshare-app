@@ -1,27 +1,32 @@
-import {ActivityIndicator, Image, Text, TouchableOpacity, View} from "react-native";
+import {ActivityIndicator, Text, View} from "react-native";
 import {eclipseCardStyles} from "../../styles/components/cards/EclipseCard";
 import {SolarEclipse} from "../../helpers/types/eclipses/SolarEclipse";
 import { SvgUri } from 'react-native-svg';
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import dayjs from "dayjs";
 import {app_colors, solarEclipseTypes} from "../../helpers/constants";
 import DSOValues from "../commons/DSOValues";
 import SimpleButton from "../commons/buttons/SimpleButton";
 import {routes} from "../../helpers/routes";
+import {LunarEclipse} from "../../helpers/types/LunarEclipse";
 
 interface CardProps {
-  eclipse: SolarEclipse
+  type: 'solar' | 'lunar'
+  eclipse: SolarEclipse | LunarEclipse
   navigation: any
 }
 
-export const EclipseCard = ({eclipse, navigation}: CardProps) => {
+export const EclipseCard = ({type, eclipse, navigation}: CardProps) => {
 
   const [loadingImage, setLoadingImage] = useState(true)
-  // const eclipseCenter = [eclipse.events.greatest?.location.geometry.coordinates[0], eclipse.events.greatest?.location.geometry.coordinates[1]]
 
-  useEffect(() => {
-
-  }, []);
+  const handleDetailsRoute = () => {
+    if (type === 'solar') {
+      navigation.push(routes.transits.eclipses.solarDetails.path, {eclipse: eclipse})
+    } else {
+      navigation.push(routes.transits.eclipses.lunarDetails.path, {eclipse: eclipse})
+    }
+  }
 
   return (
     <View style={eclipseCardStyles.card}>
@@ -40,9 +45,9 @@ export const EclipseCard = ({eclipse, navigation}: CardProps) => {
         <View style={{marginVertical: 10}}>
           <DSOValues small title={"Début:"} value={dayjs(eclipse.events.P1?.date).format('HH:mm:ss').replace(':', 'h ').replace(':', 'm ') + 's'}/>
           <DSOValues small title={"Max:"} value={dayjs(eclipse.events.greatest?.date).format('HH:mm:ss').replace(':', 'h ').replace(':', 'm ') + 's'}/>
-          <DSOValues small title={"Fin:"} value={dayjs(eclipse.events.P4?.date).format('HH:mm:ss').replace(':', 'h ').replace(':', 'm ') + 's'}/>
+          <DSOValues small title={"Fin:"} value={type === 'solar' ? dayjs(((eclipse) as SolarEclipse).events.P4?.date).format('HH:mm:ss').replace(':', 'h ').replace(':', 'm ') + 's' : dayjs(((eclipse) as LunarEclipse).events.P2?.date).format('HH:mm:ss').replace(':', 'h ').replace(':', 'm ') + 's'}/>
         </View>
-        <SimpleButton small fullWidth onPress={() => {navigation.push(routes.transits.eclipses.solarDetails.path, {eclipse: eclipse})}} align={'center'} text={"En savoir plus"} backgroundColor={app_colors.white} textColor={app_colors.black} />
+        <SimpleButton small fullWidth onPress={() => handleDetailsRoute()} align={'center'} text={"En savoir plus"} backgroundColor={app_colors.white} textColor={app_colors.black} />
       </View>
     </View>
   )

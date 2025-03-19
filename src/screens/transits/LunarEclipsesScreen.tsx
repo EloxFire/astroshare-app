@@ -10,16 +10,16 @@ import dayjs from "dayjs";
 import {useSettings} from "../../contexts/AppSettingsContext";
 import {astroshareApi} from "../../helpers/api";
 import {EclipseCard} from "../../components/cards/EclipseCard";
-import {SolarEclipse} from "../../helpers/types/eclipses/SolarEclipse";
 // @ts-ignore
 import CheckBox from 'react-native-check-box'
+import {LunarEclipse} from "../../helpers/types/LunarEclipse";
 
-export default function SolarEclipsesScreen({ navigation }: any) {
+export default function LunarEclipsesScreen({ navigation }: any) {
 
   const {currentUserLocation} = useSettings()
   const [loading, setLoading] = useState(false)
   const [selectedYear, setSelectedYear] = useState(dayjs().year())
-  const [eclipses, setEclipses] = useState<SolarEclipse[]>([])
+  const [eclipses, setEclipses] = useState<LunarEclipse[]>([])
   const [showOnlyVisible, setShowOnlyVisible] = useState(true)
 
   const findNextEclipse = async () => {
@@ -28,7 +28,7 @@ export default function SolarEclipsesScreen({ navigation }: any) {
     setEclipses([])
 
     try {
-      const eclipses = await astroshareApi.get('/eclipses/solar', {params: {year: selectedYear, observer: showOnlyVisible ? `${currentUserLocation.lat},${currentUserLocation.lon}` : undefined}})
+      const eclipses = await astroshareApi.get('/eclipses/lunar', {params: {year: selectedYear, observer: showOnlyVisible ? `${currentUserLocation.lat},${currentUserLocation.lon}` : undefined}})
       setEclipses(eclipses.data)
       setLoading(false)
     }catch (e) {
@@ -99,10 +99,10 @@ export default function SolarEclipsesScreen({ navigation }: any) {
             {loading ?
               <ActivityIndicator size={"large"} color={app_colors.white} pointerEvents={'none'} />
             :
-              eclipses.map((eclipse: SolarEclipse) => {
+              eclipses.map((eclipse: LunarEclipse) => {
                 return (
                   <EclipseCard
-                    type={'solar'}
+                    type={"lunar"}
                     key={`${eclipse.calendarDate}-${eclipse.duration.penumbral}`}
                     eclipse={eclipse}
                     navigation={navigation}
