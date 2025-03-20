@@ -74,3 +74,14 @@ export const formatYears = (years: number | string, lang: string) => {
 
   return formatter.format(years);
 }
+
+// Create a formater for euro currency
+export const formatEuro = (amount: number, lang: string) => {
+  const formatter = new Intl.NumberFormat(lang, {
+    style: 'currency',
+    currency: 'EUR',
+    maximumFractionDigits: 2
+  });
+
+  return formatter.format(amount);
+}

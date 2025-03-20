@@ -8,6 +8,19 @@ export const sellScreenStyles = {
     marginBottom: 80,
     paddingTop: 50,
 
+    highlightTitle: {
+      color: app_colors.white,
+      fontSize: 18,
+      fontFamily: 'GilroyRegular' as 'GilroyRegular',
+      marginTop: 20,
+    },
+
+    highlightFeatures: {
+      display: 'flex' as 'flex',
+      flexDirection: 'column' as 'column',
+      marginTop: 10,
+    },
+
     title: {
       color: app_colors.white,
       fontSize: 35,
@@ -23,81 +36,61 @@ export const sellScreenStyles = {
 
     description: {
       color: app_colors.white,
-      fontSize: 18,
+      fontSize: 16,
       fontFamily: 'GilroyRegular' as 'GilroyRegular',
+      opacity: .5,
+      textAlign: 'center' as 'center',
       marginTop: 30,
-    },
-
-    features: {
-      display: 'flex' as 'flex',
-      flexDirection: 'column' as 'column',
-
-      title: {
-        color: app_colors.white,
-        fontSize: 18,
-        fontFamily: 'GilroyRegular' as 'GilroyRegular',
-        marginTop: 30,
-        marginBottom: 10,
-      }
     },
 
     offers: {
       display: 'flex' as 'flex',
-      flexDirection: 'row' as 'row',
-      justifyContent: 'space-between' as 'space-between',
-      marginTop: 40,
-      gap: 10,
-
-      button: {
-        backgroundColor: app_colors.white,
-        padding: 10,
-        borderRadius: 10,
-        marginTop: 20,
-
-        text:{
-          textAlign: 'center' as 'center',
-          fontFamily: 'GilroyBlack' as 'GilroyBlack',
-          fontSize: 16,
-          color: app_colors.black,
-        }
-      },
+      flexDirection: 'column' as 'column',
+      marginTop: 20,
 
       offerCard: {
-        position: 'relative' as 'relative',
-        padding: 10,
-        paddingTop: 25,
-        width: (Dimensions.get('window').width / 2) - 20,
-        height: 200,
         backgroundColor: app_colors.white_no_opacity,
-        borderRadius: 10,
-        display: 'flex' as 'flex',
-        flexDirection: 'column' as 'column',
-        justifyContent: 'space-between' as 'space-between',
         borderWidth: 1,
         borderColor: app_colors.white_twenty,
+        borderRadius: 10,
+        padding: 10,
+        marginBottom: 20,
 
-        discountBadge: {
-          position: 'absolute' as 'absolute',
-          right: 0,
-          backgroundColor: app_colors.red,
+        display: 'flex' as 'flex',
+        flexDirection: 'row' as 'row',
+        alignItems: 'flex-start' as 'flex-start',
+        justifyContent: 'space-between' as 'space-between',
+
+        title: {
           color: app_colors.white,
-          padding: 5,
-          borderTopRightRadius: 10,
-          borderBottomLeftRadius: 10,
+          fontSize: 18,
           fontFamily: 'GilroyBlack' as 'GilroyBlack',
-          fontSize: 10,
         },
-        offerName: {
+
+        price: {
           color: app_colors.white,
-          opacity: .5,
-          fontSize: 12,
+          fontSize: 18,
           fontFamily: 'GilroyRegular' as 'GilroyRegular',
         },
 
-        offerPrice: {
-          color: app_colors.white,
-          fontSize: 35,
+        discount: {
+          // position: 'absolute' as 'absolute',
+          // top: -25,
+          color: app_colors.black,
+          fontSize: 14,
           fontFamily: 'GilroyBlack' as 'GilroyBlack',
+          backgroundColor: app_colors.yellow,
+          paddingVertical: 2,
+          paddingHorizontal: 5,
+          borderRadius: 5,
+        },
+
+        selected: {
+          width: 15,
+          height: 15,
+          borderRadius: 30,
+          borderWidth: 1,
+          borderColor: app_colors.white_twenty,
         }
       }
     }
@@ -108,7 +101,7 @@ export const sellScreenStyles = {
     top: 0,
     left: 0,
     width: Dimensions.get('window').width,
-    height: Dimensions.get('window').height / 4,
+    height: Dimensions.get('window').height / 4 + 10,
     zIndex: -1,
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,

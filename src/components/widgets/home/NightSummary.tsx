@@ -46,6 +46,7 @@ export default function NightSummary({ noHeader }: NightSummaryProps) {
   const [night, setNight] = useState<NightInterface>()
   const [moonData, setMoonData] = useState<MoonData | null>(null)
   const [visiblePlanets, setVisiblePlanets] = useState<GlobalPlanet[]>([])
+  const [moonImageUrl, setMoonImageUrl] = useState<undefined | {uri: string }>({uri: `${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/moon/illustration`})
 
   useEffect(() => {
     getInfos()
@@ -178,7 +179,7 @@ export default function NightSummary({ noHeader }: NightSummaryProps) {
                           <Text style={nightSummaryStyles.container.data.timings.info.title}>Lever</Text>
                           <Text style={nightSummaryStyles.container.data.timings.info.value}>{moonData.moonrise}</Text>
                         </View> */}
-                        <Image source={moonIcons[moonData.phase]} style={nightSummaryStyles.container.data.moon.icon} resizeMode='contain' />
+                        <Image source={moonImageUrl} style={nightSummaryStyles.container.data.moon.icon} resizeMode='contain' />
                         {/* <View style={[nightSummaryStyles.container.data.timings.info, { alignItems: 'flex-start' }]}>
                           <Text style={nightSummaryStyles.container.data.timings.info.title}>Coucher</Text>
                           <Text style={nightSummaryStyles.container.data.timings.info.value}>{moonData.moonset}</Text>

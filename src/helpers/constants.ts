@@ -1,4 +1,5 @@
 import {DSO} from "./types/DSO";
+import {ProPackage} from "./types/ProPackage";
 
 export const app_colors = {
   black: '#000000',
@@ -28,10 +29,10 @@ export const app_colors = {
   green_eighty: '#00FF0080',
   turquoise: '#488f9d',
   turquoise_sixty: '#488f9d60',
-  yellow: '#FFFF00',
-  yellow_forty: '#FFFF0040',
-  yellow_sixty: '#FFFF0060',
-  yellow_eighty: '#FFFF0080',
+  yellow: '#F4C238',
+  yellow_forty: '#F4C23840',
+  yellow_sixty: '#F4C23860',
+  yellow_eighty: '#F4C23880',
   orange: '#FFA500',
   orange_forty: '#FFA50040',
   orange_sixty: '#FFA50060',
@@ -44,7 +45,6 @@ export const app_colors = {
   violet_forty: '#8A2BE240',
   violet_sixty: '#8A2BE260',
   violet_eighty: '#8A2BE280',
-
   gold: '#D2AF26',
   gold_eighty: '#D2AF2680',
   blue: '#061e92',

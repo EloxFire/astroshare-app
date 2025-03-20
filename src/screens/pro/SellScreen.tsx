@@ -15,38 +15,20 @@ import {routes} from "../../helpers/routes";
 import {initPaymentSheet, presentPaymentSheet, StripeProvider} from "@stripe/stripe-react-native";
 import axios from "axios";
 import {ProPackage} from "../../helpers/types/ProPackage";
+import {app_colors} from "../../helpers/constants";
+import {useTranslation} from "../../hooks/useTranslation";
+import {astroshare_pro_packages} from "../../helpers/constants/proPackages";
+import SimpleButton from "../../components/commons/buttons/SimpleButton";
 
 export default function SellScreen({ navigation }: any) {
 
-  const proPackages: ProPackage[] = [
-    {
-      title: i18n.t('pro.sellScreen.offers.monthlyTitle'),
-      description: i18n.t('pro.sellScreen.offers.monthlyDescription'),
-      price: 2.49,
-      stripePrice: 249,
-      displayType: i18n.t('pro.sellScreen.offers.monthly'),
-      type: 'monthly'
-    },
-    {
-      title: i18n.t('pro.sellScreen.offers.yearlyTitle'),
-      description: i18n.t('pro.sellScreen.offers.yearlyDescription'),
-      price: 23.90,
-      stripePrice: 2390,
-      displayType: i18n.t('pro.sellScreen.offers.yearly'),
-      type: 'yearly'
-    },
-  ]
-
   const {currentUser} = useAuth()
-  const [activeOffer, setActiveOffer] = useState<'monthly' | 'yearly'>('yearly')
-  const [selectedOffer, setSelectedOffer] = useState<ProPackage | null>(proPackages.find(proPackage => proPackage.type === activeOffer) || null)
-  const [stripePublishableKey, setStripePublishableKey] = useState<string>('')
-  const [paymentLoading, setPaymentLoading] = useState<boolean>(false)
+  const {currentLocale} = useTranslation()
 
   const hilightFeature: ProFeature[] = [
     {
-      name: "Planétarium 3D avancé",
-      description: "Simulez le FOV de votre matériel et plus encore avec le planétarium 3D avancé.",
+      name: "Carte du ciel 3D",
+      description: "Profitez d'un planétarium 3D complet, directement dans votre poche !",
       image: require('../../../assets/images/tools/skymap.png')
     },
     {
@@ -65,16 +47,18 @@ export default function SellScreen({ navigation }: any) {
       image: require('../../../assets/images/tools/isstransit.png')
     },
     {
-      name: "Lieux d'observation",
-      description: "Gérez et ajouter des lieux d'observation. Effectuez des simulations de visibilité à différents endroits.",
-      image: require('../../../assets/images/tools/skymap.png')
-    },
-    {
       name: "Et bien plus !",
       description: "Astroshare est mis à jour régulièrement avec de nouvelles fonctionnalités.",
       image: require('../../../assets/images/tools/skymap.png')
     },
   ]
+
+  console.log("HEEEEEERE", currentLocale)
+
+  const [activeOffer, setActiveOffer] = useState<'monthly' | 'yearly'>('yearly')
+  const [selectedOffer, setSelectedOffer] = useState<ProPackage | null>(astroshare_pro_packages[currentLocale].find((proPackage: ProPackage) => proPackage.type === activeOffer) || null)
+  const [stripePublishableKey, setStripePublishableKey] = useState<string>('')
+  const [paymentLoading, setPaymentLoading] = useState<boolean>(false)
 
   useEffect(() => {
     initStripe()
@@ -194,48 +178,50 @@ export default function SellScreen({ navigation }: any) {
           <View style={sellScreenStyles.content}>
             <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
               <Text style={sellScreenStyles.content.title}>Astroshare</Text>
-              <ProBadge additionalStyles={{transform: [{scale: 2.8}], marginLeft: 30}}/>
+              <ProBadge additionalStyles={{transform: [{scale: 2.8}], marginLeft: 30}} customColor={app_colors.yellow}/>
             </View>
             <Text style={sellScreenStyles.content.subtitle}>{i18n.t('pro.sellScreen.subtitle')}</Text>
+            <Text style={sellScreenStyles.content.description}>{i18n.t('pro.sellScreen.description')}</Text>
             <View style={sellScreenStyles.content.offers}>
               {
-                proPackages.map((proPackage, index) => {
+                astroshare_pro_packages[currentLocale].map((proPackage: ProPackage, index: number) => {
                   return <ProOfferCard
                     key={index}
                     onClick={() => {
                       setActiveOffer(proPackage.type as 'monthly' | 'yearly');
                       setSelectedOffer(proPackage)
                     }}
-                    active={activeOffer === proPackage.type}
-                    price={proPackage.price}
-                    type={proPackage.displayType}
-                    hasDiscount={proPackage.type === 'yearly'}
-                    badgeText={proPackage.type === 'yearly' ? i18n.t('pro.sellScreen.offers.discount') : ''}
-                    description={proPackage.description}
+                    active={selectedOffer === proPackage}
+                    proPackage={proPackage}
                   />
                 })
               }
             </View>
-            {
-              currentUser ?
-                <TouchableOpacity style={sellScreenStyles.content.offers.button} onPress={() => handlePayment()}>
-                  <Text style={sellScreenStyles.content.offers.button.text}>{i18n.t('pro.sellScreen.offers.proceedToPayment')}</Text>
-                </TouchableOpacity>
-                :
-                <TouchableOpacity style={sellScreenStyles.content.offers.button} onPress={() => navigation.push(routes.auth.login.path)}>
-                  <Text style={sellScreenStyles.content.offers.button.text}>{i18n.t('pro.sellScreen.noUser')}</Text>
-                </TouchableOpacity>
-            }
-            <View style={sellScreenStyles.content.features}>
-              <Text style={sellScreenStyles.content.features.title}>Des fonctionnalités exclusives :</Text>
-              {
-                hilightFeature.map((feature, index) => {
-                  return <ProFeatureCard key={index} feature={feature}/>
-                })
-              }
+
+            <View style={{borderTopColor: app_colors.white_twenty, borderTopWidth: 1}}>
+              <Text style={sellScreenStyles.content.highlightTitle}>Les fonctionnalités en détail</Text>
+              <View style={sellScreenStyles.content.highlightFeatures}>
+                {
+                  hilightFeature.map((feature: ProFeature, index: number) => {
+                    return <ProFeatureCard key={index} feature={feature}/>
+                  })
+                }
+              </View>
             </View>
           </View>
         </ScrollView>
+        <View style={{backgroundColor: app_colors.white_no_opacity, height: 100, display: 'flex', justifyContent: 'center', alignItems: 'center', borderTopRightRadius: 10, borderTopLeftRadius: 10}}>
+          <SimpleButton
+            text={i18n.t('pro.sellScreen.toPayment')}
+            onPress={() => handlePayment()}
+            disabled={paymentLoading}
+            backgroundColor={app_colors.white}
+            textColor={app_colors.black}
+            width={'80%'}
+            align={'center'}
+            textAdditionalStyles={{fontFamily: 'GilroyBlack', fontSize: 20}}
+          />
+        </View>
       </View>
     </StripeProvider>
   )

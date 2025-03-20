@@ -17,9 +17,10 @@ interface BigButtonProps {
   activeBorderColor?: string
   align?: 'center' | 'flex-start' | 'flex-end' | 'space-between' | 'space-around' | 'space-evenly'
   textAdditionalStyles?: any
+  width?: string
 }
 
-export default function SimpleButton({ text, icon, onPress, disabled, small, iconColor, textColor, active, fullWidth, backgroundColor, activeBorderColor, align, textAdditionalStyles }: BigButtonProps) {
+export default function SimpleButton({ text, icon, onPress, disabled, small, iconColor, textColor, active, fullWidth, backgroundColor, activeBorderColor, align, textAdditionalStyles, width }: BigButtonProps) {
 
   const handleButtonPress = () => {
     if (disabled) return;
@@ -30,7 +31,7 @@ export default function SimpleButton({ text, icon, onPress, disabled, small, ico
     display: 'flex' as 'flex',
     flexDirection: 'row' as 'row',
     alignItems: 'center' as 'center',
-    width: fullWidth ? '100%' as '100%' : 'auto' as 'auto',
+    width: fullWidth ? '100%' as '100%' : width ? width : 'auto' as 'auto',
     opacity: disabled ? .5 : 1,
     padding: small ? 8 : 10,
     borderWidth: 1,

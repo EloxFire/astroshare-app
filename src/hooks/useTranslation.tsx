@@ -33,12 +33,22 @@ export function TranslationProvider({ children }: TranslationProviderProps) {
     })()
   }, [])
 
+  const updateLocale = async (code: string) => {
+    setCurrentLocale(code);
+    dayjs.locale(code === "gb" ? "en" : code);
+    const lcid = languagesList.find(lang => lang.twoLettersCode === code)?.lcidString
+    if (lcid) {
+      setCurrentLCID(lcid)
+    }
+  }
+
   const [currentLocale, setCurrentLocale] = useState('fr');
   const [currentLCID, setCurrentLCID] = useState('fr-FR');
 
   const values = {
     currentLocale,
-    currentLCID
+    currentLCID,
+    updateLocale
   }
 
   return (

@@ -1,8 +1,9 @@
 export type ProPackage = {
-  title: string;
-  description: string;
-  displayType: string;
+  name: string;
   type: string;
   price: number;
   stripePrice: number;
+  description: string;
+  features: string[];
+  discount?: string;
 }
