@@ -192,10 +192,10 @@ export default function PlanetariumUI({ navigation, infos, onShowGround, onShowC
         {objectInfos && (
           <View>
             <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginTop: 10}}>
-              <SimpleButton active={currentInfoTab === 0} small text="Infos" icon={require('../../../assets/icons/FiInfo.png')} backgroundColor={app_colors.black_skymap} onPress={() => setCurrentInfoTab(0)} />
-              <SimpleButton active={currentInfoTab === 1} small text="Visibilité" icon={require('../../../assets/icons/FiEye.png')} backgroundColor={app_colors.black_skymap} onPress={() => setCurrentInfoTab(1)} />
-              <SimpleButton active={currentInfoTab === 2} small text="Détails" icon={require('../../../assets/icons/FiFileText.png')} backgroundColor={app_colors.black_skymap} onPress={() => setCurrentInfoTab(2)} />
-              <SimpleButton active={currentInfoTab === 3} small text="Centrer" icon={require('../../../assets/icons/FiCrosshair.png')} backgroundColor={app_colors.black_skymap} onPress={() => onCenterObject()} />
+              <SimpleButton active={currentInfoTab === 0} small text="Infos" icon={require('../../../assets/icons/FiInfo.png')} backgroundColor={app_colors.black_skymap} textColor={app_colors.white} onPress={() => setCurrentInfoTab(0)} />
+              <SimpleButton active={currentInfoTab === 1} small text="Visibilité" icon={require('../../../assets/icons/FiEye.png')} backgroundColor={app_colors.black_skymap} textColor={app_colors.white} onPress={() => setCurrentInfoTab(1)} />
+              <SimpleButton active={currentInfoTab === 2} small text="Détails" icon={require('../../../assets/icons/FiFileText.png')} backgroundColor={app_colors.black_skymap} textColor={app_colors.white} onPress={() => setCurrentInfoTab(2)} />
+              <SimpleButton active={currentInfoTab === 3} small text="Centrer" icon={require('../../../assets/icons/FiCrosshair.png')} backgroundColor={app_colors.black_skymap} textColor={app_colors.white} onPress={() => onCenterObject()} />
             </View>
             {
               objectInfos && currentInfoTab === 0 && (

@@ -1,4 +1,5 @@
 import {ProPackage} from "../types/ProPackage";
+import {ProFeature} from "../types/ProFeature";
 
 const frPackages: ProPackage[] = [
   {
@@ -38,6 +39,7 @@ const frPackages: ProPackage[] = [
     stripePrice: 9900,
     type: 'one-time',
     features: [
+      "Paiement unique, accès à vie",
       "Planétarium 3D interactif",
       "Prédictions passages ISS",
       "Météo solaire avancée",
@@ -77,6 +79,21 @@ const enPackages: ProPackage[] = [
       "Regular updates",
     ],
     discount: '20% OFF'
+  },
+  {
+    name: 'Lifetime',
+    description: 'One-time payment for lifetime AstroShare Pro',
+    price: 99,
+    stripePrice: 9900,
+    type: 'one-time',
+    features: [
+      "One-time payment, lifetime access",
+      "Interactive 3D planetarium",
+      "ISS pass predictions",
+      "Advanced solar weather",
+      "Transit and eclipse calculations",
+      "Regular updates",
+    ]
   }
 ]
 

@@ -19,41 +19,12 @@ import {app_colors} from "../../helpers/constants";
 import {useTranslation} from "../../hooks/useTranslation";
 import {astroshare_pro_packages} from "../../helpers/constants/proPackages";
 import SimpleButton from "../../components/commons/buttons/SimpleButton";
+import {proFeaturesList} from "../../helpers/constants/proFeatures";
 
 export default function SellScreen({ navigation }: any) {
 
   const {currentUser} = useAuth()
   const {currentLocale} = useTranslation()
-
-  const hilightFeature: ProFeature[] = [
-    {
-      name: "Carte du ciel 3D",
-      description: "Profitez d'un planétarium 3D complet, directement dans votre poche !",
-      image: require('../../../assets/images/tools/skymap.png')
-    },
-    {
-      name: "Prédictions passages ISS",
-      description: "Calculez les prochains passage de l'ISS au dessus de votre position",
-      image: require('../../../assets/images/tools/isstracker.png')
-    },
-    {
-      name: "Météo solaire avancée",
-      description: "Analyser notre étoile avec des données encore plus précises et complètes.",
-      image: require('../../../assets/images/tools/sun.png')
-    },
-    {
-      name: "Outils de calculs",
-      description: "Calculez le FOV, les tailles apparentes, les transits et bien plus avec nos outils de calculs.",
-      image: require('../../../assets/images/tools/isstransit.png')
-    },
-    {
-      name: "Et bien plus !",
-      description: "Astroshare est mis à jour régulièrement avec de nouvelles fonctionnalités.",
-      image: require('../../../assets/images/tools/skymap.png')
-    },
-  ]
-
-  console.log("HEEEEEERE", currentLocale)
 
   const [activeOffer, setActiveOffer] = useState<'monthly' | 'yearly'>('yearly')
   const [selectedOffer, setSelectedOffer] = useState<ProPackage | null>(astroshare_pro_packages[currentLocale].find((proPackage: ProPackage) => proPackage.type === activeOffer) || null)
@@ -202,7 +173,7 @@ export default function SellScreen({ navigation }: any) {
               <Text style={sellScreenStyles.content.highlightTitle}>Les fonctionnalités en détail</Text>
               <View style={sellScreenStyles.content.highlightFeatures}>
                 {
-                  hilightFeature.map((feature: ProFeature, index: number) => {
+                  proFeaturesList[currentLocale].map((feature: ProFeature, index: number) => {
                     return <ProFeatureCard key={index} feature={feature}/>
                   })
                 }

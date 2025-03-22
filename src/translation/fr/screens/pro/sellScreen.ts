@@ -1,7 +1,7 @@
 export const sellScreenTranslations = {
   subtitle: 'Explorez encore plus loin !',
   toPayment: "Continuer",
-  description: "Astroshare Pro vous propose une multitude de fonctionnalités pour explorer l'univers en profondeur. Choisissez l'abonnement qui vous convient le mieux et profitez des avantages d'Astroshare Pro !",
+  description: "Astroshare Pro vous propose une multitude de fonctionnalités supplémentaires pour explorer l'univers en profondeur. Choisissez l'abonnement qui vous convient le mieux et profitez des avantages d'Astroshare Pro !",
   offers: {
     monthlyTitle: "Astroshare Pro - Mensuel",
     yearlyTitle: "Astroshare Pro - Annuel",
