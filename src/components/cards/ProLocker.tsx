@@ -22,7 +22,7 @@ export default function ProLocker({ navigation, image, darker, small }: ProLocke
           <>
             <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', marginBottom: small ? 5 : 15}}>
               <Text style={proLockerStyles.locker.title}>Astroshare</Text>
-              <ProBadge additionalStyles={{transform: [{scale: 2.1}], marginLeft: 22}}/>
+              <ProBadge additionalStyles={{transform: [{scale: 2.1}], marginLeft: 22}} customColor={app_colors.yellow}/>
             </View>
             <Text style={proLockerStyles.locker.text}>Voici une fonctionnalité Astroshare Pro.</Text>
             <Text style={proLockerStyles.locker.text}>Mettez à niveau votre application pour y accéder !</Text>

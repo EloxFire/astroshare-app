@@ -10,7 +10,7 @@ import SimpleButton from "../components/commons/buttons/SimpleButton";
 import * as Linking from 'expo-linking';
 import {aboutStyles} from "../styles/screens/about";
 import {storeData} from "../helpers/storage";
-import {storageKeys} from "../helpers/constants";
+import {app_colors, storageKeys} from "../helpers/constants";
 import {showToast} from "../helpers/scripts/showToast";
 
 export default function About({ navigation }: any) {
@@ -65,8 +65,8 @@ export default function About({ navigation }: any) {
             <Text style={[aboutStyles.content.card.text, {textAlign: 'left'}]}>{i18n.t('about.legal.phone')}</Text>
             <Text style={[aboutStyles.content.card.text, {textAlign: 'left'}]}>{i18n.t('about.legal.siret')}</Text>
           </View>
-          <SimpleButton fullWidth text={i18n.t('about.contact.title')} icon={require('../../assets/icons/FiMail.png')} onPress={() => Linking.openURL('mailto:contact@enzoavagliano.fr')} />
-          <SimpleButton fullWidth text={i18n.t('about.privacy.title')} icon={require('../../assets/icons/FiShield.png')} onPress={() => Linking.openURL('https://www.astroshare.fr/application-mobile/politique-de-confidentialite')} />
+          <SimpleButton textColor={app_colors.white} align={'flex-start'} fullWidth text={i18n.t('about.contact.title')} icon={require('../../assets/icons/FiMail.png')} onPress={() => Linking.openURL('mailto:contact@enzoavagliano.fr')} />
+          <SimpleButton textColor={app_colors.white} align={'flex-start'} fullWidth text={i18n.t('about.privacy.title')} icon={require('../../assets/icons/FiShield.png')} onPress={() => Linking.openURL('https://www.astroshare.fr/application-mobile/politique-de-confidentialite')} />
           {/*<SimpleButton fullWidth text={i18n.t('about.license.title')} icon={require('../../assets/icons/FiShield.png')} />*/}
 
           <TouchableOpacity onLongPress={() => {handleHiddenPremiumAccess()}} >

@@ -115,7 +115,7 @@ export default function SolarWeather({ navigation }: any) {
               {
                 Object.keys(ESunFilter).map((key: string) => {
                   return (
-                    <SimpleButton small key={key} text={key} onPress={() => handleChangeSunImage(ESunFilter[key as keyof typeof ESunFilter], isImageMode ? 'img' : 'video')} active={key === currentImageFilter} />
+                    <SimpleButton textColor={app_colors.white} small key={key} text={key} onPress={() => handleChangeSunImage(ESunFilter[key as keyof typeof ESunFilter], isImageMode ? 'img' : 'video')} active={key === currentImageFilter} />
                   )
                 })
               }
@@ -155,7 +155,7 @@ export default function SolarWeather({ navigation }: any) {
               {
                 Object.keys(ECmeFilters).map((key: string) => {
                   return (
-                    <SimpleButton small key={key} text={key} onPress={() => handleChangeCMEImage(ECmeFilters[key as keyof typeof ECmeFilters], isCmeImageMode ? 'img' : 'video')} active={key === currentCmeImageFilter} />
+                    <SimpleButton textColor={app_colors.white} small key={key} text={key} onPress={() => handleChangeCMEImage(ECmeFilters[key as keyof typeof ECmeFilters], isCmeImageMode ? 'img' : 'video')} active={key === currentCmeImageFilter} />
                   )
                 })
               }

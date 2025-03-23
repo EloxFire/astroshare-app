@@ -14,7 +14,7 @@ export const bigValueStyles = {
     },
     label: {
       fontSize: 15,
-      fontFamily: 'AuxMono',
+      fontFamily: 'DMMonoRegular',
       color: app_colors.white,
       opacity: .5,
     },

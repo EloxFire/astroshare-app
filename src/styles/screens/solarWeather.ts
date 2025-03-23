@@ -20,8 +20,8 @@ export const solarWeatherStyles = {
     subtitle: {
       color: app_colors.white,
       opacity: .5,
-      fontSize: 12,
-      fontFamily: 'GilroyMedium',
+      fontSize: 10,
+      fontFamily: 'DMMonoRegular',
       // marginBottom: 15,
     },
 

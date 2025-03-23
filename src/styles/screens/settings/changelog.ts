@@ -34,7 +34,7 @@ export const changelogStyles = {
         },
 
         date: {
-          fontFamily: 'GilroyRegular',
+          fontFamily: 'DMMonoRegular',
           fontSize: 12,
           color: app_colors.white_eighty,
           textAlign: 'right' as 'right',
@@ -51,8 +51,8 @@ export const changelogStyles = {
       list: {
         display: "flex" as "flex",
         flexDirection: "column" as "column",
-        marginTop: 20,
-        paddingTop: 5,
+        marginTop: 10,
+        paddingTop: 10,
         borderTopColor: app_colors.white_twenty,
         borderTopWidth: 1,
         

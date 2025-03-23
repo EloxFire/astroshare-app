@@ -25,7 +25,7 @@ export const markdownStyles = {
     },
     code_inline: {
       backgroundColor: "transparent",
-      fontFamily: 'AuxMono',
+      fontFamily: 'DMMonoRegular',
     },
     table: {
       borderColor: app_colors.white,

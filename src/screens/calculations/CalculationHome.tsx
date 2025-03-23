@@ -63,7 +63,7 @@ export default function CalculationHome({ navigation }: any) {
       <View style={globalStyles.screens.separator} />
         <ScrollView contentContainerStyle={{display: 'flex', flexDirection: 'column', gap: 10, paddingBottom: 80}}>
           <View style={calculationHomeStyles.content}>
-            <Text style={[calculationHomeStyles.content.description, {opacity: 1}]}>Entrez les informations dont vous disposez, le calculateur s'occupe du reste !</Text>
+            <Text style={[calculationHomeStyles.content.description, {opacity: 1, fontFamily: 'GilroyRegular', fontSize: 15}]}>Entrez les informations dont vous disposez, le calculateur s'occupe du reste !</Text>
             <View style={{display: 'flex', flexDirection: 'row', gap: 10}}>
               <InputWithIcon keyboardType={"numeric"} additionalStyles={{marginVertical: 0}} search={() => {}} placeholder={"Focale télescope (mm)"} changeEvent={(e) => setFocalLength(parseInt(e))} value={focalLength ? focalLength.toString() : ""} type={"number"}/>
               <InputWithIcon keyboardType={"numeric"} additionalStyles={{marginVertical: 0}} search={() => {}} placeholder={"Diamètre télescope (mm)"} changeEvent={(e) => setDiameter(parseInt(e))} value={diameter ? diameter.toString() : ""} type={"number"}/>

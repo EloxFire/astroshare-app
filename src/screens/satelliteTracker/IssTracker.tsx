@@ -236,26 +236,6 @@ export default function IssTracker({ navigation }: any) {
     return points;
   };
 
-  const addOrbitPoints = (scene: THREE.Scene, points: THREE.Vector3[]) => {
-    const geometry = new THREE.BufferGeometry();
-    const positions = new Float32Array(points.length * 3);
-
-    for (let i = 0; i < points.length; i++) {
-      positions[i * 3] = points[i].x;
-      positions[i * 3 + 1] = points[i].y;
-      positions[i * 3 + 2] = points[i].z;
-    }
-
-    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-
-    const material = new THREE.PointsMaterial({
-      color: 0xff0000, // Red color
-      size: 20, // Taille des points
-    });
-
-    const pointsObject = new THREE.Points(geometry, material);
-    scene.add(pointsObject);
-  };
 
   const _onContextCreate = async (gl: ExpoWebGLRenderingContext) => {
     const { drawingBufferWidth, drawingBufferHeight } = gl;
@@ -289,16 +269,6 @@ export default function IssTracker({ navigation }: any) {
       scene.add(earth);
       earthMeshRef.current = earth;
     }
-
-    // console.log('Loading ISS trajectory points...');
-    // const tle: any = await axios.get(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/iss/tle`)
-    //
-    // // Ajouter la trajectoire orbitale
-    // if (tle.data.data) {
-    //   console.log('Calculating ISS orbit points...');
-    //   const orbitPoints = calculateOrbitPoints([tle.data.data.line1, tle.data.data.line2], earthRadius);
-    //   addOrbitPoints(scene, orbitPoints);
-    // }
 
     updateIssPosition(focusIss);
 
@@ -466,7 +436,7 @@ const centerIss = () => {
                 <Text style={issTrackerStyles.content.nextPasses.title}>{i18n.t('satelliteTracker.issTracker.nextPasses.title')}</Text>
                 <Text style={issTrackerStyles.content.nextPasses.subtitle}>{i18n.t('satelliteTracker.issTracker.nextPasses.subtitle')}{currentUserLocation.common_name}</Text>
                 {
-                  !currentUser && !isProUser(currentUser) ?
+                  !currentUser && isProUser(currentUser) ?
                     <>
                       <View style={issTrackerStyles.content.nextPasses.container}>
                         {

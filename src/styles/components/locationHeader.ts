@@ -30,7 +30,7 @@ export const locationHeaderStyles = {
       value: {
         color: app_colors.white,
         textTransform: 'uppercase' as 'uppercase',
-        fontFamily: 'AuxMono',
+        fontFamily: 'DMMonoRegular',
         fontSize: 12,
       },
 
@@ -46,7 +46,7 @@ export const locationHeaderStyles = {
         value: {
           color: app_colors.white,
           textTransform: 'uppercase' as 'uppercase',
-          fontFamily: 'AuxMono',
+          fontFamily: 'DMMonoRegular',
           // fontSize: 12,
         },
       }
@@ -74,7 +74,7 @@ export const locationHeaderStyles = {
         color: app_colors.white,
         textTransform: 'uppercase' as 'uppercase',
         fontSize: 15,
-        fontFamily: 'AuxMono'
+        fontFamily: 'DMMonoRegular'
       },
 
       close: {

@@ -28,7 +28,7 @@ export const issTrackerStyles = {
       subtitle: {
         color: app_colors.white,
         fontSize: 10,
-        fontFamily: 'AuxMono',
+        fontFamily: 'DMMonoRegular',
         marginBottom: 10,
         opacity: 0.5,
       }
@@ -83,7 +83,7 @@ export const issTrackerStyles = {
       subtitle: {
         color: app_colors.white,
         fontSize: 10,
-        fontFamily: 'AuxMono',
+        fontFamily: 'DMMonoRegular',
         marginBottom: 10,
         opacity: 0.5,
       }
@@ -93,9 +93,16 @@ export const issTrackerStyles = {
       display: 'flex' as 'flex',
       flexDirection: 'column' as 'column',
       flex: 1,
+      backgroundColor: app_colors.white_no_opacity,
+      padding: 10,
+      borderRadius: 10,
+      borderWidth: 1,
+      borderColor: app_colors.white_no_opacity,
 
       map: {
-        flex: 1
+        marginTop: 10,
+        width: Dimensions.get('screen').width - 42,
+        height: Dimensions.get('screen').width - 40,
       }
     },
   },

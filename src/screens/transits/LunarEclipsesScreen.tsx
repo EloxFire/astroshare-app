@@ -41,8 +41,8 @@ export default function LunarEclipsesScreen({ navigation }: any) {
     <View style={globalStyles.body}>
       <PageTitle
         navigation={navigation}
-        title={i18n.t('transits.solarEclipse.title')}
-        subtitle={i18n.t('transits.solarEclipse.subtitle')}
+        title={i18n.t('transits.lunarEclipse.title')}
+        subtitle={i18n.t('transits.lunarEclipse.subtitle')}
       />
       <View style={globalStyles.screens.separator} />
       <ScrollView>

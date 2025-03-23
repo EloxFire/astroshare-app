@@ -1,4 +1,4 @@
 export const issTransitTranslations = {
-  title: "Transit ISS",
+  title: "Transits ISS",
   subtitle: "// Calculez les transits de l'ISS"
 }

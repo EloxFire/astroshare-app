@@ -1,4 +1,4 @@
 export const planetaryConjunctionTranslations = {
-  title: "Conjonction planétaire",
+  title: "Conjonctions planétaire",
   subtitle: "// Calculez les conjonctions planétaires",
 }

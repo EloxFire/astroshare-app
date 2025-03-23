@@ -1,4 +1,4 @@
 export const lunarEclipseTranslations = {
-  title: "Éclipse lunaire",
+  title: "Éclipses lunaire",
   subtitle: "// Calculez les éclipses lunaires"
 }

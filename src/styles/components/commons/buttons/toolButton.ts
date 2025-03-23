@@ -43,7 +43,7 @@ export const toolButtonStyles = {
     subtitle: {
       color: app_colors.white,
       fontSize: 10,
-      fontFamily: 'AuxMono',
+      fontFamily: 'DMMonoRegular',
     }
   }
 }

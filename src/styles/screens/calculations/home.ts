@@ -46,8 +46,8 @@ export const calculationHomeStyles = {
     },
 
     description: {
-      fontSize: 15,
-      fontFamily: 'GilroyRegular',
+      fontSize: 12,
+      fontFamily: 'DMMonoRegular',
       color: app_colors.white,
       opacity: .5,
     },

@@ -196,6 +196,7 @@ export default function PlanetaryConjunctionScreen({ navigation }: any) {
               activeBorderColor={app_colors.white_twenty}
               onPress={() => setIsStartDateModalVisible(true)}
               active
+              textColor={app_colors.white}
             />
             <Text style={planetaryConjunctionStyles.content.parameters.text}>et le</Text>
             <SimpleButton
@@ -203,6 +204,7 @@ export default function PlanetaryConjunctionScreen({ navigation }: any) {
               activeBorderColor={app_colors.white_twenty}
               onPress={() => setIsEndDateModalVisible(true)}
               active
+              textColor={app_colors.white}
             />
           </View>
           <View style={planetaryConjunctionStyles.content.row}>
@@ -215,6 +217,9 @@ export default function PlanetaryConjunctionScreen({ navigation }: any) {
               textColor={app_colors.black}
               fullWidth
               small
+              align={"center"}
+              icon={require('../../../assets/icons/FiSearch.png')}
+              iconColor={app_colors.black}
             />
           </View>
         </View>

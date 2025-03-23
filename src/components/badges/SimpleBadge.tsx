@@ -31,7 +31,7 @@ export default function SimpleBadge({text, backgroundColor, foregroundColor, ico
     text: {
       color: foregroundColor ? foregroundColor : app_colors.white,
       fontSize: 12,
-      fontFamily: 'GilroyRegular'
+      fontFamily: 'DMMonoRegular'
     },
     icon: {
       tintColor: iconColor ? iconColor : "",

@@ -8,6 +8,7 @@ import PageTitle from "../../components/commons/PageTitle";
 import axios from "axios";
 import SimpleButton from "../../components/commons/buttons/SimpleButton";
 import dayjs from "dayjs";
+import {app_colors} from "../../helpers/constants";
 
 export default function ChangelogScreen({ navigation }: any) {
 
@@ -33,7 +34,7 @@ export default function ChangelogScreen({ navigation }: any) {
         <View style={changelogStyles.content}>
           {
             news.length === 0 ?
-            <SimpleButton disabled text={i18n.t('changelog.noData')} small />
+            <SimpleButton textColor={app_colors.white} align={'center'} disabled text={i18n.t('changelog.noData')} small />
             :
             news.map((change, index) => {
               return (

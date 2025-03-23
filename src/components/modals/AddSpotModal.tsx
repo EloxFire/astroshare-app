@@ -4,6 +4,7 @@ import { addSpotModalStyles } from '../../styles/components/modals/addSpotModal'
 import { useSpot } from '../../contexts/ObservationSpotContext'
 import { showToast } from '../../helpers/scripts/showToast'
 import SimpleButton from '../commons/buttons/SimpleButton'
+import {app_colors} from "../../helpers/constants";
 
 interface AddSpotModalProps {
   onClose: () => void
@@ -114,7 +115,7 @@ export default function AddSpotModal({ onClose }: AddSpotModalProps) {
           </View>
         </View>
 
-        <SimpleButton text="Ajouter ce lieu" onPress={() => handleAddSpot()} />
+        <SimpleButton textColor={app_colors.white} text="Ajouter ce lieu" onPress={() => handleAddSpot()} />
       </View>
     </View>
   )

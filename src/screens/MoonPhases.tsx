@@ -69,7 +69,7 @@ export default function MoonPhases({ navigation }: any) {
               {moonData ? <Text style={moonPhasesStyles.content.header.transitCard.text}>{moonData.visibility.objectNextRise}</Text> : <ActivityIndicator size={"small"} />}
             </View>
             <View>
-              <Text style={moonPhasesStyles.content.header.transitCard.text}>{currentDate.format('DD MMMM YYYY')}</Text>
+              <Text style={moonPhasesStyles.content.header.transitCard.date}>{currentDate.format('DD MMMM YYYY')}</Text>
               <Text style={moonPhasesStyles.content.header.transitCard.text}>{currentDate.format('HH:mm:ss')}</Text>
             </View>
             <View style={moonPhasesStyles.content.header.transitCard}>
@@ -119,6 +119,11 @@ export default function MoonPhases({ navigation }: any) {
               </>
             )
           }
+        </View>
+
+        {/*Calendar view*/}
+        <View style={moonPhasesStyles.content}>
+          
         </View>
       </ScrollView>
     </View>

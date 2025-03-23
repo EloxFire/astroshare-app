@@ -33,10 +33,18 @@ export const moonPhasesStyles = {
 
         text: {
           marginTop: 5,
-          fontSize: 16,
-          fontFamily: 'GilroyRegular',
+          fontSize: 15,
+          fontFamily: 'DMMonoMedium',
           color: app_colors.white,
           textAlign: 'center' as 'center'
+        },
+
+        date: {
+          fontSize: 16,
+          fontFamily: 'DMMonoMedium',
+          color: app_colors.white,
+          textAlign: 'center' as 'center',
+          textTransform: 'uppercase' as 'uppercase'
         }
       }
     },
@@ -89,7 +97,7 @@ export const moonPhasesStyles = {
           label: {
             fontSize: 10,
             opacity: 0.5,
-            fontFamily: 'AuxMono',
+            fontFamily: 'DMMonoRegular',
             color: app_colors.white,
             // textAlign: 'center' as 'center'
           },

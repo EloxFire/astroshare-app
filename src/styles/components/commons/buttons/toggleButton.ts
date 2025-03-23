@@ -10,7 +10,7 @@ export const toggleButtonStyles = {
 
     title: {
       fontSize: 12,
-      fontFamily: 'AuxMono',
+      fontFamily: 'DMMonoRegular',
       color: app_colors.white,
       opacity: .5,
     },

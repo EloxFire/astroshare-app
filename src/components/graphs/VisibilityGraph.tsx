@@ -24,7 +24,7 @@ export default function VisibilityGraph({ visibilityGraph }: VisibilityGraphProp
   // Générer les échelles pour les axes
   const xScale = scaleLinear()
     .domain([0, hours.length - 1]) // Indices des heures
-    .range([22, WIDTH]); // Largeur du graphique
+    .range([30, WIDTH]); // Largeur du graphique
 
   const yScale = scaleLinear()
     .domain([minAltitude, maxAltitude]) // Altitudes min/max étendues
@@ -43,9 +43,9 @@ export default function VisibilityGraph({ visibilityGraph }: VisibilityGraphProp
     <View style={{ height: HEIGHT + 40, width: "100%", marginTop: 20 }}>
       <Svg height={HEIGHT + 40} width={WIDTH}>
         {/* Axe X */}
-        <Line x1={22} y1={HEIGHT} x2={WIDTH} y2={HEIGHT} stroke="gray" strokeWidth={1} />
+        <Line x1={30} y1={HEIGHT} x2={WIDTH} y2={HEIGHT} stroke="gray" strokeWidth={1} />
         {/* Axe Y */}
-        <Line x1={22} y1={0} x2={22} y2={HEIGHT} stroke="gray" strokeWidth={1} />
+        <Line x1={30} y1={0} x2={30} y2={HEIGHT} stroke="gray" strokeWidth={1} />
 
         {/* Ligne en pointillés à l'heure actuelle */}
         <Line
@@ -59,25 +59,32 @@ export default function VisibilityGraph({ visibilityGraph }: VisibilityGraphProp
         />
 
         {/* Lignes des heures sur l'axe X */}
-        {hours.map((hour, index) => (
-          <SvgText
-            key={`hour-${index}`}
-            x={xScale(index)} // Décalage pour marge
-            y={HEIGHT + 15} // Sous l'axe X
-            fill="gray"
-            fontSize="10"
-            textAnchor="middle"
-          >
-            {hour}
-          </SvgText>
-        ))}
+        {hours.map((hour, index) => {
+          // Afficher uniquement les labels toutes les 30 minutes
+          if (index % 2 === 0) {
+            return (
+              <SvgText
+                fontFamily={'DMMonoRegular'}
+                key={`hour-${index}`}
+                x={xScale(index)} // Décalage pour marge
+                y={HEIGHT + 15} // Sous l'axe X
+                fill="gray"
+                fontSize="10"
+                textAnchor="middle"
+              >
+                {hour}
+              </SvgText>
+            );
+          }
+          return null;
+        })}
 
         {/* Graduations et labels des altitudes sur l'axe Y */}
         {[-90, -60, -30, 0, 30, 60, 90].map((altitude, index) => (
           <React.Fragment key={`altitude-${index}`}>
             {/* Ligne de la graduation */}
             <Line
-              x1={22}
+              x1={30}
               y1={yScale(altitude)}
               x2={WIDTH}
               y2={yScale(altitude)}
@@ -87,6 +94,7 @@ export default function VisibilityGraph({ visibilityGraph }: VisibilityGraphProp
             />
             {/* Label de la graduation */}
             <SvgText
+              fontFamily={'DMMonoRegular'}
               x={0} // Décalage pour marge
               y={yScale(altitude) + 5} // Ajuster pour centrer le texte
               fill="gray"
