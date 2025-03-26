@@ -30,8 +30,8 @@ export const sellScreenStyles = {
 
     subtitle: {
       color: app_colors.white,
-      fontSize: 18,
-      fontFamily: 'GilroyRegular' as 'GilroyRegular',
+      fontSize: 16,
+      fontFamily: 'DMMonoRegular' as 'DMMonoRegular',
     },
 
     description: {
@@ -69,8 +69,8 @@ export const sellScreenStyles = {
 
         price: {
           color: app_colors.white,
-          fontSize: 18,
-          fontFamily: 'GilroyRegular' as 'GilroyRegular',
+          fontSize: 16,
+          fontFamily: 'DMMonoMedium' as 'DMMonoMedium',
         },
 
         discount: {

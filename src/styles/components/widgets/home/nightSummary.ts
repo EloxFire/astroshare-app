@@ -62,7 +62,7 @@ export const nightSummaryStyles = {
 
           value: {
             fontSize: 14,
-            fontFamily: 'GilroyRegular',
+            fontFamily: 'DMMonoRegular',
             color: app_colors.white,
           }
         }
@@ -76,8 +76,8 @@ export const nightSummaryStyles = {
         flex: 1,
 
         icon: {
-          height: 70,
-          width: 70,
+          height: 75,
+          width: 75,
         },
 
         title: {
