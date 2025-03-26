@@ -14,6 +14,7 @@ import { moonIcons } from '../../../helpers/scripts/loadImages';
 import { GlobalPlanet } from '../../../helpers/types/GlobalPlanet';
 import { useSolarSystem } from '../../../contexts/SolarSystemContext';
 import { isNightPastTwelve } from '../../../helpers/scripts/astro/transits/isNightPastTwelve';
+import {astroshareApi} from "../../../helpers/api";
 
 interface NightInterface {
   start: Date | null,
@@ -46,10 +47,11 @@ export default function NightSummary({ noHeader }: NightSummaryProps) {
   const [night, setNight] = useState<NightInterface>()
   const [moonData, setMoonData] = useState<MoonData | null>(null)
   const [visiblePlanets, setVisiblePlanets] = useState<GlobalPlanet[]>([])
-  const [moonImageUrl, setMoonImageUrl] = useState<undefined | {uri: string }>({uri: `${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/moon/illustration`})
+  const [moonImageUrl, setMoonImageUrl] = useState<undefined | {uri: string }>(undefined)
 
   useEffect(() => {
     getInfos()
+    fetchMoonImage()
   }, [currentUserLocation])
 
   const getInfos = async () => {
@@ -92,7 +94,6 @@ export default function NightSummary({ noHeader }: NightSummaryProps) {
     const moonset = getMoonRiseAndSet(date).moonset
 
 
-
     setMoonData({
       phase: phase || 'Full',
       illumination: illumination || i18n.t('common.errors.simple'),
@@ -104,6 +105,12 @@ export default function NightSummary({ noHeader }: NightSummaryProps) {
       moonrise: moonrise || i18n.t('common.errors.simple'),
       moonset: moonset || i18n.t('common.errors.simple'),
     })
+  }
+
+  const fetchMoonImage = async () => {
+    const response = await astroshareApi.get('/moon/illustration')
+    console.log(response)
+    setMoonImageUrl({uri: `data:image/png;base64,${response.data.image}`})
   }
 
   const getMoonRiseAndSet = (date: Date): { moonrise: string, moonset: string } => {
@@ -179,7 +186,12 @@ export default function NightSummary({ noHeader }: NightSummaryProps) {
                           <Text style={nightSummaryStyles.container.data.timings.info.title}>Lever</Text>
                           <Text style={nightSummaryStyles.container.data.timings.info.value}>{moonData.moonrise}</Text>
                         </View> */}
-                        <Image source={moonImageUrl} style={nightSummaryStyles.container.data.moon.icon} resizeMode='contain' />
+                        {
+                          !moonImageUrl ?
+                            <ActivityIndicator size='small' color={app_colors.white} />
+                            :
+                            <Image source={moonImageUrl} style={nightSummaryStyles.container.data.moon.icon} />
+                        }
                         {/* <View style={[nightSummaryStyles.container.data.timings.info, { alignItems: 'flex-start' }]}>
                           <Text style={nightSummaryStyles.container.data.timings.info.title}>Coucher</Text>
                           <Text style={nightSummaryStyles.container.data.timings.info.value}>{moonData.moonset}</Text>

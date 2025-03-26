@@ -292,12 +292,12 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
               <View style={celestialBodiesOverviewStyles.content.moreContainer.infos}>
                 <Image resizeMode={"contain"} source={objectInfos.dsoAdditionalInfos.image} style={{width: 80, height: 80, borderRadius: 10, borderWidth: 1, borderColor: app_colors.white_twenty}} />
                 <View style={{flex: 1}}>
-                  <DSOValues title={"Discovered by"} value={objectInfos.dsoAdditionalInfos.discovered_by}/>
-                  <DSOValues title={"Discovery year"} value={objectInfos.dsoAdditionalInfos.discovery_year}/>
-                  <DSOValues title={"Distance"} value={objectInfos.dsoAdditionalInfos.distance}/>
-                  <DSOValues title={"Dimensions"} value={objectInfos.dsoAdditionalInfos.dimensions}/>
-                  <DSOValues title={"Apparent size"} value={objectInfos.dsoAdditionalInfos.apparent_size}/>
-                  <DSOValues title={"Age"} value={objectInfos.dsoAdditionalInfos.age}/>
+                  <DSOValues title={i18n.t('detailsPages.dso.generalInfos.discoveredBy')} value={objectInfos.dsoAdditionalInfos.discovered_by}/>
+                  <DSOValues title={i18n.t('detailsPages.dso.generalInfos.discoveryYear')} value={objectInfos.dsoAdditionalInfos.discovery_year}/>
+                  <DSOValues title={i18n.t('detailsPages.dso.generalInfos.distance')} value={objectInfos.dsoAdditionalInfos.distance}/>
+                  <DSOValues title={i18n.t('detailsPages.dso.generalInfos.dimensions')} value={objectInfos.dsoAdditionalInfos.dimensions}/>
+                  <DSOValues title={i18n.t('detailsPages.dso.generalInfos.apparentSize')} value={objectInfos.dsoAdditionalInfos.apparent_size}/>
+                  <DSOValues title={i18n.t('detailsPages.dso.generalInfos.age')} value={objectInfos.dsoAdditionalInfos.age}/>
                 </View>
               </View>
             </View>

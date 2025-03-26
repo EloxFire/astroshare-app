@@ -6,7 +6,7 @@ import {
   GeographicCoordinate,
 } from '@observerly/astrometry'
 import { useSettings } from '../contexts/AppSettingsContext'
-import dayjs from 'dayjs'
+import dayjs, {Dayjs} from 'dayjs'
 import PageTitle from '../components/commons/PageTitle'
 import { i18n } from '../helpers/scripts/i18n'
 import {useTranslation} from "../hooks/useTranslation";
@@ -15,6 +15,9 @@ import {computeMoon} from "../helpers/scripts/astro/objects/computeMoon";
 import VisibilityGraph from "../components/graphs/VisibilityGraph";
 import {formatDays, formatKm} from "../helpers/scripts/utils/formatters/formaters";
 import {astroshareApi} from "../helpers/api";
+import {app_colors} from "../helpers/constants";
+import SimpleButton from "../components/commons/buttons/SimpleButton";
+import {capitalize} from "../helpers/scripts/utils/formatters/capitalize";
 
 interface MoonData {
   phase: string,
@@ -37,12 +40,15 @@ export default function MoonPhases({ navigation }: any) {
 
   const [moonData, setMoonData] = useState<ComputedMoonInfos | null>(null)
   const [currentDate, setCurrentDate] = useState(dayjs())
-  const [moonImageUrl, setMoonImageUrl] = useState<undefined | {uri: string }>({uri: `${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/moon/illustration`})
+  const [moonImageUrl, setMoonImageUrl] = useState<undefined | {uri: string }>(undefined)
+  const [currentMonth, setCurrentMonth] = useState(dayjs().month())
+  const [calendarImages, setCalendarImages] = useState<{date: string, image: string}[]>([])
 
   useEffect(() => {
     const observer: GeographicCoordinate = {latitude: currentUserLocation.lat, longitude: currentUserLocation.lon}
     const data: ComputedMoonInfos = computeMoon({date: new Date(), observer})
     setMoonData(data)
+    fetchMoonImage()
   }, [currentUserLocation])
 
   useEffect(() => {
@@ -57,12 +63,36 @@ export default function MoonPhases({ navigation }: any) {
     }
   }, [])
 
+  useEffect(() => {
+    (async () => {
+      await fetchCalendarImages(currentMonth)
+    })()
+  }, [currentMonth]);
+
+  const fetchMoonImage = async () => {
+    const response = await astroshareApi.get('/moon/illustration')
+    setMoonImageUrl({uri: `data:image/png;base64,${response.data.image}`})
+  }
+
+  const handleMonthChange = (direction: 'next' | 'previous') => {
+    if (direction === 'next') {
+      setCurrentMonth(currentMonth + 1)
+    } else {
+      setCurrentMonth(currentMonth - 1)
+    }
+  }
+
+  const fetchCalendarImages = async (month: number) => {
+    const response = await astroshareApi.get(`/moon/illustration/month`, {params: {month: currentMonth}})
+    setCalendarImages(response.data)
+  }
+
   return (
     <View style={globalStyles.body}>
       <PageTitle navigation={navigation} title={i18n.t('home.buttons.moon_phases.title')} subtitle={i18n.t('home.buttons.moon_phases.subtitle')} />
       <View style={globalStyles.screens.separator} />
       <ScrollView>
-        <View style={moonPhasesStyles.content}>
+        <View style={[moonPhasesStyles.content, {marginBottom: 0}]}>
           <View style={moonPhasesStyles.content.header}>
             <View style={moonPhasesStyles.content.header.transitCard}>
               <Image source={require('../../assets/icons/FiMoonrise.png')} style={moonPhasesStyles.content.header.transitCard.icon} />
@@ -82,7 +112,7 @@ export default function MoonPhases({ navigation }: any) {
               <>
                 <View style={moonPhasesStyles.content.body}>
                   <Text style={moonPhasesStyles.content.body.phaseTitle}>{moonData.data.phase}</Text>
-                  <Image source={moonImageUrl} style={moonPhasesStyles.content.body.icon}/>
+                  { !moonImageUrl ? <ActivityIndicator size={"large"} color={app_colors.white} /> : <Image source={moonImageUrl} style={moonPhasesStyles.content.body.icon}/> }
                   {/*MOON PHASE HERE*/}
                   <View style={moonPhasesStyles.content.body.infos}>
                     <View>
@@ -113,7 +143,7 @@ export default function MoonPhases({ navigation }: any) {
                     </View>
                   </View>
                 </View>
-                <View style={moonPhasesStyles.content.footer}>
+                <View>
                   <VisibilityGraph visibilityGraph={moonData?.visibility.visibilityGraph}/>
                 </View>
               </>
@@ -122,8 +152,37 @@ export default function MoonPhases({ navigation }: any) {
         </View>
 
         {/*Calendar view*/}
-        <View style={moonPhasesStyles.content}>
-          
+        <View style={[moonPhasesStyles.content, {marginTop: 20}]}>
+          <Text style={moonPhasesStyles.content.calendar.title}>Calendrier complet</Text>
+
+          <View style={moonPhasesStyles.content.calendar.selectorRow}>
+            {/*<SimpleButton*/}
+            {/*  icon={require('../../assets/icons/FiChevronLeft.png')}*/}
+            {/*  active*/}
+            {/*  activeBorderColor={app_colors.white_twenty}*/}
+            {/*  onPress={() => handleMonthChange('previous')}*/}
+            {/*/>*/}
+            <Text style={moonPhasesStyles.content.calendar.selectorRow.currentMonth}>{capitalize(dayjs().month(currentMonth).format('MMMM YYYY'))}</Text>
+            {/*<SimpleButton*/}
+            {/*  icon={require('../../assets/icons/FiChevronRight.png')}*/}
+            {/*  active*/}
+            {/*  activeBorderColor={app_colors.white_twenty}*/}
+            {/*  onPress={() => handleMonthChange('next')}*/}
+            {/*/>*/}
+          </View>
+
+          <View style={moonPhasesStyles.content.calendar.calendarCellsContainer}>
+            {
+              calendarImages.map((day, index) => {
+                return (
+                  <View key={index} style={moonPhasesStyles.content.calendar.calendarCellsContainer.cell}>
+                    <Text style={moonPhasesStyles.content.calendar.calendarCellsContainer.cell.day}>{dayjs(day.date).format('ddd DD MMMM')}</Text>
+                    <Image source={{uri: `data:image/png;base64,${day.image}`}} style={moonPhasesStyles.content.calendar.calendarCellsContainer.cell.image}/>
+                  </View>
+                )
+              })
+            }
+          </View>
         </View>
       </ScrollView>
     </View>

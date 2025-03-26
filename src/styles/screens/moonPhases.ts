@@ -75,8 +75,8 @@ export const moonPhasesStyles = {
       },
 
       icon: {
-        width: Dimensions.get('window').width - 100,
-        height: Dimensions.get('window').width - 100,
+        width: Dimensions.get('window').width - 200,
+        height: Dimensions.get('window').width - 200,
         resizeMode: 'contain' as 'contain',
         alignSelf: 'center' as 'center',
         borderRadius: 210
@@ -112,7 +112,66 @@ export const moonPhasesStyles = {
       }
     },
 
-    footer: {
+    calendar: {
+      display: 'flex' as 'flex',
+      flexDirection: 'column' as 'column',
+
+      title: {
+        fontSize: 20,
+        fontFamily: 'GilroyBlack',
+        color: app_colors.white,
+        textAlign: 'center' as 'center',
+        textTransform: 'uppercase' as 'uppercase'
+      },
+
+      selectorRow: {
+        display: "flex" as "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "center" as "center",
+        alignItems: "center" as "center",
+
+        currentMonth: {
+          fontSize: 20,
+          fontFamily: 'DMMonoMedium',
+          color: app_colors.white,
+          textAlign: 'center' as 'center',
+        }
+      },
+
+      calendarCellsContainer: {
+        display: 'flex' as 'flex',
+        flexDirection: 'row' as 'row',
+        justifyContent: 'center' as 'center',
+        flexWrap: 'wrap' as 'wrap',
+        gap: 5,
+
+        cell: {
+          width: (Dimensions.get('window').width + 30) / 5,
+          height: 120,
+          borderRadius: 5,
+          backgroundColor: app_colors.white_no_opacity,
+          borderColor: app_colors.white_twenty,
+          borderWidth: 1,
+          display: 'flex' as 'flex',
+          justifyContent: 'center' as 'center',
+          alignItems: 'center' as 'center',
+
+          day: {
+            fontSize: 10,
+            fontFamily: 'DMMonoRegular',
+            color: app_colors.white
+          },
+
+          text: {
+
+          },
+
+          image: {
+            width: 80,
+            height: 80,
+          }
+        }
+      }
     }
   }
 }

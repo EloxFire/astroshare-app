@@ -436,7 +436,7 @@ const centerIss = () => {
                 <Text style={issTrackerStyles.content.nextPasses.title}>{i18n.t('satelliteTracker.issTracker.nextPasses.title')}</Text>
                 <Text style={issTrackerStyles.content.nextPasses.subtitle}>{i18n.t('satelliteTracker.issTracker.nextPasses.subtitle')}{currentUserLocation.common_name}</Text>
                 {
-                  !currentUser && isProUser(currentUser) ?
+                  currentUser && isProUser(currentUser) ?
                     <>
                       <View style={issTrackerStyles.content.nextPasses.container}>
                         {
@@ -462,7 +462,6 @@ const centerIss = () => {
                     </> :
                   <ProLocker navigation={navigation} image={require('../../../assets/images/tools/isstracker.png')}/>
                 }
-
               </View>
               <View style={starlinkTrackerStyles.content.glviewContainer}>
                 <Text style={issTrackerStyles.content.liveStats.title}>{i18n.t('satelliteTracker.issTracker.3dMap.title')}</Text>
