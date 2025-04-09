@@ -4,7 +4,7 @@ import {app_colors} from "../../../helpers/constants";
 export const conjunctionCardStyles = {
   card: {
     display: 'flex' as 'flex',
-    flexDirection: 'row' as 'row',
+    flexDirection: 'column' as 'column',
     width: Dimensions.get('window').width - 20,
     backgroundColor: app_colors.white_no_opacity,
     borderRadius: 10,
@@ -13,28 +13,11 @@ export const conjunctionCardStyles = {
     marginRight: 25,
     padding: 10,
 
-    row: {
-      flexDirection: 'row' as 'row',
-      justifyContent: 'space-between' as 'space-between',
-      marginBottom: 10,
-    },
-
-    infos: {
-      marginLeft: 10,
-      flex: 1,
-
-      title: {
-        fontFamily: 'GilroyBlack',
-        fontSize: 15,
-        color: app_colors.white,
-        textTransform: 'uppercase' as 'uppercase'
-      }
-    },
-
-    text: {
-      fontFamily: 'GilroyRegular',
-      fontSize: 15,
-      color: app_colors.white
+    title: {
+      fontFamily: 'GilroyBlack',
+      fontSize: 18,
+      color: app_colors.white,
+      textTransform: 'uppercase' as 'uppercase',
     }
   }
 }

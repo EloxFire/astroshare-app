@@ -18,7 +18,7 @@ export const planetaryConjunctionStyles = {
       flexDirection: 'column' as 'column',
       gap: 5,
       marginTop: 10,
-      marginBottom: 50,
+      marginBottom: 20,
 
       text: {
         fontFamily: 'GilroyRegular',
