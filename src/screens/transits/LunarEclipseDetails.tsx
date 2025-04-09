@@ -24,26 +24,9 @@ export default function LunarEclipseDetails({ navigation, route }: any) {
   const [selectedLocation, setSelectedLocation] = useState<{latitude: number, longitude: number} | null>(null);
   const [selectedLocationName, setSelectedLocationName] = useState<string>('');
   const [loadingCircumstances, setLoadingCircumstances] = useState<boolean>(false);
+
+  console.log(JSON.stringify(routeEclipse))
   const mapRef = useRef(null)
-
-  const extractVisibilityLines = (geometry: [number, number, number][][]) => {
-    const polygonCoordinates: {latitude: number, longitude: number}[] = [];
-    console.log("GEOMETRY", geometry)
-    console.log("GEOMETRY[0]", geometry[0])
-    console.log("GEOMETRY[0][0]", geometry[0][0])
-
-    geometry.map((coord: any) => {
-      console.log("COORD", coord[0], coord[1]);
-      const coordSet: {latitude: number, longitude: number} = {
-        latitude: coord[0],
-        longitude: coord[1],
-      }
-
-      console.log("COORD SET \n\n\n\n\n", coordSet)
-      polygonCoordinates.push(coordSet);
-    })
-    return polygonCoordinates;
-  }
 
   const handleMapPress = async (event?: MapPressEvent | null, location?: {latitude: number, longitude: number}) => {
     if (!event && !location) {
@@ -97,20 +80,74 @@ export default function LunarEclipseDetails({ navigation, route }: any) {
         rotateEnabled={false}
         cameraZoomRange={{ minCenterCoordinateDistance: 1000 }}
       >
-        {/*Tracé de la zone de pénombre*/}
-        {
-          Object.entries(routeEclipse.events).map(event => {
-            return (
-              <Polygon
-                key={event[0]}
-                coordinates={extractVisibilityLines(event[1].zenith.geometry.coordinates)}
-                strokeColor={app_colors.white}
-                fillColor={app_colors.white}
-                strokeWidth={1}
-              />
-            );
-          })
-        }
+        {/*Tracé des zones de pénombre*/}
+        {/* Zone de pénombre (P1 → P2) */}
+        <Polygon
+          coordinates={[
+            {
+              latitude: routeEclipse.events.P1?.zenith.geometry.coordinates[1],
+              longitude: routeEclipse.events.P1?.zenith.geometry.coordinates[0]
+            },
+            {
+              latitude: routeEclipse.events.P2?.zenith.geometry.coordinates[1],
+              longitude: routeEclipse.events.P2?.zenith.geometry.coordinates[0]
+            },
+          ]}
+          fillColor="rgba(255, 255, 200, 0.2)"
+          strokeColor="rgba(255, 255, 150, 0.4)"
+          strokeWidth={1}
+        />
+
+        {/* Zone de totalité (U1 → U4) */}
+        <Polygon
+          coordinates={[
+            {
+              latitude: routeEclipse.events.U1?.zenith.geometry.coordinates[1],
+              longitude: routeEclipse.events.U1?.zenith.geometry.coordinates[0]
+            },
+            {
+              latitude: routeEclipse.events.U4?.zenith.geometry.coordinates[1],
+              longitude: routeEclipse.events.U4?.zenith.geometry.coordinates[0]
+            },
+          ]}
+          fillColor="rgba(150, 150, 255, 0.3)"
+          strokeColor="rgba(100, 100, 255, 0.6)"
+          strokeWidth={1}
+        />
+
+        {/* Ligne de totalité : U2 → greatest → U3 */}
+        <Polyline
+          coordinates={[
+            {
+              latitude: routeEclipse.events.U2?.zenith.geometry.coordinates[1],
+              longitude: routeEclipse.events.U2?.zenith.geometry.coordinates[0]
+            },
+            {
+              latitude: routeEclipse.events.greatest?.zenith.geometry.coordinates[1],
+              longitude: routeEclipse.events.greatest?.zenith.geometry.coordinates[0]
+            },
+            {
+              latitude: routeEclipse.events.U3?.zenith.geometry.coordinates[1],
+              longitude: routeEclipse.events.U3?.zenith.geometry.coordinates[0]
+            },
+          ]}
+          strokeColor="red"
+          strokeWidth={2}
+        />
+
+
+        {/* Marqueurs pour les points clés */}
+        {['P1', 'P2', 'U1', 'U2', 'U3', 'U4', 'greatest'].map(key => {
+          const coords = routeEclipse.events[key].zenith.geometry.coordinates;
+          return (
+            <Marker
+              key={key}
+              coordinate={{ latitude: coords[1], longitude: coords[0] }}
+              title={key}
+              pinColor={key === 'greatest' ? 'red' : 'blue'}
+            />
+          );
+        })}
 
 
         {

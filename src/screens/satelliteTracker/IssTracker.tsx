@@ -436,7 +436,7 @@ const centerIss = () => {
                 <Text style={issTrackerStyles.content.nextPasses.title}>{i18n.t('satelliteTracker.issTracker.nextPasses.title')}</Text>
                 <Text style={issTrackerStyles.content.nextPasses.subtitle}>{i18n.t('satelliteTracker.issTracker.nextPasses.subtitle')}{currentUserLocation.common_name}</Text>
                 {
-                  currentUser && isProUser(currentUser) ?
+                  isProUser(currentUser) ?
                     <>
                       <View style={issTrackerStyles.content.nextPasses.container}>
                         {

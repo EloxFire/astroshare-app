@@ -8,7 +8,14 @@ export interface LunarEclipse {
   events: {
     P1?: EclipseEvent;
     P2?: EclipseEvent;
-    P4?: EclipseEvent;
+    U1?: EclipseEvent;
+    U2?: EclipseEvent;
+    U3?: EclipseEvent;
+    U4?: EclipseEvent;
+    T1?: EclipseEvent;
+    T2?: EclipseEvent;
+    O1?: EclipseEvent;
+    O2?: EclipseEvent;
     greatest?: EclipseEvent;
   };
   link: {

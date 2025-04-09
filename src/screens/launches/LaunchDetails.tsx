@@ -15,10 +15,10 @@ import {
   scheduleLocalNotification,
   unScheduleNotification
 } from "../../helpers/scripts/notifications/scheduleLocalNotification";
-import {launchCardStyles} from "../../styles/components/cards/launchCard";
-import {localizedNoRocketImage, localizedNoRocketImageSmall} from "../../helpers/scripts/loadImages";
+import {localizedNoRocketImage} from "../../helpers/scripts/loadImages";
 import {useTranslation} from "../../hooks/useTranslation";
 import {app_colors} from "../../helpers/constants";
+import {LaunchData} from "../../helpers/types/LaunchData";
 
 interface LaunchCardProps {
   route: any
@@ -27,7 +27,7 @@ interface LaunchCardProps {
 
 export default function LaunchDetails({ route, navigation }: LaunchCardProps): ReactNode {
 
-  const { launch } = route.params;
+  const launch: LaunchData = route.params.launch;
   const {currentLocale} = useTranslation()
   const [isNotificationPlanned, setIsNotificationPlanned] = useState(false);
   const [countdown, setCountdown] = useState<string>('00:00:00:00') // DD:HH:mm:ss
@@ -156,11 +156,23 @@ export default function LaunchDetails({ route, navigation }: LaunchCardProps): R
                   <DSOValues title={i18n.t('launchesScreen.details.program.name')} value={launch.program[0].name}/>
                   <DSOValues title={i18n.t('launchesScreen.details.program.start')} value={dayjs(launch.program[0].start_date).format('DD/MM/YYYY')}/>
                   <DSOValues title={i18n.t('launchesScreen.details.program.founder')} value={launch.program[0].agencies[0].name.length > 30 ? launch.program[0].agencies[0].abbrev : launch.program[0].agencies[0].name}/>
-
                   <Text style={launchDetailsStyles.content.programCard.subtitle}>{i18n.t('launchesScreen.details.program.description')}</Text>
                   <Text style={launchDetailsStyles.content.programCard.description}>{launch.program[0].description}</Text>
               </View>
           }
+
+          {/*{*/}
+          {/*  launch.vid_urls?.length > 0 &&*/}
+          {/*    <View style={launchDetailsStyles.content.videosCard}>*/}
+          {/*        <Text style={launchDetailsStyles.content.programCard.title}>{i18n.t('launchesScreen.details.videos.title')}</Text>*/}
+          {/*        <DSOValues title={i18n.t('launchesScreen.details.program.name')} value={launch.program[0].name}/>*/}
+          {/*        <DSOValues title={i18n.t('launchesScreen.details.program.start')} value={dayjs(launch.program[0].start_date).format('DD/MM/YYYY')}/>*/}
+          {/*        <DSOValues title={i18n.t('launchesScreen.details.program.founder')} value={launch.program[0].agencies[0].name.length > 30 ? launch.program[0].agencies[0].abbrev : launch.program[0].agencies[0].name}/>*/}
+
+          {/*        <Text style={launchDetailsStyles.content.programCard.subtitle}>{i18n.t('launchesScreen.details.program.description')}</Text>*/}
+          {/*        <Text style={launchDetailsStyles.content.programCard.description}>{launch.program[0].description}</Text>*/}
+          {/*    </View>*/}
+          {/*}*/}
 
         </View>
       </ScrollView>

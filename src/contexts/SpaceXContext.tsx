@@ -13,6 +13,7 @@ interface SpaceXContextProviderProps {
 export function SpaceXContextProvider({ children }: SpaceXContextProviderProps) {
 
   const [constellation, setConstellation] = useState<any>([])
+  const [stats, setStats] = useState<any>([])
 
   useEffect(() => {
     getSpacexData()
@@ -27,14 +28,17 @@ export function SpaceXContextProvider({ children }: SpaceXContextProviderProps) 
   const getSpacexData = async () => {
     try {
       const constellation = await axios.get(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/spacex/starlink`)
+      const stats = await axios.get(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/spacex/starlink/count`)
       setConstellation(constellation.data.data)
+      setStats(stats.data)
     } catch (e) {
       console.log("Sartlink constellation get error :", e)
     }
   }
 
   const values = {
-    constellation
+    constellation,
+    stats
   }
 
   return (

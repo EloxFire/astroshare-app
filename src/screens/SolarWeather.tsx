@@ -80,7 +80,7 @@ export default function SolarWeather({ navigation }: any) {
       <PageTitle navigation={navigation} title={i18n.t('home.buttons.solar_weather.title')} subtitle={i18n.t('home.buttons.solar_weather.subtitle')} />
       <View style={globalStyles.screens.separator} />
       <ScrollView>
-        <View style={{backgroundColor: app_colors.white_no_opacity, padding: 10, borderRadius: 10}}>
+        <View>
           {/* SUN CONTAINER */}
           <View style={solarWeatherStyles.container}>
             <View style={{ display: 'flex', flexDirection: 'row' }}>

@@ -16,7 +16,6 @@ import VisibilityGraph from "../components/graphs/VisibilityGraph";
 import {formatDays, formatKm} from "../helpers/scripts/utils/formatters/formaters";
 import {astroshareApi} from "../helpers/api";
 import {app_colors} from "../helpers/constants";
-import SimpleButton from "../components/commons/buttons/SimpleButton";
 import {capitalize} from "../helpers/scripts/utils/formatters/capitalize";
 
 interface MoonData {
@@ -173,14 +172,18 @@ export default function MoonPhases({ navigation }: any) {
 
           <View style={moonPhasesStyles.content.calendar.calendarCellsContainer}>
             {
+              calendarImages.length > 0 ?
               calendarImages.map((day, index) => {
                 return (
                   <View key={index} style={moonPhasesStyles.content.calendar.calendarCellsContainer.cell}>
-                    <Text style={moonPhasesStyles.content.calendar.calendarCellsContainer.cell.day}>{dayjs(day.date).format('ddd DD MMMM')}</Text>
+                    <Text style={moonPhasesStyles.content.calendar.calendarCellsContainer.cell.day}>{dayjs(day.date).format('ddd')}</Text>
+                    <Text style={moonPhasesStyles.content.calendar.calendarCellsContainer.cell.day}>{dayjs(day.date).format('DD MMMM')}</Text>
                     <Image source={{uri: `data:image/png;base64,${day.image}`}} style={moonPhasesStyles.content.calendar.calendarCellsContainer.cell.image}/>
                   </View>
                 )
               })
+                :
+                <ActivityIndicator size={"large"} color={app_colors.white}/>
             }
           </View>
         </View>
