@@ -272,7 +272,7 @@ export default function PlanetaryConjunctionScreen({ navigation }: any) {
         {
           !loadingConjunctions && conjunctions && (
             <View style={{borderTopWidth: 1, borderTopColor: app_colors.white_twenty, paddingTop: 5}}>
-              <Text style={[planetaryConjunctionStyles.content.parameters.text, {marginBottom: 10, fontFamily: 'GilroyBlack'}]}>Prochaine conjonction</Text>
+              <Text style={[planetaryConjunctionStyles.content.parameters.text, {marginBottom: 10, fontFamily: 'GilroyBlack', textTransform: 'uppercase'}]}>Prochaine conjonction</Text>
               <ConjunctionCard conjunction={conjunctions} />
             </View>
           )

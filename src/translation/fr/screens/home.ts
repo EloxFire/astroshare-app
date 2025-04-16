@@ -49,8 +49,8 @@ export const homeTranslations = {
       subtitle: "// Suivi de l'ISS et de Starlink"
     },
     skymap_generator: {
-      title: "Carte du ciel",
-      subtitle: "// Carte du ciel en direct"
+      title: "Cartes du ciel",
+      subtitle: "// Vues en direct et cartes précises"
     },
     launches_screen: {
       title: "Lancements",

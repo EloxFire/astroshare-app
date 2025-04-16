@@ -19,13 +19,12 @@ export default function LunarEclipseDetails({ navigation, route }: any) {
   const routeEclipse: LunarEclipse = route.params.eclipse;
 
   const [eclipse, setEclipse] = useState<SolarEclipse | null>(null);
-  const [localCircumstances, setLocalCircumstances] = useState<SolarEclipse | null>(null);
+  const [localCircumstances, setLocalCircumstances] = useState<LunarEclipse | null>(null);
   const [eclipseNotVisible, setEclipseNotVisible] = useState<boolean>(false);
   const [selectedLocation, setSelectedLocation] = useState<{latitude: number, longitude: number} | null>(null);
   const [selectedLocationName, setSelectedLocationName] = useState<string>('');
   const [loadingCircumstances, setLoadingCircumstances] = useState<boolean>(false);
 
-  console.log(JSON.stringify(routeEclipse))
   const mapRef = useRef(null)
 
   const handleMapPress = async (event?: MapPressEvent | null, location?: {latitude: number, longitude: number}) => {
@@ -46,9 +45,8 @@ export default function LunarEclipseDetails({ navigation, route }: any) {
     }
 
     try {
-      const response = await astroshareApi.get('/eclipses/lunar', { params: { year: eclipse?.calendarDate, observer } });
+      const response = await astroshareApi.get('/eclipses/lunar', { params: { year: routeEclipse?.calendarDate, observer } });
       const data = response.data[0];
-      console.log(data);
       if (!data) {
         setLocalCircumstances(null)
         setEclipseNotVisible(true);
@@ -57,12 +55,17 @@ export default function LunarEclipseDetails({ navigation, route }: any) {
         setEclipseNotVisible(false);
       }
     } catch (e) {
-      console.log("Error while fetching solar eclipses");
+      console.log("Error while fetching lunar eclipse");
     } finally {
       setLoadingCircumstances(false);
     }
   }
 
+  console.log(routeEclipse?.events.P2?.date)
+  Object.keys(routeEclipse?.events || {}).forEach((event) => {
+    const typedEvent = event as keyof typeof routeEclipse.events;
+    console.log(typedEvent, routeEclipse?.events[typedEvent]?.date, routeEclipse?.events[typedEvent]?.zenith.type);
+  });
   return (
     <View style={[globalStyles.body, { paddingHorizontal: 0, paddingTop: 0 }]}>
       <MapView
@@ -81,74 +84,6 @@ export default function LunarEclipseDetails({ navigation, route }: any) {
         cameraZoomRange={{ minCenterCoordinateDistance: 1000 }}
       >
         {/*Tracé des zones de pénombre*/}
-        {/* Zone de pénombre (P1 → P2) */}
-        <Polygon
-          coordinates={[
-            {
-              latitude: routeEclipse.events.P1?.zenith.geometry.coordinates[1],
-              longitude: routeEclipse.events.P1?.zenith.geometry.coordinates[0]
-            },
-            {
-              latitude: routeEclipse.events.P2?.zenith.geometry.coordinates[1],
-              longitude: routeEclipse.events.P2?.zenith.geometry.coordinates[0]
-            },
-          ]}
-          fillColor="rgba(255, 255, 200, 0.2)"
-          strokeColor="rgba(255, 255, 150, 0.4)"
-          strokeWidth={1}
-        />
-
-        {/* Zone de totalité (U1 → U4) */}
-        <Polygon
-          coordinates={[
-            {
-              latitude: routeEclipse.events.U1?.zenith.geometry.coordinates[1],
-              longitude: routeEclipse.events.U1?.zenith.geometry.coordinates[0]
-            },
-            {
-              latitude: routeEclipse.events.U4?.zenith.geometry.coordinates[1],
-              longitude: routeEclipse.events.U4?.zenith.geometry.coordinates[0]
-            },
-          ]}
-          fillColor="rgba(150, 150, 255, 0.3)"
-          strokeColor="rgba(100, 100, 255, 0.6)"
-          strokeWidth={1}
-        />
-
-        {/* Ligne de totalité : U2 → greatest → U3 */}
-        <Polyline
-          coordinates={[
-            {
-              latitude: routeEclipse.events.U2?.zenith.geometry.coordinates[1],
-              longitude: routeEclipse.events.U2?.zenith.geometry.coordinates[0]
-            },
-            {
-              latitude: routeEclipse.events.greatest?.zenith.geometry.coordinates[1],
-              longitude: routeEclipse.events.greatest?.zenith.geometry.coordinates[0]
-            },
-            {
-              latitude: routeEclipse.events.U3?.zenith.geometry.coordinates[1],
-              longitude: routeEclipse.events.U3?.zenith.geometry.coordinates[0]
-            },
-          ]}
-          strokeColor="red"
-          strokeWidth={2}
-        />
-
-
-        {/* Marqueurs pour les points clés */}
-        {['P1', 'P2', 'U1', 'U2', 'U3', 'U4', 'greatest'].map(key => {
-          const coords = routeEclipse.events[key].zenith.geometry.coordinates;
-          return (
-            <Marker
-              key={key}
-              coordinate={{ latitude: coords[1], longitude: coords[0] }}
-              title={key}
-              pinColor={key === 'greatest' ? 'red' : 'blue'}
-            />
-          );
-        })}
-
 
         {
           selectedLocation &&
@@ -209,17 +144,17 @@ export default function LunarEclipseDetails({ navigation, route }: any) {
                     />
                     <DSOValues
                         title={"Fin"}
-                        value={dayjs(localCircumstances.events.P4?.date).format('HH:mm:ss').replace(':', 'h').replace(':', 'm') + 's'}
+                        value={dayjs(localCircumstances.events.P2?.date).format('HH:mm:ss').replace(':', 'h').replace(':', 'm') + 's'}
                         chipValue
                     />
                     <DSOValues
                         title={"Durée totale"}
-                        value={localCircumstances.duration.penumbral.replace(':', 'h').replace(':', 'm') + 's'}
+                        value={localCircumstances.duration.penumbral?.replace(':', 'h').replace(':', 'm') + 's'}
                         chipValue
                     />
                     <DSOValues
-                        title={"Obscuration"}
-                        value={localCircumstances.obscuration + "%"}
+                        title={"Type"}
+                        value={localCircumstances.type}
                         chipValue
                     />
 

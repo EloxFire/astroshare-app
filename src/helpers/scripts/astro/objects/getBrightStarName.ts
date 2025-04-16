@@ -12,5 +12,5 @@ export const getBrightStarName = (starIds: string): string => {
     return name.split(' ').slice(1).join(' ')
   }
 
-  return ids.find(id => id.includes('*'))!
+  return ids.find(id => id.includes('HIP'))!
 }

@@ -56,6 +56,9 @@ export const commonTranslations = {
     thisNight: "Cette nuit",
     allNight: "Toute la nuit",
     never: "Jamais",
+    date: "Date",
+    hour: "Heure",
+    datetime: "Date et heure",
   },
   visibility: {
     title: "Visibilité",
@@ -72,6 +75,16 @@ export const commonTranslations = {
     nakedEye: "À l'œil nu",
     binoculars: "Jumelles",
     telescope: "Télescope",
+  },
+  coordinates: {
+    rightAscension: "Ascension droite",
+    declination: "Déclinaison",
+    altitude: "Altitude",
+    azimuth: "Azimut",
+    distance: "Distance",
+    apparentMagnitude: "Magnitude apparente",
+    absoluteMagnitude: "Magnitude absolue",
+    angularSeparation: "Séparation angulaire",
   },
   planets: {
     Sun: "Soleil",

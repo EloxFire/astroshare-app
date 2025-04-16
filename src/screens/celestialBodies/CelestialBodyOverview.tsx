@@ -166,13 +166,9 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
 
                   )
                 }
-                {
-                  objectInfos.base.common_name !== "" && (
-                    <SimpleBadge
-                      text={object.type}
-                    />
-                  )
-                }
+                <SimpleBadge
+                  text={objectInfos.base.family}
+                />
                 {
                   getObjectFamily(object) !== 'DSO' && objectInfos && (
                     <>

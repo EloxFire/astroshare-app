@@ -11,6 +11,7 @@ import { astroImages } from "../../helpers/scripts/loadImages";
 import {convertDegreesRaToHMS} from "../../helpers/scripts/astro/coords/convertDegreesRaToHMS";
 import {getObjectName} from "../../helpers/scripts/astro/objects/getObjectName";
 import {GlobalPlanet} from "../../helpers/types/GlobalPlanet";
+import planetariumImages from "../../helpers/planetarium_images.json";
 
 interface PlanetaryConjunctionMapProps {
   ra: number; // Ascension droite centrale
