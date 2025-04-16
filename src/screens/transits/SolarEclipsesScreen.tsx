@@ -13,6 +13,7 @@ import {EclipseCard} from "../../components/cards/EclipseCard";
 import {SolarEclipse} from "../../helpers/types/eclipses/SolarEclipse";
 // @ts-ignore
 import CheckBox from 'react-native-check-box'
+import ScreenInfo from "../../components/ScreenInfo";
 
 export default function SolarEclipsesScreen({ navigation }: any) {
 
@@ -96,6 +97,11 @@ export default function SolarEclipsesScreen({ navigation }: any) {
           </View>
 
           <View style={{display: 'flex', gap: 10, marginTop: 20}}>
+            {
+              eclipses.length === 0 && !loading && (
+                <ScreenInfo image={require('../../../assets/icons/FiInfo.png')} text={"Appuyez sur 'Rechercher' pour afficher les éclipses solaires de l'année sélectionnée."} />
+              )
+            }
             {loading ?
               <ActivityIndicator size={"large"} color={app_colors.white} pointerEvents={'none'} />
             :

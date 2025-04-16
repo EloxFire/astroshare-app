@@ -13,6 +13,7 @@ import {EclipseCard} from "../../components/cards/EclipseCard";
 // @ts-ignore
 import CheckBox from 'react-native-check-box'
 import {LunarEclipse} from "../../helpers/types/LunarEclipse";
+import ScreenInfo from "../../components/ScreenInfo";
 
 export default function LunarEclipsesScreen({ navigation }: any) {
 
@@ -96,6 +97,11 @@ export default function LunarEclipsesScreen({ navigation }: any) {
           </View>
 
           <View style={{display: 'flex', gap: 10, marginTop: 20}}>
+            {
+              eclipses.length === 0 && !loading && (
+                <ScreenInfo image={require('../../../assets/icons/FiInfo.png')} text={"Appuyez sur 'Rechercher' pour afficher les éclipses lunaires de l'année sélectionnée."} />
+              )
+            }
             {loading ?
               <ActivityIndicator size={"large"} color={app_colors.white} pointerEvents={'none'} />
             :

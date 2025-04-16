@@ -1,12 +1,24 @@
 import { app_colors } from "../../helpers/constants";
+import {Dimensions} from "react-native";
 
 export const apodStyles = {
   content: {
-    paddingTop: 10,
     display: 'flex' as 'flex',
-    flecDirection: 'column' as 'column',
+    flexDirection: 'column' as 'column',
     alignItems: 'center' as 'center',
-    paddingBottom: 60,
+    paddingBottom: 80,
+
+    imageContainer: {
+      backgroundColor: app_colors.white_no_opacity,
+      borderRadius: 10,
+      borderWidth: 1,
+      borderColor: app_colors.white_twenty,
+      width: Dimensions.get('window').width - 20,
+      height: Dimensions.get('window').width - 20,
+      marginVertical: 10,
+      justifyContent: 'center' as 'center',
+      alignItems: 'center' as 'center',
+    },
 
     title: {
       fontSize: 25,

@@ -41,7 +41,9 @@ export const computeMoon = ({date, observer}: computeMoonProps): ComputedMoonInf
   let moonrise = i18n.t('common.errors.simple')
   let moonset = i18n.t('common.errors.simple')
   if (isTransitInstance(moonRise) && isTransitInstance(moonSet)) {
-    dayjs(moonSet.datetime).isBefore(dayjs(moonRise.datetime)) ? moonrise = "Déjà\nlevée" : moonrise = dayjs(moonRise.datetime).add(2, 'h').format('HH:mm').replace(':', 'h')
+    console.log("MOON RISE DATETIME", dayjs(moonRise.datetime))
+    console.log("MOON SET DATETIME", dayjs(moonSet.datetime))
+    moonrise = dayjs(moonRise.datetime).add(2, 'h').format('HH:mm').replace(':', 'h') //.isBefore(dayjs(moonRise.datetime)) ? moonrise = "Déjà\nlevée" : moonrise = dayjs(moonRise.datetime).add(2, 'h').format('HH:mm').replace(':', 'h')
     moonset = dayjs(moonSet.datetime).add(2, 'h').format('HH:mm').replace(':', 'h')
   }
 

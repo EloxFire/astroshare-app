@@ -7,7 +7,7 @@ export const starlinkTrackerTranslations = {
     total: 'Total',
     orbiting: 'En orbite',
     active: 'Actifs',
-    inactive: 'Défaillants ou désorbités',
+    inactive: 'Défaillants',
   },
   '3dMap': {
     title: "Carte 3D interactive",
