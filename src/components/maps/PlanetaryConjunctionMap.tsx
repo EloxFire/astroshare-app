@@ -12,6 +12,7 @@ import {convertDegreesRaToHMS} from "../../helpers/scripts/astro/coords/convertD
 import {getObjectName} from "../../helpers/scripts/astro/objects/getObjectName";
 import {GlobalPlanet} from "../../helpers/types/GlobalPlanet";
 import planetariumImages from "../../helpers/planetarium_images.json";
+import {getBrightStarName} from "../../helpers/scripts/astro/objects/getBrightStarName";
 
 interface PlanetaryConjunctionMapProps {
   ra: number; // Ascension droite centrale
@@ -312,13 +313,35 @@ export default function PlanetaryConjunctionMap({ra, dec, width, height, conjunc
       );
     });
 
+    // 4. Ajouter le nom des étoiles brillantes (mag < 2)
+    starsCatalog.slice(0, 1000).forEach((star: Star, index: number) => {
+      if (star.V < 3) {
+        const { x, y } = getPosition(star.ra, star.dec);
+
+        if (x >= 0 && x <= width && y >= 0 && y <= height) {
+          elements.push(
+            <SvgText
+              key={`bright-star-name-${index}`}
+              x={x}
+              y={y - 10}
+              fill={app_colors.white}
+              fontSize="10"
+              textAnchor="middle"
+            >
+              {getBrightStarName(star.ids)}
+            </SvgText>
+          );
+        }
+      }
+    });
+
     return elements;
   };
 
   return (
     <View style={{ borderRadius: 10, overflow: "hidden", borderWidth: 1, borderColor: app_colors.white_twenty }}>
       <Svg width={width} height={height} style={{ backgroundColor: "black" }}>
-        {starsCatalog.slice(0, 6000).map((star: Star, index: number) => {
+        {starsCatalog.slice(0, 10000).map((star: Star, index: number) => {
           const { x, y } = getPosition(star.ra, star.dec);
 
           if (!isNaN(x) && !isNaN(y) && x >= 0 && x <= width && y >= 0 && y <= height) {
@@ -327,7 +350,7 @@ export default function PlanetaryConjunctionMap({ra, dec, width, height, conjunc
                 key={`star-${index}`}
                 cx={x}
                 cy={y}
-                r={Math.max(0.5, 3 - star.V)}
+                r={Math.max(0.5, 6 - star.V)}
                 fill="white"
                 opacity={0.8}
               />
