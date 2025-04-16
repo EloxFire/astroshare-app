@@ -13,6 +13,7 @@ import {getObjectName} from "../../helpers/scripts/astro/objects/getObjectName";
 import {GlobalPlanet} from "../../helpers/types/GlobalPlanet";
 import planetariumImages from "../../helpers/planetarium_images.json";
 import {getBrightStarName} from "../../helpers/scripts/astro/objects/getBrightStarName";
+import {doesStarHaveName} from "../../helpers/scripts/astro/objects/doesStarHaveName";
 
 interface PlanetaryConjunctionMapProps {
   ra: number; // Ascension droite centrale
@@ -314,8 +315,8 @@ export default function PlanetaryConjunctionMap({ra, dec, width, height, conjunc
     });
 
     // 4. Ajouter le nom des étoiles brillantes (mag < 2)
-    starsCatalog.slice(0, 1000).forEach((star: Star, index: number) => {
-      if (star.V < 3) {
+    starsCatalog.slice(0, 10000).forEach((star: Star, index: number) => {
+      if (star.V < 3.5) {
         const { x, y } = getPosition(star.ra, star.dec);
 
         if (x >= 0 && x <= width && y >= 0 && y <= height) {
@@ -328,7 +329,7 @@ export default function PlanetaryConjunctionMap({ra, dec, width, height, conjunc
               fontSize="10"
               textAnchor="middle"
             >
-              {getBrightStarName(star.ids)}
+              {doesStarHaveName(star.ids) && getBrightStarName(star.ids)}
             </SvgText>
           );
         }
