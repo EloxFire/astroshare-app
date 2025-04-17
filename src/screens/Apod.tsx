@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import {Dimensions, Image, ScrollView, Text, View} from 'react-native'
+import {ActivityIndicator, Dimensions, Image, ScrollView, Text, View} from 'react-native'
 import { globalStyles } from '../styles/global'
 import { apodStyles } from '../styles/screens/apod'
 import { showToast } from '../helpers/scripts/showToast'
@@ -17,19 +17,23 @@ export default function Apod({ navigation }: any) {
 
   const [apod, setApod] = useState<APODPicture | null>(null)
   const videoRef = useRef(null);
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     getApod()
   }, [])
 
   const getApod = async () => {
+    setLoading(true)
     try {
       const picture = await axios.get(process.env.EXPO_PUBLIC_ASTROSHARE_API_URL + '/apod');
       setApod(picture.data.data);
       showToast({ message: 'Image récupérée', duration: Toast.durations.SHORT, type: 'success' });
+      setLoading(false)
     } catch (error) {
       console.log(error)
       showToast({ message: 'Une erreur est survenue', duration: Toast.durations.SHORT, type: 'error' });
+      setLoading(false)
     }
   }
 
@@ -44,29 +48,34 @@ export default function Apod({ navigation }: any) {
           <Text style={[apodStyles.content.text, { color: app_colors.white_eighty, marginTop: 5, fontFamily: 'DMMonoRegular' }]}>Date : {apod?.date ? dayjs(apod?.date).format('DD/MM/YYYY') : i18n.t('common.loadings.simple')}</Text>
           <View style={apodStyles.content.imageContainer}>
             {
-              apod?.media_type === 'video' ?
-                apod?.url.includes('youtube') ?
-                  <YoutubePlayer
-                    width={Dimensions.get('screen').width - 40}
-                    height={(Dimensions.get('screen').width - 40) / (16 / 9)}
-                    play
-                    videoId={apod?.url.split('embed/')[1].split('?')[0]}
-                  />
+              loading &&
+              <ActivityIndicator size="large" color={app_colors.white} />
+            }
+            {
+              !loading &&
+                apod?.media_type === 'video' ?
+                  apod?.url.includes('youtube') ?
+                    <YoutubePlayer
+                      width={Dimensions.get('screen').width - 40}
+                      height={(Dimensions.get('screen').width - 40) / (16 / 9)}
+                      play
+                      videoId={apod?.url.split('embed/')[1].split('?')[0]}
+                    />
+                    :
+                    <Video
+                      ref={videoRef}
+                      source={{ uri: apod?.url || '' }}
+                      isMuted={true}
+                      rate={1.0}
+                      shouldPlay={true}
+                      isLooping={true}
+                      resizeMode={ResizeMode.CONTAIN}
+                      style={{ width: Dimensions.get('screen').width - 40, height: Dimensions.get('screen').width - 40, marginVertical: 10 }}
+                    />
                   :
-                  <Video
-                    ref={videoRef}
-                    source={{ uri: apod?.url || '' }}
-                    isMuted={true}
-                    rate={1.0}
-                    shouldPlay={true}
-                    isLooping={true}
-                    resizeMode={ResizeMode.CONTAIN}
-                    style={{ width: Dimensions.get('screen').width - 40, height: Dimensions.get('screen').width - 40, marginVertical: 10 }}
-                  />
-                :
-                apod?.media_type === 'image' && (
-                  <Image source={{ uri: apod?.url }} style={{width: Dimensions.get('screen').width - 40, height: Dimensions.get('screen').width - 40, marginVertical: 10}} resizeMode='contain' />
-                )
+                  apod?.media_type === 'image' && (
+                    <Image source={{ uri: apod?.url }} style={{width: Dimensions.get('screen').width - 40, height: Dimensions.get('screen').width - 40, marginVertical: 10}} resizeMode='contain' />
+                  )
             }
           </View>
 
