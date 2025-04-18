@@ -17,6 +17,7 @@ import HomeSearchModule from '../components/forms/HomeSearchModule';
 import HomeWidgetDisplay from '../components/widgets/HomeWidgetDisplay';
 import {getData} from "../helpers/storage";
 import {useRessources} from "../contexts/RessourcesContext";
+import NewsBannerHandler from "../components/banners/NewsBannerHandler";
 
 export default function Home({ navigation }: any) {
   const { hasInternetConnection, currentUserLocation } = useSettings()
@@ -46,6 +47,7 @@ export default function Home({ navigation }: any) {
     <View style={globalStyles.body}>
       <AppHeader navigation={navigation} />
       <BannerHandler />
+      <NewsBannerHandler navigation={navigation} />
       <LocationHeader />
       <HomeSearchModule navigation={navigation} />
       <ScrollView style={{ borderTopWidth: 1, borderTopColor: app_colors.white_twenty }}>
