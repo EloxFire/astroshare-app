@@ -1,8 +1,9 @@
 import React, {useEffect, useRef, useState} from 'react'
-import {Dimensions, FlatList, SafeAreaView, View} from 'react-native'
+import {Dimensions, FlatList, ImageSourcePropType, SafeAreaView, View} from 'react-native'
 import NewsBar from "./NewsBar";
 import {app_colors} from "../../helpers/constants";
-import {routes} from "../../helpers/routes";
+import {BannerNews} from "../../helpers/types/utils/BannerNews";
+import axios from "axios";
 
 interface Props {
   navigation: any
@@ -12,49 +13,25 @@ export default function NewsBannerHandler({ navigation }: Props) {
 
   const flatListRef = useRef<FlatList>(null)
 
+  const [banners, setBanners] = useState<BannerNews[]>([])
   const [currentScrollPosition, setCurrentScrollPosition] = useState(0)
 
   useEffect(() => {
     (async () => {
-
+      const news = await axios.get(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/news`)
+      setBanners(news.data.data)
     })()
   }, [])
-
-  const fakeNews = [
-    {
-      title: "Maximum des Orionides !",
-      description: "Le maximum des Orionides sera visible cette nuit ! Cliquez ici pour en savoir plus.",
-      icon: require('../../../assets/icons/FiMeteorShower.png'),
-      colors: "#311D6E;#3B2751",
-      type: 'external',
-      externalLink: 'https://www.stelvision.com'
-    },
-    {
-      title: "Activitée solaire intense",
-      description: "Une tempête solaire est en approche ! Cliquez ici pour en savoir plus.",
-      icon: require('../../../assets/icons/FiSun.png'),
-      colors: "#6E1D1D;#6E1D1D",
-      type: 'internal',
-      internalRoute: routes.solarWeather.path
-    },
-    {
-      title: "Activitée solaire intense",
-      description: "Une tempête solaire est en approche ! Cliquez ici pour en savoir plus.",
-      icon: require('../../../assets/icons/FiSun.png'),
-      colors: "#6E1D1D;#8B4E35",
-      type: 'none',
-    }
-  ]
 
   return (
     <SafeAreaView>
       <FlatList
         ref={flatListRef}
-        data={fakeNews}
+        data={banners}
         renderItem={({item}) => (
           <NewsBar
             navigation={navigation}
-            icon={item.icon}
+            icon={item.icon as ImageSourcePropType}
             title={item.title}
             description={item.description}
             colors={item.colors}
@@ -77,7 +54,7 @@ export default function NewsBannerHandler({ navigation }: Props) {
       {/*  Item Dots */}
         <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'center', marginTop: 10}}>
           <View style={{flexDirection: 'row'}}>
-            {fakeNews.map((_, index) => (
+            {banners.map((_, index) => (
               <View
                 key={index}
                 style={{

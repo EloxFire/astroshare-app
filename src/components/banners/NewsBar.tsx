@@ -16,6 +16,8 @@ interface NewsBarProps {
 
 export default function NewsBar({navigation, icon, type, colors, internalRoute, externalLink, description, title}: NewsBarProps) {
 
+  console.log('NewsBar', {icon, type, colors, internalRoute, externalLink, description, title})
+
   const handlePress = () => {
     if (type === 'internal' && internalRoute) {
       navigation.navigate(internalRoute)
@@ -23,8 +25,6 @@ export default function NewsBar({navigation, icon, type, colors, internalRoute, 
       Linking.openURL(externalLink)
     }
   }
-
-  console.log('NewsBar type', type, type === "none")
 
   return (
     <TouchableOpacity disabled={type === 'none'} onPress={handlePress}>

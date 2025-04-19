@@ -96,7 +96,6 @@ export default function IssTracker({ navigation }: any) {
     (async () => {
       const weather = await getWeather(currentUserLocation.lat, currentUserLocation.lon)
       setPassesWeather(weather.daily)
-      console.log(weather.daily[6].weather[0])
     })()
   }, [currentUserLocation])
 
@@ -126,7 +125,6 @@ export default function IssTracker({ navigation }: any) {
   }, [issPasses])
 
   const handleIssPasses = async () => {
-    console.log('Handling ISS passes')
     const storedPasses = await getObject(storageKeys.issPasses);
 
     if(storedPasses){
