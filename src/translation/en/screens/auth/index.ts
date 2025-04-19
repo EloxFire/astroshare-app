@@ -21,6 +21,7 @@ export const authScreensTranslations = {
     downloadedRessources: 'Downloaded resources',
     accountRole: 'Account status',
     logout: 'Logout',
+    edit: 'Edit / add information',
     roles: {
       admin: "Administrator",
       member: "Unsubscribed",

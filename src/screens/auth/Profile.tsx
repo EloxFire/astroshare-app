@@ -12,6 +12,7 @@ import {routes} from "../../helpers/routes";
 import {app_colors} from "../../helpers/constants";
 import ProLocker from "../../components/cards/ProLocker";
 import {isProUser} from "../../helpers/scripts/auth/checkUserRole";
+import SimpleButton from "../../components/commons/buttons/SimpleButton";
 
 export default function ProfileScreen({ navigation }: any) {
 
@@ -70,9 +71,15 @@ export default function ProfileScreen({ navigation }: any) {
             <ProLocker navigation={navigation} image={require('../../../assets/images/tools/apod.png')} darker small />
           }
 
-          <TouchableOpacity style={profileScreenStyles.content.button} onPress={() => handleLogout()}>
-            <Text style={profileScreenStyles.content.button.text}>{i18n.t('auth.profile.logout')}</Text>
-          </TouchableOpacity>
+          <SimpleButton
+            fullWidth
+            icon={require('../../../assets/icons/FiLogout.png')}
+            align={'center'}
+            iconColor={app_colors.red_eighty}
+            textAdditionalStyles={{color: app_colors.red_eighty, fontFamily: 'GilroyBlack', textTransform: 'uppercase', fontSize: 16}}
+            text={i18n.t('auth.profile.logout')}
+            onPress={handleLogout}
+          />
         </View>
       </ScrollView>
     </View>

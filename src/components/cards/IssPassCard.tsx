@@ -5,6 +5,7 @@ import dayjs from 'dayjs';
 import {IssPass} from "../../helpers/types/IssPass";
 import {weatherImages} from "../../helpers/scripts/loadImages";
 import {determineIssVisibility} from "../../helpers/scripts/astro/determineIssVisibility";
+import {getTimeFromLaunch} from "../../helpers/scripts/utils/getTimeFromLaunch";
 
 interface IssPassCardProps {
   pass: IssPass;
@@ -25,6 +26,9 @@ export default function IssPassCard({ pass, passIndex, navigation, weather }: Is
     const date1 = dayjs.unix(pass.startUTC)
     const date2 = dayjs.unix(pass.endUTC)
     const diff = date2.diff(date1)
+
+    console.log("END EL", pass.endEl)
+
     setPassLength(dayjs.duration(diff).format('mm:ss').replace(':', 'm') + 's')
   }, []);
 

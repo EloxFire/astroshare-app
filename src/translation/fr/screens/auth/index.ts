@@ -23,6 +23,7 @@ export const authScreensTranslations = {
     downloadedRessources: 'Ressources téléchargées',
     accountRole: 'Status du compte',
     logout: 'Se déconnecter',
+    edit: 'Modifier / ajouter des informations',
     roles: {
       admin: "Administrateur",
       member: "Non abonné",

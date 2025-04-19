@@ -41,6 +41,7 @@ import ProLocker from "../../components/cards/ProLocker";
 import {isProUser} from "../../helpers/scripts/auth/checkUserRole";
 import {useAuth} from "../../contexts/AuthContext";
 import { propagate, twoline2satrec, gstime, EciVec3 } from "satellite.js";
+import {getTimeFromLaunch} from "../../helpers/scripts/utils/getTimeFromLaunch";
 
 export default function IssTracker({ navigation }: any) {
 
@@ -109,6 +110,20 @@ export default function IssTracker({ navigation }: any) {
       longitudeDelta: 100,
     })
   }, [loading])
+
+  const [countdown, setCountdown] = useState<string>('00:00:00:00') // DD:HH:mm:ss
+
+  useEffect(() => {
+    if(issPasses.length > 0){
+      setCountdown(getTimeFromLaunch(dayjs.unix(issPasses[0].startUTC).toDate()))
+
+      const interval = setInterval(() => {
+        setCountdown(getTimeFromLaunch(dayjs.unix(issPasses[0].startUTC).toDate()))
+      }, 1000)
+
+      return () => clearInterval(interval)
+    }
+  }, [issPasses])
 
   const handleIssPasses = async () => {
     console.log('Handling ISS passes')
@@ -439,6 +454,7 @@ const centerIss = () => {
                   isProUser(currentUser) ?
                     <>
                       <View style={issTrackerStyles.content.nextPasses.container}>
+                        <DSOValues title={i18n.t("satelliteTracker.issTracker.nextPasses.timeToNext")} value={countdown}/>
                         {
                           issPassesLoading ?
                             <ActivityIndicator size={'small'} color={app_colors.white} animating /> :

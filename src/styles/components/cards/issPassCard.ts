@@ -16,11 +16,11 @@ export const issPassCardStyles = {
     title: {
       color: app_colors.black,
       fontSize: 14,
-      fontFamily: 'GilroyBlack',
+      fontFamily: 'DMMonoMedium',
       // textTransform: 'uppercase' as 'uppercase',
       backgroundColor: app_colors.white,
       paddingVertical: 2,
-      borderRadius: 10,
+      borderRadius: 5,
       paddingHorizontal: 5,
     },
 
