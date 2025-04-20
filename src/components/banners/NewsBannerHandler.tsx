@@ -31,7 +31,7 @@ export default function NewsBannerHandler({ navigation }: Props) {
         renderItem={({item}) => (
           <NewsBar
             navigation={navigation}
-            icon={item.icon as ImageSourcePropType}
+            icon={item.icon}
             title={item.title}
             description={item.description}
             colors={item.colors}

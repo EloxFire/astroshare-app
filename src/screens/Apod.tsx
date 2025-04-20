@@ -16,6 +16,7 @@ import { i18n } from '../helpers/scripts/i18n'
 export default function Apod({ navigation }: any) {
 
   const [apod, setApod] = useState<APODPicture | null>(null)
+  const [apodSize, setApodSize] = useState({ width: 0, height: 0 })
   const videoRef = useRef(null);
   const [loading, setLoading] = useState(false)
 
@@ -28,6 +29,28 @@ export default function Apod({ navigation }: any) {
     try {
       const picture = await axios.get(process.env.EXPO_PUBLIC_ASTROSHARE_API_URL + '/apod');
       setApod(picture.data.data);
+
+      if(picture.data.data.media_type === 'image'){
+        Image.getSize(picture.data.data.url, (width, height) => {
+          const maxWidth = Dimensions.get('window').width - 20;
+          const maxHeight = Dimensions.get('window').width - 20;
+
+          if (width > maxWidth) {
+            const ratio = maxWidth / width;
+            width = maxWidth;
+            height = height * ratio;
+          }
+
+          if (height > maxHeight) {
+            const ratio = maxHeight / height;
+            height = maxHeight;
+            width = width * ratio;
+          }
+
+          console.log("Adjusted Image size: ", width, height);
+          setApodSize({ width, height });
+        });
+      }
       showToast({ message: 'Image récupérée', duration: Toast.durations.SHORT, type: 'success' });
       setLoading(false)
     } catch (error) {
@@ -46,7 +69,6 @@ export default function Apod({ navigation }: any) {
           <Text style={apodStyles.content.title}>{apod?.title.replace(/(\r\n|\n|\r)/gm, "") || i18n.t('common.loadings.simple')}</Text>
           {apod?.copyright && <Text style={[apodStyles.content.text, { color: app_colors.white_eighty, textAlign: 'center', fontFamily: 'DMMonoRegular' }]}>Copyright : {apod?.copyright.replace(/(\r\n|\n|\r)/gm, "") || i18n.t('common.loadings.simple')}</Text>}
           <Text style={[apodStyles.content.text, { color: app_colors.white_eighty, marginTop: 5, fontFamily: 'DMMonoRegular' }]}>Date : {apod?.date ? dayjs(apod?.date).format('DD/MM/YYYY') : i18n.t('common.loadings.simple')}</Text>
-          <View style={apodStyles.content.imageContainer}>
             {
               loading &&
               <ActivityIndicator size="large" color={app_colors.white} />
@@ -56,8 +78,8 @@ export default function Apod({ navigation }: any) {
                 apod?.media_type === 'video' ?
                   apod?.url.includes('youtube') ?
                     <YoutubePlayer
-                      width={Dimensions.get('screen').width - 40}
-                      height={(Dimensions.get('screen').width - 40) / (16 / 9)}
+                      width={Dimensions.get('screen').width}
+                      height={(Dimensions.get('screen').width) / (16 / 9)}
                       play
                       videoId={apod?.url.split('embed/')[1].split('?')[0]}
                     />
@@ -70,14 +92,13 @@ export default function Apod({ navigation }: any) {
                       shouldPlay={true}
                       isLooping={true}
                       resizeMode={ResizeMode.CONTAIN}
-                      style={{ width: Dimensions.get('screen').width - 40, height: Dimensions.get('screen').width - 40, marginVertical: 10 }}
+                      style={{ width: Dimensions.get('screen').width, height: Dimensions.get('screen').width, marginVertical: 10 }}
                     />
                   :
                   apod?.media_type === 'image' && (
-                    <Image source={{ uri: apod?.url }} style={{width: Dimensions.get('screen').width - 40, height: Dimensions.get('screen').width - 40, marginVertical: 10}} resizeMode='contain' />
+                    <Image source={{ uri: apod?.url }} width={apodSize.width} height={apodSize.height} style={apodStyles.content.image} resizeMode='contain' />
                   )
             }
-          </View>
 
           <Text style={apodStyles.content.subtitle}>Description :</Text>
           <Text style={[apodStyles.content.text, { fontSize: 16, alignSelf: 'flex-start', lineHeight: 25 }]}>{apod?.explanation || i18n.t('common.loadings.simple')}</Text>

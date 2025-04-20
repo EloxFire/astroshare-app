@@ -8,16 +8,11 @@ export const apodStyles = {
     alignItems: 'center' as 'center',
     paddingBottom: 80,
 
-    imageContainer: {
-      backgroundColor: app_colors.white_no_opacity,
+    image: {
+      marginVertical: 10,
       borderRadius: 10,
       borderWidth: 1,
       borderColor: app_colors.white_twenty,
-      width: Dimensions.get('window').width - 20,
-      height: Dimensions.get('window').width - 20,
-      marginVertical: 10,
-      justifyContent: 'center' as 'center',
-      alignItems: 'center' as 'center',
     },
 
     title: {
