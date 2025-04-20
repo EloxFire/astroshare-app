@@ -35,10 +35,12 @@ export const solarWeatherStyles = {
   },
 
   sunImage: {
-    width: Dimensions.get('window').width - 60,
-    height: Dimensions.get('window').width - 60,
+    width: Dimensions.get('window').width - 40,
+    height: Dimensions.get('window').width - 40,
     alignSelf: 'center' as 'center',
     borderRadius: 10,
     marginTop: 15,
+    borderWidth: 1,
+    borderColor: app_colors.white_twenty,
   }
 }
