@@ -9,6 +9,11 @@ export type User = {
   subscriptionDate?: Date;
   subscription?: string;
   subscriptionName?: string;
+  subscriptionRenewal?: Date;
+  subscriptionCategory?: string;
+  hasCancelledSubscription?: boolean;
+  subscriptionCancelledAt?: Date;
+  subscriptionId?: string;
   firstName?: string;
   lastName?: string;
   username?: string;

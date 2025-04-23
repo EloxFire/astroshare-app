@@ -1,23 +1,19 @@
 import React, { ReactNode, createContext, useContext, useEffect, useState } from 'react'
-import {User} from "../helpers/types/auth/User";
-import axios from "axios";
-import {showToast} from "../helpers/scripts/showToast";
-import {getData, getObject, removeData, storeData, storeObject} from "../helpers/storage";
-import {storageKeys} from "../helpers/constants";
-import {jwtDecode} from "jwt-decode";
+import { User } from "../helpers/types/auth/User"
+import axios from "axios"
+import { showToast } from "../helpers/scripts/showToast"
+import { getData, removeData, storeData, storeObject } from "../helpers/storage"
+import { storageKeys } from "../helpers/constants"
 
 const AuthContext = createContext<any>({})
 
-export const useAuth = () => {
-  return useContext(AuthContext)
-}
+export const useAuth = () => useContext(AuthContext)
 
 interface AuthContextProviderProps {
   children: ReactNode
 }
 
 export function AuthContextProvider({ children }: AuthContextProviderProps) {
-
   const [currentUser, setCurrentUser] = useState<User | null | undefined>(null)
 
   useEffect(() => {
@@ -25,29 +21,49 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
   }, [])
 
   const checkUser = async () => {
-    const token = await getData(storageKeys.auth.refreshToken);
+    const refreshToken = await getData(storageKeys.auth.refreshToken)
 
     console.log('[Auth] Checking user')
-    console.log('[Auth] Refresh token :', token)
+    console.log('[Auth] Refresh token:', refreshToken)
 
-    if(!token){
+    if (!refreshToken) {
       console.log('[Auth] No token found')
-      return;
-    }else{
-      const {exp} = jwtDecode(token);
-      if(exp! * 1000 < Date.now()) {
-        console.log('[Auth] Token expired')
-        await removeData(storageKeys.auth.refreshToken)
-        await removeData(storageKeys.auth.accessToken)
-        await removeData(storageKeys.auth.user)
-        setCurrentUser(null)
-        return;
-      }else{
-        console.log('[Auth] Token still valid')
-        const user: User = await getObject(storageKeys.auth.user);
-        console.log('[Auth] User found :', user.email)
-        setCurrentUser(user)
-      }
+      return
+    }
+
+    try {
+      // Firebase refresh tokens are opaque, skip manual decoding
+      await refreshAccessToken()
+    } catch (e) {
+      console.log('[Auth] Error during token validation:', e)
+      await logoutUser()
+    }
+  }
+
+  const refreshAccessToken = async () => {
+    const refreshToken = await getData(storageKeys.auth.refreshToken)
+
+    if (!refreshToken) return null
+
+    try {
+      const response = await axios.post(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/auth/refresh`, {
+        refreshToken
+      })
+
+      const { accessToken, refreshToken: newRefreshToken, user } = response.data
+
+      // Firebase renvoie parfois un refreshToken actualisé → on le stocke aussi
+      await storeData(storageKeys.auth.accessToken, accessToken)
+      await storeData(storageKeys.auth.refreshToken, newRefreshToken)
+      await storeObject(storageKeys.auth.user, user)
+
+      setCurrentUser(user)
+      console.log('[Auth] Session restored with refreshed token')
+      return accessToken
+    } catch (e) {
+      console.log('[Auth] Failed to refresh token', e)
+      await logoutUser()
+      return null
     }
   }
 
@@ -58,20 +74,19 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
         email,
         password
       })
-      console.log('[Auth] User logged in :', userToLog.data.user.email)
-      console.log('[Auth] Access token :', userToLog.data.accessToken)
-      await storeData(storageKeys.auth.refreshToken, userToLog.data.refreshToken)
-      await storeData(storageKeys.auth.accessToken, userToLog.data.accessToken)
-      await storeObject(storageKeys.auth.user, userToLog.data.user)
-      setCurrentUser(userToLog.data.user)
-    } catch (e: any) {
-      console.log('[Auth] Error logging in user :', e)
-      showToast({message: e.response.data.error, type: 'error'})
-    }
-  }
 
-  const registerUser = async (email: string, password: string) => {
-    console.log('[Auth] Registering user')
+      const { accessToken, refreshToken, user } = userToLog.data
+
+      await storeData(storageKeys.auth.refreshToken, refreshToken)
+      await storeData(storageKeys.auth.accessToken, accessToken)
+      await storeObject(storageKeys.auth.user, user)
+
+      setCurrentUser(user)
+      console.log('[Auth] User logged in successfully')
+    } catch (e: any) {
+      console.log('[Auth] Error logging in user:', e)
+      showToast({ message: e.response?.data?.error || "Erreur de connexion", type: 'error' })
+    }
   }
 
   const logoutUser = async () => {
@@ -83,9 +98,9 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
   }
 
   const updateCurrentUser = async () => {
-    if(!currentUser) {
+    if (!currentUser) {
       console.log('[Auth] No user found')
-      return;
+      return
     }
 
     try {
@@ -95,27 +110,20 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
           'Authorization': process.env.EXPO_PUBLIC_ADMIN_KEY,
           'Content-Type': 'application/json'
         }
-      });
+      })
 
-      if (!response.ok) {
-        console.log('[Auth] Error fetching and updating currentUser data')
-        throw new Error('Failed to fetch user data');
-      }
+      if (!response.ok) throw new Error('Failed to fetch user data')
 
-      const data = await response.json();
-
-      console.log("User found", data)
+      const data = await response.json()
       setCurrentUser(data)
     } catch (e: any) {
-      console.log('[Auth] Error updating user :', e)
-      showToast({message: e.response.data.error, type: 'error'})
+      console.log('[Auth] Error updating user:', e)
+      showToast({ message: e.response?.data?.error || "Erreur de récupération de l'utilisateur", type: 'error' })
     }
   }
 
-
   const values = {
     loginUser,
-    registerUser,
     logoutUser,
     updateCurrentUser,
     currentUser

@@ -20,6 +20,10 @@ export const authScreensTranslations = {
     updatedAt: 'Last update',
     downloadedRessources: 'Downloaded resources',
     accountRole: 'Account status',
+    subscriptionName: 'Subscription name',
+    subscriptionRenewal: 'Renewal date',
+    subscriptionDate: 'Subscribed since',
+    subscriptionType: 'Subscription type',
     logout: 'Logout',
     edit: 'Edit / add information',
     roles: {
@@ -27,6 +31,13 @@ export const authScreensTranslations = {
       member: "Unsubscribed",
       subscriber: "Subscriber",
       unknown: "Unknown",
+    },
+    subscriptionTypes: {
+      monthly: "Monthly",
+      yearly: "Yearly",
+      lifetime: "Lifetime license",
+      personal: 'Personal',
+      professional: 'Organization',
     }
   },
   placeholders: {
