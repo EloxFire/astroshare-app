@@ -106,9 +106,9 @@ export default function SolarWeather({ navigation }: any) {
                   rate={2.0}
                   isLooping={true}
                   resizeMode={ResizeMode.CONTAIN}
-                  style={{ width: Dimensions.get('window').width - 60, height: Dimensions.get('window').width - 60, marginVertical: 10, borderRadius: 10, opacity: loadingImage ? .1 : 1, borderWidth: loadingImage ? 1 : 0, borderColor: app_colors.white_eighty }}
+                  style={{ width: Dimensions.get('window').width - 40, height: Dimensions.get('window').width - 40, marginVertical: 10, borderRadius: 10, opacity: loadingImage ? .1 : 1, borderWidth: 1, borderColor: app_colors.white_twenty }}
                 >
-                  <Image placeholder={localizedVideoPlaceholders[i18n.locale]} style={{ width: Dimensions.get('window').width - 60, height: Dimensions.get('window').width - 60, marginVertical: 10, borderRadius: 10 }} />
+                  <Image placeholder={localizedVideoPlaceholders[i18n.locale]} style={{ width: Dimensions.get('window').width - 40, height: Dimensions.get('window').width - 40, marginVertical: 10, borderRadius: 10 }} />
                 </Video>
             }
             <View style={solarWeatherStyles.container.buttons}>
@@ -146,9 +146,9 @@ export default function SolarWeather({ navigation }: any) {
                   rate={1.0}
                   isLooping={true}
                   resizeMode={ResizeMode.CONTAIN}
-                  style={{ width: Dimensions.get('window').width - 60, height: Dimensions.get('window').width - 60, marginVertical: 10, borderRadius: 10, opacity: loadingCME ? .1 : 1, borderWidth: loadingCME ? 1 : 0, borderColor: app_colors.white_eighty }}
+                  style={{ width: Dimensions.get('window').width - 40, height: Dimensions.get('window').width - 40, marginVertical: 10, borderRadius: 10, opacity: loadingCME ? .1 : 1, borderWidth: 1, borderColor: app_colors.white_twenty }}
                 >
-                  <Image placeholder={localizedVideoPlaceholders[i18n.locale]} style={{ width: Dimensions.get('window').width - 60, height: Dimensions.get('window').width - 60, marginVertical: 10, borderRadius: 10 }} />
+                  <Image placeholder={localizedVideoPlaceholders[i18n.locale]} style={{ width: Dimensions.get('window').width - 40, height: Dimensions.get('window').width - 40, marginVertical: 10, borderRadius: 10 }} />
                 </Video>
             }
             <View style={solarWeatherStyles.container.buttons}>
