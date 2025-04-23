@@ -63,7 +63,7 @@ export default function CelestialBodyCardLite({ object, navigation }: CelestialB
                 )
               }
               {
-                objectInfos.base.common_name !== "" && (
+                getObjectFamily(object) !== 'Planet' && getObjectFamily(object) !== 'Star' && objectInfos.base.common_name !== "" && (
                   <SimpleBadge
                     text={((object) as DSO).type}
                   />

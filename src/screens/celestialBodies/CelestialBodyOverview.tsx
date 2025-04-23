@@ -274,6 +274,7 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
                 </>
               )
             }
+            <Text style={[celestialBodiesOverviewStyles.content.sectionTitle, {marginTop: 15, marginBottom: -10}]}>Altitude de l'objet</Text>
             <VisibilityGraph
               visibilityGraph={{altitudes: objectInfos?.visibilityInfos.visibilityGraph.altitudes || [], hours: objectInfos?.visibilityInfos.visibilityGraph.hours || []}}
             />

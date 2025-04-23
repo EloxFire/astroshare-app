@@ -25,12 +25,13 @@ export const locationHeaderStyles = {
         opacity: .6,
         textTransform: 'uppercase' as 'uppercase',
         fontSize: 12,
+        fontFamily: 'GilroyRegular',
       },
       
       value: {
         color: app_colors.white,
         textTransform: 'uppercase' as 'uppercase',
-        fontFamily: 'DMMonoRegular',
+        fontFamily: 'DMMonoMedium',
         fontSize: 12,
       },
 
