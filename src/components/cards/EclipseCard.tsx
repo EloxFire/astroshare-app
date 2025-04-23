@@ -39,6 +39,10 @@ export const EclipseCard = ({type, eclipse, navigation}: CardProps) => {
       }
       <SvgUri onLoad={() => setLoadingImage(false)} uri={`${eclipse.link.image}&image-size=600,600&map-projection=EPSG:9840&map-labels=fr&map-theme=land-medium`} width={120} height={120}/>
       <View style={eclipseCardStyles.card.infos}>
+        {
+          dayjs(eclipse.calendarDate).isBefore(dayjs()) &&
+            <Text style={eclipseCardStyles.card.infos.passed}>Éclipse passée</Text>
+        }
         <Text style={eclipseCardStyles.card.infos.title}>{dayjs(eclipse.calendarDate).format('DD MMMM YYYY')}</Text>
         <Text style={eclipseCardStyles.card.infos.subtitle}>{solarEclipseTypes[eclipse.type]}</Text>
 

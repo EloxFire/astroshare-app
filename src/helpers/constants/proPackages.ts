@@ -6,7 +6,7 @@ const frPackages: ProPackage[] = [
     name: 'Mensuel',
     description: 'Abonnement mensuel à AstroShare Pro',
     price: 2.49,
-    stripePrice: 249,
+    priceId: "price_1RGMR1J3dJHPO7PjZKIR8IZI",
     type: 'monthly',
     features: [
       "Sans engagement",
@@ -21,7 +21,7 @@ const frPackages: ProPackage[] = [
     name: 'Annuel',
     description: 'Abonnement annuel à AstroShare Pro',
     price: 23.90,
-    stripePrice: 2390,
+    priceId: "price_1QkS0VJ3dJHPO7Pj67rDBtZs",
     type: 'yearly',
     features: [
       "Planétarium 3D interactif",
@@ -32,21 +32,21 @@ const frPackages: ProPackage[] = [
     ],
     discount: '-20% !'
   },
-  {
-    name: 'Licence à vie',
-    description: 'Paiement unique pour à AstroShare Pro à vie',
-    price: 99,
-    stripePrice: 9900,
-    type: 'one-time',
-    features: [
-      "Paiement unique, accès à vie",
-      "Planétarium 3D interactif",
-      "Prédictions passages ISS",
-      "Météo solaire avancée",
-      "Calculs transits et éclipses",
-      "Mises à jour régulières",
-    ],
-  },
+  // {
+  //   name: 'Licence à vie',
+  //   description: 'Paiement unique pour à AstroShare Pro à vie',
+  //   price: 99,
+  //   stripePrice: 9900,
+  //   type: 'one-time',
+  //   features: [
+  //     "Paiement unique, accès à vie",
+  //     "Planétarium 3D interactif",
+  //     "Prédictions passages ISS",
+  //     "Météo solaire avancée",
+  //     "Calculs transits et éclipses",
+  //     "Mises à jour régulières",
+  //   ],
+  // },
 ]
 
 const enPackages: ProPackage[] = [
@@ -54,7 +54,7 @@ const enPackages: ProPackage[] = [
     name: 'Monthly',
     description: 'Monthly subscription to AstroShare Pro',
     price: 2.49,
-    stripePrice: 249,
+    priceId: "price_1RGMR1J3dJHPO7PjZKIR8IZI",
     type: 'monthly',
     features: [
       "No commitment",
@@ -69,7 +69,7 @@ const enPackages: ProPackage[] = [
     name: 'Yearly',
     description: 'Annual subscription to AstroShare Pro',
     price: 23.90,
-    stripePrice: 2390,
+    priceId: "price_1QkS0VJ3dJHPO7Pj67rDBtZs",
     type: 'yearly',
     features: [
       "Interactive 3D planetarium",
@@ -80,21 +80,21 @@ const enPackages: ProPackage[] = [
     ],
     discount: '20% OFF'
   },
-  {
-    name: 'Lifetime',
-    description: 'One-time payment for lifetime AstroShare Pro',
-    price: 99,
-    stripePrice: 9900,
-    type: 'one-time',
-    features: [
-      "One-time payment, lifetime access",
-      "Interactive 3D planetarium",
-      "ISS pass predictions",
-      "Advanced solar weather",
-      "Transit and eclipse calculations",
-      "Regular updates",
-    ]
-  }
+  // {
+  //   name: 'Lifetime',
+  //   description: 'One-time payment for lifetime AstroShare Pro',
+  //   price: 99,
+  //   stripePrice: 9900,
+  //   type: 'one-time',
+  //   features: [
+  //     "One-time payment, lifetime access",
+  //     "Interactive 3D planetarium",
+  //     "ISS pass predictions",
+  //     "Advanced solar weather",
+  //     "Transit and eclipse calculations",
+  //     "Regular updates",
+  //   ]
+  // }
 ]
 
 export const astroshare_pro_packages: any = {

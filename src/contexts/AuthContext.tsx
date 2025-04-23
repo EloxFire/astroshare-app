@@ -82,11 +82,42 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
     setCurrentUser(null)
   }
 
+  const updateCurrentUser = async () => {
+    if(!currentUser) {
+      console.log('[Auth] No user found')
+      return;
+    }
+
+    try {
+      const response = await fetch(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/auth/get?userId=${currentUser.uid}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': process.env.EXPO_PUBLIC_ADMIN_KEY,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        console.log('[Auth] Error fetching and updating currentUser data')
+        throw new Error('Failed to fetch user data');
+      }
+
+      const data = await response.json();
+
+      console.log("User found", data)
+      setCurrentUser(data)
+    } catch (e: any) {
+      console.log('[Auth] Error updating user :', e)
+      showToast({message: e.response.data.error, type: 'error'})
+    }
+  }
+
 
   const values = {
     loginUser,
     registerUser,
     logoutUser,
+    updateCurrentUser,
     currentUser
   }
 

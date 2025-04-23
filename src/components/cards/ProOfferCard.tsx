@@ -8,12 +8,16 @@ import {useTranslation} from "../../hooks/useTranslation";
 import {ProPackage} from "../../helpers/types/ProPackage";
 
 interface ProOfferCardProps {
-  proPackage: ProPackage;
+  name: string;
+  features: string[];
+  price: number;
+  type: string;
   active: boolean;
+  discount?: string;
   onClick: () => void
 }
 
-export default function ProOfferCard({proPackage, active, onClick}: ProOfferCardProps) {
+export default function ProOfferCard({name, features, price, discount, type, active, onClick}: ProOfferCardProps) {
 
   const { currentLCID } = useTranslation()
 
@@ -27,10 +31,10 @@ export default function ProOfferCard({proPackage, active, onClick}: ProOfferCard
       <View>
         <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 10}}>
           <View style={[sellScreenStyles.content.offers.offerCard.selected, {backgroundColor: active ? app_colors.yellow : 'transparent'}]}/>
-          <Text style={sellScreenStyles.content.offers.offerCard.title}>{proPackage.name}</Text>
+          <Text style={sellScreenStyles.content.offers.offerCard.title}>{name}</Text>
           {
-            proPackage.discount && (
-              <Text style={sellScreenStyles.content.offers.offerCard.discount}>{proPackage.discount}</Text>
+            discount && (
+              <Text style={sellScreenStyles.content.offers.offerCard.discount}>{discount}</Text>
             )
           }
         </View>
@@ -38,11 +42,11 @@ export default function ProOfferCard({proPackage, active, onClick}: ProOfferCard
           active && (
             <View style={{marginTop: 10, opacity: .8, gap: 5}}>
               {
-                proPackage.features.map((feature: string, index: number) => {
+                features.map((feature: string, index: number) => {
                   return (
                     <View key={index} style={{display: 'flex', flexDirection: 'row', alignItems: 'flex-start', gap: 5}}>
                       <Image source={require('../../../assets/icons/FiCheck.png')} style={{width: 15, height: 15}}/>
-                      <Text style={{color: app_colors.white, fontSize: 16, fontFamily: 'GilroyRegular'}}>{feature}</Text>
+                      <Text style={{color: app_colors.white, fontSize: 14, fontFamily: 'DMMonoRegular'}}>{feature}</Text>
                     </View>
                   )
                 })
@@ -52,7 +56,7 @@ export default function ProOfferCard({proPackage, active, onClick}: ProOfferCard
         }
       </View>
       <View style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 5, flex: 1}}>
-        <Text style={sellScreenStyles.content.offers.offerCard.price}>{formatEuro(proPackage.price, currentLCID)} {typesTranslations[proPackage.type]}</Text>
+        <Text style={sellScreenStyles.content.offers.offerCard.price}>{formatEuro(price, currentLCID)} {typesTranslations[type]}</Text>
 
       </View>
     </TouchableOpacity>

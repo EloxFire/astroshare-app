@@ -21,6 +21,13 @@ export const eclipseCardStyles = {
       borderLeftWidth: 1,
       borderLeftColor: app_colors.white_twenty,
 
+      passed: {
+        color: app_colors.red,
+        fontFamily: "DMMonoMedium",
+        fontSize: 10,
+        textTransform: "uppercase" as "uppercase",
+      },
+
       title: {
         color: app_colors.white,
         fontFamily: "GilroyBlack",

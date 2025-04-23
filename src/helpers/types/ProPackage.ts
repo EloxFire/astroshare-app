@@ -2,7 +2,7 @@ export type ProPackage = {
   name: string;
   type: string;
   price: number;
-  stripePrice: number;
+  priceId: string;
   description: string;
   features: string[];
   discount?: string;

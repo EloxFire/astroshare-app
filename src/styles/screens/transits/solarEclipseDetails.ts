@@ -65,7 +65,7 @@ export const solarEclipseDetailsStyles = {
       subtitle: {
         color: app_colors.white,
         fontSize: 18,
-        fontFamily: 'GilroyBlack',
+        fontFamily: 'DMMonoMedium',
         textTransform: 'uppercase' as 'uppercase',
         opacity: .5,
       },

@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react'
-import {ScrollView, Text, View, TouchableOpacity, StatusBar} from 'react-native'
+import {ScrollView, Text, View, TouchableOpacity, StatusBar, ActivityIndicator} from 'react-native'
 import { globalStyles } from '../../styles/global'
 import { sellScreenStyles } from '../../styles/screens/pro/sellScreen'
 import {pageTitleStyles} from "../../styles/components/commons/pageTitle";
@@ -11,125 +11,129 @@ import ProBadge from "../../components/badges/ProBadge";
 import ProOfferCard from "../../components/cards/ProOfferCard";
 import {i18n} from "../../helpers/scripts/i18n";
 import {useAuth} from "../../contexts/AuthContext";
-import {routes} from "../../helpers/routes";
 import {initPaymentSheet, presentPaymentSheet, StripeProvider} from "@stripe/stripe-react-native";
-import axios from "axios";
-import {ProPackage} from "../../helpers/types/ProPackage";
 import {app_colors} from "../../helpers/constants";
 import {useTranslation} from "../../hooks/useTranslation";
-import {astroshare_pro_packages} from "../../helpers/constants/proPackages";
 import SimpleButton from "../../components/commons/buttons/SimpleButton";
 import {proFeaturesList} from "../../helpers/constants/proFeatures";
+import {getStripeProducts} from "../../helpers/api/stripe/getProducts";
+import {getStripePublishableKey} from "../../helpers/api/stripe/getStripePublishableKey";
+import {routes} from "../../helpers/routes";
+import {showToast} from "../../helpers/scripts/showToast";
+import {createStripeSubscription} from "../../helpers/api/stripe/createStipePayment";
+import {finishStripePayment} from "../../helpers/api/stripe/finishStripePayment";
 
 export default function SellScreen({ navigation }: any) {
 
-  const {currentUser} = useAuth()
+  const {currentUser, updateCurrentUser} = useAuth()
   const {currentLocale} = useTranslation()
 
-  const [activeOffer, setActiveOffer] = useState<'monthly' | 'yearly'>('yearly')
-  const [selectedOffer, setSelectedOffer] = useState<ProPackage | null>(astroshare_pro_packages[currentLocale].find((proPackage: ProPackage) => proPackage.type === activeOffer) || null)
+  const [stripeLoading, setStripeLoading] = useState<boolean>(true)
+  const [stripeProducts, setStripeProducts] = useState<any>(null)
+  const [selectedProduct, setSelectedProduct] = useState<any>(null)
   const [stripePublishableKey, setStripePublishableKey] = useState<string>('')
-  const [paymentLoading, setPaymentLoading] = useState<boolean>(false)
 
   useEffect(() => {
-    initStripe()
+    (async () => {
+      const products = await getStripeProducts()
+      const publishableKey: string = await getStripePublishableKey()
+
+      const sortedProducts = products.sort((a: any, b: any) => {
+        return a.prices[0].unit_amount - b.prices[0].unit_amount
+      })
+
+      // console.log("Stripe products: ", products[1].prices[0].unit_amount)
+      setStripePublishableKey(publishableKey)
+      setStripeProducts(sortedProducts)
+      setSelectedProduct(products[1].prices[0].id)
+      setStripeLoading(false)
+    })()
   }, []);
 
-  const initStripe = async () => {
-    try {
-      const response = await axios.get(
-        `${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/stripe/stripetoken`,
-        {
-          headers: {
-            Authorization: process.env.EXPO_PUBLIC_ADMIN_KEY, // Pass the adminKey in the Authorization header
-          },
-        }
-      );
-      console.log("Test", response.data.publishableKey)
-      setStripePublishableKey(response.data.publishableKey)
-    } catch (e) {
-      console.log("Error", e)
-    }
-  }
-
-  const createPayment = async () => {
-    try {
-      const response = await axios.post(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/stripe/create-payment-intent`, {
-          subscriptionType: selectedOffer?.type,
-        },
-        {
-          headers: {
-            Authorization: process.env.EXPO_PUBLIC_ADMIN_KEY, // Pass the adminKey in the Authorization header
-          },
-        })
-      const { paymentIntent, ephemeralKey, customer } = response.data
-
-      return {
-        paymentIntent,
-        ephemeralKey,
-        customer,
-      };
-    }catch (e) {
-      console.log("[ERROR] Error while creating payement intent", e)
-    }
-  }
-
   const handlePayment = async () => {
-    if(stripePublishableKey === ''){
-      console.log("Stripe publishable key is not set")
+    if (!selectedProduct) return;
+
+    if (!currentUser) {
+      showToast({
+        message: "Vous devez être connecté pour acheter un abonnement",
+        type: "success",
+        duration: 3000
+      });
+      navigation.navigate(routes.auth.login.path);
       return;
     }
 
+    setStripeLoading(true);
+
     try {
-      const response = await createPayment()
+      // 1. Crée la souscription
+      const response = await createStripeSubscription(currentUser.uid, selectedProduct);
+      const { subscriptionId, clientSecret, ephemeralKey, customerId, publishableKey } = await response.json();
 
-      if(!response){
-        console.log("[ERROR] Error creating payment")
-        return;
-      }
-
-      const { error } = await initPaymentSheet({
+      // 2. Initialise Stripe payment sheet
+      const { error: initError } = await initPaymentSheet({
         merchantDisplayName: "Astroshare",
-        customerId: response.customer,
-        customerEphemeralKeySecret: response.ephemeralKey,
-        paymentIntentClientSecret: response.paymentIntent,
-        allowsDelayedPaymentMethods: false, // SEPA or credit payment
+        customerId,
+        customerEphemeralKeySecret: ephemeralKey,
+        paymentIntentClientSecret: clientSecret,
+        allowsDelayedPaymentMethods: false,
         defaultBillingDetails: {
           name: currentUser.username,
-          email: currentUser.email,
+          email: currentUser.email
         },
         style: 'alwaysDark',
         returnURL: 'astroshare://payment',
       });
-      if (!error) {
-        setPaymentLoading(true);
 
-        const {error} = await presentPaymentSheet()
-        if(error) {
-          console.log("[ERROR] Error while trying to present payment sheet to user", error)
-        }
-
-        await axios.post(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/stripe/updateUser`, {
-          userId: currentUser.uid,
-          subscriptionType: selectedOffer?.type,
-          subscriptionPrice: selectedOffer?.price,
-        }, {
-          headers: {
-            Authorization: process.env.EXPO_PUBLIC_ADMIN_KEY, // Pass the adminKey in the Authorization header
-          }
-        })
-        setPaymentLoading(false);
+      if (initError) {
+        console.log("[ERROR] initPaymentSheet failed", initError);
+        showToast({ message: "Erreur lors de l'initialisation du paiement", type: 'error' });
+        setStripeLoading(false);
+        return;
       }
-    }catch (e) {
-      console.log("[ERROR] Error in payment process", e)
+
+      // 3. Affiche la sheet de paiement à l’utilisateur
+      const { error: paymentError } = await presentPaymentSheet();
+
+      if (paymentError) {
+        console.log("[ERROR] Payment failed", paymentError);
+        showToast({ message: "Le paiement a été annulé", type: 'error' });
+        setStripeLoading(false);
+        return;
+      }
+
+      // 4. Finalise côté Firestore
+      const selectedStripeProduct = stripeProducts.find((p: any) =>
+        p.prices.some((price: any) => price.id === selectedProduct)
+      );
+
+      const subscriptionType = selectedStripeProduct.prices[0].metadata.type;
+
+      await finishStripePayment(
+        currentUser.uid,
+        selectedProduct,
+        selectedStripeProduct.name,
+        subscriptionType
+      );
+
+      await updateCurrentUser();
+
+      showToast({ message: "Abonnement activé avec succès !", type: "success", duration: 3000 });
+
+      setStripeLoading(false);
+      navigation.goBack(); // ou vers une autre page ?
+    } catch (error) {
+      console.error("Error during payment flow:", error);
+      showToast({ message: "Une erreur est survenue", type: "error" });
+      setStripeLoading(false);
     }
-  }
+  };
 
   return (
     <StripeProvider
       publishableKey={stripePublishableKey}
       merchantIdentifier={"astroshare.fr"}
-      urlScheme={"astroshare"}
+      urlScheme={"astroshare://"}
     >
       <View style={[globalStyles.body, {paddingTop: 0, paddingHorizontal: 0}]}>
         <ScrollView contentContainerStyle={{paddingHorizontal: 10, paddingTop: StatusBar.currentHeight ? StatusBar.currentHeight + 20 : 20}}>
@@ -155,16 +159,23 @@ export default function SellScreen({ navigation }: any) {
             <Text style={sellScreenStyles.content.description}>{i18n.t('pro.sellScreen.description')}</Text>
             <View style={sellScreenStyles.content.offers}>
               {
-                astroshare_pro_packages[currentLocale].map((proPackage: ProPackage, index: number) => {
-                  return <ProOfferCard
-                    key={index}
-                    onClick={() => {
-                      setActiveOffer(proPackage.type as 'monthly' | 'yearly');
-                      setSelectedOffer(proPackage)
-                    }}
-                    active={selectedOffer === proPackage}
-                    proPackage={proPackage}
-                  />
+                stripeLoading && !stripeProducts &&
+                <ActivityIndicator size="large" color={app_colors.yellow} style={{marginTop: 20, marginBottom: 50}}/>
+              }
+              {
+                stripeProducts && stripeProducts.map((product: any, index: number) => {
+                  return (
+                    <ProOfferCard
+                      key={index}
+                      name={product.name}
+                      features={product.prices[0].metadata.features.split('; ')}
+                      price={product.prices[0].unit_amount / 100}
+                      active={product.prices[0].id === selectedProduct}
+                      type={product.prices[0].metadata.type === 'monthly' ? i18n.t('pro.sellScreen.offers.cards.priceMonthly') : i18n.t('pro.sellScreen.offers.cards.priceYearly')}
+                      discount={product.prices[0].metadata.discount}
+                      onClick={() => setSelectedProduct(product.prices[0].id)}
+                    />
+                  )
                 })
               }
             </View>
@@ -184,8 +195,8 @@ export default function SellScreen({ navigation }: any) {
         <View style={{backgroundColor: app_colors.white_no_opacity, height: 100, display: 'flex', justifyContent: 'center', alignItems: 'center', borderTopRightRadius: 10, borderTopLeftRadius: 10}}>
           <SimpleButton
             text={i18n.t('pro.sellScreen.toPayment')}
-            onPress={() => handlePayment()}
-            disabled={paymentLoading}
+            onPress={() => {handlePayment()}}
+            disabled={stripeLoading}
             backgroundColor={app_colors.white}
             textColor={app_colors.black}
             width={'80%'}

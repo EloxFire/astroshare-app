@@ -64,12 +64,22 @@ export default function ProfileScreen({ navigation }: any) {
             <DSOValues title={i18n.t('auth.profile.createdAt')} value={dayjs.unix(currentUser.createdAt.seconds).format("DD MMM YYYY à HH:mm").replace(':', 'h')}/>
             <DSOValues title={i18n.t('auth.profile.updatedAt')} value={dayjs.unix(currentUser.updatedAt.seconds).format("DD MMM YYYY à HH:mm").replace(':', 'h')}/>
             <DSOValues title={i18n.t('auth.profile.accountRole')} chipValue chipColor={humanizeAccountRole(currentUser.role).color} value={humanizeAccountRole(currentUser.role).role}/>
+            {
+              isProUser(currentUser) &&
+                <>
+                  <DSOValues title={i18n.t('auth.profile.subscriptionName')} value={currentUser.subscriptionName}/>
+                  <DSOValues title={i18n.t('auth.profile.subscriptionDate')} value={dayjs.unix(currentUser.subscriptionDate.seconds).format("DD MMMM YYYY")}/>
+                  <DSOValues title={i18n.t('auth.profile.subscriptionRenewal')} value={dayjs.unix(currentUser.subscriptionRenewal.seconds).format("DD MMMM YYYY")}/>
+                </>
+            }
           </View>
 
-          {
-            !isProUser(currentUser) &&
-            <ProLocker navigation={navigation} image={require('../../../assets/images/tools/apod.png')} darker small />
-          }
+          <View style={{marginBottom: 20}}>
+            {
+              !isProUser(currentUser) &&
+                <ProLocker navigation={navigation} image={require('../../../assets/images/tools/apod.png')} darker small />
+            }
+          </View>
 
           <SimpleButton
             fullWidth
