@@ -57,6 +57,8 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
       await storeData(storageKeys.auth.refreshToken, newRefreshToken)
       await storeObject(storageKeys.auth.user, user)
 
+
+
       setCurrentUser(user)
       console.log('[Auth] Session restored with refreshed token')
       return accessToken

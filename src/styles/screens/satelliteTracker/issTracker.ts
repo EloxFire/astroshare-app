@@ -44,6 +44,15 @@ export const issTrackerStyles = {
       flexDirection: 'column' as 'column',
       gap: 3,
 
+      date: {
+        color: app_colors.white,
+        fontSize: 16,
+        fontFamily: 'DMMonoMedium',
+        textTransform: 'uppercase' as 'uppercase',
+        marginBottom: 5,
+        marginTop: 10,
+      },
+
       container: {
         position: 'relative' as 'relative',
         display: 'flex' as 'flex',

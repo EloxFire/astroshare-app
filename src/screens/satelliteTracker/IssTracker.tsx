@@ -87,7 +87,7 @@ export default function IssTracker({ navigation }: any) {
   }, [])
 
   useEffect(() => {
-    handleIssPasses()
+    fetchIssPasses()
   }, [currentUserLocation])
 
   useEffect(() => {
@@ -114,6 +114,7 @@ export default function IssTracker({ navigation }: any) {
 
   useEffect(() => {
     if(issPasses.length > 0){
+      console.log(issPasses[0].startUTC)
       setCountdown(getTimeFromLaunch(dayjs.unix(issPasses[0].startUTC).toDate()))
 
       const interval = setInterval(() => {
@@ -124,30 +125,31 @@ export default function IssTracker({ navigation }: any) {
     }
   }, [issPasses])
 
-  const handleIssPasses = async () => {
-    const storedPasses = await getObject(storageKeys.issPasses);
-
-    if(storedPasses){
-      console.log("Found ISS passes in Local Storage")
-      const parsedPasses = JSON.parse(storedPasses);
-      const areSomePassesOver = parsedPasses.passes.some((pass: IssPass) => dayjs.unix(pass.endUTC) < dayjs());
-
-      if(areSomePassesOver){
-        console.log('Some passes are over, fetching new passes')
-        fetchIssPasses()
-      }else{
-        console.log('Restoring passes from local storage')
-        setIssPasses(parsedPasses.passes)
-        setIssPassesLoading(false)
-      }
-    }else{
-      fetchIssPasses()
-    }
-  }
+  // const handleIssPasses = async () => {
+  //   const storedPasses = await getObject(storageKeys.issPasses);
+  //
+  //   if(storedPasses){
+  //     console.log("Found ISS passes in Local Storage")
+  //     const parsedPasses = JSON.parse(storedPasses);
+  //     const areSomePassesOver = parsedPasses.passes.some((pass: IssPass) => dayjs.unix(pass.endUTC) < dayjs());
+  //
+  //     if(areSomePassesOver){
+  //       console.log('Some passes are over, fetching new passes')
+  //       fetchIssPasses()
+  //     }else{
+  //       console.log('Restoring passes from local storage')
+  //       setIssPasses(parsedPasses.passes)
+  //       setIssPassesLoading(false)
+  //     }
+  //   }else{
+  //     fetchIssPasses()
+  //   }
+  // }
 
   const fetchIssPasses = async () => {
     if(!currentUserLocation) return
     try {
+      console.log('Fetching ISS passes from API')
       console.log('Fetching ISS passes API')
       const response = await axios.get(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/iss/passes`, {
         params: {
@@ -156,7 +158,9 @@ export default function IssTracker({ navigation }: any) {
           altitude: 0
         }
       })
-      setIssPasses(response.data.passes)
+
+      // console.log("PASSSSSEEEEESSS SORT :", response.data.passes.filter((pass: IssPass) => pass.maxEl > 19))
+      setIssPasses(response.data.passes.filter((pass: IssPass) => pass.startEl > 10))
       console.log('Storing ISS passes in local storage')
       await storeObject(storageKeys.issPasses, JSON.stringify(response.data))
       setIssPassesLoading(false)
@@ -454,14 +458,41 @@ const centerIss = () => {
                       <View style={issTrackerStyles.content.nextPasses.container}>
                         <DSOValues title={i18n.t("satelliteTracker.issTracker.nextPasses.timeToNext")} value={countdown}/>
                         {
-                          issPassesLoading ?
-                            <ActivityIndicator size={'small'} color={app_colors.white} animating /> :
-                            issPasses.length > 0 ?
-                              issPasses.slice(0, 4).map((pass: IssPass, index: number) => {
-                                return (
-                                  <IssPassCard pass={pass} navigation={navigation} key={index} passIndex={index} weather={passesWeather} />
-                                )
-                              }) : <SimpleButton text={i18n.t('satelliteTracker.issTracker.nextPasses.noPasses')} disabled fullWidth />
+                          issPassesLoading ? (
+                            <ActivityIndicator size={'small'} color={app_colors.white} animating />
+                          ) : issPasses.length > 0 ? (
+                            ((): any => {
+                              const firstFourPasses = issPasses.slice(0, 4);
+
+                              const passesByDate = firstFourPasses.reduce((acc: { [date: string]: IssPass[] }, pass) => {
+                                const dateString = dayjs.unix(pass.startUTC).format('dddd D MMMM YYYY');
+                                if (!acc[dateString]) {
+                                  acc[dateString] = [];
+                                }
+                                acc[dateString].push(pass);
+                                return acc;
+                              }, {});
+
+                              return Object.entries(passesByDate).map(([date, passes]) => (
+                                <View key={date}>
+                                  <Text style={issTrackerStyles.content.nextPasses.date}>{date}</Text>
+                                  <View style={{display: 'flex', gap: 5}}>
+                                    {passes.map((pass, index) => (
+                                      <IssPassCard
+                                        pass={pass}
+                                        navigation={navigation}
+                                        key={`${pass.startUTC}-${index}`}
+                                        passIndex={index}
+                                        weather={passesWeather}
+                                      />
+                                    ))}
+                                  </View>
+                                </View>
+                              ));
+                            })()
+                          ) : (
+                            <SimpleButton text={i18n.t('satelliteTracker.issTracker.nextPasses.noPasses')} disabled fullWidth />
+                          )
                         }
                         <SimpleButton
                           fullWidth
