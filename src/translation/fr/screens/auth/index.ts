@@ -46,7 +46,7 @@ export const authScreensTranslations = {
       renewal: "Renouvellement",
       renewalTypes: {
         auto: "Automatique",
-        canceled: "Non renouvelé",
+        canceled: "Désactivé",
       }
     }
   },
