@@ -1,38 +1,46 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ActivityIndicator, Text, View } from 'react-native';
+import {ActivityIndicator, StatusBar, Text, View} from 'react-native';
 import { planetariumStyles } from '../../styles/screens/skymap/planetarium';
-import { Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
+import {
+  ComposedGesture, ExclusiveGesture,
+  Gesture,
+  GestureDetector,
+  GestureHandlerRootView,
+  GestureStateChangeEvent, GestureTouchEvent,
+  GestureUpdateEvent,
+  PanGesture,
+  PanGestureChangeEventPayload,
+  PanGestureHandlerEventPayload,
+  PinchGesture,
+  PinchGestureChangeEventPayload,
+  PinchGestureHandlerEventPayload, SimultaneousGesture, TapGestureHandlerEventPayload
+} from 'react-native-gesture-handler';
 import { ExpoWebGLRenderingContext, GLView } from 'expo-gl';
 import { useSettings } from '../../contexts/AppSettingsContext';
 import * as THREE from "three";
 import * as ExpoTHREE from "expo-three";
-import { Star } from '../../helpers/types/Star';
-import { getStarColor, getStarMaterial } from '../../helpers/scripts/astro/skymap/createStarMaterial';
 import { useStarCatalog } from '../../contexts/StarsContext';
-import { getEffectiveAngularResolution } from '../../helpers/scripts/astro/skymap/getEffectiveAngularResolution';
-import { getEuclideanDistance } from '../../helpers/scripts/astro/skymap/getEuclideanDistance';
-import { getFovFromAngularResolution } from '../../helpers/scripts/astro/skymap/getFovFromAngularResolution';
-import { createEquatorialGrid } from '../../helpers/scripts/astro/skymap/createEquatorialGrid';
-import { drawConstellations } from '../../helpers/scripts/astro/skymap/drawConstellations';
-import { createGround } from '../../helpers/scripts/astro/skymap/createGround';
-import { convertSphericalToCartesian } from '../../helpers/scripts/astro/skymap/convertSphericalToCartesian';
-import { getGlobePosition } from '../../helpers/scripts/astro/skymap/getGlobePosition';
 import PlanetariumUI from "../../components/skymap/PlanetariumUI";
-import { createAzimuthalGrid } from '../../helpers/scripts/astro/skymap/createAzimuthalGrid';
 import { createPointerMaterial } from '../../helpers/scripts/astro/skymap/createPointerMaterial';
-import { createPointerTextures } from '../../helpers/scripts/astro/skymap/createPointerTextures';
 import {app_colors, planetTextures} from "../../helpers/constants";
-import { convertHMSToDegreeFromString } from "../../helpers/scripts/astro/HmsToDegree";
-import { convertDMSToDegreeFromString } from "../../helpers/scripts/astro/DmsToDegree";
-import planetariumImages from "../../helpers/planetarium_images.json"
 import {useSolarSystem} from "../../contexts/SolarSystemContext";
-import {GlobalPlanet} from "../../helpers/types/GlobalPlanet";
+import {initScene} from "../../helpers/scripts/planetarium/initScene";
+import {getGlobePosition} from "../../helpers/scripts/astro/skymap/getGlobePosition";
+import {TapGesture} from "react-native-gesture-handler/lib/typescript/handlers/gestures/tapGesture";
+import {
+  applyInertia,
+  handlePanChange,
+  handlePanEnd,
+  handlePanStart, inertiaEnabled
+} from "../../helpers/scripts/planetarium/handlePanGesture";
+import {
+  handlePinchTouchDown,
+  handlePinchTouchMove
+} from "../../helpers/scripts/planetarium/handlePinchGesture";
+import {handleTapStart} from "../../helpers/scripts/planetarium/handleTapGesture";
+import {Star} from "../../helpers/types/Star";
 
 
-let IsInertia = false;
-let oldX = 0.0, oldY = 0.0;
-let Vx = 0.0, Vy = 0.0;
-let camWdth = 0;
 let EquatorialGrid: any;
 let AzimuthalGrid: any;
 let Constellations: any;
@@ -44,8 +52,6 @@ pointergeometry.setAttribute('position', new THREE.Float32BufferAttribute(pointe
 const pointermaterial = createPointerMaterial();
 const pointerUI = new THREE.Points(pointergeometry, pointermaterial);
 pointerUI.visible = false;
-let azAngle = 0;
-let altAngle = Math.PI / 2;
 
 
 export default function Planetarium({ route, navigation }: any) {
@@ -54,226 +60,56 @@ export default function Planetarium({ route, navigation }: any) {
   const { starsCatalog } = useStarCatalog();
   const {planets, moonCoords} = useSolarSystem()
 
-  const [cameraWidth, setCameraWidth] = useState<number>(0);
-  const [cameraHeight, setCameraHeight] = useState<number>(0);
-
-  const [planetariumLoading, setPlanetariumLoading] = useState<boolean>(true);
-
-  // Use refs for THREE-related objects to keep their state across renders
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
   const sceneRef = useRef<THREE.Scene | null>(null);
   const rendererRef = useRef<ExpoTHREE.Renderer | null>(null);
+  const groundRef = useRef<THREE.Mesh | null>(null);
+  const selectionCircleRef = useRef<THREE.Line | null>(null);
 
-  const [currentTapInfos, setCurrentTapInfos] = useState<any>(null);
-
+  const [planetariumLoading, setPlanetariumLoading] = useState<boolean>(true);
   const [showEqGrid, setShowEqGrid] = useState<boolean>(false);
   const [showAzGrid, setShowAzGrid] = useState<boolean>(false);
   const [showConstellations, setShowConstellations] = useState<boolean>(true);
   const [showGround, setShowGround] = useState<boolean>(true);
+  const [glViewParams, setGlViewParams] = useState<any>({width: 0, height: 0});
 
   useEffect(() => {
-    const defaultObject = route.params?.defaultObject;
-    if (defaultObject) {
-      const { ra, dec } = defaultObject;
+    StatusBar.setHidden(true);
 
-      let formatedRa = typeof ra === 'string' ? convertHMSToDegreeFromString(ra) : ra;
-      let formatedDec = typeof dec === 'string' ? convertDMSToDegreeFromString(dec) : dec;
-
-      let pointerCoos = convertSphericalToCartesian(0.5, parseFloat(formatedRa), parseFloat(formatedDec));
-      let g = pointerUI.geometry;
-      let p = g.getAttribute('position');
-      p.setXYZ(0, pointerCoos.x, pointerCoos.y, pointerCoos.z);
-      p.needsUpdate = true;
-      pointerUI.visible = true;
-      setCurrentTapInfos(defaultObject);
-      cameraRef.current?.lookAt(new THREE.Vector3(
-        ...Object.values(convertSphericalToCartesian(10, formatedRa, formatedDec))
-      ));
-    }
-  }, [planetariumLoading]);
-
-  useEffect(() => {
-
-    console.log('Planetarium mounted!');
-    // Cleanup all ThreeJS related objects when unmounting
     return () => {
-      console.log('Cleaning up Planetarium...');
-      if (sceneRef.current) {
-        sceneRef.current.traverse((object: any) => {
-          if (object.geometry) {
-            object.geometry.dispose();
-          }
-          if (object.material) {
-            object.material.dispose();
-          }
-          if (object.texture) {
-            object.texture.dispose();
-          }
-        })
-      }
-      if (rendererRef.current) {
-        rendererRef.current.dispose();
-      }
-    }
+      StatusBar.setHidden(false);
+    };
   }, []);
 
 
   const _onContextCreate = async (gl: ExpoWebGLRenderingContext) => {
-    const { drawingBufferWidth, drawingBufferHeight } = gl;
-    setCameraWidth(drawingBufferWidth);
-    setCameraHeight(drawingBufferHeight);
-    camWdth = drawingBufferWidth;
-
-    // Initialize scene, camera, and renderer
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(90, drawingBufferWidth / drawingBufferHeight, 0.1, 10000);
-    const renderer = new ExpoTHREE.Renderer({ gl });
-
-    renderer.setSize(drawingBufferWidth, drawingBufferHeight);
-    renderer.setClearColor(0x080808); // Background color
-
-    camera.position.set(0, 0, 0); // Camera positioned at the origin
-
-    // Store them in refs
-    cameraRef.current = camera;
+    const {scene, camera, renderer, ground, selectionCircle} = initScene(gl, currentUserLocation, starsCatalog.filter((star: Star) => star.V < 6), planets, moonCoords);
     sceneRef.current = scene;
+    cameraRef.current = camera;
     rendererRef.current = renderer;
+    groundRef.current = ground;
+    selectionCircleRef.current = selectionCircle;
 
-    // Create stars
-    const stars: number[] = [];
-    const starSize: number[] = [];
-    const starColor: number[] = [];
-    const geometry = new THREE.BufferGeometry();
-    const material = getStarMaterial();
-    starsCatalog.forEach((star: Star) => {
-      const { x, y, z } = convertSphericalToCartesian(10, star.ra, star.dec);
-      stars.push(x, y, z);
-      starSize.push(50 * (Math.max(0.5, 6 - star.V)));
-      const indice = getStarColor(star.sp_type);
-      starColor.push(2 * indice ** 2, 0.5 / (100 * (indice - 0.5) ** 2 + 1), 2 * (indice - 1) ** 2, 1.0);
-    });
-    geometry.setAttribute('position', new THREE.Float32BufferAttribute(stars, 3));
-    geometry.setAttribute('size', new THREE.Float32BufferAttribute(starSize, 1));
-    geometry.setAttribute('color', new THREE.Float32BufferAttribute(starColor, 4));
-    const starsCloud = new THREE.Points(geometry, material);
-    starsCloud.frustumCulled = false;
-    starsCloud.renderOrder = 0;
-    scene.add(starsCloud);
+    setGlViewParams({width: gl.drawingBufferWidth, height: gl.drawingBufferHeight});
+    setPlanetariumLoading(false);
 
-    // Texture de la voie lactée
-    const milkywayGeometry = new THREE.SphereGeometry(100, 64, 64);
-    const milkywayMaterial = new THREE.MeshBasicMaterial({ map: new ExpoTHREE.TextureLoader().load(require('../../../assets/images/textures/milkyway.png')), side: THREE.BackSide });
-    const milkyway = new THREE.Mesh(milkywayGeometry, milkywayMaterial);
+    const animate = () => {
+      requestAnimationFrame(animate);
 
-    milkyway.position.set(0, 0, 0);
-    if (milkywayMaterial.map) {
-      milkywayMaterial.map.flipY = false;
-    }
-    milkyway.setRotationFromQuaternion(new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1, 0, 0), -Math.PI / 2));
-    milkyway.renderOrder = -1;
-    scene.add(milkyway);
+      if (inertiaEnabled) {
+        applyInertia(cameraRef, groundRef, gl.drawingBufferWidth);
+      }
+
+      if (rendererRef.current && sceneRef.current && cameraRef.current) {
+        rendererRef.current.render(sceneRef.current, cameraRef.current);
+        gl.endFrameEXP(); // Required for Expo's GL context
+      }
+    };
+
+    animate();
 
 
-    // DSO IMAGES
-    planetariumImages.images.forEach((image) => {
-      const verticesBuffer: number[] = [];
-      const uvBuffer: number[] = [];
-      const geometry = new THREE.BufferGeometry();
-
-      const indices = [
-        0, 1, 2, // first triangle
-        2, 3, 0  // second triangle
-      ];
-
-      image.worldCoords[0].forEach((imageVertex, index) => {
-        const { x, y, z } = convertSphericalToCartesian(11, imageVertex[0], imageVertex[1]);
-        verticesBuffer.push(x, y, z);
-
-        // Ajoutez les coordonnées UV correspondantes
-        const u = image.textureCoords[0][index][0];
-        const v = image.textureCoords[0][index][1];
-        uvBuffer.push(u, v);
-      });
-
-      geometry.setAttribute('position', new THREE.Float32BufferAttribute(verticesBuffer, 3));
-      geometry.setAttribute('uv', new THREE.Float32BufferAttribute(uvBuffer, 2));
-      geometry.setIndex(indices);
-
-      const textureLoader = new ExpoTHREE.TextureLoader();
-      const texture = textureLoader.load(image.imageUrl);
-
-      // Définir le vertex shader
-      const vertexShader = `
-        varying vec2 vUv;
-        void main() {
-          vUv = uv;
-          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-        }
-      `;
-
-          // Définir le fragment shader avec effet de fondu rectangulaire
-          const fragmentShader = `
-        uniform sampler2D map;
-        varying vec2 vUv;
-    
-        void main() {
-          vec4 color = texture2D(map, vUv);
-    
-          // Calculer la distance par rapport aux bords
-          float alpha = 1.0;
-          float border = 0.1; // Largeur de la bordure de fondu
-    
-          if (vUv.x < border || vUv.x > (1.0 - border) || vUv.y < border || vUv.y > (1.0 - border)) {
-            // Appliquer un effet de fondu basé sur la distance par rapport aux bords
-            float dist = min(vUv.x, 1.0 - vUv.x);
-            dist = min(dist, min(vUv.y, 1.0 - vUv.y));
-            alpha = smoothstep(0.0, border, dist);
-          }
-    
-          gl_FragColor = vec4(color.rgb, color.a * alpha);
-        }
-      `;
-
-      const nebulaeMaterial = new THREE.ShaderMaterial({
-        uniforms: {
-          map: { value: texture },
-        },
-        vertexShader,
-        fragmentShader,
-        transparent: true,
-        blending: THREE.AdditiveBlending, // Utiliser un mode de fusion normal pour un effet naturel
-      });
-
-      const nebulae = new THREE.Mesh(geometry, nebulaeMaterial);
-      scene.add(nebulae);
-    });
-
-    // PLANETS TEXTURES
-    planets.forEach((planet: GlobalPlanet) => {
-      const { x, y, z } = convertSphericalToCartesian(10, planet.ra, planet.dec);
-      const geometry = new THREE.SphereGeometry(0.1, 32, 32);
-      const texture = new ExpoTHREE.TextureLoader().load(planetTextures[planet.name.toUpperCase()]);
-      const material = new THREE.MeshBasicMaterial({ map: texture});
-      const planetMesh = new THREE.Mesh(geometry, material);
-      planetMesh.position.set(x, y, z);
-      scene.add(planetMesh);
-    })
-
-    // MOON TEXTURE
-    const { x, y, z } = convertSphericalToCartesian(10, moonCoords.ra, moonCoords.dec);
-    const moonGeometry = new THREE.SphereGeometry(0.1, 32, 32);
-    const moonTexture = new ExpoTHREE.TextureLoader().load(planetTextures.MOON);
-    const moonNormalMap = new ExpoTHREE.TextureLoader().load(planetTextures.MOON_NORMAL);
-    const moonMaterial = new THREE.MeshStandardMaterial({ map: moonTexture, normalMap: moonNormalMap });
-    const moonMesh = new THREE.Mesh(moonGeometry, moonMaterial);
-    moonMesh.position.set(x, y, z);
-    scene.add(moonMesh);
-
-
-
-    const light = new THREE.AmbientLight(0xffffff); // soft white light
-    scene.add(light);
-
+    /*
 
     pointerUI.frustumCulled = false;
     const pointerTextures = createPointerTextures();
@@ -347,7 +183,33 @@ export default function Planetarium({ route, navigation }: any) {
 
     // Start the animation
     animate();
+     */
   };
+
+  const panGesture = Gesture.Pan()
+    .onStart((e: GestureStateChangeEvent<PanGestureHandlerEventPayload>) => handlePanStart(e))
+    .onChange((e: GestureUpdateEvent<PanGestureHandlerEventPayload & PanGestureChangeEventPayload>) => {
+      handlePanChange(
+        e,
+        cameraRef,
+        groundRef,
+        glViewParams.width
+      )
+    })
+    .onEnd((e: GestureStateChangeEvent<PanGestureHandlerEventPayload>) => handlePanEnd(e))
+
+  const pinchGesture = Gesture.Pinch()
+    .onTouchesDown((e: GestureTouchEvent) => handlePinchTouchDown(e, cameraRef, glViewParams.width))
+    .onTouchesMove((e: GestureTouchEvent) => handlePinchTouchMove(e, cameraRef, glViewParams.width))
+
+  const tapGesture = Gesture.Tap()
+    .maxDuration(250)
+    .onStart((e: GestureStateChangeEvent<TapGestureHandlerEventPayload>) => handleTapStart(e, sceneRef, cameraRef, selectionCircleRef))
+
+
+  const movementGestures: SimultaneousGesture = Gesture.Simultaneous(panGesture, pinchGesture);
+  const actionGestures: ExclusiveGesture = Gesture.Exclusive(tapGesture);
+  const composedGestures: ComposedGesture = Gesture.Race(movementGestures, actionGestures)
 
 
 
@@ -399,90 +261,7 @@ export default function Planetarium({ route, navigation }: any) {
   }
 
 
-
-  const pan = Gesture.Pan()
-    .onBegin(() => {
-      IsInertia = false;
-    })
-    .onStart(() => {
-      // console.log('onStart');
-      oldX = 0;
-      oldY = 0;
-      Vx = 0;
-      Vy = 0;
-    })
-    .onChange((e) => {
-      const camera = cameraRef.current; // Access camera from ref
-      if (camera) {
-        let q1 = new THREE.Quaternion;
-        let q2 = new THREE.Quaternion;
-        let q3 = new THREE.Quaternion;
-        let newAzAngle = azAngle + getEffectiveAngularResolution(camera.getEffectiveFOV(), cameraWidth) * (e.translationX - oldX);
-        let Y = new THREE.Vector3(0, 0, 1);
-        q1.setFromAxisAngle(Y, newAzAngle);
-        let X = new THREE.Vector3(1, 0, 0);
-        let newAltAngle = altAngle + getEffectiveAngularResolution(camera.getEffectiveFOV(), cameraWidth) * (e.translationY - oldY);
-        if (newAltAngle > Math.PI) {
-          newAltAngle = Math.PI;
-        } else if (newAltAngle < 0) {
-          newAltAngle = 0;
-        }
-        q2.setFromAxisAngle(X, newAltAngle);
-        ground.getWorldQuaternion(q3);
-        let qtot = q3.multiply(q1).multiply(q2);
-        camera.setRotationFromQuaternion(qtot.normalize());
-        azAngle = newAzAngle;
-        altAngle = newAltAngle;
-        oldX = e.translationX;
-        oldY = e.translationY;
-        Vx = e.velocityX;
-        Vy = e.velocityY;
-        camera.updateProjectionMatrix();
-      } else {
-        console.log("camera is undefined");
-      }
-    })
-    .onEnd(() => {
-      IsInertia = true;
-    });
-
-  const Inertia = () => {
-    const camera = cameraRef.current;
-    if (camera) {
-      let q1 = new THREE.Quaternion;
-      let q2 = new THREE.Quaternion;
-      let q3 = new THREE.Quaternion;
-      let newAzAngle = azAngle + getEffectiveAngularResolution(camera.getEffectiveFOV(), camWdth) * Vx * 0.01;
-      let Y = new THREE.Vector3(0, 0, 1);
-      q1.setFromAxisAngle(Y, newAzAngle);
-      let X = new THREE.Vector3(1, 0, 0);
-      let newAltAngle = altAngle + getEffectiveAngularResolution(camera.getEffectiveFOV(), camWdth) * Vy * 0.01;
-      if (newAltAngle > Math.PI) {
-        newAltAngle = Math.PI;
-      } else if (newAltAngle < 0) {
-        newAltAngle = 0;
-      }
-      q2.setFromAxisAngle(X, newAltAngle);
-      ground.getWorldQuaternion(q3);
-      let qtot = q3.multiply(q1).multiply(q2);
-      camera.setRotationFromQuaternion(qtot.normalize());
-      azAngle = newAzAngle;
-      altAngle = newAltAngle;
-      Vx = Vx * 0.98;
-      Vy = Vy * 0.98;
-      if (Math.abs(Vx) < 0.1) {
-        Vx = 0;
-      }
-      if (Math.abs(Vy) < 0.1) {
-        Vy = 0;
-      }
-      if (Vy == 0 && Vx == 0) {
-        IsInertia = false;
-      }
-      return camera.updateProjectionMatrix();
-    }
-  }
-
+/*
   let startAngle: number;
   const pinch = Gesture.Pinch()
     .onTouchesDown((e) => {
@@ -537,20 +316,6 @@ export default function Planetarium({ route, navigation }: any) {
       }
     });
 
-  let actualRotation: number;
-  const rotation = Gesture.Rotation()
-    .onStart((e) => {
-      actualRotation = 0;
-    })
-    .onChange((e) => {
-      const camera = cameraRef.current;
-      if (!camera) return;
-      camera.rotateZ(e.rotation - (actualRotation || 0));
-      actualRotation = e.rotation;
-      camera.updateProjectionMatrix();
-    })
-    .simultaneousWithExternalGesture(pinch);
-
   const singleTap = Gesture.Tap()
     .maxDuration(250)
     .onStart((e) => {
@@ -566,7 +331,8 @@ export default function Planetarium({ route, navigation }: any) {
         pointer.x = (e.x / window.innerWidth) * 2 - 1;
         pointer.y = - (e.y / window.innerHeight) * 2 + 1;
         raycaster.setFromCamera(pointer, camera);
-        const intersects = raycaster.intersectObjects(scene.children);
+        const intersects: Intersection[] = raycaster.intersectObjects(scene.children);
+        console.log("Intersects: ", intersects[0].object);
         let Vmin = 30.0;
         let index = '0';
         if (typeof intersects[0] !== 'undefined') {
@@ -590,31 +356,22 @@ export default function Planetarium({ route, navigation }: any) {
         }
       }
     });
-
-  const gestures = Gesture.Simultaneous(pinch, pan);
-  const taps = Gesture.Exclusive(singleTap);
-  const composed = Gesture.Race(gestures, taps);
+  */
 
   return (
     <GestureHandlerRootView>
       <PlanetariumUI
         navigation={navigation}
-        infos={currentTapInfos}
+        infos={null}
         onShowAzGrid={onShowAzGrid}
         onShowConstellations={onShowConstellations}
         onShowEqGrid={onShowEqGrid}
         onShowGround={onShowGround}
         onShowPlanets={() => { }}
         onShowDSO={() => { }}
-        onCenterObject={() => {
-          const formatedRa = typeof currentTapInfos.ra === 'string' ? convertHMSToDegreeFromString(currentTapInfos.ra) : currentTapInfos.ra;
-          const formatedDec = typeof currentTapInfos.dec === 'string' ? convertDMSToDegreeFromString(currentTapInfos.dec) : currentTapInfos.dec;
-          cameraRef.current!.lookAt(new THREE.Vector3(
-            ...Object.values(convertSphericalToCartesian(10, formatedRa, formatedDec))
-          ))
-        }}
+        onCenterObject={() => { }}
       />
-      <GestureDetector gesture={composed}>
+      <GestureDetector gesture={composedGestures}>
         <View style={planetariumStyles.container}>
           <GLView style={{ flex: 1 }} onContextCreate={_onContextCreate} />
           {planetariumLoading && (

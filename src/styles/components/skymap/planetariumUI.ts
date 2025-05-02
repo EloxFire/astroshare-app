@@ -15,7 +15,6 @@ export const planetariumUIStyles = {
     height: "100%" as "100%",
     width: "100%" as "100%",
     zIndex: 10,
-    paddingVertical: StatusBar.currentHeight!,
     paddingHorizontal: 10,
 
     layersModal: {

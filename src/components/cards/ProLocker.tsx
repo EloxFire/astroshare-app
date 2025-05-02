@@ -8,11 +8,12 @@ import {routes} from "../../helpers/routes";
 interface ProLockerProps {
   navigation: any;
   image: ImageSourcePropType;
+  multipleFeatures?: boolean;
   darker?: boolean;
   small?: boolean;
 }
 
-export default function ProLocker({ navigation, image, darker, small }: ProLockerProps) {
+export default function ProLocker({ navigation, image, darker, small, multipleFeatures }: ProLockerProps) {
 
   return (
     <ImageBackground blurRadius={15} resizeMode={"cover"} source={image} imageStyle={proLockerStyles.locker.image} style={[proLockerStyles.locker, {height: small ? 100 : 200}]}>
@@ -24,7 +25,12 @@ export default function ProLocker({ navigation, image, darker, small }: ProLocke
               <Text style={proLockerStyles.locker.title}>Astroshare</Text>
               <ProBadge additionalStyles={{transform: [{scale: 2.1}], marginLeft: 22}} customColor={app_colors.yellow}/>
             </View>
-            <Text style={proLockerStyles.locker.text}>Voici une fonctionnalité Astroshare Pro.</Text>
+            {
+              multipleFeatures ?
+                <Text style={proLockerStyles.locker.text}>Voici des fonctionnalités Astroshare Pro.</Text>
+                :
+                <Text style={proLockerStyles.locker.text}>Voici une fonctionnalité Astroshare Pro.</Text>
+            }
             <Text style={proLockerStyles.locker.text}>Mettez à niveau votre application pour y accéder !</Text>
           </>
         ) :

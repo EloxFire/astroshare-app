@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {ActivityIndicator, ScrollView, Text, View} from "react-native";
 import {globalStyles} from "../../styles/global";
 import PageTitle from "../../components/commons/PageTitle";

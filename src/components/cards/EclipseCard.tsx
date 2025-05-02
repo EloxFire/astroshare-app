@@ -40,18 +40,27 @@ export const EclipseCard = ({type, eclipse, navigation}: CardProps) => {
       <SvgUri onLoad={() => setLoadingImage(false)} uri={`${eclipse.link.image}&image-size=600,600&map-projection=EPSG:9840&map-labels=fr&map-theme=land-medium`} width={120} height={120}/>
       <View style={eclipseCardStyles.card.infos}>
         {
-          dayjs(eclipse.calendarDate).isBefore(dayjs()) &&
-            <Text style={eclipseCardStyles.card.infos.passed}>Éclipse passée</Text>
-        }
-        <Text style={eclipseCardStyles.card.infos.title}>{dayjs(eclipse.calendarDate).format('DD MMMM YYYY')}</Text>
-        <Text style={eclipseCardStyles.card.infos.subtitle}>{solarEclipseTypes[eclipse.type]}</Text>
+          loadingImage ? (
+            <View style={{flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+              <Text style={{color: app_colors.white, fontFamily: 'DMMonoRegular', fontSize: 12}}>Récupération des informations en cours...</Text>
+            </View>
+          ) :
+            <>
+              {
+                dayjs(eclipse.calendarDate).isBefore(dayjs()) &&
+                  <Text style={eclipseCardStyles.card.infos.passed}>Éclipse passée</Text>
+              }
+              <Text style={eclipseCardStyles.card.infos.title}>{dayjs(eclipse.calendarDate).format('DD MMMM YYYY')}</Text>
+              <Text style={eclipseCardStyles.card.infos.subtitle}>{solarEclipseTypes[eclipse.type]}</Text>
 
-        <View style={{marginVertical: 10}}>
-          <DSOValues small title={"Début:"} value={dayjs(eclipse.events.P1?.date).format('HH:mm:ss').replace(':', 'h ').replace(':', 'm ') + 's'}/>
-          <DSOValues small title={"Max:"} value={dayjs(eclipse.events.greatest?.date).format('HH:mm:ss').replace(':', 'h ').replace(':', 'm ') + 's'}/>
-          <DSOValues small title={"Fin:"} value={type === 'solar' ? dayjs(((eclipse) as SolarEclipse).events.P4?.date).format('HH:mm:ss').replace(':', 'h ').replace(':', 'm ') + 's' : dayjs(((eclipse) as LunarEclipse).events.P2?.date).format('HH:mm:ss').replace(':', 'h ').replace(':', 'm ') + 's'}/>
-        </View>
-        <SimpleButton small fullWidth onPress={() => handleDetailsRoute()} align={'center'} text={"En savoir plus"} backgroundColor={app_colors.white} textColor={app_colors.black} />
+              <View style={{marginVertical: 10}}>
+                <DSOValues small title={"Début:"} value={dayjs(eclipse.events.P1?.date).format('HH:mm:ss').replace(':', 'h ').replace(':', 'm ') + 's'}/>
+                <DSOValues small title={"Max:"} value={dayjs(eclipse.events.greatest?.date).format('HH:mm:ss').replace(':', 'h ').replace(':', 'm ') + 's'}/>
+                <DSOValues small title={"Fin:"} value={type === 'solar' ? dayjs(((eclipse) as SolarEclipse).events.P4?.date).format('HH:mm:ss').replace(':', 'h ').replace(':', 'm ') + 's' : dayjs(((eclipse) as LunarEclipse).events.P2?.date).format('HH:mm:ss').replace(':', 'h ').replace(':', 'm ') + 's'}/>
+              </View>
+              <SimpleButton small fullWidth onPress={() => handleDetailsRoute()} align={'center'} text={"En savoir plus"} backgroundColor={app_colors.white} textColor={app_colors.black} />
+            </>
+        }
       </View>
     </View>
   )

@@ -1,5 +1,5 @@
-import React from 'react'
-import { View, ScrollView } from 'react-native'
+import React, {useEffect} from 'react'
+import {View, ScrollView, StatusBar} from 'react-native'
 import { routes } from '../../helpers/routes'
 import { i18n } from '../../helpers/scripts/i18n'
 import { globalStyles } from '../../styles/global'
