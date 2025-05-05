@@ -64,6 +64,7 @@ export default function Planetarium({ route, navigation }: any) {
   const sceneRef = useRef<THREE.Scene | null>(null);
   const rendererRef = useRef<ExpoTHREE.Renderer | null>(null);
   const groundRef = useRef<THREE.Mesh | null>(null);
+  const atmosphereRef = useRef<THREE.Mesh | null>(null);
   const selectionCircleRef = useRef<THREE.Line | null>(null);
 
   const [planetariumLoading, setPlanetariumLoading] = useState<boolean>(true);
@@ -83,17 +84,19 @@ export default function Planetarium({ route, navigation }: any) {
 
 
   const _onContextCreate = async (gl: ExpoWebGLRenderingContext) => {
-    const {scene, camera, renderer, ground, selectionCircle} = initScene(gl, currentUserLocation, starsCatalog.filter((star: Star) => star.V < 6), planets, moonCoords);
+    const {scene, camera, renderer, ground, selectionCircle, atmosphere} = initScene(gl, currentUserLocation, starsCatalog.filter((star: Star) => star.V < 6), planets, moonCoords);
     sceneRef.current = scene;
     cameraRef.current = camera;
     rendererRef.current = renderer;
     groundRef.current = ground;
+    atmosphereRef.current = atmosphere;
     selectionCircleRef.current = selectionCircle;
 
     setGlViewParams({width: gl.drawingBufferWidth, height: gl.drawingBufferHeight});
     setPlanetariumLoading(false);
 
     const animate = () => {
+
       requestAnimationFrame(animate);
 
       if (inertiaEnabled) {
@@ -213,42 +216,42 @@ export default function Planetarium({ route, navigation }: any) {
 
 
 
-  const onShowEqGrid = () => {
-    if (showEqGrid) {
-      sceneRef.current?.remove(EquatorialGrid.grid1);
-      sceneRef.current?.remove(EquatorialGrid.grid2);
-      sceneRef.current?.remove(EquatorialGrid.grid3);
-      setShowEqGrid(false);
-    } else {
-      sceneRef.current?.add(EquatorialGrid.grid1);
-      sceneRef.current?.add(EquatorialGrid.grid2);
-      sceneRef.current?.add(EquatorialGrid.grid3);
-      setShowEqGrid(true);
-    }
-  }
-
-  const onShowAzGrid = () => {
-    if (showAzGrid) {
-      sceneRef.current?.remove(AzimuthalGrid.grid1);
-      sceneRef.current?.remove(AzimuthalGrid.grid2);
-      sceneRef.current?.remove(AzimuthalGrid.grid3);
-      setShowAzGrid(false);
-    } else {
-      sceneRef.current?.add(AzimuthalGrid.grid1);
-      sceneRef.current?.add(AzimuthalGrid.grid2);
-      sceneRef.current?.add(AzimuthalGrid.grid3);
-      setShowAzGrid(true);
-    }
-  }
-  const onShowConstellations = () => {
-    if (showConstellations) {
-      sceneRef.current?.remove(Constellations);
-      setShowConstellations(false);
-    } else {
-      sceneRef.current?.add(Constellations);
-      setShowConstellations(true);
-    }
-  }
+  // const onShowEqGrid = () => {
+  //   if (showEqGrid) {
+  //     sceneRef.current?.remove(EquatorialGrid.grid1);
+  //     sceneRef.current?.remove(EquatorialGrid.grid2);
+  //     sceneRef.current?.remove(EquatorialGrid.grid3);
+  //     setShowEqGrid(false);
+  //   } else {
+  //     sceneRef.current?.add(EquatorialGrid.grid1);
+  //     sceneRef.current?.add(EquatorialGrid.grid2);
+  //     sceneRef.current?.add(EquatorialGrid.grid3);
+  //     setShowEqGrid(true);
+  //   }
+  // }
+  //
+  // const onShowAzGrid = () => {
+  //   if (showAzGrid) {
+  //     sceneRef.current?.remove(AzimuthalGrid.grid1);
+  //     sceneRef.current?.remove(AzimuthalGrid.grid2);
+  //     sceneRef.current?.remove(AzimuthalGrid.grid3);
+  //     setShowAzGrid(false);
+  //   } else {
+  //     sceneRef.current?.add(AzimuthalGrid.grid1);
+  //     sceneRef.current?.add(AzimuthalGrid.grid2);
+  //     sceneRef.current?.add(AzimuthalGrid.grid3);
+  //     setShowAzGrid(true);
+  //   }
+  // }
+  // const onShowConstellations = () => {
+  //   if (showConstellations) {
+  //     sceneRef.current?.remove(Constellations);
+  //     setShowConstellations(false);
+  //   } else {
+  //     sceneRef.current?.add(Constellations);
+  //     setShowConstellations(true);
+  //   }
+  // }
 
   const onShowGround = () => {
     if (showGround) {
@@ -363,9 +366,9 @@ export default function Planetarium({ route, navigation }: any) {
       <PlanetariumUI
         navigation={navigation}
         infos={null}
-        onShowAzGrid={onShowAzGrid}
-        onShowConstellations={onShowConstellations}
-        onShowEqGrid={onShowEqGrid}
+        onShowAzGrid={() => { }}
+        onShowConstellations={() => { }}
+        onShowEqGrid={() => { }}
         onShowGround={onShowGround}
         onShowPlanets={() => { }}
         onShowDSO={() => { }}

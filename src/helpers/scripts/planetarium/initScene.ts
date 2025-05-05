@@ -14,6 +14,8 @@ import {Quaternion, Vector3} from "three";
 import {createDSO} from "./createDSO";
 import {drawConstellations} from "../astro/skymap/drawConstellations";
 import {createSelectionCircle} from "./createSelectionCircle";
+import {createAtmosphere} from "./createAtmosphere";
+import {setInitialAngles} from "./handlePanGesture";
 
 export const initScene = (
   gl: ExpoWebGLRenderingContext,
@@ -21,7 +23,14 @@ export const initScene = (
   starsCatalog: Star[],
   planetList: GlobalPlanet[],
   moonCoords: (EquatorialCoordinate & HorizontalCoordinate & { phase: string }),
-): {scene: THREE.Scene, camera: THREE.PerspectiveCamera, renderer: ExpoTHREE.Renderer, ground: THREE.Mesh, selectionCircle: THREE.Line} => {
+): {
+  scene: THREE.Scene,
+  camera: THREE.PerspectiveCamera,
+  renderer: ExpoTHREE.Renderer,
+  ground: THREE.Mesh,
+  atmosphere: THREE.Mesh,
+  selectionCircle: THREE.Line
+} => {
   console.log("[GLView] Initializing scene...")
 
   const scene = new THREE.Scene();
@@ -40,6 +49,7 @@ export const initScene = (
   const background = createBackground()
   const dso = createDSO()
   const constellations = drawConstellations()
+  const atmosphere = createAtmosphere();
   const light = new THREE.AmbientLight(0xffffff);
 
   // Camera position locked to the ground
@@ -54,7 +64,11 @@ export const initScene = (
   const groundTotalQuaternion: Quaternion = q3.multiply(q1).multiply(q2);
   camera.setRotationFromQuaternion(groundTotalQuaternion.normalize());
 
-  scene.add(selectionCircle, ground, background, stars, ...planets, moon, light, ...dso, constellations);
+  const initialEuler = new THREE.Euler().setFromQuaternion(groundTotalQuaternion, 'YXZ');
+  setInitialAngles(initialEuler.y, initialEuler.x);
+
+  scene.add(selectionCircle, ground, background, atmosphere, stars, ...planets, moon, light, ...dso, constellations);
+
 
   console.log("[GLView] Scene initialized")
   return {
@@ -62,6 +76,7 @@ export const initScene = (
     camera: camera,
     renderer: renderer,
     ground: ground,
+    atmosphere: atmosphere,
     selectionCircle: selectionCircle,
   }
 }

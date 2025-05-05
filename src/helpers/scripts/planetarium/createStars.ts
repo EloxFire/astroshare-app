@@ -21,15 +21,12 @@ export function createStars(starsCatalog: Star[]) {
     positions[i3 + 1] = y;
     positions[i3 + 2] = z;
 
-    sizes[i] = getStarSizeFromMagnitude(star.V) * 10;
+    sizes[i] = Math.max(0.5, 6 - star.V) * 4;
 
-    const i4 = i * 4;
     const [r, g, b] = getStarColorFromSpectralType(star.sp_type);
-    const alpha = Math.max(0.15, Math.min(1.0, star.V * 1.5));
-    colors[i4] = r;
-    colors[i4 + 1] = g;
-    colors[i4 + 2] = b;
-    colors[i4 + 3] = alpha;
+    colors[i3] = r;
+    colors[i3 + 1] = g;
+    colors[i3 + 2] = b;
   }
 
   const geometry = new THREE.BufferGeometry();
@@ -54,18 +51,26 @@ export function createStars(starsCatalog: Star[]) {
       varying vec4 vColor;
       
       void main() {
-        gl_FragColor = vColor; // pixel net, pas de cercle ni halo
+        vec2 coord = gl_PointCoord - vec2(0.5);
+        float dist = length(coord);
+      
+        // Masque circulaire net
+        if (dist > 0.5) {
+          discard;
+        }
+      
+        gl_FragColor = vColor;
       }
     `,
     depthWrite: false,
-      depthTest: true,
-      transparent: true,
-      blending: THREE.AdditiveBlending,
+    depthTest: true,
+    transparent: true,
+    blending: THREE.AdditiveBlending,
 });
 
   const starsCloud = new THREE.Points(geometry, material);
   starsCloud.frustumCulled = false;
-  starsCloud.renderOrder = 0;
+  starsCloud.renderOrder = 1;
 
   function onStarTap (star: Star) {
     console.log(`[GLView] Star tapped: ${getBrightStarName(star.ids)}`);
@@ -79,6 +84,44 @@ export function createStars(starsCatalog: Star[]) {
       }
     }
   };
+
+
+  // const starLabels: THREE.Object3D[] = [];
+  //
+  // for (let i = 0; i < starCount; i++) {
+  //   const star = starsCatalog[i];
+  //
+  //   if (star.V >= 2) continue;
+  //
+  //   const { x, y, z } = convertSphericalToCartesian(10, star.ra, star.dec);
+  //
+  //   const canvas = document.createElement('canvas');
+  //   canvas.width = 256;
+  //   canvas.height = 64;
+  //   const context = canvas.getContext('2d')!;
+  //   context.fillStyle = 'red';
+  //   context.font = '24px sans-serif';
+  //   context.textAlign = 'center';
+  //   context.fillText(getBrightStarName(star.ids), canvas.width / 2, canvas.height / 2 + 8);
+  //
+  //   const texture = new THREE.CanvasTexture(canvas);
+  //   const material = new THREE.SpriteMaterial({ map: texture, transparent: true });
+  //   const sprite = new THREE.Sprite(material);
+  //   sprite.scale.set(2, 0.5, 1); // adapte à ta scène
+  //
+  //   // Position juste sous l’étoile (y - offset)
+  //   sprite.position.set(x, y - 0.5, z);
+  //
+  //   starLabels.push(sprite);
+  //   console.log(`[GLView] Star label created: ${getBrightStarName(star.ids)}`);
+  // }
+  //
+  //
+  // const group = new THREE.Group();
+  // group.add(starsCloud);
+  // starLabels.forEach(label => group.add(label));
+  // console.log("[GLView] Stars created");
+  // return group;
 
   console.log("[GLView] Stars created");
   return starsCloud;
@@ -98,13 +141,7 @@ function getStarColorFromSpectralType(type: string | null): [number, number, num
     M: [1.0, 0.8, 0.6],   // rouge/orangé
   };
 
-  const code = type[0];
+  const code: string = type[0];
+  return [1.0, 1.0, 1.0]
   return spectralColors[code] || [1.0, 1.0, 1.0];
-}
-
-function getStarSizeFromMagnitude(mag: number): number {
-  const clamped = Math.min(Math.max(mag, -1.5), 6.5);
-  const brightness = Math.pow(2.512, -clamped);
-  const size = brightness * 2.0; // légèrement plus gros
-  return Math.max(0.5, Math.min(size, 2.6)); // bornes plus visibles
 }

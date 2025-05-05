@@ -6,7 +6,7 @@ import {EquatorialCoordinate, HorizontalCoordinate} from "@observerly/astrometry
 
 export const createMoon = (moonCoords: (EquatorialCoordinate & HorizontalCoordinate & { phase: string })) => {
   console.log("[GLView] Creating moon...")
-  const { x, y, z } = convertSphericalToCartesian(10, moonCoords.ra, moonCoords.dec);
+  const { x, y, z } = convertSphericalToCartesian(9.8, moonCoords.ra, moonCoords.dec);
   const moonGeometry = new THREE.SphereGeometry(0.1, 32, 32);
   const moonTexture = new ExpoTHREE.TextureLoader().load(planetTextures.MOON);
   const moonNormalMap = new ExpoTHREE.TextureLoader().load(planetTextures.MOON_NORMAL);

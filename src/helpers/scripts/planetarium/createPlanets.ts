@@ -11,7 +11,7 @@ export const createPlanets = (planets: GlobalPlanet[]) => {
   const meshes: THREE.Mesh[] = [];
 
   planets.forEach((planet: GlobalPlanet) => {
-    const { x, y, z } = convertSphericalToCartesian(10, planet.ra, planet.dec);
+    const { x, y, z } = convertSphericalToCartesian(9.9, planet.ra, planet.dec);
     const geometry = new THREE.SphereGeometry(0.1, 32, 32);
     const texture = new ExpoTHREE.TextureLoader().load(planetTextures[planet.name.toUpperCase()]);
     const material = new THREE.MeshBasicMaterial({ map: texture});

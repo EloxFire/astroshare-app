@@ -114,3 +114,8 @@ export const applyInertia = (cameraRef: React.MutableRefObject<THREE.Perspective
 
   camera.updateProjectionMatrix();
 };
+
+export function setInitialAngles(az: number, alt: number) {
+  azAngle = az;
+  altAngle = alt;
+}

@@ -20,7 +20,7 @@ export const createDSO = () => {
     ];
 
     image.worldCoords[0].forEach((imageVertex, index) => {
-      const { x, y, z } = convertSphericalToCartesian(11, imageVertex[0], imageVertex[1]);
+      const { x, y, z } = convertSphericalToCartesian(9.7, imageVertex[0], imageVertex[1]);
       verticesBuffer.push(x, y, z);
       corners.push(new THREE.Vector3(x, y, z));
 
@@ -70,6 +70,8 @@ export const createDSO = () => {
       vertexShader,
       fragmentShader,
       transparent: true,
+      depthWrite: false,
+      depthTest: true,
       blending: THREE.AdditiveBlending,
     });
 

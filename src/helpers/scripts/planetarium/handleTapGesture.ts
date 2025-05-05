@@ -22,7 +22,7 @@ export const handleTapStart = (
   const raycaster = new THREE.Raycaster();
   raycaster.near = 9;
   raycaster.far = 20;
-  raycaster.params.Points.threshold = 0.008 * camera.getEffectiveFOV();
+  raycaster.params.Points.threshold = 0.08;
 
   const pointer = new THREE.Vector2(
     (event.x / window.innerWidth) * 2 - 1,
@@ -38,7 +38,7 @@ export const handleTapStart = (
     return;
   }
 
-  const priority = ["dso", "star", "planet"];
+  const priority = ["planet", "star", "dso"];
   for (const type of priority) {
     const target = intersects.find((i) => i.object.userData?.type === type);
     if (!target || !target.object.userData?.onTap) continue;
