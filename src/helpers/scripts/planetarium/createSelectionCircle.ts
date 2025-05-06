@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import {planetariumRenderOrders} from "./utils/renderOrders";
+import {planetariumRenderOrders} from "./utils/planetariumSettings";
 
 /**
  * Crée un cercle de sélection visible autour d’un objet cliqué.

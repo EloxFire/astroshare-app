@@ -2,12 +2,12 @@ import * as THREE from 'three';
 import * as ExpoTHREE from "expo-three";
 import planetariumImages from '../../planetarium_images.json';
 import { convertSphericalToCartesian } from "./utils/convertSphericalToCartesian";
-import {planetariumRenderOrders} from "./utils/renderOrders";
+import {meshGroupsNames, planetariumRenderOrders} from "./utils/planetariumSettings";
 
 export const createDSO = () => {
   console.log("[GLView] Creating Deep Sky Objects...");
 
-  const dsoMeshes: THREE.Mesh[] = [];
+  const dsoMeshes: THREE.Group = new THREE.Group();
 
   planetariumImages.images.forEach((image) => {
     const verticesBuffer: number[] = [];
@@ -90,8 +90,10 @@ export const createDSO = () => {
 
     nebulae.renderOrder = planetariumRenderOrders.dso
 
-    dsoMeshes.push(nebulae);
+    dsoMeshes.add(nebulae);
   });
+
+  dsoMeshes.name = meshGroupsNames.dso;
 
   console.log("[GLView] Deep Sky Objects created");
   return dsoMeshes;

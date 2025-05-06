@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import {planetariumRenderOrders} from "./utils/renderOrders";
+import {meshGroupsNames, planetariumRenderOrders} from "./utils/planetariumSettings";
 
 export const createAtmosphere = () => {
   const atmosphereMaterial = new THREE.ShaderMaterial({
@@ -30,6 +30,7 @@ export const createAtmosphere = () => {
   const geometry = new THREE.SphereGeometry(70, 128, 128);
   const atmosphere = new THREE.Mesh(geometry, atmosphereMaterial);
   atmosphere.renderOrder = planetariumRenderOrders.atmosphere;
+  atmosphere.name = meshGroupsNames.atmosphere;
 
   return atmosphere;
 };

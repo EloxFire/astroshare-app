@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import {convertSphericalToCartesian} from "./utils/convertSphericalToCartesian";
 import {Star} from "../../types/Star";
 import {getBrightStarName} from "../astro/objects/getBrightStarName";
-import {planetariumRenderOrders} from "./utils/renderOrders";
+import {meshGroupsNames, planetariumRenderOrders} from "./utils/planetariumSettings";
 
 export function createStars(starsCatalog: Star[]) {
   console.log("[GLView] Creating stars...");
@@ -123,6 +123,7 @@ export function createStars(starsCatalog: Star[]) {
   // starLabels.forEach(label => group.add(label));
   // console.log("[GLView] Stars created");
   // return group;
+  starsCloud.name = meshGroupsNames.stars;
 
   console.log("[GLView] Stars created");
   return starsCloud;

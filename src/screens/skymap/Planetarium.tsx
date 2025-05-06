@@ -8,7 +8,7 @@ import * as THREE from "three";
 import * as ExpoTHREE from "expo-three";
 import { useStarCatalog } from '../../contexts/StarsContext';
 import PlanetariumUI from "../../components/skymap/PlanetariumUI";
-import {app_colors, planetTextures} from "../../helpers/constants";
+import {app_colors} from "../../helpers/constants";
 import {useSolarSystem} from "../../contexts/SolarSystemContext";
 import {initScene} from "../../helpers/scripts/planetarium/initScene";
 import {
@@ -23,6 +23,13 @@ import {
 } from "../../helpers/scripts/planetarium/handlePinchGesture";
 import {handleTapStart} from "../../helpers/scripts/planetarium/handleTapGesture";
 import {Star} from "../../helpers/types/Star";
+import {shutdownPlanetarium} from "../../helpers/scripts/planetarium/shutdownPlanetarium";
+import {
+  onShowAzGrid,
+  onShowConstellations, onShowDSO,
+  onShowEqGrid,
+  onShowGround, onShowPlanets
+} from "../../helpers/scripts/planetarium/ui/toggle";
 
 export default function Planetarium({ route, navigation }: any) {
 
@@ -36,12 +43,10 @@ export default function Planetarium({ route, navigation }: any) {
   const groundRef = useRef<THREE.Mesh | null>(null);
   const atmosphereRef = useRef<THREE.Mesh | null>(null);
   const selectionCircleRef = useRef<THREE.Line | null>(null);
+  const azGridRef = useRef<THREE.Group | null>(null);
+  const eqGridRef = useRef<THREE.Group | null>(null);
 
   const [planetariumLoading, setPlanetariumLoading] = useState<boolean>(true);
-  const [showEqGrid, setShowEqGrid] = useState<boolean>(false);
-  const [showAzGrid, setShowAzGrid] = useState<boolean>(false);
-  const [showConstellations, setShowConstellations] = useState<boolean>(true);
-  const [showGround, setShowGround] = useState<boolean>(true);
   const [glViewParams, setGlViewParams] = useState<any>({width: 0, height: 0});
 
   useEffect(() => {
@@ -52,15 +57,23 @@ export default function Planetarium({ route, navigation }: any) {
     };
   }, []);
 
+  useEffect(() => {
+    return () => {
+      shutdownPlanetarium(sceneRef.current!)
+    }
+  }, []);
+
 
   const _onContextCreate = async (gl: ExpoWebGLRenderingContext) => {
-    const {scene, camera, renderer, ground, selectionCircle, atmosphere} = initScene(gl, currentUserLocation, starsCatalog.filter((star: Star) => star.V < 6), planets, moonCoords);
+    const {scene, camera, renderer, ground, selectionCircle, atmosphere, grids} = initScene(gl, currentUserLocation, starsCatalog.filter((star: Star) => star.V < 6), planets, moonCoords);
     sceneRef.current = scene;
     cameraRef.current = camera;
     rendererRef.current = renderer;
     groundRef.current = ground;
     atmosphereRef.current = atmosphere;
     selectionCircleRef.current = selectionCircle;
+    azGridRef.current = grids.azGrid;
+    eqGridRef.current = grids.eqGrid;
 
     setGlViewParams({width: gl.drawingBufferWidth, height: gl.drawingBufferHeight});
     setPlanetariumLoading(false);
@@ -112,12 +125,12 @@ export default function Planetarium({ route, navigation }: any) {
       <PlanetariumUI
         navigation={navigation}
         infos={null}
-        onShowAzGrid={() => { }}
-        onShowConstellations={() => { }}
-        onShowEqGrid={() => { }}
-        onShowGround={() => { }}
-        onShowPlanets={() => { }}
-        onShowDSO={() => { }}
+        onShowAzGrid={() => onShowAzGrid(sceneRef.current!)}
+        onShowConstellations={() => onShowConstellations(sceneRef.current!)}
+        onShowEqGrid={() => onShowEqGrid(sceneRef.current!)}
+        onShowGround={() => onShowGround(sceneRef.current!)}
+        onShowPlanets={() => onShowPlanets(sceneRef.current!)}
+        onShowDSO={() => onShowDSO(sceneRef.current!)}
         onCenterObject={() => { }}
       />
       <GestureDetector gesture={composedGestures}>

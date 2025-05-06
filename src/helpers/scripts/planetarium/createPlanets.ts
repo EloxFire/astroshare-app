@@ -3,13 +3,13 @@ import * as ExpoTHREE from "expo-three";
 import {GlobalPlanet} from "../../types/GlobalPlanet";
 import {planetTextures} from "../../constants";
 import {convertSphericalToCartesian} from "./utils/convertSphericalToCartesian";
-import {planetariumRenderOrders} from "./utils/renderOrders";
+import {meshGroupsNames, planetariumRenderOrders} from "./utils/planetariumSettings";
 
 
 export const createPlanets = (planets: GlobalPlanet[]) => {
   console.log("[GLView] Creating planets...")
 
-  const meshes: THREE.Mesh[] = [];
+  const meshes: THREE.Group = new THREE.Group();
 
   planets.forEach((planet: GlobalPlanet) => {
     const { x, y, z } = convertSphericalToCartesian(9.9, planet.ra, planet.dec);
@@ -33,8 +33,10 @@ export const createPlanets = (planets: GlobalPlanet[]) => {
 
     planetMesh.renderOrder = planetariumRenderOrders.planets;
 
-    meshes.push(planetMesh);
+    meshes.add(planetMesh);
   })
+
+  meshes.name = meshGroupsNames.planets;
 
   console.log("[GLView] Planets created")
   return meshes;

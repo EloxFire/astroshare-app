@@ -20,7 +20,7 @@ import {createEquatorialGrid} from "./createEquatorialGrid";
 import {createAzimuthalGrid} from "./createAzimutalGrid";
 import {getGlobePosition} from "./utils/getGlobePosition";
 import {hex_colors} from "../../constants";
-import {planetariumRenderOrders} from "./utils/renderOrders";
+import {meshGroupsNames, planetariumRenderOrders} from "./utils/planetariumSettings";
 
 export const initScene = (
   gl: ExpoWebGLRenderingContext,
@@ -34,7 +34,11 @@ export const initScene = (
   renderer: ExpoTHREE.Renderer,
   ground: THREE.Mesh,
   atmosphere: THREE.Mesh,
-  selectionCircle: THREE.Line
+  selectionCircle: THREE.Line,
+  grids: {
+    eqGrid: THREE.Group,
+    azGrid: THREE.Group,
+  }
 } => {
   console.log("[GLView] Initializing scene...")
 
@@ -67,6 +71,9 @@ export const initScene = (
   azGrid.add(azGrid1);
   eqGrid.add(eqGrid1);
 
+  azGrid.name = meshGroupsNames.azGrid
+  eqGrid.name = meshGroupsNames.eqGrid
+
   // Camera position locked to the ground
   const q1: Quaternion = new THREE.Quaternion;
   const q2: Quaternion = new THREE.Quaternion;
@@ -82,7 +89,7 @@ export const initScene = (
   const initialEuler = new THREE.Euler().setFromQuaternion(groundTotalQuaternion, 'YXZ');
   setInitialAngles(initialEuler.y, initialEuler.x);
 
-  scene.add(selectionCircle, eqGrid, azGrid, ground, background, atmosphere, stars, ...planets, moon, light, ...dso, constellations);
+  scene.add(selectionCircle, eqGrid, azGrid, ground, background, atmosphere, stars, planets, moon, light, dso, constellations);
 
 
   console.log("[GLView] Scene initialized")
@@ -93,5 +100,9 @@ export const initScene = (
     ground: ground,
     atmosphere: atmosphere,
     selectionCircle: selectionCircle,
+    grids: {
+      eqGrid: eqGrid,
+      azGrid: azGrid,
+    }
   }
 }

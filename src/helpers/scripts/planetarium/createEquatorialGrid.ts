@@ -1,6 +1,6 @@
 import { THREE } from 'expo-three';
 import {drawCircle} from "./utils/drawCircle";
-import {planetariumRenderOrders} from "./utils/renderOrders";
+import {planetariumRenderOrders} from "./utils/planetariumSettings";
 
 /**
  * Crée une grille équatoriale sphérique à plusieurs niveaux de détail.
