@@ -1,7 +1,8 @@
 import * as THREE from 'three';
-import {convertSphericalToCartesian} from "../astro/skymap/convertSphericalToCartesian";
+import {convertSphericalToCartesian} from "./utils/convertSphericalToCartesian";
 import {Star} from "../../types/Star";
 import {getBrightStarName} from "../astro/objects/getBrightStarName";
+import {planetariumRenderOrders} from "./utils/renderOrders";
 
 export function createStars(starsCatalog: Star[]) {
   console.log("[GLView] Creating stars...");
@@ -70,7 +71,7 @@ export function createStars(starsCatalog: Star[]) {
 
   const starsCloud = new THREE.Points(geometry, material);
   starsCloud.frustumCulled = false;
-  starsCloud.renderOrder = 1;
+  starsCloud.renderOrder = planetariumRenderOrders.stars;
 
   function onStarTap (star: Star) {
     console.log(`[GLView] Star tapped: ${getBrightStarName(star.ids)}`);

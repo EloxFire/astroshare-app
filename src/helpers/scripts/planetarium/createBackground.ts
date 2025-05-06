@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import * as ExpoTHREE from "expo-three";
+import {planetariumRenderOrders} from "./utils/renderOrders";
 
 export const createBackground = () => {
   console.log("[GLView] Creating MilkyWay background...");
@@ -18,10 +19,9 @@ export const createBackground = () => {
 
   const geometry = new THREE.SphereGeometry(100, 64, 64);
   const milkyWay = new THREE.Mesh(geometry, material);
-  milkyWay.renderOrder = 0;
 
   milkyWay.quaternion.setFromAxisAngle(new THREE.Vector3(1, 0, 0), -Math.PI / 2);
-  milkyWay.renderOrder = -1;
+  milkyWay.renderOrder = planetariumRenderOrders.background;
 
   console.log("[GLView] MilkyWay background created");
   return milkyWay;

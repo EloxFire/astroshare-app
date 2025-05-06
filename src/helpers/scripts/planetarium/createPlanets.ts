@@ -2,7 +2,8 @@ import * as THREE from 'three';
 import * as ExpoTHREE from "expo-three";
 import {GlobalPlanet} from "../../types/GlobalPlanet";
 import {planetTextures} from "../../constants";
-import {convertSphericalToCartesian} from "../astro/skymap/convertSphericalToCartesian";
+import {convertSphericalToCartesian} from "./utils/convertSphericalToCartesian";
+import {planetariumRenderOrders} from "./utils/renderOrders";
 
 
 export const createPlanets = (planets: GlobalPlanet[]) => {
@@ -29,6 +30,8 @@ export const createPlanets = (planets: GlobalPlanet[]) => {
         console.log(`[GLView] Planet tapped: ${planet.name}`);
       }
     };
+
+    planetMesh.renderOrder = planetariumRenderOrders.planets;
 
     meshes.push(planetMesh);
   })

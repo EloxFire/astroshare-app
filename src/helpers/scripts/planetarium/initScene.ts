@@ -12,10 +12,15 @@ import {createMoon} from "./createMoon";
 import {LocationObject} from "../../types/LocationObject";
 import {Quaternion, Vector3} from "three";
 import {createDSO} from "./createDSO";
-import {drawConstellations} from "../astro/skymap/drawConstellations";
+import {drawConstellations} from "./drawConstellations";
 import {createSelectionCircle} from "./createSelectionCircle";
 import {createAtmosphere} from "./createAtmosphere";
 import {setInitialAngles} from "./handlePanGesture";
+import {createEquatorialGrid} from "./createEquatorialGrid";
+import {createAzimuthalGrid} from "./createAzimutalGrid";
+import {getGlobePosition} from "./utils/getGlobePosition";
+import {hex_colors} from "../../constants";
+import {planetariumRenderOrders} from "./utils/renderOrders";
 
 export const initScene = (
   gl: ExpoWebGLRenderingContext,
@@ -50,7 +55,17 @@ export const initScene = (
   const dso = createDSO()
   const constellations = drawConstellations()
   const atmosphere = createAtmosphere();
+  const {eqGrid1, eqGrid2, eqGrid3} = createEquatorialGrid(hex_colors.blue, .5);
+  const {azGrid1, azGrid2, azGrid3} = createAzimuthalGrid(hex_colors.violet, .5);
   const light = new THREE.AmbientLight(0xffffff);
+
+  const eqGrid = new THREE.Group();
+  const azGrid = new THREE.Group();
+
+  azGrid.lookAt(getGlobePosition(currentUserLocation.lat, currentUserLocation.lon))
+
+  azGrid.add(azGrid1);
+  eqGrid.add(eqGrid1);
 
   // Camera position locked to the ground
   const q1: Quaternion = new THREE.Quaternion;
@@ -67,7 +82,7 @@ export const initScene = (
   const initialEuler = new THREE.Euler().setFromQuaternion(groundTotalQuaternion, 'YXZ');
   setInitialAngles(initialEuler.y, initialEuler.x);
 
-  scene.add(selectionCircle, ground, background, atmosphere, stars, ...planets, moon, light, ...dso, constellations);
+  scene.add(selectionCircle, eqGrid, azGrid, ground, background, atmosphere, stars, ...planets, moon, light, ...dso, constellations);
 
 
   console.log("[GLView] Scene initialized")

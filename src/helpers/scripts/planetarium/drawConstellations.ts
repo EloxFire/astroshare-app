@@ -1,6 +1,7 @@
 import { THREE } from "expo-three";
-import { constellationsAsterisms } from "../constellationsAsterisms"
-import { convertSphericalToCartesian } from "./convertSphericalToCartesian";
+import { constellationsAsterisms } from "../astro/constellationsAsterisms"
+import { convertSphericalToCartesian } from "./utils/convertSphericalToCartesian";
+import {planetariumRenderOrders} from "./utils/renderOrders";
 
 
 export const drawConstellations = () => {
@@ -22,5 +23,8 @@ export const drawConstellations = () => {
             group.add(line);
         });
     });
+
+    group.renderOrder = planetariumRenderOrders.constellations;
+
     return group;
 }

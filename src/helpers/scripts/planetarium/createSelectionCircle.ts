@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import {planetariumRenderOrders} from "./utils/renderOrders";
 
 /**
  * Crée un cercle de sélection visible autour d’un objet cliqué.
@@ -23,6 +24,8 @@ export function createSelectionCircle(radius: number = 1, color: number = 0xff00
 
   const circle = new THREE.LineSegments(edgeGeometry, material);
   circle.visible = false;
+
+  circle.renderOrder = planetariumRenderOrders.selectionCircle;
 
   return circle;
 }

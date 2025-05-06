@@ -3,7 +3,6 @@ import {
   TapGestureHandlerEventPayload,
 } from "react-native-gesture-handler";
 import { THREE } from "expo-three";
-import {createEllipseFromCorners} from "./createEllipseFromCorners";
 
 export const handleTapStart = (
   event: GestureStateChangeEvent<TapGestureHandlerEventPayload>,

@@ -55,6 +55,11 @@ export const app_colors = {
   warning: '#FFA500',
 }
 
+export const hex_colors = {
+  blue: 0x061e92,
+  violet: 0x8A2BE2,
+}
+
 export const Polaris = {
   ra: 37.954560670189856,
   dec: 37.954560670189856,

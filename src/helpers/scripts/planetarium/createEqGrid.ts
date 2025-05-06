@@ -1,5 +1,5 @@
 import {THREE} from "expo-three";
-import {drawCircle} from "../astro/skymap/drawCircle";
+import {drawCircle} from "./utils/drawCircle";
 
 export const createEqGrid = () => {
   console.log("[GLView] Creating equatorial grid...");

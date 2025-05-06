@@ -1,10 +1,11 @@
 import { THREE } from "expo-three";
 import { MultiplyMatrices } from "./MultiplyMatrices";
 
-export const drawCircle = (radius: THREE.Vector3, position: THREE.Vector3, rotAxis: THREE.Vector3, color:number) => {
+export const drawCircle = (radius: THREE.Vector3, position: THREE.Vector3, rotAxis: THREE.Vector3, color:number, opacity: number = 1) => {
     const material = new THREE.LineBasicMaterial({
         color: color,
-        transparent: true
+        transparent: true,
+        opacity: opacity
     });
     let points = [];
     const axis = rotAxis.normalize();

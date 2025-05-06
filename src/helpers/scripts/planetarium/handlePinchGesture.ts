@@ -4,10 +4,10 @@ import {
   PinchGestureChangeEventPayload,
   PinchGestureHandlerEventPayload,
 } from "react-native-gesture-handler";
-import {getEffectiveAngularResolution} from "../astro/skymap/getEffectiveAngularResolution";
-import {getEuclideanDistance} from "../astro/skymap/getEuclideanDistance";
+import {getEffectiveAngularResolution} from "./utils/getEffectiveAngularResolution";
+import {getEuclideanDistance} from "./utils/getEuclideanDistance";
 import {THREE} from "expo-three";
-import {getFovFromAngularResolution} from "../astro/skymap/getFovFromAngularResolution";
+import {getFovFromAngularResolution} from "./utils/getFovFromAngularResolution";
 
 let startAngle: number = 0;
 

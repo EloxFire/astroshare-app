@@ -1,8 +1,9 @@
 import * as THREE from 'three';
 import * as ExpoTHREE from "expo-three";
-import {convertSphericalToCartesian} from "../astro/skymap/convertSphericalToCartesian";
+import {convertSphericalToCartesian} from "./utils/convertSphericalToCartesian";
 import {planetTextures} from "../../constants";
 import {EquatorialCoordinate, HorizontalCoordinate} from "@observerly/astrometry";
+import {planetariumRenderOrders} from "./utils/renderOrders";
 
 export const createMoon = (moonCoords: (EquatorialCoordinate & HorizontalCoordinate & { phase: string })) => {
   console.log("[GLView] Creating moon...")
@@ -21,6 +22,8 @@ export const createMoon = (moonCoords: (EquatorialCoordinate & HorizontalCoordin
       console.log(`[GLView] Moon tapped: ${moonCoords.phase}`);
     }
   };
+
+  moonMesh.renderOrder = planetariumRenderOrders.moon;
 
   console.log("[GLView] Moon created")
   return moonMesh;

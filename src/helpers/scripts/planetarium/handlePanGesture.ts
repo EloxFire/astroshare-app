@@ -5,7 +5,7 @@ import {
   PanGestureChangeEventPayload,
   PanGestureHandlerEventPayload
 } from "react-native-gesture-handler";
-import {getEffectiveAngularResolution} from "../astro/skymap/getEffectiveAngularResolution";
+import {getEffectiveAngularResolution} from "./utils/getEffectiveAngularResolution";
 import {Quaternion} from "three";
 
 // Variables partagées (tu peux aussi envisager un système de classe ou d’état si besoin)

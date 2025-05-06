@@ -1,6 +1,7 @@
 import * as THREE from 'three';
-import {getGlobePosition} from "../astro/skymap/getGlobePosition";
+import {getGlobePosition} from "./utils/getGlobePosition";
 import {LocationObject} from "../../types/LocationObject";
+import {planetariumRenderOrders} from "./utils/renderOrders";
 
 export const createGround = (currentUserLocation: LocationObject) => {
   console.log("[GLView] Creating ground...");
@@ -29,14 +30,14 @@ export const createGround = (currentUserLocation: LocationObject) => {
   });
 
   groundShader.side = THREE.BackSide;
-  const ground = new THREE.Mesh(groundGeometry, groundShader);
-  ground.renderOrder = 1000;
 
+  const ground = new THREE.Mesh(groundGeometry, groundShader);
   const lookAtVec = getGlobePosition(currentUserLocation.lat, currentUserLocation.lon);
   ground.lookAt(lookAtVec);
 
   // On récupère l'orientation calculée et on la stocke dans une propriété custom
   ground.userData.baseQuaternion = ground.quaternion.clone();
+  ground.renderOrder = planetariumRenderOrders.ground;
 
   return ground;
 }
