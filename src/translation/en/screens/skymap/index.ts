@@ -12,6 +12,10 @@ export const skymapTranslations = {
     planetarium: {
       title: "3D Skymap (Coming soon)",
       subtitle: "// Visualize the sky in 3D"
+    },
+    constellations: {
+      title: "Constellation maps",
+      subtitle: "// Coming soon!"
     }
   },
   info: "Use our skymaps to locate yourself and explore the night sky.",

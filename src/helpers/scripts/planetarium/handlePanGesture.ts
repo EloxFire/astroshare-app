@@ -32,7 +32,7 @@ export const handlePanChange = (
   groundRef: React.MutableRefObject<THREE.Mesh | null>,
   cameraWidth: number
 ) => {
-  console.log("[GLView] Pan gesture changed");
+  // console.log("[GLView] Pan gesture changed");
   const camera = cameraRef.current;
   const ground = groundRef.current!;
 

@@ -75,6 +75,7 @@ export function createStars(starsCatalog: Star[]) {
 
   function onStarTap (star: Star) {
     console.log(`[GLView] Star tapped: ${getBrightStarName(star.ids)}`);
+
   }
 
   starsCloud.userData = {

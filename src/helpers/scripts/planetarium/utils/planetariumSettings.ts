@@ -24,4 +24,5 @@ export const meshGroupsNames = {
   selectionCircle: 'selectionCircle',
   azGrid: 'azGrid',
   eqGrid: 'eqGrid',
+  compassLabels: 'compassLabels',
 }

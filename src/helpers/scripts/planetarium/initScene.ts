@@ -20,7 +20,7 @@ import {createEquatorialGrid} from "./createEquatorialGrid";
 import {createAzimuthalGrid} from "./createAzimutalGrid";
 import {getGlobePosition} from "./utils/getGlobePosition";
 import {hex_colors} from "../../constants";
-import {meshGroupsNames, planetariumRenderOrders} from "./utils/planetariumSettings";
+import {meshGroupsNames} from "./utils/planetariumSettings";
 
 export const initScene = (
   gl: ExpoWebGLRenderingContext,
@@ -50,6 +50,9 @@ export const initScene = (
   renderer.setClearColor(0x080808);
   camera.position.set(0, 0, 0);
 
+  const axesHelper = new THREE.AxesHelper( 3 );
+  scene.add( axesHelper );
+
   const selectionCircle = createSelectionCircle()
   const ground = createGround(currentUserLocation)
   const stars = createStars(starsCatalog)
@@ -61,6 +64,7 @@ export const initScene = (
   const atmosphere = createAtmosphere();
   const {eqGrid1, eqGrid2, eqGrid3} = createEquatorialGrid(hex_colors.blue, .5);
   const {azGrid1, azGrid2, azGrid3} = createAzimuthalGrid(hex_colors.violet, .5);
+
   const light = new THREE.AmbientLight(0xffffff);
 
   const eqGrid = new THREE.Group();
