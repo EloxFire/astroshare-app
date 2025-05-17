@@ -1,12 +1,10 @@
 import React, {useEffect, useState} from 'react'
-import {Image, Text, TouchableOpacity, View} from 'react-native'
+import {Image, Text, View} from 'react-native'
 import { issPassCardStyles } from '../../styles/components/cards/issPassCard'
 import dayjs from 'dayjs';
 import {IssPass} from "../../helpers/types/IssPass";
 import {weatherImages} from "../../helpers/scripts/loadImages";
 import {determineIssVisibility} from "../../helpers/scripts/astro/determineIssVisibility";
-import {getTimeFromLaunch} from "../../helpers/scripts/utils/getTimeFromLaunch";
-import {getWindDir} from "../../helpers/scripts/getWindDir";
 
 interface IssPassCardProps {
   pass: IssPass;
@@ -64,8 +62,8 @@ export default function IssPassCard({ pass, passIndex, navigation, weather }: Is
         </View>
 
         <View style={issPassCardStyles.column}>
-          <Text style={issPassCardStyles.column.title}>Altitude</Text>
-          <Text style={issPassCardStyles.column.value}>{pass.startEl}°</Text>
+          <Text style={issPassCardStyles.column.title}>Altitude max</Text>
+          <Text style={issPassCardStyles.column.value}>{pass.maxEl}°</Text>
         </View>
 
         <View style={issPassCardStyles.column}>
@@ -74,48 +72,5 @@ export default function IssPassCard({ pass, passIndex, navigation, weather }: Is
         </View>
       </View>
     </View>
-    // <TouchableOpacity style={issPassCardStyles.card}>
-    //   <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center', gap: 10}}>
-    //     <Text style={issPassCardStyles.card.title}>{dayjs.unix(pass.startUTC).format('DD MMM YYYY')}</Text>
-    //     <Text style={[issPassCardStyles.card.subtitle, {backgroundColor: visibilityBadge.backgroundColor, color: visibilityBadge.foregroundColor}]}>{visibilityBadge.text}</Text>
-    //     {!isWeatherAccurate && <Image style={issPassCardStyles.card.noWeather} source={require('../../../assets/icons/FiCloudOff.png')}/>}
-    //   </View>
-    //
-    //   <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
-    //     <View style={issPassCardStyles.card.column}>
-    //       <Image style={issPassCardStyles.card.weatherIcon} source={isWeatherAccurate ? weatherImages[weather[passWeatherIndex]?.weather[0].icon] : require('../../../assets/icons/FiIss.png')}/>
-    //     </View>
-    //     <View style={issPassCardStyles.card.column}>
-    //       <View style={issPassCardStyles.card.row}>
-    //         <Image style={issPassCardStyles.card.icon} source={require('../../../assets/icons/FiSunrise.png')}/>
-    //         <Text style={issPassCardStyles.card.text}>{dayjs.unix(pass.startUTC).format('HH:mm')}</Text>
-    //       </View>
-    //       <View style={issPassCardStyles.card.row}>
-    //         <Image style={issPassCardStyles.card.icon} source={require('../../../assets/icons/FiSunset.png')}/>
-    //         <Text style={issPassCardStyles.card.text}>{dayjs.unix(pass.endUTC).format('HH:mm')}</Text>
-    //       </View>
-    //     </View>
-    //     <View style={issPassCardStyles.card.column}>
-    //       <View style={issPassCardStyles.card.row}>
-    //         <Image style={issPassCardStyles.card.icon} source={require('../../../assets/icons/FiClock.png')}/>
-    //         <Text style={issPassCardStyles.card.text}>{passLength}</Text>
-    //       </View>
-    //       <View style={issPassCardStyles.card.row}>
-    //         <Image style={issPassCardStyles.card.icon} source={require('../../../assets/icons/FiSun.png')}/>
-    //         <Text style={issPassCardStyles.card.text}>{pass.mag}</Text>
-    //       </View>
-    //     </View>
-    //     <View style={issPassCardStyles.card.column}>
-    //       <View style={issPassCardStyles.card.row}>
-    //         <Image style={issPassCardStyles.card.icon} source={require('../../../assets/icons/FiCompass.png')}/>
-    //         <Text style={issPassCardStyles.card.text}>{pass.startAz.toFixed(2)}° ({pass.startAzCompass})</Text>
-    //       </View>
-    //       <View style={issPassCardStyles.card.row}>
-    //         <Image style={issPassCardStyles.card.icon} source={require('../../../assets/icons/FiAngleRight.png')}/>
-    //         <Text style={issPassCardStyles.card.text}>{pass.maxEl.toFixed(2)}°</Text>
-    //       </View>
-    //     </View>
-    //   </View>
-    // </TouchableOpacity>
   )
 }

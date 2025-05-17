@@ -96,7 +96,7 @@ export default function Apod({ navigation }: any) {
                     />
                   :
                   apod?.media_type === 'image' && (
-                    <Image source={{ uri: apod?.url }} width={apodSize.width} height={apodSize.height} style={apodStyles.content.image} resizeMode='contain' />
+                    <Image onLoadStart={() => setLoading(true)} onLoadEnd={() => setLoading(false)} source={{ uri: apod?.url || undefined }} width={apodSize.width} height={apodSize.height} style={apodStyles.content.image} resizeMode='contain' />
                   )
             }
 

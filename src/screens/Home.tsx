@@ -47,9 +47,9 @@ export default function Home({ navigation }: any) {
     <View style={globalStyles.body}>
       <AppHeader navigation={navigation} />
       <BannerHandler />
-      <NewsBannerHandler navigation={navigation} />
       <LocationHeader />
       <HomeSearchModule navigation={navigation} />
+      <NewsBannerHandler navigation={navigation} />
       <ScrollView style={{ borderTopWidth: 1, borderTopColor: app_colors.white_twenty }}>
         <HomeWidgetDisplay />
         <View style={homeStyles.toolsSuggestions}>
@@ -62,7 +62,7 @@ export default function Home({ navigation }: any) {
             <BigButton disabled={!hasInternetConnection || !currentUserLocation} navigation={navigation} targetScreen={routes.moonPhases.path} text={i18n.t('home.buttons.moon_phases.title')} subtitle={i18n.t('home.buttons.moon_phases.subtitle')} icon={require('../../assets/icons/FiMoon.png')} />
             <BigButton disabled={!hasInternetConnection} navigation={navigation} targetScreen={routes.solarWeather.path} text={i18n.t('home.buttons.solar_weather.title')} subtitle={i18n.t('home.buttons.solar_weather.subtitle')} icon={require('../../assets/icons/SolarWind.png')} />
             <BigButton navigation={navigation} targetScreen={routes.calculations.home.path} text={i18n.t('home.buttons.calculations.title')} subtitle={i18n.t('home.buttons.calculations.subtitle')} icon={require('../../assets/icons/FiCpu.png')} />
-            <BigButton isPremium disabled={!hasInternetConnection || !currentUserLocation} navigation={navigation} targetScreen={routes.transits.home.path} text={i18n.t('home.buttons.transits.title')} subtitle={i18n.t('home.buttons.transits.subtitle')} icon={require('../../assets/icons/FiTransit.png')} />
+            <BigButton disabled={!hasInternetConnection || !currentUserLocation} navigation={navigation} targetScreen={routes.transits.home.path} text={i18n.t('home.buttons.transits.title')} subtitle={i18n.t('home.buttons.transits.subtitle')} icon={require('../../assets/icons/FiTransit.png')} />
           </View>
         </View>
         <View style={homeStyles.nasaTools}>

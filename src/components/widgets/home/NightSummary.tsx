@@ -7,10 +7,8 @@ import { extractNumbers } from '../../../helpers/scripts/extractNumbers';
 import { calculateHorizonAngle } from '../../../helpers/scripts/astro/calculateHorizonAngle';
 import { i18n } from '../../../helpers/scripts/i18n';
 import { app_colors } from '../../../helpers/constants';
-import { globalStyles } from '../../../styles/global';
 import { nightSummaryStyles } from '../../../styles/components/widgets/home/nightSummary';
 import dayjs from 'dayjs';
-import { moonIcons } from '../../../helpers/scripts/loadImages';
 import { GlobalPlanet } from '../../../helpers/types/GlobalPlanet';
 import { useSolarSystem } from '../../../contexts/SolarSystemContext';
 import { isNightPastTwelve } from '../../../helpers/scripts/astro/transits/isNightPastTwelve';
@@ -57,7 +55,7 @@ export default function NightSummary({ noHeader }: NightSummaryProps) {
   const getInfos = async () => {
     if (!currentUserLocation) return;
     const date = isNightPastTwelve(new Date(), {latitude: currentUserLocation.lat, longitude: currentUserLocation.lon}) ? dayjs().subtract(1, 'day').toDate() : dayjs().subtract(12,'hours').toDate();
-    
+
 
     const altitude = selectedSpot ? selectedSpot.equipments.altitude : defaultAltitude;
     const observer: GeographicCoordinate = { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }
@@ -109,7 +107,6 @@ export default function NightSummary({ noHeader }: NightSummaryProps) {
 
   const fetchMoonImage = async () => {
     const response = await astroshareApi.get('/moon/illustration')
-    console.log(response)
     setMoonImageUrl({uri: `data:image/png;base64,${response.data.image}`})
   }
 

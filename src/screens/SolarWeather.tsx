@@ -188,6 +188,7 @@ export default function SolarWeather({ navigation }: any) {
             <Text style={solarWeatherStyles.container.title}>{i18n.t('solarWeather.containers.kpIndexes')}</Text>
             <Text style={[solarWeatherStyles.container.subtitle, {marginBottom: 10}]}>Source : SWPC (Space Weather Prediction Center) / NOAA (National Oceanic and Atmospheric Administration)</Text>
             <Text style={[solarWeatherStyles.container.subtitle, {marginBottom: 10}]}>Les horaires suivantes sont en UTC</Text>
+            <Text style={[solarWeatherStyles.container.subtitle, {marginBottom: 10}]}>Ce graphique affiche des tranches de 3 heures. Il est mis à jour toutes les 3 heures.</Text>
             {
               isProUser(currentUser) ?
                 <KpChart />

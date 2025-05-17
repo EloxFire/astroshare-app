@@ -52,7 +52,7 @@ export default function NewsBannerHandler({ navigation }: Props) {
       />
       <View>
       {/*  Item Dots */}
-        <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'center', marginTop: 10}}>
+        <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'center', marginVertical: 10}}>
           <View style={{flexDirection: 'row'}}>
             {banners.map((_, index) => (
               <View
