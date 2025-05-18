@@ -1,5 +1,4 @@
 import { app_colors } from "../../helpers/constants";
-import {Dimensions} from "react-native";
 
 export const apodStyles = {
   content: {
@@ -32,7 +31,7 @@ export const apodStyles = {
       alignSelf: 'flex-start' as 'flex-start',
       marginBottom: 10
     },
-    
+
     text: {
       color: app_colors.white,
       fontFamily: 'GilroyRegular',

@@ -2,13 +2,14 @@ import {ActivityIndicator, Text, View} from "react-native";
 import {eclipseCardStyles} from "../../styles/components/cards/EclipseCard";
 import {SolarEclipse} from "../../helpers/types/eclipses/SolarEclipse";
 import { SvgUri } from 'react-native-svg';
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import dayjs from "dayjs";
 import {app_colors, solarEclipseTypes} from "../../helpers/constants";
 import DSOValues from "../commons/DSOValues";
 import SimpleButton from "../commons/buttons/SimpleButton";
 import {routes} from "../../helpers/routes";
 import {LunarEclipse} from "../../helpers/types/LunarEclipse";
+import {log} from "expo/build/devtools/logger";
 
 interface CardProps {
   type: 'solar' | 'lunar'
@@ -27,6 +28,10 @@ export const EclipseCard = ({type, eclipse, navigation}: CardProps) => {
       navigation.push(routes.transits.eclipses.lunarDetails.path, {eclipse: eclipse})
     }
   }
+
+  useEffect(() => {
+    console.log("Eclipse image link : ", `${eclipse.link.image}&image-size=600,600&map-projection=EPSG:9840&map-labels=fr&map-theme=land-medium`)
+  }, []);
 
   return (
     <View style={eclipseCardStyles.card}>

@@ -99,7 +99,7 @@ export default function LunarEclipsesScreen({ navigation }: any) {
           <View style={{display: 'flex', gap: 10, marginTop: 20}}>
             {
               eclipses.length === 0 && !loading && (
-                <ScreenInfo image={require('../../../assets/icons/FiInfo.png')} text={"Appuyez sur 'Rechercher' pour afficher les éclipses lunaires de l'année sélectionnée."} />
+                <ScreenInfo image={require('../../../assets/icons/FiInfo.png')} text={i18n.t('transits.lunarEclipse.hint')} />
               )
             }
             {loading ?
@@ -118,6 +118,10 @@ export default function LunarEclipsesScreen({ navigation }: any) {
             }
           </View>
         </View>
+        {
+          !loading && eclipses.length > 0 &&
+            <ScreenInfo image={require('../../../assets/icons/FiInfo.png')} text={i18n.t('transits.lunarEclipse.imcceQuote')}/>
+        }
       </ScrollView>
     </View>
   );

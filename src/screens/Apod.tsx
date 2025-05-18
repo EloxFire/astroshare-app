@@ -74,31 +74,39 @@ export default function Apod({ navigation }: any) {
               <ActivityIndicator size="large" color={app_colors.white} />
             }
             {
-              !loading &&
-                apod?.media_type === 'video' ?
-                  apod?.url.includes('youtube') ?
-                    <YoutubePlayer
-                      width={Dimensions.get('screen').width}
-                      height={(Dimensions.get('screen').width) / (16 / 9)}
-                      play
-                      videoId={apod?.url.split('embed/')[1].split('?')[0]}
-                    />
-                    :
-                    <Video
-                      ref={videoRef}
-                      source={{ uri: apod?.url || '' }}
-                      isMuted={true}
-                      rate={1.0}
-                      shouldPlay={true}
-                      isLooping={true}
-                      resizeMode={ResizeMode.CONTAIN}
-                      style={{ width: Dimensions.get('screen').width, height: Dimensions.get('screen').width, marginVertical: 10 }}
-                    />
+              !loading && apod && apod.media_type === 'video' && (
+                apod?.url.includes('youtube') ?
+                  <YoutubePlayer
+                    width={Dimensions.get('screen').width}
+                    height={(Dimensions.get('screen').width) / (16 / 9)}
+                    play
+                    videoId={apod?.url.split('embed/')[1].split('?')[0]}
+                  />
                   :
-                  apod?.media_type === 'image' && (
-                    <Image onLoadStart={() => setLoading(true)} onLoadEnd={() => setLoading(false)} source={{ uri: apod?.url || undefined }} width={apodSize.width} height={apodSize.height} style={apodStyles.content.image} resizeMode='contain' />
-                  )
+                  <Video
+                    ref={videoRef}
+                    source={{ uri: apod?.url || '' }}
+                    isMuted={true}
+                    rate={1.0}
+                    shouldPlay={true}
+                    isLooping={true}
+                    resizeMode={ResizeMode.CONTAIN}
+                    style={{ width: Dimensions.get('screen').width, height: Dimensions.get('screen').width, marginVertical: 10 }}
+                  />
+              )
             }
+            {
+              !loading && apod && apod.media_type === 'image' && (
+                <Image source={{ uri: apod.url }} width={apodSize.width} height={apodSize.height} style={apodStyles.content.image} resizeMode='contain' />
+              )
+            }
+          {
+            !loading && apod && apod.media_type === 'other' && (
+              <View style={{marginVertical: 40}}>
+                <Text style={{ color: app_colors.red, textAlign: 'center', fontFamily: 'DMMonoRegular', paddingHorizontal: 20, paddingVertical: 10, backgroundColor: app_colors.white_no_opacity, borderWidth: 1, borderColor: app_colors.white_twenty, borderRadius: 10 }}>Aperçu non disponible ou type de contenu non supporté...</Text>
+              </View>
+            )
+          }
 
           <Text style={apodStyles.content.subtitle}>Description :</Text>
           <Text style={[apodStyles.content.text, { fontSize: 16, alignSelf: 'flex-start', lineHeight: 25 }]}>{apod?.explanation || i18n.t('common.loadings.simple')}</Text>
