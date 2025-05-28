@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from "react";
-import {ActivityIndicator, ScrollView, Text, View} from "react-native";
+import {ActivityIndicator, Dimensions, Image, ScrollView, Text, TouchableOpacity, View} from "react-native";
 import { globalStyles } from "../../styles/global";
 import { SolarEclipse } from "../../helpers/types/eclipses/SolarEclipse";
 import { solarEclipseDetailsStyles } from "../../styles/screens/transits/solarEclipseDetails";
@@ -13,6 +13,7 @@ import dayjs from "dayjs";
 import {getLocationName} from "../../helpers/api/getLocationFromCoords";
 import SimpleButton from "../../components/commons/buttons/SimpleButton";
 import {LunarEclipse} from "../../helpers/types/LunarEclipse";
+import {SvgUri} from "react-native-svg";
 
 export default function LunarEclipseDetails({ navigation, route }: any) {
   const { currentUserLocation } = useSettings();
@@ -24,6 +25,10 @@ export default function LunarEclipseDetails({ navigation, route }: any) {
   const [selectedLocation, setSelectedLocation] = useState<{latitude: number, longitude: number} | null>(null);
   const [selectedLocationName, setSelectedLocationName] = useState<string>('');
   const [loadingCircumstances, setLoadingCircumstances] = useState<boolean>(false);
+  const [loadingImage, setLoadingImage] = useState<boolean>(true);
+  const [svgWidth, setSvgWidth] = useState<number>(200);
+  const [svgHeight, setSvgHeight] = useState<number>(150);
+  const [svgPressed, setSvgPressed] = useState<boolean>(false);
 
   const mapRef = useRef(null)
 
@@ -61,11 +66,19 @@ export default function LunarEclipseDetails({ navigation, route }: any) {
     }
   }
 
-  console.log(routeEclipse?.events.P2?.date)
-  Object.keys(routeEclipse?.events || {}).forEach((event) => {
-    const typedEvent = event as keyof typeof routeEclipse.events;
-    console.log(typedEvent, routeEclipse?.events[typedEvent]?.date, routeEclipse?.events[typedEvent]?.zenith.type);
-  });
+
+  const handleSvgMapPress = () => {
+    if( svgPressed ) {
+      setSvgPressed(false);
+      setSvgWidth(200);
+      setSvgHeight(150);
+    }else{
+      setSvgPressed(true);
+      setSvgWidth(Dimensions.get('window').width - 20);
+      setSvgHeight(Dimensions.get('window').height - 20);
+    }
+  }
+
   return (
     <View style={[globalStyles.body, { paddingHorizontal: 0, paddingTop: 0 }]}>
       <MapView
@@ -83,8 +96,6 @@ export default function LunarEclipseDetails({ navigation, route }: any) {
         rotateEnabled={false}
         cameraZoomRange={{ minCenterCoordinateDistance: 1000 }}
       >
-        {/*Tracé des zones de pénombre*/}
-
         {
           selectedLocation &&
             <Marker
@@ -96,6 +107,18 @@ export default function LunarEclipseDetails({ navigation, route }: any) {
             />
         }
       </MapView>
+      {/*<TouchableOpacity style={solarEclipseDetailsStyles.content.svgSettings} onPress={() => handleSvgMapPress()}>*/}
+      {/*  {loadingImage && <ActivityIndicator size={"large"} color={"white"} />}*/}
+      {/*  {!loadingImage && <Image source={require('../../../assets/icons/FiSearch.png')} style={{height: 30}} resizeMode={"contain"} />}*/}
+      {/*</TouchableOpacity>*/}
+      <SvgUri
+        uri={routeEclipse.link.image + "&map-meridian-zenith=true&image-format=svg&map-projection=EPSG:3395&map-labels=fr&map-theme=land-medium"}
+        style={solarEclipseDetailsStyles.content.svgMapOverlay}
+        width={svgWidth}
+        height={svgHeight}
+        onLoad={() => setLoadingImage(false)}
+        onPress={() => handleSvgMapPress()}
+      />
       <View style={solarEclipseDetailsStyles.content.overlay.backButton}>
         <SimpleButton
           text={"Retour"}
@@ -112,7 +135,7 @@ export default function LunarEclipseDetails({ navigation, route }: any) {
         <Text style={solarEclipseDetailsStyles.content.overlay.subtitle}>{solarEclipseTypes[routeEclipse.type]}</Text>
         {
           !selectedLocation && !loadingCircumstances &&
-            <Text style={solarEclipseDetailsStyles.content.overlay.noEclipse}>Appuyez sur la carte pour obtenir les circonstances locales</Text>
+            <Text style={solarEclipseDetailsStyles.content.overlay.noEclipse}>Appuyez sur la carte pour obtenir les circonstances locales.</Text>
         }
         {
           eclipseNotVisible && !loadingCircumstances &&

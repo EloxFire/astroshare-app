@@ -7,6 +7,30 @@ export const solarEclipseDetailsStyles = {
     flexDirection: "column" as "column",
     gap: 10,
 
+    svgMapOverlay:{
+      position: 'absolute' as 'absolute',
+      top: StatusBar.currentHeight! + 10,
+      right: 10,
+      width: 200,
+      height: 150,
+      zIndex: 1,
+    },
+
+    svgSettings: {
+      position: 'absolute' as 'absolute',
+      top: StatusBar.currentHeight! + 10,
+      right: 10,
+      zIndex: 2,
+      width: 200,
+      height: 150,
+      backgroundColor: app_colors.black_forty,
+      padding: 10,
+      display: "flex" as "flex",
+      flexDirection: "column" as "column",
+      justifyContent: "center" as "center",
+      alignItems: "center" as "center",
+    },
+
     loadingScreen: {
       flex: 1,
       display: "flex" as "flex",

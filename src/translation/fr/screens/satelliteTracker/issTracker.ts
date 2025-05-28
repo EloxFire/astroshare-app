@@ -30,5 +30,10 @@ export const issTrackerTranslations = {
   nextLaunches: {
     title: "Prochains lancements vers l'ISS",
     noLaunches: "Aucune mission de ravitaillement à venir ou lancements habités vers l'ISS",
+  },
+  passCard: {
+    time: "Heure",
+    maxAltitude: "Altitude max",
+    direction: "Direction",
   }
 }

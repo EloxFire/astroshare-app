@@ -19,6 +19,7 @@ export default function Apod({ navigation }: any) {
   const [apodSize, setApodSize] = useState({ width: 0, height: 0 })
   const videoRef = useRef(null);
   const [loading, setLoading] = useState(false)
+  const [loaded, setLoaded] = useState(false)
 
   useEffect(() => {
     getApod()
@@ -97,7 +98,7 @@ export default function Apod({ navigation }: any) {
             }
             {
               !loading && apod && apod.media_type === 'image' && (
-                <Image source={{ uri: apod.url }} width={apodSize.width} height={apodSize.height} style={apodStyles.content.image} resizeMode='contain' />
+                <Image source={!loaded ? require('../../assets/images/placeholders/fr/image.png') : { uri: apod.url }} onLoad={() => setLoaded(true)} width={apodSize.width} height={apodSize.height} style={apodStyles.content.image} resizeMode='contain' />
               )
             }
           {

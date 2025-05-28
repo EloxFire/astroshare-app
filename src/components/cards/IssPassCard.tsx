@@ -5,6 +5,7 @@ import dayjs from 'dayjs';
 import {IssPass} from "../../helpers/types/IssPass";
 import {weatherImages} from "../../helpers/scripts/loadImages";
 import {determineIssVisibility} from "../../helpers/scripts/astro/determineIssVisibility";
+import {i18n} from "../../helpers/scripts/i18n";
 
 interface IssPassCardProps {
   pass: IssPass;
@@ -57,17 +58,17 @@ export default function IssPassCard({ pass, passIndex, navigation, weather }: Is
 
       <View style={issPassCardStyles.card.infos}>
         <View style={issPassCardStyles.column}>
-          <Text style={issPassCardStyles.column.title}>Heure</Text>
+          <Text style={issPassCardStyles.column.title}>{i18n.t('satelliteTracker.issTracker.passCard.time')}</Text>
           <Text style={issPassCardStyles.column.value}>{dayjs.unix(pass.startUTC).format('HH:mm')}</Text>
         </View>
 
         <View style={issPassCardStyles.column}>
-          <Text style={issPassCardStyles.column.title}>Altitude max</Text>
+          <Text style={issPassCardStyles.column.title}>{i18n.t('satelliteTracker.issTracker.passCard.maxAltitude')}</Text>
           <Text style={issPassCardStyles.column.value}>{pass.maxEl}°</Text>
         </View>
 
         <View style={issPassCardStyles.column}>
-          <Text style={issPassCardStyles.column.title}>Direction</Text>
+          <Text style={issPassCardStyles.column.title}>{i18n.t('satelliteTracker.issTracker.passCard.direction')}</Text>
           <Text style={issPassCardStyles.column.value}>{pass.startAzCompass}</Text>
         </View>
       </View>
