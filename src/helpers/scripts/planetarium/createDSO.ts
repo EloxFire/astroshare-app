@@ -4,7 +4,7 @@ import planetariumImages from '../../planetarium_images.json';
 import { convertSphericalToCartesian } from "./utils/convertSphericalToCartesian";
 import {meshGroupsNames, planetariumRenderOrders} from "./utils/planetariumSettings";
 
-export const createDSO = () => {
+export const createDSO = (setUiInfos: React.Dispatch<any>) => {
   console.log("[GLView] Creating Deep Sky Objects...");
 
   const dsoMeshes: THREE.Group = new THREE.Group();
@@ -84,7 +84,25 @@ export const createDSO = () => {
       index: image.imageUrl.split('/').pop()!.split('.')[0],
       corners,
       onTap: () => {
-        console.log(`[GLView] DSO tapped: ${image.imageUrl.split('/').pop()!.split('.')[0]}`);
+        const selectedImage = image.imageUrl.split('/').pop()!.split('.')[0]
+        console.log(`[GLView] DSO tapped: ${selectedImage}`);
+
+        // Fetch Astroshare api to get object data
+        fetch(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/dso/${selectedImage}`)
+          .then(response => response.json())
+          .then(data => {
+            console.log("[GLView] DSO data fetched:", data.dec);
+            if (!data) {
+              console.error("[GLView] No data found for DSO:", selectedImage);
+              setUiInfos(null);
+              return;
+            }else{
+              setUiInfos(data);
+            }
+          })
+          .catch(error => {
+            console.error("[GLView] Error fetching DSO data:", error);
+          });
       }
     };
 

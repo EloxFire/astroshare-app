@@ -9,6 +9,7 @@ export const handleTapStart = (
   sceneRef: React.MutableRefObject<THREE.Scene | null>,
   cameraRef: React.MutableRefObject<THREE.PerspectiveCamera | null>,
   selectionCircle: React.MutableRefObject<THREE.Line | null>,
+  setObjectInfos: React.Dispatch<any>
 ) => {
   console.log("[GLView] Tap gesture started");
 
@@ -94,4 +95,5 @@ export const handleTapStart = (
 
   console.log("[GLView] No relevant object found");
   selectionCircleObject.visible = false;
+  setObjectInfos(null); // Clear object info if no relevant object found
 };

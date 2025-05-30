@@ -24,6 +24,7 @@ import {getPlanetMagnitude} from "./getPlanetMagnitude";
 import {getBrightStarName} from "./getBrightStarName";
 import {getObjectIcon} from "./getObjectIcon";
 import {ImageSourcePropType} from "react-native";
+import {prettyDec, prettyRa} from "../prettyCoords";
 
 interface ComputeObjectProps {
   object: DSO | Star | GlobalPlanet;
@@ -40,6 +41,8 @@ export const computeObject = (props: ComputeObjectProps): ComputedObjectInfos | 
     const objectFamily: "DSO" | "Star" | "Planet" | "Other" = getObjectFamily(props.object);
     const alt: number = props.altitude ? props.altitude : 341;
     const horizonAngle: number = calculateHorizonAngle(alt);
+
+    console.log(props.object.dec, props.object.ra);
 
     let degRa: number = objectFamily === 'DSO' ? convertHMSToDegreeFromString(props.object.ra as string) : props.object.ra as number
     let degDec: number = objectFamily === 'DSO' ? convertDMSToDegreeFromString(props.object.dec as string) : props.object.dec as number

@@ -4,7 +4,7 @@ import {Star} from "../../types/Star";
 import {getBrightStarName} from "../astro/objects/getBrightStarName";
 import {meshGroupsNames, planetariumRenderOrders} from "./utils/planetariumSettings";
 
-export function createStars(starsCatalog: Star[]) {
+export function createStars(starsCatalog: Star[], setUiInfos: React.Dispatch<any>) {
   console.log("[GLView] Creating stars...");
 
 
@@ -75,7 +75,7 @@ export function createStars(starsCatalog: Star[]) {
 
   function onStarTap (star: Star) {
     console.log(`[GLView] Star tapped: ${getBrightStarName(star.ids)}`);
-
+    setUiInfos(star)
   }
 
   starsCloud.userData = {

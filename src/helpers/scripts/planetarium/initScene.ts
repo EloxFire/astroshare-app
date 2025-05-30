@@ -28,6 +28,7 @@ export const initScene = (
   starsCatalog: Star[],
   planetList: GlobalPlanet[],
   moonCoords: (EquatorialCoordinate & HorizontalCoordinate & { phase: string }),
+  setObjectInfos: React.Dispatch<any>
 ): {
   scene: THREE.Scene,
   camera: THREE.PerspectiveCamera,
@@ -55,11 +56,11 @@ export const initScene = (
 
   const selectionCircle = createSelectionCircle()
   const ground = createGround(currentUserLocation)
-  const stars = createStars(starsCatalog)
+  const stars = createStars(starsCatalog, setObjectInfos)
   const planets = createPlanets(planetList)
   const moon = createMoon(moonCoords)
   const background = createBackground()
-  const dso = createDSO()
+  const dso = createDSO(setObjectInfos)
   const constellations = drawConstellations()
   const atmosphere = createAtmosphere();
   const {eqGrid1, eqGrid2, eqGrid3} = createEquatorialGrid(hex_colors.blue, .5);
@@ -77,6 +78,10 @@ export const initScene = (
 
   azGrid.name = meshGroupsNames.azGrid
   eqGrid.name = meshGroupsNames.eqGrid
+
+  // Default visibility settings
+  eqGrid.visible = false;
+  azGrid.visible = false;
 
   // Camera position locked to the ground
   const q1: Quaternion = new THREE.Quaternion;

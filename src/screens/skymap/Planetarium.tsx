@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, {useState, useRef, useEffect, RefObject} from 'react';
 import {ActivityIndicator, StatusBar, Text, View} from 'react-native';
 import { planetariumStyles } from '../../styles/screens/skymap/planetarium';
 import {ComposedGesture, ExclusiveGesture, Gesture, GestureDetector, GestureHandlerRootView, GestureStateChangeEvent, GestureTouchEvent, GestureUpdateEvent, PanGestureChangeEventPayload, PanGestureHandlerEventPayload, SimultaneousGesture, TapGestureHandlerEventPayload} from 'react-native-gesture-handler';
@@ -48,6 +48,7 @@ export default function Planetarium({ route, navigation }: any) {
 
   const [planetariumLoading, setPlanetariumLoading] = useState<boolean>(true);
   const [glViewParams, setGlViewParams] = useState<any>({width: 0, height: 0});
+  const [objectInfos, setObjectInfos] = useState<any>(null);
 
   useEffect(() => {
     StatusBar.setHidden(true);
@@ -65,7 +66,14 @@ export default function Planetarium({ route, navigation }: any) {
 
 
   const _onContextCreate = async (gl: ExpoWebGLRenderingContext) => {
-    const {scene, camera, renderer, ground, selectionCircle, atmosphere, grids} = initScene(gl, currentUserLocation, starsCatalog.filter((star: Star) => star.V < 6), planets, moonCoords);
+    const {scene, camera, renderer, ground, selectionCircle, atmosphere, grids} = initScene(
+      gl,
+      currentUserLocation,
+      starsCatalog.filter((star: Star) => star.V < 6),
+      planets,
+      moonCoords,
+      setObjectInfos
+    );
     sceneRef.current = scene;
     cameraRef.current = camera;
     rendererRef.current = renderer;
@@ -113,7 +121,7 @@ export default function Planetarium({ route, navigation }: any) {
 
   const tapGesture = Gesture.Tap()
     .maxDuration(250)
-    .onStart((e: GestureStateChangeEvent<TapGestureHandlerEventPayload>) => handleTapStart(e, sceneRef, cameraRef, selectionCircleRef))
+    .onStart((e: GestureStateChangeEvent<TapGestureHandlerEventPayload>) => handleTapStart(e, sceneRef, cameraRef, selectionCircleRef, setObjectInfos))
 
 
   const movementGestures: SimultaneousGesture = Gesture.Simultaneous(panGesture, pinchGesture);
@@ -124,7 +132,7 @@ export default function Planetarium({ route, navigation }: any) {
     <GestureHandlerRootView>
       <PlanetariumUI
         navigation={navigation}
-        infos={null}
+        infos={objectInfos}
         onShowAzGrid={() => onShowAzGrid(sceneRef.current!)}
         onShowConstellations={() => onShowConstellations(sceneRef.current!)}
         onShowEqGrid={() => onShowEqGrid(sceneRef.current!)}

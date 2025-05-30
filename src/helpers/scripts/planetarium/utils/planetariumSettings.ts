@@ -8,8 +8,8 @@ export const planetariumRenderOrders = {
   azGrid: -10,
   eqGrid: -9,
   constellations: -5,
-  ground: 9,
-  selectionCircle: 10,
+  ground: 11,
+  selectionCircle: 12,
 }
 
 export const meshGroupsNames = {
