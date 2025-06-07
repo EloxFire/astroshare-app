@@ -30,12 +30,15 @@ import {
   onShowEqGrid,
   onShowGround, onShowPlanets
 } from "../../helpers/scripts/planetarium/ui/toggle";
+import {useTranslation} from "../../hooks/useTranslation";
+import {centerCameraToRaDec} from "../../helpers/scripts/planetarium/utils/gotTo";
 
 export default function Planetarium({ route, navigation }: any) {
 
+  const { currentLocale } = useTranslation();
   const { currentUserLocation } = useSettings();
   const { starsCatalog } = useStarCatalog();
-  const {planets, moonCoords} = useSolarSystem()
+  const { planets, moonCoords } = useSolarSystem()
 
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
   const sceneRef = useRef<THREE.Scene | null>(null);
@@ -45,6 +48,7 @@ export default function Planetarium({ route, navigation }: any) {
   const selectionCircleRef = useRef<THREE.Line | null>(null);
   const azGridRef = useRef<THREE.Group | null>(null);
   const eqGridRef = useRef<THREE.Group | null>(null);
+  const groundTotalQuaternionRef = useRef<THREE.Quaternion | null>(null);
 
   const [planetariumLoading, setPlanetariumLoading] = useState<boolean>(true);
   const [glViewParams, setGlViewParams] = useState<any>({width: 0, height: 0});
@@ -66,13 +70,14 @@ export default function Planetarium({ route, navigation }: any) {
 
 
   const _onContextCreate = async (gl: ExpoWebGLRenderingContext) => {
-    const {scene, camera, renderer, ground, selectionCircle, atmosphere, grids} = initScene(
+    const {scene, camera, renderer, ground, selectionCircle, atmosphere, grids, quaternions} = initScene(
       gl,
       currentUserLocation,
       starsCatalog.filter((star: Star) => star.V < 6),
       planets,
       moonCoords,
-      setObjectInfos
+      setObjectInfos,
+      currentLocale
     );
     sceneRef.current = scene;
     cameraRef.current = camera;
@@ -82,6 +87,7 @@ export default function Planetarium({ route, navigation }: any) {
     selectionCircleRef.current = selectionCircle;
     azGridRef.current = grids.azGrid;
     eqGridRef.current = grids.eqGrid;
+    groundTotalQuaternionRef.current = quaternions.groundTotalQuaternion;
 
     setGlViewParams({width: gl.drawingBufferWidth, height: gl.drawingBufferHeight});
     setPlanetariumLoading(false);
@@ -121,7 +127,7 @@ export default function Planetarium({ route, navigation }: any) {
 
   const tapGesture = Gesture.Tap()
     .maxDuration(250)
-    .onStart((e: GestureStateChangeEvent<TapGestureHandlerEventPayload>) => handleTapStart(e, sceneRef, cameraRef, selectionCircleRef, setObjectInfos))
+    .onEnd((e) => handleTapStart(e, sceneRef, cameraRef, selectionCircleRef, setObjectInfos));
 
 
   const movementGestures: SimultaneousGesture = Gesture.Simultaneous(panGesture, pinchGesture);
@@ -139,7 +145,13 @@ export default function Planetarium({ route, navigation }: any) {
         onShowGround={() => onShowGround(sceneRef.current!)}
         onShowPlanets={() => onShowPlanets(sceneRef.current!)}
         onShowDSO={() => onShowDSO(sceneRef.current!)}
-        onCenterObject={() => { }}
+        onCenterObject={() => centerCameraToRaDec(
+          cameraRef,
+          groundRef,
+          objectInfos.ra,
+          objectInfos.dec
+        )
+      }
       />
       <GestureDetector gesture={composedGestures}>
         <View style={planetariumStyles.container}>

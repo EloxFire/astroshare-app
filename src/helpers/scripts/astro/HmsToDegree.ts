@@ -6,6 +6,7 @@ export const convertHMSToDegreeFromString = (decString: string): number => {
   const match = decString.match(regex);
 
   if (!match) {
+    console.log(`[convertHMSToDegreeFromString] Format invalide pour la chaîne : ${decString}`);
     showToast({ message: 'Format D:M:S invalide', type: 'error' });
     return 0;
   }

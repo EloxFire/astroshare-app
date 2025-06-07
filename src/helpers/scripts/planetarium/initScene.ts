@@ -28,7 +28,8 @@ export const initScene = (
   starsCatalog: Star[],
   planetList: GlobalPlanet[],
   moonCoords: (EquatorialCoordinate & HorizontalCoordinate & { phase: string }),
-  setObjectInfos: React.Dispatch<any>
+  setObjectInfos: React.Dispatch<any>,
+  currentLocale: string,
 ): {
   scene: THREE.Scene,
   camera: THREE.PerspectiveCamera,
@@ -39,6 +40,9 @@ export const initScene = (
   grids: {
     eqGrid: THREE.Group,
     azGrid: THREE.Group,
+  },
+  quaternions: {
+    groundTotalQuaternion: Quaternion,
   }
 } => {
   console.log("[GLView] Initializing scene...")
@@ -57,10 +61,10 @@ export const initScene = (
   const selectionCircle = createSelectionCircle()
   const ground = createGround(currentUserLocation)
   const stars = createStars(starsCatalog, setObjectInfos)
-  const planets = createPlanets(planetList)
+  const planets = createPlanets(planetList, setObjectInfos)
   const moon = createMoon(moonCoords)
   const background = createBackground()
-  const dso = createDSO(setObjectInfos)
+  const dso = createDSO(setObjectInfos);
   const constellations = drawConstellations()
   const atmosphere = createAtmosphere();
   const {eqGrid1, eqGrid2, eqGrid3} = createEquatorialGrid(hex_colors.blue, .5);
@@ -112,6 +116,9 @@ export const initScene = (
     grids: {
       eqGrid: eqGrid,
       azGrid: azGrid,
+    },
+    quaternions: {
+      groundTotalQuaternion: groundTotalQuaternion,
     }
   }
 }

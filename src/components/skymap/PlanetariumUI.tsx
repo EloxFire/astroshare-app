@@ -206,7 +206,7 @@ export default function PlanetariumUI({ navigation, infos, onShowGround, onShowC
                     </View>
                     <View style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-start'}}>
                       <Text style={planetariumUIStyles.container.generalInfosBar.body.title}>{objectInfos.base.common_name}</Text>
-                      <Text style={planetariumUIStyles.container.generalInfosBar.body.subtitle}>{objectInfos.base.family}</Text>
+                      <Text style={planetariumUIStyles.container.generalInfosBar.body.subtitle}>{objectInfos.base.type}</Text>
                     </View>
                     <View style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-end', flex: 1, gap: 5}}>
                       <SimpleBadge
@@ -245,7 +245,7 @@ export default function PlanetariumUI({ navigation, infos, onShowGround, onShowC
                     </View>
                     <View style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-start'}}>
                       <Text style={planetariumUIStyles.container.generalInfosBar.body.title}>{objectInfos.base.common_name}</Text>
-                      <Text style={planetariumUIStyles.container.generalInfosBar.body.subtitle}>{objectInfos.base.family}</Text>
+                      <Text style={planetariumUIStyles.container.generalInfosBar.body.subtitle}>{objectInfos.base.type}</Text>
                     </View>
                     <View style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-end', flex: 1, gap: 5}}>
                       <SimpleBadge

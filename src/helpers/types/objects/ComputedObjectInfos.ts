@@ -4,6 +4,7 @@ import {Dayjs} from "dayjs";
 export type ComputedObjectInfos = {
   base:{
     family: "DSO" | "Star" | "Planet" | "Other";
+    type: string;
     common_name: string;
     icon: ImageSourcePropType;
     ra: string | number;

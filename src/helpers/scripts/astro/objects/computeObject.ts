@@ -24,7 +24,8 @@ import {getPlanetMagnitude} from "./getPlanetMagnitude";
 import {getBrightStarName} from "./getBrightStarName";
 import {getObjectIcon} from "./getObjectIcon";
 import {ImageSourcePropType} from "react-native";
-import {prettyDec, prettyRa} from "../prettyCoords";
+import {getObjectType} from "./getObjectType";
+import {getObjectName} from "./getObjectName";
 
 interface ComputeObjectProps {
   object: DSO | Star | GlobalPlanet;
@@ -38,11 +39,11 @@ export const computeObject = (props: ComputeObjectProps): ComputedObjectInfos | 
     console.log('[computeObject] Error: object is null')
     return null;
   }else{
+    console.log(`[computeObject] Object type: ${typeof props.object}`);
     const objectFamily: "DSO" | "Star" | "Planet" | "Other" = getObjectFamily(props.object);
     const alt: number = props.altitude ? props.altitude : 341;
     const horizonAngle: number = calculateHorizonAngle(alt);
 
-    console.log(props.object.dec, props.object.ra);
 
     let degRa: number = objectFamily === 'DSO' ? convertHMSToDegreeFromString(props.object.ra as string) : props.object.ra as number
     let degDec: number = objectFamily === 'DSO' ? convertDMSToDegreeFromString(props.object.dec as string) : props.object.dec as number
@@ -54,7 +55,7 @@ export const computeObject = (props: ComputeObjectProps): ComputedObjectInfos | 
 
     let objectName: string = '';
     if(objectFamily === 'DSO'){
-      objectName = (props.object as DSO).common_names.split(',')[0];
+      objectName = getObjectName(props.object as DSO, 'all', true);
     }else if (objectFamily === 'Star'){
       objectName = getBrightStarName((props.object as Star).ids);
     }else if (objectFamily === 'Planet'){
@@ -64,6 +65,7 @@ export const computeObject = (props: ComputeObjectProps): ComputedObjectInfos | 
     }
 
     let objectIcon: ImageSourcePropType = getObjectIcon(props.object);
+    let objectType: string = getObjectType(props.object)
 
     // VISIBILITE ACTUELLE ET POUR LA NUIT
     const target: EquatorialCoordinate = {ra: degRa, dec: degDec}
@@ -162,6 +164,7 @@ export const computeObject = (props: ComputeObjectProps): ComputedObjectInfos | 
     return {
       base: {
         family: objectFamily,
+        type: objectType,
         common_name: objectName,
         icon: objectIcon,
         ra: props.object.ra,

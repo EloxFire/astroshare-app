@@ -3,6 +3,7 @@ import {
   TapGestureHandlerEventPayload,
 } from "react-native-gesture-handler";
 import { THREE } from "expo-three";
+import {computeObject} from "../astro/objects/computeObject";
 
 export const handleTapStart = (
   event: GestureStateChangeEvent<TapGestureHandlerEventPayload>,
@@ -43,12 +44,18 @@ export const handleTapStart = (
     const target = intersects.find((i) => i.object.userData?.type === type);
     if (!target || !target.object.userData?.onTap) continue;
 
+    console.log(`[DEBUG] target type: ${type}, index: ${target.index}, userData:`, target.object.userData);
+
+
     // Appel du comportement
     if (type === "star" && target.index != null) {
+      console.log(`[handleTap] Taping Star : ${target.index}`);
       target.object.userData.onTap(target.index);
-    } else if (type === "dso" && target.index != null) {
-      target.object.userData.onTap(target.index);
-    } else {
+    } else if (type === "dso") {
+      console.log(`[handleTap] Taping DSO : ${target.object.userData.index}`);
+      target.object.userData.onTap(target.object.userData.index);
+    } else if (type === "planet"){
+      console.log(`[handleTap] Taping Planet : ${target.object.userData.name}`);
       target.object.userData.onTap();
     }
 

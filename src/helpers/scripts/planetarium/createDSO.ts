@@ -91,13 +91,13 @@ export const createDSO = (setUiInfos: React.Dispatch<any>) => {
         fetch(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/dso/${selectedImage}`)
           .then(response => response.json())
           .then(data => {
-            console.log("[GLView] DSO data fetched:", data.dec);
+            console.log("[GLView] DSO data fetched:", data.dsoObject);
             if (!data) {
               console.error("[GLView] No data found for DSO:", selectedImage);
               setUiInfos(null);
               return;
             }else{
-              setUiInfos(data);
+              setUiInfos(data.dsoObject);
             }
           })
           .catch(error => {

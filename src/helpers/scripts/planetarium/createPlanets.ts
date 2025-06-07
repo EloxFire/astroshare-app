@@ -6,7 +6,7 @@ import {convertSphericalToCartesian} from "./utils/convertSphericalToCartesian";
 import {meshGroupsNames, planetariumRenderOrders} from "./utils/planetariumSettings";
 
 
-export const createPlanets = (planets: GlobalPlanet[]) => {
+export const createPlanets = (planets: GlobalPlanet[], setUiInfos: React.Dispatch<any>) => {
   console.log("[GLView] Creating planets...")
 
   const meshes: THREE.Group = new THREE.Group();
@@ -28,6 +28,7 @@ export const createPlanets = (planets: GlobalPlanet[]) => {
       index: planet.name,
       onTap: () => {
         console.log(`[GLView] Planet tapped: ${planet.name}`);
+        setUiInfos(planet);
       }
     };
 
