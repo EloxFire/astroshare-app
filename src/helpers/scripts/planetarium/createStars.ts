@@ -75,7 +75,11 @@ export function createStars(starsCatalog: Star[], setUiInfos: React.Dispatch<any
 
   function onStarTap (star: Star) {
     console.log(`[GLView] Star tapped: ${getBrightStarName(star.ids)}`);
-    setUiInfos(star)
+    const { x, y, z } = convertSphericalToCartesian(10, star.ra, star.dec);
+    setUiInfos({
+      object: star,
+      meshPosition: new THREE.Vector3(x, y, z),
+    })
   }
 
   starsCloud.userData = {

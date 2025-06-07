@@ -179,7 +179,10 @@ export default function IssTracker({ navigation }: any) {
                 isProUser(currentUser) ?
                   <>
                     <View style={issTrackerStyles.content.nextPasses.container}>
-                      <DSOValues title={i18n.t("satelliteTracker.issTracker.nextPasses.timeToNext")} value={countdown}/>
+                      {
+                        issPasses.length > 0 && !issPassesLoading &&
+                          <DSOValues title={i18n.t("satelliteTracker.issTracker.nextPasses.timeToNext")} value={countdown}/>
+                      }
                       {
                         issPassesLoading ? (
                           <ActivityIndicator size={'small'} color={app_colors.white} animating />
@@ -214,18 +217,21 @@ export default function IssTracker({ navigation }: any) {
                             ));
                           })()
                         ) : (
-                          <SimpleButton text={i18n.t('satelliteTracker.issTracker.nextPasses.noPasses')} disabled fullWidth />
+                          <SimpleButton textColor={app_colors.white} text={i18n.t('satelliteTracker.issTracker.nextPasses.noPasses')} disabled fullWidth />
                         )
                       }
-                      <SimpleButton
-                        fullWidth
-                        backgroundColor={app_colors.white}
-                        textColor={app_colors.black}
-                        textAdditionalStyles={{fontFamily: 'GilroyBlack'}}
-                        align={'center'}
-                        text={i18n.t('satelliteTracker.issTracker.nextPasses.seeMore')}
-                        onPress={() => navigation.push(routes.satellitesTrackers.issPasses.path, {passes: issPasses, weather: passesWeather})}
-                      />
+                      {
+                        issPasses.length > 0 &&
+                          <SimpleButton
+                              fullWidth
+                              backgroundColor={app_colors.white}
+                              textColor={app_colors.black}
+                              textAdditionalStyles={{fontFamily: 'GilroyBlack'}}
+                              align={'center'}
+                              text={i18n.t('satelliteTracker.issTracker.nextPasses.seeMore')}
+                              onPress={() => navigation.push(routes.satellitesTrackers.issPasses.path, {passes: issPasses, weather: passesWeather})}
+                          />
+                      }
                     </View>
                   </> :
                 <ProLocker navigation={navigation} image={require('../../../assets/images/tools/isstracker.png')}/>

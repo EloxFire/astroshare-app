@@ -5,7 +5,7 @@ import {planetTextures} from "../../constants";
 import {EquatorialCoordinate, HorizontalCoordinate} from "@observerly/astrometry";
 import {meshGroupsNames, planetariumRenderOrders} from "./utils/planetariumSettings";
 
-export const createMoon = (moonCoords: (EquatorialCoordinate & HorizontalCoordinate & { phase: string })) => {
+export const createMoon = (moonCoords: (EquatorialCoordinate & HorizontalCoordinate & { phase: string }), setUiInfos: React.Dispatch<any>) => {
   console.log("[GLView] Creating moon...")
   const { x, y, z } = convertSphericalToCartesian(9.8, moonCoords.ra, moonCoords.dec);
   const moonGeometry = new THREE.SphereGeometry(0.1, 32, 32);
@@ -20,6 +20,11 @@ export const createMoon = (moonCoords: (EquatorialCoordinate & HorizontalCoordin
     index: 'moon',
     onTap: () => {
       console.log(`[GLView] Moon tapped: ${moonCoords.phase}`);
+      const { x, y, z } = convertSphericalToCartesian(10, moonCoords.ra, moonCoords.dec);
+      setUiInfos({
+        object: moonCoords,
+        meshPosition: new THREE.Vector3(x, y, z),
+      });
     }
   };
 

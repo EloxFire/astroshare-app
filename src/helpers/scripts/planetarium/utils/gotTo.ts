@@ -11,7 +11,7 @@ import { setInitialAngles } from '../handlePanGesture';
 export function centerCameraToObject3D(
   cameraRef: React.MutableRefObject<THREE.PerspectiveCamera | null>,
   groundRef: React.MutableRefObject<THREE.Mesh | null>,
-  target: THREE.Vector3
+  targetWorld: THREE.Vector3
 ): void {
   const camera = cameraRef.current;
   const ground = groundRef.current;
@@ -19,21 +19,20 @@ export function centerCameraToObject3D(
 
   const baseQuaternion = ground.userData.baseQuaternion as THREE.Quaternion;
 
-  // La direction du point dans le repère de la caméra (après rotation du sol)
-  const localTarget = target.clone().applyQuaternion(baseQuaternion);
+  // 👉 Passer dans le repère de la caméra : on annule baseQuaternion
+  const invBaseQ = baseQuaternion.clone().invert();
+  const target = targetWorld.clone().applyQuaternion(invBaseQ);
 
-  // Calcul azimuth (rotation horizontale autour de Z)
-  const az = Math.atan2(localTarget.x, localTarget.z);
+  // Calcul des angles dans le repère local
+  const az = Math.atan2(target.x, target.z);
+  const alt = Math.acos(target.y / target.length());
 
-  // Calcul altitude (élévation verticale)
-  const alt = Math.acos(localTarget.y / localTarget.length());
-
-  // Enregistrer ces angles dans le système PanGesture
+  // Mettre à jour les angles du système de pan gesture
   setInitialAngles(az, alt);
 
   const q1 = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 0, 1), az);
   const q2 = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1, 0, 0), alt);
-  const qTot = baseQuaternion.clone().multiply(q1).multiply(q2);
+  const finalQ = baseQuaternion.clone().multiply(q1).multiply(q2);
 
-  camera.setRotationFromQuaternion(qTot.normalize());
+  camera.setRotationFromQuaternion(finalQ.normalize());
 }

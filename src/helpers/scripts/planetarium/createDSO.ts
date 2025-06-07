@@ -86,6 +86,7 @@ export const createDSO = (setUiInfos: React.Dispatch<any>) => {
       onTap: () => {
         const selectedImage = image.imageUrl.split('/').pop()!.split('.')[0]
         console.log(`[GLView] DSO tapped: ${selectedImage}`);
+        const { x, y, z } = convertSphericalToCartesian(9.7, image.worldCoords[0][0][0], image.worldCoords[0][0][1]);
 
         // Fetch Astroshare api to get object data
         fetch(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/dso/${selectedImage}`)
@@ -97,7 +98,10 @@ export const createDSO = (setUiInfos: React.Dispatch<any>) => {
               setUiInfos(null);
               return;
             }else{
-              setUiInfos(data.dsoObject);
+              setUiInfos({
+                object: data.dsoObject,
+                meshPosition: new THREE.Vector3(x, y, z),
+              });
             }
           })
           .catch(error => {

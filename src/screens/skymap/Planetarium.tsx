@@ -31,7 +31,7 @@ import {
   onShowGround, onShowPlanets
 } from "../../helpers/scripts/planetarium/ui/toggle";
 import {useTranslation} from "../../hooks/useTranslation";
-import {centerCameraToRaDec} from "../../helpers/scripts/planetarium/utils/gotTo";
+import {centerCameraToObject3D} from "../../helpers/scripts/planetarium/utils/gotTo";
 
 export default function Planetarium({ route, navigation }: any) {
 
@@ -138,18 +138,17 @@ export default function Planetarium({ route, navigation }: any) {
     <GestureHandlerRootView>
       <PlanetariumUI
         navigation={navigation}
-        infos={objectInfos}
+        infos={objectInfos ? objectInfos.object : null}
         onShowAzGrid={() => onShowAzGrid(sceneRef.current!)}
         onShowConstellations={() => onShowConstellations(sceneRef.current!)}
         onShowEqGrid={() => onShowEqGrid(sceneRef.current!)}
         onShowGround={() => onShowGround(sceneRef.current!)}
         onShowPlanets={() => onShowPlanets(sceneRef.current!)}
         onShowDSO={() => onShowDSO(sceneRef.current!)}
-        onCenterObject={() => centerCameraToRaDec(
+        onCenterObject={() => centerCameraToObject3D(
           cameraRef,
           groundRef,
-          objectInfos.ra,
-          objectInfos.dec
+          objectInfos.meshPosition,
         )
       }
       />
