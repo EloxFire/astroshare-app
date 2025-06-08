@@ -16,6 +16,7 @@ import SimpleBadge from "../badges/SimpleBadge";
 import {getObjectFamily} from "../../helpers/scripts/astro/objects/getObjectFamily";
 import {app_colors} from "../../helpers/constants";
 import {astroImages} from "../../helpers/scripts/loadImages";
+import {getWindDir} from "../../helpers/scripts/getWindDir";
 
 interface CelestialBodyCardLiteProps {
   object: Star | DSO | GlobalPlanet
@@ -37,7 +38,32 @@ export default function CelestialBodyCardLite({ object, navigation }: CelestialB
     <TouchableOpacity onPress={() => navigation.push(routes.celestialBodies.details.path, { object: object })} style={objectCardLiteStyles.card}>
       <Image source={getObjectIcon(object)} style={objectCardLiteStyles.card.icon} />
       <View style={objectCardLiteStyles.card.data}>
-        <Text style={objectCardLiteStyles.card.data.title}>{getObjectName(object, 'all', true)}</Text>
+        <View style={objectCardLiteStyles.card.header}>
+          <Text style={objectCardLiteStyles.card.data.title}>{getObjectName(object, 'all', true)}</Text>
+          {
+            getObjectFamily(object) === 'DSO' && (object as DSO).m !== "" && !objectInfos?.base.common_name &&
+              <SimpleBadge
+                text={((object) as DSO).name}
+                noBorder
+              />
+          }
+          {
+            (object as DSO).m !== "" && (
+              <SimpleBadge
+                text={((object) as DSO).name}
+                noBorder
+              />
+            )
+          }
+          {
+            (object as DSO).m === "" && objectInfos?.base.common_name && (
+              <SimpleBadge
+                text={objectInfos.base.common_name}
+                noBorder
+              />
+            )
+          }
+        </View>
         {
           objectInfos && (
             <View style={objectCardLiteStyles.card.data.badges}>
@@ -46,38 +72,35 @@ export default function CelestialBodyCardLite({ object, navigation }: CelestialB
                 icon={objectInfos.visibilityInfos.visibilityIcon}
                 backgroundColor={objectInfos.visibilityInfos.visibilityBackgroundColor}
                 foregroundColor={objectInfos.visibilityInfos.visibilityForegroundColor}
+                noBorder
+                small
               />
               {
                 getObjectFamily(object) === 'DSO' && (object as DSO).m !== "" && (
-                  <>
-                    <SimpleBadge
-                      text={((object) as DSO).name}
-                    />
-                    <SimpleBadge
-                      text={((object) as DSO).const}
-                      icon={astroImages['CONSTELLATION']}
-                      iconColor={app_colors.white}
-                    />
-                  </>
-
-                )
-              }
-              {
-                getObjectFamily(object) !== 'Planet' && getObjectFamily(object) !== 'Star' && objectInfos.base.common_name !== "" && (
                   <SimpleBadge
-                    text={((object) as DSO).type}
+                    text={((object) as DSO).const}
+                    icon={astroImages['CONSTELLATION']}
+                    iconColor={app_colors.white}
+                    small
                   />
                 )
               }
+              {/*{*/}
+              {/*  getObjectFamily(object) !== 'Planet' && getObjectFamily(object) !== 'Star' && objectInfos.base.common_name !== "" && (*/}
+              {/*    <SimpleBadge*/}
+              {/*      text={((object) as DSO).type}*/}
+              {/*    />*/}
+              {/*  )*/}
+              {/*}*/}
               {
-                getObjectFamily(object) !== 'DSO' && objectInfos && (
+                objectInfos && (
                   <>
                     <SimpleBadge
                       text={objectInfos.base.alt}
                       icon={require('../../../assets/icons/FiAngleRight.png')}
                     />
                     <SimpleBadge
-                      text={objectInfos.base.az}
+                      text={getWindDir(parseFloat(objectInfos.base.az))}
                       icon={require('../../../assets/icons/FiCompass.png')}
                     />
                   </>

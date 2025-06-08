@@ -88,6 +88,7 @@ export const planetariumUIStyles = {
       back: {
         left: 10,
         right: 'auto' as 'auto',
+        // zIndex: 10000,
       },
 
       search: {

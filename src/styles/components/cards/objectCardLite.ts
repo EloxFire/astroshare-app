@@ -13,6 +13,14 @@ export const objectCardLiteStyles = {
     justifyContent: "space-between" as "space-between",
     alignItems: "center" as "center",
 
+    header: {
+      display: "flex" as "flex",
+      flexDirection: "row" as "row",
+      alignItems: "center" as "center",
+      gap: 10,
+      marginBottom: 5,
+    },
+
     icon: {
       width: 45,
       height: 45,
@@ -26,7 +34,7 @@ export const objectCardLiteStyles = {
       flex: 1,
 
       title: {
-        fontSize: 16,
+        fontSize: 20,
         color: app_colors.white,
         fontFamily: "GilroyBlack",
         textTransform: "uppercase" as "uppercase",

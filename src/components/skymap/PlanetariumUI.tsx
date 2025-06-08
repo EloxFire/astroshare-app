@@ -25,6 +25,7 @@ import {getObjectFamily} from "../../helpers/scripts/astro/objects/getObjectFami
 import InputWithIcon from "../forms/InputWithIcon";
 import CelestialBodyCardLite from "../cards/CelestialBodyCardLite";
 import PlanetariumResultCard from "../cards/PlanetariumResultCard";
+import PlanetariumSearchModal from "./PlanetariumSearchModal";
 
 interface PlanetariumUIProps {
   navigation: any;
@@ -100,55 +101,10 @@ export default function PlanetariumUI({ navigation, infos, onShowGround, onShowC
 
       {
         showSearchBar && (
-          <View style={[planetariumUIStyles.container.searchContainer]}>
-            <TextInput
-              style={planetariumUIStyles.container.searchContainer.input}
-              placeholder={"Recherchez un objet"}
-              placeholderTextColor={app_colors.white_sixty}
-              keyboardType="default"
-            />
-
-            <ScrollView style={[planetariumUIStyles.container.searchContainer.results]}>
-              <PlanetariumResultCard object={sampleDSO} onPress={() => {}} />
-              <PlanetariumResultCard object={sampleDSO} onPress={() => {}} />
-              <PlanetariumResultCard object={sampleDSO} onPress={() => {}} />
-              <PlanetariumResultCard object={sampleDSO} onPress={() => {}} />
-              <PlanetariumResultCard object={sampleDSO} onPress={() => {}} />
-              <PlanetariumResultCard object={sampleDSO} onPress={() => {}} />
-              <PlanetariumResultCard object={sampleDSO} onPress={() => {}} />
-              <PlanetariumResultCard object={sampleDSO} onPress={() => {}} />
-              <PlanetariumResultCard object={sampleDSO} onPress={() => {}} />
-              <PlanetariumResultCard object={sampleDSO} onPress={() => {}} />
-              <PlanetariumResultCard object={sampleDSO} onPress={() => {}} />
-              <PlanetariumResultCard object={sampleDSO} onPress={() => {}} />
-              <PlanetariumResultCard object={sampleDSO} onPress={() => {}} />
-              <PlanetariumResultCard object={sampleDSO} onPress={() => {}} />
-              <PlanetariumResultCard object={sampleDSO} onPress={() => {}} />
-              <PlanetariumResultCard object={sampleDSO} onPress={() => {}} />
-            </ScrollView>
-
-            <View style={[planetariumUIStyles.container.searchContainer.categories]}>
-              <TouchableOpacity style={planetariumUIStyles.container.searchContainer.categories.category}>
-                <Text style={planetariumUIStyles.container.searchContainer.categories.category.text}>Vos favoris</Text>
-                <Image style={planetariumUIStyles.container.searchContainer.categories.category.icon} source={require('../../../assets/icons/FiChevronRight.png')} />
-              </TouchableOpacity>
-              <View  style={planetariumUIStyles.container.searchContainer.categories.separator}/>
-              <TouchableOpacity style={planetariumUIStyles.container.searchContainer.categories.category}>
-                <Text style={planetariumUIStyles.container.searchContainer.categories.category.text}>Objets du ciel profond</Text>
-                <Image style={planetariumUIStyles.container.searchContainer.categories.category.icon} source={require('../../../assets/icons/FiChevronRight.png')} />
-              </TouchableOpacity>
-              <View  style={planetariumUIStyles.container.searchContainer.categories.separator}/>
-              <TouchableOpacity style={planetariumUIStyles.container.searchContainer.categories.category}>
-                <Text style={planetariumUIStyles.container.searchContainer.categories.category.text}>Étoiles</Text>
-                <Image style={planetariumUIStyles.container.searchContainer.categories.category.icon} source={require('../../../assets/icons/FiChevronRight.png')} />
-              </TouchableOpacity>
-              <View  style={planetariumUIStyles.container.searchContainer.categories.separator}/>
-              <TouchableOpacity style={planetariumUIStyles.container.searchContainer.categories.category}>
-                <Text style={planetariumUIStyles.container.searchContainer.categories.category.text}>Planètes</Text>
-                <Image style={planetariumUIStyles.container.searchContainer.categories.category.icon} source={require('../../../assets/icons/FiChevronRight.png')} />
-              </TouchableOpacity>
-            </View>
-          </View>
+          <PlanetariumSearchModal
+            onClose={() => setShowSearchBar(false)}
+            navigation={navigation}
+          />
         )
       }
 
