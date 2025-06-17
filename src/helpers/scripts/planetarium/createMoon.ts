@@ -4,8 +4,14 @@ import {convertSphericalToCartesian} from "./utils/convertSphericalToCartesian";
 import {planetTextures} from "../../constants";
 import {EquatorialCoordinate, HorizontalCoordinate} from "@observerly/astrometry";
 import {meshGroupsNames, planetariumRenderOrders} from "./utils/planetariumSettings";
+import {createTextLabel} from "./createLabel";
 
-export const createMoon = (moonCoords: (EquatorialCoordinate & HorizontalCoordinate & { phase: string }), setUiInfos: React.Dispatch<any>) => {
+export const createMoon = (
+  moonCoords: (EquatorialCoordinate & HorizontalCoordinate & { phase: string }),
+  setUiInfos: React.Dispatch<any>,
+  groundQuaternion: THREE.Quaternion,
+  camera: THREE.PerspectiveCamera,
+) => {
   console.log("[GLView] Creating moon...")
   const { x, y, z } = convertSphericalToCartesian(9.8, moonCoords.ra, moonCoords.dec);
   const moonGeometry = new THREE.SphereGeometry(0.1, 32, 32);
@@ -16,7 +22,7 @@ export const createMoon = (moonCoords: (EquatorialCoordinate & HorizontalCoordin
   moonMesh.position.set(x, y, z);
 
   moonMesh.userData = {
-    type: 'planet',
+    type: 'moon',
     index: 'moon',
     onTap: () => {
       console.log(`[GLView] Moon tapped: ${moonCoords.phase}`);
@@ -28,9 +34,16 @@ export const createMoon = (moonCoords: (EquatorialCoordinate & HorizontalCoordin
     }
   };
 
+  const moonLabel = createTextLabel("Lune", moonMesh.position, groundQuaternion, camera);
+
   moonMesh.renderOrder = planetariumRenderOrders.moon;
   moonMesh.name = meshGroupsNames.planets;
+  moonLabel.renderOrder = planetariumRenderOrders.moon;
+  moonLabel.name = meshGroupsNames.labels.moon;
+
+  const moonGroup = new THREE.Group();
+  moonGroup.add(moonMesh, moonLabel);
 
   console.log("[GLView] Moon created")
-  return moonMesh;
+  return moonGroup;
 }

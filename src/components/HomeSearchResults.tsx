@@ -74,7 +74,7 @@ export default function HomeSearchResults({ results, planetResults, onReset, nav
           scrollEnabled={data.length > 1}
           horizontal
           data={data}
-          ListEmptyComponent={<></>}
+          ListEmptyComponent={<View></View>}
           renderItem={handleRenderItem}
           keyExtractor={item => `${item.dec}-${item.ra}`}
         />

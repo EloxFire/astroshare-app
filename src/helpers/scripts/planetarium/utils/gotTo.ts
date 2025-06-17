@@ -1,38 +1,45 @@
 import * as THREE from 'three';
-import { setInitialAngles } from '../handlePanGesture';
 
 /**
- * Centre la caméra vers un objet 3D en scène (planète, étoile, DSO, etc.)
- *
- * @param cameraRef - Référence vers la caméra
- * @param groundRef - Référence vers le sol
- * @param target - Vecteur position cible dans la scène
+ * Convert RA/DEC to a unit vector in Cartesian coordinates
  */
-export function centerCameraToObject3D(
-  cameraRef: React.MutableRefObject<THREE.PerspectiveCamera | null>,
-  groundRef: React.MutableRefObject<THREE.Mesh | null>,
-  targetWorld: THREE.Vector3
-): void {
-  const camera = cameraRef.current;
-  const ground = groundRef.current;
-  if (!camera || !ground) return;
+function raDecToCartesian(ra: number, dec: number): THREE.Vector3 {
+  const cosDec = Math.cos(dec);
+  return new THREE.Vector3(
+    Math.cos(ra) * cosDec,
+    Math.sin(ra) * cosDec,
+    Math.sin(dec)
+  ).normalize();
+}
 
-  const baseQuaternion = ground.userData.baseQuaternion as THREE.Quaternion;
+/**
+ * Orient the camera to look at the given RA/DEC direction.
+ * @param ra Right Ascension in radians
+ * @param dec Declination in radians
+ * @param camera THREE.Camera – must be at position (0, 0, 0)
+ */
+export function goTo(ra: number, dec: number, camera: THREE.PerspectiveCamera) {
+  const target = raDecToCartesian(ra, dec);
 
-  // 👉 Passer dans le repère de la caméra : on annule baseQuaternion
-  const invBaseQ = baseQuaternion.clone().invert();
-  const target = targetWorld.clone().applyQuaternion(invBaseQ);
+  const forward = new THREE.Vector3(0, 0, -1); // camera default direction
+  const quaternionStart = camera.quaternion.clone();
+  const quaternionOffset = new THREE.Quaternion().setFromUnitVectors(forward, target);
 
-  // Calcul des angles dans le repère local
-  const az = Math.atan2(target.x, target.z);
-  const alt = Math.acos(target.y / target.length());
+  const quaternionEnd = quaternionOffset.multiply(quaternionStart.clone());
 
-  // Mettre à jour les angles du système de pan gesture
-  setInitialAngles(az, alt);
+  const duration = 1.0; // seconds
+  let elapsed = 0;
 
-  const q1 = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 0, 1), az);
-  const q2 = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1, 0, 0), alt);
-  const finalQ = baseQuaternion.clone().multiply(q1).multiply(q2);
+  const animate = () => {
+    elapsed += 1 / 60;
+    const t = Math.min(elapsed / duration, 1);
 
-  camera.setRotationFromQuaternion(finalQ.normalize());
+    camera.quaternion.copy(quaternionStart.clone().slerp(quaternionEnd, t));
+
+    if (t < 1) {
+      requestAnimationFrame(animate);
+    }
+  };
+
+  requestAnimationFrame(animate);
 }

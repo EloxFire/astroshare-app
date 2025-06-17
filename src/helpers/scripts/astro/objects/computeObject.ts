@@ -64,6 +64,15 @@ export const computeObject = (props: ComputeObjectProps): ComputedObjectInfos | 
       objectName = 'Unknown object';
     }
 
+    let objectOtherName: string | undefined;
+    if(objectFamily === 'DSO') {
+      objectOtherName = (props.object as DSO).common_names.split(',')[0].trim();
+    } else if (objectFamily === 'Star') {
+      objectOtherName = undefined
+    } else if (objectFamily === 'Planet') {
+      objectOtherName = undefined;
+    }
+
     let objectIcon: ImageSourcePropType = getObjectIcon(props.object);
     let objectType: string = getObjectType(props.object)
 
@@ -165,7 +174,8 @@ export const computeObject = (props: ComputeObjectProps): ComputedObjectInfos | 
       base: {
         family: objectFamily,
         type: objectType,
-        common_name: objectName,
+        name: objectName,
+        otherName: objectOtherName,
         icon: objectIcon,
         ra: props.object.ra,
         dec: props.object.dec,

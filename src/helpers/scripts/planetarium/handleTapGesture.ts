@@ -3,7 +3,7 @@ import {
   TapGestureHandlerEventPayload,
 } from "react-native-gesture-handler";
 import { THREE } from "expo-three";
-import {computeObject} from "../astro/objects/computeObject";
+import { computeObject } from "../astro/objects/computeObject";
 
 export const handleTapStart = (
   event: GestureStateChangeEvent<TapGestureHandlerEventPayload>,
@@ -44,9 +44,6 @@ export const handleTapStart = (
     const target = intersects.find((i) => i.object.userData?.type === type);
     if (!target || !target.object.userData?.onTap) continue;
 
-    console.log(`[DEBUG] target type: ${type}, index: ${target.index}, userData:`, target.object.userData);
-
-
     // Appel du comportement
     if (type === "star" && target.index != null) {
       console.log(`[handleTap] Taping Star : ${target.index}`);
@@ -54,19 +51,14 @@ export const handleTapStart = (
     } else if (type === "dso") {
       console.log(`[handleTap] Taping DSO : ${target.object.userData.index}`);
       target.object.userData.onTap(target.object.userData.index);
-    } else if (type === "planet"){
+    } else if (type === "planet") {
       console.log(`[handleTap] Taping Planet : ${target.object.userData.name}`);
       target.object.userData.onTap();
     }
 
-    // Pour les étoiles et planètes
     const point = new THREE.Vector3();
 
-    if (
-      (type === "star") &&
-      target.index != null &&
-      "geometry" in target.object
-    ) {
+    if (type === "star" && target.index != null && "geometry" in target.object) {
       const geometry = target.object.geometry as THREE.BufferGeometry;
       const attr = geometry.getAttribute("position");
 
@@ -76,26 +68,52 @@ export const handleTapStart = (
         attr.getZ(target.index)
       );
       target.object.localToWorld(point);
-    } else {
+
+      selectionCircleObject.position.copy(point);
+      selectionCircleObject.scale.set(0.200, 0.200, 0.200);
+      selectionCircleObject.lookAt(camera.position);
+      selectionCircleObject.visible = true;
+
+    }else if (type === "moon"){
       target.object.getWorldPosition(point);
-    }
 
-    // Rayon
-    let radius = 0.5;
-    if (type === "star") {
-      radius = 0.2;
-    } else if ("geometry" in target.object) {
-      const geometry = target.object.geometry as THREE.BufferGeometry;
-      geometry.computeBoundingSphere();
-      radius =
-        (geometry.boundingSphere?.radius || 1) * target.object.scale.x;
-    }
+      selectionCircleObject.position.copy(point);
+      selectionCircleObject.scale.set(1, 1, 1);
+      selectionCircleObject.lookAt(camera.position);
+      selectionCircleObject.visible = true;
+    } else if (type === "planet") {
+      target.object.getWorldPosition(point);
 
-    // Affichage du cercle
-    selectionCircleObject.position.copy(point);
-    selectionCircleObject.scale.set(radius, radius, radius);
-    selectionCircleObject.lookAt(camera.position);
-    selectionCircleObject.visible = true;
+      selectionCircleObject.position.copy(point);
+      selectionCircleObject.scale.set(1, 1, 1);
+      selectionCircleObject.lookAt(camera.position);
+      selectionCircleObject.visible = true;
+
+    } else if (type === "dso") {
+      const corners: THREE.Vector3[] = target.object.userData.corners;
+
+      if (corners && corners.length === 4) {
+        // Calcul du centre de l'image
+        const center = new THREE.Vector3();
+        for (const corner of corners) {
+          center.add(corner);
+        }
+        center.divideScalar(4);
+
+        // Calcul des axes de l'ellipse
+        const majorAxis = new THREE.Vector3().subVectors(corners[2], corners[0]).length() / 2;
+        const minorAxis = new THREE.Vector3().subVectors(corners[1], corners[0]).length() / 2;
+
+        // Mise à jour du cercle
+        selectionCircleObject.position.copy(center);
+        selectionCircleObject.scale.set(majorAxis, minorAxis, 1);
+        selectionCircleObject.lookAt(camera.position);
+        selectionCircleObject.visible = true;
+      } else {
+        console.warn("[handleTap] Corners not found for DSO");
+        selectionCircleObject.visible = false;
+      }
+    }
 
     return;
   }

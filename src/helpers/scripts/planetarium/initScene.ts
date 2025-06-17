@@ -58,15 +58,28 @@ export const initScene = (
   const axesHelper = new THREE.AxesHelper( 3 );
   scene.add( axesHelper );
 
-  const selectionCircle = createSelectionCircle()
+  const background = createBackground()
   const ground = createGround(currentUserLocation)
+  const atmosphere = createAtmosphere();
+  const constellations = drawConstellations()
+  const selectionCircle = createSelectionCircle()
+
+  // Camera position locked to the ground
+  const q1: Quaternion = new THREE.Quaternion;
+  const q2: Quaternion = new THREE.Quaternion;
+  const q3: Quaternion = new THREE.Quaternion;
+  const x1: Vector3 = new THREE.Vector3(1, 0, 0);
+  const y1: Vector3 = new THREE.Vector3(0, 0, 1);
+  q1.setFromAxisAngle(y1, 0);
+  q2.setFromAxisAngle(x1, Math.PI / 2);
+  ground.getWorldQuaternion(q3);
+  const groundTotalQuaternion: Quaternion = q3.multiply(q1).multiply(q2);
+  camera.setRotationFromQuaternion(groundTotalQuaternion.normalize());
+
   const stars = createStars(starsCatalog, setObjectInfos)
   const planets = createPlanets(planetList, setObjectInfos)
-  const moon = createMoon(moonCoords, setObjectInfos)
-  const background = createBackground()
+  const moon = createMoon(moonCoords, setObjectInfos, groundTotalQuaternion, camera)
   const dso = createDSO(setObjectInfos);
-  const constellations = drawConstellations()
-  const atmosphere = createAtmosphere();
   const {eqGrid1, eqGrid2, eqGrid3} = createEquatorialGrid(hex_colors.blue, .5);
   const {azGrid1, azGrid2, azGrid3} = createAzimuthalGrid(hex_colors.violet, .5);
 
@@ -86,18 +99,6 @@ export const initScene = (
   // Default visibility settings
   eqGrid.visible = false;
   azGrid.visible = false;
-
-  // Camera position locked to the ground
-  const q1: Quaternion = new THREE.Quaternion;
-  const q2: Quaternion = new THREE.Quaternion;
-  const q3: Quaternion = new THREE.Quaternion;
-  const x1: Vector3 = new THREE.Vector3(1, 0, 0);
-  const y1: Vector3 = new THREE.Vector3(0, 0, 1);
-  q1.setFromAxisAngle(y1, 0);
-  q2.setFromAxisAngle(x1, Math.PI / 2);
-  ground.getWorldQuaternion(q3);
-  const groundTotalQuaternion: Quaternion = q3.multiply(q1).multiply(q2);
-  camera.setRotationFromQuaternion(groundTotalQuaternion.normalize());
 
   const initialEuler = new THREE.Euler().setFromQuaternion(groundTotalQuaternion, 'YXZ');
   setInitialAngles(initialEuler.y, initialEuler.x);

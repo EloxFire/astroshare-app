@@ -15,9 +15,8 @@ export const objectCardLiteStyles = {
 
     header: {
       display: "flex" as "flex",
-      flexDirection: "row" as "row",
-      alignItems: "center" as "center",
-      gap: 10,
+      flexDirection: "column" as "column",
+      alignItems: "flex-start" as "flex-start",
       marginBottom: 5,
     },
 
@@ -34,10 +33,16 @@ export const objectCardLiteStyles = {
       flex: 1,
 
       title: {
-        fontSize: 20,
+        fontSize: 16,
         color: app_colors.white,
         fontFamily: "GilroyBlack",
         textTransform: "uppercase" as "uppercase",
+      },
+
+      subtitle: {
+        fontSize: 12,
+        color: app_colors.white,
+        fontFamily: "DMMonoRegular",
       },
 
       badges: {
@@ -45,7 +50,7 @@ export const objectCardLiteStyles = {
         flexDirection: "row" as "row",
         justifyContent: "flex-start" as "flex-start",
         marginTop: 5,
-        gap: 10,
+        gap: 5,
       }
     }
   }

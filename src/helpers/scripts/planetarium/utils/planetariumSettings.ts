@@ -8,6 +8,7 @@ export const planetariumRenderOrders = {
   azGrid: -10,
   eqGrid: -9,
   constellations: -5,
+  labels: -2,
   ground: 11,
   selectionCircle: 12,
 }
@@ -25,4 +26,10 @@ export const meshGroupsNames = {
   azGrid: 'azGrid',
   eqGrid: 'eqGrid',
   compassLabels: 'compassLabels',
+  labels: {
+    stars: 'starLabels',
+    planets: 'planetLabels',
+    dso: 'dsoLabels',
+    moon: 'moonLabels',
+  }
 }

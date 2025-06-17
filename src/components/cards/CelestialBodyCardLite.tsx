@@ -38,32 +38,18 @@ export default function CelestialBodyCardLite({ object, navigation }: CelestialB
     <TouchableOpacity onPress={() => navigation.push(routes.celestialBodies.details.path, { object: object })} style={objectCardLiteStyles.card}>
       <Image source={getObjectIcon(object)} style={objectCardLiteStyles.card.icon} />
       <View style={objectCardLiteStyles.card.data}>
-        <View style={objectCardLiteStyles.card.header}>
-          <Text style={objectCardLiteStyles.card.data.title}>{getObjectName(object, 'all', true)}</Text>
-          {
-            getObjectFamily(object) === 'DSO' && (object as DSO).m !== "" && !objectInfos?.base.common_name &&
-              <SimpleBadge
-                text={((object) as DSO).name}
-                noBorder
-              />
-          }
-          {
-            (object as DSO).m !== "" && (
-              <SimpleBadge
-                text={((object) as DSO).name}
-                noBorder
-              />
-            )
-          }
-          {
-            (object as DSO).m === "" && objectInfos?.base.common_name && (
-              <SimpleBadge
-                text={objectInfos.base.common_name}
-                noBorder
-              />
-            )
-          }
-        </View>
+        {
+          objectInfos?.base.otherName ? (
+            <View style={[objectCardLiteStyles.card.header, {flexDirection: 'row', alignItems: 'center', gap: 5}]}>
+              <Text style={objectCardLiteStyles.card.data.title}>{objectInfos?.base.otherName || ''}</Text>
+              <Text style={objectCardLiteStyles.card.data.subtitle}>({getObjectName(object, 'all', false)})</Text>
+            </View>
+          ) : (
+            <View style={[objectCardLiteStyles.card.header, {flexDirection: 'row', gap: 5}]}>
+              <Text style={objectCardLiteStyles.card.data.title}>{objectInfos?.base.name}</Text>
+            </View>
+          )
+        }
         {
           objectInfos && (
             <View style={objectCardLiteStyles.card.data.badges}>
@@ -85,13 +71,6 @@ export default function CelestialBodyCardLite({ object, navigation }: CelestialB
                   />
                 )
               }
-              {/*{*/}
-              {/*  getObjectFamily(object) !== 'Planet' && getObjectFamily(object) !== 'Star' && objectInfos.base.common_name !== "" && (*/}
-              {/*    <SimpleBadge*/}
-              {/*      text={((object) as DSO).type}*/}
-              {/*    />*/}
-              {/*  )*/}
-              {/*}*/}
               {
                 objectInfos && (
                   <>

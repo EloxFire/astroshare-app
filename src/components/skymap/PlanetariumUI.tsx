@@ -86,6 +86,10 @@ export default function PlanetariumUI({ navigation, infos, onShowGround, onShowC
     setShowSearchBar(false);
   }
 
+  useEffect(() => {
+    console.log("[PlanetariumUI] Object Infos updated:", objectInfos?.base.otherName, objectInfos?.base.name, objectInfos?.base.type);
+  }, [objectInfos])
+
 
   return (
     <View style={planetariumUIStyles.container}>
@@ -161,7 +165,7 @@ export default function PlanetariumUI({ navigation, infos, onShowGround, onShowC
                       <Image style={planetariumUIStyles.container.generalInfosBar.body.image} source={objectInfos.base.icon} />
                     </View>
                     <View style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-start'}}>
-                      <Text style={planetariumUIStyles.container.generalInfosBar.body.title}>{objectInfos.base.common_name}</Text>
+                      <Text style={planetariumUIStyles.container.generalInfosBar.body.title}>{objectInfos.base.otherName || objectInfos.base.name}</Text>
                       <Text style={planetariumUIStyles.container.generalInfosBar.body.subtitle}>{objectInfos.base.type}</Text>
                     </View>
                     <View style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-end', flex: 1, gap: 5}}>
@@ -200,7 +204,7 @@ export default function PlanetariumUI({ navigation, infos, onShowGround, onShowC
                       <Image style={planetariumUIStyles.container.generalInfosBar.body.image} source={objectInfos.base.icon} />
                     </View>
                     <View style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-start'}}>
-                      <Text style={planetariumUIStyles.container.generalInfosBar.body.title}>{objectInfos.base.common_name}</Text>
+                      <Text style={planetariumUIStyles.container.generalInfosBar.body.title}>{objectInfos.base.otherName || objectInfos.base.name}</Text>
                       <Text style={planetariumUIStyles.container.generalInfosBar.body.subtitle}>{objectInfos.base.type}</Text>
                     </View>
                     <View style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-end', flex: 1, gap: 5}}>

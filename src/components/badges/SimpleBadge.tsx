@@ -10,10 +10,11 @@ interface SimpleBadgeProps {
   icon?: ImageSourcePropType
   iconColor?: string
   noBorder?: boolean
+  noBackground?: boolean
   small?: boolean
 }
 
-export default function SimpleBadge({text, backgroundColor, foregroundColor, icon, iconColor, noBorder, small}: SimpleBadgeProps) {
+export default function SimpleBadge({text, backgroundColor, foregroundColor, icon, iconColor, noBorder, noBackground, small}: SimpleBadgeProps) {
 
   const badgeStyles = {
     badge: {
@@ -22,9 +23,9 @@ export default function SimpleBadge({text, backgroundColor, foregroundColor, ico
       justifyContent: 'center' as 'center',
       alignItems: 'center' as 'center',
       gap: 5,
-      backgroundColor: backgroundColor ? backgroundColor : app_colors.white_no_opacity,
+      backgroundColor: noBackground ? 'transparent' : backgroundColor ? backgroundColor : app_colors.white_no_opacity,
       borderWidth: noBorder ? 0 : 1,
-      borderColor: backgroundColor ? backgroundColor : app_colors.white_no_opacity,
+      borderColor: noBackground ? 'transparent' : app_colors.white_no_opacity,
       paddingHorizontal: 8,
       paddingVertical: small ? 1 : 3,
       borderRadius: 20,
