@@ -17,19 +17,7 @@ import {formatDays, formatKm} from "../helpers/scripts/utils/formatters/formater
 import {astroshareApi} from "../helpers/api";
 import {app_colors} from "../helpers/constants";
 import {capitalize} from "../helpers/scripts/utils/formatters/capitalize";
-
-interface MoonData {
-  phase: string,
-  illumination: string,
-  distance: number,
-  elongation: number,
-  newMoon: boolean,
-  fullMoon: boolean,
-  age: number
-  moonrise: string,
-  moonset: string
-}
-
+import DisclaimerBar from "../components/banners/DisclaimerBar";
 
 export default function MoonPhases({ navigation }: any) {
 
@@ -153,6 +141,10 @@ export default function MoonPhases({ navigation }: any) {
         {/*Calendar view*/}
         <View style={[moonPhasesStyles.content, {marginTop: 20}]}>
           <Text style={moonPhasesStyles.content.calendar.title}>Calendrier complet</Text>
+          {
+            calendarImages.length === 0 &&
+              <DisclaimerBar message={"Le traitement du calendrier complet peu prendre un certain à cause de la méthode actuelle de génération des images."} type={"warning"} soft/>
+          }
 
           <View style={moonPhasesStyles.content.calendar.selectorRow}>
             {/*<SimpleButton*/}
