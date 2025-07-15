@@ -24,10 +24,9 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
     const refreshToken = await getData(storageKeys.auth.refreshToken)
 
     console.log('[Auth] Checking user')
-    console.log('[Auth] Refresh token:', refreshToken)
 
     if (!refreshToken) {
-      console.log('[Auth] No token found')
+      console.log('[Auth] No token found : Skipping user login')
       return
     }
 
@@ -43,8 +42,13 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
   const refreshAccessToken = async () => {
     const refreshToken = await getData(storageKeys.auth.refreshToken)
 
-    if (!refreshToken) return null
+    if (!refreshToken) {
+      console.log('[Auth] No refresh token found, user is not logged in')
+      await logoutUser()
+      return null
+    }
 
+    console.log('[Auth] Refreshing user access token')
     try {
       const response = await axios.post(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/auth/refresh`, {
         refreshToken
@@ -57,10 +61,20 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
       await storeData(storageKeys.auth.refreshToken, newRefreshToken)
       await storeObject(storageKeys.auth.user, user)
 
+      console.log('[Auth] Access token refreshed successfully')
 
 
       setCurrentUser(user)
-      console.log('[Auth] Session restored with refreshed token')
+      console.log('[Auth] Current user updated')
+
+      if(user.subscriptionId){
+        console.log('[Auth] User has a subscription, checking subscription status...')
+        const subscriptionResponse = await axios.get(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/auth/subscription/status`, {
+          headers: {
+            'Authorization': accessToken
+          }
+        })
+      }
       return accessToken
     } catch (e) {
       console.log('[Auth] Failed to refresh token', e)

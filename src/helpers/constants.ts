@@ -53,6 +53,7 @@ export const app_colors = {
   blue_forty: '#061e9240',
   blue_twenty: '#061e9220',
   warning: '#FFA500',
+  warning_forty: '#FFA50040',
 }
 
 export const hex_colors = {

@@ -7,9 +7,10 @@ interface DisclaimerBarProps {
   message: string
   type: 'error' | 'info' | 'warning'
   onPress?: () => void
+  soft?: boolean
 }
 
-export default function DisclaimerBar({ message, type, onPress }: DisclaimerBarProps) {
+export default function DisclaimerBar({ message, type, onPress, soft }: DisclaimerBarProps) {
   let bgColor;
   switch (type) {
     case 'error':
@@ -19,7 +20,7 @@ export default function DisclaimerBar({ message, type, onPress }: DisclaimerBarP
       bgColor = app_colors.white_no_opacity
       break
     case 'warning':
-      bgColor = app_colors.warning
+      bgColor = soft ? app_colors.warning_forty : app_colors.warning
       break
     default:
       bgColor = app_colors.white_no_opacity

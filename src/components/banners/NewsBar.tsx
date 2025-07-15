@@ -16,7 +16,7 @@ interface NewsBarProps {
 
 export default function NewsBar({navigation, icon, type, colors, internalRoute, externalLink, description, title}: NewsBarProps) {
 
-  console.log('NewsBar', {icon, type, colors, internalRoute, externalLink, description, title})
+  // console.log('NewsBar', {icon, type, colors, internalRoute, externalLink, description, title})
 
   const handlePress = () => {
     if (type === 'internal' && internalRoute) {

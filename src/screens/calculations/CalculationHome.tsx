@@ -13,22 +13,25 @@ import {calculateFD} from "../../helpers/scripts/math/calculateFD";
 import {calculateMagnification} from "../../helpers/scripts/math/calculateMagnification";
 import {calculateMinMagnification} from "../../helpers/scripts/math/calculateMinMagnification";
 import {calculateSampling} from "../../helpers/scripts/math/calculateSampling";
+import {calculateApparentFov} from "../../helpers/scripts/math/calculateApparentFov";
 
 export default function CalculationHome({ navigation }: any) {
 
   const [focalLength, setFocalLength] = useState<number | undefined>(undefined);
   const [diameter, setDiameter] = useState<number | undefined>(undefined);
   const [eyepieceFocalLength, setEyepieceFocalLength] = useState<number | undefined>(undefined);
+  const [eyepieceField, setEyepieceField] = useState<number | undefined>(undefined);
   const [pixelSize, setPixelSize] = useState<string | undefined>(undefined);
 
   const [fD, setFD] = useState<string | undefined>(undefined);
   const [magnification, setMagnification] = useState<string | undefined>(undefined);
   const [minMagnification, setMinMagnification] = useState<string | undefined>(undefined);
   const [sampling, setSampling] = useState<string | undefined>(undefined);
+  const [fov, setFov] = useState<string | undefined>(undefined);
 
   const computeCalculations = () => {
     if(!focalLength && !diameter && !eyepieceFocalLength && !pixelSize){
-      showToast({message: "Veuillez renseigner au moins le diamètre", type: "error"});
+      showToast({message: "Veuillez renseigner au moins deux valeurs", type: "error"});
       return;
     }
 
@@ -36,6 +39,7 @@ export default function CalculationHome({ navigation }: any) {
     setMagnification(calculateMagnification(focalLength, eyepieceFocalLength));
     setMinMagnification(calculateMinMagnification(diameter));
     setSampling(calculateSampling(focalLength, pixelSize));
+    setFov(calculateApparentFov(focalLength, diameter, eyepieceField));
   }
 
   const resetCalculations = () => {
@@ -64,14 +68,20 @@ export default function CalculationHome({ navigation }: any) {
         <ScrollView contentContainerStyle={{display: 'flex', flexDirection: 'column', gap: 10, paddingBottom: 80}}>
           <View style={calculationHomeStyles.content}>
             <Text style={[calculationHomeStyles.content.description, {opacity: 1, fontFamily: 'GilroyRegular', fontSize: 15}]}>Entrez les informations dont vous disposez, le calculateur s'occupe du reste !</Text>
+
             <View style={{display: 'flex', flexDirection: 'row', gap: 10}}>
               <InputWithIcon keyboardType={"numeric"} additionalStyles={{marginVertical: 0}} search={() => {}} placeholder={"Focale télescope (mm)"} changeEvent={(e) => setFocalLength(parseInt(e))} value={focalLength ? focalLength.toString() : ""} type={"number"}/>
               <InputWithIcon keyboardType={"numeric"} additionalStyles={{marginVertical: 0}} search={() => {}} placeholder={"Diamètre télescope (mm)"} changeEvent={(e) => setDiameter(parseInt(e))} value={diameter ? diameter.toString() : ""} type={"number"}/>
             </View>
             <View style={{display: 'flex', flexDirection: 'row', gap: 10}}>
               <InputWithIcon keyboardType={"numeric"} additionalStyles={{marginVertical: 0}} search={() => {}} placeholder={"Focale oculaire (mm)"} changeEvent={(e) => setEyepieceFocalLength(parseInt(e))} value={eyepieceFocalLength ? eyepieceFocalLength.toString() : ""} type={"number"}/>
+              <InputWithIcon keyboardType={"numeric"} additionalStyles={{marginVertical: 0}} search={() => {}} placeholder={"Champ oculaire (°)"} changeEvent={(e) => setEyepieceField(parseInt(e))} value={eyepieceField ? eyepieceField.toString() : ""} type={"number"}/>
+            </View>
+            <View style={{display: 'flex', flexDirection: 'row', gap: 10, width: '50%', paddingRight: 5}}>
               <InputWithIcon keyboardType={"default"} additionalStyles={{marginVertical: 0}} search={() => {}} placeholder={"Taille pixel caméra (µm)"} changeEvent={(e) => handlePixelSize(e)} value={pixelSize ? pixelSize.toString() : ""} type={"text"}/>
             </View>
+
+
             <SimpleButton
               text={"Calculer"}
               icon={require('../../../assets/icons/FiCpu.png')}
@@ -125,9 +135,17 @@ export default function CalculationHome({ navigation }: any) {
             <View style={calculationHomeStyles.content.container}>
               <View>
                 <Text style={calculationHomeStyles.content.title}>Échantillonnage</Text>
-                <Text style={calculationHomeStyles.content.description}>Détermine la résolution en secondes d'arc par pixel pour l'imagerie.</Text>
+                <Text style={calculationHomeStyles.content.description}>Détermine la résolution en secondes d'arc par pixel pour l'imagerie. (En seconde d'arc / pixel)</Text>
               </View>
               <MathComponent expression={sampling}/>
+            </View>
+
+            <View style={calculationHomeStyles.content.container}>
+              <View>
+                <Text style={calculationHomeStyles.content.title}>Champ réel</Text>
+                <Text style={calculationHomeStyles.content.description}>Détermine le champ de vision pour un oculaire donné. (En minutes d'arc)</Text>
+              </View>
+              <MathComponent expression={fov}/>
             </View>
           </View>
         </ScrollView>

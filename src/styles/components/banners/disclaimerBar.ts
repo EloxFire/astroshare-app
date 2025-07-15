@@ -5,7 +5,7 @@ export const disclaimerBarStyles = {
     display: 'flex' as 'flex',
     flexDirection: 'row' as 'row',
     justifyContent: 'flex-start' as 'flex-start',
-    alignItems: 'flex-start' as 'flex-start',
+    alignItems: 'center' as 'center',
     padding: 10,
     borderRadius: 5,
 

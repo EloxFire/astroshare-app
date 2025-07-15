@@ -24,7 +24,7 @@ export default function InputWithIcon({ placeholder, changeEvent, icon, search, 
         placeholder={placeholder}
         onChangeText={(searchString) => { changeEvent(searchString) }}
         underlineColorAndroid="transparent"
-        placeholderTextColor={app_colors.white_forty}
+        placeholderTextColor={app_colors.white_sixty}
         value={value}
         keyboardType={keyboardType || 'default'}
       />
