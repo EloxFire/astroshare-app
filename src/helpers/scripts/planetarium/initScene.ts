@@ -7,7 +7,7 @@ import {createGround} from "./createGround";
 import {createBackground} from "./createBackground";
 import {GlobalPlanet} from "../../types/GlobalPlanet";
 import {createPlanets} from "./createPlanets";
-import {EquatorialCoordinate, HorizontalCoordinate} from "@observerly/astrometry";
+import {EquatorialCoordinate, GeographicCoordinate, HorizontalCoordinate} from "@observerly/astrometry";
 import {createMoon} from "./createMoon";
 import {LocationObject} from "../../types/LocationObject";
 import {Quaternion, Vector3} from "three";
@@ -30,6 +30,7 @@ export const initScene = (
   moonCoords: (EquatorialCoordinate & HorizontalCoordinate & { phase: string }),
   setObjectInfos: React.Dispatch<any>,
   currentLocale: string,
+  observer: GeographicCoordinate
 ): {
   scene: THREE.Scene,
   camera: THREE.PerspectiveCamera,

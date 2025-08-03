@@ -74,6 +74,7 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
             'Authorization': accessToken
           }
         })
+      console.log('[Auth] User subscription status response : ', subscriptionResponse.data)
       }
       return accessToken
     } catch (e) {

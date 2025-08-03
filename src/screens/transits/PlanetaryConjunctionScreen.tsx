@@ -62,7 +62,7 @@ export default function PlanetaryConjunctionScreen({ navigation }: any) {
     if (currentUserLocation) {
       setLoadingConjunctions(true);
       setConjunctions(null);
-      const separation = 3;
+      const separation = 1;
 
       const interval: Interval = {
         from: dayjs().toDate(),
@@ -119,7 +119,7 @@ export default function PlanetaryConjunctionScreen({ navigation }: any) {
       <View style={globalStyles.screens.separator} />
       <View style={planetaryConjunctionStyles.content}>
 
-        <Text style={planetaryConjunctionStyles.content.parameters.text}>Sélectionnez deux planètes</Text>
+        <Text style={planetaryConjunctionStyles.content.parameters.text}>1. Sélectionnez deux planètes</Text>
         <View style={planetaryConjunctionStyles.content.parameters}>
           <View style={planetaryConjunctionStyles.content.row}>
             <SelectDropdown
@@ -188,7 +188,26 @@ export default function PlanetaryConjunctionScreen({ navigation }: any) {
               dropdownStyle={planetaryConjunctionStyles.content.parameters.dropdown.list}
             />
           </View>
-          <Text style={planetaryConjunctionStyles.content.parameters.text}>Sélectionnez un intervalle</Text>
+          <Text style={[planetaryConjunctionStyles.content.parameters.text, {borderTopWidth: 1, borderTopColor: app_colors.white_forty, paddingTop: 5, marginTop: 10}]}>2. Sélectionnez un intervalle</Text>
+          <View style={planetaryConjunctionStyles.content.row}>
+            <Text style={planetaryConjunctionStyles.content.parameters.text}>Entre le</Text>
+            <SimpleButton
+              text={dayjs(startDate).format('DD MMM YYYY')}
+              activeBorderColor={app_colors.white_twenty}
+              onPress={() => setIsStartDateModalVisible(true)}
+              active
+              textColor={app_colors.white}
+            />
+            <Text style={planetaryConjunctionStyles.content.parameters.text}>et le</Text>
+            <SimpleButton
+              text={dayjs(endDate).format('DD MMM YYYY')}
+              activeBorderColor={app_colors.white_twenty}
+              onPress={() => setIsEndDateModalVisible(true)}
+              active
+              textColor={app_colors.white}
+            />
+          </View>
+          <Text style={[planetaryConjunctionStyles.content.parameters.text, {borderTopWidth: 1, borderTopColor: app_colors.white_forty, paddingTop: 5, marginTop: 10}]}>3. Séparation angulaire max</Text>
           <View style={planetaryConjunctionStyles.content.row}>
             <Text style={planetaryConjunctionStyles.content.parameters.text}>Entre le</Text>
             <SimpleButton

@@ -11,11 +11,18 @@ import { StackActions } from '@react-navigation/native';
 import { languageSelectionStyles } from '../styles/screens/languageSelection'
 import { i18n } from '../helpers/scripts/i18n'
 import getUnicodeFlagIcon from 'country-flag-icons/unicode'
+import {sendAnalyticsEvent} from "../helpers/scripts/analytics";
+import {eventTypes} from "../helpers/constants/analytics";
+import {useAuth} from "../contexts/AuthContext";
+import {useTranslation} from "../hooks/useTranslation";
 
 
 export default function Onboarding({ navigation }: any) {
 
   const { refreshCurrentUserLocation } = useSettings()
+  const { currentUserLocation } = useSettings()
+  const { currentUser } = useAuth()
+  const { currentLocale } = useTranslation()
 
   useEffect(() => {
     (async () => {
@@ -24,6 +31,8 @@ export default function Onboarding({ navigation }: any) {
         navigation.dispatch(
           StackActions.replace(routes.home.path)
         );
+      }else{
+        sendAnalyticsEvent(currentUser, currentUserLocation, 'Onboarding screen', eventTypes.SCREEN_VIEW, {}, currentLocale)
       }
     })()
   }, [])
@@ -31,12 +40,14 @@ export default function Onboarding({ navigation }: any) {
   const changeLocale = async (code: string) => {
     i18n.locale = code
     await storeData('locale', code)
+    await sendAnalyticsEvent(currentUser, currentUserLocation, 'Change lang onboaring', eventTypes.BUTTON_CLICK, {}, currentLocale)
     navigation.replace(routes.onboarding.path)
   }
 
   const handleAccept = async () => {
     await storeData('firstLaunch', 'false');
     refreshCurrentUserLocation()
+    await sendAnalyticsEvent(currentUser, currentUserLocation, 'Accept onboarding', eventTypes.BUTTON_CLICK, {}, currentLocale)
     navigation.dispatch(
       StackActions.replace(routes.home.path)
     );

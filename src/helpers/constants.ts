@@ -87,6 +87,10 @@ export const storageKeys = {
     refreshToken: 'refresh_token',
     user: 'user',
   },
+  analytics: {
+    sessionId: 'sessionId',
+    base: "analyticsBase"
+  },
   hiddenPremiumAccess: 'hasHiddenPremiumAccess',
 }
 

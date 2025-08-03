@@ -15,7 +15,7 @@ import {
   applyInertia,
   handlePanChange,
   handlePanEnd,
-  handlePanStart, inertiaEnabled
+  handlePanStart, inertiaEnabled, setInitialAngles
 } from "../../helpers/scripts/planetarium/handlePanGesture";
 import {
   handlePinchTouchDown,
@@ -34,6 +34,8 @@ import {useTranslation} from "../../hooks/useTranslation";
 import {goTo} from "../../helpers/scripts/planetarium/utils/gotTo";
 import {GlobalPlanet} from "../../helpers/types/GlobalPlanet";
 import {DSO} from "../../helpers/types/DSO";
+import {ComputedObjectInfos} from "../../helpers/types/objects/ComputedObjectInfos";
+import {computeObject} from "../../helpers/scripts/astro/objects/computeObject";
 
 export default function Planetarium({ route, navigation }: any) {
 
@@ -54,7 +56,8 @@ export default function Planetarium({ route, navigation }: any) {
 
   const [planetariumLoading, setPlanetariumLoading] = useState<boolean>(true);
   const [glViewParams, setGlViewParams] = useState<any>({width: 0, height: 0});
-  const [objectInfos, setObjectInfos] = useState<{object: (DSO | Star | GlobalPlanet), meshPosition: any} | null>(null);
+  const [objectInfos, setObjectInfos] = useState<Star | GlobalPlanet | DSO | null>(null);
+  const [computedObjectInfos, setComputedObjectInfos] = useState<ComputedObjectInfos | null>(null);
 
   useEffect(() => {
     StatusBar.setHidden(true);
@@ -70,6 +73,23 @@ export default function Planetarium({ route, navigation }: any) {
     }
   }, []);
 
+  useEffect(() => {
+    if(!objectInfos) {
+      setComputedObjectInfos(null);
+      return;
+    }
+
+    const observer: { latitude: number, longitude: number } = {
+      latitude: currentUserLocation.lat,
+      longitude: currentUserLocation.lon
+    };
+
+    setComputedObjectInfos(computeObject({
+      object: objectInfos,
+      observer: observer,
+      lang: currentLocale,
+    }));
+  }, [objectInfos])
 
   const _onContextCreate = async (gl: ExpoWebGLRenderingContext) => {
     const {scene, camera, renderer, ground, selectionCircle, atmosphere, grids, quaternions} = initScene(
@@ -79,7 +99,8 @@ export default function Planetarium({ route, navigation }: any) {
       planets,
       moonCoords,
       setObjectInfos,
-      currentLocale
+      currentLocale,
+      {latitude: currentUserLocation.lat, longitude: currentUserLocation.lon}
     );
     sceneRef.current = scene;
     cameraRef.current = camera;
@@ -142,16 +163,21 @@ export default function Planetarium({ route, navigation }: any) {
         !planetariumLoading &&
           <PlanetariumUI
               navigation={navigation}
-              infos={objectInfos ? objectInfos.object : null}
+              infos={computedObjectInfos ? computedObjectInfos : null}
               onShowAzGrid={() => onShowAzGrid(sceneRef.current!)}
               onShowConstellations={() => onShowConstellations(sceneRef.current!)}
               onShowEqGrid={() => onShowEqGrid(sceneRef.current!)}
               onShowGround={() => onShowGround(sceneRef.current!)}
               onShowPlanets={() => onShowPlanets(sceneRef.current!)}
               onShowDSO={() => onShowDSO(sceneRef.current!)}
-              onCenterObject={() => goTo(
-                objectInfos.object
-              )
+              onCenterObject={() =>
+                goTo(
+                  computedObjectInfos?.base.degRa,
+                  computedObjectInfos?.base.degDec,
+                  cameraRef.current!,
+                  groundRef.current!,
+                  setInitialAngles
+                )
               }
           />
       }

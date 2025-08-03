@@ -10,6 +10,8 @@ export type ComputedObjectInfos = {
     icon: ImageSourcePropType;
     ra: string | number;
     dec: string | number;
+    degRa: number;
+    degDec: number;
     mag: number | string;
     alt: string;
     az: string;

@@ -179,6 +179,8 @@ export const computeObject = (props: ComputeObjectProps): ComputedObjectInfos | 
         icon: objectIcon,
         ra: props.object.ra,
         dec: props.object.dec,
+        degRa: degRa,
+        degDec: degDec,
         mag: objectFamily === 'Planet' ? objectMagnitude + ' (max)' : objectMagnitude,
         alt: objectCurrentAltitude.toFixed(2) + '°',
         az: Math.round(objectCurrentAzimuth) + '°',

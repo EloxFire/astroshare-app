@@ -1,35 +1,28 @@
 import React, {useEffect, useState} from "react";
-import {Image, ImageSourcePropType, ScrollView, Text, TextInput, TouchableOpacity, View} from "react-native";
+import {Image, Text, TouchableOpacity, View} from "react-native";
 import {planetariumUIStyles} from "../../styles/components/skymap/planetariumUI";
-import {routes} from "../../helpers/routes";
 import {useSettings} from "../../contexts/AppSettingsContext";
 import dayjs from "dayjs";
 import {GeographicCoordinate, isNight} from "@observerly/astrometry";
 import {ComputedObjectInfos} from "../../helpers/types/objects/ComputedObjectInfos";
-import {computeObject} from "../../helpers/scripts/astro/objects/computeObject";
 import {useTranslation} from "../../hooks/useTranslation";
 import {DSO} from "../../helpers/types/DSO";
 import {Star} from "../../helpers/types/Star";
 import {GlobalPlanet} from "../../helpers/types/GlobalPlanet";
 import VisibilityGraph from "../graphs/VisibilityGraph";
-import {useStarCatalog} from "../../contexts/StarsContext";
 import SimpleButton from "../commons/buttons/SimpleButton";
 import SimpleBadge from "../badges/SimpleBadge";
-import {app_colors, sampleDSO} from "../../helpers/constants";
+import {app_colors} from "../../helpers/constants";
 import DSOValues from "../commons/DSOValues";
 import {i18n} from "../../helpers/scripts/i18n";
 import {convertDegreesRaToHMS} from "../../helpers/scripts/astro/coords/convertDegreesRaToHMS";
 import {prettyDec, prettyRa} from "../../helpers/scripts/astro/prettyCoords";
 import {convertDegreesDecToDMS} from "../../helpers/scripts/astro/coords/convertDegreesDecToDms";
-import {getObjectFamily} from "../../helpers/scripts/astro/objects/getObjectFamily";
-import InputWithIcon from "../forms/InputWithIcon";
-import CelestialBodyCardLite from "../cards/CelestialBodyCardLite";
-import PlanetariumResultCard from "../cards/PlanetariumResultCard";
 import PlanetariumSearchModal from "./PlanetariumSearchModal";
 
 interface PlanetariumUIProps {
   navigation: any;
-  infos: DSO | Star | GlobalPlanet | null;
+  infos: ComputedObjectInfos | null;
   onShowEqGrid: () => void;
   onShowConstellations: () => void;
   onShowAzGrid: () => void;
@@ -67,10 +60,11 @@ export default function PlanetariumUI({ navigation, infos, onShowGround, onShowC
   }, []);
 
   useEffect(() => {
+    console.log("[PlanetariumUI] Infos updated:", infos);
     setCurrentInfoTab(0);
     if(infos){
       const observer: GeographicCoordinate = {latitude: currentUserLocation.lat, longitude: currentUserLocation.lon};
-      setObjectInfos(computeObject({object: infos, observer, lang: currentLocale, altitude: 341 }));
+      setObjectInfos(infos);
     }else{
       setObjectInfos(null);
     }

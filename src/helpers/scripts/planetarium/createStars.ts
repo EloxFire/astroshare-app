@@ -3,6 +3,14 @@ import {convertSphericalToCartesian} from "./utils/convertSphericalToCartesian";
 import {Star} from "../../types/Star";
 import {getBrightStarName} from "../astro/objects/getBrightStarName";
 import {meshGroupsNames, planetariumRenderOrders} from "./utils/planetariumSettings";
+import {computeObject} from "../astro/objects/computeObject";
+import {GeographicCoordinate} from "@observerly/astrometry";
+
+interface createStarsProps {
+  starsCatalog: Star[];
+  setUiInfos: React.Dispatch<any>;
+  observer: GeographicCoordinate;
+}
 
 export function createStars(starsCatalog: Star[], setUiInfos: React.Dispatch<any>) {
   console.log("[GLView] Creating stars...");
@@ -76,10 +84,7 @@ export function createStars(starsCatalog: Star[], setUiInfos: React.Dispatch<any
   function onStarTap (star: Star) {
     console.log(`[GLView] Star tapped: ${getBrightStarName(star.ids)}`);
     const { x, y, z } = convertSphericalToCartesian(10, star.ra, star.dec);
-    setUiInfos({
-      object: star,
-      meshPosition: new THREE.Vector3(x, y, z),
-    })
+    setUiInfos(star)
   }
 
   starsCloud.userData = {

@@ -214,8 +214,8 @@ export const planetariumUIStyles = {
 
         subtitle: {
           color: app_colors.white,
-          fontSize: 15,
-          fontFamily: 'DMMonoRegular'
+          fontSize: 12,
+          fontFamily: 'DMMonoRegular',
         }
       }
     }

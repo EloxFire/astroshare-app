@@ -1,3 +1,4 @@
+import 'react-native-get-random-values';
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import {useEffect, useRef, useState} from "react";
@@ -73,6 +74,9 @@ import SolarEclipseDetails from "./src/screens/transits/SolarEclipseDetails";
 import LunarEclipsesScreen from "./src/screens/transits/LunarEclipsesScreen";
 import LunarEclipseDetails from "./src/screens/transits/LunarEclipseDetails";
 
+import { LogBox } from 'react-native';
+import {setupAnalytics} from "./src/helpers/scripts/analytics";
+
 dayjs.locale('fr');
 dayjs.extend(LocalizedFormat)
 dayjs.extend(Duration)
@@ -87,6 +91,9 @@ dayjs().format('L LT')
 const Stack = createNativeStackNavigator();
 
 export default function App() {
+
+  LogBox.ignoreLogs(['EXGL: gl.pixelStorei()'])
+
   const {expoPushToken, notification} = usePushNotifications();
 
   console.log('expoPushToken', expoPushToken?.data);
@@ -109,6 +116,13 @@ export default function App() {
 
     prepare();
   }, []);
+
+  // SETUP ANALYTICS FOR TRACK EVENTS
+  useEffect(() => {
+    setupAnalytics().then(() => {
+      console.log('[Analytics] Analytics setup completed');
+    })
+  })
 
 
   if (!appIsReady) {

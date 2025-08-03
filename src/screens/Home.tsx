@@ -18,11 +18,17 @@ import HomeWidgetDisplay from '../components/widgets/HomeWidgetDisplay';
 import {getData} from "../helpers/storage";
 import {useRessources} from "../contexts/RessourcesContext";
 import NewsBannerHandler from "../components/banners/NewsBannerHandler";
+import {sendAnalyticsEvent} from "../helpers/scripts/analytics";
+import {eventTypes} from "../helpers/constants/analytics";
+import {useAuth} from "../contexts/AuthContext";
+import {useTranslation} from "../hooks/useTranslation";
 
 export default function Home({ navigation }: any) {
   const { hasInternetConnection, currentUserLocation } = useSettings()
   const { launchContextLoading } = useLaunchData()
   const {ressourcesLoading} = useRessources()
+  const { currentUser } = useAuth()
+  const { currentLocale } = useTranslation()
 
   const [pushToken, setPushToken] = React.useState<string | null>(null)
 
@@ -34,6 +40,13 @@ export default function Home({ navigation }: any) {
       }
     })()
   }, [])
+
+  useEffect(() => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'Home screen view', eventTypes.SCREEN_VIEW, {firstLaunch: isFirstLaunch()}, currentLocale)
+      .then(() => {
+        console.log('[Analytics] Home screen view event sent successfully');
+      })
+  }, []);
 
   useEffect(() => {
     (async () => {
