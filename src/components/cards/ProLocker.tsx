@@ -4,6 +4,12 @@ import {proLockerStyles} from "../../styles/components/cards/proLocker";
 import ProBadge from "../badges/ProBadge";
 import {app_colors} from "../../helpers/constants";
 import {routes} from "../../helpers/routes";
+import {i18n} from "../../helpers/scripts/i18n";
+import {sendAnalyticsEvent} from "../../helpers/scripts/analytics";
+import {useSettings} from "../../contexts/AppSettingsContext";
+import {useAuth} from "../../contexts/AuthContext";
+import {useTranslation} from "../../hooks/useTranslation";
+import {eventTypes} from "../../helpers/constants/analytics";
 
 interface ProLockerProps {
   navigation: any;
@@ -14,6 +20,15 @@ interface ProLockerProps {
 }
 
 export default function ProLocker({ navigation, image, darker, small, multipleFeatures }: ProLockerProps) {
+
+  const { currentUserLocation } = useSettings();
+  const { currentUser } = useAuth()
+  const { currentLocale } = useTranslation()
+
+  const handleLockerPress = () => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'Pro locker pressed', eventTypes.BUTTON_CLICK, {}, currentLocale);
+    navigation.push(routes.sellScreen.path);
+  }
 
   return (
     <ImageBackground blurRadius={15} resizeMode={"cover"} source={image} imageStyle={proLockerStyles.locker.image} style={[proLockerStyles.locker, {height: small ? 100 : 200}]}>
@@ -27,22 +42,22 @@ export default function ProLocker({ navigation, image, darker, small, multipleFe
             </View>
             {
               multipleFeatures ?
-                <Text style={proLockerStyles.locker.text}>Voici des fonctionnalités Astroshare Pro.</Text>
+                <Text style={proLockerStyles.locker.text}>{i18n.t('cards.proLocker.text.multiple')}</Text>
                 :
-                <Text style={proLockerStyles.locker.text}>Voici une fonctionnalité Astroshare Pro.</Text>
+                <Text style={proLockerStyles.locker.text}>{i18n.t('cards.proLocker.text.single')}</Text>
             }
-            <Text style={proLockerStyles.locker.text}>Mettez à niveau votre application pour y accéder !</Text>
+            <Text style={proLockerStyles.locker.text}>{i18n.t('cards.proLocker.text.upgrade')}</Text>
           </>
         ) :
           (
             <>
-              <Text style={[proLockerStyles.locker.text, {marginBottom: 10}]}>Envie d'explorer le ciel encore plus précisément ?</Text>
+              <Text style={[proLockerStyles.locker.text, {marginBottom: 10}]}>{i18n.t('cards.proLocker.text.extra')}</Text>
             </>
           )
       }
 
-      <TouchableOpacity onPress={() => navigation.push(routes.sellScreen.path)} style={[proLockerStyles.locker.button, {marginTop: small ? 0 : 20}]}>
-        <Text style={proLockerStyles.locker.button.text}>Passer à Astroshare</Text>
+      <TouchableOpacity onPress={() => handleLockerPress()} style={[proLockerStyles.locker.button, {marginTop: small ? 0 : 20}]}>
+        <Text style={proLockerStyles.locker.button.text}>{i18n.t('cards.proLocker.button.generic')}</Text>
         <ProBadge additionalStyles={{marginLeft: 4, marginRight: 10}} customColor={app_colors.black}/>
       </TouchableOpacity>
     </ImageBackground>

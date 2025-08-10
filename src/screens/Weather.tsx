@@ -19,6 +19,7 @@ import {sendAnalyticsEvent} from "../helpers/scripts/analytics";
 import {useAuth} from "../contexts/AuthContext";
 import {eventTypes} from "../helpers/constants/analytics";
 import {useTranslation} from "../hooks/useTranslation";
+import {routes} from "../helpers/routes";
 
 export default function Weather({ navigation }: any) {
 
@@ -83,7 +84,12 @@ export default function Weather({ navigation }: any) {
 
   return (
     <View style={globalStyles.body}>
-      <PageTitle navigation={navigation} title={i18n.t('home.buttons.weather.title')} subtitle={i18n.t('home.buttons.weather.subtitle')} />
+      <PageTitle
+        navigation={navigation}
+        title={i18n.t('home.buttons.weather.title')}
+        subtitle={i18n.t('home.buttons.weather.subtitle')}
+        backRoute={routes.home.path}
+      />
       <View style={globalStyles.screens.separator} />
       <View style={weatherStyles.content.inputContainer}>
         <InputWithIcon type={'text'} icon={require('../../assets/icons/FiSearch.png')} placeholder={i18n.t('weather.input_placeholder')} changeEvent={(text: string) => setSearchString(text)} search={() => searchWeather()} value={searchString} />

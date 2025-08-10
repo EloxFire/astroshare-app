@@ -1,4 +1,4 @@
-import React, {useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {ScrollView, Text, TextInput, View} from "react-native";
 import PageTitle from "../../components/commons/PageTitle";
 import {i18n} from "../../helpers/scripts/i18n";
@@ -14,8 +14,18 @@ import {calculateMagnification} from "../../helpers/scripts/math/calculateMagnif
 import {calculateMinMagnification} from "../../helpers/scripts/math/calculateMinMagnification";
 import {calculateSampling} from "../../helpers/scripts/math/calculateSampling";
 import {calculateApparentFov} from "../../helpers/scripts/math/calculateApparentFov";
+import {routes} from "../../helpers/routes";
+import {useSettings} from "../../contexts/AppSettingsContext";
+import {useAuth} from "../../contexts/AuthContext";
+import {useTranslation} from "../../hooks/useTranslation";
+import {sendAnalyticsEvent} from "../../helpers/scripts/analytics";
+import {eventTypes} from "../../helpers/constants/analytics";
 
 export default function CalculationHome({ navigation }: any) {
+
+  const { currentUserLocation } = useSettings();
+  const { currentUser } = useAuth()
+  const { currentLocale } = useTranslation()
 
   const [focalLength, setFocalLength] = useState<number | undefined>(undefined);
   const [diameter, setDiameter] = useState<number | undefined>(undefined);
@@ -28,6 +38,10 @@ export default function CalculationHome({ navigation }: any) {
   const [minMagnification, setMinMagnification] = useState<string | undefined>(undefined);
   const [sampling, setSampling] = useState<string | undefined>(undefined);
   const [fov, setFov] = useState<string | undefined>(undefined);
+
+  useEffect(() => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'Calculations screen view', eventTypes.SCREEN_VIEW, {}, currentLocale)
+  }, []);
 
   const computeCalculations = () => {
     if(!focalLength && !diameter && !eyepieceFocalLength && !pixelSize){
@@ -63,6 +77,7 @@ export default function CalculationHome({ navigation }: any) {
         navigation={navigation}
         title={i18n.t('home.buttons.calculations.title')}
         subtitle={i18n.t('home.buttons.calculations.subtitle')}
+        backRoute={routes.home.path}
       />
       <View style={globalStyles.screens.separator} />
         <ScrollView contentContainerStyle={{display: 'flex', flexDirection: 'column', gap: 10, paddingBottom: 80}}>

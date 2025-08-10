@@ -37,16 +37,11 @@ export default function Home({ navigation }: any) {
       const firstLaunch = await isFirstLaunch();
       if (firstLaunch) {
         navigation.push(routes.onboarding.path)
+      }else{
+        sendAnalyticsEvent(currentUser, currentUserLocation, 'Home screen view', eventTypes.SCREEN_VIEW, {firstLaunch: firstLaunch}, currentLocale)
       }
     })()
   }, [])
-
-  useEffect(() => {
-    sendAnalyticsEvent(currentUser, currentUserLocation, 'Home screen view', eventTypes.SCREEN_VIEW, {firstLaunch: isFirstLaunch()}, currentLocale)
-      .then(() => {
-        console.log('[Analytics] Home screen view event sent successfully');
-      })
-  }, []);
 
   useEffect(() => {
     (async () => {

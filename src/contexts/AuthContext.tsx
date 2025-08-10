@@ -93,16 +93,17 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
       })
 
       const { accessToken, refreshToken, user } = userToLog.data
-
       await storeData(storageKeys.auth.refreshToken, refreshToken)
       await storeData(storageKeys.auth.accessToken, accessToken)
       await storeObject(storageKeys.auth.user, user)
 
       setCurrentUser(user)
       console.log('[Auth] User logged in successfully')
+      return 'success';
     } catch (e: any) {
       console.log('[Auth] Error logging in user:', e)
       showToast({ message: e.response?.data?.error || "Erreur de connexion", type: 'error' })
+      return null;
     }
   }
 

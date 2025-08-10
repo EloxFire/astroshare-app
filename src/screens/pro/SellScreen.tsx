@@ -22,16 +22,24 @@ import {routes} from "../../helpers/routes";
 import {showToast} from "../../helpers/scripts/showToast";
 import {createStripeSubscription} from "../../helpers/api/stripe/createStipePayment";
 import {finishStripePayment} from "../../helpers/api/stripe/finishStripePayment";
+import {useSettings} from "../../contexts/AppSettingsContext";
+import {sendAnalyticsEvent} from "../../helpers/scripts/analytics";
+import {eventTypes} from "../../helpers/constants/analytics";
 
 export default function SellScreen({ navigation }: any) {
 
   const {currentUser, updateCurrentUser} = useAuth()
   const {currentLocale} = useTranslation()
+  const { currentUserLocation } = useSettings()
 
   const [stripeLoading, setStripeLoading] = useState<boolean>(true)
   const [stripeProducts, setStripeProducts] = useState<any>(null)
   const [selectedProduct, setSelectedProduct] = useState<any>(null)
   const [stripePublishableKey, setStripePublishableKey] = useState<string>('')
+
+  useEffect(() => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'Sell screen view', eventTypes.SCREEN_VIEW, {}, currentLocale)
+  }, []);
 
   useEffect(() => {
     (async () => {

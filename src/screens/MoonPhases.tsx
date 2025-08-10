@@ -18,11 +18,16 @@ import {astroshareApi} from "../helpers/api";
 import {app_colors} from "../helpers/constants";
 import {capitalize} from "../helpers/scripts/utils/formatters/capitalize";
 import DisclaimerBar from "../components/banners/DisclaimerBar";
+import {useAuth} from "../contexts/AuthContext";
+import {sendAnalyticsEvent} from "../helpers/scripts/analytics";
+import {eventTypes} from "../helpers/constants/analytics";
+import {routes} from "../helpers/routes";
 
 export default function MoonPhases({ navigation }: any) {
 
   const { currentUserLocation } = useSettings()
   const {currentLocale, currentLCID} = useTranslation()
+  const { currentUser } = useAuth()
   dayjs().locale(currentLocale)
 
   const [moonData, setMoonData] = useState<ComputedMoonInfos | null>(null)
@@ -30,6 +35,10 @@ export default function MoonPhases({ navigation }: any) {
   const [moonImageUrl, setMoonImageUrl] = useState<undefined | {uri: string }>(undefined)
   const [currentMonth, setCurrentMonth] = useState(dayjs().month())
   const [calendarImages, setCalendarImages] = useState<{date: string, image: string}[]>([])
+
+  useEffect(() => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'Moon Phases screen view', eventTypes.SCREEN_VIEW, {currentMonth: currentMonth}, currentLocale)
+  }, []);
 
   useEffect(() => {
     const observer: GeographicCoordinate = {latitude: currentUserLocation.lat, longitude: currentUserLocation.lon}
@@ -76,7 +85,7 @@ export default function MoonPhases({ navigation }: any) {
 
   return (
     <View style={globalStyles.body}>
-      <PageTitle navigation={navigation} title={i18n.t('home.buttons.moon_phases.title')} subtitle={i18n.t('home.buttons.moon_phases.subtitle')} />
+      <PageTitle navigation={navigation} title={i18n.t('home.buttons.moon_phases.title')} subtitle={i18n.t('home.buttons.moon_phases.subtitle')} backRoute={routes.home.path} />
       <View style={globalStyles.screens.separator} />
       <ScrollView>
         <View style={[moonPhasesStyles.content, {marginBottom: 0}]}>

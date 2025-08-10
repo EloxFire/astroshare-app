@@ -23,6 +23,7 @@ export default function Settings({ navigation }: any) {
         navigation={navigation}
         title={i18n.t('settings.title')}
         subtitle={i18n.t('settings.subtitle')}
+        backRoute={routes.home.path}
       />
       <View style={globalStyles.screens.separator} />
       <ScrollView>

@@ -37,6 +37,7 @@ import {proTranslations} from "./screens/pro";
 import {authScreensTranslations} from "./screens/auth";
 import {widgetManagerTranslations} from "./screens/widgetManager";
 import {calculationsTranslations} from "./screens/calculations";
+import {cardsTranslations} from "./components/cards";
 
 export const frTranslations = {
   onboarding: onboardingTranslations,
@@ -60,6 +61,7 @@ export const frTranslations = {
   skymap: skymapTranslations,
   viewpointsManager: viewpointsManagerTranslations,
   resultCards: resultCardsTranslations,
+  cards: cardsTranslations,
   favouriteScreen: favouriteScreenTranslations,
   detailsPages: detailsPages,
   transits: transitsTranslations,

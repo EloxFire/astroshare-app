@@ -18,10 +18,17 @@ import KpChart from "../components/graphs/KpChart";
 import LineGraph from "../components/graphs/LineGraph";
 import {SolarWindData} from "../helpers/types/SolarWindData";
 import {getSolarWindData} from "../helpers/api/getSolarWindData";
+import {useSettings} from "../contexts/AppSettingsContext";
+import {useTranslation} from "../hooks/useTranslation";
+import {sendAnalyticsEvent} from "../helpers/scripts/analytics";
+import {eventTypes} from "../helpers/constants/analytics";
+import {routes} from "../helpers/routes";
 
 export default function SolarWeather({ navigation }: any) {
 
-  const {currentUser} = useAuth()
+  const { currentUserLocation } = useSettings();
+  const { currentUser } = useAuth()
+  const { currentLocale } = useTranslation()
 
   const videoRef = useRef(null);
 
@@ -38,6 +45,10 @@ export default function SolarWeather({ navigation }: any) {
   const [currentCmeImageUrl, setCurrentCmeImageUrl] = useState<string | undefined>("")
 
   const [solarWindData, setSolarWindData] = useState<SolarWindData[]>([])
+
+  useEffect(() => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'Solar Weather screen view', eventTypes.SCREEN_VIEW, {}, currentLocale)
+  }, [])
 
   useEffect(() => {
     (async () => {
@@ -77,7 +88,12 @@ export default function SolarWeather({ navigation }: any) {
 
   return (
     <View style={globalStyles.body}>
-      <PageTitle navigation={navigation} title={i18n.t('home.buttons.solar_weather.title')} subtitle={i18n.t('home.buttons.solar_weather.subtitle')} />
+      <PageTitle
+        navigation={navigation}
+        title={i18n.t('home.buttons.solar_weather.title')}
+        subtitle={i18n.t('home.buttons.solar_weather.subtitle')}
+        backRoute={routes.home.path}
+      />
       <View style={globalStyles.screens.separator} />
       <ScrollView>
         <View>

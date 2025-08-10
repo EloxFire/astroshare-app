@@ -7,8 +7,10 @@ export const authStyles = {
     paddingTop: 30,
 
     logo: {
-      maxWidth: 200,
+      maxHeight: 50,
+      resizeMode: 'contain',
       alignSelf: 'center' as 'center',
+      marginVertical: 50,
     },
 
     title: {

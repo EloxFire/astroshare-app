@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import {
   Keyboard,
   ScrollView,
@@ -13,17 +13,42 @@ import { routes } from "../helpers/routes";
 import PageTitle from "../components/commons/PageTitle";
 import PolarClock from "../components/PolarClock";
 import { i18n } from "../helpers/scripts/i18n";
+import {useSettings} from "../contexts/AppSettingsContext";
+import {useAuth} from "../contexts/AuthContext";
+import {useTranslation} from "../hooks/useTranslation";
+import {sendAnalyticsEvent} from "../helpers/scripts/analytics";
+import {eventTypes} from "../helpers/constants/analytics";
 
 export default function ScopeAlignment({ navigation }: any) {
+
+  const { currentUserLocation } = useSettings();
+  const { currentUser } = useAuth()
+  const { currentLocale } = useTranslation()
+
+  useEffect(() => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'Scope Alignment screen view', eventTypes.SCREEN_VIEW, {currentStep: currentStep}, currentLocale)
+  }, []);
 
   const [currentStep, setCurrentStep] = useState(1);
 
   const handleNextStep = () => {
-    currentStep === 2 ? navigation.push(routes.home.path) : setCurrentStep(currentStep + 1);
+    if(currentStep === 1) {
+      sendAnalyticsEvent(currentUser, currentUserLocation, 'Next step polar scope alignment', eventTypes.BUTTON_CLICK, {currentStep: currentStep}, currentLocale)
+      setCurrentStep(currentStep + 1)
+    }else {
+      sendAnalyticsEvent(currentUser, currentUserLocation, 'Return home from scope alignment', eventTypes.BUTTON_CLICK, {currentStep: currentStep}, currentLocale)
+      navigation.push(routes.home.path)
+    }
   }
 
   const handlePreviousStep = () => {
-    currentStep === 1 ? navigation.push(routes.home.path) : setCurrentStep(currentStep - 1);
+    if(currentStep === 1) {
+      sendAnalyticsEvent(currentUser, currentUserLocation, 'Return home from scope alignment', eventTypes.BUTTON_CLICK, {currentStep: currentStep}, currentLocale)
+      navigation.push(routes.home.path)
+    }else {
+      sendAnalyticsEvent(currentUser, currentUserLocation, 'Previous step polar scope alignment', eventTypes.BUTTON_CLICK, {currentStep: currentStep}, currentLocale)
+      setCurrentStep(currentStep - 1);
+    }
   }
 
   const scopeAlignmentSteps = [
@@ -39,7 +64,12 @@ export default function ScopeAlignment({ navigation }: any) {
 
   return (
     <View style={globalStyles.body}>
-      <PageTitle navigation={navigation} title={i18n.t('home.buttons.scope_alignment.title')} subtitle={i18n.t('home.buttons.scope_alignment.subtitle')} />
+      <PageTitle
+        navigation={navigation}
+        title={i18n.t('home.buttons.scope_alignment.title')}
+        subtitle={i18n.t('home.buttons.scope_alignment.subtitle')}
+        backRoute={routes.home.path}
+      />
       <View style={globalStyles.screens.separator} />
 
       <ScrollView>

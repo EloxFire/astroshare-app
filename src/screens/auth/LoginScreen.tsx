@@ -29,15 +29,16 @@ export default function LoginScreen({ navigation }: any) {
     }
 
     setLoading(true)
-    try{
-      await loginUser(email, password)
-      navigation.push(routes.auth.profile.path)
+    const response = await loginUser(email, password)
+    console.log("Login response", response)
+
+    if (!response) {
       setLoading(false)
-    } catch (e) {
-      console.log("Error while logging in", e)
-      setLoading(false)
-      showToast({message: i18n.t('auth.errors.generic'), type: 'error'})
+      return;
     }
+
+    navigation.push(routes.auth.profile.path)
+    setLoading(false)
   }
 
   return (
