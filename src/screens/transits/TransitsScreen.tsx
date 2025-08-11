@@ -72,7 +72,7 @@ export default function TransitsScreen({ navigation }: any) {
           {/*<ToolButton disabled isPremium navigation={navigation} text={i18n.t('transits.issTransit.title')} subtitle={i18n.t('transits.issTransit.subtitle')} image={require('../../../assets/images/tools/isstransit.png')} />*/}
           {
             !isProUser(currentUser) &&
-            <ProLocker navigation={navigation} image={require('../../../assets/images/tools/solareclipse.png')} darker multipleFeatures/>
+            <ProLocker id={routes.transits.home.path} navigation={navigation} image={require('../../../assets/images/tools/solareclipse.png')} darker multipleFeatures/>
           }
           <ScreenInfo text={i18n.t('transits.info')} image={require("../../../assets/icons/FiTransit.png")} />
         </View>

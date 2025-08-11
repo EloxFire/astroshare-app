@@ -19,6 +19,11 @@ import {localizedNoRocketImage} from "../../helpers/scripts/loadImages";
 import {useTranslation} from "../../hooks/useTranslation";
 import {app_colors} from "../../helpers/constants";
 import {LaunchData} from "../../helpers/types/LaunchData";
+import {useSettings} from "../../contexts/AppSettingsContext";
+import {useAuth} from "../../contexts/AuthContext";
+import {sendAnalyticsEvent} from "../../helpers/scripts/analytics";
+import {eventTypes} from "../../helpers/constants/analytics";
+import {routes} from "../../helpers/routes";
 
 interface LaunchCardProps {
   route: any
@@ -29,8 +34,14 @@ export default function LaunchDetails({ route, navigation }: LaunchCardProps): R
 
   const launch: LaunchData = route.params.launch;
   const {currentLocale} = useTranslation()
+  const { currentUserLocation } = useSettings();
+  const { currentUser } = useAuth()
   const [isNotificationPlanned, setIsNotificationPlanned] = useState(false);
   const [countdown, setCountdown] = useState<string>('00:00:00:00') // DD:HH:mm:ss
+
+  useEffect(() => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'Launch details screen view', eventTypes.SCREEN_VIEW, {launchId: launch.id, launch_name: launch.name, launch_date: launch.net}, currentLocale)
+  }, []);
 
   useEffect(() => {
     if(launch) {
@@ -66,6 +77,7 @@ export default function LaunchDetails({ route, navigation }: LaunchCardProps): R
         await removeData(`notification_${launch.id}`)
         setIsNotificationPlanned(false)
         showToast({message: i18n.t('notifications.successRemove'), type: 'success', duration: 4000})
+        sendAnalyticsEvent(currentUser, currentUserLocation, 'Launch notification removed', eventTypes.BUTTON_CLICK, {launchId: launch.id, launch_name: launch.name, launch_date: launch.net}, currentLocale)
       }
     } else {
       // Add notification
@@ -80,6 +92,7 @@ export default function LaunchDetails({ route, navigation }: LaunchCardProps): R
         setIsNotificationPlanned(true)
         await storeData(`notification_${launch.id}`, notif)
         showToast({message: i18n.t('notifications.successSchedule'), type: 'success', duration: 4000})
+        sendAnalyticsEvent(currentUser, currentUserLocation, 'Launch notification scheduled', eventTypes.BUTTON_CLICK, {launchId: launch.id, launch_name: launch.name, launch_date: launch.net}, currentLocale)
       }
     }
   }

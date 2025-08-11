@@ -209,7 +209,7 @@ export default function SolarWeather({ navigation }: any) {
               isProUser(currentUser) ?
                 <KpChart />
                 :
-              <ProLocker darker navigation={navigation} image={require('../../assets/images/tools/sun.png')} />
+              <ProLocker id={routes.solarWeather.path} darker navigation={navigation} image={require('../../assets/images/tools/sun.png')} />
             }
           </View>
 
@@ -235,7 +235,7 @@ export default function SolarWeather({ navigation }: any) {
                   }
                 </>
                 :
-                <ProLocker darker navigation={navigation} image={require('../../assets/images/tools/sun.png')} />
+                <ProLocker id={routes.solarWeather.path} darker navigation={navigation} image={require('../../assets/images/tools/sun.png')} />
             }
           </View>
         </View>

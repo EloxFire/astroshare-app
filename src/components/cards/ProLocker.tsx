@@ -14,19 +14,20 @@ import {eventTypes} from "../../helpers/constants/analytics";
 interface ProLockerProps {
   navigation: any;
   image: ImageSourcePropType;
+  id: string;
   multipleFeatures?: boolean;
   darker?: boolean;
   small?: boolean;
 }
 
-export default function ProLocker({ navigation, image, darker, small, multipleFeatures }: ProLockerProps) {
+export default function ProLocker({ navigation, image, id, darker, small, multipleFeatures }: ProLockerProps) {
 
   const { currentUserLocation } = useSettings();
   const { currentUser } = useAuth()
   const { currentLocale } = useTranslation()
 
   const handleLockerPress = () => {
-    sendAnalyticsEvent(currentUser, currentUserLocation, 'Pro locker pressed', eventTypes.BUTTON_CLICK, {}, currentLocale);
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'Pro locker pressed', eventTypes.BUTTON_CLICK, {from: id}, currentLocale);
     navigation.push(routes.sellScreen.path);
   }
 

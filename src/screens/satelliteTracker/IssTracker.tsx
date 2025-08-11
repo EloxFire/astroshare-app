@@ -30,6 +30,8 @@ import ProLocker from "../../components/cards/ProLocker";
 import {isProUser} from "../../helpers/scripts/auth/checkUserRole";
 import {useAuth} from "../../contexts/AuthContext";
 import {getTimeFromLaunch} from "../../helpers/scripts/utils/getTimeFromLaunch";
+import {sendAnalyticsEvent} from "../../helpers/scripts/analytics";
+import {eventTypes} from "../../helpers/constants/analytics";
 
 export default function IssTracker({ navigation }: any) {
 
@@ -56,6 +58,10 @@ export default function IssTracker({ navigation }: any) {
 
     return () => clearInterval(update)
   }, [])
+
+  useEffect(() => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'ISS tracker screen view', eventTypes.SCREEN_VIEW, {}, currentLocale)
+  }, []);
 
   useEffect(() => {
     fetchIssPasses()
@@ -229,12 +235,15 @@ export default function IssTracker({ navigation }: any) {
                               textAdditionalStyles={{fontFamily: 'GilroyBlack'}}
                               align={'center'}
                               text={i18n.t('satelliteTracker.issTracker.nextPasses.seeMore')}
-                              onPress={() => navigation.push(routes.satellitesTrackers.issPasses.path, {passes: issPasses, weather: passesWeather})}
+                              onPress={() => {
+                                sendAnalyticsEvent(currentUser, currentUserLocation, 'See more ISS passes', eventTypes.BUTTON_CLICK, {}, currentLocale)
+                                navigation.push(routes.satellitesTrackers.issPasses.path, {passes: issPasses, weather: passesWeather});
+                              }}
                           />
                       }
                     </View>
                   </> :
-                <ProLocker navigation={navigation} image={require('../../../assets/images/tools/isstracker.png')}/>
+                <ProLocker id={routes.issTracker.path} navigation={navigation} image={require('../../../assets/images/tools/isstracker.png')}/>
               }
             </View>
             <View style={issTrackerStyles.content.mapContainer}>

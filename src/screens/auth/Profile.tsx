@@ -132,7 +132,7 @@ export default function ProfileScreen({ navigation }: any) {
           <View style={{marginBottom: 20}}>
             {
               !isProUser(currentUser) &&
-                <ProLocker navigation={navigation} image={require('../../../assets/images/tools/apod.png')} darker small />
+                <ProLocker id={routes.auth.profile.path} navigation={navigation} image={require('../../../assets/images/tools/apod.png')} darker small />
             }
           </View>
 

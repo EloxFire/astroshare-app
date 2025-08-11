@@ -9,9 +9,14 @@ import {truncate} from "../../helpers/scripts/utils/formatters/truncate";
 import {routes} from "../../helpers/routes";
 import {localizedNoRocketImageSmall} from "../../helpers/scripts/loadImages";
 import {useTranslation} from "../../hooks/useTranslation";
+import {useSettings} from "../../contexts/AppSettingsContext";
+import {useAuth} from "../../contexts/AuthContext";
+import {sendAnalyticsEvent} from "../../helpers/scripts/analytics";
+import {eventTypes} from "../../helpers/constants/analytics";
+import {LaunchData} from "../../helpers/types/LaunchData";
 
 interface LaunchCardProps {
-  launch: any
+  launch: LaunchData
   navigation: any
   noFollow?: boolean
 }
@@ -19,9 +24,16 @@ interface LaunchCardProps {
 export default function LaunchCard({ launch, navigation, noFollow }: LaunchCardProps): ReactNode {
 
   const {currentLocale} = useTranslation()
+  const { currentUserLocation } = useSettings();
+  const { currentUser } = useAuth()
+
+  const handlePress = () => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'Launch card clicked', eventTypes.BUTTON_CLICK, {launchId: launch.id, launch_name: launch.name, launch_date: launch.net}, currentLocale)
+    navigation.navigate(routes.launchDetails.path, {launch: launch})
+  }
 
   return (
-    <TouchableOpacity style={launchCardStyles.card} disabled={noFollow} onPress={() => navigation.navigate(routes.launchDetails.path, {launch: launch})}>
+    <TouchableOpacity style={launchCardStyles.card} disabled={noFollow} onPress={() => handlePress()}>
       {
         launch.image ?
         <Image style={launchCardStyles.card.thumbnail} resizeMode='cover' source={{uri: launch.image.thumbnail_url}} />

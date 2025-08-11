@@ -12,8 +12,17 @@ import PageTitle from '../components/commons/PageTitle'
 import dayjs from 'dayjs'
 import YoutubePlayer from "react-native-youtube-iframe";
 import { i18n } from '../helpers/scripts/i18n'
+import {useSettings} from "../contexts/AppSettingsContext";
+import {useAuth} from "../contexts/AuthContext";
+import {useTranslation} from "../hooks/useTranslation";
+import {sendAnalyticsEvent} from "../helpers/scripts/analytics";
+import {eventTypes} from "../helpers/constants/analytics";
 
 export default function Apod({ navigation }: any) {
+
+  const { currentUserLocation } = useSettings();
+  const { currentUser } = useAuth()
+  const { currentLocale } = useTranslation()
 
   const [apod, setApod] = useState<APODPicture | null>(null)
   const [apodSize, setApodSize] = useState({ width: 0, height: 0 })
@@ -24,6 +33,11 @@ export default function Apod({ navigation }: any) {
   useEffect(() => {
     getApod()
   }, [])
+
+  useEffect(() => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'APOD screen view', eventTypes.SCREEN_VIEW, { media_type: apod?.media_type, apodTitle: apod?.title || 'N/A' }, currentLocale)
+  }, []);
+
 
   const getApod = async () => {
     setLoading(true)
