@@ -22,7 +22,7 @@ export const getAnalyticsSessionId = async (): Promise<string | null | undefined
 
 export const sendAnalyticsEvent = async (
   user: User,
-  location: LocationObject,
+  location: LocationObject | null,
   eventName: string,
   eventType: string,
   eventData: Record<string, any> = {},
@@ -47,8 +47,8 @@ export const sendAnalyticsEvent = async (
       model: `${Device.brand} ${Device.modelName}` || "Unknown",
     },
     location: {
-      latitude: location.lat,
-      longitude: location.lon,
+      latitude: location ? location.lat : null,
+      longitude: location ? location.lon : null,
     },
     eventType: eventType,
     eventSource: eventName,

@@ -23,8 +23,8 @@ export type ComputedObjectInfos = {
     visibilityBackgroundColor: string;
     visibilityForegroundColor: string;
     visibilityIcon: ImageSourcePropType;
-    objectNextRise: Dayjs;
-    objectNextSet: Dayjs;
+    objectNextRise: Dayjs | null;
+    objectNextSet: Dayjs | null;
     nakedEye: {
       label: string;
       icon: ImageSourcePropType;

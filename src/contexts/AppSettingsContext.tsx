@@ -12,8 +12,10 @@ import * as Location from 'expo-location'
 import Toast from 'react-native-root-toast';
 import NetInfo from '@react-native-community/netinfo';
 import { HomeWidget } from '../helpers/types/HomeWidget'
-import { v4 as uuidv4 } from 'uuid';
-import axios from "axios";
+import {sendAnalyticsEvent} from "../helpers/scripts/analytics";
+import {useAuth} from "./AuthContext";
+import {useTranslation} from "../hooks/useTranslation";
+import {eventTypes} from "../helpers/constants/analytics";
 
 const AppSettingsContext = createContext<any>({})
 
@@ -28,6 +30,9 @@ interface AppSettingsProviderProps {
 export function AppSettingsProvider({ children }: AppSettingsProviderProps) {
 
   const [isNightMode, setIsNightMode] = useState<boolean>(false)
+
+  const { currentUser } = useAuth()
+  const { currentLocale } = useTranslation()
 
   // Location related states
   const [locationPermissions, setLocationPermissions] = useState<boolean>(false)
@@ -44,9 +49,9 @@ export function AppSettingsProvider({ children }: AppSettingsProviderProps) {
       if (!cellularData) {
         await storeData('cellularData', 'true');
       }
-      setIsCellularDataEnabled(cellularData === 'true' ? true : false);
+      setIsCellularDataEnabled(cellularData === 'true');
       const nightMode = await getData('nightMode');
-      setIsNightMode(nightMode === 'true' ? true : false);
+      setIsNightMode(nightMode === 'true');
     })()
   }, [])
 
@@ -65,7 +70,7 @@ export function AppSettingsProvider({ children }: AppSettingsProviderProps) {
 
   useEffect(() => {
     const unsubscribe = NetInfo.addEventListener(state => {
-      setHasInternetConnection(state.isConnected ? true : false);
+      setHasInternetConnection(!!state.isConnected);
     });
 
     return () => {
@@ -105,6 +110,7 @@ export function AppSettingsProvider({ children }: AppSettingsProviderProps) {
     setLocationLoading(true);
     // Check if location permission is granted
     const hasLocationPermission = await askLocationPermission();
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'refresh_user_location', eventTypes.BUTTON_CLICK, {}, currentLocale);
     if (!hasLocationPermission) {
       setLocationLoading(false);
       showToast({ message: 'Vous devez autoriser l\'accès à la localisation pour utiliser l\'application', duration: Toast.durations.LONG, type: 'error' });
@@ -142,11 +148,13 @@ export function AppSettingsProvider({ children }: AppSettingsProviderProps) {
   const handleCellularData = () => {
     setIsCellularDataEnabled(!isCellularDataEnabled);
     storeData('cellularData', !isCellularDataEnabled ? 'true' : 'false');
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'toggle_cellular_data', eventTypes.BUTTON_CLICK, {isCellularDataEnabled: !isCellularDataEnabled}, currentLocale);
   }
 
   const handleNightMode = () => {
     setIsNightMode(!isNightMode);
     storeData('nightMode', !isNightMode ? 'true' : 'false');
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'toggle_night_mode', eventTypes.BUTTON_CLICK, {isNightMode: !isNightMode}, currentLocale);
   }
 
   const values = {

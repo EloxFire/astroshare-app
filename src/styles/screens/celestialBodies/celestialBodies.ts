@@ -13,6 +13,13 @@ export const celestialBodiesOverviewStyles = {
       textTransform: 'uppercase' as 'uppercase',
     },
 
+    text: {
+      fontSize: 15,
+      fontFamily: 'GilroyRegular',
+      color: app_colors.white,
+      opacity: 0.5,
+    },
+
     header: {
       position: 'relative' as 'relative',
       display: 'flex' as 'flex',

@@ -14,8 +14,9 @@ import {isProUser} from "../helpers/scripts/auth/checkUserRole";
 
 export default function Settings({ navigation }: any) {
 
-  const { isNightMode, handleNightMode, isCellularDataEnabled, handleCellularData } = useSettings()
-  const {currentUser} = useAuth()
+  const { isNightMode, handleNightMode } = useSettings()
+  const { currentUser } = useAuth()
+
 
   return (
     <View style={globalStyles.body}>

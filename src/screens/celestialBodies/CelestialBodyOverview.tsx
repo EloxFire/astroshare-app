@@ -28,6 +28,7 @@ import {GlobalPlanet} from "../../helpers/types/GlobalPlanet";
 import {DSO} from "../../helpers/types/DSO";
 import {Star} from "../../helpers/types/Star";
 import {routes} from "../../helpers/routes";
+import dayjs from "dayjs";
 
 export default function CelestialBodyOverview({ route, navigation }: any) {
 
@@ -140,7 +141,7 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
           <View style={celestialBodiesOverviewStyles.content.header.infos}>
             <View>
               <Text style={celestialBodiesOverviewStyles.content.header.infos.title}>{getObjectName(object, 'all', true)}</Text>
-              {objectInfos && <Text style={celestialBodiesOverviewStyles.content.header.infos.subtitle}>{objectInfos.base.common_name !== "" ? objectInfos.base.common_name : getObjectType(object)}</Text>}
+              {objectInfos && <Text style={celestialBodiesOverviewStyles.content.header.infos.subtitle}>{objectInfos.base.otherName !== "" ? objectInfos.base.otherName : getObjectType(object)}</Text>}
             </View>
             {
             objectInfos && (
@@ -220,12 +221,13 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
 
               <View style={{marginTop: 10}}>
                 <SimpleButton
-                  text={`Voir dans le planétarium`}
+                  text={`Voir dans le planétarium\n(Bientôt disponible)`}
                   fullWidth backgroundColor={app_colors.white}
                   small
                   textColor={app_colors.black}
                   onPress={() => navigation.push(routes.planetarium.path, {defaultObject: object})}
                   align={"center"}
+                  disabled
                 />
               </View>
             </View>
@@ -274,6 +276,23 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
                 </>
               )
             }
+            <View style={{marginTop: 10}}>
+              <Text style={celestialBodiesOverviewStyles.content.sectionTitle}>Lever et coucher</Text>
+              <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 30}}>
+                <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 10}}>
+                  <Image source={require('../../../assets/icons/FiSunrise.png')} style={{width: 24, height: 24}}/>
+                  <Text style={celestialBodiesOverviewStyles.content.text}>{
+                    objectInfos?.visibilityInfos.isCurrentlyVisible ? i18n.t('common.visibility.alreadyUp') : objectInfos?.visibilityInfos.objectNextRise?.locale(currentLocale).calendar()
+                  }</Text>
+                </View>
+                <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 10}}>
+                  <Image source={require('../../../assets/icons/FiSunset.png')} style={{width: 24, height: 24}}/>
+                  <Text style={celestialBodiesOverviewStyles.content.text}>{
+                    !objectInfos?.visibilityInfos.isCurrentlyVisible ? i18n.t('common.visibility.alreadyDown') : objectInfos?.visibilityInfos.objectNextSet?.locale(currentLocale).calendar()
+                  }</Text>
+                </View>
+              </View>
+            </View>
             <Text style={[celestialBodiesOverviewStyles.content.sectionTitle, {marginTop: 15, marginBottom: -10}]}>Altitude de l'objet</Text>
             <VisibilityGraph
               visibilityGraph={{altitudes: objectInfos?.visibilityInfos.visibilityGraph.altitudes || [], hours: objectInfos?.visibilityInfos.visibilityGraph.hours || []}}

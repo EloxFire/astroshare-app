@@ -6,11 +6,24 @@ import { app_colors } from '../helpers/constants'
 import { tutorialStyles } from '../styles/screens/tutorial'
 import { tutorialScreens } from '../helpers/scripts/tutorial/tutorialScreens'
 import { routes } from '../helpers/routes'
+import {useSettings} from "../contexts/AppSettingsContext";
+import {useAuth} from "../contexts/AuthContext";
+import {useTranslation} from "../hooks/useTranslation";
+import {sendAnalyticsEvent} from "../helpers/scripts/analytics";
+import {eventTypes} from "../helpers/constants/analytics";
 
 export default function TutorialScreen({ navigation }: any) {
 
+  const { currentUserLocation } = useSettings();
+  const { currentUser } = useAuth()
+  const { currentLocale } = useTranslation()
+
   const [currentStep, setCurrentStep] = useState(0)
   const [screen, setScreen] = useState(tutorialScreens[currentStep])
+
+  useEffect(() => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'tutorial_screen_view', eventTypes.SCREEN_VIEW, {currentStep: currentStep}, currentLocale)
+  }, []);
 
   const onPressNext = () => {
     if (currentStep === tutorialScreens.length - 1) {

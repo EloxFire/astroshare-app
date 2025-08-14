@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useEffect} from 'react'
 import { View, ScrollView, TouchableOpacity, Text } from 'react-native'
 import { i18n } from '../helpers/scripts/i18n'
 import { globalStyles } from '../styles/global'
@@ -11,10 +11,21 @@ import NightSummary from '../components/widgets/home/NightSummary'
 import NextLaunchCountdownWidget from "../components/widgets/home/NextLaunchCountdownWidget";
 import DisclaimerBar from "../components/banners/DisclaimerBar";
 import {Image} from "expo-image";
+import {useAuth} from "../contexts/AuthContext";
+import {useTranslation} from "../hooks/useTranslation";
+import {sendAnalyticsEvent} from "../helpers/scripts/analytics";
+import {eventTypes} from "../helpers/constants/analytics";
 
 export default function WidgetManager({ navigation }: any) {
 
-  const { selectedHomeWidget, updateSelectedHomeWidget } = useSettings()
+  const { selectedHomeWidget, updateSelectedHomeWidget, currentUserLocation } = useSettings()
+  const { currentUser } = useAuth()
+  const { currentLocale } = useTranslation()
+
+  useEffect(() => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'widget_manager_screen_view', eventTypes.SCREEN_VIEW, {selectedHomeWidget: selectedHomeWidget}, currentLocale)
+  }, []);
+
 
   const handleWidget = (newWidget: string) => {
     updateSelectedHomeWidget(newWidget)

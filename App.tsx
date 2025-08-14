@@ -22,6 +22,7 @@ import utc from 'dayjs/plugin/utc'
 import tz from 'dayjs/plugin/timezone'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import LocalizedFormat from 'dayjs/plugin/localizedFormat'
+import Calendar from 'dayjs/plugin/calendar'
 import AdvancedFormat from 'dayjs/plugin/advancedFormat'
 import Duration from 'dayjs/plugin/duration'
 import SolarWeather from "./src/screens/SolarWeather";
@@ -83,6 +84,7 @@ dayjs.extend(Duration)
 dayjs.extend(utc)
 dayjs.extend(tz)
 dayjs.extend(relativeTime)
+dayjs.extend(Calendar)
 dayjs.tz.setDefault('Europe/Paris');
 dayjs.extend(AdvancedFormat)
 dayjs().format('L LT')

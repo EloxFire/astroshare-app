@@ -8,8 +8,8 @@ import {calculateHorizonAngle} from "../calculateHorizonAngle";
 import {
   convertEquatorialToHorizontal,
   EquatorialCoordinate,
-  GeographicCoordinate, HorizontalCoordinate,
-  isBodyAboveHorizon, isBodyVisibleForNight
+  GeographicCoordinate, getBodyNextRise, getBodyNextSet, HorizontalCoordinate,
+  isBodyAboveHorizon, isBodyCircumpolar, isBodyVisibleForNight, isTransitInstance, TransitInstance
 } from "@observerly/astrometry";
 import {ComputedObjectInfos} from "../../../types/objects/ComputedObjectInfos";
 import {app_colors} from "../../../constants";
@@ -80,9 +80,26 @@ export const computeObject = (props: ComputeObjectProps): ComputedObjectInfos | 
     const target: EquatorialCoordinate = {ra: degRa, dec: degDec}
     const isCurrentlyVisible: boolean = isBodyAboveHorizon(new Date(), props.observer, target, horizonAngle)
     const isVisibleThisNight: boolean = isBodyVisibleForNight(new Date(), props.observer, target, horizonAngle)
+    const isObjectCircumpolar: boolean = isBodyCircumpolar(props.observer, target, horizonAngle);
     const objectCurrentAltitude: number = convertEquatorialToHorizontal(new Date(), props.observer, target).alt;
     const objectCurrentAzimuth: number = convertEquatorialToHorizontal(new Date(), props.observer, target).az;
 
+
+    // CALCUL HEURES DE LEVER ET COUCHER
+    let objectNextRise: Dayjs | null = null;
+    let objectNextSet: Dayjs | null = null;
+    if(!isObjectCircumpolar) {
+      const nextRise: false | TransitInstance = getBodyNextRise(new Date(), props.observer, target, horizonAngle);
+      const nextSet: boolean | TransitInstance = getBodyNextSet(new Date(), props.observer, target, horizonAngle);
+
+      if(isTransitInstance(nextRise)){
+        objectNextRise = dayjs(nextRise.datetime);
+      }
+
+      if(isTransitInstance(nextSet)){
+        objectNextSet = dayjs(nextSet.datetime);
+      }
+    }
 
     // GESTION MAGNITUDE SELON TYPE D'OBJET
     let objectMagnitude: number;
@@ -189,8 +206,8 @@ export const computeObject = (props: ComputeObjectProps): ComputedObjectInfos | 
         isCurrentlyVisible: isCurrentlyVisible,
         isVisibleThisNight: isVisibleThisNight,
         visibilityLabel: isCurrentlyVisible ? i18n.t('common.visibility.visible') : i18n.t('common.visibility.notVisible'),
-        objectNextRise: dayjs(),
-        objectNextSet: dayjs(),
+        objectNextRise: objectNextRise,
+        objectNextSet: objectNextSet,
         visibilityIcon: isCurrentlyVisible ? require('../../../../../assets/icons/FiEye.png') : require('../../../../../assets/icons/FiEyeOff.png'),
         visibilityBackgroundColor: isCurrentlyVisible ? app_colors.green_eighty : app_colors.red_eighty,
         visibilityForegroundColor: app_colors.white,
