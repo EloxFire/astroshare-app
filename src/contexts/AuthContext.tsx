@@ -39,50 +39,73 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
     }
   }
 
-  const refreshAccessToken = async () => {
-    const refreshToken = await getData(storageKeys.auth.refreshToken)
+  const refreshAccessToken = async (): Promise<string | null> => {
+    const refreshToken = await getData(storageKeys.auth.refreshToken);
 
     if (!refreshToken) {
-      console.log('[Auth] No refresh token found, user is not logged in')
-      await logoutUser()
-      return null
+      console.log("[Auth] No refresh token found, user is not logged in");
+      await logoutUser();
+      return null;
     }
 
-    console.log('[Auth] Refreshing user access token')
+    console.log("[Auth] Refreshing user access token");
+
     try {
-      const response = await axios.post(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/auth/refresh`, {
-        refreshToken
-      })
+      // 1) Refresh token
+      const { data } = await axios.post(
+        `${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/auth/refresh`,
+        { refreshToken },
+        { timeout: 8000 }
+      );
 
-      const { accessToken, refreshToken: newRefreshToken, user } = response.data
+      const {
+        accessToken,
+        refreshToken: newRefreshToken,
+        user,
+      }: { accessToken: string; refreshToken: string; user: User } = data;
 
-      // Firebase renvoie parfois un refreshToken actualisé → on le stocke aussi
-      await storeData(storageKeys.auth.accessToken, accessToken)
-      await storeData(storageKeys.auth.refreshToken, newRefreshToken)
-      await storeObject(storageKeys.auth.user, user)
+      // 2) Persist & set state
+      await storeData(storageKeys.auth.accessToken, accessToken);
+      await storeData(storageKeys.auth.refreshToken, newRefreshToken);
+      await storeObject(storageKeys.auth.user, user);
 
-      console.log('[Auth] Access token refreshed successfully')
+      setCurrentUser(user);
+      console.log("[Auth] Access token refreshed & current user updated");
 
+      // 3) Vérif abonnement (silencieuse)
+      if (user?.subscriptionId) {
+        console.log("[Auth] User has a subscription, checking subscription status...");
 
-      setCurrentUser(user)
-      console.log('[Auth] Current user updated')
+        try {
+          const subRes = await axios.post(
+            `${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/stripe/check-subscription-status`,
+            { userId: user.uid }, // le backend lit l'ID user et va chercher subscriptionId en DB
+            {
+              headers: {
+                Authorization: process.env.EXPO_PUBLIC_ADMIN_KEY, // assure-toi que c'est ce que checkCallFromApp attend
+              },
+              timeout: 8000,
+            }
+          );
 
-      if(user.subscriptionId){
-        console.log('[Auth] User has a subscription, checking subscription status...')
-        const subscriptionResponse = await axios.get(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/auth/subscription/status`, {
-          headers: {
-            'Authorization': accessToken
-          }
-        })
-      console.log('[Auth] User subscription status response : ', subscriptionResponse.data)
+          // Attendu côté backend robuste: { status, valid, reason, current_period_end, ... }
+          const { valid, status, reason } = subRes.data || {};
+          console.log("[Auth] Subscription status:", { valid, status, reason });
+
+        } catch (err: any) {
+          console.log("[Auth] Error checking user subscription status:", err?.message || err);
+        }
+      } else {
+        console.log("[Auth] User has no subscription ID, skipping subscription check");
       }
-      return accessToken
-    } catch (e) {
-      console.log('[Auth] Failed to refresh token', e)
-      await logoutUser()
-      return null
+
+      return accessToken;
+    } catch (e: any) {
+      console.log("[Auth] Failed to refresh token", e?.message || e);
+      await logoutUser();
+      return null;
     }
-  }
+  };
 
   const loginUser = async (email: string, password: string) => {
     console.log('[Auth] Logging in user')
