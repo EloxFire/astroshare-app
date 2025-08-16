@@ -94,6 +94,7 @@ export const computeObject = (props: ComputeObjectProps): ComputedObjectInfos | 
 
       if(isTransitInstance(nextRise)){
         objectNextRise = dayjs(nextRise.datetime);
+        console.log(`[computeObject] Object next rise: ${objectNextRise}`);
       }
 
       if(isTransitInstance(nextSet)){

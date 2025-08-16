@@ -29,6 +29,7 @@ import {DSO} from "../../helpers/types/DSO";
 import {Star} from "../../helpers/types/Star";
 import {routes} from "../../helpers/routes";
 import dayjs from "dayjs";
+import {makeCalendarMapping} from "../../helpers/scripts/i18n/dayjsCalendarTimeCustom";
 
 export default function CelestialBodyOverview({ route, navigation }: any) {
 
@@ -282,13 +283,13 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
                 <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 10}}>
                   <Image source={require('../../../assets/icons/FiSunrise.png')} style={{width: 24, height: 24}}/>
                   <Text style={celestialBodiesOverviewStyles.content.text}>{
-                    objectInfos?.visibilityInfos.isCurrentlyVisible ? i18n.t('common.visibility.alreadyUp') : objectInfos?.visibilityInfos.objectNextRise?.locale(currentLocale).calendar()
+                    objectInfos?.visibilityInfos.isCurrentlyVisible ? i18n.t('common.visibility.alreadyUp') : objectInfos?.visibilityInfos.objectNextRise?.locale(currentLocale).calendar(dayjs(), makeCalendarMapping())
                   }</Text>
                 </View>
                 <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 10}}>
                   <Image source={require('../../../assets/icons/FiSunset.png')} style={{width: 24, height: 24}}/>
                   <Text style={celestialBodiesOverviewStyles.content.text}>{
-                    !objectInfos?.visibilityInfos.isCurrentlyVisible ? i18n.t('common.visibility.alreadyDown') : objectInfos?.visibilityInfos.objectNextSet?.locale(currentLocale).calendar()
+                    !objectInfos?.visibilityInfos.isCurrentlyVisible ? i18n.t('common.visibility.alreadyDown') : objectInfos?.visibilityInfos.objectNextSet?.locale(currentLocale).calendar(dayjs() , makeCalendarMapping())
                   }</Text>
                 </View>
               </View>

@@ -82,6 +82,14 @@ export const commonTranslations = {
     date: "Date",
     hour: "Heure",
     datetime: "Date et heure",
+    calendar: {
+      sameDay: "Aujourd'hui à {{time}}",
+      nextDay: "Demain à {{time}}",
+      nextWeek: "Le {{weekday}} à {{time}}",
+      lastDay: "Hier à {{time}}",
+      lastWeek: "Le {{weekday}} dernier à {{time}}",
+      sameElse: "{{date}} à {{time}}"
+    }
   },
   visibility: {
     title: "Visibilité",

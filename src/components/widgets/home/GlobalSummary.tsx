@@ -38,7 +38,7 @@ export default function GlobalSummary({ noHeader }: GlobalSummaryProps) {
 
     const interval = setInterval(() => {
       getInfos()
-    }, 60000)
+    }, 300000)
 
     return () => clearInterval(interval)
   }, [currentUserLocation, planets])
