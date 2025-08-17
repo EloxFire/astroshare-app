@@ -1,4 +1,5 @@
 import { app_colors } from "../../helpers/constants";
+import {Dimensions} from "react-native";
 
 export const apodStyles = {
   content: {
@@ -8,35 +9,55 @@ export const apodStyles = {
     paddingBottom: 80,
 
     image: {
-      marginVertical: 10,
       borderRadius: 10,
       borderWidth: 1,
-      borderColor: app_colors.white_twenty,
+      borderColor: app_colors.white_forty,
     },
 
-    title: {
-      fontSize: 25,
-      textTransform: 'uppercase' as 'uppercase',
-      fontFamily: 'GilroyBlack',
-      textAlign: 'center' as 'center',
-      marginBottom: 10,
-      color: app_colors.white
-    },
-
-    subtitle: {
+    imageTitle: {
       color: app_colors.white,
-      fontFamily: 'GilroyBlack',
       fontSize: 20,
-      textAlign: 'left' as 'left',
-      alignSelf: 'flex-start' as 'flex-start',
-      marginBottom: 10
+      marginTop: 10,
+      marginBottom: 5,
+      fontFamily: 'GilroyBlack' as 'GilroyBlack',
     },
 
-    text: {
+    imageDescriptionTitle: {
       color: app_colors.white,
-      fontFamily: 'GilroyRegular',
-      fontSize: 12,
+      fontSize: 18,
+      marginTop: 20,
+      marginBottom: 5,
+      fontFamily: 'GilroyBlack' as 'GilroyBlack',
+    },
+
+    imageDescription: {
+      color: app_colors.white,
+      fontSize: 16,
+      lineHeight: 25,
+      fontFamily: 'GilroyRegular' as 'GilroyRegular',
       textAlign: 'justify' as 'justify',
+    },
+
+    imageSubtitle: {
+      color: app_colors.white_sixty,
+      fontSize: 12,
+      marginBottom: 5,
+      fontFamily: 'DMMonoRegular' as 'DMMonoRegular',
+    },
+
+    loadingText: {
+      color: app_colors.white,
+      fontSize: 12,
+      textAlign: 'center' as 'center',
+    },
+
+    errorBox: {
+      width: Dimensions.get('window').width - 40,
+      backgroundColor: app_colors.red_twenty,
+      borderRadius: 10,
+      borderWidth: 1,
+      borderColor: app_colors.red_eighty,
+      padding: 10,
     }
   }
 }

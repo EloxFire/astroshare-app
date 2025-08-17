@@ -38,6 +38,7 @@ import {authScreensTranslations} from "./screens/auth";
 import {widgetManagerTranslations} from "./screens/widgetManager";
 import {calculationsTranslations} from "./screens/calculations";
 import {cardsTranslations} from "./components/cards";
+import {apodTranslations} from "./screens/apod";
 
 export const frTranslations = {
   onboarding: onboardingTranslations,
@@ -79,5 +80,6 @@ export const frTranslations = {
   pro: proTranslations,
   auth: authScreensTranslations,
   widgetsManager: widgetManagerTranslations,
-  calculations: calculationsTranslations
+  calculations: calculationsTranslations,
+  apod: apodTranslations,
 }
