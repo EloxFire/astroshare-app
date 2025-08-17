@@ -93,12 +93,11 @@ export const computeObject = (props: ComputeObjectProps): ComputedObjectInfos | 
       const nextSet: boolean | TransitInstance = getBodyNextSet(new Date(), props.observer, target, horizonAngle);
 
       if(isTransitInstance(nextRise)){
-        objectNextRise = dayjs(nextRise.datetime);
-        console.log(`[computeObject] Object next rise: ${objectNextRise}`);
+        objectNextRise = dayjs(nextRise.datetime).add(2, 'hours');
       }
 
       if(isTransitInstance(nextSet)){
-        objectNextSet = dayjs(nextSet.datetime);
+        objectNextSet = dayjs(nextSet.datetime).add(2, 'hours');
       }
     }
 
