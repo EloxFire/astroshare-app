@@ -4,7 +4,7 @@ import {app_colors} from "../../../helpers/constants";
 export const newsBarStyles = {
   bar: {
     width: Dimensions.get("window").width - 20,
-    height: 65,
+    height: 70,
     borderRadius: 10,
     borderWidth: 1,
     borderColor: app_colors.white_twenty,
@@ -37,7 +37,7 @@ export const newsBarStyles = {
       description:{
         fontSize: 12,
         color: app_colors.white,
-        fontFamily: "DMMonoMedium",
+        fontFamily: "DMMonoRegular",
       },
     }
   }

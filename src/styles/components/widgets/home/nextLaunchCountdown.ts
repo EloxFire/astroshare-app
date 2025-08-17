@@ -58,6 +58,7 @@ export const nextLaunchCountdownWidgetStyles = {
         paddingHorizontal: 10,
         color: app_colors.white,
         backgroundColor: app_colors.white_no_opacity,
+        fontFamily: 'DMMonoMedium' as 'DMMonoMedium',
         fontSize: 12,
         height: 25,
         minWidth: 50,

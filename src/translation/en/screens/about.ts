@@ -14,7 +14,7 @@ export const aboutTranslations = {
   legal: {
     title: "Legal Notice",
     editor: "Editor :\nEnzo Avagliano",
-    address: "Headquarters :\n 36 rue Mignet, 13100 Aix-en-Provence, France",
+    address: "Headquarters :\n36 rue Mignet, 13100 Aix-en-Provence, France",
     phone: "Phone :\n06.69.07.42.59",
     siret: "SIRET :\n89122657300014"
   },

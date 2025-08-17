@@ -54,17 +54,15 @@ export default function NightSummary({ noHeader }: NightSummaryProps) {
 
   const getInfos = async () => {
     if (!currentUserLocation) return;
-    const date = isNightPastTwelve(new Date(), {latitude: currentUserLocation.lat, longitude: currentUserLocation.lon}) ? dayjs().subtract(1, 'day').toDate() : dayjs().subtract(12,'hours').toDate();
-
 
     const altitude = selectedSpot ? selectedSpot.equipments.altitude : defaultAltitude;
     const observer: GeographicCoordinate = { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }
     const horizonAngle = calculateHorizonAngle(extractNumbers(altitude))
 
-    const nightTimes = getNight(date, observer, horizonAngle)
+    const nightTimes = getNight(new Date(), observer, horizonAngle)
     setNight(nightTimes)
 
-    getMoonData(date)
+    getMoonData(new Date())
 
     let vp: GlobalPlanet[] = [];
     planets.forEach((planet: GlobalPlanet) => {
@@ -144,13 +142,6 @@ export default function NightSummary({ noHeader }: NightSummaryProps) {
 
   return (
     <View style={{ marginTop: noHeader ? 0 : 10, marginBottom: 20 }}>
-      {/*{*/}
-      {/*  !noHeader &&*/}
-      {/*  <View>*/}
-      {/*    <Text style={globalStyles.sections.title}>{i18n.t('common.other.overview')}</Text>*/}
-      {/*    <Text style={[globalStyles.sections.subtitle, { marginBottom: 0 }]}>{i18n.t('widgets.homeWidgets.night.title')}</Text>*/}
-      {/*  </View>*/}
-      {/*}*/}
       <ImageBackground source={loading ? undefined : require('../../../../assets/icons/astro/bands/NIGHT.png')} imageStyle={nightSummaryStyles.container.backgroundPicture} resizeMode='cover' style={[nightSummaryStyles.container, { justifyContent: loading ? 'center' : 'flex-start' }]}>
         {
           loading ?
@@ -160,7 +151,6 @@ export default function NightSummary({ noHeader }: NightSummaryProps) {
               <View style={nightSummaryStyles.container.blur} />
               <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
                 <Text style={nightSummaryStyles.container.title}>{isNightPastTwelve(new Date, {latitude: currentUserLocation.lat, longitude: currentUserLocation.lon}) ? i18n.t('widgets.homeWidgets.night.container.alterTitle') : dayjs().isAfter(dayjs(night!.start)) ? i18n.t('widgets.homeWidgets.night.container.alterTitle') : i18n.t('widgets.homeWidgets.night.container.title')}</Text>
-                {/* <Text style={nightSummaryStyles.container.title}>Planètes</Text> */}
                 <Text style={nightSummaryStyles.container.title}>{moonData ? moonPhasesList[moonData.phase] : i18n.t('common.loadings.simple')}</Text>
               </View>
               <View style={nightSummaryStyles.container.data}>
