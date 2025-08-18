@@ -80,6 +80,7 @@ export default function Weather({ navigation }: any) {
     const searchedWeather = await getWeather(city.lat, city.lon)
     setSearchedCity(city)
     setWeather(searchedWeather)
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'User searched weather for new city', eventTypes.BUTTON_CLICK, { searchString: searchString }, currentLocale)
   }
 
   return (

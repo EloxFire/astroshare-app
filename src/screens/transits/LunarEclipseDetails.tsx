@@ -14,9 +14,16 @@ import {getLocationName} from "../../helpers/api/getLocationFromCoords";
 import SimpleButton from "../../components/commons/buttons/SimpleButton";
 import {LunarEclipse} from "../../helpers/types/LunarEclipse";
 import {SvgUri} from "react-native-svg";
+import {useAuth} from "../../contexts/AuthContext";
+import {useTranslation} from "../../hooks/useTranslation";
+import {sendAnalyticsEvent} from "../../helpers/scripts/analytics";
+import {eventTypes} from "../../helpers/constants/analytics";
 
 export default function LunarEclipseDetails({ navigation, route }: any) {
-  const { currentUserLocation } = useSettings();
+  const {currentUserLocation} = useSettings()
+  const {currentUser} = useAuth()
+  const {currentLocale} = useTranslation()
+
   const routeEclipse: LunarEclipse = route.params.eclipse;
 
   const [eclipse, setEclipse] = useState<SolarEclipse | null>(null);
@@ -31,6 +38,13 @@ export default function LunarEclipseDetails({ navigation, route }: any) {
   const [svgPressed, setSvgPressed] = useState<boolean>(false);
 
   const mapRef = useRef(null)
+
+  useEffect(() => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'Lunar eclipse details screen view', eventTypes.SCREEN_VIEW, {
+      eclipseType: routeEclipse.type,
+      calendarDate: routeEclipse.calendarDate,
+    }, currentLocale);
+  }, []);
 
   const handleMapPress = async (event?: MapPressEvent | null, location?: {latitude: number, longitude: number}) => {
     if (!event && !location) {

@@ -70,7 +70,7 @@ import CelestialBodyOverview from "./src/screens/celestialBodies/CelestialBodyOv
 import {app_colors} from "./src/helpers/constants";
 import * as SystemUI from 'expo-system-ui';
 import CalculationHome from "./src/screens/calculations/CalculationHome";
-import SolarEclipsesScreen from "./src/screens/transits/SolarEclipsesScreen";
+import {SolarEclipsesScreen} from "./src/screens/transits/SolarEclipsesScreen";
 import SolarEclipseDetails from "./src/screens/transits/SolarEclipseDetails";
 import LunarEclipsesScreen from "./src/screens/transits/LunarEclipsesScreen";
 import LunarEclipseDetails from "./src/screens/transits/LunarEclipseDetails";

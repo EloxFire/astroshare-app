@@ -35,7 +35,7 @@ export const weatherStyles = {
 
         subtitle: {
           fontSize: 10,
-          fontFamily: 'GilroyRegular',
+          fontFamily: 'DMMonoRegular',
           textTransform: 'uppercase' as 'uppercase',
           color: app_colors.white
         },
@@ -45,8 +45,9 @@ export const weatherStyles = {
         },
 
         description: {
-          fontSize: 15,
+          fontSize: 14,
           textAlign: 'center' as 'center',
+          fontFamily: 'GilroyRegular',
         }
       }
     },

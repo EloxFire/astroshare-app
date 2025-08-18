@@ -14,14 +14,25 @@ import {EclipseCard} from "../../components/cards/EclipseCard";
 import CheckBox from 'react-native-check-box'
 import {LunarEclipse} from "../../helpers/types/LunarEclipse";
 import ScreenInfo from "../../components/ScreenInfo";
+import {useAuth} from "../../contexts/AuthContext";
+import {useTranslation} from "../../hooks/useTranslation";
+import {sendAnalyticsEvent} from "../../helpers/scripts/analytics";
+import {eventTypes} from "../../helpers/constants/analytics";
 
 export default function LunarEclipsesScreen({ navigation }: any) {
 
   const {currentUserLocation} = useSettings()
+  const {currentUser} = useAuth()
+  const {currentLocale} = useTranslation()
+
   const [loading, setLoading] = useState(false)
   const [selectedYear, setSelectedYear] = useState(dayjs().year())
   const [eclipses, setEclipses] = useState<LunarEclipse[]>([])
   const [showOnlyVisible, setShowOnlyVisible] = useState(true)
+
+  useEffect(() => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'Lunar eclipses screen view', eventTypes.SCREEN_VIEW, {}, currentLocale)
+  }, []);
 
   const findNextEclipse = async () => {
     console.log({params: {year: selectedYear, observer: `[${currentUserLocation.lat},${currentUserLocation.lon}]`}})

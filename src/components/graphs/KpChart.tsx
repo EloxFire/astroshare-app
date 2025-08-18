@@ -120,11 +120,9 @@ const KpChart: React.FC = () => {
                     {
                       data.map((item, index) => {
                         return (
-                          <>
-                            <View key={"value-key-" + index} style={{flex:1, height: `${(item.Kp / 9) * 100}%`, backgroundColor: getGeomagneticStormInfos(item.Kp).color}}>
-                              <Text style={[kpIndexGraphStyles.container.graph.topGraph.yAxis.values, {color: app_colors.black, textAlign: 'center'}]}>{item.Kp}</Text>
-                            </View>
-                          </>
+                          <View key={"value-key-" + index} style={{flex:1, height: `${(item.Kp / 9) * 100}%`, backgroundColor: getGeomagneticStormInfos(item.Kp).color}}>
+                            <Text style={[kpIndexGraphStyles.container.graph.topGraph.yAxis.values, {color: app_colors.black, textAlign: 'center'}]}>{item.Kp}</Text>
+                          </View>
                         )
                       })
                     }

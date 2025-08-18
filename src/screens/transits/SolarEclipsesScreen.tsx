@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {ActivityIndicator, ScrollView, Text, View} from "react-native";
 import {globalStyles} from "../../styles/global";
 import PageTitle from "../../components/commons/PageTitle";
@@ -14,14 +14,25 @@ import {SolarEclipse} from "../../helpers/types/eclipses/SolarEclipse";
 // @ts-ignore
 import CheckBox from 'react-native-check-box'
 import ScreenInfo from "../../components/ScreenInfo";
+import {useAuth} from "../../contexts/AuthContext";
+import {useTranslation} from "../../hooks/useTranslation";
+import {sendAnalyticsEvent} from "../../helpers/scripts/analytics";
+import {eventTypes} from "../../helpers/constants/analytics";
 
-export default function SolarEclipsesScreen({ navigation }: any) {
+export function SolarEclipsesScreen({navigation}: any) {
 
   const {currentUserLocation} = useSettings()
+  const {currentUser} = useAuth()
+  const {currentLocale} = useTranslation()
+
   const [loading, setLoading] = useState(false)
   const [selectedYear, setSelectedYear] = useState(dayjs().year())
   const [eclipses, setEclipses] = useState<SolarEclipse[]>([])
   const [showOnlyVisible, setShowOnlyVisible] = useState(true)
+
+  useEffect(() => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'Solar eclipses screen view', eventTypes.SCREEN_VIEW, {}, currentLocale)
+  }, []);
 
   const findNextEclipse = async () => {
     console.log({params: {year: selectedYear, observer: `[${currentUserLocation.lat},${currentUserLocation.lon}]`}})
@@ -29,10 +40,15 @@ export default function SolarEclipsesScreen({ navigation }: any) {
     setEclipses([])
 
     try {
-      const eclipses = await astroshareApi.get('/eclipses/solar', {params: {year: selectedYear, observer: showOnlyVisible ? `${currentUserLocation.lat},${currentUserLocation.lon}` : undefined}})
+      const eclipses = await astroshareApi.get('/eclipses/solar', {
+        params: {
+          year: selectedYear,
+          observer: showOnlyVisible ? `${currentUserLocation.lat},${currentUserLocation.lon}` : undefined
+        }
+      })
       setEclipses(eclipses.data)
       setLoading(false)
-    }catch (e) {
+    } catch (e) {
       console.log("Error while fetching solar eclipses")
     }
     setLoading(false)
@@ -45,7 +61,7 @@ export default function SolarEclipsesScreen({ navigation }: any) {
         title={i18n.t('transits.solarEclipse.title')}
         subtitle={i18n.t('transits.solarEclipse.subtitle')}
       />
-      <View style={globalStyles.screens.separator} />
+      <View style={globalStyles.screens.separator}/>
       <ScrollView>
         <View style={solarEclipseScreenStyles.content}>
           <CheckBox
@@ -57,7 +73,14 @@ export default function SolarEclipsesScreen({ navigation }: any) {
             leftTextStyle={{color: app_colors.white_sixty, fontFamily: 'GilroyRegular'}}
             leftText={"Visible uniquement depuis ma position"}
           />
-          <View style={{display: 'flex', flexDirection: 'row', gap: 10, borderBottomWidth: 1, borderBottomColor: app_colors.white_twenty, paddingBottom: 10}}>
+          <View style={{
+            display: 'flex',
+            flexDirection: 'row',
+            gap: 10,
+            borderBottomWidth: 1,
+            borderBottomColor: app_colors.white_twenty,
+            paddingBottom: 10
+          }}>
             <SimpleButton
               disabled={loading}
               textColor={app_colors.white_sixty}
@@ -99,12 +122,13 @@ export default function SolarEclipsesScreen({ navigation }: any) {
           <View style={{display: 'flex', gap: 10, marginTop: 20}}>
             {
               eclipses.length === 0 && !loading && (
-                <ScreenInfo image={require('../../../assets/icons/FiInfo.png')} text={"Appuyez sur 'Rechercher' pour afficher les éclipses solaires de l'année sélectionnée."} />
+                <ScreenInfo image={require('../../../assets/icons/FiInfo.png')}
+                            text={"Appuyez sur 'Rechercher' pour afficher les éclipses solaires de l'année sélectionnée."}/>
               )
             }
             {loading ?
-              <ActivityIndicator size={"large"} color={app_colors.white} pointerEvents={'none'} />
-            :
+              <ActivityIndicator size={"large"} color={app_colors.white} pointerEvents={'none'}/>
+              :
               eclipses.map((eclipse: SolarEclipse) => {
                 return (
                   <EclipseCard

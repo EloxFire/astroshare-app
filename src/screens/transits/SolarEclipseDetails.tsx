@@ -12,9 +12,15 @@ import DSOValues from "../../components/commons/DSOValues";
 import dayjs from "dayjs";
 import {getLocationName} from "../../helpers/api/getLocationFromCoords";
 import SimpleButton from "../../components/commons/buttons/SimpleButton";
+import {useAuth} from "../../contexts/AuthContext";
+import {useTranslation} from "../../hooks/useTranslation";
+import {sendAnalyticsEvent} from "../../helpers/scripts/analytics";
 
 export default function SolarEclipseDetails({ navigation, route }: any) {
-  const { currentUserLocation } = useSettings();
+  const {currentUserLocation} = useSettings()
+  const {currentUser} = useAuth()
+  const {currentLocale} = useTranslation()
+
   const routeEclipse: SolarEclipse = route.params.eclipse;
 
   const [eclipse, setEclipse] = useState<SolarEclipse | null>(null);
@@ -24,6 +30,13 @@ export default function SolarEclipseDetails({ navigation, route }: any) {
   const [selectedLocationName, setSelectedLocationName] = useState<string>('');
   const [loadingCircumstances, setLoadingCircumstances] = useState<boolean>(false);
   const mapRef = useRef(null)
+
+  useEffect(() => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'Solar eclipse details screen view', 'screen_view', {
+      eclipseType: routeEclipse.type,
+      eclipseDate: routeEclipse.calendarDate,
+    }, currentLocale);
+  }, []);
 
   useEffect(() => {
     if (!routeEclipse.visibilityLines || !routeEclipse.visibilityLines.features) {

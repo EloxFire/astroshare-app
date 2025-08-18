@@ -24,11 +24,17 @@ import SimpleButton from "../../components/commons/buttons/SimpleButton";
 import DateTimePicker from '@react-native-community/datetimepicker';
 import {getSpecificPlanetsConjunctions} from "../../helpers/scripts/astro/objects/getSpecificPlanetsConjunctions";
 import {showToast} from "../../helpers/scripts/showToast";
+import {useAuth} from "../../contexts/AuthContext";
+import {useTranslation} from "../../hooks/useTranslation";
+import {sendAnalyticsEvent} from "../../helpers/scripts/analytics";
+import {eventTypes} from "../../helpers/constants/analytics";
 
 
 export default function PlanetaryConjunctionScreen({ navigation }: any) {
 
-  const { currentUserLocation } = useSettings();
+  const { currentUserLocation } = useSettings()
+  const { currentUser } = useAuth()
+  const { currentLocale } = useTranslation()
 
   const [conjunctions, setConjunctions] = useState<Conjunction | null | undefined>(null);
   const [selectedPlanet1, setSelectedPlanet1] = useState<Planet | null>(null);
@@ -41,6 +47,10 @@ export default function PlanetaryConjunctionScreen({ navigation }: any) {
 
   const planetSelector1Ref = useRef<SelectDropdown>(null);
   const planetSelector2Ref = useRef<SelectDropdown>(null);
+
+  useEffect(() => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'Planetary conjunctions screen view', eventTypes.SCREEN_VIEW, {}, currentLocale);
+  }, []);
 
 
   const searchConjunctions = () => {
@@ -98,6 +108,12 @@ export default function PlanetaryConjunctionScreen({ navigation }: any) {
 
   const handleSearchButton = () => {
     if(!conjunctions) {
+      sendAnalyticsEvent(currentUser, currentUserLocation, 'Search planetary conjunctions', eventTypes.BUTTON_CLICK, {
+        planet1: selectedPlanet1 ? selectedPlanet1.name : 'none',
+        planet2: selectedPlanet2 ? selectedPlanet2.name : 'none',
+        startDate: dayjs(startDate).format('YYYY-MM-DD'),
+        endDate: dayjs(endDate).format('YYYY-MM-DD'),
+      }, currentLocale);
       searchConjunctions();
     }else{
       setSelectedPlanet1(null);
@@ -127,6 +143,7 @@ export default function PlanetaryConjunctionScreen({ navigation }: any) {
               data={planetsList}
               onSelect={(selectedFirstPlanet) => {
                 setSelectedPlanet1(selectedFirstPlanet.object ? selectedFirstPlanet.object : null);
+                sendAnalyticsEvent(currentUser, currentUserLocation, 'Selected first planet for conjunction', eventTypes.BUTTON_CLICK, {planet: selectedFirstPlanet.title}, currentLocale);
               }}
               renderButton={(selectedFirstPlanet, isOpened: boolean) => {
                 if(selectedFirstPlanet) {
@@ -160,6 +177,7 @@ export default function PlanetaryConjunctionScreen({ navigation }: any) {
               data={planetsList}
               onSelect={(selectedSecondPlanet) => {
                 setSelectedPlanet2(selectedSecondPlanet.object ? selectedSecondPlanet.object : null);
+                sendAnalyticsEvent(currentUser, currentUserLocation, 'Selected second planet for conjunction', eventTypes.BUTTON_CLICK, {planet: selectedSecondPlanet.title}, currentLocale);
               }}
               renderButton={(selectedSecondPlanet, isOpened: boolean) => {
                 if(selectedSecondPlanet) {
