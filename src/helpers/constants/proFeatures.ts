@@ -1,11 +1,11 @@
 import {ProFeature} from "../types/ProFeature";
 
 const proFeaturesFr: ProFeature[] = [
-  {
-    name: "Carte du ciel 3D",
-    description: "Profitez d'un planétarium 3D complet, directement dans votre poche !",
-    image: require('../../../assets/images/tools/skymap.png')
-  },
+  // {
+  //   name: "Carte du ciel 3D",
+  //   description: "Profitez d'un planétarium 3D complet, directement dans votre poche !",
+  //   image: require('../../../assets/images/tools/skymap.png')
+  // },
   {
     name: "Prédictions passages ISS",
     description: "Calculez les prochains passage de l'ISS au dessus de votre position",
@@ -29,11 +29,11 @@ const proFeaturesFr: ProFeature[] = [
 ]
 
 const proFeaturesEn: ProFeature[] = [
-  {
-    name: "3D Sky Map",
-    description: "Enjoy a complete 3D planetarium, directly in your pocket!",
-    image: require('../../../assets/images/tools/skymap.png')
-  },
+  // {
+  //   name: "3D Sky Map",
+  //   description: "Enjoy a complete 3D planetarium, directly in your pocket!",
+  //   image: require('../../../assets/images/tools/skymap.png')
+  // },
   {
     name: "ISS Pass Predictions",
     description: "Calculate the next ISS passes over your location",

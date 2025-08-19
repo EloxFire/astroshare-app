@@ -20,7 +20,7 @@ module.exports = {
     bundleIdentifier: "fr.eavagliano.astroshare",
   },
   android: {
-    versionCode: 45,
+    versionCode: 46,
     adaptiveIcon: {
       foregroundImage: "./assets/adaptive-icon.png",
       backgroundColor: "#000000"
