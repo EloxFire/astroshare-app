@@ -15,6 +15,7 @@ interface AuthContextProviderProps {
 
 export function AuthContextProvider({ children }: AuthContextProviderProps) {
   const [currentUser, setCurrentUser] = useState<User | null | undefined>(null)
+  const [authLoading, setAuthLoading] = useState<boolean>(false)
 
   useEffect(() => {
     checkUser()
@@ -73,31 +74,7 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
       console.log("[Auth] Access token refreshed & current user updated");
 
       // 3) Vérif abonnement (silencieuse)
-      if (user?.subscriptionId) {
-        console.log("[Auth] User has a subscription, checking subscription status...");
-
-        try {
-          const subRes = await axios.post(
-            `${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/stripe/check-subscription-status`,
-            { userId: user.uid }, // le backend lit l'ID user et va chercher subscriptionId en DB
-            {
-              headers: {
-                Authorization: process.env.EXPO_PUBLIC_ADMIN_KEY, // assure-toi que c'est ce que checkCallFromApp attend
-              },
-              timeout: 8000,
-            }
-          );
-
-          // Attendu côté backend robuste: { status, valid, reason, current_period_end, ... }
-          const { valid, status, reason } = subRes.data || {};
-          console.log("[Auth] Subscription status:", { valid, status, reason });
-
-        } catch (err: any) {
-          console.log("[Auth] Error checking user subscription status:", err?.message || err);
-        }
-      } else {
-        console.log("[Auth] User has no subscription ID, skipping subscription check");
-      }
+      await checkSubscriptionStatus(user)
 
       return accessToken;
     } catch (e: any) {
@@ -106,6 +83,29 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
       return null;
     }
   };
+
+  const registerUser = async (email: string, password: string) => {
+    console.log('[Auth] Registering user')
+    try {
+      setAuthLoading(true);
+      const userToRegister = await axios.post(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/auth/register`, {
+        email,
+        password
+      })
+
+      const { refreshToken } = userToRegister.data
+      await storeData(storageKeys.auth.refreshToken, refreshToken)
+      console.log('[Auth] User registered successfully')
+
+      setAuthLoading(false);
+      return 'success';
+    } catch (e: any) {
+      console.log('[Auth] Error registering user:', e)
+      showToast({ message: e.response?.data?.error || "Erreur d'inscription", type: 'error' })
+      setAuthLoading(false);
+      return null;
+    }
+  }
 
   const loginUser = async (email: string, password: string) => {
     console.log('[Auth] Logging in user')
@@ -119,6 +119,8 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
       await storeData(storageKeys.auth.refreshToken, refreshToken)
       await storeData(storageKeys.auth.accessToken, accessToken)
       await storeObject(storageKeys.auth.user, user)
+
+      await checkSubscriptionStatus(user)
 
       setCurrentUser(user)
       console.log('[Auth] User logged in successfully')
@@ -163,7 +165,43 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
     }
   }
 
+  const checkSubscriptionStatus = async (user: User) => {
+    if (user?.subscriptionId) {
+      console.log("[Auth] User has a subscription, checking subscription status...");
+
+      try {
+        const subRes = await axios.post(
+          `${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/stripe/check-subscription-status`,
+          { userId: user.uid }, // le backend lit l'ID user et va chercher subscriptionId en DB
+          {
+            headers: {
+              Authorization: process.env.EXPO_PUBLIC_ADMIN_KEY, // assure-toi que c'est ce que checkCallFromApp attend
+            },
+            timeout: 8000,
+          }
+        );
+
+        // Attendu côté backend robuste: { status, valid, reason, current_period_end, ... }
+        const { valid, status, reason } = subRes.data || {};
+        console.log("[Auth] Subscription status:", { valid, status, reason });
+
+        if(!valid) {
+          console.log("[Auth] Subscription is not valid:", reason);
+          showToast({ message: `Abonnement invalide : ${reason}`, type: 'error' });
+          await updateCurrentUser()
+        }
+
+      } catch (err: any) {
+        console.log("[Auth] Error checking user subscription status:", err?.message || err);
+      }
+    } else {
+      console.log("[Auth] User has no subscription ID, skipping subscription check");
+      return;
+    }
+  }
+
   const values = {
+    registerUser,
     loginUser,
     logoutUser,
     updateCurrentUser,

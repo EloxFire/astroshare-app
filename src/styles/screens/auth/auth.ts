@@ -8,7 +8,7 @@ export const authStyles = {
 
     logo: {
       maxHeight: 50,
-      resizeMode: 'contain',
+      resizeMode: 'contain' as 'contain',
       alignSelf: 'center' as 'center',
       marginVertical: 50,
     },

@@ -9,22 +9,40 @@ import {useTranslation} from "../../hooks/useTranslation";
 import {localizedWhiteLogo} from "../../helpers/scripts/loadImages";
 import {routes} from "../../helpers/routes";
 import {pageTitleStyles} from "../../styles/components/commons/pageTitle";
+import {showToast} from "../../helpers/scripts/showToast";
 
 export default function RegisterScreen({ navigation }: any) {
 
-  const {registerUser} = useAuth()
+  const {registerUser, loginUser} = useAuth()
   const {currentLocale} = useTranslation()
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [passwordConfirmation, setPasswordConfirmation] = useState('')
   const [showPassword, setShowPassword] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   const handleFormSubmit = async () => {
     if(password !== passwordConfirmation) {
       return;
     }
-    await registerUser(email, password)
+    setLoading(true)
+    const response = await registerUser(email, password);
+
+    if(!response) {
+      showToast({message: i18n.t('auth.register.error'), type: 'error'})
+      setLoading(false);
+      return;
+    }else{
+      const response = await loginUser(email, password)
+      if(response !== 'success') {
+        showToast({message: i18n.t('auth.register.error'), type: 'error'})
+        setLoading(false);
+        return;
+      }
+      navigation.push(routes.auth.profile.path);
+      setLoading(false);
+    }
   }
 
   return (
@@ -75,7 +93,7 @@ export default function RegisterScreen({ navigation }: any) {
               <Text style={authStyles.content.forgotPassword}>{i18n.t('auth.register.noAccount')}</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={authStyles.content.form.button} onPress={() => navigation.navigate('ForgotPasswordScreen')}>
+            <TouchableOpacity style={authStyles.content.form.button} onPress={() => handleFormSubmit()}>
               <Text style={authStyles.content.form.button.text}>{i18n.t('auth.register.submit')}</Text>
             </TouchableOpacity>
           </View>
