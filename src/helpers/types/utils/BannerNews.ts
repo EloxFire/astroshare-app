@@ -5,6 +5,7 @@ export type BannerNews = {
   icon: string
   colors: string // String of colors (hex) separated by semicolon exemple #FFFFFF;#000000
   type: 'internal' | 'external' | 'none'
+  visible: boolean
   externalLink?: string
   internalRoute?: string
 }

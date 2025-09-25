@@ -46,7 +46,7 @@ function CategoryScreen({route, navigation}: any) {
               <DSOValues title={i18n.t('ressourcesScreen.categoryScreen.availableRessources')} value={ressourcesList.length} />
             </View>
             <View>
-              <InputWithIcon placeholder={i18n.t('ressourcesScreen.categoryScreen.searchPlaceholder')} changeEvent={(e) => setSearch(e)} search={() => {}} icon={require('../../../assets/icons/FiSearch.png')} value={search}/>
+              <InputWithIcon type='text' placeholder={i18n.t('ressourcesScreen.categoryScreen.searchPlaceholder')} changeEvent={(e) => setSearch(e)} search={() => {}} icon={require('../../../assets/icons/FiSearch.png')} value={search}/>
             </View>
             {
               ressourcesList.length === 0 ? <SimpleButton disabled text={i18n.t('ressourcesScreen.categoryScreen.noRessources')} /> :

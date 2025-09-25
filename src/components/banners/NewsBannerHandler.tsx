@@ -19,7 +19,7 @@ export default function NewsBannerHandler({ navigation }: Props) {
   useEffect(() => {
     (async () => {
       const news = await axios.get(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/news`)
-      setBanners(news.data.data)
+      setBanners(news.data.data.filter((banner: BannerNews) => banner.visible === true))
     })()
   }, [])
 
@@ -52,7 +52,7 @@ export default function NewsBannerHandler({ navigation }: Props) {
       />
       <View>
       {/*  Item Dots */}
-        <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'center', marginVertical: 10}}>
+        <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'center', marginVertical: banners.length > 0 ? 10 : 0}}>
           <View style={{flexDirection: 'row'}}>
             {banners.map((_, index) => (
               <View
