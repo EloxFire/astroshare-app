@@ -27,6 +27,7 @@ export default function InputWithIcon({ placeholder, changeEvent, icon, search, 
         placeholderTextColor={app_colors.white_sixty}
         value={value}
         keyboardType={keyboardType || 'default'}
+        onSubmitEditing={() => { if (search) search() }}
       />
       {icon && search &&
         <TouchableOpacity onPress={() => search()}>
