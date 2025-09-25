@@ -1,5 +1,3 @@
-import {showToast} from "../showToast";
-
 export const calculateFD = (focal: number | undefined, diameter: number | undefined): string | undefined => {
   if(diameter === 0 ){
     return '\\text{Le diamètre ne peut pas être égal à 0}';

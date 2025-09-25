@@ -4,6 +4,6 @@ export const calculateMinMagnification = (diameter: number | undefined): string 
   }
 
   if (diameter) {
-    return `M_{min} = \\frac{D}{7} = \\frac{${diameter}}{7} = ${(diameter / 7).toFixed(2)}\\text{x}`;
+    return `G_{min} = \\frac{D}{7} = \\frac{${diameter}}{7} = ${(diameter / 7).toFixed(2)}\\text{x}`;
   }
 }

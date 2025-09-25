@@ -20,6 +20,8 @@ import {useAuth} from "../../contexts/AuthContext";
 import {useTranslation} from "../../hooks/useTranslation";
 import {sendAnalyticsEvent} from "../../helpers/scripts/analytics";
 import {eventTypes} from "../../helpers/constants/analytics";
+import { calculateExitPupil } from "../../helpers/scripts/math/calculateExitPupil";
+import { calculateResolvingPower } from "../../helpers/scripts/math/calculateResolvingPower";
 
 export default function CalculationHome({ navigation }: any) {
 
@@ -38,6 +40,8 @@ export default function CalculationHome({ navigation }: any) {
   const [minMagnification, setMinMagnification] = useState<string | undefined>(undefined);
   const [sampling, setSampling] = useState<string | undefined>(undefined);
   const [fov, setFov] = useState<string | undefined>(undefined);
+  const [exitPupil, setExitPupil] = useState<string | undefined>(undefined);
+  const [resolvingPower, setResolvingPower] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     sendAnalyticsEvent(currentUser, currentUserLocation, 'Calculations screen view', eventTypes.SCREEN_VIEW, {}, currentLocale)
@@ -54,6 +58,8 @@ export default function CalculationHome({ navigation }: any) {
     setMinMagnification(calculateMinMagnification(diameter));
     setSampling(calculateSampling(focalLength, pixelSize));
     setFov(calculateApparentFov(focalLength, diameter, eyepieceField));
+    setExitPupil(calculateExitPupil(diameter, focalLength, eyepieceFocalLength));
+    setResolvingPower(calculateResolvingPower(diameter));
   }
 
   const resetCalculations = () => {
@@ -65,6 +71,9 @@ export default function CalculationHome({ navigation }: any) {
     setMagnification(undefined);
     setMinMagnification(undefined);
     setSampling(undefined);
+    setFov(undefined);
+    setExitPupil(undefined);
+    setResolvingPower(undefined);
   }
 
   const handlePixelSize = (e: string) => {
@@ -128,7 +137,15 @@ export default function CalculationHome({ navigation }: any) {
                 <Text style={calculationHomeStyles.content.title}>Rapport focale</Text>
                 <Text style={calculationHomeStyles.content.description}>Permet de calculer le rapport f/D d'un instrument optique.</Text>
               </View>
-              <MathComponent expression={fD}/>
+              {
+                fD ?
+                <MathComponent expression={fD}/>
+                :
+                <View>
+                  <MathComponent expression={`f/D = \\frac{F}{D}`}/>
+                  <Text style={calculationHomeStyles.content.description}>F = focale instrument et D = diamètre instrument</Text>
+                </View>
+              }
             </View>
 
             <View style={calculationHomeStyles.content.container}>
@@ -136,7 +153,15 @@ export default function CalculationHome({ navigation }: any) {
                 <Text style={calculationHomeStyles.content.title}>Grossissement</Text>
                 <Text style={calculationHomeStyles.content.description}>Permet de connaître le grossissement obtenu avec un oculaire donné.</Text>
               </View>
-              <MathComponent expression={magnification}/>
+              {
+                magnification ?
+                <MathComponent expression={magnification}/>
+                :
+                <View>
+                  <MathComponent expression={`G = \\frac{F}{f}`} />
+                  <Text style={calculationHomeStyles.content.description}>F = focale instrument et f = focale oculaire</Text>
+                </View>
+              }
             </View>
 
             <View style={calculationHomeStyles.content.container}>
@@ -144,7 +169,15 @@ export default function CalculationHome({ navigation }: any) {
                 <Text style={calculationHomeStyles.content.title}>Grossissement minimum</Text>
                 <Text style={calculationHomeStyles.content.description}>Indique le grossissement minimum pour une pupille de sortie optimale selon l'instrument.</Text>
               </View>
-              <MathComponent expression={minMagnification}/>
+              {
+                minMagnification ?
+                <MathComponent expression={minMagnification}/>
+                :
+                <View>
+                  <MathComponent expression={`G_{min} = \\frac{D}{7}`} />
+                  <Text style={calculationHomeStyles.content.description}>D = diamètre instrument</Text>
+                </View>
+              }
             </View>
 
             <View style={calculationHomeStyles.content.container}>
@@ -152,7 +185,15 @@ export default function CalculationHome({ navigation }: any) {
                 <Text style={calculationHomeStyles.content.title}>Échantillonnage</Text>
                 <Text style={calculationHomeStyles.content.description}>Détermine la résolution en secondes d'arc par pixel pour l'imagerie. (En seconde d'arc / pixel)</Text>
               </View>
-              <MathComponent expression={sampling}/>
+              {
+                sampling ?
+                <MathComponent expression={sampling}/>
+                :
+                <View>
+                  <MathComponent expression={`S = \\frac{206.3 \\times p}{F}`} />
+                  <Text style={calculationHomeStyles.content.description}>p = taille pixel caméra (µm) et F = focale instrument (mm)</Text>
+                </View>
+              }
             </View>
 
             <View style={calculationHomeStyles.content.container}>
@@ -160,7 +201,47 @@ export default function CalculationHome({ navigation }: any) {
                 <Text style={calculationHomeStyles.content.title}>Champ réel</Text>
                 <Text style={calculationHomeStyles.content.description}>Détermine le champ de vision pour un oculaire donné. (En minutes d'arc)</Text>
               </View>
-              <MathComponent expression={fov}/>
+              {
+                fov ?
+                <MathComponent expression={fov}/>
+                :
+                <View>
+                  <MathComponent expression={`FoV = \\frac{C}{G}`} />
+                  <Text style={calculationHomeStyles.content.description}>C = champ oculaire (°) et G = grossissement</Text>
+                </View>
+              }
+            </View>
+
+            <View style={calculationHomeStyles.content.container}>
+              <View>
+                <Text style={calculationHomeStyles.content.title}>Pupille de sortie</Text>
+                <Text style={calculationHomeStyles.content.description}>Détermine le diamètre de la pupille de sortie pour un oculaire donné. (En mm)</Text>
+              </View>
+              {
+                exitPupil ?
+                <MathComponent expression={exitPupil}/>
+                :
+                <View>
+                  <MathComponent expression={`P = \\frac{D}{G}`} />
+                  <Text style={calculationHomeStyles.content.description}>D = diamètre instrument (mm) et G = grossissement</Text>
+                </View>
+              }
+            </View>
+
+            <View style={calculationHomeStyles.content.container}>
+              <View>
+                <Text style={calculationHomeStyles.content.title}>Pouvoir séparateur</Text>
+                <Text style={calculationHomeStyles.content.description}>Détermine la capacité de l'instrument à distinguer deux objets proches. (En secondes d'arc)</Text>
+              </View>
+              {
+                resolvingPower ?
+                <MathComponent expression={resolvingPower}/>
+                :
+                <View>
+                  <MathComponent expression={`Ps = \\frac{120}{D}`} />
+                  <Text style={calculationHomeStyles.content.description}>D = diamètre instrument (mm)</Text>
+                </View>
+              }
             </View>
           </View>
         </ScrollView>
