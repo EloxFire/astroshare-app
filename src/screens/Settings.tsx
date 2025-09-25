@@ -36,6 +36,7 @@ export default function Settings({ navigation }: any) {
           {!isProUser(currentUser) && <ToolButton image={require('../../assets/images/tools/apod.png')} isPremium navigation={navigation} targetScreen={routes.sellScreen.path} text={i18n.t('settings.buttons.pro.title')} subtitle={i18n.t('settings.buttons.pro.subtitle')}/>}
           <Text style={settingsStyles.content.categoryTitle}>{i18n.t('settings.categories.appearance')}</Text>
           <BigButton icon={require('../../assets/icons/FiWidget.png')} text={i18n.t('settings.buttons.widgets.title')} subtitle={i18n.t('settings.buttons.widgets.subtitle')} navigation={navigation} targetScreen={routes.widgetsManager.path} />
+          <BigButton icon={require('../../assets/icons/FiNewspaper.png')} text={i18n.t('settings.buttons.newsBannerManager.title')} subtitle={i18n.t('settings.buttons.newsBannerManager.subtitle')} navigation={navigation} targetScreen={routes.newsManager.home.path} />
           <BigButton icon={require('../../assets/icons/FiViewPoint.png')} text={i18n.t('settings.buttons.favoritesViewPoints.title')} subtitle={i18n.t('settings.buttons.favoritesViewPoints.subtitle')} navigation={navigation} targetScreen={routes.favoritesViewPoints.path} />
           <Text style={settingsStyles.content.categoryTitle}>{i18n.t('settings.categories.infos')}</Text>
           <BigButton icon={require('../../assets/icons/FiInfo.png')} text={i18n.t('settings.buttons.about.title')} subtitle={i18n.t('settings.buttons.about.subtitle')} navigation={navigation} targetScreen={routes.about.path} />

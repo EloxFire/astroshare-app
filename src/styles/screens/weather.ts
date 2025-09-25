@@ -89,7 +89,6 @@ export const weatherStyles = {
     display: 'flex' as 'flex',
     flexDirection: 'row' as 'row',
     justifyContent: 'space-between' as 'space-between',
-    marginLeft: -10,
     marginBottom: 50,
   },
 

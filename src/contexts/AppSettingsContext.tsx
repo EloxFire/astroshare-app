@@ -42,6 +42,7 @@ export function AppSettingsProvider({ children }: AppSettingsProviderProps) {
   const [isCellularDataEnabled, setIsCellularDataEnabled] = useState<boolean>(true)
   const [hasInternetConnection, setHasInternetConnection] = useState<boolean>(false)
   const [selectedHomeWidget, setSelectedHomeWidget] = useState<HomeWidget>('None' as HomeWidget)
+  const [homeNewsBannerVisible, setHomeNewsBannerVisible] = useState<boolean>(true)
 
   useEffect(() => {
     (async () => {
@@ -157,6 +158,12 @@ export function AppSettingsProvider({ children }: AppSettingsProviderProps) {
     sendAnalyticsEvent(currentUser, currentUserLocation, 'toggle_night_mode', eventTypes.BUTTON_CLICK, {isNightMode: !isNightMode}, currentLocale);
   }
 
+  const handleHomeNewsBanner = () => {
+    setHomeNewsBannerVisible(!homeNewsBannerVisible);
+    storeData(storageKeys.homeNewsBannerVisible, !homeNewsBannerVisible ? 'true' : 'false');
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'toggle_home_news_banner', eventTypes.BUTTON_CLICK, {homeNewsBannerVisible: !homeNewsBannerVisible}, currentLocale);
+  }
+
   const values = {
     isNightMode,
     handleNightMode,
@@ -171,6 +178,8 @@ export function AppSettingsProvider({ children }: AppSettingsProviderProps) {
     hasInternetConnection,
     selectedHomeWidget,
     updateSelectedHomeWidget,
+    homeNewsBannerVisible,
+    handleHomeNewsBanner,
   }
 
   return (

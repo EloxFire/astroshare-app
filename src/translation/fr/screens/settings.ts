@@ -22,6 +22,10 @@ export const settingsTranslations = {
       title: "Personnalisation",
       subtitle: "// Configurez vos widgets"
     },
+    newsBannerManager: {
+      title: "Bannière d'actualités",
+      subtitle: "// Gérez les actualités affichées"
+    },
     tutorial: {
       title: "Tutoriel",
       subtitle: "// Découvrez comment utiliser l'application"

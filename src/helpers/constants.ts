@@ -67,6 +67,7 @@ export const Polaris = {
 }
 
 export const storageKeys = {
+  firstLaunch: 'firstLaunch',
   viewPoints: 'viewPoints',
   hasChangedCurrentSpotElevation: 'hasChangedCurrentSpotElevation',
   hasAddedSpot: 'hasAddedSpot',
@@ -92,6 +93,7 @@ export const storageKeys = {
     base: "analyticsBase"
   },
   hiddenPremiumAccess: 'hasHiddenPremiumAccess',
+  homeNewsBannerVisible: 'homeNewsBannerVisible',
 }
 
 export const geomagneticStormLevelsLongLabels = {

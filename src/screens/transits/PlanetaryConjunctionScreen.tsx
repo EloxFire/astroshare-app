@@ -28,6 +28,7 @@ import {useAuth} from "../../contexts/AuthContext";
 import {useTranslation} from "../../hooks/useTranslation";
 import {sendAnalyticsEvent} from "../../helpers/scripts/analytics";
 import {eventTypes} from "../../helpers/constants/analytics";
+import InputWithIcon from '../../components/forms/InputWithIcon';
 
 
 export default function PlanetaryConjunctionScreen({ navigation }: any) {
@@ -39,6 +40,7 @@ export default function PlanetaryConjunctionScreen({ navigation }: any) {
   const [conjunctions, setConjunctions] = useState<Conjunction | null | undefined>(null);
   const [selectedPlanet1, setSelectedPlanet1] = useState<Planet | null>(null);
   const [selectedPlanet2, setSelectedPlanet2] = useState<Planet | null>(null);
+  const [maxSeparation, setMaxSeparation] = useState<number>(1);
   const [startDate, setStartDate] = useState<Date>(dayjs().toDate());
   const [endDate, setEndDate] = useState<Date>(dayjs().add(3, "months").toDate());
   const [isStartDateModalVisible, setIsStartDateModalVisible] = useState<boolean>(false);
@@ -72,7 +74,7 @@ export default function PlanetaryConjunctionScreen({ navigation }: any) {
     if (currentUserLocation) {
       setLoadingConjunctions(true);
       setConjunctions(null);
-      const separation = 1;
+      const separation = maxSeparation ? maxSeparation === 0 ? 1 : maxSeparation : 1;
 
       const interval: Interval = {
         from: dayjs().toDate(),
@@ -227,21 +229,22 @@ export default function PlanetaryConjunctionScreen({ navigation }: any) {
           </View>
           <Text style={[planetaryConjunctionStyles.content.parameters.text, {borderTopWidth: 1, borderTopColor: app_colors.white_forty, paddingTop: 5, marginTop: 10}]}>3. Séparation angulaire max</Text>
           <View style={planetaryConjunctionStyles.content.row}>
-            <Text style={planetaryConjunctionStyles.content.parameters.text}>Entre le</Text>
-            <SimpleButton
-              text={dayjs(startDate).format('DD MMM YYYY')}
-              activeBorderColor={app_colors.white_twenty}
-              onPress={() => setIsStartDateModalVisible(true)}
-              active
-              textColor={app_colors.white}
-            />
-            <Text style={planetaryConjunctionStyles.content.parameters.text}>et le</Text>
-            <SimpleButton
-              text={dayjs(endDate).format('DD MMM YYYY')}
-              activeBorderColor={app_colors.white_twenty}
-              onPress={() => setIsEndDateModalVisible(true)}
-              active
-              textColor={app_colors.white}
+            <Text style={planetaryConjunctionStyles.content.parameters.text}>Séparation max (en °)</Text>
+            <InputWithIcon
+              type='number'
+              placeholder='1'
+              value={maxSeparation.toString()}
+              changeEvent={(s) => {
+                if (!s) {
+                  setMaxSeparation(0)
+                  return
+                }
+                const n = parseFloat(s)
+                if (!isNaN(n)) {
+                  setMaxSeparation(n)
+                }
+              }}
+              keyboardType='numeric'
             />
           </View>
           <View style={planetaryConjunctionStyles.content.row}>

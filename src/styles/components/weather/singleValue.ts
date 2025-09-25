@@ -5,7 +5,7 @@ export const singleValueStyles = {
     display: 'flex' as 'flex',
     flexDirection: 'row' as 'row',
     alignItems: 'center' as 'center',
-    marginHorizontal: 8,
+    // marginHorizontal: 5,
 
     value: {
       fontSize: 15,

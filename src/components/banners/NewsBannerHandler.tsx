@@ -1,7 +1,7 @@
 import React, {useEffect, useRef, useState} from 'react'
 import {Dimensions, FlatList, ImageSourcePropType, SafeAreaView, View} from 'react-native'
 import NewsBar from "./NewsBar";
-import {app_colors} from "../../helpers/constants";
+import {app_colors, storageKeys} from "../../helpers/constants";
 import {BannerNews} from "../../helpers/types/utils/BannerNews";
 import axios from "axios";
 
@@ -15,6 +15,7 @@ export default function NewsBannerHandler({ navigation }: Props) {
 
   const [banners, setBanners] = useState<BannerNews[]>([])
   const [currentScrollPosition, setCurrentScrollPosition] = useState(0)
+  
 
   useEffect(() => {
     (async () => {

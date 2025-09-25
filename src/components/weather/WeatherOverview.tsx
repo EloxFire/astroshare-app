@@ -46,12 +46,12 @@ export default function WeatherOverview({ weather, currentUserLocation, searched
           <View style={{display: 'flex', flexDirection: 'column' ,alignItems: 'flex-end'}}>
             <Text style={[weatherStyles.weatherContainer.title, weatherStyles.content.weather.header.temp]}>{weather ? `${Math.floor(weather.current.temp)}°C` : '--'}</Text>
             <View>
-              <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 5}}>
+              <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 5, gap: 15}}>
                 <SingleValue value={weather ? Math.floor(weather.current.feels_like) : '--'} unit="°C" icon={require('../../../assets/icons/FiUser.png')} />
                 <SingleValue value={weather ? Math.floor(weather.daily[0].temp.min) : '--'} unit="°C" icon={require('../../../assets/icons/FiTrendingDown.png')} />
                 <SingleValue value={weather ? Math.floor(weather.daily[0].temp.max) : '--'} unit="°C" icon={require('../../../assets/icons/FiTrendingUp.png')} />
               </View>
-              <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 20}}>
+              <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 20, gap: 15}}>
                 <SingleValue value={weather ? weather.current.humidity : '--'} unit="%" icon={require('../../../assets/icons/FiDroplet.png')} />
                 <SingleValue value={weather ? weather.current.wind_speed : '--'} unit="km/h" icon={require('../../../assets/icons/FiWind.png')} />
                 <SingleValue value={weather ? getWindDir(weather.current.wind_deg) : '--'} icon={require('../../../assets/icons/FiCompass.png')} />

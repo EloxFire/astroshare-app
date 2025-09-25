@@ -77,6 +77,7 @@ import LunarEclipseDetails from "./src/screens/transits/LunarEclipseDetails";
 
 import { LogBox } from 'react-native';
 import {setupAnalytics} from "./src/helpers/scripts/analytics";
+import NewsBannerManager from './src/screens/settings/NewsBannerManager';
 
 dayjs.locale('fr');
 dayjs.extend(LocalizedFormat)
@@ -177,6 +178,7 @@ export default function App() {
                             <Stack.Screen name={routes.changelogScreen.path} component={ChangelogScreen} />
                             <Stack.Screen name={routes.astroDataInfos.path} component={AstroDataInfos} />
                             <Stack.Screen name={routes.widgetsManager.path} component={WidgetManager} />
+                            <Stack.Screen name={routes.newsManager.home.path} component={NewsBannerManager} />
                             <Stack.Screen name={routes.favoritesViewPoints.path} component={ViewPointsManager} />
                             <Stack.Screen name={routes.about.path} component={About} />
 

@@ -23,5 +23,8 @@ export const aboutTranslations = {
   },
   license: {
     title: "MIT License",
+  },
+  website: {
+    title: "Website",
   }
 }

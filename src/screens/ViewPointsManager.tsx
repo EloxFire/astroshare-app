@@ -28,7 +28,7 @@ export default function ViewPointsManager({ navigation }: any) {
       {isDeleteModalVisible && <DeleteSpotModal onClose={() => setDeleteModalVisible(false)} />}
       <PageTitle navigation={navigation} title={i18n.t('viewpointsManager.title')} subtitle={i18n.t('viewpointsManager.subtitle')} />
       <View style={globalStyles.screens.separator} />
-      <DisclaimerBar message={i18n.t('viewpointsManager.disclaimer')} type={'info'} />
+      <DisclaimerBar message={i18n.t('viewpointsManager.disclaimer')} type={'warning'} soft/>
       <View style={viewPointsManagerStyles.content}>
         <View style={{ display: 'flex', flexDirection: 'row', gap: 10, justifyContent: 'center' }}>
           <SimpleButton textColor={app_colors.white} align={'center'} text={i18n.t('viewpointsManager.addViewPoint')} icon={require('../../assets/icons/FiPlus.png')} onPress={() => setIsModalVisible(true)} />

@@ -29,6 +29,7 @@ export default function Home({ navigation }: any) {
   const {ressourcesLoading} = useRessources()
   const { currentUser } = useAuth()
   const { currentLocale } = useTranslation()
+  const { homeNewsBannerVisible } = useSettings()
 
   const [pushToken, setPushToken] = React.useState<string | null>(null)
 
@@ -57,7 +58,7 @@ export default function Home({ navigation }: any) {
       <BannerHandler />
       <LocationHeader />
       <HomeSearchModule navigation={navigation} />
-      <NewsBannerHandler navigation={navigation} />
+      {homeNewsBannerVisible && <NewsBannerHandler navigation={navigation} />}
       <ScrollView style={{ borderTopWidth: 1, borderTopColor: app_colors.white_twenty }}>
         <HomeWidgetDisplay />
         <View style={homeStyles.toolsSuggestions}>

@@ -88,5 +88,11 @@ export const routes = {
         requirements: []
       }
     }
+  },
+  newsManager: {
+    home: {
+      path: "NewsManager",
+      requirements: []
+    }
   }
 }
