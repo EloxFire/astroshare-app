@@ -37,6 +37,10 @@ export default function NewsBannerManager({ navigation }: any) {
       <ScrollView>
         <View style={{display: 'flex', flexDirection: 'column', gap: 10}}>
           {
+            banners.length === 0 &&
+            <Text style={{fontSize: 16, color: '#666666', fontStyle: 'italic'}}>{i18n.t('settings.screens.newsBannerManager.noNews')}</Text>
+          }
+          {
             banners.map((banner, index) => {
               return (
                 <NewsBar
@@ -52,6 +56,10 @@ export default function NewsBannerManager({ navigation }: any) {
                 />
               )
             })
+          }
+          {
+            banners.length > 0 &&
+            <Text style={{fontSize: 16, color: '#666666', fontStyle: 'italic'}}>{i18n.t('settings.screens.newsBannerManager.endNews')}</Text>
           }
         </View>
       </ScrollView>

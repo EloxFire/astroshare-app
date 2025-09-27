@@ -1,3 +1,5 @@
+import { settingsScreensTranslations } from "./settings/index";
+
 export const settingsTranslations = {
   title: "Settings",
   subtitle: "// Customize your Astroshare application",
@@ -55,5 +57,6 @@ export const settingsTranslations = {
     general: "General",
     appearance: "Customization",
     infos: "Information and security"
-  }
+  },
+  screens: settingsScreensTranslations
 }
