@@ -9,4 +9,11 @@ export const eventTypes = {
   USER_PASSWORD_CHANGE: 'user_password_change',
   BUTTON_CLICK: 'button_click',
   SCREEN_VIEW: 'screen_view',
+  DATA_ACQUISITION: 'data_acquisition',
+  ERROR: 'error',
+  PURCHASE: 'purchase',
+  SHARE: 'share',
+  CUSTOM_EVENT: 'custom_event',
+  NOTIFICATION_RECEIVED: 'notification_received',
+  NOTIFICATION_OPENED: 'notification_opened',
 }

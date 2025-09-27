@@ -39,7 +39,6 @@ export const computeObject = (props: ComputeObjectProps): ComputedObjectInfos | 
     console.log('[computeObject] Error: object is null')
     return null;
   }else{
-    console.log(`[computeObject] Object type: ${typeof props.object}`);
     const objectFamily: "DSO" | "Star" | "Planet" | "Other" = getObjectFamily(props.object);
     const alt: number = props.altitude ? props.altitude : 341;
     const horizonAngle: number = calculateHorizonAngle(alt);

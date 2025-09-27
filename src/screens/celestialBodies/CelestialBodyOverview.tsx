@@ -30,12 +30,18 @@ import {Star} from "../../helpers/types/Star";
 import {routes} from "../../helpers/routes";
 import dayjs from "dayjs";
 import {makeCalendarMapping} from "../../helpers/scripts/i18n/dayjsCalendarTimeCustom";
+import { useAuth } from "../../contexts/AuthContext";
+import { sendAnalyticsEvent } from "../../helpers/scripts/analytics";
+import { eventTypes } from "../../helpers/constants/analytics";
 
 export default function CelestialBodyOverview({ route, navigation }: any) {
 
+  const {currentUser} = useAuth()
   const {currentLocale} = useTranslation()
   const {currentUserLocation} = useSettings()
+
   const { object } = route.params;
+
   const [objectInfos, setObjectInfos] = useState<ComputedObjectInfos | null>(null);
   const [favouritePlanets, setFavouritePlanets] = useState<GlobalPlanet[]>([]);
   const [favouriteDSO, setFavouriteDSO] = useState<DSO[]>([]);
@@ -45,6 +51,11 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
     const observer = { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }
     setObjectInfos(computeObject({ object, observer, lang: currentLocale, altitude: 341 }));
   }, [])
+
+  useEffect(() => {
+    if (!objectInfos) return;
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'view_celestial_body_overview', eventTypes.SCREEN_VIEW, { objectName: getObjectName(object, 'all', true), objectType: getObjectType(object) }, currentLocale)
+  }, [objectInfos])
 
 
   useEffect(() => {
@@ -117,6 +128,7 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
         }
         break;
     }
+    sendAnalyticsEvent(currentUser, currentUserLocation, checkIsFav() ? 'remove_favorite' : 'add_favorite', eventTypes.BUTTON_CLICK, { objectName: getObjectName(object, 'all', true), objectType: getObjectType(object) }, currentLocale)
   }
 
   return (
@@ -125,6 +137,7 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
         navigation={navigation}
         title={i18n.t('detailsPages.dso.title')}
         subtitle={i18n.t('detailsPages.dso.subtitle')}
+        backRoute={routes.home.path}
       />
       <View style={globalStyles.screens.separator} />
       <ScrollView style={celestialBodiesOverviewStyles.content} contentContainerStyle={{gap: 10}}>

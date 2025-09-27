@@ -11,11 +11,16 @@ import {routes} from "../../helpers/routes";
 import {pageTitleStyles} from "../../styles/components/commons/pageTitle";
 import {showToast} from "../../helpers/scripts/showToast";
 import {app_colors} from "../../helpers/constants";
+import { useSettings } from "../../contexts/AppSettingsContext";
+import { sendAnalyticsEvent } from "../../helpers/scripts/analytics";
+import { eventTypes } from "../../helpers/constants/analytics";
 
 export default function LoginScreen({ navigation }: any) {
 
   const {loginUser} = useAuth()
-  const {currentLocale} = useTranslation()
+  const {currentUser} = useAuth()
+  const { currentLocale } = useTranslation()
+  const { currentUserLocation } = useSettings()
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -31,14 +36,23 @@ export default function LoginScreen({ navigation }: any) {
     setLoading(true)
     const response = await loginUser(email, password)
     console.log("Login response", response)
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'login_attempt', eventTypes.BUTTON_CLICK, {target: "profile screen"}, currentLocale)
 
     if (!response) {
       setLoading(false)
+      showToast({message: i18n.t('common.errors.unknown'), type: 'error'})
+      sendAnalyticsEvent(currentUser, currentUserLocation, 'login_failure', eventTypes.ERROR, {}, currentLocale)
       return;
     }
 
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'login_success', eventTypes.USER_LOGIN, {}, currentLocale)
     navigation.push(routes.auth.profile.path)
     setLoading(false)
+  }
+
+  const handleRegisterNavigation = () => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'navigate_to_register', eventTypes.BUTTON_CLICK, {from: "login screen"}, currentLocale)
+    navigation.push(routes.auth.register.path)
   }
 
   return (
@@ -75,7 +89,7 @@ export default function LoginScreen({ navigation }: any) {
               additionalStyles={{marginBottom: 0}}
             />
 
-            <TouchableOpacity onPress={() => navigation.push(routes.auth.register.path)}>
+            <TouchableOpacity onPress={() => handleRegisterNavigation()}>
               <Text style={authStyles.content.forgotPassword}>{i18n.t('auth.login.noAccount')}</Text>
             </TouchableOpacity>
             {/*<TouchableOpacity onPress={() => navigation.navigate('ForgotPasswordScreen')}>*/}

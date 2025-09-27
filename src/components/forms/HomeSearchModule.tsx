@@ -11,6 +11,10 @@ import InputWithIcon from './InputWithIcon'
 import HomeSearchResults from '../HomeSearchResults'
 import { getRealSearch } from '../../helpers/scripts/astro/planets/getRealSearch'
 import {universalObjectSearch} from "../../helpers/scripts/universalObjectSearch";
+import { useTranslation } from '../../hooks/useTranslation'
+import { useAuth } from '../../contexts/AuthContext'
+import { sendAnalyticsEvent } from '../../helpers/scripts/analytics'
+import { eventTypes } from '../../helpers/constants/analytics'
 
 interface HomeSearchModuleProps {
   navigation: any
@@ -20,6 +24,8 @@ export default function HomeSearchModule({ navigation }: HomeSearchModuleProps) 
 
   const { hasInternetConnection, currentUserLocation } = useSettings()
   const { planets } = useSolarSystem()
+  const {currentUser} = useAuth()
+  const { currentLocale } = useTranslation()
 
   const [searchString, setSearchString] = useState('')
   const [searchResults, setSearchResults] = useState<DSO[]>([])
@@ -43,6 +49,8 @@ export default function HomeSearchModule({ navigation }: HomeSearchModuleProps) 
 
     const formatedSearchString = searchString.trim().replaceAll('*', '');
 
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'user_search', eventTypes.BUTTON_CLICK, { search_term: formatedSearchString }, currentLocale)
+
     setSearchResults([])
     setPlanetResults([])
     setStarsResults([])
@@ -64,6 +72,7 @@ export default function HomeSearchModule({ navigation }: HomeSearchModuleProps) 
     setPlanetResults([])
     setStarsResults([])
     setSearchString('')
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'reset_search', eventTypes.BUTTON_CLICK, {}, currentLocale)
   }
 
   return (

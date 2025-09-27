@@ -19,6 +19,10 @@ import { planetsOrder } from '../../helpers/scripts/astro/planets/order'
 import { prettyDec, prettyRa } from '../../helpers/scripts/astro/prettyCoords'
 import { convertDegreesDecToDMS } from '../../helpers/scripts/astro/coords/convertDegreesDecToDms'
 import { convertDegreesRaToHMS } from '../../helpers/scripts/astro/coords/convertDegreesRaToHMS'
+import { useAuth } from '../../contexts/AuthContext'
+import { sendAnalyticsEvent } from '../../helpers/scripts/analytics'
+import { eventTypes } from '../../helpers/constants/analytics'
+import { getObjectName } from '../../helpers/scripts/astro/objects/getObjectName'
 
 interface SearchPlanetResultCardProps {
   planet: GlobalPlanet
@@ -29,6 +33,9 @@ export default function SearchPlanetResultCard({ planet, navigation }: SearchPla
 
   const { currentUserLocation } = useSettings()
   const { currentLCID } = useTranslation()
+  const {currentUser} = useAuth()
+  const { currentLocale } = useTranslation()
+  
   const [isVisible, setIsVisible] = useState<boolean>(false)
 
   useEffect(() => {
@@ -39,8 +46,13 @@ export default function SearchPlanetResultCard({ planet, navigation }: SearchPla
     setIsVisible(isBodyAboveHorizon(new Date(), observer, target, horizonAngle))
   }, [])
 
+   const handleClickCard = () => {
+      sendAnalyticsEvent(currentUser, currentUserLocation, 'select_search_result', eventTypes.BUTTON_CLICK, { object_name: getObjectName(planet, 'all', true) }, currentLocale)
+      navigation.push(routes.celestialBodies.details.path, { object: planet })
+    }
+
   return (
-    <TouchableOpacity onPress={() => navigation.push(routes.celestialBodies.details.path, { object: planet })}>
+    <TouchableOpacity onPress={handleClickCard}>
       <View style={searchResultCardStyles.card}>
         <View style={searchResultCardStyles.card.header}>
           <View>

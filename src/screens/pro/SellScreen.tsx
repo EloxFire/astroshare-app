@@ -73,6 +73,8 @@ export default function SellScreen({ navigation }: any) {
 
     setStripeLoading(true);
 
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'start_payment_process', eventTypes.BUTTON_CLICK, { selectedProduct }, currentLocale);
+
     try {
       // 1. Crée la souscription
       const response = await createStripeSubscription(currentUser.uid, selectedProduct);
@@ -129,10 +131,12 @@ export default function SellScreen({ navigation }: any) {
       showToast({ message: "Abonnement activé avec succès !", type: "success", duration: 3000 });
 
       setStripeLoading(false);
+      sendAnalyticsEvent(currentUser, currentUserLocation, 'payment_successful', eventTypes.PURCHASE, { selectedProduct }, currentLocale);
       navigation.goBack(); // ou vers une autre page ?
     } catch (error) {
       console.error("Error during payment flow:", error);
       showToast({ message: "Une erreur est survenue", type: "error" });
+      sendAnalyticsEvent(currentUser, currentUserLocation, 'payment_failed', eventTypes.ERROR, { selectedProduct }, currentLocale);
       setStripeLoading(false);
     }
   };

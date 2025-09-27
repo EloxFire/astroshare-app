@@ -8,10 +8,16 @@ import NewsBar from "../../components/banners/NewsBar";
 import BigButton from "../../components/commons/buttons/BigButton";
 import { useSettings } from "../../contexts/AppSettingsContext";
 import axios from "axios";
+import { sendAnalyticsEvent } from "../../helpers/scripts/analytics";
+import { useAuth } from "../../contexts/AuthContext";
+import { useTranslation } from "../../hooks/useTranslation";
+import { eventTypes } from "../../helpers/constants/analytics";
 
 export default function NewsBannerManager({ navigation }: any) {
 
-  const { homeNewsBannerVisible, handleHomeNewsBanner } = useSettings()
+  const { homeNewsBannerVisible, handleHomeNewsBanner, currentUserLocation } = useSettings()
+  const { currentUser } = useAuth()
+  const { currentLocale } = useTranslation()
 
   const [banners, setBanners] = useState<BannerNews[]>([])
 
@@ -20,6 +26,17 @@ export default function NewsBannerManager({ navigation }: any) {
       const news = await axios.get(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/news`)
       setBanners(news.data.data.filter((banner: BannerNews) => banner.visible === true))
     })()
+  }, [])
+
+  useEffect(() => {
+    sendAnalyticsEvent(
+      currentUser,
+      currentUserLocation,
+      'News Banner Manager Screen',
+      eventTypes.SCREEN_VIEW,
+      { bannerNewsVisible: homeNewsBannerVisible },
+      currentLocale
+    )
   }, [])
 
   return (

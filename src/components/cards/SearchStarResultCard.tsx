@@ -17,6 +17,11 @@ import { getConstellationName } from '../../helpers/scripts/getConstellationName
 import { useSpot } from '../../contexts/ObservationSpotContext'
 import { extractNumbers } from '../../helpers/scripts/extractNumbers'
 import { i18n } from '../../helpers/scripts/i18n'
+import { useTranslation } from '../../hooks/useTranslation'
+import { useAuth } from '../../contexts/AuthContext'
+import { sendAnalyticsEvent } from '../../helpers/scripts/analytics'
+import { eventTypes } from '../../helpers/constants/analytics'
+import { getObjectName } from '../../helpers/scripts/astro/objects/getObjectName'
 
 interface SearchPlanetResultCardProps {
   star: Star
@@ -27,6 +32,9 @@ export default function SearchStarResultCard({ star, navigation }: SearchPlanetR
 
   const { selectedSpot, defaultAltitude } = useSpot()
   const { currentUserLocation } = useSettings()
+  const {currentUser} = useAuth()
+  const { currentLocale } = useTranslation()
+
   const [isVisible, setIsVisible] = useState<boolean>(false)
 
   useEffect(() => {
@@ -39,8 +47,13 @@ export default function SearchStarResultCard({ star, navigation }: SearchPlanetR
     setIsVisible(visible)
   }, [currentUserLocation])
 
+  const handleClickCard = () => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'select_search_result', eventTypes.BUTTON_CLICK, { object_name: getObjectName(star, 'all', true) }, currentLocale)
+    navigation.push(routes.celestialBodies.details.path, { object: star })
+  }
+
   return (
-    <TouchableOpacity onPress={() => navigation.push(routes.celestialBodies.details.path, { object: star })}>
+    <TouchableOpacity onPress={handleClickCard}>
       <View style={searchResultCardStyles.card}>
         <View style={searchResultCardStyles.card.header}>
           <View>

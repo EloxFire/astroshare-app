@@ -105,6 +105,7 @@ export function AppSettingsProvider({ children }: AppSettingsProviderProps) {
   const updateSelectedHomeWidget = async (widget: HomeWidget) => {
     await storeData(storageKeys.homeWidgets, widget);
     setSelectedHomeWidget(widget);
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'update_home_widget', eventTypes.BUTTON_CLICK, {selectedHomeWidget: widget}, currentLocale);
   }
 
   const refreshCurrentUserLocation = async () => {
@@ -138,6 +139,7 @@ export function AppSettingsProvider({ children }: AppSettingsProviderProps) {
       setCurrentUserLocation(userCoords);
       setCurrentUserHorizon(90 - userCoords.lat)
       setLocationLoading(false);
+      sendAnalyticsEvent(currentUser, userCoords, 'user_location_acquired', eventTypes.DATA_ACQUISITION, {}, currentLocale);
     } catch (error) {
       console.log("Error while getting location name : ", error);
 

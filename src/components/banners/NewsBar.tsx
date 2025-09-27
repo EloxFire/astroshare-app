@@ -2,6 +2,11 @@ import React from 'react'
 import {Image, ImageSourcePropType, Linking, Text, TouchableOpacity, View} from 'react-native'
 import {newsBarStyles} from "../../styles/components/banners/newsBar";
 import {LinearGradient} from "expo-linear-gradient";
+import { useAuth } from '../../contexts/AuthContext';
+import { useTranslation } from '../../hooks/useTranslation';
+import { useSettings } from '../../contexts/AppSettingsContext';
+import { sendAnalyticsEvent } from '../../helpers/scripts/analytics';
+import { eventTypes } from '../../helpers/constants/analytics';
 
 interface NewsBarProps {
   navigation: any
@@ -16,7 +21,12 @@ interface NewsBarProps {
 
 export default function NewsBar({navigation, icon, type, colors, internalRoute, externalLink, description, title}: NewsBarProps) {
 
+  const {currentUser} = useAuth()
+  const { currentLocale } = useTranslation()
+  const { currentUserLocation } = useSettings()
+
   const handlePress = () => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'click_news_banner', eventTypes.BUTTON_CLICK, { title, type, internalRoute, externalLink }, currentLocale)
     if (type === 'internal' && internalRoute) {
       navigation.navigate(internalRoute)
     } else if (type === 'external' && externalLink) {

@@ -19,6 +19,10 @@ import { prettyDec, prettyRa } from '../../helpers/scripts/astro/prettyCoords'
 import { i18n } from '../../helpers/scripts/i18n'
 import DSOValues from '../commons/DSOValues'
 import { getObjectType } from '../../helpers/scripts/astro/objects/getObjectType'
+import { useTranslation } from '../../hooks/useTranslation'
+import { useAuth } from '../../contexts/AuthContext'
+import { sendAnalyticsEvent } from '../../helpers/scripts/analytics'
+import { eventTypes } from '../../helpers/constants/analytics'
 
 interface SearchResultCardProps {
   object: DSO
@@ -28,7 +32,10 @@ interface SearchResultCardProps {
 export default function SearchResultCard({ object, navigation }: SearchResultCardProps) {
 
   const { selectedSpot, defaultAltitude } = useSpot()
+  const {currentUser} = useAuth()
+  const { currentLocale } = useTranslation()
   const { currentUserLocation } = useSettings()
+
   const [isVisible, setIsVisible] = useState(false)
   const [riseTime, setRiseTime] = useState<Dayjs | boolean>(false)
   const [setTime, setSetTime] = useState<Dayjs | boolean>(false)
@@ -66,8 +73,14 @@ export default function SearchResultCard({ object, navigation }: SearchResultCar
   }, [])
 
 
+  const handleClickCard = () => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'select_search_result', eventTypes.BUTTON_CLICK, { object_name: getObjectName(object, 'all', true) }, currentLocale)
+    navigation.push(routes.celestialBodies.details.path, { object: object })
+  }
+
+
   return (
-    <TouchableOpacity onPress={() => navigation.push(routes.celestialBodies.details.path, { object: object })}>
+    <TouchableOpacity onPress={handleClickCard}>
       <View style={searchResultCardStyles.card}>
         <View style={searchResultCardStyles.card.header}>
           <View>
