@@ -20,7 +20,11 @@ export default function NewsBannerHandler({ navigation }: Props) {
   useEffect(() => {
     (async () => {
       const news = await axios.get(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/news`)
-      setBanners(news.data.data.filter((banner: BannerNews) => banner.visible === true))
+      const visibleBanners = news.data.data.filter((banner: BannerNews) => banner.visible === true)
+      const sortedBannerByOrder = visibleBanners.sort((a: BannerNews, b: BannerNews) => {
+        return a.order - b.order
+      })
+      setBanners(sortedBannerByOrder)
     })()
   }, [])
 
@@ -39,6 +43,8 @@ export default function NewsBannerHandler({ navigation }: Props) {
             type={item.type}
             externalLink={item.externalLink}
             internalRoute={item.internalRoute}
+            order={item.order}
+            createdAt={item.createdAt}
           />
         )}
         keyExtractor={(item, index) => index.toString()}

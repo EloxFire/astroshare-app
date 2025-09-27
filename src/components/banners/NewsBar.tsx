@@ -15,8 +15,10 @@ interface NewsBarProps {
   description: string
   colors: string // String of colors (hex) separated by semicolon exemple #FFFFFF;#000000
   type: 'internal' | 'external' | 'none'
+  order: number
   externalLink?: string
   internalRoute?: string
+  createdAt?: Date
 }
 
 export default function NewsBar({navigation, icon, type, colors, internalRoute, externalLink, description, title}: NewsBarProps) {

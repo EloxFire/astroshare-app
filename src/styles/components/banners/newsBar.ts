@@ -17,7 +17,7 @@ export const newsBarStyles = {
     icon: {
       width: 35,
       height: 35,
-      marginRight: 20,
+      marginRight: 10,
     },
 
     infos: {
