@@ -24,6 +24,7 @@ export default function RegisterScreen({ navigation }: any) {
 
   const handleFormSubmit = async () => {
     if(password !== passwordConfirmation) {
+      showToast({message: i18n.t('auth.register.passwordMismatch'), type: 'error'})
       return;
     }
     setLoading(true)

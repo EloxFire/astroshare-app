@@ -13,6 +13,7 @@ export const authScreensTranslations = {
     noAccount: "Vous avez un compte ? Connectez-vous !",
     submit: "Créer mon compte",
     error: "Une erreur est survenue, veuillez réessayer",
+    passwordMismatch: "Les mots de passe ne correspondent pas",
   },
   profile: {
     title: "Profil",

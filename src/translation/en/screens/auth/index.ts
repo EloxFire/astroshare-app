@@ -11,6 +11,7 @@ export const authScreensTranslations = {
     subtitle: "Join us!",
     noAccount: "Already have an account? Log in!",
     submit: "Create my account",
+    error: "An error occurred, please try again",
   },
   profile: {
     title: "Profile",

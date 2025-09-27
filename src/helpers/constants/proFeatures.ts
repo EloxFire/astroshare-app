@@ -17,7 +17,7 @@ const proFeaturesFr: ProFeature[] = [
     image: require('../../../assets/images/tools/sun.png')
   },
   {
-    name: "Outils de calculs",
+    name: "Outils de calculs d'éclipses",
     description: "Calculez les prochains transits, éclipses et plus encore avec nos outils de calculs.",
     image: require('../../../assets/images/tools/isstransit.png')
   },
@@ -45,7 +45,7 @@ const proFeaturesEn: ProFeature[] = [
     image: require('../../../assets/images/tools/sun.png')
   },
   {
-    name: "Calculation tools",
+    name: "Eclipses calculation tools",
     description: "Calculate upcoming transits, eclipses and more with our calculation tools.",
     image: require('../../../assets/images/tools/isstransit.png')
   },
