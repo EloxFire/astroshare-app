@@ -11,7 +11,7 @@ ios/
 .expo/
 dist/
 web-build/
-eas.json
+# eas.json
 
 # Native
 *.orig.*
