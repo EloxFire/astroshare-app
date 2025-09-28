@@ -63,7 +63,7 @@ export const hex_colors = {
 
 export const Polaris = {
   ra: 37.954560670189856,
-  dec: 37.954560670189856,
+  dec: 89.26410897,
 }
 
 export const storageKeys = {

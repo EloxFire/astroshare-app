@@ -31,7 +31,7 @@ export const formatKelvinShort = (kelvin: number, lang: string) => {
   });
 
   // Format the number and append 'K' for Kelvin
-  return `${formatter.format(kelvin)} °K`;
+  return `${formatter.format(kelvin)} K`;
 };
 
 // Create a formater to display seconds in minutes
