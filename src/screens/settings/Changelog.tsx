@@ -8,8 +8,18 @@ import PageTitle from "../../components/commons/PageTitle";
 import axios from "axios";
 import SimpleButton from "../../components/commons/buttons/SimpleButton";
 import dayjs from "dayjs";
+import {app_colors} from "../../helpers/constants";
+import { useSettings } from "../../contexts/AppSettingsContext";
+import { useTranslation } from "../../hooks/useTranslation";
+import { useAuth } from "../../contexts/AuthContext";
+import { sendAnalyticsEvent } from "../../helpers/scripts/analytics";
+import { eventTypes } from "../../helpers/constants/analytics";
 
 export default function ChangelogScreen({ navigation }: any) {
+
+  const {currentUser} = useAuth()
+  const { currentLocale } = useTranslation()
+  const { currentUserLocation } = useSettings()
 
   const [news, setNews] = useState<NewsLog[]>([])
 
@@ -18,6 +28,10 @@ export default function ChangelogScreen({ navigation }: any) {
         const news = await axios.get(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/changelog/app`)
         setNews(news.data.data)
      })()
+  }, [])
+
+  useEffect(() => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'view_changelog_screen', eventTypes.SCREEN_VIEW, {}, currentLocale)
   }, [])
 
 
@@ -33,7 +47,7 @@ export default function ChangelogScreen({ navigation }: any) {
         <View style={changelogStyles.content}>
           {
             news.length === 0 ?
-            <SimpleButton disabled text={i18n.t('changelog.noData')} small />
+            <SimpleButton textColor={app_colors.white} align={'center'} disabled text={i18n.t('changelog.noData')} small />
             :
             news.map((change, index) => {
               return (

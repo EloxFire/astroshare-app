@@ -6,6 +6,9 @@ export const solarWeatherTranslations = {
     zone: "Zone d'étude : %{zone}",
     northenAurora: "Prévisions d'aurores (Nord)",
     southernAurora: "Prévisions d'aurores (Sud)",
+    kpIndexes: "Indices KP",
+    solarWinds: "Vents solaires",
+    solarActivity: "Activité solaire",
     switches: {
       image: "Image",
       video: "Vidéo"

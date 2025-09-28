@@ -31,4 +31,12 @@ export type DSO = {
   ned_notes: string;
   open_ngc_notes: string;
   sources: string;
+  image_url: string;
+  distance: number | string;
+  dist_unit: string;
+  dimensions: string;
+  discovered_by: string;
+  discovery_year: string;
+  apparent_size: string;
+  age: number | string;
 }

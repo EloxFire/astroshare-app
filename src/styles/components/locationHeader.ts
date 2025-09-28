@@ -3,7 +3,7 @@ import { app_colors } from "../../helpers/constants";
 
 export const locationHeaderStyles = {
   container: {
-    marginTop: 20,
+    marginTop: 10,
     display: 'flex' as 'flex',
     flexDirection: 'row' as 'row',
     justifyContent: 'space-between' as 'space-between',
@@ -25,12 +25,13 @@ export const locationHeaderStyles = {
         opacity: .6,
         textTransform: 'uppercase' as 'uppercase',
         fontSize: 12,
+        fontFamily: 'GilroyRegular',
       },
       
       value: {
         color: app_colors.white,
         textTransform: 'uppercase' as 'uppercase',
-        fontFamily: 'AuxMono',
+        fontFamily: 'DMMonoMedium',
         fontSize: 12,
       },
 
@@ -46,7 +47,7 @@ export const locationHeaderStyles = {
         value: {
           color: app_colors.white,
           textTransform: 'uppercase' as 'uppercase',
-          fontFamily: 'AuxMono',
+          fontFamily: 'DMMonoRegular',
           // fontSize: 12,
         },
       }
@@ -74,7 +75,7 @@ export const locationHeaderStyles = {
         color: app_colors.white,
         textTransform: 'uppercase' as 'uppercase',
         fontSize: 15,
-        fontFamily: 'AuxMono'
+        fontFamily: 'DMMonoRegular'
       },
 
       close: {

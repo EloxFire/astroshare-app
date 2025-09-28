@@ -27,7 +27,7 @@ export default function Hourly({ weather }: HourlyProps) {
                     <Text style={{ color: 'white', fontSize: 14, fontFamily: 'GilroyBlack' }}>{hour.weather[0].description.toUpperCase()}</Text>
                   </View>
                   <View style={[hourlyStyles.content.hour.row, { alignItems: 'flex-end' }]}>
-                    <Image style={{ height: 30, width: 30 }} source={weatherImages[hour.weather[0].icon]} />
+                    <Image style={{ height: 25, width: 25 }} source={weatherImages[hour.weather[0].icon]} />
                     <SingleValue icon={require('../../../assets/icons/FiThermometer.png')} value={Math.floor(hour.temp)} unit='°C' />
                     <SingleValue icon={require('../../../assets/icons/FiDroplet.png')} value={Math.floor(hour.humidity)} unit='%' />
                     <SingleValue icon={require('../../../assets/icons/FiWind.png')} value={Math.floor(hour.wind_speed)} unit='Km/h' />

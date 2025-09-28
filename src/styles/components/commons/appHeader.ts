@@ -7,7 +7,7 @@ export const appHeaderStyles = {
     flexDirection: 'row' as 'row',
     justifyContent: 'space-between' as 'space-between',
     alignItems: 'center' as 'center',
-    marginBottom: 15,
+    marginBottom: 10,
 
     logo: {
       maxHeight: 35,

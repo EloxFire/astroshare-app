@@ -19,6 +19,26 @@ export const commonTranslations = {
   loadings: {
     simple: "Chargement...",
   },
+  compass: {
+    short: {
+      N: "N",
+      NNE: "NNE",
+      NE: "NE",
+      ENE: "ENE",
+      E: "E",
+      ESE: "ESE",
+      SE: "SE",
+      SSE: "SSE",
+      S: "S",
+      SSW: "SSO",
+      SW: "SO",
+      WSW: "OSO",
+      W: "O",
+      WNW: "ONO",
+      NW: "NO",
+      NNW: "NNO",
+    }
+  },
   moon_phases: {
     new: "Nouvelle Lune",
     waxing_crescent: "Premier Croissant",
@@ -29,6 +49,13 @@ export const commonTranslations = {
     last_quarter: "Dernier Quartier",
     waning_crescent: "Dernier Croissant",
   },
+  objects: {
+    types: {
+      star: "Étoile",
+      planet: "Planète",
+      moon: "Lune",
+    }
+  },
   other: {
     yes: "Oui",
     no: "Non",
@@ -38,6 +65,7 @@ export const commonTranslations = {
     removeFav: "Retirer des favoris",
     addFav: "Ajouter aux favoris",
     overview: "Aperçu",
+    more: "En savoir plus"
   },
   time: {
     time: "Temps",
@@ -45,24 +73,59 @@ export const commonTranslations = {
     minutes: "minutes",
     days: "jours",
     now: "Maintenant",
+    today: "Aujourd'hui",
+    tomorrow: "Demain",
+    yesterday: "Hier",
     thisNight: "Cette nuit",
     allNight: "Toute la nuit",
     never: "Jamais",
+    date: "Date",
+    hour: "Heure",
+    datetime: "Date et heure",
+    calendar: {
+      sameDay: "Aujourd'hui à {{time}}",
+      nextDay: "Demain à {{time}}",
+      nextWeek: "Le {{weekday}} à {{time}}",
+      lastDay: "Hier à {{time}}",
+      lastWeek: "Le {{weekday}} dernier à {{time}}",
+      sameElse: "{{date}} à {{time}}"
+    }
   },
   visibility: {
     title: "Visibilité",
     visible: "Visible",
+    partiallyVisible: "Partiellement visible",
     notVisible: "Non visible",
     error: "Erreur lors du calcul de la visibilité",
     nextRise: "Prochain lever",
     nextSet: "Prochain coucher",
     altitude: "Altitude",
+    alreadyUp: "Déjà levé",
+    alreadyDown: "Déjà couché",
+    nextRiseIn: "Prochain lever dans",
+    nextSetIn: "Prochain coucher dans",
+    nextRiseAt: "Prochain lever à",
+    nextSetAt: "Prochain coucher à",
+    nextRiseToday: "Prochain lever aujourd'hui",
+    nextSetToday: "Prochain coucher aujourd'hui",
+    nextRiseTomorrow: "Prochain lever demain",
+    nextSetTomorrow: "Prochain coucher demain",
   },
   observation: {
     title: "Observation",
     nakedEye: "À l'œil nu",
     binoculars: "Jumelles",
     telescope: "Télescope",
+  },
+  coordinates: {
+    rightAscension: "Ascension droite",
+    declination: "Déclinaison",
+    altitude: "Altitude",
+    azimuth: "Azimut",
+    distance: "Distance",
+    apparentMagnitude: "Magnitude apparente",
+    absoluteMagnitude: "Magnitude absolue",
+    angularSeparation: "Séparation angulaire",
   },
   planets: {
     Sun: "Soleil",

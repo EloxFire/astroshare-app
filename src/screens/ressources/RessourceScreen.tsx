@@ -21,12 +21,23 @@ import DisclaimerBar from "../../components/banners/DisclaimerBar";
 import {useTranslation} from "../../hooks/useTranslation";
 import {truncate} from "../../helpers/scripts/utils/formatters/truncate";
 import SimpleButton from "../../components/commons/buttons/SimpleButton";
+import {useSettings} from "../../contexts/AppSettingsContext";
+import {useAuth} from "../../contexts/AuthContext";
+import {sendAnalyticsEvent} from "../../helpers/scripts/analytics";
+import {eventTypes} from "../../helpers/constants/analytics";
 
 function CategoryScreen({route, navigation}: any) {
   const ressource: Ressource = route.params.ressource;
+
   const {currentLocale} = useTranslation()
+  const { currentUserLocation } = useSettings();
+  const { currentUser } = useAuth()
 
   const [readingStats, setReadingStats] = useState<any>({});
+
+  useEffect(() => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'Ressource screen view', eventTypes.SCREEN_VIEW, {ressourceName: ressource.name, ressourceType: ressource.type}, currentLocale);
+  }, []);
 
   useEffect(() => {
     if(ressource.type !==  'pdf'){

@@ -34,9 +34,10 @@ export const globalSummaryStyles = {
       display: 'flex' as 'flex',
       flexDirection: 'column' as 'column',
       height: '100%' as '100%',
+      justifyContent: 'space-between' as 'space-between',
       
       city: {
-        fontSize: 16,
+        fontSize: 14,
         textTransform: 'uppercase' as 'uppercase',
         fontFamily: 'GilroyBlack',
         color: app_colors.white,
@@ -54,8 +55,8 @@ export const globalSummaryStyles = {
         gap: 10,
 
         icon: {
-          width: 60,
-          height: 60,
+          width: 45,
+          height: 45,
         },
 
         infos: {
@@ -67,6 +68,7 @@ export const globalSummaryStyles = {
           info: {
             display: 'flex' as 'flex',
             flexDirection: 'row' as 'row',
+            alignItems: 'center' as 'center',
             gap: 3,
             
             icon: {
@@ -76,7 +78,7 @@ export const globalSummaryStyles = {
 
             value: {
               fontSize: 16,
-              fontFamily: 'GilroyBlack',
+              fontFamily: 'DMMonoRegular' as 'DMMonoRegular',
               color: app_colors.white,
             }
           }
@@ -91,7 +93,7 @@ export const globalSummaryStyles = {
       gap: 5,
 
       title: {
-        fontSize: 16,
+        fontSize: 14,
         textTransform: 'uppercase' as 'uppercase',
         fontFamily: 'GilroyBlack',
         color: app_colors.white,
@@ -107,7 +109,7 @@ export const globalSummaryStyles = {
 
         empty: {
           fontSize: 12,
-          fontFamily: 'GilroyRegular',
+          fontFamily: 'DMMonoRegular' as 'DMMonoRegular',
           color: app_colors.white,
         },
 
@@ -119,11 +121,12 @@ export const globalSummaryStyles = {
           icon: {
             width: 20,
             height: 20,
+            marginBottom: 5,
           },
 
           name: {
-            fontSize: 10,
-            fontFamily: 'GilroyRegular',
+            fontSize: 9,
+            fontFamily: 'DMMonoRegular' as 'DMMonoRegular',
             color: app_colors.white,
           }
         }

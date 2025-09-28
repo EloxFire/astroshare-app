@@ -41,7 +41,7 @@ export default function BrightStarCardLite({ star, navigation }: BrightStarCardL
   }, [])
 
   return (
-    <TouchableOpacity onPress={() => navigation.push(routes.brightStarDetails.path, { star: star })} style={objectCardLiteStyles.card}>
+    <TouchableOpacity onPress={() => navigation.push(routes.celestialBodies.details.path, { object: star })} style={objectCardLiteStyles.card}>
       <View style={[objectCardLiteStyles.card.visibility, {backgroundColor: isVisible ? app_colors.green : app_colors.red}]}/>
       <Image style={objectCardLiteStyles.card.image} source={astroImages['BRIGHTSTAR']} />
       <View style={objectCardLiteStyles.card.infos}>

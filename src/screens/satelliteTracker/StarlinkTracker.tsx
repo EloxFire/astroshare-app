@@ -21,10 +21,11 @@ import * as FileSystem from 'expo-file-system';
 import {useLaunchData} from "../../contexts/LaunchContext";
 import {LaunchData} from "../../helpers/types/LaunchData";
 import LaunchCard from "../../components/cards/LaunchCard";
+import dayjs from "dayjs";
 
 export default function StarlinkTracker({ navigation }: any) {
 
-  const { constellation} = useSpacex()
+  const { constellation, stats } = useSpacex()
   const {launchData} = useLaunchData()
 
   const [launchDetails, setLaunchDetails] = useState<number>(-1)
@@ -262,14 +263,16 @@ export default function StarlinkTracker({ navigation }: any) {
           <ScrollView>
             <View style={starlinkTrackerStyles.content}>
               <View style={starlinkTrackerStyles.content.statsContainer}>
-                <Text style={[globalStyles.sections.title, {fontSize: 20, marginBottom: 10}]}>{i18n.t('satelliteTracker.starlinkTracker.stats.title')}</Text>
-                <DSOValues title={i18n.t('satelliteTracker.starlinkTracker.stats.total')} value={constellation.satellites.length + constellation.satcat_missing_tle.length} />
-                <DSOValues title={i18n.t('satelliteTracker.starlinkTracker.stats.active')} value={constellation.satellites.filter((satellite: StarlinkSatellite) => satellite.DECAY === null && satellite.TLE).length} />
-                <DSOValues title={i18n.t('satelliteTracker.starlinkTracker.stats.inactive')} value={constellation.satcat_missing_tle.length} />
+                <Text style={[globalStyles.sections.title, {fontSize: 20}]}>{i18n.t('satelliteTracker.starlinkTracker.stats.title')}</Text>
+                <Text style={[globalStyles.sections.subtitle, {fontSize: 10, textTransform: 'none', marginBottom: 10}]}>{i18n.t('satelliteTracker.starlinkTracker.stats.subtitle')}{dayjs(stats.last_update).format('DD/MM/YYYY')}</Text>
+                <DSOValues title={i18n.t('satelliteTracker.starlinkTracker.stats.total')} value={stats.launched} />
+                <DSOValues title={i18n.t('satelliteTracker.starlinkTracker.stats.orbiting')} value={stats.orbiting} />
+                <DSOValues title={i18n.t('satelliteTracker.starlinkTracker.stats.active')} value={stats.active} />
+                <DSOValues title={i18n.t('satelliteTracker.starlinkTracker.stats.inactive')} value={stats.fail_or_deorbited} />
               </View>
                 <View style={starlinkTrackerStyles.content.glviewContainer}>
                   <Text style={[issTrackerStyles.content.liveStats.title, {marginBottom: 10}]}>{i18n.t('satelliteTracker.starlinkTracker.3dMap.title')}</Text>
-                  <SimpleButton small icon={require('../../../assets/icons/FiRepeat.png')} text={i18n.t('satelliteTracker.starlinkTracker.3dMap.button')} onPress={() => updateSatellitesPosition(constellation.satellites)} />
+                  <SimpleButton small textColor={app_colors.white} icon={require('../../../assets/icons/FiRepeat.png')} text={i18n.t('satelliteTracker.starlinkTracker.3dMap.button')} onPress={() => updateSatellitesPosition(constellation.satellites)} />
                   <GestureDetector gesture={gestures}>
                     <GLView style={[starlinkTrackerStyles.content.glviewContainer.glview, {marginTop: 10}]} onContextCreate={_onContextCreate} />
                   </GestureDetector>

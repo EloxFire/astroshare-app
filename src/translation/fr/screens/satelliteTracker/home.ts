@@ -1,7 +1,7 @@
 export const homeTranslations = {
   title: "Satellites",
   subtitle: "// Suivi de l'ISS et de Starlink",
-  info: "De nouveaux satelittes seront ajoutés au fil du temps.",
+  info: "De nouveaux satellites et objets à suivre seront ajoutés au fil du temps.",
   buttons: {
     issTracker: {
       title: "Iss",

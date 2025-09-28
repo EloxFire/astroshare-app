@@ -12,6 +12,7 @@ import AddSpotModal from '../components/modals/AddSpotModal'
 import DeleteSpotModal from '../components/modals/DeleteSpotModal'
 import ScreenInfo from '../components/ScreenInfo'
 import DisclaimerBar from "../components/banners/DisclaimerBar";
+import {app_colors} from "../helpers/constants";
 
 export default function ViewPointsManager({ navigation }: any) {
 
@@ -27,14 +28,14 @@ export default function ViewPointsManager({ navigation }: any) {
       {isDeleteModalVisible && <DeleteSpotModal onClose={() => setDeleteModalVisible(false)} />}
       <PageTitle navigation={navigation} title={i18n.t('viewpointsManager.title')} subtitle={i18n.t('viewpointsManager.subtitle')} />
       <View style={globalStyles.screens.separator} />
-      <DisclaimerBar message={i18n.t('viewpointsManager.disclaimer')} type={'info'} />
+      <DisclaimerBar message={i18n.t('viewpointsManager.disclaimer')} type={'warning'} soft/>
       <View style={viewPointsManagerStyles.content}>
         <View style={{ display: 'flex', flexDirection: 'row', gap: 10, justifyContent: 'center' }}>
-          <SimpleButton text={i18n.t('viewpointsManager.addViewPoint')} icon={require('../../assets/icons/FiPlus.png')} onPress={() => setIsModalVisible(true)} />
-          <SimpleButton text={i18n.t('viewpointsManager.deleteViewPoint')} icon={require('../../assets/icons/FiTrash.png')} onPress={() => setDeleteModalVisible(true)} />
+          <SimpleButton textColor={app_colors.white} align={'center'} text={i18n.t('viewpointsManager.addViewPoint')} icon={require('../../assets/icons/FiPlus.png')} onPress={() => setIsModalVisible(true)} />
+          <SimpleButton textColor={app_colors.white} align={'center'} text={i18n.t('viewpointsManager.deleteViewPoint')} icon={require('../../assets/icons/FiTrash.png')} onPress={() => setDeleteModalVisible(true)} />
         </View>
         <Text style={viewPointsManagerStyles.content.title}>{i18n.t('viewpointsManager.sectionTitle')}</Text>
-        <Text style={viewPointsManagerStyles.content.text}>{i18n.t('viewpointsManager.currentViewPoint')} : {viewPoints.length === 0 ? i18n.t('viewpointsManager.noViewPoint') : selectedSpot ? selectedSpot.title : i18n.t('viewpointsManager.noViewPoint')}</Text>
+        <Text style={[viewPointsManagerStyles.content.text, {textAlign: 'left'}]}>{i18n.t('viewpointsManager.currentViewPoint')} : {viewPoints.length === 0 ? i18n.t('viewpointsManager.noViewPoint') : selectedSpot ? selectedSpot.title : i18n.t('viewpointsManager.noViewPoint')}</Text>
         <ScrollView>
           <View style={viewPointsManagerStyles.content.viewPoints}>
             {

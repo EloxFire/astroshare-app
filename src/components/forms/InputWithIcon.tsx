@@ -9,12 +9,13 @@ interface InputWithIconProps {
   changeEvent: (searchString: string) => void
   search?: () => void
   icon?: ImageSourcePropType
-  value: string
-  type: 'text' | 'password'
+  value: string | undefined
+  type: 'text' | 'password' | 'number'
+  keyboardType?: 'numeric' | 'default' | 'decimal-pad'
   additionalStyles?: any
 }
 
-export default function InputWithIcon({ placeholder, changeEvent, icon, search, value, type, additionalStyles }: InputWithIconProps) {
+export default function InputWithIcon({ placeholder, changeEvent, icon, search, value, type, additionalStyles, keyboardType }: InputWithIconProps) {
   return (
     <View style={[inputWithIconStyles.inputContainer, additionalStyles]}>
       <TextInput
@@ -23,8 +24,10 @@ export default function InputWithIcon({ placeholder, changeEvent, icon, search, 
         placeholder={placeholder}
         onChangeText={(searchString) => { changeEvent(searchString) }}
         underlineColorAndroid="transparent"
-        placeholderTextColor="#FFFFFF60"
+        placeholderTextColor={app_colors.white_sixty}
         value={value}
+        keyboardType={keyboardType || 'default'}
+        onSubmitEditing={() => { if (search) search() }}
       />
       {icon && search &&
         <TouchableOpacity onPress={() => search()}>

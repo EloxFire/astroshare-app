@@ -15,10 +15,15 @@ import {
   scheduleLocalNotification,
   unScheduleNotification
 } from "../../helpers/scripts/notifications/scheduleLocalNotification";
-import {launchCardStyles} from "../../styles/components/cards/launchCard";
-import {localizedNoRocketImage, localizedNoRocketImageSmall} from "../../helpers/scripts/loadImages";
+import {localizedNoRocketImage} from "../../helpers/scripts/loadImages";
 import {useTranslation} from "../../hooks/useTranslation";
 import {app_colors} from "../../helpers/constants";
+import {LaunchData} from "../../helpers/types/LaunchData";
+import {useSettings} from "../../contexts/AppSettingsContext";
+import {useAuth} from "../../contexts/AuthContext";
+import {sendAnalyticsEvent} from "../../helpers/scripts/analytics";
+import {eventTypes} from "../../helpers/constants/analytics";
+import {routes} from "../../helpers/routes";
 
 interface LaunchCardProps {
   route: any
@@ -27,10 +32,16 @@ interface LaunchCardProps {
 
 export default function LaunchDetails({ route, navigation }: LaunchCardProps): ReactNode {
 
-  const { launch } = route.params;
+  const launch: LaunchData = route.params.launch;
   const {currentLocale} = useTranslation()
+  const { currentUserLocation } = useSettings();
+  const { currentUser } = useAuth()
   const [isNotificationPlanned, setIsNotificationPlanned] = useState(false);
   const [countdown, setCountdown] = useState<string>('00:00:00:00') // DD:HH:mm:ss
+
+  useEffect(() => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'Launch details screen view', eventTypes.SCREEN_VIEW, {launchId: launch.id, launch_name: launch.name, launch_date: launch.net}, currentLocale)
+  }, []);
 
   useEffect(() => {
     if(launch) {
@@ -66,6 +77,7 @@ export default function LaunchDetails({ route, navigation }: LaunchCardProps): R
         await removeData(`notification_${launch.id}`)
         setIsNotificationPlanned(false)
         showToast({message: i18n.t('notifications.successRemove'), type: 'success', duration: 4000})
+        sendAnalyticsEvent(currentUser, currentUserLocation, 'Launch notification removed', eventTypes.BUTTON_CLICK, {launchId: launch.id, launch_name: launch.name, launch_date: launch.net}, currentLocale)
       }
     } else {
       // Add notification
@@ -80,6 +92,7 @@ export default function LaunchDetails({ route, navigation }: LaunchCardProps): R
         setIsNotificationPlanned(true)
         await storeData(`notification_${launch.id}`, notif)
         showToast({message: i18n.t('notifications.successSchedule'), type: 'success', duration: 4000})
+        sendAnalyticsEvent(currentUser, currentUserLocation, 'Launch notification scheduled', eventTypes.BUTTON_CLICK, {launchId: launch.id, launch_name: launch.name, launch_date: launch.net}, currentLocale)
       }
     }
   }
@@ -108,7 +121,7 @@ export default function LaunchDetails({ route, navigation }: LaunchCardProps): R
                 <Text style={launchDetailsStyles.content.mainCard.body.subtitleContainer.subtitle_text}>{launch.name.split('|')[1].trim().length > 38 ? truncate(launch.name.split('|')[1].trim(), 38) :  launch.name.split('|')[1].trim()}</Text>
               </View>
               <View style={[launchDetailsStyles.content.mainCard.body.subtitleContainer, {marginBottom: 20}]}>
-                <Text style={launchDetailsStyles.content.mainCard.body.subtitleContainer.subtitle}>T- </Text>
+                <Text style={launchDetailsStyles.content.mainCard.body.subtitleContainer.subtitle}>T{dayjs(launch.net).isBefore(dayjs()) ? "+" : "-"} </Text>
                 <Text style={launchDetailsStyles.content.mainCard.body.subtitleContainer.subtitle_text}>{countdown}</Text>
               </View>
               <DSOValues title={`${i18n.t('launchesScreen.launchCards.date')} ${launch.status.id === 2 || launch.status.id === 8 ? i18n.t('launchesScreen.launchCards.temporary') : ""}`} value={dayjs(launch.net).format("DD MMM YYYY")} />
@@ -156,11 +169,23 @@ export default function LaunchDetails({ route, navigation }: LaunchCardProps): R
                   <DSOValues title={i18n.t('launchesScreen.details.program.name')} value={launch.program[0].name}/>
                   <DSOValues title={i18n.t('launchesScreen.details.program.start')} value={dayjs(launch.program[0].start_date).format('DD/MM/YYYY')}/>
                   <DSOValues title={i18n.t('launchesScreen.details.program.founder')} value={launch.program[0].agencies[0].name.length > 30 ? launch.program[0].agencies[0].abbrev : launch.program[0].agencies[0].name}/>
-
                   <Text style={launchDetailsStyles.content.programCard.subtitle}>{i18n.t('launchesScreen.details.program.description')}</Text>
                   <Text style={launchDetailsStyles.content.programCard.description}>{launch.program[0].description}</Text>
               </View>
           }
+
+          {/*{*/}
+          {/*  launch.vid_urls?.length > 0 &&*/}
+          {/*    <View style={launchDetailsStyles.content.videosCard}>*/}
+          {/*        <Text style={launchDetailsStyles.content.programCard.title}>{i18n.t('launchesScreen.details.videos.title')}</Text>*/}
+          {/*        <DSOValues title={i18n.t('launchesScreen.details.program.name')} value={launch.program[0].name}/>*/}
+          {/*        <DSOValues title={i18n.t('launchesScreen.details.program.start')} value={dayjs(launch.program[0].start_date).format('DD/MM/YYYY')}/>*/}
+          {/*        <DSOValues title={i18n.t('launchesScreen.details.program.founder')} value={launch.program[0].agencies[0].name.length > 30 ? launch.program[0].agencies[0].abbrev : launch.program[0].agencies[0].name}/>*/}
+
+          {/*        <Text style={launchDetailsStyles.content.programCard.subtitle}>{i18n.t('launchesScreen.details.program.description')}</Text>*/}
+          {/*        <Text style={launchDetailsStyles.content.programCard.description}>{launch.program[0].description}</Text>*/}
+          {/*    </View>*/}
+          {/*}*/}
 
         </View>
       </ScrollView>

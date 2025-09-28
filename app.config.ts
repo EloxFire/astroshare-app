@@ -4,7 +4,7 @@ dotenv.config();
 module.exports = {
   name: "Astroshare",
   slug: "astroshare-app",
-  version: "v1.5.2",
+  version: "v2.0.0",
   orientation: "portrait",
   icon: "./assets/icon.png",
   userInterfaceStyle: "light",
@@ -17,14 +17,15 @@ module.exports = {
   assetBundlePatterns: ["**/*"],
   ios: {
     supportsTablet: true,
-    bundleIdentifier: 'fr.eavagliano.astroshare'
+    bundleIdentifier: "fr.eavagliano.astroshare",
   },
   android: {
+    versionCode: 46,
     adaptiveIcon: {
       foregroundImage: "./assets/adaptive-icon.png",
       backgroundColor: "#000000"
     },
-    "googleServicesFile": process.env.GOOGLE_SERVICES_JSON || "./android/app/google-services.json",
+    googleServicesFile: process.env.GOOGLE_SERVICES_JSON ?? "./android/app/DEVgoogle-services.json",
     permissions: [
       "android.permission.ACCESS_FINE_LOCATION",
       "android.permission.SCHEDULE_EXACT_ALARM", // For android 12+ to schedule notifications
@@ -38,8 +39,7 @@ module.exports = {
         apiKey: process.env.GOOGLE_MAPS_API_KEY
       }
     },
-    package: "fr.eavagliano.astroshare",
-    versionCode: 39
+    package: "fr.eavagliano.astroshare"
   },
   web: {
     favicon: "./assets/favicon.png"
@@ -50,6 +50,9 @@ module.exports = {
     }
   },
   plugins: [
+    [
+      "expo-font"
+    ],
     [
       'expo-notifications',
       {

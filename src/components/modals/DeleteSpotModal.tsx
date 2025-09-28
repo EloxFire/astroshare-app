@@ -47,7 +47,7 @@ export default function DeleteSpotModal({ onClose }: AddSpotModalProps) {
           ))}
         </View>
 
-        <SimpleButton text="Retour" onPress={onClose} />
+        <SimpleButton textColor={app_colors.white} text="Retour" onPress={onClose} />
       </View>
     </View>
   )

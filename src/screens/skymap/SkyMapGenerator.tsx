@@ -4,16 +4,7 @@ import { globalStyles } from '../../styles/global'
 import { Star } from '../../helpers/types/Star'
 import { useSettings } from '../../contexts/AppSettingsContext'
 import { calculateHorizonAngle } from '../../helpers/scripts/astro/calculateHorizonAngle'
-import {
-  convertEquatorialToHorizontal,
-  isBodyAboveHorizon,
-  hercules,
-  lyra,
-  draco,
-  cepheus,
-  getPlanetaryPositions,
-  Constellation
-} from '@observerly/astrometry'
+import {convertEquatorialToHorizontal, isBodyAboveHorizon} from '@observerly/astrometry'
 import { Circle, G, Image, Line, Mask, Polyline, Rect, Svg, Text as SvgText } from 'react-native-svg';
 import dayjs from 'dayjs'
 import axios from 'axios'
@@ -26,15 +17,15 @@ import {GlobalPlanet} from "../../helpers/types/GlobalPlanet";
 import {astroImages, moonIcons} from "../../helpers/scripts/loadImages";
 import DSOValues from "../../components/commons/DSOValues";
 import ToggleButton from "../../components/commons/buttons/ToggleButton";
+import {useStarCatalog} from "../../contexts/StarsContext";
 
 
 export default function SkyMapGenerator({ navigation }: any) {
 
   const { currentUserLocation } = useSettings()
   const { planets, moonCoords } = useSolarSystem()
+  const {starsCatalog, starCatalogLoading} = useStarCatalog();
 
-  const [starCatalog, setStarCatalog] = useState<Star[]>([])
-  const [starCatalogLoading, setStarCatalogLoading] = useState(true)
   const [currentTime, setCurrentTime] = useState(new Date())
 
   const [showConstellations, setShowConstellations] = useState(true)
@@ -47,9 +38,6 @@ export default function SkyMapGenerator({ navigation }: any) {
 
   const [starsToDisplay, setStarsToDisplay] = useState<Star[]>([])
 
-  useEffect(() => {
-    getStarCatalog()
-  }, [])
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -60,8 +48,10 @@ export default function SkyMapGenerator({ navigation }: any) {
   }, [])
 
   useEffect(() => {
+    getStarsAboveHorizon(starsCatalog)
+
     const interval = setInterval(() => {
-      getStarsAboveHorizon(starCatalog)
+      getStarsAboveHorizon(starsCatalog)
     }, 60000)
 
     return () => clearInterval(interval)
@@ -75,28 +65,20 @@ export default function SkyMapGenerator({ navigation }: any) {
     setCurrentTime(new Date())
   }
 
-  const getStarCatalog = async () => {
-    const stars = await axios.get(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/stars`);
-    setStarCatalog(stars.data.data)
-    setStarCatalogLoading(false)
-
-    getStarsAboveHorizon(stars.data.data)
-  }
-
   const getStarsAboveHorizon = (stars: Star[]) => {
     if (stars.length === 0) return;
 
     const candidates: Star[] = []
     stars.forEach((star: Star) => {
+      if((star.V < 4.8 && star.V > 0) || star.ids.includes('alf UMi')){
+        const { ra, dec } = star
+        const { lat, lon } = currentUserLocation
+        const horizonAngle = calculateHorizonAngle(341)
 
-      const { ra, dec } = star
-      const { lat, lon } = currentUserLocation
-      const horizonAngle = calculateHorizonAngle(341)
-
-      const isAboveHorizon = isBodyAboveHorizon(new Date(), { latitude: lat, longitude: lon }, { ra: ra, dec: dec }, horizonAngle)
-      // if ((isAboveHorizon && star.V > 5.7) || star.ids.includes('alf UMi')) {
-      if ((isAboveHorizon && star.V < 4.8 && star.V > 0) || star.ids.includes('alf UMi')) {
-        candidates.push(star)
+        const isAboveHorizon = isBodyAboveHorizon(new Date(), { latitude: lat, longitude: lon }, { ra: ra, dec: dec }, horizonAngle)
+        if (isAboveHorizon) {
+          candidates.push(star)
+        }
       }
     })
 
@@ -148,9 +130,9 @@ export default function SkyMapGenerator({ navigation }: any) {
 
           {
             starsToDisplay.length > 0 && showConstellations &&
-            constellationsAsterisms.flatMap((constellation: any, constellationIndex: number) => {
+            constellationsAsterisms.map((constellation: any, constellationIndex: number) => {
               // @ts-ignore
-              return constellation.features[0].geometry.coordinates.map((segment: any, segmentIndex: any) => {
+              return constellation.feature.features[0].geometry.coordinates.map((segment: any, segmentIndex: any) => {
                 if (segment.length < 2) return null;
 
                 const start = segment[0];
@@ -215,7 +197,8 @@ export default function SkyMapGenerator({ navigation }: any) {
           {
             starsToDisplay.length > 0 && showConstellations && showConstellationsName &&
             constellationsAsterisms.map((constellation, constellationIndex) => {
-              const centrum = constellation.features[0].properties?.centrum;
+              if(!constellation) return null;
+              const centrum = constellation.feature.features[0].properties?.centrum;
               if (!centrum) return null;
 
               const coords = convertEquatorialToHorizontal(currentTime, { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }, { ra: centrum.ra, dec: centrum.dec });
@@ -224,7 +207,7 @@ export default function SkyMapGenerator({ navigation }: any) {
               const centerX = (screenWidth / 2) + centerR * Math.sin(centerTheta);
               const centerY = (screenWidth / 2) + centerR * Math.cos(centerTheta);
 
-              const name = constellation.features[0].properties?.name || `Constellation ${constellationIndex}`;
+              const name = constellation.feature.features[0].properties?.name || `Constellation ${constellationIndex}`;
 
               return (
                 <SvgText

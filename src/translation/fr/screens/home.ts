@@ -34,7 +34,11 @@ export const homeTranslations = {
     },
     transits: {
       title: "Transits & Éclipses",
-      subtitle: "// Calculez les transits de corps célestes"
+      subtitle: "// Calcul de transits et conjonctions"
+    },
+    calculations: {
+      title: "Calculateur",
+      subtitle: "// Votre calculateur astronomique"
     },
     apod: {
       title: "APOD",
@@ -45,8 +49,8 @@ export const homeTranslations = {
       subtitle: "// Suivi de l'ISS et de Starlink"
     },
     skymap_generator: {
-      title: "Carte du ciel",
-      subtitle: "// Carte du ciel en direct"
+      title: "Cartes du ciel",
+      subtitle: "// Vues en direct et cartes précises"
     },
     launches_screen: {
       title: "Lancements",

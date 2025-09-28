@@ -9,22 +9,55 @@ import {useTranslation} from "../../hooks/useTranslation";
 import {localizedWhiteLogo} from "../../helpers/scripts/loadImages";
 import {routes} from "../../helpers/routes";
 import {pageTitleStyles} from "../../styles/components/commons/pageTitle";
+import {showToast} from "../../helpers/scripts/showToast";
+import { useSettings } from "../../contexts/AppSettingsContext";
+import { sendAnalyticsEvent } from "../../helpers/scripts/analytics";
+import { eventTypes } from "../../helpers/constants/analytics";
 
 export default function RegisterScreen({ navigation }: any) {
 
-  const {registerUser} = useAuth()
-  const {currentLocale} = useTranslation()
+  const {registerUser, loginUser} = useAuth()
+  const {currentUser} = useAuth()
+  const { currentLocale } = useTranslation()
+  const { currentUserLocation } = useSettings() 
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [passwordConfirmation, setPasswordConfirmation] = useState('')
   const [showPassword, setShowPassword] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   const handleFormSubmit = async () => {
     if(password !== passwordConfirmation) {
+      showToast({message: i18n.t('auth.register.passwordMismatch'), type: 'error'})
       return;
     }
-    await registerUser(email, password)
+    setLoading(true)
+    const response = await registerUser(email, password);
+
+    if(!response) {
+      sendAnalyticsEvent(currentUser, currentUserLocation, 'register_failure', eventTypes.ERROR, {}, currentLocale)
+      showToast({message: i18n.t('auth.register.error'), type: 'error'})
+      setLoading(false);
+      return;
+    }else{
+      sendAnalyticsEvent(currentUser, currentUserLocation, 'register_success', eventTypes.USER_SIGNUP, {}, currentLocale)
+      const response = await loginUser(email, password)
+      if(response !== 'success') {
+        sendAnalyticsEvent(currentUser, currentUserLocation, 'login_failure_after_register', eventTypes.ERROR, {}, currentLocale)
+        showToast({message: i18n.t('auth.register.error'), type: 'error'})
+        setLoading(false);
+        return;
+      }
+      sendAnalyticsEvent(currentUser, currentUserLocation, 'login_success_after_register', eventTypes.USER_LOGIN, {}, currentLocale)
+      navigation.push(routes.auth.profile.path);
+      setLoading(false);
+    }
+  }
+
+  const handleLoginNavigation = () => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'navigate_to_login', eventTypes.BUTTON_CLICK, {from: "register screen"}, currentLocale)
+    navigation.push(routes.auth.login.path)
   }
 
   return (
@@ -71,11 +104,11 @@ export default function RegisterScreen({ navigation }: any) {
               additionalStyles={{marginBottom: 0}}
             />
 
-            <TouchableOpacity onPress={() => navigation.push(routes.auth.login.path)}>
+            <TouchableOpacity onPress={() => handleLoginNavigation()}>
               <Text style={authStyles.content.forgotPassword}>{i18n.t('auth.register.noAccount')}</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={authStyles.content.form.button} onPress={() => navigation.navigate('ForgotPasswordScreen')}>
+            <TouchableOpacity style={authStyles.content.form.button} onPress={() => handleFormSubmit()}>
               <Text style={authStyles.content.form.button.text}>{i18n.t('auth.register.submit')}</Text>
             </TouchableOpacity>
           </View>

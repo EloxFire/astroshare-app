@@ -2,25 +2,139 @@ import { app_colors } from "../../../helpers/constants";
 
 export const issPassCardStyles = {
   card: {
-    borderWidth: 1,
-    borderColor: app_colors.white_no_opacity,
+    display: "flex" as "flex",
+    flexDirection: "row" as "row",
+    alignItems: "center" as "center",
+    gap: 10,
+    height: 60,
     backgroundColor: app_colors.white_no_opacity,
     borderRadius: 10,
     padding: 10,
-    marginBottom: 5,
+    borderWidth: 1,
+    borderColor: app_colors.white_twenty,
 
-    header: {
-      display: 'flex' as 'flex',
-      flexDirection: 'row' as 'row',
-      justifyContent: 'space-between' as 'space-between',
+    conditions: {
+      display: "flex" as "flex",
+      flexDirection: "row" as "row",
+      alignItems: "center" as "center",
+      width: "30%" as "30%",
+      gap: 10,
 
-      title:{
+      icon: {
+        width: 40,
+        height: 40,
+      },
+
+      title: {
         color: app_colors.white,
-        fontSize: 15,
-        fontFamily: 'GilroyBlack',
-        textTransform: 'uppercase' as 'uppercase',
-        marginBottom: 10
+        fontSize: 16,
+        fontFamily: "DMMonoMedium",
+      },
+
+      subtitle: {
+        color: app_colors.white_eighty,
+        fontSize: 12,
+        fontFamily: "GilroyRegular",
       },
     },
+
+
+    infos: {
+      display: "flex" as "flex",
+      flexDirection: "row" as "row",
+      justifyContent: "space-between" as "space-between",
+      alignItems: "center" as "center",
+      flex: 1,
+      gap: 15,
+      paddingLeft: 10,
+    }
+  },
+
+  column: {
+    display: "flex" as "flex",
+    flexDirection: "column" as "column",
+    gap: 5,
+
+    title: {
+      color: app_colors.white_eighty,
+      fontSize: 12,
+      fontFamily: "GilroyRegular",
+    },
+
+    value: {
+      color: app_colors.white,
+      fontSize: 14,
+      fontFamily: "DMMonoMedium",
+    }
   }
+
+  // card: {
+  //   height: 'auto' as 'auto',
+  //   borderWidth: 1,
+  //   borderColor: app_colors.white_no_opacity,
+  //   backgroundColor: app_colors.white_no_opacity,
+  //   borderRadius: 10,
+  //   padding: 10,
+  //   // marginBottom: 5,
+  //   display: 'flex' as 'flex',
+  //   flexDirection: 'column' as 'column',
+  //   gap: 10,
+  //
+  //   title: {
+  //     color: app_colors.black,
+  //     fontSize: 14,
+  //     fontFamily: 'DMMonoMedium',
+  //     // textTransform: 'uppercase' as 'uppercase',
+  //     backgroundColor: app_colors.white,
+  //     paddingVertical: 2,
+  //     borderRadius: 5,
+  //     paddingHorizontal: 5,
+  //   },
+  //
+  //   subtitle: {
+  //     color: app_colors.black,
+  //     fontSize: 14,
+  //     fontFamily: 'GilroyRegular',
+  //     // textTransform: 'uppercase' as 'uppercase',
+  //     backgroundColor: app_colors.white,
+  //     paddingVertical: 2,
+  //     borderRadius: 10,
+  //     paddingHorizontal: 5,
+  //   },
+  //
+  //   text: {
+  //     color: app_colors.white,
+  //     fontSize: 14,
+  //     fontFamily: 'GilroyRegular',
+  //   },
+  //
+  //   noWeather: {
+  //     width: 15,
+  //     height: 15,
+  //     marginLeft: 'auto' as 'auto',
+  //   },
+  //
+  //   weatherIcon: {
+  //     width: 30,
+  //     height: 30,
+  //     alignSelf: 'center' as 'center'
+  //   },
+  //
+  //   icon: {
+  //     width: 15,
+  //     height: 15
+  //   },
+  //
+  //   column: {
+  //     display: 'flex' as 'flex',
+  //     flexDirection: 'column' as 'column',
+  //     gap: 5
+  //   },
+  //
+  //   row: {
+  //     display: 'flex' as 'flex',
+  //     flexDirection: 'row' as 'row',
+  //     gap: 5
+  //   }
+  // }
 }

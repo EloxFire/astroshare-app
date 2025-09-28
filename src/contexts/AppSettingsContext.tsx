@@ -12,8 +12,10 @@ import * as Location from 'expo-location'
 import Toast from 'react-native-root-toast';
 import NetInfo from '@react-native-community/netinfo';
 import { HomeWidget } from '../helpers/types/HomeWidget'
-import { v4 as uuidv4 } from 'uuid';
-import axios from "axios";
+import {sendAnalyticsEvent} from "../helpers/scripts/analytics";
+import {useAuth} from "./AuthContext";
+import {useTranslation} from "../hooks/useTranslation";
+import {eventTypes} from "../helpers/constants/analytics";
 
 const AppSettingsContext = createContext<any>({})
 
@@ -29,6 +31,9 @@ export function AppSettingsProvider({ children }: AppSettingsProviderProps) {
 
   const [isNightMode, setIsNightMode] = useState<boolean>(false)
 
+  const { currentUser } = useAuth()
+  const { currentLocale } = useTranslation()
+
   // Location related states
   const [locationPermissions, setLocationPermissions] = useState<boolean>(false)
   const [currentUserLocation, setCurrentUserLocation] = useState<LocationObject | null>(null)
@@ -37,6 +42,7 @@ export function AppSettingsProvider({ children }: AppSettingsProviderProps) {
   const [isCellularDataEnabled, setIsCellularDataEnabled] = useState<boolean>(true)
   const [hasInternetConnection, setHasInternetConnection] = useState<boolean>(false)
   const [selectedHomeWidget, setSelectedHomeWidget] = useState<HomeWidget>('None' as HomeWidget)
+  const [homeNewsBannerVisible, setHomeNewsBannerVisible] = useState<boolean>(true)
 
   useEffect(() => {
     (async () => {
@@ -44,9 +50,9 @@ export function AppSettingsProvider({ children }: AppSettingsProviderProps) {
       if (!cellularData) {
         await storeData('cellularData', 'true');
       }
-      setIsCellularDataEnabled(cellularData === 'true' ? true : false);
+      setIsCellularDataEnabled(cellularData === 'true');
       const nightMode = await getData('nightMode');
-      setIsNightMode(nightMode === 'true' ? true : false);
+      setIsNightMode(nightMode === 'true');
     })()
   }, [])
 
@@ -65,7 +71,7 @@ export function AppSettingsProvider({ children }: AppSettingsProviderProps) {
 
   useEffect(() => {
     const unsubscribe = NetInfo.addEventListener(state => {
-      setHasInternetConnection(state.isConnected ? true : false);
+      setHasInternetConnection(!!state.isConnected);
     });
 
     return () => {
@@ -99,12 +105,14 @@ export function AppSettingsProvider({ children }: AppSettingsProviderProps) {
   const updateSelectedHomeWidget = async (widget: HomeWidget) => {
     await storeData(storageKeys.homeWidgets, widget);
     setSelectedHomeWidget(widget);
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'update_home_widget', eventTypes.BUTTON_CLICK, {selectedHomeWidget: widget}, currentLocale);
   }
 
   const refreshCurrentUserLocation = async () => {
     setLocationLoading(true);
     // Check if location permission is granted
     const hasLocationPermission = await askLocationPermission();
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'refresh_user_location', eventTypes.BUTTON_CLICK, {}, currentLocale);
     if (!hasLocationPermission) {
       setLocationLoading(false);
       showToast({ message: 'Vous devez autoriser l\'accès à la localisation pour utiliser l\'application', duration: Toast.durations.LONG, type: 'error' });
@@ -131,6 +139,7 @@ export function AppSettingsProvider({ children }: AppSettingsProviderProps) {
       setCurrentUserLocation(userCoords);
       setCurrentUserHorizon(90 - userCoords.lat)
       setLocationLoading(false);
+      sendAnalyticsEvent(currentUser, userCoords, 'user_location_acquired', eventTypes.DATA_ACQUISITION, {}, currentLocale);
     } catch (error) {
       console.log("Error while getting location name : ", error);
 
@@ -142,11 +151,19 @@ export function AppSettingsProvider({ children }: AppSettingsProviderProps) {
   const handleCellularData = () => {
     setIsCellularDataEnabled(!isCellularDataEnabled);
     storeData('cellularData', !isCellularDataEnabled ? 'true' : 'false');
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'toggle_cellular_data', eventTypes.BUTTON_CLICK, {isCellularDataEnabled: !isCellularDataEnabled}, currentLocale);
   }
 
   const handleNightMode = () => {
     setIsNightMode(!isNightMode);
     storeData('nightMode', !isNightMode ? 'true' : 'false');
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'toggle_night_mode', eventTypes.BUTTON_CLICK, {isNightMode: !isNightMode}, currentLocale);
+  }
+
+  const handleHomeNewsBanner = () => {
+    setHomeNewsBannerVisible(!homeNewsBannerVisible);
+    storeData(storageKeys.homeNewsBannerVisible, !homeNewsBannerVisible ? 'true' : 'false');
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'toggle_home_news_banner', eventTypes.BUTTON_CLICK, {homeNewsBannerVisible: !homeNewsBannerVisible}, currentLocale);
   }
 
   const values = {
@@ -163,6 +180,8 @@ export function AppSettingsProvider({ children }: AppSettingsProviderProps) {
     hasInternetConnection,
     selectedHomeWidget,
     updateSelectedHomeWidget,
+    homeNewsBannerVisible,
+    handleHomeNewsBanner,
   }
 
   return (

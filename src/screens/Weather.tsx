@@ -15,16 +15,27 @@ import WeatherOverview from '../components/weather/WeatherOverview'
 import Ephemeris from '../components/weather/Ephemeris'
 import Hourly from '../components/weather/Hourly'
 import { i18n } from '../helpers/scripts/i18n'
+import {sendAnalyticsEvent} from "../helpers/scripts/analytics";
+import {useAuth} from "../contexts/AuthContext";
+import {eventTypes} from "../helpers/constants/analytics";
+import {useTranslation} from "../hooks/useTranslation";
+import {routes} from "../helpers/routes";
 
 export default function Weather({ navigation }: any) {
 
   const { currentUserLocation } = useSettings();
+  const { currentLocale } = useTranslation();
+  const { currentUser } = useAuth();
   const [searchString, setSearchString] = useState<string>('')
   const [searchedCity, setSearchedCity] = useState<LocationObject | null>(null)
   const [weather, setWeather] = useState<any>(null)
 
   useEffect(() => {
     getCurrent()
+  }, [])
+
+  useEffect(() => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'Weather screen', eventTypes.SCREEN_VIEW, {}, currentLocale)
   }, [])
 
   const getCurrent = async () => {
@@ -69,14 +80,20 @@ export default function Weather({ navigation }: any) {
     const searchedWeather = await getWeather(city.lat, city.lon)
     setSearchedCity(city)
     setWeather(searchedWeather)
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'User searched weather for new city', eventTypes.BUTTON_CLICK, { searchString: searchString }, currentLocale)
   }
 
   return (
     <View style={globalStyles.body}>
-      <PageTitle navigation={navigation} title={i18n.t('home.buttons.weather.title')} subtitle={i18n.t('home.buttons.weather.subtitle')} />
+      <PageTitle
+        navigation={navigation}
+        title={i18n.t('home.buttons.weather.title')}
+        subtitle={i18n.t('home.buttons.weather.subtitle')}
+        backRoute={routes.home.path}
+      />
       <View style={globalStyles.screens.separator} />
       <View style={weatherStyles.content.inputContainer}>
-        <InputWithIcon icon={require('../../assets/icons/FiSearch.png')} placeholder={i18n.t('weather.input_placeholder')} changeEvent={(text: string) => setSearchString(text)} search={() => searchWeather()} value={searchString} />
+        <InputWithIcon type={'text'} icon={require('../../assets/icons/FiSearch.png')} placeholder={i18n.t('weather.input_placeholder')} changeEvent={(text: string) => setSearchString(text)} search={() => searchWeather()} value={searchString} />
       </View>
       {
         searchedCity &&

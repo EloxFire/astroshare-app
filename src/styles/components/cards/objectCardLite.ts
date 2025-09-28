@@ -3,60 +3,54 @@ import { app_colors } from "../../../helpers/constants";
 export const objectCardLiteStyles = {
   card: {
     backgroundColor: app_colors.white_no_opacity,
-    borderColor: app_colors.white_no_opacity,
     borderRadius: 10,
-    padding: 8,
+    padding: 5,
+    marginBottom: 10,
     borderWidth: 1,
-    display: 'flex' as 'flex',
-    flexDirection: 'row' as 'row',
-    alignItems: 'center' as 'center',
-    gap: 10,
-    marginBottom: 8,
+    borderColor: app_colors.white_twenty,
+    display: "flex" as "flex",
+    flexDirection: "row" as "row",
+    justifyContent: "space-between" as "space-between",
+    alignItems: "center" as "center",
 
-    visibility: {
-      width: 2,
-      height: '100%' as '100%',
-      borderRadius: 2
-    },
-    
-    image: {
-      width: 35,
-      height: 35,
+    header: {
+      display: "flex" as "flex",
+      flexDirection: "column" as "column",
+      alignItems: "flex-start" as "flex-start",
+      marginBottom: 5,
     },
 
-    infos: {
-      display: 'flex' as 'flex',
-      flexDirection: 'column' as 'column',
+    icon: {
+      width: 45,
+      height: 45,
+    },
+
+    data: {
+      display: "flex" as "flex",
+      flexDirection: "column" as "column",
+      justifyContent: "space-between" as "space-between",
+      marginLeft: 10,
       flex: 1,
 
-
       title: {
-        fontSize: 15,
-        fontFamily: 'GilroyBlack',
+        fontSize: 16,
         color: app_colors.white,
+        fontFamily: "GilroyBlack",
+        textTransform: "uppercase" as "uppercase",
       },
 
-      data: {
-        display: 'flex' as 'flex',
-        flexDirection: 'row' as 'row',
-        gap: 20,
+      subtitle: {
+        fontSize: 12,
+        color: app_colors.white,
+        fontFamily: "DMMonoRegular",
+      },
 
-        info: {
-          display: 'flex' as 'flex',
-          flexDirection: 'column' as 'column',
-
-          label: {
-            fontSize: 10,
-            fontFamily: 'GilroyBlack',
-            color: app_colors.white_eighty,
-          },
-
-          value: {
-            fontSize: 12,
-            fontFamily: 'GilroyRegular',
-            color: app_colors.white,
-          }
-        }
+      badges: {
+        display: "flex" as "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "flex-start" as "flex-start",
+        marginTop: 5,
+        gap: 5,
       }
     }
   }

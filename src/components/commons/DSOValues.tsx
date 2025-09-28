@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react'
-import {ScrollView, Text, View} from 'react-native'
+import {Image, ImageSourcePropType, ScrollView, Text, View} from 'react-native'
 import { objectDetailsStyles } from '../../styles/screens/objectDetails'
 import { app_colors } from '../../helpers/constants'
 
@@ -11,12 +11,19 @@ interface DSOValuesProps {
   chipForegroundColor?: string
   small?: boolean
   wideChip?: boolean
+  icon?: ImageSourcePropType
 }
 
-export default function DSOValues({ title, value, chipValue, chipColor, small, wideChip, chipForegroundColor }: DSOValuesProps) {
+export default function DSOValues({ title, value, chipValue, chipColor, small, wideChip, chipForegroundColor, icon }: DSOValuesProps) {
   return (
     <View style={objectDetailsStyles.dsoValues}>
-      <Text style={[objectDetailsStyles.dsoValues.title, { fontSize: small ? 10 : 12 }]}>{title}</Text>
+      <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 5}}>
+        {
+          icon &&
+            <Image source={icon} style={{width: 20, height: 20}} />
+        }
+        <Text style={[objectDetailsStyles.dsoValues.title, { fontSize: small ? 10 : 12 }]}>{title}</Text>
+      </View>
       <ScrollView style={{marginLeft: 30, backgroundColor: 'transparent'}} contentContainerStyle={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end'}}>
         {
           typeof value !== 'object' ?

@@ -1,78 +1,117 @@
-import React, { useEffect, useRef, useState } from 'react'
-import {Dimensions, Image, ImageBackground, ScrollView, Text, View} from 'react-native'
+import React, {useEffect, useState} from 'react'
+import { ActivityIndicator, Dimensions, ScrollView, Text, View } from 'react-native'
 import { globalStyles } from '../styles/global'
 import { apodStyles } from '../styles/screens/apod'
-import { showToast } from '../helpers/scripts/showToast'
 import { APODPicture } from '../helpers/types/APODPicture'
 import { app_colors } from '../helpers/constants'
-import { ResizeMode, Video } from 'expo-av'
-import * as Clipboard from 'expo-clipboard'
-import axios from 'axios'
-import Toast from 'react-native-root-toast'
 import PageTitle from '../components/commons/PageTitle'
 import dayjs from 'dayjs'
-import WebView from 'react-native-webview'
-import YoutubePlayer from "react-native-youtube-iframe";
 import { i18n } from '../helpers/scripts/i18n'
+import { useSettings } from '../contexts/AppSettingsContext'
+import { useAuth } from '../contexts/AuthContext'
+import { useTranslation } from '../hooks/useTranslation'
+import { sendAnalyticsEvent } from '../helpers/scripts/analytics'
+import { eventTypes } from '../helpers/constants/analytics'
+import {renderApodMedia} from "../helpers/scripts/apod/renderApod";
+import {fetchApod} from "../helpers/scripts/apod/getApod";
 
 export default function Apod({ navigation }: any) {
+  const { currentUserLocation } = useSettings()
+  const { currentUser } = useAuth()
+  const { currentLocale } = useTranslation()
 
+  const [loadingMedia, setLoadingMedia] = useState(false)
   const [apod, setApod] = useState<APODPicture | null>(null)
-  const videoRef = useRef(null);
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    getApod()
-  }, [])
+    (async () => {
+      setLoadingMedia(true)
+      setError(null)
+      const res = await fetchApod({ timeoutMs: 7000 }) // ex: timeout custom
 
-  const getApod = async () => {
-    try {
-      const picture = await axios.get(process.env.EXPO_PUBLIC_ASTROSHARE_API_URL + '/apod');
-      setApod(picture.data.data);
-      showToast({ message: 'Image récupérée', duration: Toast.durations.SHORT, type: 'success' });
-    } catch (error) {
-      console.log(error)
-      showToast({ message: 'Une erreur est survenue', duration: Toast.durations.SHORT, type: 'error' });
-    }
-  }
+      if (res.ok) {
+        setApod(res.data)
+        setError(null)
+      } else {
+        // Différencier les erreurs ici
+        switch (res.reason) {
+          case 'timeout':
+            // ex: proposer un retry agressif, garder dummy en fond
+            setError(i18n.t('apod.errors.timeout') || "Le serveur met trop de temps à répondre. Réessaie.")
+            setApod(null)
+            break
+          case 'network':
+            setError(i18n.t('apod.errors.network') || "Problème de connexion réseau.")
+            break
+          case 'http':
+            setError(
+              (i18n.t('apod.errors.httpWithCode', { code: res.status }) as string) ||
+              `Le serveur a répondu avec le code ${res.status}.`
+            )
+            break
+          case 'parse':
+            setError(i18n.t('apod.errors.malformed') || "Réponse serveur invalide.")
+            break
+          default:
+            setError(i18n.t('apod.errors.fetchError') || "Erreur inattendue.")
+        }
+      }
+
+      setLoadingMedia(false)
+
+      // Analytics quand on a des données (même dummy)
+      sendAnalyticsEvent(
+        currentUser,
+        currentUserLocation,
+        'APOD screen view',
+        eventTypes.SCREEN_VIEW,
+        { media_type: (res.ok ? res.data : apod)?.media_type, apodTitle: (res.ok ? res.data : apod)?.title || 'N/A' },
+        currentLocale
+      )
+    })()
+  }, []);
 
   return (
     <View style={globalStyles.body}>
-      <PageTitle navigation={navigation} title={i18n.t('home.buttons.apod.title')} subtitle={i18n.t('home.buttons.apod.subtitle')} />
-      <View style={globalStyles.screens.separator} />
-      <ScrollView>
-        <View style={apodStyles.content}>
-          <Text style={apodStyles.content.title}>{apod?.title.replace(/(\r\n|\n|\r)/gm, "") || i18n.t('common.loadings.simple')}</Text>
-          {apod?.copyright && <Text style={[apodStyles.content.text, { color: app_colors.white_eighty }]}>Copyright : {apod?.copyright.replace(/(\r\n|\n|\r)/gm, "") || i18n.t('common.loadings.simple')}</Text>}
-          <Text style={[apodStyles.content.text, { color: app_colors.white_eighty, marginTop: 5 }]}>Date : {apod?.date ? dayjs(apod?.date).format('DD/MM/YYYY') : i18n.t('common.loadings.simple')}</Text>
-          {
-            apod?.media_type === 'video' ?
-              apod?.url.includes('youtube') ?
-                <YoutubePlayer
-                  width={Dimensions.get('screen').width - 20}
-                  height={(Dimensions.get('screen').width - 20) / (16 / 9)}
-                  play
-                  videoId={apod?.url.split('embed/')[1].split('?')[0]}
-                />
-                :
-                <Video
-                  ref={videoRef}
-                  source={{ uri: apod?.url || '' }}
-                  isMuted={true}
-                  rate={1.0}
-                  shouldPlay={true}
-                  isLooping={true}
-                  resizeMode={ResizeMode.CONTAIN}
-                  style={{ width: Dimensions.get('screen').width, height: Dimensions.get('screen').width, marginVertical: 10 }}
-                />
-              :
-              apod?.media_type === 'image' && (
-                <Image source={{ uri: apod?.url }} style={{width: Dimensions.get('screen').width, height: Dimensions.get('screen').width, marginVertical: 10}} resizeMode='contain' />
-              )
-          }
+      <PageTitle
+        navigation={navigation}
+        title={i18n.t('home.buttons.apod.title')}
+        subtitle={i18n.t('home.buttons.apod.subtitle')}
+      />
 
-          <Text style={apodStyles.content.subtitle}>Description :</Text>
-          <Text style={[apodStyles.content.text, { fontSize: 16, alignSelf: 'flex-start', lineHeight: 25 }]}>{apod?.explanation || i18n.t('common.loadings.simple')}</Text>
-        </View>
+      <View style={globalStyles.screens.separator} />
+
+      <ScrollView contentContainerStyle={{paddingBottom: 80}}>
+        {
+          loadingMedia && (
+            <View style={{height: Dimensions.get('window').height - 200, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+              <ActivityIndicator size="large" color={app_colors.white} style={{marginBottom: 20}} />
+              <Text style={apodStyles.content.loadingText}>{i18n.t('common.loadings.simple')}</Text>
+            </View>
+          )
+        }
+        {
+          !loadingMedia && error && (
+            <View style={{height: Dimensions.get('window').height - 200, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+              <View style={apodStyles.content.errorBox}>
+                <Text style={apodStyles.content.loadingText}>{error}</Text>
+              </View>
+            </View>
+          )
+        }
+        {
+          !loadingMedia && !error && apod && (
+            <View>
+              { renderApodMedia(apod, currentLocale) }
+              <Text style={apodStyles.content.imageTitle}>{apod.title}</Text>
+              { apod.copyright && <Text style={apodStyles.content.imageSubtitle}>{i18n.t('apod.copyrights')} : {apod.copyright.replace(/\n/g, '')}</Text>}
+              <Text style={apodStyles.content.imageSubtitle}>{i18n.t('apod.date')} : {dayjs(apod.date).format("DD/MM/YYYY")}</Text>
+              <Text style={apodStyles.content.imageDescriptionTitle}>{i18n.t('apod.explanation')} :</Text>
+              <Text style={apodStyles.content.imageDescription}>{apod.explanation}</Text>
+            </View>
+          )
+        }
       </ScrollView>
     </View>
   )

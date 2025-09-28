@@ -32,7 +32,7 @@ export const globalStyles = {
       color: app_colors.white,
       fontSize: 10,
       marginBottom: 10,
-      fontFamily: "AuxMono",
+      fontFamily: "DMMonoRegular",
       opacity: 0.6,
       textTransform: "uppercase" as "uppercase",
     },
@@ -55,7 +55,7 @@ export const globalStyles = {
       color: app_colors.white,
       fontSize: 9,
       marginBottom: 10,
-      fontFamily: "AuxMono",
+      fontFamily: "DMMonoRegular",
       opacity: 0.6,
       textTransform: "uppercase" as "uppercase",
     },
@@ -73,5 +73,42 @@ export const globalStyles = {
     borderRadius: 10,
     borderWidth: 1,
     marginBottom: 20,
+  },
+
+  proBadge:{
+    margin: 0,
+
+    star1:{
+      position: 'absolute' as 'absolute',
+      left: -5,
+      top: -3,
+      width: 7,
+      height: 7,
+    },
+
+    star2:{
+      position: 'absolute' as 'absolute',
+      left: 20,
+      top: -3,
+      width: 5,
+      height: 5,
+
+    },
+
+    star3:{
+      position: 'absolute' as 'absolute',
+      left: 25,
+      top: 0,
+      width: 8,
+      height: 8,
+    },
+
+    star4:{
+      position: 'absolute' as 'absolute',
+      left: 3,
+      top: 12,
+      width: 5,
+      height: 5,
+    }
   }
 };

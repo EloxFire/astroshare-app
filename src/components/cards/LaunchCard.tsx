@@ -9,9 +9,14 @@ import {truncate} from "../../helpers/scripts/utils/formatters/truncate";
 import {routes} from "../../helpers/routes";
 import {localizedNoRocketImageSmall} from "../../helpers/scripts/loadImages";
 import {useTranslation} from "../../hooks/useTranslation";
+import {useSettings} from "../../contexts/AppSettingsContext";
+import {useAuth} from "../../contexts/AuthContext";
+import {sendAnalyticsEvent} from "../../helpers/scripts/analytics";
+import {eventTypes} from "../../helpers/constants/analytics";
+import {LaunchData} from "../../helpers/types/LaunchData";
 
 interface LaunchCardProps {
-  launch: any
+  launch: LaunchData
   navigation: any
   noFollow?: boolean
 }
@@ -19,9 +24,16 @@ interface LaunchCardProps {
 export default function LaunchCard({ launch, navigation, noFollow }: LaunchCardProps): ReactNode {
 
   const {currentLocale} = useTranslation()
+  const { currentUserLocation } = useSettings();
+  const { currentUser } = useAuth()
+
+  const handlePress = () => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'Launch card clicked', eventTypes.BUTTON_CLICK, {launchId: launch.id, launch_name: launch.name, launch_date: launch.net}, currentLocale)
+    navigation.navigate(routes.launchDetails.path, {launch: launch})
+  }
 
   return (
-    <TouchableOpacity style={launchCardStyles.card} disabled={noFollow} onPress={() => navigation.navigate(routes.launchDetails.path, {launch: launch})}>
+    <TouchableOpacity style={launchCardStyles.card} disabled={noFollow} onPress={() => handlePress()}>
       {
         launch.image ?
         <Image style={launchCardStyles.card.thumbnail} resizeMode='cover' source={{uri: launch.image.thumbnail_url}} />
@@ -43,7 +55,7 @@ export default function LaunchCard({ launch, navigation, noFollow }: LaunchCardP
           <DSOValues title={`${i18n.t('launchesScreen.launchCards.date')} ${launch.status.id === 2 || launch.status.id === 8 ? i18n.t('launchesScreen.launchCards.temporary') : ""}`} value={dayjs(launch.net).format("DD MMM YYYY")} />
           <DSOValues title={i18n.t('launchesScreen.launchCards.launcher')} value={launch.rocket.configuration.full_name} />
           <DSOValues title={i18n.t('launchesScreen.launchCards.operator')} value={truncate(launch.launch_service_provider.name, 18)} />
-          <DSOValues title={i18n.t('launchesScreen.launchCards.launchPad')} value={truncate(launch.pad.name, 18)} />
+          <DSOValues title={i18n.t('launchesScreen.launchCards.launchPad')} value={truncate(launch.pad.name, 15)} />
           <DSOValues title={i18n.t('launchesScreen.launchCards.client')} value={launch.mission.agencies.length > 0 ? launch.mission.agencies[0].name.length > 25 ? launch.mission.agencies[0].abbrev : truncate(launch.mission.agencies[0].name, 25) : "N/A" } />
         </View>
       </View>

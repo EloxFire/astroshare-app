@@ -1,0 +1,40 @@
+import {ImageSourcePropType} from "react-native";
+
+export type ComputedMoonInfos = {
+  base: {
+    family: string;
+    common_name: string;
+    ra: number;
+    dec: number;
+    alt: number;
+    az: number;
+    icon: ImageSourcePropType
+  },
+  data: {
+    phase: string;
+    illumination: number;
+    distance: number;
+    elongation: number;
+    isNewMoon: boolean;
+    isFullMoon: boolean;
+    age: number;
+    angularDiameter: number;
+    phaseAngle: number;
+    nextNewMoon: Date;
+    nextFullMoon: Date;
+  },
+  visibility: {
+    isCurrentlyVisible: boolean;
+    isVisibleThisNight: boolean;
+    visibilityLabel: string;
+    visibilityBackgroundColor: string;
+    visibilityForegroundColor: string;
+    visibilityIcon: string;
+    objectNextRise: string;
+    objectNextSet: string;
+    visibilityGraph: {
+      altitudes: number[];
+      hours: string[];
+    };
+  }
+}

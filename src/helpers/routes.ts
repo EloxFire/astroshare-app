@@ -8,9 +8,6 @@ export const routes = {
   scopeAlignment: { path: 'ScopeAlignmentScreen ', requirements: [] },
   weather: { path: 'WeatherScreen', requirements: [] },
   moonPhases: { path: 'MoonPhasesScreen', requirements: [] },
-  objectDetails: { path: 'ObjectDetails', requirements: [] },
-  planetDetails: { path: 'PlanetDetails', requirements: [] },
-  brightStarDetails: { path: 'BrightStarDetails', requirements: [] },
   solarWeather: { path: 'SolarWeatherScreen', requirements: [] },
   favoritesViewPoints: { path: 'FavoritesViewPoints', requirements: [] },
   apod: { path: 'ApodScreen', requirements: [] },
@@ -23,7 +20,6 @@ export const routes = {
   spaceXDataScreen: { path: 'SpaceXDataScreen', requirements: [] },
   favorites: { path: 'FavoritesScreen', requirements: [] },
   sellScreen: { path: 'SellScreen', requirements: [] },
-  transitScreen: { path: 'TransitScreen', requirements: [] },
   astroDataInfos: { path: 'AstroDataInfos', requirements: [] },
   widgetsManager: {path: 'WidgetsManager', requirements: []},
   changelogScreen: {path: 'ChangelogScreen', requirements: []},
@@ -33,11 +29,70 @@ export const routes = {
   ressource: {path: 'RessourceScreen', requirements: []},
   categoryScreen: {path: 'RessourcesCategory', requirements: []},
   observationPlanner: {path: 'ObservationPlannerScreen', requirements: []},
+
+  celestialBodies: {
+    details: {
+      path: "CelestialBodyOverview",
+      requirements: []
+    }
+  },
+  satellitesTrackers: {
+    home: { path: 'SatelliteTrackerScreen', requirements: [] },
+    issTracker: { path: 'IssTrackerScreen', requirements: [] },
+    issPasses: { path: "IssPasses", requirements: []},
+    starlinkTracker: { path: 'StarlinkTrackerScreen', requirements: [] },
+  },
   auth: {
     login: { path: 'Login', requirements: [] },
     register: { path: 'Register', requirements: [] },
     profile: { path: 'Profile', requirements: [] },
     passwordRecovery: { path: 'PasswordRecovery', requirements: [] },
     passwordReset: { path: 'PasswordReset', requirements: [] },
+  },
+  pro: {
+    paywallScreen:{
+      path: "PaywallScreen",
+      requirements: []
+    }
+  },
+  calculations: {
+    home: {
+      path: "CalculationsScreen",
+      requirements: []
+    }
+  },
+  transits: {
+    home: {
+      path: "TransitScreen",
+      requirements: []
+    },
+    planetary: {
+      path: "PlanetaryConjunctionScreen",
+      requirements: []
+    },
+    eclipses: {
+      solar: {
+        path: "SolarEclipsesScreen",
+        requirements: []
+      },
+      solarDetails: {
+        path: "SolarEclipseDetails",
+        requirements: []
+      },
+      lunar: {
+        path: 'LunarEclipsesScreen',
+        requirements: []
+      },
+      lunarDetails: {
+        path: 'LunarEclipseDetails',
+        requirements: []
+      }
+    }
+  },
+  newsManager: {
+    home: {
+      path: "NewsManager",
+      requirements: []
+    }
   }
 }

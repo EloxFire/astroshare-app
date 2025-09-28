@@ -3,15 +3,18 @@ import { Keyboard, View } from 'react-native'
 import { showToast } from '../../helpers/scripts/showToast'
 import { DSO } from '../../helpers/types/DSO'
 import { useSettings } from '../../contexts/AppSettingsContext'
-import { planetNamesRegexes, solarSystemRegexes } from '../../helpers/scripts/utils/regex/searchRegex'
 import { useSolarSystem } from '../../contexts/SolarSystemContext'
 import { GlobalPlanet } from '../../helpers/types/GlobalPlanet'
 import { Star } from '../../helpers/types/Star'
 import { i18n } from '../../helpers/scripts/i18n'
 import InputWithIcon from './InputWithIcon'
 import HomeSearchResults from '../HomeSearchResults'
-import axios from 'axios'
 import { getRealSearch } from '../../helpers/scripts/astro/planets/getRealSearch'
+import {universalObjectSearch} from "../../helpers/scripts/universalObjectSearch";
+import { useTranslation } from '../../hooks/useTranslation'
+import { useAuth } from '../../contexts/AuthContext'
+import { sendAnalyticsEvent } from '../../helpers/scripts/analytics'
+import { eventTypes } from '../../helpers/constants/analytics'
 
 interface HomeSearchModuleProps {
   navigation: any
@@ -21,6 +24,8 @@ export default function HomeSearchModule({ navigation }: HomeSearchModuleProps) 
 
   const { hasInternetConnection, currentUserLocation } = useSettings()
   const { planets } = useSolarSystem()
+  const {currentUser} = useAuth()
+  const { currentLocale } = useTranslation()
 
   const [searchString, setSearchString] = useState('')
   const [searchResults, setSearchResults] = useState<DSO[]>([])
@@ -40,9 +45,11 @@ export default function HomeSearchModule({ navigation }: HomeSearchModuleProps) 
       return;
     }
 
-    if (searchString === '') return;
+    if (searchString === '' || !searchString) return;
 
     const formatedSearchString = searchString.trim().replaceAll('*', '');
+
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'user_search', eventTypes.BUTTON_CLICK, { search_term: formatedSearchString }, currentLocale)
 
     setSearchResults([])
     setPlanetResults([])
@@ -51,46 +58,12 @@ export default function HomeSearchModule({ navigation }: HomeSearchModuleProps) 
 
     setSearchResultsLoading(true)
 
-
     let realSearch = getRealSearch(formatedSearchString);
 
-    console.log("searchedPlanet", realSearch);
-
-
-    try {
-      if (planetNamesRegexes.test(realSearch)) {
-        setPlanetResults(planets.filter((planet: GlobalPlanet) => planet.name.toLowerCase() === realSearch.toLowerCase()))
-      } else if (solarSystemRegexes.some(regex => regex.test(formatedSearchString))) {
-        setPlanetResults(planets)
-      }
-    } catch (error) {
-      console.log("Planet Error :", error)
-    }
-
-    try {
-      const starsResponse = await axios.get(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/stars/` + realSearch);
-      console.log(starsResponse.data.data);
-
-      setStarsResults(starsResponse.data.data)
-    } catch (error: any) {
-      setStarsResults([])
-      console.log("Star Error :", error.message)
-      if (!error.message.includes('404')) {
-        showToast({ message: error.message ? error.message : i18n.t('common.errors.unknownError'), type: 'error' })
-      }
-    }
-
-    try {
-      const dsoResponse = await axios.get(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/search?search=` + realSearch);
-      setSearchResults(dsoResponse.data.data)
-    } catch (error: any) {
-      setSearchResults([])
-      console.log("DSO Error :", error.message)
-      if (!error.message.includes('404')) {
-        showToast({ message: error.message ? error.message : i18n.t('common.errors.unknownError'), type: 'error' })
-      }
-    }
-
+    const { planetResults: searchedPlanets, starsResults: searchedStars, dsoResults: searchedDSOs } = await universalObjectSearch(realSearch, planets);
+    setSearchResults(searchedDSOs);
+    setPlanetResults(searchedPlanets);
+    setStarsResults(searchedStars);
     setSearchResultsLoading(false)
   }
 
@@ -99,6 +72,7 @@ export default function HomeSearchModule({ navigation }: HomeSearchModuleProps) 
     setPlanetResults([])
     setStarsResults([])
     setSearchString('')
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'reset_search', eventTypes.BUTTON_CLICK, {}, currentLocale)
   }
 
   return (
@@ -110,6 +84,7 @@ export default function HomeSearchModule({ navigation }: HomeSearchModuleProps) 
           icon={require('../../../assets/icons/FiSearch.png')}
           search={() => handleSearch()}
           value={searchString}
+          type={'text'}
         />
       </View>
       {

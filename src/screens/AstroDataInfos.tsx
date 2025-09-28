@@ -52,9 +52,7 @@ export default function AstroDataInfos({ navigation }: any) {
           <View style={globalStyles.globalContainer}>
             <Text style={globalStyles.sections.title}>{i18n.t('astroDataInfos.solarWeather.title')}</Text>
             <Text style={[globalStyles.sections.text, { marginBottom: 10 }]}>{i18n.t('astroDataInfos.solarWeather.text1')}</Text>
-            <Text style={[globalStyles.sections.text, { marginBottom: 3 }]}>- Solar Dynamics Observatory (sdo.gsfc.nasa.gov)</Text>
-            <Text style={[globalStyles.sections.text, { marginBottom: 3 }]}>- Solar And Heliospheric Observatory (soho.nascom.nasa.gov)</Text>
-            <Text style={[globalStyles.sections.text, { marginBottom: 3 }]}>- National Oceanic and Atmospheric Administration (noaa.gov)</Text>
+            <Text style={[globalStyles.sections.text, { marginBottom: 10 }]}>{i18n.t('astroDataInfos.solarWeather.text2')}</Text>
           </View>
           <View style={globalStyles.globalContainer}>
             <Text style={globalStyles.sections.title}>{i18n.t('astroDataInfos.apod.title')}</Text>
@@ -63,6 +61,14 @@ export default function AstroDataInfos({ navigation }: any) {
           <View style={globalStyles.globalContainer}>
             <Text style={globalStyles.sections.title}>{i18n.t('astroDataInfos.moonPhases.title')}</Text>
             <Text style={[globalStyles.sections.text, { marginBottom: 10 }]}>{i18n.t('astroDataInfos.moonPhases.text1')}</Text>
+          </View>
+          <View style={globalStyles.globalContainer}>
+            <Text style={globalStyles.sections.title}>{i18n.t('astroDataInfos.conjunctions.title')}</Text>
+            <Text style={[globalStyles.sections.text, { marginBottom: 10 }]}>{i18n.t('astroDataInfos.conjunctions.text1')}</Text>
+          </View>
+          <View style={globalStyles.globalContainer}>
+            <Text style={globalStyles.sections.title}>{i18n.t('astroDataInfos.eclipses.title')}</Text>
+            <Text style={[globalStyles.sections.text, { marginBottom: 10 }]}>{i18n.t('astroDataInfos.eclipses.text1')}</Text>
           </View>
         </View>
       </ScrollView>

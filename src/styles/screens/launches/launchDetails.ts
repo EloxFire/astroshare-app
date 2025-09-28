@@ -173,6 +173,16 @@ export const launchDetailsStyles = {
           borderRadius: 5,
         }
       }
+    },
+
+    videosCard: {
+      display: 'flex' as 'flex',
+      flexDirection: 'column' as 'column',
+      backgroundColor: app_colors.white_no_opacity,
+      borderColor: app_colors.white_no_opacity,
+      borderRadius: 10,
+      padding: 10,
+      borderWidth: 1,
     }
   }
 }

@@ -1,3 +1,5 @@
+import { settingsScreensTranslations } from "./settings/index";
+
 export const settingsTranslations = {
   title: "Paramètres",
   subtitle: "// Personnalisez votre application Astroshare",
@@ -22,9 +24,17 @@ export const settingsTranslations = {
       title: "Personnalisation",
       subtitle: "// Configurez vos widgets"
     },
+    newsBannerManager: {
+      title: "Bannière d'actualités",
+      subtitle: "// Gérez les actualités affichées"
+    },
     tutorial: {
       title: "Tutoriel",
       subtitle: "// Découvrez comment utiliser l'application"
+    },
+    pro: {
+      title: "Astroshare Pro",
+      subtitle: "// Explorez encore plus loin !"
     },
     data: {
       title: "Données astronomiques",
@@ -47,5 +57,6 @@ export const settingsTranslations = {
     general: "Général",
     appearance: "Personnalisation",
     infos: "Informations et sécurité"
-  }
+  },
+  screens: settingsScreensTranslations
 }

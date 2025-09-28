@@ -19,7 +19,7 @@ export const nightSummaryStyles = {
     },
 
     title: {
-      fontSize: 16,
+      fontSize: 14,
       textTransform: 'uppercase' as 'uppercase',
       fontFamily: 'GilroyBlack',
       color: app_colors.white,
@@ -55,14 +55,14 @@ export const nightSummaryStyles = {
 
           title: {
             fontSize: 10,
-            fontFamily: 'GilroyBlack',
+            fontFamily: 'GilroyRegular' as 'GilroyRegular',
             textTransform: 'uppercase' as 'uppercase',
             color: app_colors.white,
           },
 
           value: {
             fontSize: 14,
-            fontFamily: 'GilroyRegular',
+            fontFamily: 'DMMonoMedium' as 'DMMonoMedium',
             color: app_colors.white,
           }
         }
@@ -76,8 +76,8 @@ export const nightSummaryStyles = {
         flex: 1,
 
         icon: {
-          height: 70,
-          width: 70,
+          height: 75,
+          width: 75,
         },
 
         title: {

@@ -8,4 +8,12 @@ export const dsoTranslations = {
     declination: "Declination",
     constellation: "Constellation",
   },
+  generalInfos: {
+    discoveredBy: "Discovered by",
+    discoveryYear: "Discovery year",
+    distance: "Distance",
+    dimensions: "Dimensions",
+    apparentSize: "Apparent size",
+    age: "Age",
+  }
 }

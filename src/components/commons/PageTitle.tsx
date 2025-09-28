@@ -7,13 +7,23 @@ interface PageTitleProps {
   navigation: any
   title: string
   subtitle?: string
+  backRoute?: string
 }
 
 
-export default function PageTitle({ navigation, title, subtitle }: PageTitleProps) {
+export default function PageTitle({ navigation, title, subtitle, backRoute }: PageTitleProps) {
+
+  const handleGoBack = () => {
+    if(backRoute){
+      navigation.push(backRoute)
+    }else{
+      navigation.goBack()
+    }
+  }
+
   return (
     <View style={pageTitleStyles.container}>
-      <TouchableOpacity onPress={() => navigation.goBack()}>
+      <TouchableOpacity onPress={() => handleGoBack()}>
         <Image style={pageTitleStyles.container.icon} source={require('../../../assets/icons/FiChevronDown.png')}/>
       </TouchableOpacity>
       <View>

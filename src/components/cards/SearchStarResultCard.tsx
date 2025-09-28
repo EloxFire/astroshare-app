@@ -5,20 +5,23 @@ import { routes } from '../../helpers/routes'
 import { EquatorialCoordinate, GeographicCoordinate, getConstellation, isBodyAboveHorizon, Planet } from '@observerly/astrometry'
 import { GlobalPlanet } from '../../helpers/types/GlobalPlanet'
 import DSOValues from '../commons/DSOValues'
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useSettings } from '../../contexts/AppSettingsContext'
 import { app_colors } from '../../helpers/constants'
 import { calculateHorizonAngle } from '../../helpers/scripts/astro/calculateHorizonAngle'
 import { Star } from '../../helpers/types/Star'
 import { getBrightStarName } from '../../helpers/scripts/astro/objects/getBrightStarName'
-import { prettyDec, prettyRa } from '../../helpers/scripts/astro/prettyCoords'
-import { convertDDtoDMS } from '../../helpers/scripts/convertDDtoDMSCoords'
 import { convertDegreesRaToHMS } from '../../helpers/scripts/astro/coords/convertDegreesRaToHMS'
 import { convertDegreesDecToDMS } from '../../helpers/scripts/astro/coords/convertDegreesDecToDms'
 import { getConstellationName } from '../../helpers/scripts/getConstellationName'
 import { useSpot } from '../../contexts/ObservationSpotContext'
 import { extractNumbers } from '../../helpers/scripts/extractNumbers'
 import { i18n } from '../../helpers/scripts/i18n'
+import { useTranslation } from '../../hooks/useTranslation'
+import { useAuth } from '../../contexts/AuthContext'
+import { sendAnalyticsEvent } from '../../helpers/scripts/analytics'
+import { eventTypes } from '../../helpers/constants/analytics'
+import { getObjectName } from '../../helpers/scripts/astro/objects/getObjectName'
 
 interface SearchPlanetResultCardProps {
   star: Star
@@ -29,6 +32,9 @@ export default function SearchStarResultCard({ star, navigation }: SearchPlanetR
 
   const { selectedSpot, defaultAltitude } = useSpot()
   const { currentUserLocation } = useSettings()
+  const {currentUser} = useAuth()
+  const { currentLocale } = useTranslation()
+
   const [isVisible, setIsVisible] = useState<boolean>(false)
 
   useEffect(() => {
@@ -41,23 +47,29 @@ export default function SearchStarResultCard({ star, navigation }: SearchPlanetR
     setIsVisible(visible)
   }, [currentUserLocation])
 
+  const handleClickCard = () => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'select_search_result', eventTypes.BUTTON_CLICK, { object_name: getObjectName(star, 'all', true) }, currentLocale)
+    navigation.push(routes.celestialBodies.details.path, { object: star })
+  }
+
   return (
-    <TouchableOpacity onPress={() => navigation.push(routes.brightStarDetails.path, { star: star, visible: isVisible })}>
+    <TouchableOpacity onPress={handleClickCard}>
       <View style={searchResultCardStyles.card}>
         <View style={searchResultCardStyles.card.header}>
           <View>
-            <Text style={searchResultCardStyles.card.header.title}>{getBrightStarName(star.ids)?.length > 11 ? getBrightStarName(star.ids)?.slice(0, 11) + '...' : getBrightStarName(star.ids) || i18n.t('common.errors.unkownStar')}</Text>
+            <Text style={searchResultCardStyles.card.header.title}>{getBrightStarName(star.ids)?.length > 11 ? getBrightStarName(star.ids)?.slice(0, 11) + '...' : getBrightStarName(star.ids) || star.ids.split('|')[0]}</Text>
           </View>
           <Image style={searchResultCardStyles.card.image} source={astroImages['BRIGHTSTAR']} />
         </View>
         <View style={searchResultCardStyles.card.body}>
           <DSOValues small title={i18n.t('detailsPages.stars.labels.constellation')} value={getConstellationName(getConstellation({ ra: star.ra, dec: star.dec })?.abbreviation || "Inconnu")} />
-          <DSOValues small title={i18n.t('detailsPages.stars.labels.magnitude')} value={star.V.toString() || star.B.toString()} />
+          <DSOValues small title={i18n.t('detailsPages.stars.labels.magnitude')} value={star.V.toString() || star.V.toString()} />
           <DSOValues small title={i18n.t('detailsPages.stars.labels.rightAscension')} value={convertDegreesRaToHMS(star.ra)} />
           <DSOValues small title={i18n.t('detailsPages.stars.labels.declination')} value={convertDegreesDecToDMS(star.dec)} />
         </View>
         <View style={searchResultCardStyles.card.footer}>
           <Text style={[searchResultCardStyles.card.footer.chip, { backgroundColor: isVisible ? app_colors.green_eighty : app_colors.red_eighty }]}>{isVisible ? i18n.t('common.visibility.visible') : i18n.t('common.visibility.notVisible')}</Text>
+          <Text style={[searchResultCardStyles.card.footer.chip, { backgroundColor: app_colors.white_forty, color: app_colors.white }]}>{i18n.t('common.other.more')}</Text>
         </View>
       </View>
     </TouchableOpacity>

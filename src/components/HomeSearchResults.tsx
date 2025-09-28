@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React, {ReactNode, useEffect, useRef, useState} from 'react'
 import { ActivityIndicator, FlatList, Image, SafeAreaView, ScrollView, SectionList, Text, TouchableOpacity, View } from 'react-native'
 import { globalStyles } from '../styles/global'
 import { homeStyles } from '../styles/screens/home'
@@ -10,6 +10,7 @@ import SearchPlanetResultCard from './cards/SearchPlanetResultCard'
 import { Star } from '../helpers/types/Star'
 import SearchStarResultCard from './cards/SearchStarResultCard'
 import { i18n } from '../helpers/scripts/i18n'
+import {getObjectFamily} from "../helpers/scripts/astro/objects/getObjectFamily";
 
 interface HomeSearchResultsProps {
   results: DSO[]
@@ -22,22 +23,28 @@ interface HomeSearchResultsProps {
 
 export default function HomeSearchResults({ results, planetResults, onReset, navigation, starsResults, loading }: HomeSearchResultsProps) {
 
-  const flatListRef = useRef<FlatList>(null)
-  const planetFlatListRef = useRef<FlatList>(null)
-  const starFlatListRef = useRef<FlatList>(null)
-
+  const resultsFlatListRef = useRef<FlatList>(null)
+  const [data, setData] = useState<(DSO | GlobalPlanet | Star)[]>([])
 
   useEffect(() => {
-    if (results.length > 0) {
-      flatListRef.current?.scrollToIndex({ index: 0 })
-    }
-    if (planetResults.length > 0) {
-      planetFlatListRef.current?.scrollToIndex({ index: 0 })
-    }
-    if (starsResults.length > 0) {
-      starFlatListRef.current?.scrollToIndex({ index: 0 })
-    }
+    const mergedResults: (DSO | GlobalPlanet | Star)[] = [...planetResults, ...results, ...starsResults]
+    setData(mergedResults)
   }, [results, planetResults, starsResults])
+
+  const handleRenderItem = ({item}: {item: DSO | GlobalPlanet | Star}) => {
+    const itemFamily = getObjectFamily(item)
+
+    switch (itemFamily) {
+      case 'DSO':
+        return <SearchResultCard object={item as DSO} navigation={navigation} />
+      case 'Planet':
+        return <SearchPlanetResultCard planet={item as GlobalPlanet} navigation={navigation} />
+      case 'Star':
+        return <SearchStarResultCard star={item as Star} navigation={navigation} />
+      default:
+        return <></>
+    }
+  }
 
   return (
     <View>
@@ -62,36 +69,15 @@ export default function HomeSearchResults({ results, planetResults, onReset, nav
         }
       </View>
       <SafeAreaView style={homeStyles.searchResults}>
-        <ScrollView horizontal>
-          <FlatList
-            ref={planetFlatListRef}
-            scrollEnabled={results.length > 1}
-            horizontal
-            data={planetResults}
-            ListEmptyComponent={<></>}
-            renderItem={({ item }) => <SearchPlanetResultCard planet={item} navigation={navigation} />}
-            keyExtractor={item => item.name + item.ra}
-          />
-          <FlatList
-            ref={flatListRef}
-            scrollEnabled={results.length > 1}
-            horizontal
-            data={results}
-            ListEmptyComponent={<></>}
-            renderItem={({ item }) => <SearchResultCard object={item} navigation={navigation} />}
-            keyExtractor={item => item.name + item.ra}
-          />
-          <FlatList
-            ref={starFlatListRef}
-            scrollEnabled={results.length > 1}
-            horizontal
-            data={starsResults}
-            ListEmptyComponent={<></>}
-            renderItem={({ item }) => <SearchStarResultCard star={item} navigation={navigation} />}
-            keyExtractor={item => item.ids + item.ra}
-          />
-        </ScrollView>
-
+        <FlatList
+          ref={resultsFlatListRef}
+          scrollEnabled={data.length > 1}
+          horizontal
+          data={data}
+          ListEmptyComponent={<View></View>}
+          renderItem={handleRenderItem}
+          keyExtractor={item => `${item.dec}-${item.ra}`}
+        />
       </SafeAreaView>
     </View>
   )

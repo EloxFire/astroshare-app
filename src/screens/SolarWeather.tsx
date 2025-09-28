@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from 'react'
 import { app_colors, cmeImageSrc, cmeVideoSrc, sunImagesSrcWavelengths, sunVideoSrcWavelengths } from '../helpers/constants'
 import { Dimensions, ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import { globalStyles } from '../styles/global'
-import { moonPhasesStyles } from '../styles/screens/moonPhases'
 import { solarWeatherStyles } from '../styles/screens/solarWeather'
 import { ESunFilter } from '../helpers/types/SunFilter'
 import { ResizeMode, Video } from 'expo-av'
@@ -12,9 +11,24 @@ import { localizedForecastPlaceholders, localizedImagePlaceholders, localizedVid
 import { i18n } from '../helpers/scripts/i18n'
 import PageTitle from '../components/commons/PageTitle'
 import SimpleButton from '../components/commons/buttons/SimpleButton'
-import DisclaimerBar from "../components/banners/DisclaimerBar";
+import ProLocker from "../components/cards/ProLocker";
+import {useAuth} from "../contexts/AuthContext";
+import {isProUser} from "../helpers/scripts/auth/checkUserRole";
+import KpChart from "../components/graphs/KpChart";
+import LineGraph from "../components/graphs/LineGraph";
+import {SolarWindData} from "../helpers/types/SolarWindData";
+import {getSolarWindData} from "../helpers/api/getSolarWindData";
+import {useSettings} from "../contexts/AppSettingsContext";
+import {useTranslation} from "../hooks/useTranslation";
+import {sendAnalyticsEvent} from "../helpers/scripts/analytics";
+import {eventTypes} from "../helpers/constants/analytics";
+import {routes} from "../helpers/routes";
 
 export default function SolarWeather({ navigation }: any) {
+
+  const { currentUserLocation } = useSettings();
+  const { currentUser } = useAuth()
+  const { currentLocale } = useTranslation()
 
   const videoRef = useRef(null);
 
@@ -30,6 +44,20 @@ export default function SolarWeather({ navigation }: any) {
   const [currentCmeImageFilter, setCurrentCmeImageFilter] = useState<ECmeFilters>('C2' as ECmeFilters)
   const [currentCmeImageUrl, setCurrentCmeImageUrl] = useState<string | undefined>("")
 
+  const [solarWindData, setSolarWindData] = useState<SolarWindData[]>([])
+
+  useEffect(() => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'Solar Weather screen view', eventTypes.SCREEN_VIEW, {}, currentLocale)
+  }, [])
+
+  useEffect(() => {
+    (async () => {
+      const data = await getSolarWindData();
+      if(data) {
+        setSolarWindData(data);
+      }
+    })()
+  }, [])
 
   useEffect(() => {
     handleChangeSunImage(currentImageFilter, 'img')
@@ -60,10 +88,15 @@ export default function SolarWeather({ navigation }: any) {
 
   return (
     <View style={globalStyles.body}>
-      <PageTitle navigation={navigation} title={i18n.t('home.buttons.solar_weather.title')} subtitle={i18n.t('home.buttons.solar_weather.subtitle')} />
+      <PageTitle
+        navigation={navigation}
+        title={i18n.t('home.buttons.solar_weather.title')}
+        subtitle={i18n.t('home.buttons.solar_weather.subtitle')}
+        backRoute={routes.home.path}
+      />
       <View style={globalStyles.screens.separator} />
       <ScrollView>
-        <View style={moonPhasesStyles.content}>
+        <View>
           {/* SUN CONTAINER */}
           <View style={solarWeatherStyles.container}>
             <View style={{ display: 'flex', flexDirection: 'row' }}>
@@ -89,7 +122,7 @@ export default function SolarWeather({ navigation }: any) {
                   rate={2.0}
                   isLooping={true}
                   resizeMode={ResizeMode.CONTAIN}
-                  style={{ width: Dimensions.get('window').width - 40, height: Dimensions.get('window').width - 40, marginVertical: 10, borderRadius: 10, opacity: loadingImage ? .1 : 1, borderWidth: loadingImage ? 1 : 0, borderColor: app_colors.white_eighty }}
+                  style={{ width: Dimensions.get('window').width - 40, height: Dimensions.get('window').width - 40, marginVertical: 10, borderRadius: 10, opacity: loadingImage ? .1 : 1, borderWidth: 1, borderColor: app_colors.white_twenty }}
                 >
                   <Image placeholder={localizedVideoPlaceholders[i18n.locale]} style={{ width: Dimensions.get('window').width - 40, height: Dimensions.get('window').width - 40, marginVertical: 10, borderRadius: 10 }} />
                 </Video>
@@ -98,7 +131,7 @@ export default function SolarWeather({ navigation }: any) {
               {
                 Object.keys(ESunFilter).map((key: string) => {
                   return (
-                    <SimpleButton key={key} text={key} onPress={() => handleChangeSunImage(ESunFilter[key as keyof typeof ESunFilter], isImageMode ? 'img' : 'video')} active={key === currentImageFilter} />
+                    <SimpleButton textColor={app_colors.white} small key={key} text={key} onPress={() => handleChangeSunImage(ESunFilter[key as keyof typeof ESunFilter], isImageMode ? 'img' : 'video')} active={key === currentImageFilter} />
                   )
                 })
               }
@@ -129,7 +162,7 @@ export default function SolarWeather({ navigation }: any) {
                   rate={1.0}
                   isLooping={true}
                   resizeMode={ResizeMode.CONTAIN}
-                  style={{ width: Dimensions.get('window').width - 40, height: Dimensions.get('window').width - 40, marginVertical: 10, borderRadius: 10, opacity: loadingCME ? .1 : 1, borderWidth: loadingCME ? 1 : 0, borderColor: app_colors.white_eighty }}
+                  style={{ width: Dimensions.get('window').width - 40, height: Dimensions.get('window').width - 40, marginVertical: 10, borderRadius: 10, opacity: loadingCME ? .1 : 1, borderWidth: 1, borderColor: app_colors.white_twenty }}
                 >
                   <Image placeholder={localizedVideoPlaceholders[i18n.locale]} style={{ width: Dimensions.get('window').width - 40, height: Dimensions.get('window').width - 40, marginVertical: 10, borderRadius: 10 }} />
                 </Video>
@@ -138,7 +171,7 @@ export default function SolarWeather({ navigation }: any) {
               {
                 Object.keys(ECmeFilters).map((key: string) => {
                   return (
-                    <SimpleButton key={key} text={key} onPress={() => handleChangeCMEImage(ECmeFilters[key as keyof typeof ECmeFilters], isCmeImageMode ? 'img' : 'video')} active={key === currentCmeImageFilter} />
+                    <SimpleButton textColor={app_colors.white} small key={key} text={key} onPress={() => handleChangeCMEImage(ECmeFilters[key as keyof typeof ECmeFilters], isCmeImageMode ? 'img' : 'video')} active={key === currentCmeImageFilter} />
                   )
                 })
               }
@@ -149,7 +182,7 @@ export default function SolarWeather({ navigation }: any) {
           <View style={solarWeatherStyles.container}>
             <Text style={solarWeatherStyles.container.title}>{i18n.t('solarWeather.containers.sunspots')}</Text>
             <Text style={solarWeatherStyles.container.subtitle}>Source : NASA / SoHO (Solar and Heliospheric Observatory)</Text>
-            <DisclaimerBar message={"Service temporairement indisponible."} type={"error"}/>
+            {/*<DisclaimerBar message={"Service temporairement indisponible."} type={"error"}/>*/}
             <Image placeholder={localizedImagePlaceholders[i18n.locale]} source={{ uri: "https://soho.nascom.nasa.gov/data/synoptic/sunspots_earth/mdi_sunspots.jpg" + '?' + new Date() }} style={solarWeatherStyles.sunImage} />
           </View>
 
@@ -164,6 +197,46 @@ export default function SolarWeather({ navigation }: any) {
             <Text style={solarWeatherStyles.container.title}>{i18n.t('solarWeather.containers.southernAurora')}</Text>
             <Text style={solarWeatherStyles.container.subtitle}>Source : NOAA Space Weather Prediction Center</Text>
             <Image placeholder={localizedForecastPlaceholders[i18n.locale]} source={{ uri: "https://services.swpc.noaa.gov/images/animations/ovation/south/latest.jpg" + '?' + new Date() }} style={solarWeatherStyles.sunImage} />
+          </View>
+
+          {/* KP INDEXES CONTAINER */}
+          <View style={solarWeatherStyles.container}>
+            <Text style={solarWeatherStyles.container.title}>{i18n.t('solarWeather.containers.kpIndexes')}</Text>
+            <Text style={[solarWeatherStyles.container.subtitle, {marginBottom: 10}]}>Source : SWPC (Space Weather Prediction Center) / NOAA (National Oceanic and Atmospheric Administration)</Text>
+            <Text style={[solarWeatherStyles.container.subtitle, {marginBottom: 10}]}>Les horaires suivantes sont en UTC</Text>
+            <Text style={[solarWeatherStyles.container.subtitle, {marginBottom: 10}]}>Ce graphique affiche des tranches de 3 heures. Il est mis à jour toutes les 3 heures.</Text>
+            {
+              isProUser(currentUser) ?
+                <KpChart />
+                :
+              <ProLocker id={routes.solarWeather.path} darker navigation={navigation} image={require('../../assets/images/tools/sun.png')} />
+            }
+          </View>
+
+          {/* SOLAR WINDS CONTAINER */}
+          <View style={solarWeatherStyles.container}>
+            <Text style={solarWeatherStyles.container.title}>{i18n.t('solarWeather.containers.solarWinds')}</Text>
+            <Text style={[solarWeatherStyles.container.subtitle, {marginBottom: 10}]}>Source : SWPC (Space Weather Prediction Center) / NOAA (National Oceanic and Atmospheric Administration)</Text>
+            <Text style={[solarWeatherStyles.container.subtitle, {marginBottom: 10}]}>Les horaires suivantes sont en UTC</Text>
+            {
+              isProUser(currentUser) ?
+                <>
+                  {
+                    solarWindData.length !== 0 && (
+                      <>
+                        <Text style={[solarWeatherStyles.container.title, {fontSize: 15, marginBottom: 10}]}>Vitesse (Km/h)</Text>
+                        <LineGraph yMin={100} yMax={1200} data={solarWindData} field={"speed"} lineColor={app_colors.turquoise} leftMargin={55} rightMargin={10}/>
+                        <Text style={[solarWeatherStyles.container.title, {fontSize: 15, marginBottom: 10}]}>Densité (p/cm³)</Text>
+                        <LineGraph yMin={-4} yMax={100} data={solarWindData} field={"density"} lineColor={app_colors.green} leftMargin={55} rightMargin={10}/>
+                        <Text style={[solarWeatherStyles.container.title, {fontSize: 15, marginBottom: 10}]}>Température (°K)</Text>
+                        <LineGraph shortNumbers yMin={-100000} yMax={600000} data={solarWindData} field={"temperature"} lineColor={app_colors.orange} leftMargin={65} rightMargin={10}/>
+                      </>
+                    )
+                  }
+                </>
+                :
+                <ProLocker id={routes.solarWeather.path} darker navigation={navigation} image={require('../../assets/images/tools/sun.png')} />
+            }
           </View>
         </View>
       </ScrollView>

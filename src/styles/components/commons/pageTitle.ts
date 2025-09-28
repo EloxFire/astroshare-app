@@ -1,3 +1,5 @@
+import {StatusBar} from "react-native";
+
 export const pageTitleStyles = {
   container: {
     display: 'flex' as 'flex',

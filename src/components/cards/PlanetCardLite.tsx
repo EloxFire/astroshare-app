@@ -40,7 +40,7 @@ export default function PlanetCardLite({ planet, navigation }: PlanetCardLitePro
   }, [])
 
   return (
-    <TouchableOpacity onPress={() => navigation.push(routes.planetDetails.path, { planet: planet })} style={objectCardLiteStyles.card}>
+    <TouchableOpacity onPress={() => navigation.push(routes.celestialBodies.details.path, { object: planet })} style={objectCardLiteStyles.card}>
       <View style={[objectCardLiteStyles.card.visibility, {backgroundColor: isVisible ? app_colors.green : app_colors.red}]}/>
       <Image style={objectCardLiteStyles.card.image} source={astroImages[planet.name.toUpperCase()]} />
       <View style={objectCardLiteStyles.card.infos}>

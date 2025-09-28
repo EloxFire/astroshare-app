@@ -10,13 +10,13 @@ export const nextLaunchCountdownWidgetStyles = {
     marginVertical: 10,
     overflow: 'hidden' as 'hidden',
 
-    backgroundImage: {
+    bgImage: {
       flex: 1,
       justifyContent: 'center' as 'center',
       alignItems: 'center' as 'center',
       position: 'relative' as 'relative',
 
-      filter: {
+      bgFilter: {
         backgroundColor: app_colors.black,
         opacity: 0.50,
         position: 'absolute' as 'absolute',
@@ -58,6 +58,7 @@ export const nextLaunchCountdownWidgetStyles = {
         paddingHorizontal: 10,
         color: app_colors.white,
         backgroundColor: app_colors.white_no_opacity,
+        fontFamily: 'DMMonoMedium' as 'DMMonoMedium',
         fontSize: 12,
         height: 25,
         minWidth: 50,

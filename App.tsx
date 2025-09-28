@@ -1,3 +1,4 @@
+import 'react-native-get-random-values';
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import {useEffect, useRef, useState} from "react";
@@ -14,7 +15,6 @@ import Settings from "./src/screens/Settings";
 import Weather from "./src/screens/Weather";
 import dayjs from "dayjs";
 import About from "./src/screens/About";
-import ObjectDetails from "./src/screens/ObjectDetails";
 import Apod from "./src/screens/Apod";
 import MoonPhases from "./src/screens/MoonPhases";
 import ViewPointsManager from "./src/screens/ViewPointsManager";
@@ -22,6 +22,8 @@ import utc from 'dayjs/plugin/utc'
 import tz from 'dayjs/plugin/timezone'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import LocalizedFormat from 'dayjs/plugin/localizedFormat'
+import Calendar from 'dayjs/plugin/calendar'
+import AdvancedFormat from 'dayjs/plugin/advancedFormat'
 import Duration from 'dayjs/plugin/duration'
 import SolarWeather from "./src/screens/SolarWeather";
 import ScopeAlignment from "./src/screens/ScopeAlignment";
@@ -31,9 +33,7 @@ import Onboarding from "./src/screens/Onboarding";
 import SatelliteTracker from "./src/screens/satelliteTracker/SatelliteTracker";
 import SkyMapGenerator from "./src/screens/skymap/SkyMapGenerator";
 import FavouritesScreen from "./src/screens/FavouritesScreen";
-import PlanetDetails from "./src/screens/PlanetDetails";
 import { SolarSystemProvider } from "./src/contexts/SolarSystemContext";
-import BrightStarDetails from "./src/screens/BrightStarDetails";
 import TutorialScreen from "./src/screens/TutorialScreen";
 import { TranslationProvider } from "./src/hooks/useTranslation";
 import './src/helpers/scripts/i18n/index';
@@ -63,6 +63,21 @@ import {AuthContextProvider} from "./src/contexts/AuthContext";
 import LoginScreen from "./src/screens/auth/LoginScreen";
 import RegisterScreen from "./src/screens/auth/RegisterScreen";
 import ProfileScreen from "./src/screens/auth/Profile";
+import PlanetaryConjunctionScreen from "./src/screens/transits/PlanetaryConjunctionScreen";
+import IssPasses from "./src/screens/satelliteTracker/IssPasses";
+import PaywallScreen from "./src/screens/pro/PaywallScreen";
+import CelestialBodyOverview from "./src/screens/celestialBodies/CelestialBodyOverview";
+import {app_colors} from "./src/helpers/constants";
+import * as SystemUI from 'expo-system-ui';
+import CalculationHome from "./src/screens/calculations/CalculationHome";
+import {SolarEclipsesScreen} from "./src/screens/transits/SolarEclipsesScreen";
+import SolarEclipseDetails from "./src/screens/transits/SolarEclipseDetails";
+import LunarEclipsesScreen from "./src/screens/transits/LunarEclipsesScreen";
+import LunarEclipseDetails from "./src/screens/transits/LunarEclipseDetails";
+
+import { LogBox } from 'react-native';
+import {setupAnalytics} from "./src/helpers/scripts/analytics";
+import NewsBannerManager from './src/screens/settings/NewsBannerManager';
 
 dayjs.locale('fr');
 dayjs.extend(LocalizedFormat)
@@ -70,13 +85,18 @@ dayjs.extend(Duration)
 dayjs.extend(utc)
 dayjs.extend(tz)
 dayjs.extend(relativeTime)
+dayjs.extend(Calendar)
 dayjs.tz.setDefault('Europe/Paris');
+dayjs.extend(AdvancedFormat)
 dayjs().format('L LT')
 
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
+
+  LogBox.ignoreLogs(['EXGL: gl.pixelStorei()'])
+
   const {expoPushToken, notification} = usePushNotifications();
 
   console.log('expoPushToken', expoPushToken?.data);
@@ -86,6 +106,7 @@ export default function App() {
   useEffect(() => {
     async function prepare() {
       try {
+        await SystemUI.setBackgroundColorAsync(app_colors.black)
         await useFonts()
         console.log('Fonts loaded');
       } catch (e) {
@@ -98,6 +119,13 @@ export default function App() {
 
     prepare();
   }, []);
+
+  // SETUP ANALYTICS FOR TRACK EVENTS
+  useEffect(() => {
+    setupAnalytics().then(() => {
+      console.log('[Analytics] Analytics setup completed');
+    })
+  })
 
 
   if (!appIsReady) {
@@ -127,16 +155,22 @@ export default function App() {
 
                             {/*APP SCREENS*/}
                             <Stack.Screen name={routes.home.path} component={Home} />
-                            <Stack.Screen name={routes.objectDetails.path} component={ObjectDetails} />
-                            <Stack.Screen name={routes.planetDetails.path} component={PlanetDetails} />
-                            <Stack.Screen name={routes.brightStarDetails.path} component={BrightStarDetails} />
+                            <Stack.Screen name={routes.celestialBodies.details.path} component={CelestialBodyOverview} />
                             <Stack.Screen name={routes.favorites.path} component={FavouritesScreen} />
                             <Stack.Screen name={routes.scopeAlignment.path} component={ScopeAlignment} />
                             <Stack.Screen name={routes.weather.path} component={Weather} />
                             <Stack.Screen name={routes.moonPhases.path} component={MoonPhases} />
                             <Stack.Screen name={routes.solarWeather.path} component={SolarWeather} />
                             <Stack.Screen name={routes.apod.path} component={Apod} />
-                            <Stack.Screen name={routes.transitScreen.path} component={TransitsScreen} />
+                            <Stack.Screen name={routes.calculations.home.path} component={CalculationHome} />
+
+                            {/*TRANSITS SCREENS*/}
+                            <Stack.Screen name={routes.transits.home.path} component={TransitsScreen} />
+                            <Stack.Screen name={routes.transits.planetary.path} component={PlanetaryConjunctionScreen} />
+                            <Stack.Screen name={routes.transits.eclipses.solar.path} component={SolarEclipsesScreen} />
+                            <Stack.Screen name={routes.transits.eclipses.solarDetails.path} component={SolarEclipseDetails} />
+                            <Stack.Screen name={routes.transits.eclipses.lunar.path} component={LunarEclipsesScreen} />
+                            <Stack.Screen name={routes.transits.eclipses.lunarDetails.path} component={LunarEclipseDetails} />
 
                             {/*SETTINGS SCREENS*/}
                             <Stack.Screen name={routes.settings.path} component={Settings} />
@@ -144,14 +178,19 @@ export default function App() {
                             <Stack.Screen name={routes.changelogScreen.path} component={ChangelogScreen} />
                             <Stack.Screen name={routes.astroDataInfos.path} component={AstroDataInfos} />
                             <Stack.Screen name={routes.widgetsManager.path} component={WidgetManager} />
+                            <Stack.Screen name={routes.newsManager.home.path} component={NewsBannerManager} />
                             <Stack.Screen name={routes.favoritesViewPoints.path} component={ViewPointsManager} />
                             <Stack.Screen name={routes.about.path} component={About} />
+
+                            {/*MARKETING SCREENS*/}
                             <Stack.Screen name={routes.sellScreen.path} component={SellScreen} />
+                            <Stack.Screen name={routes.pro.paywallScreen.path} component={PaywallScreen} />
 
                             {/*SATELLITE TRACKING SCREENS*/}
                             <Stack.Screen name={routes.satelliteTracker.path} component={SatelliteTracker} />
                             <Stack.Screen name={routes.issTracker.path} component={IssTracker} />
                             <Stack.Screen name={routes.starlinkTracker.path} component={StarlinkTracker} />
+                            <Stack.Screen name={routes.satellitesTrackers.issPasses.path} component={IssPasses} />
 
                             {/*MAP SCREENS*/}
                             <Stack.Screen name={routes.skymapSelection.path} component={SkyMapSelection} />
@@ -160,7 +199,6 @@ export default function App() {
 
                             {/*PLANIFICATEUR*/}
                             <Stack.Screen name={routes.observationPlanner.path} component={ObservationPlannerScreen} />
-
 
                             {/*ROCKET LAUNCHES SCREENS*/}
                             <Stack.Screen name={routes.launchesScreen.path} component={LaunchesScreen} />

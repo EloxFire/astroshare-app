@@ -7,13 +7,12 @@ import { extractNumbers } from '../../../helpers/scripts/extractNumbers';
 import { calculateHorizonAngle } from '../../../helpers/scripts/astro/calculateHorizonAngle';
 import { i18n } from '../../../helpers/scripts/i18n';
 import { app_colors } from '../../../helpers/constants';
-import { globalStyles } from '../../../styles/global';
 import { nightSummaryStyles } from '../../../styles/components/widgets/home/nightSummary';
 import dayjs from 'dayjs';
-import { moonIcons } from '../../../helpers/scripts/loadImages';
 import { GlobalPlanet } from '../../../helpers/types/GlobalPlanet';
 import { useSolarSystem } from '../../../contexts/SolarSystemContext';
 import { isNightPastTwelve } from '../../../helpers/scripts/astro/transits/isNightPastTwelve';
+import {astroshareApi} from "../../../helpers/api";
 
 interface NightInterface {
   start: Date | null,
@@ -46,24 +45,24 @@ export default function NightSummary({ noHeader }: NightSummaryProps) {
   const [night, setNight] = useState<NightInterface>()
   const [moonData, setMoonData] = useState<MoonData | null>(null)
   const [visiblePlanets, setVisiblePlanets] = useState<GlobalPlanet[]>([])
+  const [moonImageUrl, setMoonImageUrl] = useState<undefined | {uri: string }>(undefined)
 
   useEffect(() => {
     getInfos()
+    fetchMoonImage()
   }, [currentUserLocation])
 
   const getInfos = async () => {
     if (!currentUserLocation) return;
-    const date = isNightPastTwelve(new Date(), {latitude: currentUserLocation.lat, longitude: currentUserLocation.lon}) ? dayjs().subtract(1, 'day').toDate() : dayjs().subtract(12,'hours').toDate();
-    
 
     const altitude = selectedSpot ? selectedSpot.equipments.altitude : defaultAltitude;
     const observer: GeographicCoordinate = { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }
     const horizonAngle = calculateHorizonAngle(extractNumbers(altitude))
 
-    const nightTimes = getNight(date, observer, horizonAngle)
+    const nightTimes = getNight(new Date(), observer, horizonAngle)
     setNight(nightTimes)
 
-    getMoonData(date)
+    getMoonData(new Date())
 
     let vp: GlobalPlanet[] = [];
     planets.forEach((planet: GlobalPlanet) => {
@@ -91,7 +90,6 @@ export default function NightSummary({ noHeader }: NightSummaryProps) {
     const moonset = getMoonRiseAndSet(date).moonset
 
 
-
     setMoonData({
       phase: phase || 'Full',
       illumination: illumination || i18n.t('common.errors.simple'),
@@ -103,6 +101,11 @@ export default function NightSummary({ noHeader }: NightSummaryProps) {
       moonrise: moonrise || i18n.t('common.errors.simple'),
       moonset: moonset || i18n.t('common.errors.simple'),
     })
+  }
+
+  const fetchMoonImage = async () => {
+    const response = await astroshareApi.get('/moon/illustration')
+    setMoonImageUrl({uri: `data:image/png;base64,${response.data.image}`})
   }
 
   const getMoonRiseAndSet = (date: Date): { moonrise: string, moonset: string } => {
@@ -139,13 +142,6 @@ export default function NightSummary({ noHeader }: NightSummaryProps) {
 
   return (
     <View style={{ marginTop: noHeader ? 0 : 10, marginBottom: 20 }}>
-      {/*{*/}
-      {/*  !noHeader &&*/}
-      {/*  <View>*/}
-      {/*    <Text style={globalStyles.sections.title}>{i18n.t('common.other.overview')}</Text>*/}
-      {/*    <Text style={[globalStyles.sections.subtitle, { marginBottom: 0 }]}>{i18n.t('widgets.homeWidgets.night.title')}</Text>*/}
-      {/*  </View>*/}
-      {/*}*/}
       <ImageBackground source={loading ? undefined : require('../../../../assets/icons/astro/bands/NIGHT.png')} imageStyle={nightSummaryStyles.container.backgroundPicture} resizeMode='cover' style={[nightSummaryStyles.container, { justifyContent: loading ? 'center' : 'flex-start' }]}>
         {
           loading ?
@@ -155,7 +151,6 @@ export default function NightSummary({ noHeader }: NightSummaryProps) {
               <View style={nightSummaryStyles.container.blur} />
               <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
                 <Text style={nightSummaryStyles.container.title}>{isNightPastTwelve(new Date, {latitude: currentUserLocation.lat, longitude: currentUserLocation.lon}) ? i18n.t('widgets.homeWidgets.night.container.alterTitle') : dayjs().isAfter(dayjs(night!.start)) ? i18n.t('widgets.homeWidgets.night.container.alterTitle') : i18n.t('widgets.homeWidgets.night.container.title')}</Text>
-                {/* <Text style={nightSummaryStyles.container.title}>Planètes</Text> */}
                 <Text style={nightSummaryStyles.container.title}>{moonData ? moonPhasesList[moonData.phase] : i18n.t('common.loadings.simple')}</Text>
               </View>
               <View style={nightSummaryStyles.container.data}>
@@ -178,7 +173,12 @@ export default function NightSummary({ noHeader }: NightSummaryProps) {
                           <Text style={nightSummaryStyles.container.data.timings.info.title}>Lever</Text>
                           <Text style={nightSummaryStyles.container.data.timings.info.value}>{moonData.moonrise}</Text>
                         </View> */}
-                        <Image source={moonIcons[moonData.phase]} style={nightSummaryStyles.container.data.moon.icon} resizeMode='contain' />
+                        {
+                          !moonImageUrl ?
+                            <ActivityIndicator size='small' color={app_colors.white} />
+                            :
+                            <Image source={moonImageUrl} style={nightSummaryStyles.container.data.moon.icon} />
+                        }
                         {/* <View style={[nightSummaryStyles.container.data.timings.info, { alignItems: 'flex-start' }]}>
                           <Text style={nightSummaryStyles.container.data.timings.info.title}>Coucher</Text>
                           <Text style={nightSummaryStyles.container.data.timings.info.value}>{moonData.moonset}</Text>

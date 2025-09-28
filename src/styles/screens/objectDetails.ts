@@ -1,4 +1,3 @@
-import { tint } from "react-native-color-matrix-image-filters";
 import { app_colors } from "../../helpers/constants";
 
 export const objectDetailsStyles = {
@@ -100,7 +99,7 @@ export const objectDetailsStyles = {
 
     title: {
       fontSize: 12,
-      fontFamily: 'AuxMono',
+      fontFamily: 'DMMonoRegular',
       color: app_colors.white,
       opacity: .5,
     },
@@ -112,8 +111,8 @@ export const objectDetailsStyles = {
     },
 
     chip: {
-      fontSize: 15,
-      fontFamily: 'GilroyRegular',
+      fontSize: 12,
+      fontFamily: 'DMMonoRegular',
       color: app_colors.white,
       paddingVertical: 2,
       paddingHorizontal: 5,

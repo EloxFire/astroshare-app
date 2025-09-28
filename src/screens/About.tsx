@@ -1,5 +1,5 @@
 import React from "react";
-import { Image, ScrollView, Text, View } from "react-native";
+import {Image, ScrollView, Text, TouchableOpacity, View} from "react-native";
 import { globalStyles } from "../styles/global";
 import { i18n } from "../helpers/scripts/i18n";
 import {localizedWhiteLogo} from "../helpers/scripts/loadImages";
@@ -9,10 +9,21 @@ import PageTitle from "../components/commons/PageTitle";
 import SimpleButton from "../components/commons/buttons/SimpleButton";
 import * as Linking from 'expo-linking';
 import {aboutStyles} from "../styles/screens/about";
+import {storeData} from "../helpers/storage";
+import {app_colors, storageKeys} from "../helpers/constants";
+import {showToast} from "../helpers/scripts/showToast";
 
 export default function About({ navigation }: any) {
 
   const { currentLocale } = useTranslation();
+
+  const handleHiddenPremiumAccess = () => {
+    storeData(storageKeys.hiddenPremiumAccess, 'yes').then(() => {
+      showToast({message: 'Premium access granted', type: 'success', duration: 1000});
+    }).catch(() => {
+      showToast({message: 'Error while granting premium access', type: 'error', duration: 1000});
+    })
+  }
 
   return (
     <View style={globalStyles.body}>
@@ -54,11 +65,14 @@ export default function About({ navigation }: any) {
             <Text style={[aboutStyles.content.card.text, {textAlign: 'left'}]}>{i18n.t('about.legal.phone')}</Text>
             <Text style={[aboutStyles.content.card.text, {textAlign: 'left'}]}>{i18n.t('about.legal.siret')}</Text>
           </View>
-          <SimpleButton fullWidth text={i18n.t('about.contact.title')} icon={require('../../assets/icons/FiMail.png')} onPress={() => Linking.openURL('mailto:contact@enzoavagliano.fr')} />
-          <SimpleButton fullWidth text={i18n.t('about.privacy.title')} icon={require('../../assets/icons/FiShield.png')} onPress={() => Linking.openURL('https://www.astroshare.fr/application-mobile/politique-de-confidentialite')} />
+          <SimpleButton textColor={app_colors.white} align={'flex-start'} fullWidth text={i18n.t('about.contact.title')} icon={require('../../assets/icons/FiMail.png')} onPress={() => Linking.openURL('mailto:contact@enzoavagliano.fr')} />
+          <SimpleButton textColor={app_colors.white} align={'flex-start'} fullWidth text={i18n.t('about.website.title')} icon={require('../../assets/icons/FiAzGrid.png')} onPress={() => Linking.openURL('https://www.astroshare.fr')} />
+          <SimpleButton textColor={app_colors.white} align={'flex-start'} fullWidth text={i18n.t('about.privacy.title')} icon={require('../../assets/icons/FiShield.png')} onPress={() => Linking.openURL('https://www.astroshare.fr/application-mobile/politique-de-confidentialite')} />
           {/*<SimpleButton fullWidth text={i18n.t('about.license.title')} icon={require('../../assets/icons/FiShield.png')} />*/}
 
-          <Image source={localizedWhiteLogo[currentLocale]} resizeMode="contain" style={{ width: '50%', alignSelf: "center" }} />
+          <TouchableOpacity onLongPress={() => {handleHiddenPremiumAccess()}} >
+            <Image source={localizedWhiteLogo[currentLocale]} resizeMode="contain" style={{ width: '50%', alignSelf: "center" }} />
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </View>

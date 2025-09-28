@@ -9,7 +9,7 @@ export const astroDataInfosTranslations = {
   },
   planets: {
     title: "Planètes",
-    text1: "Toutes les données relatives aux planètes sont le résultat de calculs astronomiques réalisés avec l'aide d'un outil indépendant : Observerly",
+    text1: "Toutes les données relatives aux planètes sont le résultat de calculs astronomiques réalisés en interne dans l'application avec l'aide d'un outil indépendant : Observerly",
   },
   satellites: {
     title: "Satellites",
@@ -31,6 +31,7 @@ export const astroDataInfosTranslations = {
   solarWeather: {
     title: "Météo solaire",
     text1: "Toutes les données relatives à la météo solaire proviennent des sites suivants :",
+    text2: "- Solar Dynamics Observatory (sdo.gsfc.nasa.gov)\n- Solar And Heliospheric Observatory (soho.nascom.nasa.gov)\n- National Oceanic and Atmospheric Administration (noaa.gov)"
   },
   apod: {
     title: "Image du jour (APOD)",
@@ -38,10 +39,18 @@ export const astroDataInfosTranslations = {
   },
   skymap: {
     title: "Cartes du ciel",
-    text1: "Les cartes du ciel générées par l'application sont réalisées à partir des calculs réalisés grâce à l'outil indépendant : Observerly",
+    text1: "Les cartes du ciel générées par l'application sont réalisées à partir des calculs internes dans l'application grâce à l'outil indépendant : Observerly",
   },
   moonPhases: {
     title: "Phases de la Lune",
-    text1: "Les informations et phases de la Lune affichées dans l'application sont calculées grâce à l'outil indépendant : Observerly",
+    text1: "Les informations et phases de la Lune affichées sont calculées en interne dans l'application grâce à l'outil indépendant : Observerly",
+  },
+  conjunctions: {
+    title: "Conjonctions planétaires",
+    text1: "Les informations sur les conjonctions planétaires affichées sont calculées en interne dans l'application grâce à l'outil indépendant : Observerly",
+  },
+  eclipses: {
+    title: "Éclipses solaires et lunaires",
+    text1: "Les informations sur les éclipses affichées dans l'application sont calculées grâce à l'API de l'IMCCE (Institut de Mécanique Céleste et de Calcul des Éphémérides)",
   }
 }

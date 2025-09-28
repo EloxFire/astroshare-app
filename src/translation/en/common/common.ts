@@ -29,6 +29,13 @@ export const commonTranslations = {
     last_quarter: "Last Quarter",
     waning_crescent: "Last Crescent",
   },
+  objects: {
+    types: {
+      star: "Star",
+      planet: "Planet",
+      moon: "Moon",
+    }
+  },
   other: {
     yes: "Yes",
     no: "No",
@@ -38,6 +45,7 @@ export const commonTranslations = {
     removeFav: "Remove from favorites",
     addFav: "Add to favorites",
     overview: "Overview",
+    more: "See more"
   },
   time: {
     time: "Time",
@@ -58,6 +66,7 @@ export const commonTranslations = {
   visibility: {
     title: "Visibility",
     visible: "Visible",
+    partiallyVisible: "Partially visible",
     notVisible: "Not visible",
     error: "Error while calculating visibility",
     nextRise: "Next rise time",

@@ -1,4 +1,5 @@
 import * as Notifications from 'expo-notifications';
+import {SchedulableTriggerInputTypes} from 'expo-notifications';
 
 interface NotificationContent {
   title: string
@@ -14,7 +15,10 @@ export async function scheduleLocalNotification({title, body, data, date}: Notif
       body: body,
       data: data || {},
     },
-    trigger: { date: date },
+    trigger: {
+      type: SchedulableTriggerInputTypes.DATE,
+      date: date
+    },
   });
 }
 

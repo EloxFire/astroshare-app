@@ -32,7 +32,7 @@ export const bigButtonStyles = {
       color: app_colors.white,
       opacity: .6,
       fontSize: 10,
-      fontFamily: 'AuxMono',
+      fontFamily: 'DMMonoRegular',
     }
   }
 }

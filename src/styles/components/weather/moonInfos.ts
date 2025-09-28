@@ -24,6 +24,7 @@ export const moonInfosStyles = {
       flexDirection: 'row' as 'row',
       marginTop: 10,
       marginLeft: 5,
+      gap: 15,
     },
   }
 }

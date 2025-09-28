@@ -9,10 +9,18 @@ import { isFirstLaunch } from '../../helpers/scripts/checkFirstLaunch'
 import { i18n } from '../../helpers/scripts/i18n'
 import { localizedWhiteLogo } from '../../helpers/scripts/loadImages'
 import {useAuth} from "../../contexts/AuthContext";
+import ProBadge from "../badges/ProBadge";
+import {isProUser} from "../../helpers/scripts/auth/checkUserRole";
+import {sendAnalyticsEvent} from "../../helpers/scripts/analytics";
+import {useTranslation} from "../../hooks/useTranslation";
+import {useSettings} from "../../contexts/AppSettingsContext";
+import {eventTypes} from "../../helpers/constants/analytics";
 
 export default function AppHeader({ navigation }: any) {
 
-  const {loginUser, currentUser} = useAuth()
+  const {currentUser} = useAuth()
+  const { currentLocale } = useTranslation()
+  const { currentUserLocation } = useSettings()
 
   const isFocused = useIsFocused();
   const [hasFavs, setHasFavs] = useState(false)
@@ -28,6 +36,10 @@ export default function AppHeader({ navigation }: any) {
       setHasFavs(favsObjects && favsObjects.length > 0 || favsPlanets && favsPlanets.length > 0 || favsStars && favsStars.length > 0)
     })()
   }, [isFocused])
+
+  useEffect(() => {
+    console.log('App header currentUser', currentUser)
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -65,10 +77,35 @@ export default function AppHeader({ navigation }: any) {
   const handleProfilePress = () => {
     console.log('currentUser', currentUser)
     if(currentUser){
+      sendAnalyticsEvent(currentUser, currentUserLocation, 'Profile button pressed', eventTypes.BUTTON_CLICK, {target: "profile screen"}, currentLocale)
       navigation.push(routes.auth.profile.path)
     }else{
+      sendAnalyticsEvent(currentUser, currentUserLocation, 'Login button pressed', eventTypes.BUTTON_CLICK, {target: "login screen"}, currentLocale)
       navigation.push(routes.auth.login.path)
     }
+  }
+
+  const handleFavPress = () => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'Favorites button pressed', eventTypes.BUTTON_CLICK, {}, currentLocale)
+    navigation.push(routes.favorites.path)
+  }
+
+  const handleSettingsPress = () => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'Settings button pressed', eventTypes.BUTTON_CLICK, {}, currentLocale)
+    navigation.push(routes.settings.path)
+  }
+
+  const handleTutorialPress = () => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'Tutorial button pressed', eventTypes.BUTTON_CLICK, {}, currentLocale)
+    navigation.push(routes.tutorial.path)
+  }
+
+  const handleSellscreenPress = () => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'Sell screen button pressed', eventTypes.BUTTON_CLICK, {}, currentLocale)
+      .then(() => {
+        console.log('[Analytics] Sell screen button pressed event sent successfully');
+        navigation.push(routes.sellScreen.path)
+      })
   }
 
   return (
@@ -78,21 +115,27 @@ export default function AppHeader({ navigation }: any) {
         resizeMode='contain'
       />
       <View style={appHeaderStyles.container.buttons}>
-        {/*<TouchableOpacity onPress={() => sendPushNotification()}>*/}
-        {/*  <Image source={require('../../../assets/icons/FiUnlock.png')} style={{ width: 20, height: 20, tintColor: app_colors.gold }} />*/}
-        {/*</TouchableOpacity>*/}
+        {
+          (!currentUser || !isProUser(currentUser)) && (
+            <TouchableOpacity onPress={() => handleSellscreenPress()}>
+              <ProBadge additionalStyles={{marginRight: 5}}/>
+            </TouchableOpacity>
+          )
+        }
+
         <TouchableOpacity onPress={() => handleProfilePress()}>
-          <Image source={require('../../../assets/icons/FiUser.png')} style={{ width: 20, height: 20, tintColor: app_colors.gold }} />
+          <Image source={require('../../../assets/icons/FiUser.png')} style={{ width: 20, height: 20 }} />
         </TouchableOpacity>
+
         {
           showTutorial &&
           <Animated.View style={{ transform: [{ scale: interpolated }] }}>
-            <TouchableOpacity style={appHeaderStyles.container.tutorialButton} onPress={() => navigation.push(routes.tutorial.path)}>
+            <TouchableOpacity style={appHeaderStyles.container.tutorialButton} onPress={() => handleTutorialPress()}>
               <Text style={appHeaderStyles.container.tutorialButton.text}>{i18n.t('tutorialScreen.button')}</Text>
             </TouchableOpacity>
           </Animated.View>
         }
-        <TouchableOpacity onPress={() => navigation.push(routes.favorites.path)}>
+        <TouchableOpacity onPress={() => handleFavPress()}>
           {
             !hasFavs ?
               <Image source={require('../../../assets/icons/FiHeart.png')} style={{ width: 20, height: 20 }} />
@@ -100,7 +143,7 @@ export default function AppHeader({ navigation }: any) {
               <Image source={require('../../../assets/icons/FiHeartFill.png')} style={{ width: 20, height: 20, tintColor: app_colors.red_eighty }} />
           }
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.push(routes.settings.path)}>
+        <TouchableOpacity onPress={() => handleSettingsPress()}>
           <Image source={require('../../../assets/icons/FiSettings.png')} style={{ width: 20, height: 20 }} />
         </TouchableOpacity>
       </View>

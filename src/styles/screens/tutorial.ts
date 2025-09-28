@@ -25,7 +25,7 @@ export const tutorialStyles = {
       subtitle: {
         fontSize: 12,
         color: app_colors.white,
-        fontFamily: 'AuxMono',
+        fontFamily: 'DMMonoRegular',
         opacity: 0.8,
         alignSelf: 'center' as 'center',
         marginBottom: 20,

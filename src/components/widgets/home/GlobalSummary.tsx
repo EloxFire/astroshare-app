@@ -17,6 +17,7 @@ import { globalSummaryStyles } from "../../../styles/components/widgets/home/glo
 import { globalStyles } from "../../../styles/global";
 import { app_colors } from "../../../helpers/constants";
 import { isNightPastTwelve } from "../../../helpers/scripts/astro/transits/isNightPastTwelve";
+import {getCurrentTwilightBand} from "../../../helpers/scripts/astro/transits/getTwilightBands";
 
 interface GlobalSummaryProps {
   noHeader?: boolean
@@ -38,19 +39,17 @@ export default function GlobalSummary({ noHeader }: GlobalSummaryProps) {
 
     const interval = setInterval(() => {
       getInfos()
-    }, 60000)
+    }, 300000)
 
     return () => clearInterval(interval)
-  }, [currentUserLocation, planets])
+  }, [])
 
   const getInfos = async (): Promise<void> => {
     if(!currentUserLocation) return;
-    const nightPastTwelve: boolean = isNightPastTwelve(new Date(), { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon })
-
-    // If isNightPastTwelve is true, we need to set the date to the previous day
-    const date = new Date()
-    date.setDate(date.getDate() - (nightPastTwelve ? 1 : 0))    
-    if (!currentUserLocation) return;    
+    setLoading(true)
+    setCurrentWeather(null)
+    setVisiblePlanets([])
+    setBackgroundColor(twilightBandsBackgrounds.Night)
 
     const altitude = selectedSpot ? selectedSpot.equipments.altitude : defaultAltitude;
     const observer: GeographicCoordinate = { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }
@@ -59,15 +58,18 @@ export default function GlobalSummary({ noHeader }: GlobalSummaryProps) {
     try {
       const weather = await getWeather(currentUserLocation.lat, currentUserLocation.lon)
       setCurrentWeather(weather)
-
+      console.log('[GlobalSummary] Current weather:', JSON.stringify(weather.current))
     } catch (error) {
       showToast({ message: 'Erreur lors de la récupération de la météo', type: 'error' })
     }
 
-    const bands = getTwilightBandsForDay(date, observer)
+    const currentBand: TwilightBand | null = getCurrentTwilightBand(new Date(), observer);
 
-    // console.log(bands)
-    setBackgroundColor(backgroundFromTwilightBands(bands))
+    if (currentBand) {
+      setBackgroundColor(backgroundFromTwilightBands(currentBand.name))
+    } else {
+      setBackgroundColor(twilightBandsBackgrounds.Night)
+    }
 
     let vp: GlobalPlanet[] = [];
     planets.forEach((planet: GlobalPlanet) => {
@@ -83,13 +85,8 @@ export default function GlobalSummary({ noHeader }: GlobalSummaryProps) {
     setLoading(false)
   }
 
-  const backgroundFromTwilightBands = (twilightBands: TwilightBand[]) => {
-    const now = new Date()
-    const currentBand = twilightBands.find(band => now > band.interval.from && now < band.interval.to)
-    if (!currentBand) return app_colors.white_no_opacity
-
-    // console.log(currentBand)
-    switch (currentBand.name) {
+  const backgroundFromTwilightBands = (bandName: string) => {
+    switch (bandName) {
       case 'Civil':
         return twilightBandsBackgrounds.Civil
       case 'Nautical':
@@ -105,13 +102,6 @@ export default function GlobalSummary({ noHeader }: GlobalSummaryProps) {
 
   return (
     <View style={{ marginTop: noHeader ? 0 : 10, marginBottom: 20 }}>
-      {/*{*/}
-      {/*  !noHeader &&*/}
-      {/*  <View>*/}
-      {/*    <Text style={globalStyles.sections.title}>{i18n.t('common.other.overview')}</Text>*/}
-      {/*    <Text style={[globalStyles.sections.subtitle, { marginBottom: 0 }]}>{i18n.t('widgets.homeWidgets.live.title')}</Text>*/}
-      {/*  </View>*/}
-      {/*}*/}
       <ImageBackground source={loading ? undefined : backgroundColor} imageStyle={globalSummaryStyles.container.backgroundPicture} resizeMode='cover' style={[globalSummaryStyles.container, { justifyContent: loading ? 'center' : 'space-between' }]}>
         {
           loading ?
@@ -133,6 +123,16 @@ export default function GlobalSummary({ noHeader }: GlobalSummaryProps) {
                       <Text style={globalSummaryStyles.container.weatherContainer.conditions.infos.info.value}>{currentWeather ? currentWeather.current.humidity + ' %' : '%'}</Text>
                     </View>
                   </View>
+                  {/*<View style={globalSummaryStyles.container.weatherContainer.conditions.infos}>*/}
+                  {/*  <View style={globalSummaryStyles.container.weatherContainer.conditions.infos.info}>*/}
+                  {/*    <Image style={globalSummaryStyles.container.weatherContainer.conditions.infos.info.icon} source={require('../../../../assets/icons/FiWind.png')} />*/}
+                  {/*    <Text style={globalSummaryStyles.container.weatherContainer.conditions.infos.info.value}>{currentWeather ? `${currentWeather.current.wind_speed} Km/h` : '--'}</Text>*/}
+                  {/*  </View>*/}
+                  {/*  <View style={globalSummaryStyles.container.weatherContainer.conditions.infos.info}>*/}
+                  {/*    <Image style={globalSummaryStyles.container.weatherContainer.conditions.infos.info.icon} source={require('../../../../assets/icons/FiDroplet.png')} />*/}
+                  {/*    <Text style={globalSummaryStyles.container.weatherContainer.conditions.infos.info.value}>{currentWeather ? currentWeather.current.humidity + ' %' : '%'}</Text>*/}
+                  {/*  </View>*/}
+                  {/*</View>*/}
                 </View>
                 <Text style={globalSummaryStyles.container.weatherContainer.description}>{currentWeather ? capitalize(currentWeather.current.weather[0].description) : i18n.t('common.loadings.simple')}</Text>
               </View>

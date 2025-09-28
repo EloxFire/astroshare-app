@@ -4,6 +4,7 @@ import { toolButtonStyles } from '../../../styles/components/commons/buttons/too
 import { app_colors } from '../../../helpers/constants'
 import AnimatedStar from '../../animations/AnimatedStar'
 import PremiumButtonDecorator from '../premium/PremiumButtonDecorator'
+import ProBadge from "../../badges/ProBadge";
 
 interface BigButtonProps {
   text: string
@@ -42,10 +43,6 @@ export default function ToolButton({ text, image, navigation, targetScreen, subt
   return (
     <TouchableOpacity activeOpacity={.5} style={[toolButtonStyles.button, { opacity: disabled ? .5 : 1 }]} onPress={() => handleButtonPress()}>
       {
-        isPremium &&
-        <PremiumButtonDecorator />
-      }
-      {
         image && (
           <Image source={image} style={toolButtonStyles.button.image} />
         )
@@ -55,13 +52,10 @@ export default function ToolButton({ text, image, navigation, targetScreen, subt
           <Text style={toolButtonStyles.button.text}>{text}</Text>
           {subtitle && <Text style={toolButtonStyles.button.subtitle}>{subtitle}</Text>}
         </View>
-        {/* {
+        {
           isPremium &&
-          <Image
-            source={require('../../../../assets/icons/FiLock.png')}
-            style={[toolButtonStyles.button.icon, { tintColor: app_colors.gold }]}
-          />
-        } */}
+          <ProBadge additionalStyles={{marginRight: 10, transform: [{scale: 1.2}]}}/>
+        }
       </View>
     </TouchableOpacity>
   )

@@ -1,35 +1,77 @@
-import React from 'react'
-import { Text, TouchableOpacity, View } from 'react-native'
+import React, {useEffect, useState} from 'react'
+import {Image, Text, View} from 'react-native'
 import { issPassCardStyles } from '../../styles/components/cards/issPassCard'
-import { IssPass } from '../../helpers/scripts/utils/satellites/getNextIssPasses'
 import dayjs from 'dayjs';
-import { useTranslation } from '../../hooks/useTranslation';
-import { formatMinutes } from '../../helpers/scripts/utils/formatters/formaters';
-import DSOValues from '../commons/DSOValues';
+import {IssPass} from "../../helpers/types/IssPass";
+import {weatherImages} from "../../helpers/scripts/loadImages";
+import {determineIssVisibility} from "../../helpers/scripts/astro/determineIssVisibility";
+import {i18n} from "../../helpers/scripts/i18n";
 
 interface IssPassCardProps {
   pass: IssPass;
+  passIndex: number;
   navigation: any;
+  weather: any;
 }
 
-export default function IssPassCard({ pass, navigation }: IssPassCardProps) {
+export default function IssPassCard({ pass, passIndex, navigation, weather }: IssPassCardProps) {
 
-  const {currentLocale} = useTranslation()
+  const [passLength, setPassLength] = useState<string>('')
+  const [isWeatherAccurate, setIsWeatherAccurate] = useState<boolean>(false)
+  const [visibilityBadge, setVisibilityBadge] = useState<any>({})
+  const [passWeatherIndex, setPassWeatherIndex] = useState<number>(0)
 
-  const passLength = `${dayjs(pass.endTime).diff(dayjs(pass.startTime), 'minute')} min`
+  // https://api.n2yo.com/rest/v1/satellite/visualpasses/25544/43.5314643/5.4508237/341/1/45/&apiKey=SQCWS8-7VQKED-JG2RHW-5DGF
+
+  useEffect(() => {
+    const weatherDateLimit = dayjs().add(6, 'days').unix()
+    const weatherAccurate = dayjs.unix(pass.startUTC).isBefore(dayjs.unix(weatherDateLimit))
+    setIsWeatherAccurate(weatherAccurate)
+
+    if(weatherAccurate){
+      const weatherIndex = weather.findIndex((w: any) => dayjs.unix(w.dt).isSame(dayjs.unix(pass.startUTC), 'day'))
+      setPassWeatherIndex(weatherIndex)
+    }
+  }, []);
+
+  useEffect(() => {
+    if(passIndex <= 6){
+      const badge = determineIssVisibility(pass.maxEl, weather[passIndex]?.weather[0].icon, pass.startUTC)
+      setVisibilityBadge(badge)
+    }
+  }, [weather]);
+
   return (
-    <TouchableOpacity style={issPassCardStyles.card}>
-      <View style={issPassCardStyles.card.header.title}>
-        <Text style={issPassCardStyles.card.header.title}>{dayjs(pass.startTime).format('ddd DD MMM YYYY')}</Text>
+    <View style={issPassCardStyles.card}>
+      <View style={issPassCardStyles.card.conditions}>
+        {
+          !isWeatherAccurate ?
+            <Image style={issPassCardStyles.card.conditions.icon} source={require('../../../assets/icons/FiIss.png')}/>
+            :
+            <Image style={issPassCardStyles.card.conditions.icon} source={isWeatherAccurate ? weatherImages[weather[passWeatherIndex]?.weather[0].icon] : require('../../../assets/icons/FiIss.png')}/>
+        }
+        <View style={issPassCardStyles.column}>
+          <Text style={issPassCardStyles.card.conditions.title}>ISS</Text>
+          <Text style={issPassCardStyles.card.conditions.subtitle}>Mag : {pass.mag}</Text>
+        </View>
       </View>
-      <DSOValues title='Début' value={dayjs(pass.startTime).format('HH:mm:ss')} />
-      <DSOValues title='Fin' value={dayjs(pass.endTime).format('HH:mm:ss')} />
-      <DSOValues title='Élévation initiale' value={`${Math.round(pass.startElevation)}°`} />
-      <DSOValues title='Élévation max' value={`${Math.round(pass.maxElevation)}°`} />
-      <DSOValues title='Élévation finale' value={`${Math.round(pass.endElevation)}°`} />
-      <DSOValues title='Durée' value={passLength} />
-      <DSOValues title='Direction initiale' value={`${pass.startDirectionCardinal} (${Math.round(pass.startAzimuth)}°)`} />
-      <DSOValues title='Direction finale' value={`${pass.endDirectionCardinal} (${Math.round(pass.endAzimuth)}°)`} />
-    </TouchableOpacity>
+
+      <View style={issPassCardStyles.card.infos}>
+        <View style={issPassCardStyles.column}>
+          <Text style={issPassCardStyles.column.title}>{i18n.t('satelliteTracker.issTracker.passCard.time')}</Text>
+          <Text style={issPassCardStyles.column.value}>{dayjs.unix(pass.startUTC).format('HH:mm')}</Text>
+        </View>
+
+        <View style={issPassCardStyles.column}>
+          <Text style={issPassCardStyles.column.title}>{i18n.t('satelliteTracker.issTracker.passCard.maxAltitude')}</Text>
+          <Text style={issPassCardStyles.column.value}>{pass.maxEl}°</Text>
+        </View>
+
+        <View style={issPassCardStyles.column}>
+          <Text style={issPassCardStyles.column.title}>{i18n.t('satelliteTracker.issTracker.passCard.direction')}</Text>
+          <Text style={issPassCardStyles.column.value}>{pass.startAzCompass}</Text>
+        </View>
+      </View>
+    </View>
   )
 }

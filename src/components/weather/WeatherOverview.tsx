@@ -21,14 +21,14 @@ export default function WeatherOverview({ weather, currentUserLocation, searched
       <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginBottom: 15}}>
         <View>
           <Text style={weatherStyles.weatherContainer.title}>{!searchedCity ? currentUserLocation?.common_name || '--' : searchedCity.common_name || '--'}</Text>
-        <Text style={weatherStyles.content.weather.header.subtitle}>{!searchedCity ? `${getUnicodeFlagIcon(currentUserLocation?.country || 'ZZ')}, ${currentUserLocation?.state}` || '--' : `${getUnicodeFlagIcon(searchedCity.country || 'ZZ')}, ${searchedCity.state}` || '--'}</Text>
+        <Text style={weatherStyles.content.weather.header.subtitle}>{!searchedCity ? `${currentUserLocation?.state} • ${getUnicodeFlagIcon(currentUserLocation?.country || 'ZZ')}` || '--' : `${getUnicodeFlagIcon(searchedCity.country || 'ZZ')}, ${searchedCity.state}` || '--'}</Text>
         </View>
         <TouchableOpacity style={{backgroundColor: app_colors.white_no_opacity, padding: 5, justifyContent: 'center', alignItems: 'center', borderRadius: 10, display: 'flex', width: 30, height: 30}} onPress={() => refresh()}>
           <Image source={require('../../../assets/icons/FiRepeat.png')} style={{ width: 12, height: 12}}/>
         </TouchableOpacity>
         </View>
         <View style={weatherStyles.content.weather.header}>
-          <View>
+          <View style={{display: 'flex', flexDirection: "column", flex: 1, alignItems: 'center'}}>
             <Image source={weather ? weatherImages[weather.current.weather[0].icon] : weatherImages.default} style={{ width: 85, height: 85, marginBottom: 8}}/>
             {
               weather ?
@@ -46,12 +46,12 @@ export default function WeatherOverview({ weather, currentUserLocation, searched
           <View style={{display: 'flex', flexDirection: 'column' ,alignItems: 'flex-end'}}>
             <Text style={[weatherStyles.weatherContainer.title, weatherStyles.content.weather.header.temp]}>{weather ? `${Math.floor(weather.current.temp)}°C` : '--'}</Text>
             <View>
-              <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 5}}>
+              <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 5, gap: 15}}>
                 <SingleValue value={weather ? Math.floor(weather.current.feels_like) : '--'} unit="°C" icon={require('../../../assets/icons/FiUser.png')} />
                 <SingleValue value={weather ? Math.floor(weather.daily[0].temp.min) : '--'} unit="°C" icon={require('../../../assets/icons/FiTrendingDown.png')} />
                 <SingleValue value={weather ? Math.floor(weather.daily[0].temp.max) : '--'} unit="°C" icon={require('../../../assets/icons/FiTrendingUp.png')} />
               </View>
-              <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 20}}>
+              <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 20, gap: 15}}>
                 <SingleValue value={weather ? weather.current.humidity : '--'} unit="%" icon={require('../../../assets/icons/FiDroplet.png')} />
                 <SingleValue value={weather ? weather.current.wind_speed : '--'} unit="km/h" icon={require('../../../assets/icons/FiWind.png')} />
                 <SingleValue value={weather ? getWindDir(weather.current.wind_deg) : '--'} icon={require('../../../assets/icons/FiCompass.png')} />

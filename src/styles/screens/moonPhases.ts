@@ -5,77 +5,171 @@ export const moonPhasesStyles = {
   content: {
     display: 'flex' as 'flex',
     flexDirection: 'column' as 'column',
-    paddingBottom: 80,
+    justifyContent: 'space-between' as 'space-between',
+    gap: 20,
+    backgroundColor: app_colors.white_no_opacity,
+    borderColor: app_colors.white_twenty,
+    borderWidth: 1,
+    borderRadius: 10,
+    padding: 10,
+    marginBottom: 80,
 
-    title: {
-      fontFamily: 'GilroyBlack',
-      fontSize: 22,
-      color: app_colors.white,
-      textTransform: 'uppercase' as 'uppercase',
-      alignSelf: 'center' as 'center'
-    },
-
-    phaseContainer: {
-      backgroundColor: app_colors.white_no_opacity,
-      borderWidth: 1,
-      borderColor: app_colors.white_no_opacity,
-      borderRadius: 10,
-      padding: 10,
-    },
-
-    valuesContainer: {
-      display: 'flex' as 'flex',
-      flexDirection: 'column' as 'column',
-      paddingTop: 20,
-      marginBottom: 20,
-    },    
-
-    selectButton: {
-      backgroundColor: app_colors.white_no_opacity,
-      paddingHorizontal: 20,
-      paddingVertical: 5,
-      borderRadius: 10,
-      marginBottom: 10,
-      borderColor: app_colors.white_no_opacity,
-      borderWidth: 1,
-      alignSelf: 'center' as 'center',
-
-      text: {
-        fontFamily: 'GilroyRegular',
-        fontSize: 16,
-        color: app_colors.white,
-        textAlign: 'center' as 'center'
-      }
-    },
-
-    calendarHeader: {
+    header: {
       display: 'flex' as 'flex',
       flexDirection: 'row' as 'row',
       justifyContent: 'space-between' as 'space-between',
-      marginTop: 20,
+      alignItems: 'center' as 'center',
+
+      transitCard: {
+        display: 'flex' as 'flex',
+        flexDirection: 'column' as 'column',
+        alignItems: 'center' as 'center',
+
+        icon: {
+          width: 30,
+          height: 30,
+          resizeMode: 'contain' as 'contain'
+        },
+
+        text: {
+          marginTop: 5,
+          fontSize: 15,
+          fontFamily: 'DMMonoMedium',
+          color: app_colors.white,
+          textAlign: 'center' as 'center'
+        },
+
+        date: {
+          fontSize: 16,
+          fontFamily: 'DMMonoMedium',
+          color: app_colors.white,
+          textAlign: 'center' as 'center',
+          textTransform: 'uppercase' as 'uppercase'
+        }
+      }
+    },
+
+    body: {
+      display: 'flex' as 'flex',
+      flexDirection: 'column' as 'column',
+      gap: 10,
+
+      moon: {
+        width: 210,
+        height: 210,
+        borderRadius: 105, // Pour avoir un cercle
+        backgroundColor: 'white', // Ajuste selon le design
+        shadowColor: 'black',
+        shadowOffset: { width: 3, height: 0 }, // Ombre vers la droite
+        shadowOpacity: 0.5, // Ajuste la transparence
+        shadowRadius: 5, // Effet de flou
+        elevation: 5, // Pour Android
+      },
+
+      phaseTitle: {
+        fontSize: 24,
+        fontFamily: 'GilroyBlack',
+        color: app_colors.white,
+        textAlign: 'center' as 'center',
+        textTransform: 'uppercase' as 'uppercase'
+      },
+
+      icon: {
+        width: Dimensions.get('window').width - 200,
+        height: Dimensions.get('window').width - 200,
+        resizeMode: 'contain' as 'contain',
+        alignSelf: 'center' as 'center',
+        borderRadius: 210
+      },
+
+      infos: {
+        display: 'flex' as 'flex',
+        flexDirection: 'row' as 'row',
+        justifyContent: 'space-evenly' as 'space-evenly',
+        alignItems: 'center' as 'center',
+        marginTop: 20,
+
+        info: {
+          display: 'flex' as 'flex',
+          flexDirection: 'column' as 'column',
+          alignItems: 'center' as 'center',
+
+          label: {
+            fontSize: 10,
+            opacity: 0.5,
+            fontFamily: 'DMMonoRegular',
+            color: app_colors.white,
+            // textAlign: 'center' as 'center'
+          },
+
+          value: {
+            fontSize: 20,
+            fontFamily: 'GilroyBlack',
+            color: app_colors.white,
+            // textAlign: 'center' as 'center'
+          }
+        }
+      }
     },
 
     calendar: {
       display: 'flex' as 'flex',
-      flexDirection: 'row' as 'row',
-      flexWrap: 'wrap' as 'wrap',
-      marginVertical: 20,
-      justifyContent: 'space-between' as 'space-between',
+      flexDirection: 'column' as 'column',
 
-      day: {
-        width: (Dimensions.get('screen').width / 2) - 20,
-        backgroundColor: app_colors.white_no_opacity,
-        borderColor: app_colors.white_no_opacity,
-        borderWidth: 1,
-        borderRadius: 10,
-        marginBottom: 20,
-        padding: 10,
+      title: {
+        fontSize: 20,
+        fontFamily: 'GilroyBlack',
+        color: app_colors.white,
+        textAlign: 'center' as 'center',
+        textTransform: 'uppercase' as 'uppercase'
+      },
 
-        title: {
-          fontFamily: 'GilroyBlack',
-          fontSize: 16,
+      selectorRow: {
+        display: "flex" as "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "center" as "center",
+        alignItems: "center" as "center",
+
+        currentMonth: {
+          fontSize: 20,
+          fontFamily: 'DMMonoMedium',
           color: app_colors.white,
-          textTransform: 'uppercase' as 'uppercase',
+          textAlign: 'center' as 'center',
+        }
+      },
+
+      calendarCellsContainer: {
+        display: 'flex' as 'flex',
+        flexDirection: 'row' as 'row',
+        justifyContent: 'center' as 'center',
+        flexWrap: 'wrap' as 'wrap',
+        gap: 5,
+
+        cell: {
+          width: (Dimensions.get('window').width + 30) / 5,
+          height: 120,
+          borderRadius: 5,
+          backgroundColor: app_colors.white_no_opacity,
+          borderColor: app_colors.white_twenty,
+          borderWidth: 1,
+          display: 'flex' as 'flex',
+          justifyContent: 'center' as 'center',
+          alignItems: 'center' as 'center',
+
+          day: {
+            fontSize: 10,
+            fontFamily: 'DMMonoRegular',
+            color: app_colors.white
+          },
+
+          text: {
+
+          },
+
+          image: {
+            width: 80,
+            height: 80,
+          }
         }
       }
     }

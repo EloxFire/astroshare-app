@@ -42,7 +42,7 @@ export const starlinkTrackerStyles = {
           value: {
             color: app_colors.white,
             fontSize: 16,
-            fontFamily: 'AuxMono',
+            fontFamily: 'DMMonoRegular',
             margin: 0,
             padding: 0,
             lineHeight: 16,
@@ -90,7 +90,7 @@ export const starlinkTrackerStyles = {
           title: {
             color: app_colors.white,
             fontSize: 12,
-            fontFamily: 'AuxMono',
+            fontFamily: 'DMMonoRegular',
             textTransform: 'uppercase' as 'uppercase',
             margin: 0,
             padding: 0,
@@ -120,7 +120,7 @@ export const starlinkTrackerStyles = {
               value: {
                 color: app_colors.white,
                 fontSize: 12,
-                fontFamily: 'AuxMono',
+                fontFamily: 'DMMonoRegular',
                 margin: 0,
                 padding: 0,
                 lineHeight: 16,

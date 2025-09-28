@@ -32,6 +32,11 @@ export const launchesScreenTranslations = {
     notificationButton: {
       add: "Ajouter un rappel",
       remove: "Supprimer le rappel"
+    },
+    videos: {
+      title: "Vidéos liées",
+      noVideos: "Aucune vidéo trouvée...",
+      watchOn: "Regarder sur {{platform}}",
     }
   }
 }

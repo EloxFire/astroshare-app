@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { ImageBackground, Text, View } from 'react-native'
+import {ActivityIndicator, Image, ImageBackground, Text, View} from 'react-native'
 import { moonInfosStyles } from '../../styles/components/weather/moonInfos'
 import { getBodyNextRise, getBodyNextSet, getLunarAge, getLunarDistance, getLunarElongation, getLunarEquatorialCoordinate, getLunarIllumination, getLunarPhase, isTransitInstance } from '@observerly/astrometry';
 import { moonIcons } from '../../helpers/scripts/loadImages';
@@ -10,6 +10,9 @@ import { calculateHorizonAngle } from '../../helpers/scripts/astro/calculateHori
 import SingleValue from './SingleValue'
 import dayjs from 'dayjs';
 import { i18n } from '../../helpers/scripts/i18n';
+import {astroshareApi} from "../../helpers/api";
+import {app_colors} from "../../helpers/constants";
+import {moonPhasesStyles} from "../../styles/screens/moonPhases";
 
 
 export default function MoonInfos() {
@@ -26,6 +29,8 @@ export default function MoonInfos() {
   const [distance, setDistance] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true)
 
+  const [moonImageUrl, setMoonImageUrl] = useState<undefined | {uri: string }>(undefined)
+
   const formatter = new Intl.NumberFormat("fr-FR", {
     style: 'unit',
     unit: 'kilometer',
@@ -40,6 +45,7 @@ export default function MoonInfos() {
     setDistance(getLunarDistance(new Date()))
     setElongation(getLunarElongation(new Date()))
     getMoonRiseAndSet()
+    fetchMoonImage()
     setLoading(false)
   }, [])
 
@@ -61,6 +67,11 @@ export default function MoonInfos() {
     }
   }
 
+  const fetchMoonImage = async () => {
+    const response = await astroshareApi.get('/moon/illustration')
+    setMoonImageUrl({uri: `data:image/png;base64,${response.data.image}`})
+  }
+
   const moonPhasesList: any = {
     "New": i18n.t('common.moon_phases.new'),
     "Waxing Crescent": i18n.t('common.moon_phases.waxing_crescent'),
@@ -74,7 +85,7 @@ export default function MoonInfos() {
 
   return (
     <View style={moonInfosStyles.container}>
-      <ImageBackground source={moonIcons[phase]} style={moonInfosStyles.container.illustration} />
+      { !moonImageUrl ? <ActivityIndicator size={"large"} color={app_colors.white} /> : <Image source={moonImageUrl} style={moonInfosStyles.container.illustration}/> }
       <View>
         {loading ? <Text>{i18n.t('common.loadings.simple')}</Text> : <Text style={moonInfosStyles.container.title}>{moonPhasesList[phase]}</Text>}
         <View style={moonInfosStyles.container.infos}>

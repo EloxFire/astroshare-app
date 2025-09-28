@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useEffect} from 'react'
 import { View, ScrollView, Linking, TouchableOpacity, Text } from 'react-native'
 import { globalStyles } from '../styles/global'
 import { languageSelectionStyles } from '../styles/screens/languageSelection'
@@ -9,13 +9,27 @@ import getUnicodeFlagIcon from 'country-flag-icons/unicode'
 import { routes } from '../helpers/routes'
 import { storeData } from '../helpers/storage'
 import { app_colors } from '../helpers/constants'
+import {useTranslation} from "../hooks/useTranslation";
+import {useSettings} from "../contexts/AppSettingsContext";
+import {useAuth} from "../contexts/AuthContext";
+import {sendAnalyticsEvent} from "../helpers/scripts/analytics";
+import {eventTypes} from "../helpers/constants/analytics";
 
 export default function LanguageSelection({ navigation }: any) {
 
+  const { currentUserLocation } = useSettings();
+  const { currentUser } = useAuth()
+  const { currentLocale, updateLocale } = useTranslation()
+
+  useEffect(() => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'language_selection_screen_view', eventTypes.SCREEN_VIEW, {currentLocale: currentLocale}, currentLocale)
+  }, []);
+
   const changeLocale = async (code: string) => {
-    // showToast({ message: i18n.t('languageSelection.warning'), type: 'error', duration: 3000 })
     i18n.locale = code
+    updateLocale(code)
     await storeData('locale', code)
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'user_changed_language', eventTypes.BUTTON_CLICK, {newLocale: code}, code)
     navigation.push(routes.home.path)
   }
 

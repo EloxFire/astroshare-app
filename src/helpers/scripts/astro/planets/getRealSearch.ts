@@ -29,7 +29,7 @@ export const getRealSearch = (searchString: string): string => {
       return 'Neptune';
   }
 
-  if(polarisRegex.test(searchString)) { return 'TIC 303256075'; }
+  // if(polarisRegex.test(searchString)) { return 'TIC 303256075'; }
 
   // If the search string does not match any case, return the original search string
   return searchString;

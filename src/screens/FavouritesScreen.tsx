@@ -6,17 +6,24 @@ import { app_colors, storageKeys } from '../helpers/constants'
 import { DSO } from '../helpers/types/DSO'
 import { useIsFocused } from "@react-navigation/native";
 import { favouriteScreenStyles } from '../styles/screens/favouriteScreen'
-import { viewPointsManagerStyles } from '../styles/screens/viewPointsManager'
 import PageTitle from '../components/commons/PageTitle'
-import ObjectCardLite from '../components/cards/ObjectCardLite'
 import { i18n } from '../helpers/scripts/i18n'
 import { GlobalPlanet } from '../helpers/types/GlobalPlanet'
 import { Star } from '../helpers/types/Star'
-import PlanetCardLite from '../components/cards/PlanetCardLite'
-import BrightStarCardLite from '../components/cards/BrightStarCardLite'
 import ScreenInfo from '../components/ScreenInfo'
+import CelestialBodyCardLite from "../components/cards/CelestialBodyCardLite";
+import { useAuth } from '../contexts/AuthContext'
+import { useTranslation } from '../hooks/useTranslation'
+import { useSettings } from '../contexts/AppSettingsContext'
+import { sendAnalyticsEvent } from '../helpers/scripts/analytics'
+import { eventTypes } from '../helpers/constants/analytics'
+import SimpleButton from '../components/commons/buttons/SimpleButton'
 
 export default function FavouritesScreen({ navigation }: any) {
+
+  const {currentUser} = useAuth()
+  const { currentLocale } = useTranslation()
+  const { currentUserLocation } = useSettings()
 
   const isFocused = useIsFocused();
   const [objects, setObjects] = useState<DSO[]>([])
@@ -38,9 +45,18 @@ export default function FavouritesScreen({ navigation }: any) {
     })()
   }, [isFocused])
 
+  useEffect(() => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'view_favourites_screen', eventTypes.SCREEN_VIEW, {}, currentLocale)
+  }, [])
+
   const handleClearAll = async () => {
     await storeObject(storageKeys.favouriteObjects, [])
+    await storeObject(storageKeys.favouritePlanets, [])
+    await storeObject(storageKeys.favouriteStars, [])
     setObjects([])
+    setPlanets([])
+    setStars([])
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'clear_all_favourites', eventTypes.BUTTON_CLICK, {}, currentLocale)
   }
 
   const handleOpenTab = (tab: string) => {
@@ -62,7 +78,7 @@ export default function FavouritesScreen({ navigation }: any) {
       <PageTitle navigation={navigation} title={i18n.t('favouriteScreen.title')} subtitle={i18n.t('favouriteScreen.subtitle')} />
       <View style={globalStyles.screens.separator} />
 
-      <ScrollView style={{ flex: 1 }}>
+      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: 50 }}>
         {
           (objects.length === 0 && planets.length === 0 && stars.length === 0) ? (
             <View>
@@ -82,7 +98,7 @@ export default function FavouritesScreen({ navigation }: any) {
                   {
                     objects.length > 0 ?
                       objects.map((object: DSO, index: number) => {
-                        return <ObjectCardLite key={index} object={object} navigation={navigation} />
+                        return <CelestialBodyCardLite key={index} object={object} navigation={navigation} />
                       }) :
                       <View>
                         <Text style={favouriteScreenStyles.noFavsBadge}>{i18n.t('favouriteScreen.dso.noFavs')}</Text>
@@ -100,7 +116,7 @@ export default function FavouritesScreen({ navigation }: any) {
                   {
                     planets.length > 0 ?
                       planets.map((planet: GlobalPlanet, index: number) => {
-                        return <PlanetCardLite key={index} planet={planet} navigation={navigation} />
+                        return <CelestialBodyCardLite key={index} object={planet} navigation={navigation} />
                       })
                       :
                       <View>
@@ -119,7 +135,7 @@ export default function FavouritesScreen({ navigation }: any) {
                   {
                     stars.length > 0 ?
                       stars.map((star: Star, index: number) => {
-                        return <BrightStarCardLite key={index} star={star} navigation={navigation} />
+                        return <CelestialBodyCardLite key={index} object={star} navigation={navigation} />
                       })
                       :
                       <View>
@@ -129,6 +145,21 @@ export default function FavouritesScreen({ navigation }: any) {
                 </View>
               }
             </>
+        }
+        {
+          (objects.length > 0 || planets.length > 0 || stars.length > 0) &&
+            <SimpleButton
+              align='center'
+              text={i18n.t('favouriteScreen.emptyButton')}
+              fullWidth
+              icon={require('../../assets/icons/FiTrash.png')}
+              textColor={app_colors.red_eighty}
+              iconColor={app_colors.red_eighty}
+              backgroundColor={app_colors.white_no_opacity}
+              activeBorderColor={app_colors.red_eighty}
+              active
+              onPress={handleClearAll}
+            />
         }
       </ScrollView>
     </View>

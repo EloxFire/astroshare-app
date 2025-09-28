@@ -11,6 +11,7 @@ export const authScreensTranslations = {
     subtitle: "Join us!",
     noAccount: "Already have an account? Log in!",
     submit: "Create my account",
+    error: "An error occurred, please try again",
   },
   profile: {
     title: "Profile",
@@ -19,7 +20,26 @@ export const authScreensTranslations = {
     createdAt: 'Creation date',
     updatedAt: 'Last update',
     downloadedRessources: 'Downloaded resources',
+    accountRole: 'Account status',
+    subscriptionName: 'Subscription name',
+    subscriptionRenewal: 'Renewal date',
+    subscriptionDate: 'Subscribed since',
+    subscriptionType: 'Subscription type',
     logout: 'Logout',
+    edit: 'Edit / add information',
+    roles: {
+      admin: "Administrator",
+      member: "Unsubscribed",
+      subscriber: "Subscriber",
+      unknown: "Unknown",
+    },
+    subscriptionTypes: {
+      monthly: "Monthly",
+      yearly: "Yearly",
+      lifetime: "Lifetime license",
+      personal: 'Personal',
+      professional: 'Organization',
+    }
   },
   placeholders: {
     email: "Email",

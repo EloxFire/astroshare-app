@@ -3,9 +3,11 @@ export const starlinkTrackerTranslations = {
   subtitle: '// All the infos about the Starlink constellation',
   stats: {
     title: "Constellation",
+    subtitle: "Last update : ",
     total: 'Total',
+    orbiting: 'In orbit',
     active: 'Actives',
-    inactive: 'Inactives'
+    inactive: 'Failing',
   },
   '3dMap': {
     title: "Interactive 3D map",

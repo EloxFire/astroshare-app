@@ -32,7 +32,7 @@ function RessourcesScreen({navigation}: any) {
       <PageTitle navigation={navigation} title={i18n.t('home.buttons.ressources.title')} subtitle={i18n.t('home.buttons.ressources.subtitle')} />
       <View style={globalStyles.screens.separator} />
       <ScrollView>
-        <InputWithIcon placeholder={i18n.t('ressourcesScreen.searchPlaceholder')} changeEvent={(e) => setSearch(e)} search={() => {}} icon={require('../../../assets/icons/FiSearch.png')} value={search}/>
+        <InputWithIcon type={"text"} placeholder={i18n.t('ressourcesScreen.searchPlaceholder')} changeEvent={(e) => setSearch(e)} search={() => {}} icon={require('../../../assets/icons/FiSearch.png')} value={search}/>
         <View style={ressourcesScreenStyles.content}>
           {
             list.length > 0 ?
