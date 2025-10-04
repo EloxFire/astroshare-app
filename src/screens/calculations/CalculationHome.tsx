@@ -57,7 +57,7 @@ export default function CalculationHome({ navigation }: any) {
     setMagnification(calculateMagnification(focalLength, eyepieceFocalLength));
     setMinMagnification(calculateMinMagnification(diameter));
     setSampling(calculateSampling(focalLength, pixelSize));
-    setFov(calculateApparentFov(focalLength, diameter, eyepieceField));
+    setFov(calculateApparentFov(focalLength, eyepieceFocalLength, eyepieceField));
     setExitPupil(calculateExitPupil(diameter, focalLength, eyepieceFocalLength));
     setResolvingPower(calculateResolvingPower(diameter));
   }

@@ -9,7 +9,7 @@ import DSOValues from "../commons/DSOValues";
 import SimpleButton from "../commons/buttons/SimpleButton";
 import {routes} from "../../helpers/routes";
 import {LunarEclipse} from "../../helpers/types/LunarEclipse";
-import {log} from "expo/build/devtools/logger";
+import { useSettings } from "../../contexts/AppSettingsContext";
 
 interface CardProps {
   type: 'solar' | 'lunar'
@@ -19,6 +19,7 @@ interface CardProps {
 
 export const EclipseCard = ({type, eclipse, navigation}: CardProps) => {
 
+  const { currentUserLocation } = useSettings()
   const [loadingImage, setLoadingImage] = useState(true)
 
   const handleDetailsRoute = () => {
@@ -29,10 +30,6 @@ export const EclipseCard = ({type, eclipse, navigation}: CardProps) => {
     }
   }
 
-  useEffect(() => {
-    console.log("Eclipse image link : ", `${eclipse.link.image}&image-size=600,600&map-projection=EPSG:9840&map-labels=fr&map-theme=land-medium`)
-  }, []);
-
   return (
     <View style={eclipseCardStyles.card}>
       {
@@ -42,7 +39,7 @@ export const EclipseCard = ({type, eclipse, navigation}: CardProps) => {
           </View>
         )
       }
-      <SvgUri onLoad={() => setLoadingImage(false)} uri={`${eclipse.link.image}&image-size=600,600&map-projection=EPSG:9840&map-labels=fr&map-theme=land-medium`} width={120} height={120}/>
+      <SvgUri onLoad={() => setLoadingImage(false)} uri={`${eclipse.link.image}&map-center=${currentUserLocation.lon},0&image-size=600,600&map-projection=EPSG:9840&map-labels=fr&map-theme=land-medium`} width={120} height={120}/>
       <View style={eclipseCardStyles.card.infos}>
         {
           loadingImage ? (

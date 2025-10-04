@@ -1,23 +1,17 @@
-import {showToast} from "../showToast";
-
-export const calculateApparentFov = (focal: number | undefined, diameter: number | undefined, fovEyepiece: number | undefined): string | undefined => {
-  if(diameter === 0 ){
-    return '\\text{Le diamètre ne peut pas être égal à 0}';
-  }
-
+export const calculateApparentFov = (focal: number | undefined, eyepieceFocalLength: number | undefined, fovEyepiece: number | undefined): string | undefined => {
   if(!focal){
     return '\\text{Focale non renseignée}';
   }
 
-  if(!diameter){
-    return '\\text{Diamètre non renseigné}';
+  if(!eyepieceFocalLength){
+    return '\\text{Focale de l’oculaire non renseigné}';
   }
 
   if (!fovEyepiece) {
     return '\\text{Champ de l’oculaire non renseigné}';
   }
 
-  if (focal && diameter) {
-    return `fov = \\frac{CO}{\\frac{F}{D}} = \\frac{${fovEyepiece}}{\\frac{${focal}}{${diameter}}} = ${fovEyepiece / (focal / diameter)}'`;
+  if (focal && eyepieceFocalLength) {
+    return `FoV = \\frac{C}{G} = \\frac{${fovEyepiece}}{\\frac{${focal}}{${eyepieceFocalLength}}} = ${fovEyepiece / (focal / eyepieceFocalLength)}'`;
   }
 }
