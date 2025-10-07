@@ -86,7 +86,7 @@ dayjs.extend(utc)
 dayjs.extend(tz)
 dayjs.extend(relativeTime)
 dayjs.extend(Calendar)
-dayjs.tz.setDefault('Europe/Paris');
+dayjs.tz.setDefault(dayjs.tz.guess());
 dayjs.extend(AdvancedFormat)
 dayjs().format('L LT')
 
@@ -108,11 +108,14 @@ export default function App() {
       try {
         await SystemUI.setBackgroundColorAsync(app_colors.black)
         await useFonts()
-        console.log('Fonts loaded');
+        console.log('[App init] App starting...');
+        console.log('[App init] Loading fonts...');
+        console.log('[App init] Set timezone to', dayjs.tz.guess());
+              
       } catch (e) {
-        console.warn('Something went wrong : ', e);
+        console.warn('[App init] Something went wrong : ', e);
       } finally {
-        console.log('App is ready');
+        console.log('[App init] App is ready');
         setAppIsReady(true);
       }
     }
@@ -126,7 +129,6 @@ export default function App() {
       console.log('[Analytics] Analytics setup completed');
     })
   })
-
 
   if (!appIsReady) {
     return (

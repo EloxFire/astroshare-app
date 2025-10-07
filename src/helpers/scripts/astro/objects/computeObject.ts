@@ -87,16 +87,18 @@ export const computeObject = (props: ComputeObjectProps): ComputedObjectInfos | 
     // CALCUL HEURES DE LEVER ET COUCHER
     let objectNextRise: Dayjs | null = null;
     let objectNextSet: Dayjs | null = null;
+    
+
     if(!isObjectCircumpolar) {
       const nextRise: false | TransitInstance = getBodyNextRise(new Date(), props.observer, target, horizonAngle);
       const nextSet: boolean | TransitInstance = getBodyNextSet(new Date(), props.observer, target, horizonAngle);
 
       if(isTransitInstance(nextRise)){
-        objectNextRise = dayjs(nextRise.datetime).add(2, 'hours');
+        objectNextRise = dayjs(nextRise.datetime).add(dayjs().utcOffset(), 'minutes');
       }
 
       if(isTransitInstance(nextSet)){
-        objectNextSet = dayjs(nextSet.datetime).add(2, 'hours');
+        objectNextSet = dayjs(nextSet.datetime).add(dayjs().utcOffset(), 'minutes');
       }
     }
 

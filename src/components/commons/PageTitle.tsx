@@ -2,6 +2,11 @@ import React from 'react'
 import { Image, Text, TouchableOpacity, View } from 'react-native'
 import { globalStyles } from '../../styles/global'
 import { pageTitleStyles } from '../../styles/components/commons/pageTitle'
+import { useAuth } from '../../contexts/AuthContext'
+import { useTranslation } from '../../hooks/useTranslation'
+import { useSettings } from '../../contexts/AppSettingsContext'
+import { sendAnalyticsEvent } from '../../helpers/scripts/analytics'
+import { eventTypes } from '../../helpers/constants/analytics'
 
 interface PageTitleProps {
   navigation: any
@@ -13,10 +18,16 @@ interface PageTitleProps {
 
 export default function PageTitle({ navigation, title, subtitle, backRoute }: PageTitleProps) {
 
+  const {currentUser} = useAuth()
+  const {currentLocale} = useTranslation()
+  const {currentUserLocation} = useSettings()
+
   const handleGoBack = () => {
     if(backRoute){
       navigation.push(backRoute)
     }else{
+      const prevRoute = navigation.getState().routes[navigation.getState().index - 1].name
+      sendAnalyticsEvent(currentUser, currentUserLocation, 'back_button_pressed', eventTypes.BUTTON_CLICK, { from: title, to: prevRoute }, currentLocale)
       navigation.goBack()
     }
   }

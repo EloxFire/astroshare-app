@@ -92,6 +92,11 @@ export const storageKeys = {
     sessionId: 'sessionId',
     base: "analyticsBase"
   },
+  updates: {
+    upgradeAvailable: 'upgradeAvailable',
+    userSkippedVersion: 'userSkippedVersion',
+    lastAvailableVersion: 'lastAvailableVersion',
+  },
   hiddenPremiumAccess: 'hasHiddenPremiumAccess',
   homeNewsBannerVisible: 'homeNewsBannerVisible',
 }

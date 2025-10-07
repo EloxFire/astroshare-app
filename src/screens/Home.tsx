@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { ScrollView, Text, View } from 'react-native'
 import { globalStyles } from '../styles/global'
 import { homeStyles } from '../styles/screens/home';
@@ -22,6 +22,8 @@ import {sendAnalyticsEvent} from "../helpers/scripts/analytics";
 import {eventTypes} from "../helpers/constants/analytics";
 import {useAuth} from "../contexts/AuthContext";
 import {useTranslation} from "../hooks/useTranslation";
+import { checkAppUpdate } from '../helpers/scripts/utils/checkAppUpdate';
+import AppUpdateModal from '../components/modals/AppUpdateModal';
 
 export default function Home({ navigation }: any) {
   const { hasInternetConnection, currentUserLocation } = useSettings()
@@ -32,6 +34,7 @@ export default function Home({ navigation }: any) {
   const { homeNewsBannerVisible } = useSettings()
 
   const [pushToken, setPushToken] = React.useState<string | null>(null)
+  const [appUpdateModalVisible, setAppUpdateModalVisible] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -52,8 +55,21 @@ export default function Home({ navigation }: any) {
     })()
   }, [])
 
+  useEffect(() => {
+    checkAppUpdate().then((updateAvailable) => {
+      if (updateAvailable) {
+        console.log('[App Update Check] New version available');
+        setAppUpdateModalVisible(true);
+      } else {
+        console.log('[App Update Check] App is up to date');
+        setAppUpdateModalVisible(false);
+      }
+    })
+  }, [])
+
   return (
     <View style={globalStyles.body}>
+      <AppUpdateModal isVisible={appUpdateModalVisible} />
       <AppHeader navigation={navigation} />
       <BannerHandler />
       <LocationHeader />
