@@ -3,6 +3,10 @@ export const homeTranslations = {
     title: "Your tools",
     subtitle: "Your custom tool box"
   },
+  pro_section: {
+    title: "Explore even further",
+    subtitle: "Unlock the full potential of Astroshare"
+  },
   other_tools: {
     title: "Other tools",
     subtitle: "Explore beyond limits !"

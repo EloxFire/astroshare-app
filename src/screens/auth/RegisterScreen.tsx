@@ -102,6 +102,7 @@ export default function RegisterScreen({ navigation }: any) {
               search={() => setShowPassword(!showPassword)}
               type={showPassword ? 'text' : 'password'}
               additionalStyles={{marginBottom: 0}}
+              alternateSubmitEvent={() => handleFormSubmit()}
             />
 
             <TouchableOpacity onPress={() => handleLoginNavigation()}>

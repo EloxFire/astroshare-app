@@ -3,6 +3,10 @@ export const homeTranslations = {
     title: "Vos outils",
     subtitle: "Votre caisse à outils personnalisée"
   },
+  pro_section: {
+    title: "Explorez encore plus loin",
+    subtitle: "Débloquez tout le potentiel d'Astroshare"
+  },
   other_tools: {
     title: "Autres outils",
     subtitle: "Explorez toujours plus !"

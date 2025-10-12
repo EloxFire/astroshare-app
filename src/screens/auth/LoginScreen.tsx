@@ -40,7 +40,7 @@ export default function LoginScreen({ navigation }: any) {
 
     if (!response) {
       setLoading(false)
-      showToast({message: i18n.t('common.errors.unknown'), type: 'error'})
+      // showToast({message: i18n.t('common.errors.unknown'), type: 'error'})
       sendAnalyticsEvent(currentUser, currentUserLocation, 'login_failure', eventTypes.ERROR, {}, currentLocale)
       return;
     }
@@ -87,6 +87,7 @@ export default function LoginScreen({ navigation }: any) {
               search={() => setShowPassword(!showPassword)}
               type={showPassword ? 'text' : 'password'}
               additionalStyles={{marginBottom: 0}}
+              alternateSubmitEvent={() => handleFormSubmit()}
             />
 
             <TouchableOpacity onPress={() => handleRegisterNavigation()}>

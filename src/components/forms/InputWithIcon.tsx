@@ -13,9 +13,10 @@ interface InputWithIconProps {
   type: 'text' | 'password' | 'number'
   keyboardType?: 'numeric' | 'default' | 'decimal-pad'
   additionalStyles?: any
+  alternateSubmitEvent?: () => void
 }
 
-export default function InputWithIcon({ placeholder, changeEvent, icon, search, value, type, additionalStyles, keyboardType }: InputWithIconProps) {
+export default function InputWithIcon({ placeholder, changeEvent, icon, search, value, type, additionalStyles, keyboardType, alternateSubmitEvent }: InputWithIconProps) {
   return (
     <View style={[inputWithIconStyles.inputContainer, additionalStyles]}>
       <TextInput
@@ -27,7 +28,14 @@ export default function InputWithIcon({ placeholder, changeEvent, icon, search, 
         placeholderTextColor={app_colors.white_sixty}
         value={value}
         keyboardType={keyboardType || 'default'}
-        onSubmitEditing={() => { if (search) search() }}
+        onSubmitEditing={() => {
+          if (alternateSubmitEvent) {
+            alternateSubmitEvent()
+          } else if (search) {
+            search()
+            Keyboard.dismiss()
+          }
+        }}
       />
       {icon && search &&
         <TouchableOpacity onPress={() => search()}>

@@ -7,30 +7,20 @@ import { NewsLog } from '../../helpers/types/NewsLog';
 
 interface AppUpdateModalProps {
   isVisible: boolean
+  onClose: () => void
 }
 
-export default function AppUpdateModal({ isVisible }: AppUpdateModalProps) {
+export default function AppUpdateModal({ isVisible, onClose }: AppUpdateModalProps) {
 
   const [modalVisible, setModalVisible] = useState(isVisible);
   const [lastUpdate, setLastUpdate] = useState<string | null>(null);
 
   useEffect(() => {
-    (async () => {
-      const lastVersionString = await getData(storageKeys.updates.lastAvailableVersion);
-      if(lastVersionString) {
-        const lastVersion = JSON.parse(lastVersionString);
-        setLastUpdate(lastVersion);
-      }
-    })()
- }, [isVisible])
-
-  const handleClose = () => {
-    storeData(storageKeys.updates.userSkippedVersion, JSON.stringify(true));
-    setModalVisible(false);
-  } 
+    setModalVisible(isVisible);
+  }, [isVisible]);
 
   return (
-    <Modal animationType='slide' visible={modalVisible}>
+    <Modal animationType='slide' visible={modalVisible} transparent>
       <View style={appUpdateModalStyles.modal}>
         <Text style={appUpdateModalStyles.modal.title}>Une nouvelle version est disponible.</Text>
         <Text style={appUpdateModalStyles.modal.subtitle}>Mettez à jour l'application pour profiter des dernières fonctionnalités et améliorations.</Text>
@@ -43,11 +33,11 @@ export default function AppUpdateModal({ isVisible }: AppUpdateModalProps) {
         }
 
         <TouchableOpacity style={appUpdateModalStyles.modal.button} onPress={() => {
-          Linking.openURL('https://play.google.com/store/apps/details?id=fr.astroshare.app');
+          Linking.openURL('https://play.google.com/store/apps/details?id=fr.eavagliano.astroshare');
         }}>
           <Text style={appUpdateModalStyles.modal.button.text}>Mettre à jour</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={appUpdateModalStyles.modal.closeButton} onPress={handleClose}>
+        <TouchableOpacity style={appUpdateModalStyles.modal.closeButton} onPress={onClose}>
           <Text style={appUpdateModalStyles.modal.closeButton.text}>Plus tard</Text>
         </TouchableOpacity>
       </View>

@@ -68,10 +68,11 @@ export default function About({ navigation }: any) {
           <SimpleButton textColor={app_colors.white} align={'flex-start'} fullWidth text={i18n.t('about.contact.title')} icon={require('../../assets/icons/FiMail.png')} onPress={() => Linking.openURL('mailto:contact@enzoavagliano.fr')} />
           <SimpleButton textColor={app_colors.white} align={'flex-start'} fullWidth text={i18n.t('about.website.title')} icon={require('../../assets/icons/FiAzGrid.png')} onPress={() => Linking.openURL('https://www.astroshare.fr')} />
           <SimpleButton textColor={app_colors.white} align={'flex-start'} fullWidth text={i18n.t('about.privacy.title')} icon={require('../../assets/icons/FiShield.png')} onPress={() => Linking.openURL('https://www.astroshare.fr/application-mobile/politique-de-confidentialite')} />
+          <SimpleButton textColor={app_colors.white} align={'flex-start'} fullWidth text={i18n.t('about.services_status.title')} icon={require('../../assets/icons/FiWifi.png')} onPress={() => Linking.openURL('https://monitor.enzoavagliano.fr/status/astroshare')} />
           {/*<SimpleButton fullWidth text={i18n.t('about.license.title')} icon={require('../../assets/icons/FiShield.png')} />*/}
 
           <TouchableOpacity onLongPress={() => {handleHiddenPremiumAccess()}} >
-            <Image source={localizedWhiteLogo[currentLocale]} resizeMode="contain" style={{ width: '50%', alignSelf: "center" }} />
+            <Image source={localizedWhiteLogo[currentLocale]} resizeMode="contain" style={{ height: 50, alignSelf: "center", marginTop: 20 }} />
           </TouchableOpacity>
         </View>
       </ScrollView>

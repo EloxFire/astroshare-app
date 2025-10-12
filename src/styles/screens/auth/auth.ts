@@ -30,9 +30,8 @@ export const authStyles = {
     },
 
     forgotPassword: {
-      fontSize: 12,
+      fontSize: 14,
       color: app_colors.white,
-      opacity: .5,
       fontFamily: 'GilroyRegular' as 'GilroyRegular',
       marginTop: 10,
       textDecorationLine: 'underline' as 'underline',

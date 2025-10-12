@@ -24,6 +24,7 @@ import {useAuth} from "../contexts/AuthContext";
 import {useTranslation} from "../hooks/useTranslation";
 import { checkAppUpdate } from '../helpers/scripts/utils/checkAppUpdate';
 import AppUpdateModal from '../components/modals/AppUpdateModal';
+import { isProUser } from '../helpers/scripts/auth/checkUserRole';
 
 export default function Home({ navigation }: any) {
   const { hasInternetConnection, currentUserLocation } = useSettings()
@@ -67,9 +68,13 @@ export default function Home({ navigation }: any) {
     })
   }, [])
 
+  const onAppUpdateModalClose = () => {
+    setAppUpdateModalVisible(false);
+  }
+
   return (
     <View style={globalStyles.body}>
-      <AppUpdateModal isVisible={appUpdateModalVisible} />
+      <AppUpdateModal isVisible={appUpdateModalVisible} onClose={onAppUpdateModalClose} />
       <AppHeader navigation={navigation} />
       <BannerHandler />
       <LocationHeader />
@@ -90,6 +95,16 @@ export default function Home({ navigation }: any) {
             <BigButton disabled={!hasInternetConnection || !currentUserLocation} navigation={navigation} targetScreen={routes.transits.home.path} text={i18n.t('home.buttons.transits.title')} subtitle={i18n.t('home.buttons.transits.subtitle')} icon={require('../../assets/icons/FiTransit.png')} />
           </View>
         </View>
+        {
+          !isProUser(currentUser) &&
+          <View style={homeStyles.proSection}>
+            <Text style={globalStyles.sections.title}>{i18n.t('home.pro_section.title')}</Text>
+            <Text style={globalStyles.sections.subtitle}>{i18n.t('home.pro_section.subtitle')}</Text>
+            <View style={homeStyles.nasaTools.buttons}>
+              <ToolButton image={require('../../assets/images/tools/apod.png')} isPremium navigation={navigation} targetScreen={routes.sellScreen.path} text={i18n.t('settings.buttons.pro.title')} subtitle={i18n.t('settings.buttons.pro.subtitle')}/>
+            </View>
+          </View>
+        }
         <View style={homeStyles.nasaTools}>
           <Text style={globalStyles.sections.title}>{i18n.t('home.other_tools.title')}</Text>
           <Text style={globalStyles.sections.subtitle}>{i18n.t('home.other_tools.subtitle')}</Text>

@@ -26,5 +26,8 @@ export const aboutTranslations = {
   },
   website: {
     title: "Site web",
+  },
+  services_status: {
+    title: "État des services",
   }
 }
