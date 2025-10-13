@@ -16,6 +16,7 @@ export const calculateFD = (focal: number | undefined, diameter: number | undefi
   }
 
   if (focal && diameter) {
-    return `f/D = \\frac{F}{D} = \\frac{${focal}}{${diameter}} = ${focal / diameter}`;
+    const ratio = parseFloat((focal / diameter).toFixed(2));
+    return `f/D = \\frac{F}{D} = \\frac{${focal}}{${diameter}} = ${ratio}`;
   }
 }

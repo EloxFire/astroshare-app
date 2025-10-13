@@ -14,6 +14,8 @@ export const calculateMagnification = (focal: number | undefined, eyepiece: numb
   }
 
   if (focal && eyepiece) {
-    return `M = \\frac{F}{E} = \\frac{${focal}}{${eyepiece}} = ${focal / eyepiece}\\text{x}`;
+    const magnification = focal / eyepiece;
+    const formatted = magnification.toFixed(2).replace(/\.?0+$/, '');
+    return `M = \\frac{F}{E} = \\frac{${focal}}{${eyepiece}} = ${formatted}\\text{x}`;
   }
 }

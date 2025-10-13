@@ -1,3 +1,5 @@
+import { parse } from "@babel/core";
+
 export const calculateApparentFov = (focal: number | undefined, eyepieceFocalLength: number | undefined, fovEyepiece: number | undefined): string | undefined => {
   if(!focal){
     return '\\text{Focale non renseignée}';
@@ -12,6 +14,7 @@ export const calculateApparentFov = (focal: number | undefined, eyepieceFocalLen
   }
 
   if (focal && eyepieceFocalLength) {
-    return `FoV = \\frac{C}{G} = \\frac{${fovEyepiece}}{\\frac{${focal}}{${eyepieceFocalLength}}} = ${fovEyepiece / (focal / eyepieceFocalLength)}'`;
+    const apparentFov = parseFloat((fovEyepiece / (focal / eyepieceFocalLength)).toFixed(2));
+    return `FoV = \\frac{C}{G} = \\frac{${fovEyepiece}}{\\frac{${focal}}{${eyepieceFocalLength}}} = ${apparentFov}'`;
   }
 }

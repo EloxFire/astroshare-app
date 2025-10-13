@@ -107,9 +107,9 @@ export default function CalculationHome({ navigation }: any) {
               <InputWithIcon keyboardType={"numeric"} additionalStyles={{marginVertical: 0}} search={() => {}} placeholder={"Focale oculaire (mm)"} changeEvent={(e) => setEyepieceFocalLength(parseInt(e))} value={eyepieceFocalLength ? eyepieceFocalLength.toString() : ""} type={"number"}/>
               <InputWithIcon keyboardType={"numeric"} additionalStyles={{marginVertical: 0}} search={() => {}} placeholder={"Champ oculaire (°)"} changeEvent={(e) => setEyepieceField(parseInt(e))} value={eyepieceField ? eyepieceField.toString() : ""} type={"number"}/>
             </View>
-            <View style={{display: 'flex', flexDirection: 'row', gap: 10}}>
+            <View style={{display: 'flex', flexDirection: 'row', gap: 10, width: '50%', paddingRight: 5}}>
               <InputWithIcon keyboardType={"default"} additionalStyles={{marginVertical: 0}} search={() => {}} placeholder={"Taille pixel caméra (µm)"} changeEvent={(e) => handlePixelSize(e)} value={pixelSize ? pixelSize.toString() : ""} type={"text"}/>
-              <SelectDropdown
+              {/* <SelectDropdown
                 ref={pupilSelectorRef}
                 data={[5, 6, 7]}
                 onSelect={(selectedItem, index) => {
@@ -117,7 +117,7 @@ export default function CalculationHome({ navigation }: any) {
                 }}
                 defaultValue={selectedPupil}
                 renderButton={() => (
-                  <View style={[planetaryConjunctionStyles.content.parameters.dropdown, {width: '50%', borderColor: app_colors.white_no_opacity}]}>
+                  <View style={[planetaryConjunctionStyles.content.parameters.dropdown, {width: '100%', borderColor: app_colors.white_no_opacity}]}>
                     <View style={planetaryConjunctionStyles.content.parameters.dropdown.withIcon}>
                       <Text style={[planetaryConjunctionStyles.content.parameters.dropdown.text, {fontSize: 12}]}>{selectedPupil} mm</Text>
                     </View>
@@ -131,7 +131,7 @@ export default function CalculationHome({ navigation }: any) {
                     <Text style={[planetaryConjunctionStyles.content.parameters.dropdown.text, {paddingLeft: 10}]}>{item} mm</Text>
                   </TouchableOpacity>
                 )}
-              />
+              /> */}
             </View>
 
 

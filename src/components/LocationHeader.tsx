@@ -48,7 +48,7 @@ export default function LocationHeader() {
   return (
     <TouchableWithoutFeedback onPress={() => handleModal()}>
       <View style={locationHeaderStyles.container}>
-        <LocationModal visible={isModalShown} onClose={handleModal} coords={currentUserLocation!} />
+        <LocationModal visible={isModalShown} onClose={handleModal} />
         <TouchableOpacity style={locationHeaderStyles.container.location} onPress={() => handleModal()}>
           <View style={locationHeaderStyles.container.location.text}>
             <Text style={locationHeaderStyles.container.location.title}>{i18n.t('locationHeader.title')}</Text>
