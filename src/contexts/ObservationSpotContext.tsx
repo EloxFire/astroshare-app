@@ -39,7 +39,7 @@ export function ObservationSpotProvider({ children }: ObservationSpotProviderPro
     const hasPermission = Barometer.isAvailableAsync()
     if (!hasPermission) return;
 
-    console.log('Barometer available');
+    console.log('[Barometer] Subscribing to barometer data...');
 
     setBarometerSubscription(
       Barometer.addListener((result) => {
@@ -66,7 +66,7 @@ export function ObservationSpotProvider({ children }: ObservationSpotProviderPro
 
   const addNewSpot = async (newSpot: TViewPoint) => {
     const temp = await getObject(storageKeys.viewPoints)
-    console.log(temp);
+    console.log('[Observation Spot] Current view points:', temp);
 
     if (temp) {
       temp.push(newSpot)

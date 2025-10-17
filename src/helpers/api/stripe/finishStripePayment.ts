@@ -17,13 +17,13 @@ export const finishStripePayment = async (userId: string, subscription: string, 
     console.log("Stripe payment response: ", response.ok);
 
     if (!response.ok) {
-      throw new Error('Failed to finish Stripe payment');
+      throw new Error('[Stripe] Failed to finish payment');
     }
 
-    console.log("Stripe payment finished successfully: ", response);
+    console.log("[Stripe] Payment finished successfully:", response);
     return response;
   } catch (error) {
-    console.error('Error finishing Stripe payment:', error);
+    console.error('[Stripe] Error finishing payment:', error);
     throw error;
   }
 }

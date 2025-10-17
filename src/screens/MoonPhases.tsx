@@ -22,6 +22,8 @@ import {useAuth} from "../contexts/AuthContext";
 import {sendAnalyticsEvent} from "../helpers/scripts/analytics";
 import {eventTypes} from "../helpers/constants/analytics";
 import {routes} from "../helpers/routes";
+import SimpleButton from '../components/commons/buttons/SimpleButton'
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 export default function MoonPhases({ navigation }: any) {
 
@@ -34,30 +36,34 @@ export default function MoonPhases({ navigation }: any) {
   const [currentDate, setCurrentDate] = useState(dayjs())
   const [moonImageUrl, setMoonImageUrl] = useState<undefined | {uri: string }>(undefined)
   const [currentMonth, setCurrentMonth] = useState(dayjs().month())
-  const [calendarImages, setCalendarImages] = useState<{date: string, image: string}[]>([])
+  const [calendarImages, setCalendarImages] = useState<any>([])
+
+  const [showDatePicker, setShowDatePicker] = useState(false)
+  const [selectedDate, setSelectedDate] = useState<Dayjs>(dayjs())
 
   useEffect(() => {
     sendAnalyticsEvent(currentUser, currentUserLocation, 'Moon Phases screen view', eventTypes.SCREEN_VIEW, {currentMonth: currentMonth}, currentLocale)
   }, []);
 
   useEffect(() => {
+    const date = selectedDate.toDate()
     const observer: GeographicCoordinate = {latitude: currentUserLocation.lat, longitude: currentUserLocation.lon}
-    const data: ComputedMoonInfos = computeMoon({date: new Date(), observer})
+    const data: ComputedMoonInfos = computeMoon({date: date, observer})
     setMoonData(data)
     fetchMoonImage()
-  }, [currentUserLocation])
+  }, [currentUserLocation, selectedDate]);
 
-  useEffect(() => {
-    setCurrentDate(dayjs())
+  // useEffect(() => {
+  //   setCurrentDate(dayjs())
 
-    const interval = setInterval(() => {
-      setCurrentDate(dayjs())
-    }, 1000)
+  //   const interval = setInterval(() => {
+  //     setCurrentDate(dayjs())
+  //   }, 1000)
 
-    return () => {
-      clearInterval(interval)
-    }
-  }, [])
+  //   return () => {
+  //     clearInterval(interval)
+  //   }
+  // }, [])
 
   useEffect(() => {
     (async () => {
@@ -66,8 +72,8 @@ export default function MoonPhases({ navigation }: any) {
   }, [currentMonth]);
 
   const fetchMoonImage = async () => {
-    const response = await astroshareApi.get('/moon/illustration')
-    setMoonImageUrl({uri: `data:image/png;base64,${response.data.image}`})
+    const response = await astroshareApi.get('/moon/illustration?date=2020-05-05')
+    setMoonImageUrl({uri: response.data.url})
   }
 
   const handleMonthChange = (direction: 'next' | 'previous') => {
@@ -79,8 +85,8 @@ export default function MoonPhases({ navigation }: any) {
   }
 
   const fetchCalendarImages = async (month: number) => {
-    const response = await astroshareApi.get(`/moon/illustration/month`, {params: {month: currentMonth}})
-    setCalendarImages(response.data)
+    const response = await astroshareApi.get(`/moon/illustration/month?year=2020&month=05`)
+    setCalendarImages(response.data.images)
   }
 
   return (
@@ -107,6 +113,25 @@ export default function MoonPhases({ navigation }: any) {
             moonData && (
               <>
                 <View style={moonPhasesStyles.content.body}>
+                  <SimpleButton
+                    icon={require('../../assets/icons/FiCalendar.png')}
+                    text={selectedDate.format('DD MMMM YYYY')}
+                    textColor={app_colors.white}
+                    active
+                    activeBorderColor={app_colors.white_twenty}
+                    onPress={() => setShowDatePicker(true)}
+                  />
+                  {
+                    showDatePicker &&
+                    <DateTimePicker
+                      value={selectedDate.toDate()}
+                      mode="date"
+                      display="default"
+                      onChange={(event, selected) => {
+                        console.log('selected', event, selected);
+                      }}
+                    />
+                  }
                   <Text style={moonPhasesStyles.content.body.phaseTitle}>{moonData.data.phase}</Text>
                   { !moonImageUrl ? <ActivityIndicator size={"large"} color={app_colors.white} /> : <Image source={moonImageUrl} style={moonPhasesStyles.content.body.icon}/> }
                   {/*MOON PHASE HERE*/}
@@ -156,30 +181,30 @@ export default function MoonPhases({ navigation }: any) {
           }
 
           <View style={moonPhasesStyles.content.calendar.selectorRow}>
-            {/*<SimpleButton*/}
-            {/*  icon={require('../../assets/icons/FiChevronLeft.png')}*/}
-            {/*  active*/}
-            {/*  activeBorderColor={app_colors.white_twenty}*/}
-            {/*  onPress={() => handleMonthChange('previous')}*/}
-            {/*/>*/}
+            <SimpleButton
+              icon={require('../../assets/icons/FiChevronLeft.png')}
+              active
+              activeBorderColor={app_colors.white_twenty}
+              onPress={() => handleMonthChange('previous')}
+            />
             <Text style={moonPhasesStyles.content.calendar.selectorRow.currentMonth}>{capitalize(dayjs().month(currentMonth).format('MMMM YYYY'))}</Text>
-            {/*<SimpleButton*/}
-            {/*  icon={require('../../assets/icons/FiChevronRight.png')}*/}
-            {/*  active*/}
-            {/*  activeBorderColor={app_colors.white_twenty}*/}
-            {/*  onPress={() => handleMonthChange('next')}*/}
-            {/*/>*/}
+            <SimpleButton
+              icon={require('../../assets/icons/FiChevronRight.png')}
+              active
+              activeBorderColor={app_colors.white_twenty}
+              onPress={() => handleMonthChange('next')}
+            />
           </View>
 
           <View style={moonPhasesStyles.content.calendar.calendarCellsContainer}>
             {
               calendarImages.length > 0 ?
-              calendarImages.map((day, index) => {
+              calendarImages.map((day: any, index: number) => {
                 return (
                   <View key={index} style={moonPhasesStyles.content.calendar.calendarCellsContainer.cell}>
                     <Text style={moonPhasesStyles.content.calendar.calendarCellsContainer.cell.day}>{dayjs(day.date).format('ddd')}</Text>
                     <Text style={moonPhasesStyles.content.calendar.calendarCellsContainer.cell.day}>{dayjs(day.date).format('DD MMMM')}</Text>
-                    <Image source={{uri: `data:image/png;base64,${day.image}`}} style={moonPhasesStyles.content.calendar.calendarCellsContainer.cell.image}/>
+                    <Image source={{uri: day.url}} style={moonPhasesStyles.content.calendar.calendarCellsContainer.cell.image}/>
                   </View>
                 )
               })

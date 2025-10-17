@@ -35,7 +35,7 @@ export default function LoginScreen({ navigation }: any) {
 
     setLoading(true)
     const response = await loginUser(email, password)
-    console.log("Login response", response)
+    console.log("[Auth] Login response", response)
     sendAnalyticsEvent(currentUser, currentUserLocation, 'login_attempt', eventTypes.BUTTON_CLICK, {target: "profile screen"}, currentLocale)
 
     if (!response) {

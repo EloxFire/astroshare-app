@@ -45,8 +45,6 @@ export default function LanguageSelection({ navigation }: any) {
         <View style={languageSelectionStyles.content}>
           {
             languagesList.map((language: any, index: number) => {
-              console.log(language)
-
               return (
                 <TouchableOpacity key={index} style={[languageSelectionStyles.content.button, { borderColor: i18n.locale === language.twoLettersCode ? app_colors.white : app_colors.white_no_opacity }]} onPress={() => changeLocale(language.twoLettersCode)}>
                   <Text style={languageSelectionStyles.content.button.text}>{language.name}</Text>

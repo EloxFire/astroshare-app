@@ -129,6 +129,7 @@ export const moonPhasesStyles = {
         flexDirection: "row" as "row",
         justifyContent: "center" as "center",
         alignItems: "center" as "center",
+        gap: 20,
 
         currentMonth: {
           fontSize: 20,

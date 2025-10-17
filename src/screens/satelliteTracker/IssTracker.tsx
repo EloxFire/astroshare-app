@@ -144,7 +144,7 @@ export default function IssTracker({ navigation }: any) {
       setTrajectoryPoints(trajectoryPoints.data.data)
       setLoading(false)
     } catch (error) {
-      console.log(error)
+      console.log(`[iss] Error fetching ISS data: ${error}`)
       setLoading(false)
     }
   }

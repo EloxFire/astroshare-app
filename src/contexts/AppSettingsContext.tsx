@@ -43,6 +43,7 @@ export function AppSettingsProvider({ children }: AppSettingsProviderProps) {
   const [hasInternetConnection, setHasInternetConnection] = useState<boolean>(false)
   const [selectedHomeWidget, setSelectedHomeWidget] = useState<HomeWidget>('None' as HomeWidget)
   const [homeNewsBannerVisible, setHomeNewsBannerVisible] = useState<boolean>(true)
+  const [apiNotReachable, setApiNotReachable] = useState<boolean>(false)
 
   useEffect(() => {
     (async () => {
@@ -166,6 +167,10 @@ export function AppSettingsProvider({ children }: AppSettingsProviderProps) {
     sendAnalyticsEvent(currentUser, currentUserLocation, 'toggle_home_news_banner', eventTypes.BUTTON_CLICK, {homeNewsBannerVisible: !homeNewsBannerVisible}, currentLocale);
   }
 
+  const handleApiReachability = (status: boolean) => {
+    setApiNotReachable(status);
+  }
+
   const values = {
     isNightMode,
     handleNightMode,
@@ -182,6 +187,8 @@ export function AppSettingsProvider({ children }: AppSettingsProviderProps) {
     updateSelectedHomeWidget,
     homeNewsBannerVisible,
     handleHomeNewsBanner,
+    apiNotReachable,
+    handleApiReachability,
   }
 
   return (
