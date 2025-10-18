@@ -84,7 +84,7 @@ export function AppSettingsProvider({ children }: AppSettingsProviderProps) {
     (async () => {
       const sw = await getData(storageKeys.homeWidgets)
       if (!sw) {
-        await storeData(storageKeys.homeWidgets, 'None');
+        await storeData(storageKeys.homeWidgets, HomeWidget['None']);
       } else {
         setSelectedHomeWidget(sw as HomeWidget);
       }

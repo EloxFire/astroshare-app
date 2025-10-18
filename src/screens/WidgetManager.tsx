@@ -15,6 +15,7 @@ import {useAuth} from "../contexts/AuthContext";
 import {useTranslation} from "../hooks/useTranslation";
 import {sendAnalyticsEvent} from "../helpers/scripts/analytics";
 import {eventTypes} from "../helpers/constants/analytics";
+import { ClockWidget } from '../components/widgets/home/ClockWidget'
 
 export default function WidgetManager({ navigation }: any) {
 
@@ -44,19 +45,23 @@ export default function WidgetManager({ navigation }: any) {
         <View style={{ paddingTop: 20 }}>
           {
             Object.keys(HomeWidget).map((widget, index) => {
+
+              <Text>{HomeWidget[widget as keyof typeof HomeWidget]}</Text>
               return (
                 <TouchableOpacity key={`widget-${index}`} onPress={() => handleWidget(widget)} style={{ display: 'flex', flexDirection: 'column', marginBottom: 10, borderTopWidth: 1, backgroundColor: app_colors.white_no_opacity, padding: 10, borderRadius: 10, borderColor: app_colors.white_twenty, borderWidth: 1 }}>
                   <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
-                    {widget === 'None' && <Text style={{ fontSize: 16, textTransform: 'uppercase', fontFamily: 'GilroyBlack', color: app_colors.white }}>Aucun widget</Text>}
-                    {widget === 'Live' && <Text style={{ fontSize: 16, textTransform: 'uppercase', fontFamily: 'GilroyBlack', color: app_colors.white }}>Aperçu du ciel en direct</Text>}
-                    {widget === 'Night' && <Text style={{ fontSize: 16, textTransform: 'uppercase', fontFamily: 'GilroyBlack', color: app_colors.white }}>Aperçu de la nuit</Text>}
-                    {widget === 'NextLaunchCountdown' && <Text style={{ fontSize: 16, textTransform: 'uppercase', fontFamily: 'GilroyBlack', color: app_colors.white }}>Aperçu prochain lancement de fusée</Text>}
+                    {widget === HomeWidget['None'] && <Text style={{ fontSize: 16, textTransform: 'uppercase', fontFamily: 'GilroyBlack', color: app_colors.white }}>Aucun widget</Text>}
+                    {widget === HomeWidget['Live'] && <Text style={{ fontSize: 16, textTransform: 'uppercase', fontFamily: 'GilroyBlack', color: app_colors.white }}>Aperçu du ciel en direct</Text>}
+                    {widget === HomeWidget['Night'] && <Text style={{ fontSize: 16, textTransform: 'uppercase', fontFamily: 'GilroyBlack', color: app_colors.white }}>Aperçu de la nuit</Text>}
+                    {widget === HomeWidget['NextLaunchCountdown'] && <Text style={{ fontSize: 16, textTransform: 'uppercase', fontFamily: 'GilroyBlack', color: app_colors.white }}>Aperçu prochain lancement de fusée</Text>}
+                    {widget === HomeWidget['Clock'] && <Text style={{ fontSize: 16, textTransform: 'uppercase', fontFamily: 'GilroyBlack', color: app_colors.white }}>Module horologe</Text>}
                     <Image source={selectedHomeWidget === widget ? require('../../assets/icons/FiToggleFilled.png') : require('../../assets/icons/FiToggleEmpty.png')} style={{ width: 30, height: 30 }} />
                   </View>
-                  {widget === 'None' && <></>}
-                  {widget === 'Live' && <GlobalSummary />}
-                  {widget === 'Night' && <NightSummary />}
-                  {widget === 'NextLaunchCountdown' && <NextLaunchCountdownWidget />}
+                  {widget === HomeWidget['None'] && <></>}
+                  {widget === HomeWidget['Live'] && <GlobalSummary />}
+                  {widget === HomeWidget['Night'] && <NightSummary />}
+                  {widget === HomeWidget['NextLaunchCountdown'] && <NextLaunchCountdownWidget />}
+                  {widget === HomeWidget['Clock'] && <ClockWidget />}
                 </TouchableOpacity>
               )
             })
