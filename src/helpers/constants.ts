@@ -1,5 +1,4 @@
 import {DSO} from "./types/DSO";
-import {ProPackage} from "./types/ProPackage";
 
 export const app_colors = {
   black: '#000000',
