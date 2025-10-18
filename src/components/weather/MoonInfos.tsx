@@ -68,7 +68,7 @@ export default function MoonInfos() {
 
   const fetchMoonImage = async () => {
     const response = await astroshareApi.get('/moon/illustration')
-    setMoonImageUrl({uri: `data:image/png;base64,${response.data.image}`})
+    setMoonImageUrl({uri: response.data.url})
   }
 
   const moonPhasesList: any = {

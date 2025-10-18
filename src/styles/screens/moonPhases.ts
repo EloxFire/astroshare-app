@@ -26,8 +26,8 @@ export const moonPhasesStyles = {
         alignItems: 'center' as 'center',
 
         icon: {
-          width: 30,
-          height: 30,
+          width: 25,
+          height: 25,
           resizeMode: 'contain' as 'contain'
         },
 
@@ -54,18 +54,6 @@ export const moonPhasesStyles = {
       flexDirection: 'column' as 'column',
       gap: 10,
 
-      moon: {
-        width: 210,
-        height: 210,
-        borderRadius: 105, // Pour avoir un cercle
-        backgroundColor: 'white', // Ajuste selon le design
-        shadowColor: 'black',
-        shadowOffset: { width: 3, height: 0 }, // Ombre vers la droite
-        shadowOpacity: 0.5, // Ajuste la transparence
-        shadowRadius: 5, // Effet de flou
-        elevation: 5, // Pour Android
-      },
-
       phaseTitle: {
         fontSize: 24,
         fontFamily: 'GilroyBlack',
@@ -74,12 +62,11 @@ export const moonPhasesStyles = {
         textTransform: 'uppercase' as 'uppercase'
       },
 
-      icon: {
-        width: Dimensions.get('window').width - 200,
-        height: Dimensions.get('window').width - 200,
+      image: {
+        width: Dimensions.get('window').width - 100,
+        height: Dimensions.get('window').width - 100,
         resizeMode: 'contain' as 'contain',
         alignSelf: 'center' as 'center',
-        borderRadius: 210
       },
 
       infos: {
@@ -87,7 +74,6 @@ export const moonPhasesStyles = {
         flexDirection: 'row' as 'row',
         justifyContent: 'space-evenly' as 'space-evenly',
         alignItems: 'center' as 'center',
-        marginTop: 20,
 
         info: {
           display: 'flex' as 'flex',
