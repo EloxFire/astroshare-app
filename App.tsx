@@ -23,7 +23,6 @@ import tz from 'dayjs/plugin/timezone'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import LocalizedFormat from 'dayjs/plugin/localizedFormat'
 import Calendar from 'dayjs/plugin/calendar'
-import AdvancedFormat from 'dayjs/plugin/advancedFormat'
 import Duration from 'dayjs/plugin/duration'
 import SolarWeather from "./src/screens/SolarWeather";
 import ScopeAlignment from "./src/screens/ScopeAlignment";
@@ -78,6 +77,7 @@ import LunarEclipseDetails from "./src/screens/transits/LunarEclipseDetails";
 import { LogBox } from 'react-native';
 import {setupAnalytics} from "./src/helpers/scripts/analytics";
 import NewsBannerManager from './src/screens/settings/NewsBannerManager';
+import CssTracker from './src/screens/satelliteTracker/CssTracker';
 
 dayjs.locale('fr');
 dayjs.extend(LocalizedFormat)
@@ -87,7 +87,6 @@ dayjs.extend(tz)
 dayjs.extend(relativeTime)
 dayjs.extend(Calendar)
 dayjs.tz.setDefault(dayjs.tz.guess());
-dayjs.extend(AdvancedFormat)
 dayjs().format('L LT')
 
 
@@ -97,9 +96,9 @@ export default function App() {
 
   LogBox.ignoreLogs(['EXGL: gl.pixelStorei()'])
 
-  const {expoPushToken, notification} = usePushNotifications();
+  // const {expoPushToken, notification} = usePushNotifications();
 
-  console.log('expoPushToken', expoPushToken?.data);
+  // console.log('expoPushToken', expoPushToken?.data);
 
   const [appIsReady, setAppIsReady] = useState(false);
 
@@ -193,6 +192,7 @@ export default function App() {
                             <Stack.Screen name={routes.issTracker.path} component={IssTracker} />
                             <Stack.Screen name={routes.starlinkTracker.path} component={StarlinkTracker} />
                             <Stack.Screen name={routes.satellitesTrackers.issPasses.path} component={IssPasses} />
+                            <Stack.Screen name={routes.satellitesTrackers.cssTracker.path} component={CssTracker} />
 
                             {/*MAP SCREENS*/}
                             <Stack.Screen name={routes.skymapSelection.path} component={SkyMapSelection} />

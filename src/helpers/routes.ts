@@ -1,3 +1,5 @@
+import { c } from "@observerly/astrometry";
+
 export const routes = {
   onboarding: { path: 'Onboarding', requirements: [] },
   tutorial: { path: 'Tutorial', requirements: [] },
@@ -40,6 +42,7 @@ export const routes = {
     home: { path: 'SatelliteTrackerScreen', requirements: [] },
     issTracker: { path: 'IssTrackerScreen', requirements: [] },
     issPasses: { path: "IssPasses", requirements: []},
+    cssTracker: { path: 'CssTrackerScreen', requirements: [] },
     starlinkTracker: { path: 'StarlinkTrackerScreen', requirements: [] },
   },
   auth: {

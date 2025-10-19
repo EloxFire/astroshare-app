@@ -4,8 +4,12 @@ export const homeTranslations = {
   info: "De nouveaux satellites et objets à suivre seront ajoutés au fil du temps.",
   buttons: {
     issTracker: {
-      title: "Iss",
-      subtitle: "// Suivi de l'ISS en temps réel"
+      title: "ISS",
+      subtitle: "// Suivi de la Station Spatiale Internationale"
+    },
+    cssTracker: {
+      title: "CSS",
+      subtitle: "// Suivi de la Station Spatiale Chinoise"
     },
     starlinkTracker: {
       title: "Starlink",
