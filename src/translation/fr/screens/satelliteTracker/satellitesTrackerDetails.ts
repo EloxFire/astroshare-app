@@ -1,6 +1,5 @@
-export const issTrackerTranslations = {
+export const satelliteTrackerDetailsTranslations = {
   stats: {
-    title: "Station spatiale internationale",
     latitude: "Latitude",
     longitude: "Longitude",
     altitude: "Altitude",

@@ -81,7 +81,11 @@ export const storageKeys = {
   },
   notificationsId: 'notificationsId',
   pushToken: 'pushToken',
-  issPasses: 'issPasses',
+  issPasses: 'issPasses', // TODO: cleanup old key
+  satellites: {
+    customNoradList: 'customNoradList',
+    satellitePasses: 'satellitePasses',
+  },
   auth: {
     accessToken: 'access_token',
     refreshToken: 'refresh_token',

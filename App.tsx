@@ -38,8 +38,6 @@ import { TranslationProvider } from "./src/hooks/useTranslation";
 import './src/helpers/scripts/i18n/index';
 import LanguageSelection from "./src/screens/LanguageSelection";
 import SellScreen from "./src/screens/pro/SellScreen";
-import IssTracker from "./src/screens/satelliteTracker/IssTracker";
-import StarlinkTracker from "./src/screens/satelliteTracker/StarlinkTracker";
 import TransitsScreen from "./src/screens/transits/TransitsScreen";
 import AstroDataInfos from "./src/screens/AstroDataInfos";
 import WidgetManager from "./src/screens/WidgetManager";
@@ -77,7 +75,7 @@ import LunarEclipseDetails from "./src/screens/transits/LunarEclipseDetails";
 import { LogBox } from 'react-native';
 import {setupAnalytics} from "./src/helpers/scripts/analytics";
 import NewsBannerManager from './src/screens/settings/NewsBannerManager';
-import CssTracker from './src/screens/satelliteTracker/CssTracker';
+import SatelliteTrackerDetails from './src/screens/satelliteTracker/SatelliteTrackerDetails';
 
 dayjs.locale('fr');
 dayjs.extend(LocalizedFormat)
@@ -189,10 +187,8 @@ export default function App() {
 
                             {/*SATELLITE TRACKING SCREENS*/}
                             <Stack.Screen name={routes.satelliteTracker.path} component={SatelliteTracker} />
-                            <Stack.Screen name={routes.issTracker.path} component={IssTracker} />
-                            <Stack.Screen name={routes.starlinkTracker.path} component={StarlinkTracker} />
+                            <Stack.Screen name={routes.satellitesTrackers.details.path} component={SatelliteTrackerDetails} />
                             <Stack.Screen name={routes.satellitesTrackers.issPasses.path} component={IssPasses} />
-                            <Stack.Screen name={routes.satellitesTrackers.cssTracker.path} component={CssTracker} />
 
                             {/*MAP SCREENS*/}
                             <Stack.Screen name={routes.skymapSelection.path} component={SkyMapSelection} />

@@ -40,10 +40,8 @@ export const routes = {
   },
   satellitesTrackers: {
     home: { path: 'SatelliteTrackerScreen', requirements: [] },
-    issTracker: { path: 'IssTrackerScreen', requirements: [] },
+    details: { path: 'SatelliteTrackerDetails', requirements: []},
     issPasses: { path: "IssPasses", requirements: []},
-    cssTracker: { path: 'CssTrackerScreen', requirements: [] },
-    starlinkTracker: { path: 'StarlinkTrackerScreen', requirements: [] },
   },
   auth: {
     login: { path: 'Login', requirements: [] },
