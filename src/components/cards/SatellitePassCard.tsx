@@ -22,7 +22,6 @@ export default function SatellitePassCard({ satname, pass, passIndex, navigation
   const [visibilityBadge, setVisibilityBadge] = useState<any>({})
   const [passWeatherIndex, setPassWeatherIndex] = useState<number>(0)
 
-  // https://api.n2yo.com/rest/v1/satellite/visualpasses/25544/43.5314643/5.4508237/341/1/45/&apiKey=SQCWS8-7VQKED-JG2RHW-5DGF
 
   useEffect(() => {
     const weatherDateLimit = dayjs().add(6, 'days').unix()
@@ -52,7 +51,7 @@ export default function SatellitePassCard({ satname, pass, passIndex, navigation
             <Image style={satellitePassCardStyles.card.conditions.icon} source={isWeatherAccurate ? weatherImages[weather[passWeatherIndex]?.weather[0].icon] : require('../../../assets/icons/FiIss.png')}/>
         }
         <View style={satellitePassCardStyles.column}>
-          <Text style={satellitePassCardStyles.card.conditions.title}>{satname.replaceAll(" ", "\n")}</Text>
+          <Text style={satellitePassCardStyles.card.conditions.title}>{satname ? satname.replaceAll(" ", "\n") : ""}</Text>
           {
             pass.mag !== 100000 && <Text style={satellitePassCardStyles.card.conditions.subtitle}>Mag : {pass.mag}</Text>
            }

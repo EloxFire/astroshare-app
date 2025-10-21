@@ -1,7 +1,8 @@
 export const homeTranslations = {
   title: "Satellites",
-  subtitle: "// Suivi de l'ISS et de Starlink",
+  subtitle: "// Suivez n'importe quel satellite !",
   info: "De nouveaux satellites et objets à suivre seront ajoutés au fil du temps.",
+  disclaimer: "Le suivi de la constellation Starlink est actuellement désactivé.\n\nNous travaillons actuellement à l'amélioration de ce suivi pour vous offrir une expérience optimale de cette fonctionnalité afin de vous fournir une vision d'ensemble de la constellation sans impacter les performances de l'application.",
   buttons: {
     25544: {
       title: "Suivi {{name}}",
@@ -11,5 +12,13 @@ export const homeTranslations = {
       title: "Suivi {{name}}",
       subtitle: "// Suivi de la Station Spatiale Chinoise"
     },
+    starlink: {
+      title: "Suivi Starlink",
+      subtitle: "// Suivi de la constellation Starlink"
+    },
+    custom: {
+      title: "Ajouter un satellite",
+      subtitle: "// Ajouter un satellite personnalisé à suivre !"
+    }
   }
 }

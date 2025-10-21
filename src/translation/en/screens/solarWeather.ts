@@ -1,4 +1,5 @@
 export const solarWeatherTranslations = {
+  disclaimer: "Due to the US government shutdown, some data is no longer being updated.\nBackup data is being used, quality may vary.",
   containers: {
     instrument: "Instrument : %{currentImageFilter}",
     emc: "Coronal Mass Ejections (CME)",
@@ -12,7 +13,8 @@ export const solarWeatherTranslations = {
     switches: {
       image: "Image",
       video: "Video"
-    }
+    },
+    disclaimer: "Backup data, degraded mode operation"
   },
   studyZones: {
     HMI_IC: "Sun in Visible Light",

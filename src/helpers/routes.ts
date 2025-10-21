@@ -41,7 +41,8 @@ export const routes = {
   satellitesTrackers: {
     home: { path: 'SatelliteTrackerScreen', requirements: [] },
     details: { path: 'SatelliteTrackerDetails', requirements: []},
-    issPasses: { path: "IssPasses", requirements: []},
+    satellitePasses: { path: "SatellitePasses", requirements: []},
+    addCustomSatellite: { path: "AddCustomSatelliteTrackerScreen", requirements: []}
   },
   auth: {
     login: { path: 'Login', requirements: [] },

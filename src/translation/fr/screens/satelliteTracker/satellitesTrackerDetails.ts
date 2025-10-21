@@ -28,7 +28,7 @@ export const satelliteTrackerDetailsTranslations = {
   },
   nextLaunches: {
     title: "Prochains lancements - {{satname}}",
-    noLaunches: "Aucune mission de ravitaillement à venir ou lancements habités vers l'ISS",
+    noLaunches: "Aucune mission de ravitaillement à venir ou lancements habités vers {{satname}}",
   },
   passCard: {
     time: "Heure",

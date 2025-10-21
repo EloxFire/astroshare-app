@@ -49,8 +49,8 @@ export const homeTranslations = {
       subtitle: "// Astronomy Picture of the Day"
     },
     satellite_tracker: {
-      title: "Satellites",
-      subtitle: "// Real-time satellites tracker"
+      title: "Satellites tracking",
+      subtitle: "// Track any satellite !"
     },
     skymap_generator: {
       title: "Skymap",

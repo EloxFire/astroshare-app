@@ -39,7 +39,6 @@ export default function SatelliteTrackerDetails({ route, navigation }: any) {
 
   const mapRef = useRef(null)
 
-
   const [satellitePasses, setSatellitePasses] = useState<SatellitePass[]>([])
   const [satellitePassesLoading, setSatellitePassesLoading] = useState<boolean>(true)
   const [satelliteInfosLoading, setSatelliteInfosLoading] = useState<boolean>(true)
@@ -54,7 +53,6 @@ export default function SatelliteTrackerDetails({ route, navigation }: any) {
     sendAnalyticsEvent(currentUser, currentUserLocation, 'Satellite Tracker Details Screen View', eventTypes.SCREEN_VIEW, {noradId}, currentLocale)
   }, [])
 
-
   useEffect(() => {
       // Get weather for the pass
       if(!currentUserLocation) return;
@@ -66,7 +64,7 @@ export default function SatelliteTrackerDetails({ route, navigation }: any) {
 
 
   useEffect(() => {
-    if (!currentUserLocation) return
+    if (!currentUserLocation || !noradId) return
 
     let isMounted = true
 
@@ -140,7 +138,7 @@ export default function SatelliteTrackerDetails({ route, navigation }: any) {
   }, [currentUserLocation, noradId])
 
   useEffect(() => {
-    if (!currentUserLocation || !hasLoadedInitialData) return
+    if (!currentUserLocation || !hasLoadedInitialData || !noradId) return
 
     let isMounted = true
 
@@ -236,74 +234,7 @@ export default function SatelliteTrackerDetails({ route, navigation }: any) {
               <DSOValues title={i18n.t('satelliteTrackers.details.stats.altitude')} value={satelliteInfos && !satelliteInfosLoading ? `${satelliteInfos.currentPosition.sataltitude} Km` : <ActivityIndicator size={'small'} color={app_colors.white} animating />} />
               <DSOValues title={i18n.t('satelliteTrackers.details.stats.country')} value={satelliteInfos && !satelliteInfosLoading ? `${getCountryByCode(satelliteInfos.currentCountry.country, currentLocale)} - ${getCountryFlag(satelliteInfos.currentCountry.country === i18n.t('satelliteTrackers.details.stats.unknown') ? 'ZZ' : satelliteInfos.currentCountry.country)}` : <ActivityIndicator size={'small'} color={app_colors.white} animating />} />
             </View>
-            <View style={satelliteTrackerStyles.content.nextPasses}>
-              <Text style={satelliteTrackerStyles.content.nextPasses.title}>{i18n.t('satelliteTrackers.details.nextPasses.title')}</Text>
-              <Text style={satelliteTrackerStyles.content.nextPasses.subtitle}>{i18n.t('satelliteTrackers.details.nextPasses.subtitle')}{currentUserLocation.common_name}</Text>
-              <View style={satelliteTrackerStyles.content.nextPasses.container}>
-                {
-                  satellitePasses.length > 0 && !satellitePassesLoading &&
-                    <DSOValues title={i18n.t("satelliteTrackers.details.nextPasses.timeToNext")} value={countdown}/>
-                }
-
-                {
-                  satellitePassesLoading &&
-                    <ActivityIndicator size={'small'} color={app_colors.white} animating />
-                }
-
-                {
-                  !satellitePassesLoading && satellitePasses.length > 0 && satelliteInfos ?
-                  (
-                    ((): any => {
-                      const firstFourPasses = satellitePasses.slice(0, 4);
-
-                      const passesByDate = firstFourPasses.reduce((acc: { [date: string]: SatellitePass[] }, pass) => {
-                        const dateString = dayjs.unix(pass.startUTC).format('dddd D MMMM YYYY');
-                        if (!acc[dateString]) {
-                          acc[dateString] = [];
-                        }
-                        acc[dateString].push(pass);
-                        return acc;
-                      }, {});
-
-                      return Object.entries(passesByDate).map(([date, passes]) => (
-                        <View key={date}>
-                          <Text style={satelliteTrackerStyles.content.nextPasses.date}>{date}</Text>
-                          <View style={{display: 'flex', gap: 5}}>
-                            {passes.map((pass, index) => (
-                              <SatellitePassCard
-                                satname={satelliteInfos.name}
-                                pass={pass}
-                                navigation={navigation}
-                                key={`${pass.startUTC}-${index}`}
-                                passIndex={index}
-                                weather={satellitePassesWeather}
-                              />
-                            ))}
-                          </View>
-                        </View>
-                      ));
-                    })()
-                  ) : !satellitePassesLoading && satellitePasses.length === 0 && (
-                    <Text style={satelliteTrackerStyles.content.nextPasses.noPasses}>{i18n.t('satelliteTrackers.details.nextPasses.noPasses')}</Text>
-                  )
-                }
-                
-                {
-                  satellitePasses.length > 0 &&
-                    <SimpleButton
-                        fullWidth
-                        backgroundColor={app_colors.white}
-                        textColor={app_colors.black}
-                        textAdditionalStyles={{fontFamily: 'GilroyBlack'}}
-                        align={'center'}
-                        text={i18n.t('satelliteTrackers.details.nextPasses.seeMore')}
-                        onPress={() => {
-                          sendAnalyticsEvent(currentUser, currentUserLocation, 'See more CSS passes', eventTypes.BUTTON_CLICK, {noradId}, currentLocale)
-                        }}
-                    />
-                }
-              </View>
-            </View>
+            
             <View style={satelliteTrackerStyles.content.mapContainer}>
               <Text style={satelliteTrackerStyles.content.liveStats.title}>{i18n.t('satelliteTrackers.details.2dMap.title')}</Text>
               <Text style={satelliteTrackerStyles.content.liveStats.subtitle}>{i18n.t('satelliteTrackers.details.2dMap.subtitle')}</Text>
@@ -371,6 +302,62 @@ export default function SatelliteTrackerDetails({ route, navigation }: any) {
                 }
               </MapView>
             </View>
+
+            <View style={satelliteTrackerStyles.content.nextPasses}>
+              <Text style={satelliteTrackerStyles.content.nextPasses.title}>{i18n.t('satelliteTrackers.details.nextPasses.title')}</Text>
+              <Text style={satelliteTrackerStyles.content.nextPasses.subtitle}>{i18n.t('satelliteTrackers.details.nextPasses.subtitle')}{currentUserLocation.common_name}</Text>
+              <View style={satelliteTrackerStyles.content.nextPasses.container}>
+                {
+                  satellitePasses.length > 0 && !satellitePassesLoading &&
+                    <DSOValues title={i18n.t("satelliteTrackers.details.nextPasses.timeToNext")} value={countdown}/>
+                }
+
+                {
+                  satellitePassesLoading &&
+                    <ActivityIndicator size={'small'} color={app_colors.white} animating />
+                }
+
+                {
+                  !satellitePassesLoading && satellitePasses.length > 0 && satelliteInfos ?
+                  (
+                    ((): any => {
+                      const firstFourPasses = satellitePasses.slice(0, 4);
+
+                      const passesByDate = satellitePasses.reduce((acc: { [date: string]: SatellitePass[] }, pass) => {
+                        const dateString = dayjs.unix(pass.startUTC).format('dddd D MMMM YYYY');
+                        if (!acc[dateString]) {
+                          acc[dateString] = [];
+                        }
+                        acc[dateString].push(pass);
+                        return acc;
+                      }, {});
+
+                      return Object.entries(passesByDate).map(([date, passes]) => (
+                        <View key={date}>
+                          <Text style={satelliteTrackerStyles.content.nextPasses.date}>{date}</Text>
+                          <View style={{display: 'flex', gap: 5}}>
+                            {passes.map((pass, index) => (
+                              <SatellitePassCard
+                                satname={satelliteInfos.name}
+                                pass={pass}
+                                navigation={navigation}
+                                key={`${pass.startUTC}-${index}`}
+                                passIndex={index}
+                                weather={satellitePassesWeather}
+                              />
+                            ))}
+                          </View>
+                        </View>
+                      ));
+                    })()
+                  ) : !satellitePassesLoading && satellitePasses.length === 0 && (
+                    <Text style={satelliteTrackerStyles.content.nextPasses.noPasses}>{i18n.t('satelliteTrackers.details.nextPasses.noPasses')}</Text>
+                  )
+                }
+              </View>
+            </View>
+
+
             {
               noradId === 25544 &&
               <View style={satelliteTrackerStyles.content.liveStats}>
@@ -384,7 +371,7 @@ export default function SatelliteTrackerDetails({ route, navigation }: any) {
                   })
                     :
                     <SimpleButton
-                      text={i18n.t('satelliteTracker.issTracker.nextLaunches.noLaunches')}
+                      text={i18n.t('satelliteTracker.details.nextLaunches.noLaunches', { satname: satelliteInfos ? satelliteInfos.name : '' })}
                       disabled
                       fullWidth
                       textColor={app_colors.white}

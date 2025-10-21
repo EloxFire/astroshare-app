@@ -49,8 +49,8 @@ export const homeTranslations = {
       subtitle: "// Image du jour de la NASA"
     },
     satellite_tracker: {
-      title: "Satellites",
-      subtitle: "// Suivi de l'ISS et de Starlink"
+      title: "Suivi de satellites",
+      subtitle: "// Suivez n'importe quel satellite !"
     },
     skymap_generator: {
       title: "Cartes du ciel",

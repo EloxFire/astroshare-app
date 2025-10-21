@@ -99,7 +99,7 @@ export default function SolarWeather({ navigation }: any) {
       />
       <View style={globalStyles.screens.separator} />
       <View style={{ marginBottom: 10 }}>
-        <DisclaimerBar message={"À cause du shutdown du gouvernement américain, certaines données ne sont plus mises à jour.\nDes données de secours sont utilisées, la qualité peut varier."} type='error' soft />
+        <DisclaimerBar message={i18n.t('solarWeather.disclaimer')} type='error' soft />
       </View>
       <ScrollView>
         <View>
@@ -116,7 +116,7 @@ export default function SolarWeather({ navigation }: any) {
             <Text style={solarWeatherStyles.container.title}>{i18n.t('solarWeather.containers.instrument', { currentImageFilter: currentImageFilter })}</Text>
             <Text style={[solarWeatherStyles.container.subtitle, { opacity: 1 }]}>{i18n.t('solarWeather.containers.zone', { zone: loadingImage ? i18n.t('common.loadings.simple') : i18n.t(`solarWeather.studyZones.${currentImageFilter}`) })}</Text>
             <Text style={solarWeatherStyles.container.subtitle}>Source : NASA & ESA SOHO (Solar and Heliospheric Observatory)</Text>
-            <Text style={[solarWeatherStyles.container.subtitle, solarWeatherStyles.container.disclaimer]}>Données de secours, fonctionnement en mode dégradé</Text>
+            <Text style={[solarWeatherStyles.container.subtitle, solarWeatherStyles.container.disclaimer]}>{i18n.t('solarWeather.containers.disclaimer')}</Text>
             {
               isImageMode ?
                 <Image priority={'high'} placeholder={localizedImagePlaceholders[i18n.locale]} source={!currentImageUrl ? undefined : { uri: currentImageUrl }} style={solarWeatherStyles.sunImage} />

@@ -1,4 +1,5 @@
 export const solarWeatherTranslations = {
+  disclaimer: "En raison du shutdown du gouvernement américain, certaines données ne sont plus mises à jour.\nDes données de secours sont utilisées, la qualité peut varier.",
   containers: {
     instrument: "Instrument : %{currentImageFilter}",
     emc: "Éjections de Masse Coronale (EMC)",
@@ -12,7 +13,8 @@ export const solarWeatherTranslations = {
     switches: {
       image: "Image",
       video: "Vidéo"
-    }
+    },
+    disclaimer: "Données de secours, fonctionnement en mode dégradé"
   },
   studyZones: {
     HMI_IC: "Soleil en lumière visible",

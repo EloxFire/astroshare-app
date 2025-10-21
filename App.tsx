@@ -61,7 +61,6 @@ import LoginScreen from "./src/screens/auth/LoginScreen";
 import RegisterScreen from "./src/screens/auth/RegisterScreen";
 import ProfileScreen from "./src/screens/auth/Profile";
 import PlanetaryConjunctionScreen from "./src/screens/transits/PlanetaryConjunctionScreen";
-import IssPasses from "./src/screens/satelliteTracker/IssPasses";
 import PaywallScreen from "./src/screens/pro/PaywallScreen";
 import CelestialBodyOverview from "./src/screens/celestialBodies/CelestialBodyOverview";
 import {app_colors} from "./src/helpers/constants";
@@ -76,6 +75,7 @@ import { LogBox } from 'react-native';
 import {setupAnalytics} from "./src/helpers/scripts/analytics";
 import NewsBannerManager from './src/screens/settings/NewsBannerManager';
 import SatelliteTrackerDetails from './src/screens/satelliteTracker/SatelliteTrackerDetails';
+import SatellitePasses from './src/screens/satelliteTracker/SatellitePasses';
 
 dayjs.locale('fr');
 dayjs.extend(LocalizedFormat)
@@ -188,7 +188,7 @@ export default function App() {
                             {/*SATELLITE TRACKING SCREENS*/}
                             <Stack.Screen name={routes.satelliteTracker.path} component={SatelliteTracker} />
                             <Stack.Screen name={routes.satellitesTrackers.details.path} component={SatelliteTrackerDetails} />
-                            <Stack.Screen name={routes.satellitesTrackers.issPasses.path} component={IssPasses} />
+                            <Stack.Screen name={routes.satellitesTrackers.satellitePasses.path} component={SatellitePasses} />
 
                             {/*MAP SCREENS*/}
                             <Stack.Screen name={routes.skymapSelection.path} component={SkyMapSelection} />
