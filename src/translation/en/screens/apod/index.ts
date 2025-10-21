@@ -5,6 +5,7 @@ export const apodTranslations = {
   errors: {
     unsupportedMediaType: "This type of media is not supported.",
     timeout: "NASA's service is currently unavailable, please try again later.",
+    disclaimer: "The APOD service is currently unavailable due to the U.S. government shutdown.",
     network: "Network connection issue. Please check your internet access.",
     httpWithCode: "The server responded with status code {{code}}.",
     malformed: "Invalid response received from the server.",

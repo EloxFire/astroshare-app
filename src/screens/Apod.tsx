@@ -14,6 +14,7 @@ import { sendAnalyticsEvent } from '../helpers/scripts/analytics'
 import { eventTypes } from '../helpers/constants/analytics'
 import {renderApodMedia} from "../helpers/scripts/apod/renderApod";
 import {fetchApod} from "../helpers/scripts/apod/getApod";
+import DisclaimerBar from '../components/banners/DisclaimerBar'
 
 export default function Apod({ navigation }: any) {
   const { currentUserLocation } = useSettings()
@@ -94,9 +95,8 @@ export default function Apod({ navigation }: any) {
         {
           !loadingMedia && error && (
             <View style={{height: Dimensions.get('window').height - 200, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-              <View style={apodStyles.content.errorBox}>
-                <Text style={apodStyles.content.loadingText}>{error}</Text>
-              </View>
+              <DisclaimerBar message={error} type='error' soft/>
+              <DisclaimerBar message={i18n.t('apod.errors.disclaimer')} type='error' soft/>
             </View>
           )
         }
