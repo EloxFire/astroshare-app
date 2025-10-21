@@ -18,16 +18,16 @@ export const satelliteTrackerDetailsTranslations = {
   },
   '3dMap': {
     title: "Carte 3D interactive",
-    subtitle: "Mis à jour toutes les 5 secondes",
+    subtitle: "Mis à jour toutes les 10 secondes",
     button: "Centrer la caméra sur l'ISS",
   },
   '2dMap': {
     title: "Carte 2D interactive",
-    subtitle: "Mis à jour toutes les 5 secondes",
+    subtitle: "Mis à jour toutes les 10 secondes",
     button: "Re-centrer",
   },
   nextLaunches: {
-    title: "Prochains lancements vers l'ISS",
+    title: "Prochains lancements - {{satname}}",
     noLaunches: "Aucune mission de ravitaillement à venir ou lancements habités vers l'ISS",
   },
   passCard: {
