@@ -21,6 +21,11 @@ export const solarWeatherTranslations = {
     AIA_171: "Boucles coronales",
     AIA_131: "Éruptions solaires",
     AIA_335: "Régions actives",
-    AIA_1600: "Champs magnétiques"
+    AIA_1600: "Champs magnétiques",
+    'HMI_CONTINUUM': "Soleil en lumière visible (SOHO)",
+    'EIT_195': "Couronne solaire (SOHO)",
+    'EIT_284': "Régions actives (SOHO)",
+    'EIT_171': "Boucles coronales (SOHO)",
+    'EIT_304': "Filaments solaires (SOHO)",
   }
 }

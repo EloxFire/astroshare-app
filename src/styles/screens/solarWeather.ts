@@ -25,6 +25,10 @@ export const solarWeatherStyles = {
       // marginBottom: 15,
     },
 
+    disclaimer: {
+      color: app_colors.red
+    },
+
     buttons: {
       marginTop: 10,
       flexDirection: 'row' as 'row',

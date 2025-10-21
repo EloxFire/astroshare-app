@@ -14,7 +14,9 @@ export const disclaimerBarStyles = {
       opacity: .5,
       fontSize: 12,
       fontFamily: 'GilroyRegular',
-      flex: 1
+      flex: 1,
+      // interpret newline characters
+      whiteSpace: 'pre-wrap' as 'pre-wrap',
     },
 
     icon: {
