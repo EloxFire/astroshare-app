@@ -76,6 +76,7 @@ import {setupAnalytics} from "./src/helpers/scripts/analytics";
 import NewsBannerManager from './src/screens/settings/NewsBannerManager';
 import SatelliteTrackerDetails from './src/screens/satelliteTracker/SatelliteTrackerDetails';
 import SatellitePasses from './src/screens/satelliteTracker/SatellitePasses';
+import ConstellationMaps from './src/screens/skymap/ConstellationMaps';
 
 dayjs.locale('fr');
 dayjs.extend(LocalizedFormat)
@@ -191,9 +192,10 @@ export default function App() {
                             <Stack.Screen name={routes.satellitesTrackers.satellitePasses.path} component={SatellitePasses} />
 
                             {/*MAP SCREENS*/}
-                            <Stack.Screen name={routes.skymapSelection.path} component={SkyMapSelection} />
-                            <Stack.Screen name={routes.planetarium.path} component={Planetarium} />
-                            <Stack.Screen name={routes.flatSkymap.path} component={SkyMapGenerator} />
+                            <Stack.Screen name={routes.skymaps.home.path} component={SkyMapSelection} />
+                            <Stack.Screen name={routes.skymaps.planetarium.path} component={Planetarium} />
+                            <Stack.Screen name={routes.skymaps.flatmap.path} component={SkyMapGenerator} />
+                            <Stack.Screen name={routes.skymaps.constellations.path} component={ConstellationMaps} />
 
                             {/*PLANIFICATEUR*/}
                             <Stack.Screen name={routes.observationPlanner.path} component={ObservationPlannerScreen} />
