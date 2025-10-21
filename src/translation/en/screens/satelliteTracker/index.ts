@@ -1,9 +1,7 @@
-import { issTrackerTranslations } from "./issTracker";
 import { homeTranslations } from "./home";
-import { starlinkTrackerTranslations } from "./starlinkTracker";
+import { satelliteTrackerDetailsTranslations } from "./satellitesTrackerDetails";
 
 export const satelliteTrackerTranslations = {
   home: homeTranslations,
-  issTracker: issTrackerTranslations,
-  starlinkTracker: starlinkTrackerTranslations
-}
+  details: satelliteTrackerDetailsTranslations,
+};

@@ -1,19 +1,15 @@
 export const homeTranslations = {
   title: "Satellite tracking",
-  subtitle: "// Tracking of the ISS and Starlink constellation",
-  info: "New satellites will be added in the future.",
+  subtitle: "// Tracking of the ISS and other constellations",
+  info: "New satellites will be added over time.",
   buttons: {
-    issTracker: {
-      title: "Iss",
-      subtitle: "// Real-time ISS tracking"
+    25544: {
+      title: "Track {{name}}",
+      subtitle: "// Real-time tracking of the International Space Station",
     },
-    starlinkTracker: {
-      title: "Starlink",
-      subtitle: "// Starlink constellation tracking"
+    48274: {
+      title: "Track {{name}}",
+      subtitle: "// Real-time tracking of the Chinese Space Station",
     },
-    tss: {
-      title: "Tiangong (Coming soon)",
-      subtitle: "// Tracking of the Chinese space station"
-    }
-  }
-}
+  },
+};
