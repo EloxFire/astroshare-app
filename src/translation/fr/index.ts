@@ -57,7 +57,7 @@ export const frTranslations = {
   scopeAlignment: scopeAlignmentTranslation,
   moonPhases: moonPhasesTranslation,
   solarWeather: solarWeatherTranslations,
-  satelliteTracker: satelliteTrackerTranslations,
+  satelliteTrackers: satelliteTrackerTranslations,
   // skymapGenerator: skymapGeneratorTranslations,
   skymap: skymapTranslations,
   viewpointsManager: viewpointsManagerTranslations,

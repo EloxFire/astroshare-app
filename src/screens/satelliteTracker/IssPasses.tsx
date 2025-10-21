@@ -5,7 +5,7 @@ import 'dayjs/locale/fr';
 import PageTitle from "../../components/commons/PageTitle";
 import { globalStyles } from "../../styles/global";
 import { i18n } from "../../helpers/scripts/i18n";
-import IssPassCard from "../../components/cards/IssPassCard";
+import IssPassCard from "../../components/cards/SatellitePassCard";
 import {IssPass} from "../../helpers/types/IssPass";
 import {issTrackerStyles} from "../../styles/screens/satelliteTracker/satelliteTrackerStyles";
 import SimpleButton from "../../components/commons/buttons/SimpleButton";

@@ -3,5 +3,5 @@ import { satelliteTrackerDetailsTranslations } from "./satellitesTrackerDetails"
 
 export const satelliteTrackerTranslations = {
   home: homeTranslations,
-  satelliteTrackerDetails: satelliteTrackerDetailsTranslations,
+  details: satelliteTrackerDetailsTranslations,
 }

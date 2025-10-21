@@ -3,12 +3,12 @@ export const homeTranslations = {
   subtitle: "// Suivi de l'ISS et de Starlink",
   info: "De nouveaux satellites et objets à suivre seront ajoutés au fil du temps.",
   buttons: {
-    iss: {
-      title: "ISS",
+    25544: {
+      title: "Suivi {{name}}",
       subtitle: "// Suivi de la Station Spatiale Internationale"
     },
-    css: {
-      title: "Tiangong",
+    48274: {
+      title: "Suivi {{name}}",
       subtitle: "// Suivi de la Station Spatiale Chinoise"
     },
   }

@@ -1,6 +1,6 @@
 import { app_colors } from "../../../helpers/constants";
 
-export const issPassCardStyles = {
+export const satellitePassCardStyles = {
   card: {
     display: "flex" as "flex",
     flexDirection: "row" as "row",
@@ -27,7 +27,7 @@ export const issPassCardStyles = {
 
       title: {
         color: app_colors.white,
-        fontSize: 16,
+        fontSize: 10,
         fontFamily: "DMMonoMedium",
       },
 

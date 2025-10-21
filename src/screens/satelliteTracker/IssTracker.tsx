@@ -20,7 +20,7 @@ import {useLaunchData} from "../../contexts/LaunchContext";
 import {LaunchData} from "../../helpers/types/LaunchData";
 import LaunchCard from "../../components/cards/LaunchCard";
 import {getObject, storeObject} from "../../helpers/storage";
-import IssPassCard from "../../components/cards/IssPassCard";
+import IssPassCard from "../../components/cards/SatellitePassCard";
 import {useSettings} from "../../contexts/AppSettingsContext";
 import {IssPass} from "../../helpers/types/IssPass";
 import dayjs from "dayjs";
