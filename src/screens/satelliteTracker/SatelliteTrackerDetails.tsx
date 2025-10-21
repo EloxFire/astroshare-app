@@ -102,6 +102,16 @@ export default function SatelliteTrackerDetails({ route, navigation }: any) {
             lon: firstPosition.satlongitude,
           }
 
+          if(mapRef.current){
+            // @ts-ignore
+            mapRef.current.animateToRegion({
+              latitude: firstPosition.satlatitude,
+              longitude: firstPosition.satlongitude,
+              latitudeDelta: 0,
+              longitudeDelta: 1000,
+            }, 1000);
+          }
+
           const locationName = await getLocationName(locObject)
           if (!isMounted) return
           setCurrentCountry(locationName)
