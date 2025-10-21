@@ -77,6 +77,7 @@ import NewsBannerManager from './src/screens/settings/NewsBannerManager';
 import SatelliteTrackerDetails from './src/screens/satelliteTracker/SatelliteTrackerDetails';
 import SatellitePasses from './src/screens/satelliteTracker/SatellitePasses';
 import ConstellationMaps from './src/screens/skymap/ConstellationMaps';
+import AddCustomSatellite from './src/screens/satelliteTracker/AddCustomSatellite';
 
 dayjs.locale('fr');
 dayjs.extend(LocalizedFormat)
@@ -190,6 +191,7 @@ export default function App() {
                             <Stack.Screen name={routes.satelliteTracker.path} component={SatelliteTracker} />
                             <Stack.Screen name={routes.satellitesTrackers.details.path} component={SatelliteTrackerDetails} />
                             <Stack.Screen name={routes.satellitesTrackers.satellitePasses.path} component={SatellitePasses} />
+                            <Stack.Screen name={routes.satellitesTrackers.addCustomSatellite.path} component={AddCustomSatellite} />
 
                             {/*MAP SCREENS*/}
                             <Stack.Screen name={routes.skymaps.home.path} component={SkyMapSelection} />
