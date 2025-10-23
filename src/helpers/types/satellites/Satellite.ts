@@ -1,5 +1,5 @@
 export type Satellite = {
-  noradId: number;
+  norad_id: number;
   object_name: string;
   object_type: string;
   ops_status: string;

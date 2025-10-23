@@ -11,5 +11,13 @@ export const satelliteTrackerHomeStyles = {
     borderTopWidth: 1,
     borderTopColor: app_colors.white_twenty,
     paddingTop: 10,
+
+    title:{
+      color: app_colors.white,
+      fontSize: 18,
+      marginBottom: 10,
+      fontFamily: 'GilroyBlack' as 'GilroyBlack',
+      textTransform: 'uppercase' as 'uppercase',
+    }
   }
 }

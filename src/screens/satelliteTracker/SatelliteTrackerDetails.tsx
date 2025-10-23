@@ -220,8 +220,8 @@ export default function SatelliteTrackerDetails({ route, navigation }: any) {
     <View style={globalStyles.body}>
       <PageTitle
         navigation={navigation}
-        title={i18n.t(`satelliteTrackers.home.buttons.${noradId}.title`, {name: KNOWN_NORAD_IDS[noradId as keyof typeof KNOWN_NORAD_IDS]})}
-        subtitle={i18n.t(`satelliteTrackers.home.buttons.${noradId}.subtitle`)}
+        title={i18n.t(`satelliteTrackers.home.buttons.${noradId}.title`, {defaultValue: satelliteInfos ? satelliteInfos.name : '', name: KNOWN_NORAD_IDS[noradId as keyof typeof KNOWN_NORAD_IDS]})}
+        subtitle={i18n.t(`satelliteTrackers.home.buttons.${noradId}.subtitle`, {defaultValue: 'NORAD ID : ' + noradId})}
       />
         <View style={globalStyles.screens.separator} />
         <ScrollView>
@@ -351,7 +351,7 @@ export default function SatelliteTrackerDetails({ route, navigation }: any) {
                       ));
                     })()
                   ) : !satellitePassesLoading && satellitePasses.length === 0 && (
-                    <Text style={satelliteTrackerStyles.content.nextPasses.noPasses}>{i18n.t('satelliteTrackers.details.nextPasses.noPasses')}</Text>
+                    <Text style={satelliteTrackerStyles.content.nextPasses.noPasses}>{i18n.t('satelliteTrackers.details.nextPasses.noPasses', {satname: satelliteInfos ? satelliteInfos.name : ''})}</Text>
                   )
                 }
               </View>

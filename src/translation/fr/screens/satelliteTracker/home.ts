@@ -18,7 +18,7 @@ export const homeTranslations = {
     },
     custom: {
       title: "Ajouter un satellite",
-      subtitle: "// Ajouter un satellite personnalisé à suivre !"
+      subtitle: "// Ajouter un satellite personnalisé !"
     }
   }
 }

@@ -11,7 +11,7 @@ export const satelliteTrackerDetailsTranslations = {
     title: "Prochains passages",
     subtitle: "Votre position : ",
     loading: "Chargement des prochains passages...",
-    noPasses: "Aucun passage de l'ISS prévu dans les 10 prochains jours",
+    noPasses: "Aucun passage de {{satname}} prévu dans les 10 prochains jours",
     seeMore: "Voir plus de passages",
     description: "Observez l'ISS au dessus de votre position !",
     timeToNext: "Prochain passage dans",

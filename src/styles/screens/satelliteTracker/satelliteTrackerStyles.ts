@@ -99,11 +99,13 @@ export const satelliteTrackerStyles = {
 
       noPasses: {
         color: app_colors.white,
-        fontSize: 16,
-        fontFamily: 'DMMonoMedium',
-        textTransform: 'uppercase' as 'uppercase',
+        fontSize: 14,
+        textAlign: 'center' as 'center',
+        fontFamily: 'DMMonoRegular',
         marginBottom: 10,
         marginTop: 10,
+        marginHorizontal: 20,
+        opacity: 0.5,
       }
     },
 
