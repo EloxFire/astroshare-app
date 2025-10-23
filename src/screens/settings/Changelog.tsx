@@ -26,7 +26,9 @@ export default function ChangelogScreen({ navigation }: any) {
   useEffect(() => {
      (async () => {
         const news = await axios.get(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/changelog/app`)
-        setNews(news.data.data)
+
+        const visibleNews = news.data.data.filter((n: NewsLog) => n.visible)
+        setNews(visibleNews)
      })()
   }, [])
 

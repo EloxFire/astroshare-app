@@ -3,5 +3,6 @@ export type NewsLog = {
   date: Date;
   changes: string[];
   breaking: boolean;
+  visible: boolean;
   version_name?: string;
 }
