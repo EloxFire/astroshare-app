@@ -1,6 +1,7 @@
 export const moonPhasesTranslation = {
   title: "Lune du %{date}",
   select_date: "Sélectioner une date",
+  disclaimer: "Il est uniquement possible de sélectionner des dates entre %{startDate} et la fin de l'année en cours.",
   pills: {
     rise_time: "Heure de lever",
     set_time: "Heure de coucher",

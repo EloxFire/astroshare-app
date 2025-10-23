@@ -154,7 +154,8 @@ export default function MoonPhases({ navigation }: any) {
       }
 
       <ScrollView>
-      <View style={[moonPhasesStyles.content, {marginBottom: 20, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}]}>
+      <DisclaimerBar message={i18n.t('moonPhases.disclaimer', {startDate: dayjs('2011-01-01').format('DD MMMM YYYY'), endDate: dayjs().endOf('year').format('DD MMMM YYYY')})} type={"info"} soft/>
+      <View style={[moonPhasesStyles.content, {marginBottom: 10, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}]}>
         <SimpleButton
           icon={require('../../assets/icons/FiChevronLeft.png')}
           onPress={() => setSelectedDate(selectedDate.subtract(1, 'day'))}
@@ -250,7 +251,7 @@ export default function MoonPhases({ navigation }: any) {
         </View>
 
         {/*Calendar view*/}
-        <View style={[moonPhasesStyles.content, {marginTop: 20}]}>
+        <View style={[moonPhasesStyles.content, {marginTop: 20, marginBottom: 5}]}>
           <Text style={moonPhasesStyles.content.calendar.title}>Calendrier complet</Text>
           {
             calendarImages.length === 0 &&
