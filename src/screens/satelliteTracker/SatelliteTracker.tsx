@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react'
-import { ScrollView, Text, TouchableOpacity, View } from 'react-native'
+import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import { i18n } from '../../helpers/scripts/i18n'
 import { globalStyles } from '../../styles/global'
 import { routes } from '../../helpers/routes'
@@ -17,16 +17,18 @@ import { isProUser } from '../../helpers/scripts/auth/checkUserRole'
 import { BASE_NORAD_IDS, KNOWN_NORAD_IDS } from '../../helpers/constants/norad'
 import DisclaimerBar from '../../components/banners/DisclaimerBar'
 import SimpleButton from '../../components/commons/buttons/SimpleButton'
-import { app_colors, storageKeys } from '../../helpers/constants'
+import { storageKeys } from '../../helpers/constants'
 import BigButton from '../../components/commons/buttons/BigButton'
-import { getObject } from '../../helpers/storage'
+import { getObject, storeObject } from '../../helpers/storage'
 import { Satellite } from '../../helpers/types/satellites/Satellite'
+import { useIsFocused } from '@react-navigation/native'
 
 export default function SatelliteTracker({ navigation }: any) {
 
   const { currentUserLocation } = useSettings();
   const { currentUser } = useAuth()
   const { currentLocale } = useTranslation()
+  const isFocused = useIsFocused();
 
   const [userSatList, setUserSatList] = useState<Array<Satellite>>([])
 
@@ -35,17 +37,28 @@ export default function SatelliteTracker({ navigation }: any) {
   }, []);
 
   useEffect(() => {
+    if (!isFocused) {
+      return;
+    }
+
     (async () => {
-      
       const storedList = await getObject(storageKeys.satellites.customNoradList);
       console.log("Stored custom NORAD list:", storedList);
-      
+
       if (storedList) {
-        const parsedList = JSON.parse(storedList) as Array<Satellite>;
+        const parsedList = (typeof storedList === 'string' ? JSON.parse(storedList) : storedList) as Array<Satellite>;
         setUserSatList(parsedList);
+      } else {
+        setUserSatList([]);
       }
     })()
-  }, [])
+  }, [isFocused])
+
+  const handleRemoveSatellite = async (satelliteId: number) => {
+    const updatedList = userSatList.filter((satellite) => satellite.norad_id !== satelliteId);
+    setUserSatList(updatedList);
+    await storeObject(storageKeys.satellites.customNoradList, JSON.stringify(updatedList));
+  }
 
   return (
     <View style={globalStyles.body}>
@@ -65,7 +78,6 @@ export default function SatelliteTracker({ navigation }: any) {
             <ToolButton text={i18n.t('satelliteTrackers.home.buttons.48274.title', {name: KNOWN_NORAD_IDS[48274 as keyof typeof KNOWN_NORAD_IDS]})} subtitle={i18n.t('satelliteTrackers.home.buttons.48274.subtitle')} image={require('../../../assets/images/tools/tiangongtracker.png')} onPress={() => navigation.navigate(routes.satellitesTrackers.details.path, {noradId: BASE_NORAD_IDS.CSS})} />
           </View>
           <View style={satelliteTrackerHomeStyles.addContainer}>
-            {/* <ToolButton disabled={!isProUser(currentUser)} text={i18n.t('satelliteTrackers.home.buttons.custom.title')} subtitle={i18n.t('satelliteTrackers.home.buttons.custom.subtitle')} image={require('../../../assets/images/tools/satellitesconstellation.png')} onPress={() => navigation.navigate(routes.satellitesTrackers.addCustomSatellite.path)} isPremium /> */}
             <Text style={satelliteTrackerHomeStyles.addContainer.title}>Mes satellites personnalisés</Text>
             <BigButton
               disabled={!isProUser(currentUser)}
@@ -78,19 +90,31 @@ export default function SatelliteTracker({ navigation }: any) {
             {
               userSatList.length > 0 && (
                 <>
-                  {
-                    userSatList.map((satellite: Satellite) => {
-                      return (
+                  {userSatList.map((satellite: Satellite) => (
+                    <View key={satellite.norad_id} style={satelliteTrackerHomeStyles.addContainer.customSatelliteRow}>
+                      <View style={{ flex: 1 }}>
                         <ToolButton
-                          key={satellite.norad_id}
-                          text={satellite.object_name}
-                          // subtitle={i18n.t('satelliteTrackers.home.customSatellite.subtitle', {noradId: satellite.norad_id})}
+                          disabled={!isProUser(currentUser)}
+                          text={i18n.t('satelliteTrackers.home.buttons.customSatellite.title', {name: satellite.object_name})}
+                          subtitle={i18n.t('satelliteTrackers.home.buttons.customSatellite.subtitle', {noradId: satellite.norad_id})}
                           image={require('../../../assets/images/tools/satellitesconstellation.png')}
                           onPress={() => navigation.navigate(routes.satellitesTrackers.details.path, {noradId: satellite.norad_id})}
                         />
-                      )
-                    })
-                  }
+                      </View>
+                      <TouchableOpacity
+                        disabled={!isProUser(currentUser)}
+                        onPress={() => handleRemoveSatellite(satellite.norad_id)}
+                        style={satelliteTrackerHomeStyles.addContainer.deleteButton}
+                        accessibilityRole="button"
+                        accessibilityLabel={i18n.t('satelliteTrackers.home.buttons.customSatellite.deleteLabel', { noradId: satellite.norad_id })}
+                      >
+                        <Image
+                          source={require('../../../assets/icons/FiTrash.png')}
+                          style={satelliteTrackerHomeStyles.addContainer.deleteIcon}
+                        />
+                      </TouchableOpacity>
+                    </View>
+                  ))}
                 </>
               )
             }

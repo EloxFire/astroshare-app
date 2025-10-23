@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import {ScrollView, Text, View, Image, TouchableOpacity} from "react-native";
+import {ScrollView, Text, View, Image, TouchableOpacity, ActivityIndicator} from "react-native";
 import { globalStyles } from "../../styles/global";
 import PageTitle from "../../components/commons/PageTitle";
 import { i18n } from "../../helpers/scripts/i18n";
@@ -26,6 +26,7 @@ export default function AddCustomSatellite({ navigation }: any) {
   const [satSearch, setSatSearch] = useState<string>("");
   const [availableSatList, setAvailableSatList] = useState<Array<Satellite>>([]);
   const [userSatList, setUserSatList] = useState<Array<Satellite>>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
     sendAnalyticsEvent(currentUser, currentUserLocation, 'Add Custom Satellite Screen View', eventTypes.SCREEN_VIEW, {}, currentLocale);
@@ -46,26 +47,30 @@ export default function AddCustomSatellite({ navigation }: any) {
 
   const handleSearchSatellite = async () => {
     if(satSearch.length === 0) {
-      console.log("[AddCustomSatellite] No NORAD ID entered.");
-      showToast({ type: 'error', message: 'Veuillez entrer un identifiant NORAD.' });
+      console.log("[AddCustomSatellite] No NORAD ID or name entered.");
+      showToast({ type: 'error', message: i18n.t('satelliteTrackers.addSatellite.errors.noSearch') });
       return;
     };
 
     if(satSearch.length <= 2) {
       console.log("[AddCustomSatellite] NORAD ID too short. Too many results expected.");
-      showToast({ type: 'error', message: 'Veuillez entrer au moins 3 chiffres.' });
+      showToast({ type: 'error', message: i18n.t('satelliteTrackers.addSatellite.errors.tooShort') });
       return;
     }
     console.log("Searching for satellite with NORAD ID:", satSearch);
-    
-    const results = await fetch(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/norad/${satSearch}`)
+
+    setIsLoading(true);
+    const results = await fetch(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/norad/${satSearch}`);
     const data = await results.json();
     console.log("Search results:", data);
     
     if (data) {
       setAvailableSatList(data);
+      setIsLoading(false);
     } else {
       setAvailableSatList([]);
+      setIsLoading(false);
+      showToast({ type: 'error', message: i18n.t('satelliteTrackers.addSatellite.errors.fetchFailed') });
     }
   }
 
@@ -90,7 +95,6 @@ export default function AddCustomSatellite({ navigation }: any) {
         navigation={navigation}
         title={i18n.t('satelliteTrackers.addSatellite.title')}
         subtitle={i18n.t('satelliteTrackers.addSatellite.subtitle')}
-        // backRoute={routes.satellitesTrackers.home.path}
       />
       <View style={globalStyles.screens.separator} />
       <ScrollView>
@@ -104,14 +108,15 @@ export default function AddCustomSatellite({ navigation }: any) {
             changeEvent={(text) => {
               setSatSearch(text);
             }}
-            type="number"
+            type="text"
             value={satSearch}
-            keyboardType="numeric"
+            keyboardType="default"
           />
           {
-            availableSatList.length > 0 ? (
+            availableSatList.length > 0 && !isLoading && (
               <View>
                 <Text style={{color: app_colors.white, marginBottom: 10}}>Résultats de la recherche :</Text>
+                <Text style={{color: app_colors.white, marginBottom: 10, fontFamily: "DMMonoRegular", opacity: 0.5}}>{availableSatList.length} résultats trouvés</Text>
                 <View style={{display: 'flex', flexDirection: 'column', gap: 10}}>
                   {
                     availableSatList.map((satellite) => (
@@ -125,10 +130,11 @@ export default function AddCustomSatellite({ navigation }: any) {
                   }
                 </View>
               </View>
-            ) : (
-              <View style={{marginTop: 20, paddingHorizontal: 10}}>
-                <Text style={{color: app_colors.white}}>Aucun résultat trouvé.</Text>
-              </View>
+            )
+          }
+          {
+            isLoading && (
+              <ActivityIndicator size="large" color={app_colors.white} style={{marginTop: 20}} />
             )
           }
         </View>

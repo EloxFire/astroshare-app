@@ -2,7 +2,7 @@ export const homeTranslations = {
   title: "Satellites",
   subtitle: "// Suivez n'importe quel satellite !",
   info: "De nouveaux satellites et objets à suivre seront ajoutés au fil du temps.",
-  disclaimer: "Le suivi de la constellation Starlink est actuellement désactivé.\n\nNous travaillons actuellement à l'amélioration de ce suivi pour vous offrir une expérience optimale de cette fonctionnalité afin de vous fournir une vision d'ensemble de la constellation sans impacter les performances de l'application.",
+  disclaimer: "Le suivi de la constellation Starlink est actuellement désactivé. Nous améliorons cette fonctionnalité !",
   buttons: {
     25544: {
       title: "Suivi {{name}}",
@@ -19,6 +19,11 @@ export const homeTranslations = {
     custom: {
       title: "Ajouter un satellite",
       subtitle: "// Ajouter un satellite personnalisé !"
+    },
+    customSatellite: {
+      title: "Suivi {{name}}",
+      subtitle: "// Suivi du satellite personnalisé {{noradId}}",
+      deleteLabel: "Supprimer le satellite personnalisé {{noradId}}"
     }
   }
 }

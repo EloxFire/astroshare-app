@@ -19,6 +19,11 @@ export const homeTranslations = {
     custom: {
       title: "Add a satellite",
       subtitle: "// Add a custom satellite to track!",
-    }
+    },
+    customSatellite: {
+      title: "Track {{name}}",
+      subtitle: "// Tracking custom satellite {{noradId}}",
+      deleteLabel: "Remove custom satellite {{noradId}} from your list",
+    },
   },
 };
