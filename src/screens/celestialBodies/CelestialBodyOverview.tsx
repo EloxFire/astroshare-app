@@ -137,7 +137,7 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
         navigation={navigation}
         title={i18n.t('detailsPages.dso.title')}
         subtitle={i18n.t('detailsPages.dso.subtitle')}
-        backRoute={routes.home.path}
+        // backRoute={routes.home.path}
       />
       <View style={globalStyles.screens.separator} />
       <ScrollView style={celestialBodiesOverviewStyles.content} contentContainerStyle={{gap: 10}}>

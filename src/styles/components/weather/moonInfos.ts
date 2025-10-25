@@ -14,7 +14,7 @@ export const moonInfosStyles = {
     title: {
       color: app_colors.white,
       fontSize: 16,
-      marginLeft: 15,
+      marginLeft: 5,
       fontFamily: 'GilroyBlack',
       textTransform: 'uppercase' as 'uppercase',
     },

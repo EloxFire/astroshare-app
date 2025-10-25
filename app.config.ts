@@ -4,7 +4,7 @@ dotenv.config();
 module.exports = {
   name: "Astroshare",
   slug: "astroshare-app",
-  version: "v2.0.0",
+  version: "v2.2.0",
   orientation: "portrait",
   icon: "./assets/icon.png",
   userInterfaceStyle: "light",
@@ -50,6 +50,9 @@ module.exports = {
     }
   },
   plugins: [
+    [
+      "expo-asset"
+    ],
     [
       "expo-font"
     ],

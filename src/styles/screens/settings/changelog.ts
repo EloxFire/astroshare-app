@@ -31,6 +31,7 @@ export const changelogStyles = {
           fontFamily: 'GilroyRegular',
           fontSize: 15,
           color: app_colors.white,
+          maxWidth: 210,
         },
 
         date: {

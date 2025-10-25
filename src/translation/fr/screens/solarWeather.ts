@@ -1,4 +1,5 @@
 export const solarWeatherTranslations = {
+  disclaimer: "En raison du shutdown du gouvernement américain, certaines données ne sont plus mises à jour.\nDes données de secours sont utilisées, la qualité peut varier.",
   containers: {
     instrument: "Instrument : %{currentImageFilter}",
     emc: "Éjections de Masse Coronale (EMC)",
@@ -12,7 +13,8 @@ export const solarWeatherTranslations = {
     switches: {
       image: "Image",
       video: "Vidéo"
-    }
+    },
+    disclaimer: "Données de secours, fonctionnement en mode dégradé"
   },
   studyZones: {
     HMI_IC: "Soleil en lumière visible",
@@ -21,6 +23,11 @@ export const solarWeatherTranslations = {
     AIA_171: "Boucles coronales",
     AIA_131: "Éruptions solaires",
     AIA_335: "Régions actives",
-    AIA_1600: "Champs magnétiques"
+    AIA_1600: "Champs magnétiques",
+    'HMI_CONTINUUM': "Soleil en lumière visible (SOHO)",
+    'EIT_195': "Couronne solaire (SOHO)",
+    'EIT_284': "Régions actives (SOHO)",
+    'EIT_171': "Boucles coronales (SOHO)",
+    'EIT_304': "Filaments solaires (SOHO)",
   }
 }

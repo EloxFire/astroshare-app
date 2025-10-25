@@ -1,5 +1,5 @@
 import React from 'react'
-import { Image, ImageSourcePropType, Text, TouchableOpacity, View } from 'react-native'
+import { Image, ImageBackground, ImageSourcePropType, Text, TouchableOpacity, View } from 'react-native'
 import { toolButtonStyles } from '../../../styles/components/commons/buttons/toolButton'
 import { app_colors } from '../../../helpers/constants'
 import AnimatedStar from '../../animations/AnimatedStar'
@@ -41,22 +41,21 @@ export default function ToolButton({ text, image, navigation, targetScreen, subt
   }
 
   return (
-    <TouchableOpacity activeOpacity={.5} style={[toolButtonStyles.button, { opacity: disabled ? .5 : 1 }]} onPress={() => handleButtonPress()}>
-      {
-        image && (
-          <Image source={image} style={toolButtonStyles.button.image} />
-        )
-      }
-      <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-        <View>
-          <Text style={toolButtonStyles.button.text}>{text}</Text>
-          {subtitle && <Text style={toolButtonStyles.button.subtitle}>{subtitle}</Text>}
+    <ImageBackground source={image} style={[toolButtonStyles.button, { opacity: disabled ? 0.3 : 1 }]} imageStyle={toolButtonStyles.button.image}>
+      <TouchableOpacity activeOpacity={.7} style={{flex: 1, justifyContent: 'center', padding: 10}} onPress={() => handleButtonPress()}>
+        <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+          <View>
+            <Text style={toolButtonStyles.button.text}>{text}</Text>
+            {subtitle && <Text style={toolButtonStyles.button.subtitle}>{subtitle}</Text>}
+          </View>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            {
+              isPremium &&
+              <ProBadge additionalStyles={{marginRight: 10, transform: [{scale: 1.2}]}}/>
+            }
+          </View>
         </View>
-        {
-          isPremium &&
-          <ProBadge additionalStyles={{marginRight: 10, transform: [{scale: 1.2}]}}/>
-        }
-      </View>
-    </TouchableOpacity>
+      </TouchableOpacity>
+    </ImageBackground>
   )
 }

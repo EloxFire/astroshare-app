@@ -1,0 +1,35 @@
+export const addCustomSatelliteTranslations = {
+  title: "Custom satellite",
+  subtitle: "Add a custom satellite to track!",
+  searchPlaceholder: "Search by NORAD ID or name...",
+  searchResultsTitle: "Search results",
+  noResults: "No results found.",
+  satAdded: "Satellite added to your custom list.",
+  satRemoved: "Satellite removed from your custom list.",
+  errors: {
+    fetchFailed: "Failed to fetch satellite data. Please try again.",
+    tooShort: "Please enter at least 3 characters.",
+    noSearch: "Please enter a NORAD ID or a name.",
+  },
+  satCard: {
+    titles: {
+      type: "Type",
+      noradId: "NORAD ID",
+      status: "Status",
+      name: "Name",
+    },
+    values: {
+      PAY: "Payload",
+      "R/B": "Rocket body",
+      DEB: "Debris",
+      UNK: "Unknown",
+      "+": "Active",
+      "-": "Inactive",
+      D: "Debris",
+      B: "Standby",
+      S: "New",
+      X: "Extended",
+      P: "Partial",
+    },
+  },
+};

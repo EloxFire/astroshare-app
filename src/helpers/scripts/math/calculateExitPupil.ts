@@ -4,5 +4,5 @@ export const calculateExitPupil = (diameter: number | undefined, focalLength: nu
   }
 
   const magnification = focalLength / eyepieceFocalLength;
-  return `P = \\frac{D}{G} = \\frac{D}{f_{oculaire}}{f_{telescope}} = \\frac{${diameter} \\times ${eyepieceFocalLength}}{${focalLength}} = ${(diameter * eyepieceFocalLength / focalLength).toFixed(2)}\\text{mm}`;
+  return `P = \\frac{D}{G} = \\frac{D}{f_{oculaire}}{f_{telescope}} = \\frac{${diameter} \\times ${eyepieceFocalLength}}{${focalLength}} = ${(diameter * eyepieceFocalLength / focalLength).toFixed(2)}\\text{ mm}`;
 }

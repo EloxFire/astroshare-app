@@ -3,6 +3,10 @@ export const homeTranslations = {
     title: "Your tools",
     subtitle: "Your custom tool box"
   },
+  pro_section: {
+    title: "Explore even further",
+    subtitle: "Unlock the full potential of Astroshare"
+  },
   other_tools: {
     title: "Other tools",
     subtitle: "Explore beyond limits !"
@@ -45,8 +49,8 @@ export const homeTranslations = {
       subtitle: "// Astronomy Picture of the Day"
     },
     satellite_tracker: {
-      title: "Satellites",
-      subtitle: "// Real-time satellites tracker"
+      title: "Satellites tracking",
+      subtitle: "// Track any satellite !"
     },
     skymap_generator: {
       title: "Skymap",

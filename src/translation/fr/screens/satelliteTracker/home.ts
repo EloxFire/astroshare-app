@@ -1,19 +1,29 @@
 export const homeTranslations = {
   title: "Satellites",
-  subtitle: "// Suivi de l'ISS et de Starlink",
+  subtitle: "// Suivez n'importe quel satellite !",
   info: "De nouveaux satellites et objets à suivre seront ajoutés au fil du temps.",
+  disclaimer: "Le suivi de la constellation Starlink est actuellement désactivé. Nous améliorons cette fonctionnalité !",
   buttons: {
-    issTracker: {
-      title: "Iss",
-      subtitle: "// Suivi de l'ISS en temps réel"
+    25544: {
+      title: "Suivi {{name}}",
+      subtitle: "// Suivi de la Station Spatiale Internationale"
     },
-    starlinkTracker: {
-      title: "Starlink",
+    48274: {
+      title: "Suivi {{name}}",
+      subtitle: "// Suivi de la Station Spatiale Chinoise"
+    },
+    starlink: {
+      title: "Suivi Starlink",
       subtitle: "// Suivi de la constellation Starlink"
     },
-    tss: {
-      title: "Tiangong (Bientôt disponible)",
-      subtitle: "// Suivi de la Station Spatiale Chinoise"
+    custom: {
+      title: "Ajouter un satellite",
+      subtitle: "// Ajouter un satellite personnalisé !"
+    },
+    customSatellite: {
+      title: "Suivi {{name}}",
+      subtitle: "// Suivi du satellite personnalisé {{noradId}}",
+      deleteLabel: "Supprimer le satellite personnalisé {{noradId}}"
     }
   }
 }

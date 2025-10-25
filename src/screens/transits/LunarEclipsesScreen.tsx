@@ -35,7 +35,6 @@ export default function LunarEclipsesScreen({ navigation }: any) {
   }, []);
 
   const findNextEclipse = async () => {
-    console.log({params: {year: selectedYear, observer: `[${currentUserLocation.lat},${currentUserLocation.lon}]`}})
     setLoading(true)
     setEclipses([])
 

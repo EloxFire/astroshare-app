@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import {ActivityIndicator, Image, ScrollView, Text, View, StyleSheet} from 'react-native'
+import {ActivityIndicator, Image, ScrollView, Text, View, Platform} from 'react-native'
 import { globalStyles } from '../styles/global'
 import { moonPhasesStyles } from '../styles/screens/moonPhases'
 import {
@@ -22,6 +22,8 @@ import {useAuth} from "../contexts/AuthContext";
 import {sendAnalyticsEvent} from "../helpers/scripts/analytics";
 import {eventTypes} from "../helpers/constants/analytics";
 import {routes} from "../helpers/routes";
+import SimpleButton from '../components/commons/buttons/SimpleButton'
+import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 
 export default function MoonPhases({ navigation }: any) {
 
@@ -31,73 +33,174 @@ export default function MoonPhases({ navigation }: any) {
   dayjs().locale(currentLocale)
 
   const [moonData, setMoonData] = useState<ComputedMoonInfos | null>(null)
-  const [currentDate, setCurrentDate] = useState(dayjs())
   const [moonImageUrl, setMoonImageUrl] = useState<undefined | {uri: string }>(undefined)
-  const [currentMonth, setCurrentMonth] = useState(dayjs().month())
-  const [calendarImages, setCalendarImages] = useState<{date: string, image: string}[]>([])
+  const [calendarImages, setCalendarImages] = useState<any>([])
+  const [showDatePicker, setShowDatePicker] = useState(false)
+  const [loadingMonth, setLoadingMonth] = useState(true)
 
+
+  const [clock, setClock] = useState(dayjs()); // Pour montrer l'heure actuelle
+  const [selectedDate, setSelectedDate] = useState<Dayjs>(dayjs())
+  const [selectedYear, setSelectedYear] = useState<number>(dayjs().year())
+  const [selectedMonth, setSelectedMonth] = useState<number>(dayjs().month())
+
+
+  // Envoi des analytiques
   useEffect(() => {
-    sendAnalyticsEvent(currentUser, currentUserLocation, 'Moon Phases screen view', eventTypes.SCREEN_VIEW, {currentMonth: currentMonth}, currentLocale)
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'Moon Phases screen view', eventTypes.SCREEN_VIEW, {currentMonth: selectedMonth}, currentLocale)
   }, []);
 
+  // Mise a jour de l'horloge chaque seconde (pause quand le date picker est ouvert)
   useEffect(() => {
-    const observer: GeographicCoordinate = {latitude: currentUserLocation.lat, longitude: currentUserLocation.lon}
-    const data: ComputedMoonInfos = computeMoon({date: new Date(), observer})
-    setMoonData(data)
-    fetchMoonImage()
-  }, [currentUserLocation])
+    if (showDatePicker) {
+      return
+    }
 
-  useEffect(() => {
-    setCurrentDate(dayjs())
+    setClock(dayjs())
 
     const interval = setInterval(() => {
-      setCurrentDate(dayjs())
-    }, 1000)
+      setClock(dayjs());
+    }, 1000);
 
     return () => {
-      clearInterval(interval)
-    }
-  }, [])
+      clearInterval(interval);
+    };
+  }, [showDatePicker]);
+
+  // Mise à jour des données lunaires
+  useEffect(() => {
+    const date = selectedDate.toDate()
+    const observer: GeographicCoordinate = {latitude: currentUserLocation.lat, longitude: currentUserLocation.lon}
+    const data: ComputedMoonInfos = computeMoon({date: date, observer})
+    setMoonData(data)
+    fetchMoonImage()
+    fetchCalendarImages(selectedMonth)
+  }, [currentUserLocation, selectedDate]);
 
   useEffect(() => {
-    (async () => {
-      await fetchCalendarImages(currentMonth)
-    })()
-  }, [currentMonth]);
+    fetchCalendarImages(selectedMonth)
+  }, [selectedMonth]);
+
 
   const fetchMoonImage = async () => {
-    const response = await astroshareApi.get('/moon/illustration')
-    setMoonImageUrl({uri: `data:image/png;base64,${response.data.image}`})
-  }
-
-  const handleMonthChange = (direction: 'next' | 'previous') => {
-    if (direction === 'next') {
-      setCurrentMonth(currentMonth + 1)
-    } else {
-      setCurrentMonth(currentMonth - 1)
-    }
+    const response = await astroshareApi.get('/moon/illustration?date=' + selectedDate.format('YYYY-MM-DD'))
+    setMoonImageUrl({uri: response.data.url})
   }
 
   const fetchCalendarImages = async (month: number) => {
-    const response = await astroshareApi.get(`/moon/illustration/month`, {params: {month: currentMonth}})
-    setCalendarImages(response.data)
+    setLoadingMonth(true)
+    const response = await astroshareApi.get(`/moon/illustration/month?year=${selectedYear}&month=${selectedMonth}`)
+    setCalendarImages(response.data.images)
+    setLoadingMonth(false)
   }
+
+  const handleDatePickerChange = (event: DateTimePickerEvent, date?: Date) => {
+    if (event.type === 'dismissed') {
+      setShowDatePicker(false)
+      return
+    }
+
+    if (date) {
+      setSelectedDate(dayjs(date))
+      setSelectedYear(dayjs(date).year())
+      setSelectedMonth(dayjs(date).month())
+    }
+
+    if (Platform.OS === 'android') {
+      setShowDatePicker(false)
+    }
+  }
+
+  const handleMonthChange = (direction: 'next' | 'previous') => {
+    if (direction === 'next' && (selectedYear === dayjs().year() && selectedMonth === 11)) {
+      return
+    }
+    if (direction === 'previous' && (selectedYear === 2011 && selectedMonth === 0)) {
+      return
+    }
+    if (direction === 'next') {
+      setSelectedMonth(selectedMonth + 1)
+    } else {
+      setSelectedMonth(selectedMonth - 1)
+    }
+  }
+
+  const handleResetDate = () => {
+    setSelectedDate(dayjs())
+    setSelectedYear(dayjs().year())
+    setSelectedMonth(dayjs().month())
+  }
+
+  
 
   return (
     <View style={globalStyles.body}>
       <PageTitle navigation={navigation} title={i18n.t('home.buttons.moon_phases.title')} subtitle={i18n.t('home.buttons.moon_phases.subtitle')} backRoute={routes.home.path} />
       <View style={globalStyles.screens.separator} />
+
+      {
+        showDatePicker &&
+        <DateTimePicker
+          value={selectedDate.toDate()}
+          mode="date"
+          display="default"
+          onChange={handleDatePickerChange}
+          accentColor={app_colors.yellow}
+          // Maximum date at 31 december of current year
+          maximumDate={new Date(dayjs().year(), 11, 31)}
+          // Minimum date at 1 january 2011
+          minimumDate={new Date(2011, 0, 1)}
+        />
+      }
+
       <ScrollView>
+      <DisclaimerBar message={i18n.t('moonPhases.disclaimer', {startDate: dayjs('2011-01-01').format('DD MMMM YYYY'), endDate: dayjs().endOf('year').format('DD MMMM YYYY')})} type={"info"} soft/>
+      <View style={[moonPhasesStyles.content, {marginBottom: 10, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}]}>
+        <SimpleButton
+          icon={require('../../assets/icons/FiChevronLeft.png')}
+          onPress={() => setSelectedDate(selectedDate.subtract(1, 'day'))}
+          active
+          activeBorderColor={app_colors.white_twenty}
+        />
+        <View>
+          <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 10}}>
+            <SimpleButton
+              icon={require('../../assets/icons/FiCalendar.png')}
+              text={selectedDate.format('DD MMMM YYYY')}
+              textColor={app_colors.white}
+              textAdditionalStyles={{textTransform: 'uppercase', fontFamily: 'DMMonoMedium'}}
+              active
+              activeBorderColor={app_colors.white_twenty}
+              onPress={() => setShowDatePicker((current) => !current)}
+            />
+            {
+              !selectedDate.isSame(dayjs(), 'day') &&
+              <SimpleButton
+                icon={require('../../assets/icons/FiRepeat.png')}
+                textColor={app_colors.white}
+                textAdditionalStyles={{textTransform: 'uppercase', fontFamily: 'DMMonoMedium', fontSize: 12}}
+                active
+                activeBorderColor={app_colors.white_twenty}
+                onPress={() => handleResetDate()}
+              />
+            }
+          </View>
+          <Text style={moonPhasesStyles.content.header.transitCard.text}>{clock.format('HH:mm:ss')}</Text>
+        </View>
+        <SimpleButton
+          icon={require('../../assets/icons/FiChevronRight.png')}
+          onPress={() => setSelectedDate(selectedDate.add(1, 'day'))}
+          active
+          activeBorderColor={app_colors.white_twenty}
+        />
+      </View>
         <View style={[moonPhasesStyles.content, {marginBottom: 0}]}>
           <View style={moonPhasesStyles.content.header}>
             <View style={moonPhasesStyles.content.header.transitCard}>
               <Image source={require('../../assets/icons/FiMoonrise.png')} style={moonPhasesStyles.content.header.transitCard.icon} />
               {moonData ? <Text style={moonPhasesStyles.content.header.transitCard.text}>{moonData.visibility.objectNextRise}</Text> : <ActivityIndicator size={"small"} />}
             </View>
-            <View>
-              <Text style={moonPhasesStyles.content.header.transitCard.date}>{currentDate.format('DD MMMM YYYY')}</Text>
-              <Text style={moonPhasesStyles.content.header.transitCard.text}>{currentDate.format('HH:mm:ss')}</Text>
-            </View>
+            <Text style={moonPhasesStyles.content.body.phaseTitle}>{!moonData ? <ActivityIndicator size={"small"} /> : moonData.data.phase}</Text>
             <View style={moonPhasesStyles.content.header.transitCard}>
               <Image source={require('../../assets/icons/FiMoonset.png')} style={moonPhasesStyles.content.header.transitCard.icon} />
               {moonData ? <Text style={moonPhasesStyles.content.header.transitCard.text}>{moonData.visibility.objectNextSet}</Text> : <ActivityIndicator size={"small"} />}
@@ -107,8 +210,8 @@ export default function MoonPhases({ navigation }: any) {
             moonData && (
               <>
                 <View style={moonPhasesStyles.content.body}>
-                  <Text style={moonPhasesStyles.content.body.phaseTitle}>{moonData.data.phase}</Text>
-                  { !moonImageUrl ? <ActivityIndicator size={"large"} color={app_colors.white} /> : <Image source={moonImageUrl} style={moonPhasesStyles.content.body.icon}/> }
+                  
+                  { !moonImageUrl ? <ActivityIndicator size={"large"} color={app_colors.white} /> : <Image source={moonImageUrl} style={moonPhasesStyles.content.body.image}/> }
                   {/*MOON PHASE HERE*/}
                   <View style={moonPhasesStyles.content.body.infos}>
                     <View>
@@ -148,7 +251,7 @@ export default function MoonPhases({ navigation }: any) {
         </View>
 
         {/*Calendar view*/}
-        <View style={[moonPhasesStyles.content, {marginTop: 20}]}>
+        <View style={[moonPhasesStyles.content, {marginTop: 20, marginBottom: 5}]}>
           <Text style={moonPhasesStyles.content.calendar.title}>Calendrier complet</Text>
           {
             calendarImages.length === 0 &&
@@ -156,36 +259,44 @@ export default function MoonPhases({ navigation }: any) {
           }
 
           <View style={moonPhasesStyles.content.calendar.selectorRow}>
-            {/*<SimpleButton*/}
-            {/*  icon={require('../../assets/icons/FiChevronLeft.png')}*/}
-            {/*  active*/}
-            {/*  activeBorderColor={app_colors.white_twenty}*/}
-            {/*  onPress={() => handleMonthChange('previous')}*/}
-            {/*/>*/}
-            <Text style={moonPhasesStyles.content.calendar.selectorRow.currentMonth}>{capitalize(dayjs().month(currentMonth).format('MMMM YYYY'))}</Text>
-            {/*<SimpleButton*/}
-            {/*  icon={require('../../assets/icons/FiChevronRight.png')}*/}
-            {/*  active*/}
-            {/*  activeBorderColor={app_colors.white_twenty}*/}
-            {/*  onPress={() => handleMonthChange('next')}*/}
-            {/*/>*/}
+            <SimpleButton
+              icon={require('../../assets/icons/FiChevronLeft.png')}
+              active
+              activeBorderColor={app_colors.white_twenty}
+              onPress={() => handleMonthChange('previous')}
+            />
+            <Text style={moonPhasesStyles.content.calendar.selectorRow.currentMonth}>{capitalize(dayjs().month(selectedMonth).format('MMMM YYYY'))}</Text>
+            <SimpleButton
+              icon={require('../../assets/icons/FiChevronRight.png')}
+              active
+              activeBorderColor={app_colors.white_twenty}
+              onPress={() => handleMonthChange('next')}
+            />
           </View>
 
           <View style={moonPhasesStyles.content.calendar.calendarCellsContainer}>
             {
-              calendarImages.length > 0 ?
-              calendarImages.map((day, index) => {
-                return (
-                  <View key={index} style={moonPhasesStyles.content.calendar.calendarCellsContainer.cell}>
-                    <Text style={moonPhasesStyles.content.calendar.calendarCellsContainer.cell.day}>{dayjs(day.date).format('ddd')}</Text>
-                    <Text style={moonPhasesStyles.content.calendar.calendarCellsContainer.cell.day}>{dayjs(day.date).format('DD MMMM')}</Text>
-                    <Image source={{uri: `data:image/png;base64,${day.image}`}} style={moonPhasesStyles.content.calendar.calendarCellsContainer.cell.image}/>
-                  </View>
-                )
-              })
-                :
+              loadingMonth ?
                 <ActivityIndicator size={"large"} color={app_colors.white}/>
+                :
+                <>
+                  {
+                    calendarImages.length > 0 ?
+                    calendarImages.map((day: any, index: number) => {
+                      return (
+                        <View key={index} style={moonPhasesStyles.content.calendar.calendarCellsContainer.cell}>
+                          <Text style={moonPhasesStyles.content.calendar.calendarCellsContainer.cell.day}>{dayjs(day.date).format('ddd')}</Text>
+                          <Text style={moonPhasesStyles.content.calendar.calendarCellsContainer.cell.day}>{dayjs(day.date).format('DD MMMM')}</Text>
+                          <Image source={{uri: day.url}} style={moonPhasesStyles.content.calendar.calendarCellsContainer.cell.image}/>
+                        </View>
+                      )
+                    })
+                      :
+                      <ActivityIndicator size={"large"} color={app_colors.white}/>
+                  }
+                </>
             }
+            
           </View>
         </View>
       </ScrollView>

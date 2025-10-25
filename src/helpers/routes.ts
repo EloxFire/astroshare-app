@@ -1,3 +1,5 @@
+import { c, constellations } from "@observerly/astrometry";
+
 export const routes = {
   onboarding: { path: 'Onboarding', requirements: [] },
   tutorial: { path: 'Tutorial', requirements: [] },
@@ -11,9 +13,6 @@ export const routes = {
   solarWeather: { path: 'SolarWeatherScreen', requirements: [] },
   favoritesViewPoints: { path: 'FavoritesViewPoints', requirements: [] },
   apod: { path: 'ApodScreen', requirements: [] },
-  skymapSelection: { path: 'SkymapSelectionScreen', requirements: [] },
-  flatSkymap: {path: 'FlatSkymapScreen', requirements: []},
-  planetarium: {path: 'PlanetariumScreen', requirements: []},
   satelliteTracker: { path: 'SatelliteTrackerScreen', requirements: [] },
   issTracker: { path: 'IssTrackerScreen', requirements: [] },
   starlinkTracker: { path: 'StarlinkTrackerScreen', requirements: [] },
@@ -38,9 +37,9 @@ export const routes = {
   },
   satellitesTrackers: {
     home: { path: 'SatelliteTrackerScreen', requirements: [] },
-    issTracker: { path: 'IssTrackerScreen', requirements: [] },
-    issPasses: { path: "IssPasses", requirements: []},
-    starlinkTracker: { path: 'StarlinkTrackerScreen', requirements: [] },
+    details: { path: 'SatelliteTrackerDetails', requirements: []},
+    satellitePasses: { path: "SatellitePasses", requirements: []},
+    addCustomSatellite: { path: "AddCustomSatelliteTrackerScreen", requirements: []}
   },
   auth: {
     login: { path: 'Login', requirements: [] },
@@ -58,6 +57,24 @@ export const routes = {
   calculations: {
     home: {
       path: "CalculationsScreen",
+      requirements: []
+    }
+  },
+  skymaps: {
+    home: {
+      path: "SkymapSelectionScreen",
+      requirements: []
+    },
+    flatmap: {
+      path: "FlatSkymapScreen",
+      requirements: []
+    },
+    planetarium: {
+      path: "PlanetariumScreen",
+      requirements: []
+    },
+    constellations: {
+      path: "ConstellationsScreen",
       requirements: []
     }
   },

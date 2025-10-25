@@ -53,7 +53,6 @@ export default function MoonInfos() {
     const altitude = selectedSpot ? selectedSpot.equipments.altitude : defaultAltitude;
     const horizonAngle = calculateHorizonAngle(extractNumbers(altitude))
     const moonCoords = getLunarEquatorialCoordinate(new Date())
-    console.log(moonCoords);
 
     const moonRise = getBodyNextRise(new Date(), { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }, moonCoords, horizonAngle)
     const moonSet = getBodyNextSet(new Date(), { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }, moonCoords, horizonAngle)
@@ -69,7 +68,7 @@ export default function MoonInfos() {
 
   const fetchMoonImage = async () => {
     const response = await astroshareApi.get('/moon/illustration')
-    setMoonImageUrl({uri: `data:image/png;base64,${response.data.image}`})
+    setMoonImageUrl({uri: response.data.url})
   }
 
   const moonPhasesList: any = {

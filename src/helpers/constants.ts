@@ -1,5 +1,4 @@
 import {DSO} from "./types/DSO";
-import {ProPackage} from "./types/ProPackage";
 
 export const app_colors = {
   black: '#000000',
@@ -82,7 +81,11 @@ export const storageKeys = {
   },
   notificationsId: 'notificationsId',
   pushToken: 'pushToken',
-  issPasses: 'issPasses',
+  issPasses: 'issPasses', // TODO: cleanup old key
+  satellites: {
+    customNoradList: 'customNoradList',
+    satellitePasses: 'satellitePasses',
+  },
   auth: {
     accessToken: 'access_token',
     refreshToken: 'refresh_token',
@@ -91,6 +94,11 @@ export const storageKeys = {
   analytics: {
     sessionId: 'sessionId',
     base: "analyticsBase"
+  },
+  updates: {
+    upgradeAvailable: 'upgradeAvailable',
+    userSkippedVersion: 'userSkippedVersion',
+    lastAvailableVersion: 'lastAvailableVersion',
   },
   hiddenPremiumAccess: 'hasHiddenPremiumAccess',
   homeNewsBannerVisible: 'homeNewsBannerVisible',
@@ -150,6 +158,14 @@ export const sunImagesSrcWavelengths = {
   'AIA_131': 'https://sdo.gsfc.nasa.gov/assets/img/latest/latest_512_0131.jpg',
   'AIA_335': 'https://sdo.gsfc.nasa.gov/assets/img/latest/latest_512_0335.jpg',
   'AIA_1600': 'https://sdo.gsfc.nasa.gov/assets/img/latest/latest_512_1600.jpg',
+}
+
+export const sunImagesSrcWavelengthsBackup = {
+  'HMI_CONTINUUM': 'https://soho.nascom.nasa.gov/data/realtime/hmi_igr/1024/latest.jpg',
+  'EIT_195': 'https://soho.nascom.nasa.gov/data/realtime/eit_195/1024/latest.jpg',
+  'EIT_284': 'https://soho.nascom.nasa.gov/data/realtime/eit_284/1024/latest.jpg',
+  'EIT_171': 'https://soho.nascom.nasa.gov/data/realtime/eit_171/1024/latest.jpg',
+  'EIT_304': 'https://soho.nascom.nasa.gov/data/realtime/eit_304/1024/latest.jpg',
 }
 
 export const sunVideoSrcWavelengths = {

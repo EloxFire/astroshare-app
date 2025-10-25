@@ -27,4 +27,9 @@ export const homeStyles = {
       flexDirection: 'column' as 'column',
     }
   },
+  proSection: {
+    display: 'flex' as 'flex',
+    flexDirection: 'column' as 'column',
+    marginTop: 10,
+  }
 }

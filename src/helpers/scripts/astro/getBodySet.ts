@@ -61,7 +61,7 @@ export const getBodyNextSetTime = (
 
   // If the set is before the current time, then we know the next set is tomorrow:
   if (set < datetime) {
-    console.log("Set is before current time, getting next set time...");
+    console.log("[getBodyNextSet] Set is before current time, getting next set time...");
     
     return getBodyNextSet(tomorrow, observer, target, horizon)
   }

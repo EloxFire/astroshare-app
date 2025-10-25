@@ -21,7 +21,7 @@ export const settingsTranslations = {
       subtitle: "// Manage your favorite viewpoints"
     },
     widgets: {
-      title: "Customization",
+      title: "Home widgets",
       subtitle: "// Configure your widgets"
     },
     newsBannerManager: {

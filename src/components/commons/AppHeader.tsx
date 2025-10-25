@@ -38,7 +38,7 @@ export default function AppHeader({ navigation }: any) {
   }, [isFocused])
 
   useEffect(() => {
-    console.log('App header currentUser', currentUser)
+    console.log('[AppHeader] Current user:', currentUser)
   }, []);
 
   useEffect(() => {
@@ -75,7 +75,6 @@ export default function AppHeader({ navigation }: any) {
   });
 
   const handleProfilePress = () => {
-    console.log('currentUser', currentUser)
     if(currentUser){
       sendAnalyticsEvent(currentUser, currentUserLocation, 'Profile button pressed', eventTypes.BUTTON_CLICK, {target: "profile screen"}, currentLocale)
       navigation.push(routes.auth.profile.path)

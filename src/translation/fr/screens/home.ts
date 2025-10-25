@@ -3,6 +3,10 @@ export const homeTranslations = {
     title: "Vos outils",
     subtitle: "Votre caisse à outils personnalisée"
   },
+  pro_section: {
+    title: "Explorez encore plus loin",
+    subtitle: "Débloquez tout le potentiel d'Astroshare"
+  },
   other_tools: {
     title: "Autres outils",
     subtitle: "Explorez toujours plus !"
@@ -45,8 +49,8 @@ export const homeTranslations = {
       subtitle: "// Image du jour de la NASA"
     },
     satellite_tracker: {
-      title: "Satellites",
-      subtitle: "// Suivi de l'ISS et de Starlink"
+      title: "Suivi de satellites",
+      subtitle: "// Suivez n'importe quel satellite !"
     },
     skymap_generator: {
       title: "Cartes du ciel",

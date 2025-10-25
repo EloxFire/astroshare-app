@@ -1,4 +1,4 @@
-export interface IssPass {
+export interface SatellitePass {
   startAz: number;
   startAzCompass: string;
   startEl: number;

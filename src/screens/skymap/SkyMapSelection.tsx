@@ -14,6 +14,7 @@ import {useAuth} from "../../contexts/AuthContext";
 import {useTranslation} from "../../hooks/useTranslation";
 import {sendAnalyticsEvent} from "../../helpers/scripts/analytics";
 import {eventTypes} from "../../helpers/constants/analytics";
+import { isProUser } from '../../helpers/scripts/auth/checkUserRole'
 
 export default function SkyMapSelection({ navigation }: any) {
 
@@ -52,14 +53,14 @@ export default function SkyMapSelection({ navigation }: any) {
             text={i18n.t('skymap.buttons.flatmap.title')}
             subtitle={i18n.t('skymap.buttons.flatmap.subtitle')}
             image={require('../../../assets/images/tools/skymap.png')}
-            onPress={() => navigation.navigate(routes.flatSkymap.path)}
+            onPress={() => navigation.navigate(routes.skymaps.flatmap.path)}
           />
           <ToolButton
             disabled={true}
             text={i18n.t('skymap.buttons.planetarium.title')}
             subtitle={i18n.t('skymap.buttons.planetarium.subtitle')}
             image={require('../../../assets/images/tools/skymap.png')}
-            onPress={() => navigation.navigate(routes.planetarium.path)}
+            onPress={() => navigation.navigate(routes.skymaps.planetarium.path)}
           />
           <ToolButton
             disabled
@@ -67,7 +68,7 @@ export default function SkyMapSelection({ navigation }: any) {
             text={i18n.t('skymap.buttons.constellations.title')}
             subtitle={i18n.t('skymap.buttons.constellations.subtitle')}
             image={require('../../../assets/images/tools/skymap.png')}
-            onPress={() => navigation.navigate(routes.planetarium.path)}
+            onPress={() => navigation.navigate(routes.skymaps.constellations.path)}
           />
         </View>
         <ScreenInfo image={require('../../../assets/icons/FiCompass.png')} text={i18n.t('skymap.info')} />

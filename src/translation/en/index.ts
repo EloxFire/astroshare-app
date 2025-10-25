@@ -4,6 +4,7 @@ import { constellationsNamesTranslations } from "./common/constellations";
 import { languagesTranslations } from "./common/languages";
 import { objectTypesTranslations } from "./common/objectTypes";
 import { spaceStuffTranslations } from "./common/spaceStuff";
+import { cardsTranslations } from "./components/cards";
 import { resultCardsTranslations } from "./components/cards/resultCards";
 import { homeSearchModuleTranslations } from "./components/forms/homeSearchModule";
 import { locationHeaderTranslations } from "./components/locationHeader";
@@ -12,13 +13,16 @@ import { ephemerisBarTranslation } from "./components/weather/ephemerisBar";
 import { hourlyOverviewTranslation } from "./components/weather/hourlyOverview";
 import { widgetsTranslations } from "./components/widgets";
 import { aboutTranslations } from "./screens/about";
+import { apodTranslations } from "./screens/apod";
 import { astroDataInfosTranslations } from "./screens/astroDataInfos";
+import { calculationsTranslations } from "./screens/calculations";
 import { detailsPages } from "./screens/detailsPages";
 import { favouriteScreenTranslations } from "./screens/favouriteScreen";
 import { homeTranslations } from "./screens/home";
 import { languageSelection } from "./screens/languageSelection";
 import { moonPhasesTranslation } from "./screens/moonPhases";
 import { onboardingTranslations } from "./screens/onboarding";
+import { observationPlannerTranslations } from "./screens/observationPlanner";
 import { proTranslations } from "./screens/pro";
 import { satelliteTrackerTranslations } from "./screens/satelliteTracker";
 import { scopeAlignmentTranslation } from "./screens/scopeAlignment";
@@ -63,6 +67,7 @@ export const enTranslations = {
   constellations: constellationsNamesTranslations,
   objectTypes: objectTypesTranslations,
   astroDataInfos: astroDataInfosTranslations,
+  apod: apodTranslations,
   about: aboutTranslations,
   widgets: widgetsTranslations,
   spaceStuff: spaceStuffTranslations,
@@ -72,5 +77,9 @@ export const enTranslations = {
   ressourcesScreen: ressourcesScreenTranslations,
   auth: authScreensTranslations,
   widgetsManager: widgetManagerTranslations,
-  transits: transitsTranslations
+  transits: transitsTranslations,
+  cards: cardsTranslations,
+  calculations: calculationsTranslations,
+  observationPlanner: observationPlannerTranslations,
+  satelliteTrackers: satelliteTrackerTranslations,
 }

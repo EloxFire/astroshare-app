@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { ScrollView, Text, View } from 'react-native'
 import { globalStyles } from '../styles/global'
 import { homeStyles } from '../styles/screens/home';
@@ -22,6 +22,9 @@ import {sendAnalyticsEvent} from "../helpers/scripts/analytics";
 import {eventTypes} from "../helpers/constants/analytics";
 import {useAuth} from "../contexts/AuthContext";
 import {useTranslation} from "../hooks/useTranslation";
+import { checkAppUpdate } from '../helpers/scripts/utils/checkAppUpdate';
+import AppUpdateModal from '../components/modals/AppUpdateModal';
+import { isProUser } from '../helpers/scripts/auth/checkUserRole';
 
 export default function Home({ navigation }: any) {
   const { hasInternetConnection, currentUserLocation } = useSettings()
@@ -32,6 +35,7 @@ export default function Home({ navigation }: any) {
   const { homeNewsBannerVisible } = useSettings()
 
   const [pushToken, setPushToken] = React.useState<string | null>(null)
+  const [appUpdateModalVisible, setAppUpdateModalVisible] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -52,8 +56,25 @@ export default function Home({ navigation }: any) {
     })()
   }, [])
 
+  useEffect(() => {
+    checkAppUpdate().then((updateAvailable) => {
+      if (updateAvailable) {
+        console.log('[App Update Check] New version available');
+        setAppUpdateModalVisible(true);
+      } else {
+        console.log('[App Update Check] App is up to date');
+        setAppUpdateModalVisible(false);
+      }
+    })
+  }, [])
+
+  const onAppUpdateModalClose = () => {
+    setAppUpdateModalVisible(false);
+  }
+
   return (
     <View style={globalStyles.body}>
+      <AppUpdateModal isVisible={appUpdateModalVisible} onClose={onAppUpdateModalClose} />
       <AppHeader navigation={navigation} />
       <BannerHandler />
       <LocationHeader />
@@ -74,11 +95,21 @@ export default function Home({ navigation }: any) {
             <BigButton disabled={!hasInternetConnection || !currentUserLocation} navigation={navigation} targetScreen={routes.transits.home.path} text={i18n.t('home.buttons.transits.title')} subtitle={i18n.t('home.buttons.transits.subtitle')} icon={require('../../assets/icons/FiTransit.png')} />
           </View>
         </View>
+        {
+          !isProUser(currentUser) &&
+          <View style={homeStyles.proSection}>
+            <Text style={globalStyles.sections.title}>{i18n.t('home.pro_section.title')}</Text>
+            <Text style={globalStyles.sections.subtitle}>{i18n.t('home.pro_section.subtitle')}</Text>
+            <View style={homeStyles.nasaTools.buttons}>
+              <ToolButton image={require('../../assets/images/tools/apod.png')} isPremium navigation={navigation} targetScreen={routes.sellScreen.path} text={i18n.t('settings.buttons.pro.title')} subtitle={i18n.t('settings.buttons.pro.subtitle')}/>
+            </View>
+          </View>
+        }
         <View style={homeStyles.nasaTools}>
           <Text style={globalStyles.sections.title}>{i18n.t('home.other_tools.title')}</Text>
           <Text style={globalStyles.sections.subtitle}>{i18n.t('home.other_tools.subtitle')}</Text>
           <View style={homeStyles.nasaTools.buttons}>
-            <ToolButton disabled={!hasInternetConnection || !currentUserLocation} navigation={navigation} targetScreen={routes.skymapSelection.path} text={i18n.t('home.buttons.skymap_generator.title')} subtitle={i18n.t('home.buttons.skymap_generator.subtitle')} image={require('../../assets/images/tools/skymap.png')} />
+            <ToolButton disabled={!hasInternetConnection || !currentUserLocation} navigation={navigation} targetScreen={routes.skymaps.home.path} text={i18n.t('home.buttons.skymap_generator.title')} subtitle={i18n.t('home.buttons.skymap_generator.subtitle')} image={require('../../assets/images/tools/skymap.png')} />
             <ToolButton disabled={!hasInternetConnection} navigation={navigation} targetScreen={routes.satelliteTracker.path} text={i18n.t('home.buttons.satellite_tracker.title')} subtitle={i18n.t('home.buttons.satellite_tracker.subtitle')} image={require('../../assets/images/tools/satellite.png')} />
             <ToolButton disabled={!hasInternetConnection || launchContextLoading} navigation={navigation} targetScreen={routes.launchesScreen.path} text={i18n.t('home.buttons.launches_screen.title')} subtitle={i18n.t('home.buttons.launches_screen.subtitle')} image={require('../../assets/images/tools/launches.png')} />
             <ToolButton disabled={!hasInternetConnection} navigation={navigation} targetScreen={routes.apod.path} text={i18n.t('home.buttons.apod.title')} subtitle={i18n.t('home.buttons.apod.subtitle')} image={require('../../assets/images/tools/apod.png')} />

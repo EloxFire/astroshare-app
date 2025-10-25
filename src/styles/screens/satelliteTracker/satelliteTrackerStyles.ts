@@ -1,7 +1,7 @@
 import { Dimensions } from "react-native";
 import { app_colors } from "../../../helpers/constants";
 
-export const issTrackerStyles = {
+export const satelliteTrackerStyles = {
   content: {
     display: 'flex' as 'flex',
     flexDirection: 'column' as 'column',
@@ -94,6 +94,17 @@ export const issTrackerStyles = {
         fontSize: 10,
         fontFamily: 'DMMonoRegular',
         marginBottom: 10,
+        opacity: 0.5,
+      },
+
+      noPasses: {
+        color: app_colors.white,
+        fontSize: 14,
+        textAlign: 'center' as 'center',
+        fontFamily: 'DMMonoRegular',
+        marginBottom: 10,
+        marginTop: 10,
+        marginHorizontal: 20,
         opacity: 0.5,
       }
     },

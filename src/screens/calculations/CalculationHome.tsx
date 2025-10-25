@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from "react";
-import {ScrollView, Text, TextInput, View} from "react-native";
+import {ScrollView, Text, TextInput, TouchableOpacity, View} from "react-native";
 import PageTitle from "../../components/commons/PageTitle";
 import {i18n} from "../../helpers/scripts/i18n";
 import {globalStyles} from "../../styles/global";
@@ -22,6 +22,8 @@ import {sendAnalyticsEvent} from "../../helpers/scripts/analytics";
 import {eventTypes} from "../../helpers/constants/analytics";
 import { calculateExitPupil } from "../../helpers/scripts/math/calculateExitPupil";
 import { calculateResolvingPower } from "../../helpers/scripts/math/calculateResolvingPower";
+import SelectDropdown from "react-native-select-dropdown";
+import { planetaryConjunctionStyles } from "../../styles/screens/transits/planetaryConjunction";
 
 export default function CalculationHome({ navigation }: any) {
 
@@ -34,6 +36,7 @@ export default function CalculationHome({ navigation }: any) {
   const [eyepieceFocalLength, setEyepieceFocalLength] = useState<number | undefined>(undefined);
   const [eyepieceField, setEyepieceField] = useState<number | undefined>(undefined);
   const [pixelSize, setPixelSize] = useState<string | undefined>(undefined);
+  const [selectedPupil, setSelectedPupil] = useState<5 | 6 | 7>(6);
 
   const [fD, setFD] = useState<string | undefined>(undefined);
   const [magnification, setMagnification] = useState<string | undefined>(undefined);
@@ -42,6 +45,9 @@ export default function CalculationHome({ navigation }: any) {
   const [fov, setFov] = useState<string | undefined>(undefined);
   const [exitPupil, setExitPupil] = useState<string | undefined>(undefined);
   const [resolvingPower, setResolvingPower] = useState<string | undefined>(undefined);
+
+
+  const pupilSelectorRef = useRef<SelectDropdown>(null);
 
   useEffect(() => {
     sendAnalyticsEvent(currentUser, currentUserLocation, 'Calculations screen view', eventTypes.SCREEN_VIEW, {}, currentLocale)
@@ -57,7 +63,7 @@ export default function CalculationHome({ navigation }: any) {
     setMagnification(calculateMagnification(focalLength, eyepieceFocalLength));
     setMinMagnification(calculateMinMagnification(diameter));
     setSampling(calculateSampling(focalLength, pixelSize));
-    setFov(calculateApparentFov(focalLength, diameter, eyepieceField));
+    setFov(calculateApparentFov(focalLength, eyepieceFocalLength, eyepieceField));
     setExitPupil(calculateExitPupil(diameter, focalLength, eyepieceFocalLength));
     setResolvingPower(calculateResolvingPower(diameter));
   }
@@ -103,6 +109,29 @@ export default function CalculationHome({ navigation }: any) {
             </View>
             <View style={{display: 'flex', flexDirection: 'row', gap: 10, width: '50%', paddingRight: 5}}>
               <InputWithIcon keyboardType={"default"} additionalStyles={{marginVertical: 0}} search={() => {}} placeholder={"Taille pixel caméra (µm)"} changeEvent={(e) => handlePixelSize(e)} value={pixelSize ? pixelSize.toString() : ""} type={"text"}/>
+              {/* <SelectDropdown
+                ref={pupilSelectorRef}
+                data={[5, 6, 7]}
+                onSelect={(selectedItem, index) => {
+                  setSelectedPupil(selectedItem)
+                }}
+                defaultValue={selectedPupil}
+                renderButton={() => (
+                  <View style={[planetaryConjunctionStyles.content.parameters.dropdown, {width: '100%', borderColor: app_colors.white_no_opacity}]}>
+                    <View style={planetaryConjunctionStyles.content.parameters.dropdown.withIcon}>
+                      <Text style={[planetaryConjunctionStyles.content.parameters.dropdown.text, {fontSize: 12}]}>{selectedPupil} mm</Text>
+                    </View>
+                  </View>
+                )}
+                renderItem={(item, index) => (
+                  <TouchableOpacity style={planetaryConjunctionStyles.content.parameters.dropdown.list.item} onPress={() => {
+                    setSelectedPupil(item)
+                    pupilSelectorRef.current?.closeDropdown()
+                  }}>
+                    <Text style={[planetaryConjunctionStyles.content.parameters.dropdown.text, {paddingLeft: 10}]}>{item} mm</Text>
+                  </TouchableOpacity>
+                )}
+              /> */}
             </View>
 
 

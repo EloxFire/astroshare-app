@@ -8,13 +8,17 @@ export const disclaimerBarStyles = {
     alignItems: 'center' as 'center',
     padding: 10,
     borderRadius: 5,
+    width: '100%' as '100%',
+    marginVertical: 5,
 
     text: {
       color: app_colors.white,
       opacity: .5,
       fontSize: 12,
       fontFamily: 'GilroyRegular',
-      flex: 1
+      flex: 1,
+      // interpret newline characters
+      whiteSpace: 'pre-wrap' as 'pre-wrap',
     },
 
     icon: {

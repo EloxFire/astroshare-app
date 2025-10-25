@@ -40,8 +40,8 @@ export const usePushNotifications = (): PushNotificationState => {
       }
 
       if(finalStatus !== 'granted'){
-        console.log('Failed to get push token for push notification!');
-        showToast({message: 'Failed to get push token for push notification!', type: 'error'});
+        console.log('[Push Notifications] Failed to get push token for push notification!');
+        showToast({message: '[Push Notifications] Failed to get push token for push notification!', type: 'error'});
         return;
       }
 
@@ -61,7 +61,7 @@ export const usePushNotifications = (): PushNotificationState => {
 
       return token;
     }else{
-      console.log('Must use physical device for Push Notifications');
+      console.log('[Push Notifications] Must use physical device for Push Notifications');
     }
   }
 

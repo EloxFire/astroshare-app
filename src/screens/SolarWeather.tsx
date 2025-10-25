@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { app_colors, cmeImageSrc, cmeVideoSrc, sunImagesSrcWavelengths, sunVideoSrcWavelengths } from '../helpers/constants'
+import { app_colors, cmeImageSrc, cmeVideoSrc, sunImagesSrcWavelengths, sunImagesSrcWavelengthsBackup, sunVideoSrcWavelengths } from '../helpers/constants'
 import { Dimensions, ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import { globalStyles } from '../styles/global'
 import { solarWeatherStyles } from '../styles/screens/solarWeather'
-import { ESunFilter } from '../helpers/types/SunFilter'
+import { ESunFilter, ESunFilterBackup } from '../helpers/types/SunFilter'
 import { ResizeMode, Video } from 'expo-av'
 import { ECmeFilters } from '../helpers/types/CmeFilters'
 import { Image } from 'expo-image'
@@ -23,6 +23,7 @@ import {useTranslation} from "../hooks/useTranslation";
 import {sendAnalyticsEvent} from "../helpers/scripts/analytics";
 import {eventTypes} from "../helpers/constants/analytics";
 import {routes} from "../helpers/routes";
+import DisclaimerBar from '../components/banners/DisclaimerBar'
 
 export default function SolarWeather({ navigation }: any) {
 
@@ -35,7 +36,8 @@ export default function SolarWeather({ navigation }: any) {
   // SUN
   const [loadingImage, setLoadingImage] = useState<boolean>(false)
   const [isImageMode, setIsImageMode] = useState<boolean>(true)
-  const [currentImageFilter, setCurrentImageFilter] = useState<ESunFilter>('HMI_IC' as ESunFilter)
+  const [currentImageFilter, setCurrentImageFilter] = useState<ESunFilterBackup>('HMI_CONTINUUM' as ESunFilterBackup)
+  // const [currentImageFilter, setCurrentImageFilter] = useState<ESunFilter>('HMI_IC' as ESunFilter)
   const [currentImageUrl, setCurrentImageUrl] = useState<string | undefined>("")
 
   // CME
@@ -64,13 +66,14 @@ export default function SolarWeather({ navigation }: any) {
     handleChangeCMEImage(currentCmeImageFilter, 'img')
   }, [])
 
-  const handleChangeSunImage = (filter: ESunFilter, type: 'img' | 'video') => {
+  const handleChangeSunImage = (filter: ESunFilterBackup, type: 'img' | 'video') => {
     setCurrentImageUrl(undefined)
     setLoadingImage(true)
 
     setTimeout(() => {
       setCurrentImageFilter(filter)
-      setCurrentImageUrl(type === 'img' ? sunImagesSrcWavelengths[filter] + '?' + new Date() : sunVideoSrcWavelengths[filter] + '?' + new Date())
+      setCurrentImageUrl(sunImagesSrcWavelengthsBackup[filter] + '?' + new Date())
+      // setCurrentImageUrl(type === 'img' ? sunImagesSrcWavelengths[filter] + '?' + new Date() : sunVideoSrcWavelengths[filter] + '?' + new Date())
       setLoadingImage(false)
     }, 300)
   }
@@ -95,6 +98,9 @@ export default function SolarWeather({ navigation }: any) {
         backRoute={routes.home.path}
       />
       <View style={globalStyles.screens.separator} />
+      <View style={{ marginBottom: 10 }}>
+        <DisclaimerBar message={i18n.t('solarWeather.disclaimer')} type='error' soft />
+      </View>
       <ScrollView>
         <View>
           {/* SUN CONTAINER */}
@@ -103,35 +109,38 @@ export default function SolarWeather({ navigation }: any) {
               <TouchableOpacity onPress={() => setIsImageMode(true)} style={{ height: 35, flex: 1, borderBottomWidth: isImageMode ? 1 : 0, borderColor: app_colors.white, marginBottom: 10, padding: 5 }}>
                 <Text style={{ fontFamily: 'GilroyBlack', color: app_colors.white, textTransform: 'uppercase', textAlign: "center", fontSize: 18 }}>{i18n.t('solarWeather.containers.switches.image')}</Text>
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => setIsImageMode(false)} style={{ height: 35, flex: 1, borderBottomWidth: isImageMode ? 0 : 1, borderColor: app_colors.white, marginBottom: 10, padding: 5 }}>
-                <Text style={{ fontFamily: 'GilroyBlack', color: app_colors.white, textTransform: 'uppercase', textAlign: "center", fontSize: 18 }}>{i18n.t('solarWeather.containers.switches.video')}</Text>
+              <TouchableOpacity disabled onPress={() => setIsImageMode(false)} style={{ height: 35, flex: 1, borderBottomWidth: isImageMode ? 0 : 1, borderColor: app_colors.white, marginBottom: 10, padding: 5 }}>
+                <Text style={{ fontFamily: 'GilroyBlack', color: app_colors.white_forty, textTransform: 'uppercase', textAlign: "center", fontSize: 18 }}>{i18n.t('solarWeather.containers.switches.video')}</Text>
               </TouchableOpacity>
             </View>
             <Text style={solarWeatherStyles.container.title}>{i18n.t('solarWeather.containers.instrument', { currentImageFilter: currentImageFilter })}</Text>
             <Text style={[solarWeatherStyles.container.subtitle, { opacity: 1 }]}>{i18n.t('solarWeather.containers.zone', { zone: loadingImage ? i18n.t('common.loadings.simple') : i18n.t(`solarWeather.studyZones.${currentImageFilter}`) })}</Text>
-            <Text style={solarWeatherStyles.container.subtitle}>Source : NASA / SDO (Solar Dynamics Observatory)</Text>
+            <Text style={solarWeatherStyles.container.subtitle}>Source : NASA & ESA SOHO (Solar and Heliospheric Observatory)</Text>
+            <Text style={[solarWeatherStyles.container.subtitle, solarWeatherStyles.container.disclaimer]}>{i18n.t('solarWeather.containers.disclaimer')}</Text>
             {
               isImageMode ?
                 <Image priority={'high'} placeholder={localizedImagePlaceholders[i18n.locale]} source={!currentImageUrl ? undefined : { uri: currentImageUrl }} style={solarWeatherStyles.sunImage} />
                 :
-                <Video
-                  ref={videoRef}
-                  source={{ uri: sunVideoSrcWavelengths[currentImageFilter] + '?' + new Date() }}
-                  isMuted={true}
-                  shouldPlay={true}
-                  rate={2.0}
-                  isLooping={true}
-                  resizeMode={ResizeMode.CONTAIN}
-                  style={{ width: Dimensions.get('window').width - 40, height: Dimensions.get('window').width - 40, marginVertical: 10, borderRadius: 10, opacity: loadingImage ? .1 : 1, borderWidth: 1, borderColor: app_colors.white_twenty }}
-                >
-                  <Image placeholder={localizedVideoPlaceholders[i18n.locale]} style={{ width: Dimensions.get('window').width - 40, height: Dimensions.get('window').width - 40, marginVertical: 10, borderRadius: 10 }} />
-                </Video>
+                <>
+                  {/* <Video
+                    ref={videoRef}
+                    source={{ uri: sunVideoSrcWavelengths[currentImageFilter] + '?' + new Date() }}
+                    isMuted={true}
+                    shouldPlay={true}
+                    rate={2.0}
+                    isLooping={true}
+                    resizeMode={ResizeMode.CONTAIN}
+                    style={{ width: Dimensions.get('window').width - 40, height: Dimensions.get('window').width - 40, marginVertical: 10, borderRadius: 10, opacity: loadingImage ? .1 : 1, borderWidth: 1, borderColor: app_colors.white_twenty }}
+                  >
+                    <Image placeholder={localizedVideoPlaceholders[i18n.locale]} style={{ width: Dimensions.get('window').width - 40, height: Dimensions.get('window').width - 40, marginVertical: 10, borderRadius: 10 }} />
+                  </Video> */}
+                </>
             }
             <View style={solarWeatherStyles.container.buttons}>
               {
-                Object.keys(ESunFilter).map((key: string) => {
+                Object.keys(ESunFilterBackup).map((key: string) => {
                   return (
-                    <SimpleButton textColor={app_colors.white} small key={key} text={key} onPress={() => handleChangeSunImage(ESunFilter[key as keyof typeof ESunFilter], isImageMode ? 'img' : 'video')} active={key === currentImageFilter} />
+                    <SimpleButton textColor={app_colors.white} small key={key} text={key} onPress={() => handleChangeSunImage(ESunFilterBackup[key as keyof typeof ESunFilterBackup], isImageMode ? 'img' : 'video')} active={key === currentImageFilter} />
                   )
                 })
               }

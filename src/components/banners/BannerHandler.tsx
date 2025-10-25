@@ -6,7 +6,7 @@ import DisclaimerBar from './DisclaimerBar'
 
 export default function BannerHandler() {
 
-  const { hasInternetConnection, currentUserLocation, locationLoading } = useSettings()
+  const { hasInternetConnection, currentUserLocation, locationLoading, apiNotReachable } = useSettings()
   const [hasChangedSpotElevation, setHasChangedSpotElevation] = useState<boolean>(false)
   const [hasAddedSpot, setHasAddedSpot] = useState<boolean>(false)
 
@@ -21,6 +21,10 @@ export default function BannerHandler() {
 
   return (
     <View style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
+      {
+        apiNotReachable &&
+        <DisclaimerBar message="Impossible de joindre le serveur AstroShare. Certaines fonctionnalités peuvent être limitées." type='error' />
+      }
       {
         !hasInternetConnection &&
         <DisclaimerBar message="Aucune connexion à internet. Fonctionnalités réduites." type='error' />

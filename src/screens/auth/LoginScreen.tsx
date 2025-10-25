@@ -35,12 +35,12 @@ export default function LoginScreen({ navigation }: any) {
 
     setLoading(true)
     const response = await loginUser(email, password)
-    console.log("Login response", response)
+    console.log("[Auth] Login response", response)
     sendAnalyticsEvent(currentUser, currentUserLocation, 'login_attempt', eventTypes.BUTTON_CLICK, {target: "profile screen"}, currentLocale)
 
     if (!response) {
       setLoading(false)
-      showToast({message: i18n.t('common.errors.unknown'), type: 'error'})
+      // showToast({message: i18n.t('common.errors.unknown'), type: 'error'})
       sendAnalyticsEvent(currentUser, currentUserLocation, 'login_failure', eventTypes.ERROR, {}, currentLocale)
       return;
     }
@@ -87,6 +87,7 @@ export default function LoginScreen({ navigation }: any) {
               search={() => setShowPassword(!showPassword)}
               type={showPassword ? 'text' : 'password'}
               additionalStyles={{marginBottom: 0}}
+              alternateSubmitEvent={() => handleFormSubmit()}
             />
 
             <TouchableOpacity onPress={() => handleRegisterNavigation()}>

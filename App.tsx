@@ -23,7 +23,6 @@ import tz from 'dayjs/plugin/timezone'
 import relativeTime from 'dayjs/plugin/relativeTime'
 import LocalizedFormat from 'dayjs/plugin/localizedFormat'
 import Calendar from 'dayjs/plugin/calendar'
-import AdvancedFormat from 'dayjs/plugin/advancedFormat'
 import Duration from 'dayjs/plugin/duration'
 import SolarWeather from "./src/screens/SolarWeather";
 import ScopeAlignment from "./src/screens/ScopeAlignment";
@@ -39,8 +38,6 @@ import { TranslationProvider } from "./src/hooks/useTranslation";
 import './src/helpers/scripts/i18n/index';
 import LanguageSelection from "./src/screens/LanguageSelection";
 import SellScreen from "./src/screens/pro/SellScreen";
-import IssTracker from "./src/screens/satelliteTracker/IssTracker";
-import StarlinkTracker from "./src/screens/satelliteTracker/StarlinkTracker";
 import TransitsScreen from "./src/screens/transits/TransitsScreen";
 import AstroDataInfos from "./src/screens/AstroDataInfos";
 import WidgetManager from "./src/screens/WidgetManager";
@@ -64,7 +61,6 @@ import LoginScreen from "./src/screens/auth/LoginScreen";
 import RegisterScreen from "./src/screens/auth/RegisterScreen";
 import ProfileScreen from "./src/screens/auth/Profile";
 import PlanetaryConjunctionScreen from "./src/screens/transits/PlanetaryConjunctionScreen";
-import IssPasses from "./src/screens/satelliteTracker/IssPasses";
 import PaywallScreen from "./src/screens/pro/PaywallScreen";
 import CelestialBodyOverview from "./src/screens/celestialBodies/CelestialBodyOverview";
 import {app_colors} from "./src/helpers/constants";
@@ -78,6 +74,10 @@ import LunarEclipseDetails from "./src/screens/transits/LunarEclipseDetails";
 import { LogBox } from 'react-native';
 import {setupAnalytics} from "./src/helpers/scripts/analytics";
 import NewsBannerManager from './src/screens/settings/NewsBannerManager';
+import SatelliteTrackerDetails from './src/screens/satelliteTracker/SatelliteTrackerDetails';
+import SatellitePasses from './src/screens/satelliteTracker/SatellitePasses';
+import ConstellationMaps from './src/screens/skymap/ConstellationMaps';
+import AddCustomSatellite from './src/screens/satelliteTracker/AddCustomSatellite';
 
 dayjs.locale('fr');
 dayjs.extend(LocalizedFormat)
@@ -86,8 +86,7 @@ dayjs.extend(utc)
 dayjs.extend(tz)
 dayjs.extend(relativeTime)
 dayjs.extend(Calendar)
-dayjs.tz.setDefault('Europe/Paris');
-dayjs.extend(AdvancedFormat)
+dayjs.tz.setDefault(dayjs.tz.guess());
 dayjs().format('L LT')
 
 
@@ -97,9 +96,9 @@ export default function App() {
 
   LogBox.ignoreLogs(['EXGL: gl.pixelStorei()'])
 
-  const {expoPushToken, notification} = usePushNotifications();
+  // const {expoPushToken, notification} = usePushNotifications();
 
-  console.log('expoPushToken', expoPushToken?.data);
+  // console.log('expoPushToken', expoPushToken?.data);
 
   const [appIsReady, setAppIsReady] = useState(false);
 
@@ -108,11 +107,14 @@ export default function App() {
       try {
         await SystemUI.setBackgroundColorAsync(app_colors.black)
         await useFonts()
-        console.log('Fonts loaded');
+        console.log('[App init] App starting...');
+        console.log('[App init] Loading fonts...');
+        console.log('[App init] Set timezone to', dayjs.tz.guess());
+              
       } catch (e) {
-        console.warn('Something went wrong : ', e);
+        console.warn('[App init] Something went wrong : ', e);
       } finally {
-        console.log('App is ready');
+        console.log('[App init] App is ready');
         setAppIsReady(true);
       }
     }
@@ -126,7 +128,6 @@ export default function App() {
       console.log('[Analytics] Analytics setup completed');
     })
   })
-
 
   if (!appIsReady) {
     return (
@@ -188,14 +189,15 @@ export default function App() {
 
                             {/*SATELLITE TRACKING SCREENS*/}
                             <Stack.Screen name={routes.satelliteTracker.path} component={SatelliteTracker} />
-                            <Stack.Screen name={routes.issTracker.path} component={IssTracker} />
-                            <Stack.Screen name={routes.starlinkTracker.path} component={StarlinkTracker} />
-                            <Stack.Screen name={routes.satellitesTrackers.issPasses.path} component={IssPasses} />
+                            <Stack.Screen name={routes.satellitesTrackers.details.path} component={SatelliteTrackerDetails} />
+                            <Stack.Screen name={routes.satellitesTrackers.satellitePasses.path} component={SatellitePasses} />
+                            <Stack.Screen name={routes.satellitesTrackers.addCustomSatellite.path} component={AddCustomSatellite} />
 
                             {/*MAP SCREENS*/}
-                            <Stack.Screen name={routes.skymapSelection.path} component={SkyMapSelection} />
-                            <Stack.Screen name={routes.planetarium.path} component={Planetarium} />
-                            <Stack.Screen name={routes.flatSkymap.path} component={SkyMapGenerator} />
+                            <Stack.Screen name={routes.skymaps.home.path} component={SkyMapSelection} />
+                            <Stack.Screen name={routes.skymaps.planetarium.path} component={Planetarium} />
+                            <Stack.Screen name={routes.skymaps.flatmap.path} component={SkyMapGenerator} />
+                            <Stack.Screen name={routes.skymaps.constellations.path} component={ConstellationMaps} />
 
                             {/*PLANIFICATEUR*/}
                             <Stack.Screen name={routes.observationPlanner.path} component={ObservationPlannerScreen} />

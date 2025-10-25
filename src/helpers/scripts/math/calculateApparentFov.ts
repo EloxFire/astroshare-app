@@ -1,23 +1,20 @@
-import {showToast} from "../showToast";
+import { parse } from "@babel/core";
 
-export const calculateApparentFov = (focal: number | undefined, diameter: number | undefined, fovEyepiece: number | undefined): string | undefined => {
-  if(diameter === 0 ){
-    return '\\text{Le diamètre ne peut pas être égal à 0}';
-  }
-
+export const calculateApparentFov = (focal: number | undefined, eyepieceFocalLength: number | undefined, fovEyepiece: number | undefined): string | undefined => {
   if(!focal){
     return '\\text{Focale non renseignée}';
   }
 
-  if(!diameter){
-    return '\\text{Diamètre non renseigné}';
+  if(!eyepieceFocalLength){
+    return '\\text{Focale de l’oculaire non renseigné}';
   }
 
   if (!fovEyepiece) {
     return '\\text{Champ de l’oculaire non renseigné}';
   }
 
-  if (focal && diameter) {
-    return `fov = \\frac{CO}{\\frac{F}{D}} = \\frac{${fovEyepiece}}{\\frac{${focal}}{${diameter}}} = ${fovEyepiece / (focal / diameter)}'`;
+  if (focal && eyepieceFocalLength) {
+    const apparentFov = parseFloat((fovEyepiece / (focal / eyepieceFocalLength)).toFixed(2));
+    return `FoV = \\frac{C}{G} = \\frac{${fovEyepiece}}{\\frac{${focal}}{${eyepieceFocalLength}}} = ${apparentFov}'`;
   }
 }

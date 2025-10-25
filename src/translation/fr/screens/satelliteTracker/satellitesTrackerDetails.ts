@@ -1,6 +1,5 @@
-export const issTrackerTranslations = {
+export const satelliteTrackerDetailsTranslations = {
   stats: {
-    title: "Station spatiale internationale",
     latitude: "Latitude",
     longitude: "Longitude",
     altitude: "Altitude",
@@ -12,24 +11,24 @@ export const issTrackerTranslations = {
     title: "Prochains passages",
     subtitle: "Votre position : ",
     loading: "Chargement des prochains passages...",
-    noPasses: "Aucun passage de l'ISS prévu dans les 10 prochains jours",
+    noPasses: "Aucun passage de {{satname}} prévu dans les 10 prochains jours",
     seeMore: "Voir plus de passages",
     description: "Observez l'ISS au dessus de votre position !",
     timeToNext: "Prochain passage dans",
   },
   '3dMap': {
     title: "Carte 3D interactive",
-    subtitle: "Mis à jour toutes les 5 secondes",
+    subtitle: "Mis à jour toutes les 10 secondes",
     button: "Centrer la caméra sur l'ISS",
   },
   '2dMap': {
     title: "Carte 2D interactive",
-    subtitle: "Mis à jour toutes les 5 secondes",
+    subtitle: "Mis à jour toutes les 10 secondes",
     button: "Re-centrer",
   },
   nextLaunches: {
-    title: "Prochains lancements vers l'ISS",
-    noLaunches: "Aucune mission de ravitaillement à venir ou lancements habités vers l'ISS",
+    title: "Prochains lancements - {{satname}}",
+    noLaunches: "Aucune mission de ravitaillement à venir ou lancements habités vers {{satname}}",
   },
   passCard: {
     time: "Heure",

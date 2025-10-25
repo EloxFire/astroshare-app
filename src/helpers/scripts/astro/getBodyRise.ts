@@ -66,7 +66,7 @@ export const getBodyNextRiseTime = (
 
   // If the rise is before the current time, then we know the next rise is tomorrow:
   if (rise.getTime() < datetime.getTime()) {
-    console.log('Rise is before current time, checking tomorrow...');
+    console.log('[getBodyNextRise] Rise is before current time, checking tomorrow...');
     
     return getBodyNextRise(tomorrow, observer, target, horizon)
   }
