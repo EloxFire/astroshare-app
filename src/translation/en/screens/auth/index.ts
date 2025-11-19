@@ -19,7 +19,7 @@ export const authScreensTranslations = {
     welcome: "Welcome,",
     createdAt: 'Creation date',
     updatedAt: 'Last update',
-    downloadedRessources: 'Downloaded resources',
+    downloadedResources: 'Downloaded resources',
     accountRole: 'Account status',
     subscriptionName: 'Subscription name',
     subscriptionRenewal: 'Renewal date',

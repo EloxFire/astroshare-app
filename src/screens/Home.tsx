@@ -16,7 +16,6 @@ import ToolButton from '../components/commons/buttons/ToolButton';
 import HomeSearchModule from '../components/forms/HomeSearchModule';
 import HomeWidgetDisplay from '../components/widgets/HomeWidgetDisplay';
 import {getData} from "../helpers/storage";
-import {useRessources} from "../contexts/RessourcesContext";
 import NewsBannerHandler from "../components/banners/NewsBannerHandler";
 import {sendAnalyticsEvent} from "../helpers/scripts/analytics";
 import {eventTypes} from "../helpers/constants/analytics";
@@ -29,7 +28,6 @@ import { isProUser } from '../helpers/scripts/auth/checkUserRole';
 export default function Home({ navigation }: any) {
   const { hasInternetConnection, currentUserLocation } = useSettings()
   const { launchContextLoading } = useLaunchData()
-  const {ressourcesLoading} = useRessources()
   const { currentUser } = useAuth()
   const { currentLocale } = useTranslation()
   const { homeNewsBannerVisible } = useSettings()
@@ -116,10 +114,10 @@ export default function Home({ navigation }: any) {
           </View>
         </View>
         <View style={[homeStyles.nasaTools, { marginBottom: 80 }]}>
-          <Text style={globalStyles.sections.title}>{i18n.t('home.ressources.title')}</Text>
-          <Text style={globalStyles.sections.subtitle}>{i18n.t('home.ressources.subtitle')}</Text>
+          <Text style={globalStyles.sections.title}>{i18n.t('home.resources.title')}</Text>
+          <Text style={globalStyles.sections.subtitle}>{i18n.t('home.resources.subtitle')}</Text>
           <View style={homeStyles.nasaTools.buttons}>
-            <ToolButton disabled={!hasInternetConnection || ressourcesLoading} navigation={navigation} targetScreen={routes.ressources.path} text={i18n.t('home.buttons.ressources.title')} subtitle={i18n.t('home.buttons.ressources.subtitle')} image={require('../../assets/images/tools/ressources.png')} />
+            <ToolButton disabled={!hasInternetConnection} navigation={navigation} targetScreen={routes.resources.home.path} text={i18n.t('home.buttons.resources.title')} subtitle={i18n.t('home.buttons.resources.subtitle')} image={require('../../assets/images/tools/resources.png')} />
           </View>
         </View>
       </ScrollView>

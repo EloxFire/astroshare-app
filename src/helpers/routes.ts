@@ -24,9 +24,6 @@ export const routes = {
   changelogScreen: {path: 'ChangelogScreen', requirements: []},
   launchesScreen: {path: 'LaunchesScreen', requirements: []},
   launchDetails: {path: 'LaunchDetails', requirements: []},
-  ressources: {path: 'RessourcesScreen', requirements: []},
-  ressource: {path: 'RessourceScreen', requirements: []},
-  categoryScreen: {path: 'RessourcesCategory', requirements: []},
   observationPlanner: {path: 'ObservationPlannerScreen', requirements: []},
 
   celestialBodies: {
@@ -109,6 +106,20 @@ export const routes = {
   newsManager: {
     home: {
       path: "NewsManager",
+      requirements: []
+    }
+  },
+  resources: {
+    home: {
+      path: "ResourcesScreen",
+      requirements: []
+    },
+    categoryScreen: {
+      path: "ResourcesCategory",
+      requirements: []
+    },
+    resource: {
+      path: "ResourceScreen",
       requirements: []
     }
   }

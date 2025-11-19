@@ -1,4 +1,4 @@
-export const ressourceScreenTranslations = {
+export const resourceScreenTranslations = {
   downloadFailure: "Échec du téléchargement",
   downloadSuccess: "Téléchargement terminé",
   immediateViewNotSupported: "La visualisation immédiate n'est pas supportée sur cet appareil",

@@ -31,7 +31,7 @@ import { weatherTranslation } from "./screens/weather";
 import {launchesScreenTranslations} from "./screens/launches";
 import {notificationsTranslations} from "./common/notifications";
 import {skymapTranslations} from "./screens/skymap";
-import {ressourcesScreenTranslations} from "./screens/ressources";
+import {resourcesScreenTranslations} from "./screens/resources";
 import {observationPlannerTranslations} from "./screens/observationPlanner";
 import {proTranslations} from "./screens/pro";
 import {authScreensTranslations} from "./screens/auth";
@@ -76,7 +76,7 @@ export const frTranslations = {
   changelog: changelogScreenTranslations,
   launchesScreen: launchesScreenTranslations,
   notifications: notificationsTranslations,
-  ressourcesScreen: ressourcesScreenTranslations,
+  resourcesScreen: resourcesScreenTranslations,
   observationPlanner: observationPlannerTranslations,
   obsevrationPlanner: observationPlannerTranslations,
   pro: proTranslations,

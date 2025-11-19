@@ -35,7 +35,7 @@ import { viewpointsManagerTranslations } from "./screens/viewpointsManager";
 import { changelogScreenTranslations } from "./screens/settings/changelog";
 import {launchesScreenTranslations} from "./screens/launches";
 import {notificationsTranslations} from "./common/notifications";
-import {ressourcesScreenTranslations} from "./screens/ressources";
+import {resourcesScreenTranslations} from "./screens/resources";
 import {authScreensTranslations} from "./screens/auth";
 import {widgetManagerTranslations} from "./screens/widgetManager";
 import {transitsTranslations} from "./screens/transits";
@@ -74,7 +74,7 @@ export const enTranslations = {
   changelog: changelogScreenTranslations,
   launchesScreen: launchesScreenTranslations,
   notifications: notificationsTranslations,
-  ressourcesScreen: ressourcesScreenTranslations,
+  resourcesScreen: resourcesScreenTranslations,
   auth: authScreensTranslations,
   widgetsManager: widgetManagerTranslations,
   transits: transitsTranslations,
