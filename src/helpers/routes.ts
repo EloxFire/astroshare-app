@@ -118,8 +118,8 @@ export const routes = {
       path: "ResourcesCategory",
       requirements: []
     },
-    resource: {
-      path: "ResourceScreen",
+    details: {
+      path: "ResourceDetails",
       requirements: []
     }
   }

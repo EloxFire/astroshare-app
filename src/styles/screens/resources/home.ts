@@ -4,7 +4,7 @@ export const resourcesHomeStyles = {
   header: {
     display: "flex" as "flex",
     flexDirection: "row" as "row",
-    justifyContent: "flex-end" as "flex-end",
+    justifyContent: "space-between" as "space-between",
     alignItems: "center" as "center",
     marginBottom: 20,
 

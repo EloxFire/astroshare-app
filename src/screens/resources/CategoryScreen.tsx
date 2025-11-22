@@ -8,13 +8,13 @@ import { resourcesHomeStyles } from "../../styles/screens/resources/home";
 import PageTitle from "../../components/commons/PageTitle";
 import SimpleButton from "../../components/commons/buttons/SimpleButton";
 import ScreenInfo from "../../components/ScreenInfo";
-import ToolButton from "../../components/commons/buttons/ToolButton";
 import InputWithIcon from "../../components/forms/InputWithIcon";
 import { Resource } from "../../helpers/types/resources/Resource";
+import { ResourceCard } from "../../components/cards/ResourceCard";
 
 export default function ResourcesHome({ navigation, route }: any) {
 
-  const { categoryId } = route.params;
+  const { category } = route.params;
 
   const [resources, setResources] = useState<Resource[]>([]);
   const [userSearchText, setUserSearchText] = useState<string>("");
@@ -23,7 +23,7 @@ export default function ResourcesHome({ navigation, route }: any) {
   const fetchResources = async () => {
     setResourcesLoading(true);
     try {
-      const response = await fetch(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/categories/${categoryId}/resources`, {
+      const response = await fetch(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/categories/${category._id}/resources`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -57,8 +57,8 @@ export default function ResourcesHome({ navigation, route }: any) {
     <View style={globalStyles.body}>
       <PageTitle
         navigation={navigation}
-        title={i18n.t('resources.home.title')}
-        subtitle={i18n.t('resources.home.subtitle')}
+        title={category.title}
+        subtitle={category.description}
       />
       <View style={globalStyles.screens.separator} />
       <ScrollView>
@@ -98,12 +98,10 @@ export default function ResourcesHome({ navigation, route }: any) {
         {
           !resourcesLoading && resources.length > 0 && resources.map((resource) => {
             return (
-              <ToolButton
+              <ResourceCard
                 key={resource._id}
-                text={resource.title}
-                subtitle={resource.description}
-                image={{ uri: resource.illustrationUrl }}
-                onPress={() => navigation.navigate(routes.resources.categoryScreen.path, { categoryId: resource._id })}
+                resource={resource}
+                navigation={navigation}
               />
             )
           })

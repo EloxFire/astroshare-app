@@ -10,7 +10,7 @@ interface ScreenInfoProps {
 
 export default function ScreenInfo({ image, text }: ScreenInfoProps) {
   return (
-    <View style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 60 }}>
+    <View style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginVertical: 40 }}>
       <Image source={image} style={{ width: 85, height: 85, opacity: .5, marginBottom: 20 }} />
       <Text style={{
         opacity: .5,

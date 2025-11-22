@@ -76,6 +76,7 @@ import ConstellationMaps from './src/screens/skymap/ConstellationMaps';
 import AddCustomSatellite from './src/screens/satelliteTracker/AddCustomSatellite';
 import ResourcesHome from './src/screens/resources/ResourcesHome';
 import CategoryScreen from './src/screens/resources/CategoryScreen';
+import ResourceDetails from './src/screens/resources/ResourceDetails';
 
 dayjs.locale('fr');
 dayjs.extend(LocalizedFormat)
@@ -206,6 +207,7 @@ export default function App() {
                             {/*RESSOURCES RELATED SCREENS*/}
                             <Stack.Screen name={routes.resources.home.path} component={ResourcesHome} />
                             <Stack.Screen name={routes.resources.categoryScreen.path} component={CategoryScreen} />
+                            <Stack.Screen name={routes.resources.details.path} component={ResourceDetails} />
 
                             {/*AUTH SCREENS*/}
                             <Stack.Screen name={routes.auth.login.path} component={LoginScreen} />

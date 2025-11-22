@@ -4,7 +4,6 @@ export interface Resource {
   title: string;
   description: string;
   tags: string[];
-  downloadLink: string;
   fileType: string;
   content: string;
   level: number;
@@ -13,6 +12,8 @@ export interface Resource {
   createdAt: string;
   updatedAt: string;
   category: string;
+  pdfUrl?: string;
+  memoUrl?: string;
   illustrationUrl?: string;
   subcategory?: string;
 }
