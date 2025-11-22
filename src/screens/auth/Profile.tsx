@@ -1,5 +1,5 @@
 import React from "react";
-import {Dimensions, Image, ScrollView, Text, TouchableOpacity, View} from "react-native";
+import {Dimensions, Image, ScrollView, Text, View} from "react-native";
 import {globalStyles} from "../../styles/global";
 import {useAuth} from "../../contexts/AuthContext";
 import {profileScreenStyles} from "../../styles/screens/auth/profile";
@@ -7,7 +7,6 @@ import {i18n} from "../../helpers/scripts/i18n";
 import PageTitle from "../../components/commons/PageTitle";
 import DSOValues from "../../components/commons/DSOValues";
 import dayjs from "dayjs";
-import {authStyles} from "../../styles/screens/auth/auth";
 import {routes} from "../../helpers/routes";
 import {app_colors} from "../../helpers/constants";
 import ProLocker from "../../components/cards/ProLocker";
@@ -108,7 +107,7 @@ export default function ProfileScreen({ navigation }: any) {
           </View>
 
           <View style={profileScreenStyles.content.body}>
-            <DSOValues title={i18n.t('auth.profile.downloadedRessources')} value={currentUser?.downloadsCount}/>
+            <DSOValues title={i18n.t('auth.profile.downloadedResources')} value={currentUser?.downloadsCount}/>
             <DSOValues title={i18n.t('auth.profile.createdAt')} value={dayjs.unix(currentUser.createdAt.seconds).format("DD MMM YYYY à HH:mm").replace(':', 'h')}/>
             <DSOValues title={i18n.t('auth.profile.updatedAt')} value={dayjs.unix(currentUser.updatedAt.seconds).format("DD MMM YYYY à HH:mm").replace(':', 'h')}/>
             <DSOValues title={i18n.t('auth.profile.accountRole')} chipValue chipColor={humanizeAccountRole(currentUser.role).color} value={humanizeAccountRole(currentUser.role).role}/>

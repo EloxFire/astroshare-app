@@ -16,4 +16,5 @@ export const eventTypes = {
   CUSTOM_EVENT: 'custom_event',
   NOTIFICATION_RECEIVED: 'notification_received',
   NOTIFICATION_OPENED: 'notification_opened',
+  FILE_DOWNLOAD: 'file_download',
 }

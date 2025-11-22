@@ -89,6 +89,8 @@ export default function MoonPhases({ navigation }: any) {
 
   const fetchCalendarImages = async (month: number) => {
     setLoadingMonth(true)
+    console.log(`Fetching calendar images for ${selectedYear}-${month} ---- ${dayjs().month()}}`);
+    
     const response = await astroshareApi.get(`/moon/illustration/month?year=${selectedYear}&month=${selectedMonth}`)
     setCalendarImages(response.data.images)
     setLoadingMonth(false)
@@ -283,10 +285,11 @@ export default function MoonPhases({ navigation }: any) {
                   {
                     calendarImages.length > 0 ?
                     calendarImages.map((day: any, index: number) => {
+                      
                       return (
                         <View key={index} style={moonPhasesStyles.content.calendar.calendarCellsContainer.cell}>
-                          <Text style={moonPhasesStyles.content.calendar.calendarCellsContainer.cell.day}>{dayjs(day.date).format('ddd')}</Text>
-                          <Text style={moonPhasesStyles.content.calendar.calendarCellsContainer.cell.day}>{dayjs(day.date).format('DD MMMM')}</Text>
+                          <Text style={moonPhasesStyles.content.calendar.calendarCellsContainer.cell.day}>{dayjs(day.date).add(1, 'month').format('ddd')}</Text>
+                          <Text style={moonPhasesStyles.content.calendar.calendarCellsContainer.cell.day}>{dayjs(day.date).add(1, 'month').format('DD MMMM')}</Text>
                           <Image source={{uri: day.url}} style={moonPhasesStyles.content.calendar.calendarCellsContainer.cell.image}/>
                         </View>
                       )

@@ -31,7 +31,6 @@ import { weatherTranslation } from "./screens/weather";
 import {launchesScreenTranslations} from "./screens/launches";
 import {notificationsTranslations} from "./common/notifications";
 import {skymapTranslations} from "./screens/skymap";
-import {ressourcesScreenTranslations} from "./screens/ressources";
 import {observationPlannerTranslations} from "./screens/observationPlanner";
 import {proTranslations} from "./screens/pro";
 import {authScreensTranslations} from "./screens/auth";
@@ -39,6 +38,7 @@ import {widgetManagerTranslations} from "./screens/widgetManager";
 import {calculationsTranslations} from "./screens/calculations";
 import {cardsTranslations} from "./components/cards";
 import {apodTranslations} from "./screens/apod";
+import { resourcesScreensTranslations } from "./screens/resources";
 
 export const frTranslations = {
   onboarding: onboardingTranslations,
@@ -76,7 +76,6 @@ export const frTranslations = {
   changelog: changelogScreenTranslations,
   launchesScreen: launchesScreenTranslations,
   notifications: notificationsTranslations,
-  ressourcesScreen: ressourcesScreenTranslations,
   observationPlanner: observationPlannerTranslations,
   obsevrationPlanner: observationPlannerTranslations,
   pro: proTranslations,
@@ -84,4 +83,5 @@ export const frTranslations = {
   widgetsManager: widgetManagerTranslations,
   calculations: calculationsTranslations,
   apod: apodTranslations,
+  resources: resourcesScreensTranslations
 }

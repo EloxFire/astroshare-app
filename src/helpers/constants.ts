@@ -133,7 +133,7 @@ export const geomagneticStormLevelsColors = {
 
 export const firebaseCollections = {
   categories: "Categories",
-  ressources: "Ressources",
+  resources: "Resources",
   gallery: "Gallery",
 }
 

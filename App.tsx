@@ -49,11 +49,6 @@ import LaunchDetails from "./src/screens/launches/LaunchDetails";
 import SkyMapSelection from "./src/screens/skymap/SkyMapSelection";
 import Planetarium from "./src/screens/skymap/Planetarium";
 import { StarsContextProvider } from "./src/contexts/StarsContext";
-import RessourcesScreen from "./src/screens/ressources/RessourcesScreen";
-import {RessourcesContextProvider} from "./src/contexts/RessourcesContext";
-import CategoryScreen from "./src/screens/ressources/CategoryScreen";
-import RessourceScreen from "./src/screens/ressources/RessourceScreen";
-import './firebaseConfig';
 import {usePushNotifications} from "./src/hooks/usePushNotifications";
 import ObservationPlannerScreen from "./src/screens/observationPlanner/ObservationPlannerScreen";
 import {AuthContextProvider} from "./src/contexts/AuthContext";
@@ -70,6 +65,7 @@ import {SolarEclipsesScreen} from "./src/screens/transits/SolarEclipsesScreen";
 import SolarEclipseDetails from "./src/screens/transits/SolarEclipseDetails";
 import LunarEclipsesScreen from "./src/screens/transits/LunarEclipsesScreen";
 import LunarEclipseDetails from "./src/screens/transits/LunarEclipseDetails";
+import './firebaseConfig';
 
 import { LogBox } from 'react-native';
 import {setupAnalytics} from "./src/helpers/scripts/analytics";
@@ -78,6 +74,9 @@ import SatelliteTrackerDetails from './src/screens/satelliteTracker/SatelliteTra
 import SatellitePasses from './src/screens/satelliteTracker/SatellitePasses';
 import ConstellationMaps from './src/screens/skymap/ConstellationMaps';
 import AddCustomSatellite from './src/screens/satelliteTracker/AddCustomSatellite';
+import ResourcesHome from './src/screens/resources/ResourcesHome';
+import CategoryScreen from './src/screens/resources/CategoryScreen';
+import ResourceDetails from './src/screens/resources/ResourceDetails';
 
 dayjs.locale('fr');
 dayjs.extend(LocalizedFormat)
@@ -147,7 +146,6 @@ export default function App() {
                   <StarsContextProvider>
                     <SpaceXContextProvider>
                       <LaunchDataContextProvider>
-                        <RessourcesContextProvider>
                           <StatusBar animated style="light" translucent />
                           <Stack.Navigator screenOptions={{ headerShown: false }}>
                             {/*ONBOARDING*/}
@@ -207,16 +205,15 @@ export default function App() {
                             <Stack.Screen name={routes.launchDetails.path} component={LaunchDetails} />
 
                             {/*RESSOURCES RELATED SCREENS*/}
-                            <Stack.Screen name={routes.ressources.path} component={RessourcesScreen} />
-                            <Stack.Screen name={routes.categoryScreen.path} component={CategoryScreen} />
-                            <Stack.Screen name={routes.ressource.path} component={RessourceScreen} />
+                            <Stack.Screen name={routes.resources.home.path} component={ResourcesHome} />
+                            <Stack.Screen name={routes.resources.categoryScreen.path} component={CategoryScreen} />
+                            <Stack.Screen name={routes.resources.details.path} component={ResourceDetails} />
 
                             {/*AUTH SCREENS*/}
                             <Stack.Screen name={routes.auth.login.path} component={LoginScreen} />
                             <Stack.Screen name={routes.auth.register.path} component={RegisterScreen} />
                             <Stack.Screen name={routes.auth.profile.path} component={ProfileScreen} />
                           </Stack.Navigator>
-                        </RessourcesContextProvider>
                       </LaunchDataContextProvider>
                     </SpaceXContextProvider>
                   </StarsContextProvider>

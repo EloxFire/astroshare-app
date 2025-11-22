@@ -21,7 +21,7 @@ export const authScreensTranslations = {
     welcome: "Bienvenue,",
     createdAt: 'Date de création',
     updatedAt: 'Dernière mise à jour',
-    downloadedRessources: 'Ressources téléchargées',
+    downloadedResources: 'Ressources téléchargées',
     subscriptionName: 'Nom de l\'abonnement',
     subscriptionRenewal: 'Date de renouvellement',
     subscriptionDate: 'Abonné depuis le',

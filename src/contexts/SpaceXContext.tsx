@@ -27,7 +27,7 @@ export function SpaceXContextProvider({ children }: SpaceXContextProviderProps) 
   
   const getSpacexData = async () => {
     try {
-      const constellation = await axios.get(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/spacex/starlink`)
+      // const constellation = await axios.get(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/spacex/starlink`)
       const stats = await axios.get(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/spacex/starlink/count`)
       setConstellation(constellation.data.data)
       setStats(stats.data)

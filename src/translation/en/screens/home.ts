@@ -11,7 +11,7 @@ export const homeTranslations = {
     title: "Other tools",
     subtitle: "Explore beyond limits !"
   },
-  ressources: {
+  resources: {
     title: "Learn",
     subtitle: "Stay informed and learn new things"
   },
@@ -60,8 +60,8 @@ export const homeTranslations = {
       title: "Launches",
       subtitle: "// Upcoming launches"
     },
-    ressources: {
-      title: "Ressources",
+    resources: {
+      title: "Resources",
       subtitle: "// Resources to help you"
     }
   }

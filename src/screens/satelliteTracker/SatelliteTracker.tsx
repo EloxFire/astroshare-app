@@ -85,7 +85,7 @@ export default function SatelliteTracker({ navigation }: any) {
               subtitle={i18n.t('satelliteTrackers.home.buttons.custom.subtitle')}
               onPress={() => navigation.navigate(routes.satellitesTrackers.addCustomSatellite.path)}
               icon={require('../../../assets/icons/FiPlus.png')}
-              isPremium
+              isPremium={!isProUser(currentUser)}
             />
             {
               userSatList.length > 0 && (

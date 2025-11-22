@@ -149,7 +149,7 @@ export default function SellScreen({ navigation }: any) {
     >
       <View style={[globalStyles.body, {paddingTop: 0, paddingHorizontal: 0}]}>
         <ScrollView contentContainerStyle={{paddingHorizontal: 10, paddingTop: StatusBar.currentHeight ? StatusBar.currentHeight + 20 : 20}}>
-          <Image style={sellScreenStyles.backgroundImage} source={require('../../../assets/images/tools/ressources.png')}/>
+          <Image style={sellScreenStyles.backgroundImage} source={require('../../../assets/images/tools/resources.png')}/>
           <LinearGradient
             // Background Linear Gradient
             colors={['rgba(0,0,0,1)', 'transparent']}
