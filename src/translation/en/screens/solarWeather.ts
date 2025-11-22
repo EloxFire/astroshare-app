@@ -1,5 +1,5 @@
 export const solarWeatherTranslations = {
-  disclaimer: "Due to the US government shutdown, some data is no longer being updated.\nBackup data is being used, quality may vary.",
+  disclaimer: "Due to technical issues on the SDO server, live images are using a backup data source, operating in degraded mode. Videos are not available. NASA teams are working to resolve the issue.",
   containers: {
     instrument: "Instrument : %{currentImageFilter}",
     emc: "Coronal Mass Ejections (CME)",
