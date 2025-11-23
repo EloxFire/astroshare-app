@@ -26,6 +26,9 @@ export const routes = {
   launchDetails: {path: 'LaunchDetails', requirements: []},
   observationPlanner: {path: 'ObservationPlannerScreen', requirements: []},
 
+  clock: {
+    home: { path: 'ClockScreen', requirements: [] },
+  },
   celestialBodies: {
     details: {
       path: "CelestialBodyOverview",

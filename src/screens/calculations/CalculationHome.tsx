@@ -50,12 +50,14 @@ export default function CalculationHome({ navigation }: any) {
     sendAnalyticsEvent(currentUser, currentUserLocation, 'Calculations screen view', eventTypes.SCREEN_VIEW, {}, currentLocale)
   }, []);
 
+  const t = (path: string, params?: Record<string, any>) => i18n.t(`calculations.home.${path}`, params);
+
   const computeCalculations = () => {
     const parsedFocalInput = focalLengthInput ? parseFloat(focalLengthInput.replace(',', '.')) : undefined;
     const focalLength = parsedFocalInput ? (focalUnit === 'mm' ? parsedFocalInput : parsedFocalInput * 25.4) : undefined;
 
     if(!focalLength && !diameter && !eyepieceFocalLength && !pixelSize){
-      showToast({message: "Veuillez renseigner au moins deux valeurs", type: "error"});
+      showToast({message: t('actions.missingValues'), type: "error"});
       return;
     }
 
@@ -160,34 +162,34 @@ export default function CalculationHome({ navigation }: any) {
       <View style={globalStyles.screens.separator} />
       <ScrollView contentContainerStyle={{display: 'flex', flexDirection: 'column', gap: 16, paddingBottom: 100}}>
         <Text style={[calculationHomeStyles.content.description, {opacity: 1, fontFamily: 'GilroyRegular', fontSize: 15}]}>
-          Entrez les informations dont vous disposez. Le calculateur s'occupe du reste !
+          {t('intro')}
         </Text>
 
         <View style={calculationHomeStyles.sectionCard}>
           <View style={calculationHomeStyles.sectionHeader}>
-            <Text style={calculationHomeStyles.sectionTitle}>Instrument</Text>
-            {/* <Text style={calculationHomeStyles.sectionSubtitle}>Focale, diamètre et unité</Text> */}
+            <Text style={calculationHomeStyles.sectionTitle}>{t('sections.instrument.title')}</Text>
+            {/* <Text style={calculationHomeStyles.sectionSubtitle}>{t('sections.instrument.subtitle')}</Text> */}
           </View>
           <View>
             <View style={{display: 'flex', flexDirection: 'row', marginBottom: 10}}>
               <View style={{flex: 1, marginRight: 10}}>
-                <Text style={calculationHomeStyles.label}>Focale télescope</Text>
+                <Text style={calculationHomeStyles.label}>{t('sections.instrument.focalLabel')}</Text>
                 <InputWithIcon
                   keyboardType={"numeric"}
                   additionalStyles={{marginVertical: 0}}
                   search={() => {}}
-                  placeholder={`Saisir en ${focalUnit === 'mm' ? 'mm' : 'pouce'}`}
+                  placeholder={t('sections.instrument.focalPlaceholder', { unit: t(`units.${focalUnit}`) })}
                   changeEvent={(e) => handleFocalLengthChange(e)}
                   value={focalLengthInput}
                   type={"number"}
                 />
               </View>
               <View>
-                <Text style={calculationHomeStyles.label}>Unité</Text>
+                <Text style={calculationHomeStyles.label}>{t('sections.instrument.unitLabel')}</Text>
                 <View style={calculationHomeStyles.chipRow}>
                   {[
-                    {label: 'mm', value: 'mm'},
-                    {label: 'pouce', value: 'inch'},
+                    {label: t('units.mm'), value: 'mm'},
+                    {label: t('units.inch'), value: 'inch'},
                   ].map((unit) => {
                     const isActive = focalUnit === unit.value;
                     return (
@@ -204,41 +206,41 @@ export default function CalculationHome({ navigation }: any) {
               </View>
             </View>
             <View style={{flex: 1}}>
-              <Text style={calculationHomeStyles.label}>Diamètre télescope</Text>
-              <InputWithIcon keyboardType={"numeric"} additionalStyles={{marginVertical: 0}} search={() => {}} placeholder={"Diamètre (mm)"} changeEvent={(e) => handleDiameterChange(e)} value={diameter ? diameter.toString() : ""} type={"number"}/>
+              <Text style={calculationHomeStyles.label}>{t('sections.instrument.diameterLabel')}</Text>
+              <InputWithIcon keyboardType={"numeric"} additionalStyles={{marginVertical: 0}} search={() => {}} placeholder={t('sections.instrument.diameterLabel')} changeEvent={(e) => handleDiameterChange(e)} value={diameter ? diameter.toString() : ""} type={"number"}/>
             </View>
           </View>
         </View>
 
         <View style={calculationHomeStyles.sectionCard}>
           <View style={calculationHomeStyles.sectionHeader}>
-            <Text style={calculationHomeStyles.sectionTitle}>Oculaire & champ</Text>
-            {/* <Text style={calculationHomeStyles.sectionSubtitle}>Paramètres visuels</Text> */}
+            <Text style={calculationHomeStyles.sectionTitle}>{t('sections.eyepiece.title')}</Text>
+            {/* <Text style={calculationHomeStyles.sectionSubtitle}>{t('sections.eyepiece.subtitle')}</Text> */}
           </View>
           <View style={calculationHomeStyles.row}>
             <View style={{flex: 1}}>
-              <Text style={calculationHomeStyles.label}>Focale oculaire</Text>
-              <InputWithIcon keyboardType={"numeric"} additionalStyles={{marginVertical: 0}} search={() => {}} placeholder={"Focale (mm)"} changeEvent={(e) => handleEyepieceFocalLengthChange(e)} value={eyepieceFocalLength ? eyepieceFocalLength.toString() : ""} type={"number"}/>
+              <Text style={calculationHomeStyles.label}>{t('sections.eyepiece.focalLabel')}</Text>
+              <InputWithIcon keyboardType={"numeric"} additionalStyles={{marginVertical: 0}} search={() => {}} placeholder={t('sections.eyepiece.focalPlaceholder')} changeEvent={(e) => handleEyepieceFocalLengthChange(e)} value={eyepieceFocalLength ? eyepieceFocalLength.toString() : ""} type={"number"}/>
             </View>
             <View style={{flex: 1}}>
-              <Text style={calculationHomeStyles.label}>Champ oculaire</Text>
-              <InputWithIcon keyboardType={"numeric"} additionalStyles={{marginVertical: 0}} search={() => {}} placeholder={"Champ (°)"} changeEvent={(e) => handleEyepieceFieldChange(e)} value={eyepieceField ? eyepieceField.toString() : ""} type={"number"}/>
+              <Text style={calculationHomeStyles.label}>{t('sections.eyepiece.fieldLabel')}</Text>
+              <InputWithIcon keyboardType={"numeric"} additionalStyles={{marginVertical: 0}} search={() => {}} placeholder={t('sections.eyepiece.fieldPlaceholder')} changeEvent={(e) => handleEyepieceFieldChange(e)} value={eyepieceField ? eyepieceField.toString() : ""} type={"number"}/>
             </View>
           </View>
         </View>
 
         <View style={calculationHomeStyles.sectionCard}>
           <View style={calculationHomeStyles.sectionHeader}>
-            <Text style={calculationHomeStyles.sectionTitle}>Caméra & confort</Text>
-            {/* <Text style={calculationHomeStyles.sectionSubtitle}>Taille de pixel et pupille de sortie</Text> */}
+            <Text style={calculationHomeStyles.sectionTitle}>{t('sections.camera.title')}</Text>
+            {/* <Text style={calculationHomeStyles.sectionSubtitle}>{t('sections.camera.subtitle')}</Text> */}
           </View>
           <View style={calculationHomeStyles.row}>
             <View style={{flex: 1}}>
-              <Text style={calculationHomeStyles.label}>Taille pixel caméra</Text>
-              <InputWithIcon keyboardType={"default"} additionalStyles={{marginVertical: 0}} search={() => {}} placeholder={"µm"} changeEvent={(e) => handlePixelSize(e)} value={pixelSize ? pixelSize.toString() : ""} type={"text"}/>
+              <Text style={calculationHomeStyles.label}>{t('sections.camera.pixelLabel')}</Text>
+              <InputWithIcon keyboardType={"default"} additionalStyles={{marginVertical: 0}} search={() => {}} placeholder={t('sections.camera.pixelPlaceholder')} changeEvent={(e) => handlePixelSize(e)} value={pixelSize ? pixelSize.toString() : ""} type={"text"}/>
             </View>
             <View style={{flex: 1}}>
-              <Text style={calculationHomeStyles.label}>Pupille de sortie pour Gmin</Text>
+              <Text style={calculationHomeStyles.label}>{t('sections.camera.exitPupilLabel')}</Text>
               <View style={calculationHomeStyles.chipRow}>
                 {[5, 6, 7].map((pupilValue) => {
                   const isActive = selectedPupil === pupilValue;
@@ -259,7 +261,7 @@ export default function CalculationHome({ navigation }: any) {
 
         <View style={calculationHomeStyles.actionRow}>
           <SimpleButton
-            text={"Calculer"}
+            text={t('actions.compute')}
             icon={require('../../../assets/icons/FiCpu.png')}
             backgroundColor={app_colors.white}
             textColor={app_colors.black}
@@ -272,7 +274,7 @@ export default function CalculationHome({ navigation }: any) {
           {
             (fD || magnification || minMagnification || sampling) &&
               <SimpleButton
-                text={"Effacer"}
+                text={t('actions.reset')}
                 icon={require('../../../assets/icons/FiTrash.png')}
                 backgroundColor={app_colors.white}
                 textColor={app_colors.black}
@@ -286,59 +288,59 @@ export default function CalculationHome({ navigation }: any) {
         </View>
 
         <View style={calculationHomeStyles.sectionHeader}>
-          <Text style={calculationHomeStyles.sectionTitle}>Résultats</Text>
-          <Text style={calculationHomeStyles.sectionSubtitle}>Formules détaillées et valeurs numériques</Text>
+          <Text style={calculationHomeStyles.sectionTitle}>{t('sections.results.title')}</Text>
+          <Text style={calculationHomeStyles.sectionSubtitle}>{t('sections.results.subtitle')}</Text>
         </View>
 
         <View style={calculationHomeStyles.resultGrid}>
           {renderResultCard(
-            "Rapport focale",
-            "Rapport f/D de l'instrument.",
+            t('sections.results.cards.focalRatio.title'),
+            t('sections.results.cards.focalRatio.description'),
             fD,
             `f/D = \\frac{F}{D}`,
-            "F = focale instrument et D = diamètre instrument"
+            t('sections.results.cards.focalRatio.fallbackNote')
           )}
           {renderResultCard(
-            "Grossissement",
-            "Grossissement obtenu avec l'oculaire choisi.",
+            t('sections.results.cards.magnification.title'),
+            t('sections.results.cards.magnification.description'),
             magnification,
             `G = \\frac{F}{f}`,
-            "F = focale instrument et f = focale oculaire"
+            t('sections.results.cards.magnification.fallbackNote')
           )}
           {renderResultCard(
-            "Grossissement minimum",
-            "Grossissement associé à la pupille sélectionnée.",
+            t('sections.results.cards.minMagnification.title'),
+            t('sections.results.cards.minMagnification.description'),
             minMagnification,
             `G_{min} = \\frac{D}{${selectedPupil}}`,
-            `D = diamètre instrument et ${selectedPupil} mm = pupille de sortie choisie`
+            t('sections.results.cards.minMagnification.fallbackNote', { pupil: selectedPupil })
           )}
           {renderResultCard(
-            "Échantillonnage",
-            "Résolution en seconde d'arc par pixel.",
+            t('sections.results.cards.sampling.title'),
+            t('sections.results.cards.sampling.description'),
             sampling,
             `S = \\frac{206.3 \\times p}{F}`,
-            "p = taille pixel caméra (µm) et F = focale instrument (mm)"
+            t('sections.results.cards.sampling.fallbackNote')
           )}
           {renderResultCard(
-            "Champ réel",
-            "Champ de vision obtenu (minutes d'arc).",
+            t('sections.results.cards.fov.title'),
+            t('sections.results.cards.fov.description'),
             fov,
             `FoV = \\frac{C}{G}`,
-            "C = champ oculaire (°) et G = grossissement"
+            t('sections.results.cards.fov.fallbackNote')
           )}
           {renderResultCard(
-            "Pupille de sortie",
-            "Diamètre de la pupille de sortie (mm).",
+            t('sections.results.cards.exitPupil.title'),
+            t('sections.results.cards.exitPupil.description'),
             exitPupil,
             `P = \\frac{D}{G}`,
-            "D = diamètre instrument (mm) et G = grossissement"
+            t('sections.results.cards.exitPupil.fallbackNote')
           )}
           {renderResultCard(
-            "Pouvoir séparateur",
-            "Capacité à distinguer deux objets proches (secondes d'arc).",
+            t('sections.results.cards.resolvingPower.title'),
+            t('sections.results.cards.resolvingPower.description'),
             resolvingPower,
             `Ps = \\frac{120}{D}`,
-            "D = diamètre instrument (mm)"
+            t('sections.results.cards.resolvingPower.fallbackNote')
           )}
         </View>
       </ScrollView>
