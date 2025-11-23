@@ -44,6 +44,10 @@ export const homeTranslations = {
       title: "Calculateur",
       subtitle: "// Votre calculateur astronomique"
     },
+    clock: {
+      title: "Horloge",
+      subtitle: "// Tous les formats temporels importants !"
+    },
     apod: {
       title: "APOD",
       subtitle: "// Image du jour de la NASA"

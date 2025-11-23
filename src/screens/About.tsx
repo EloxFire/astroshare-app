@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {Image, ScrollView, Text, TouchableOpacity, View} from "react-native";
 import { globalStyles } from "../styles/global";
 import { i18n } from "../helpers/scripts/i18n";
@@ -12,10 +12,20 @@ import {aboutStyles} from "../styles/screens/about";
 import {storeData} from "../helpers/storage";
 import {app_colors, storageKeys} from "../helpers/constants";
 import {showToast} from "../helpers/scripts/showToast";
+import { sendAnalyticsEvent } from "../helpers/scripts/analytics";
+import { useAuth } from "../contexts/AuthContext";
+import { useSettings } from "../contexts/AppSettingsContext";
+import { eventTypes } from "../helpers/constants/analytics";
 
 export default function About({ navigation }: any) {
 
-  const { currentLocale } = useTranslation();
+  const { currentUserLocation } = useSettings();
+  const { currentUser } = useAuth()
+  const { currentLocale } = useTranslation()
+
+  useEffect(() => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'About screen view', eventTypes.SCREEN_VIEW, {}, currentLocale)
+  }, [])
 
   const handleHiddenPremiumAccess = () => {
     storeData(storageKeys.hiddenPremiumAccess, 'yes').then(() => {

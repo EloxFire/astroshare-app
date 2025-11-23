@@ -38,6 +38,7 @@ import {notificationsTranslations} from "./common/notifications";
 import {authScreensTranslations} from "./screens/auth";
 import {widgetManagerTranslations} from "./screens/widgetManager";
 import {transitsTranslations} from "./screens/transits";
+import { clockTranslations } from "./screens/clock";
 
 export const enTranslations = {
   onboarding: onboardingTranslations,
@@ -80,4 +81,5 @@ export const enTranslations = {
   calculations: calculationsTranslations,
   observationPlanner: observationPlannerTranslations,
   satelliteTrackers: satelliteTrackerTranslations,
+  clock: clockTranslations,
 }
