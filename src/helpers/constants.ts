@@ -3,7 +3,7 @@ import {DSO} from "./types/DSO";
 export const app_colors = {
   black: '#000000',
   black_modal: 'rgba(0,0,0,0.90)',
-  black_skymap: 'rgba(0,0,0,0.88)',
+  black_skymap: 'rgba(0,0,0,0.70)',
   black_eighty: '#00000080',
   black_sixty: '#00000060',
   black_forty: '#00000040',
