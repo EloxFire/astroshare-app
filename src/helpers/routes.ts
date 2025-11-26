@@ -35,6 +35,9 @@ export const routes = {
       requirements: []
     }
   },
+  lightpollution: {
+    home: { path: 'LightPollutionMapScreen', requirements: [] },
+  },
   satellitesTrackers: {
     home: { path: 'SatelliteTrackerScreen', requirements: [] },
     details: { path: 'SatelliteTrackerDetails', requirements: []},

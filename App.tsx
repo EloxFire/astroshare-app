@@ -78,6 +78,7 @@ import ResourcesHome from './src/screens/resources/ResourcesHome';
 import CategoryScreen from './src/screens/resources/CategoryScreen';
 import ResourceDetails from './src/screens/resources/ResourceDetails';
 import { ClockHome } from './src/screens/clock/ClockHome';
+import LightPollutionMap from './src/screens/lightpollution/Map';
 
 dayjs.locale('fr');
 dayjs.extend(LocalizedFormat)
@@ -200,6 +201,9 @@ export default function App() {
 
                             {/*PLANIFICATEUR*/}
                             <Stack.Screen name={routes.observationPlanner.path} component={ObservationPlannerScreen} />
+
+                            {/* LIGHT POLLUTION SCREENS */}
+                            <Stack.Screen name={routes.lightpollution.home.path} component={LightPollutionMap} />
 
                             {/* CLOCK SCREENS */}
                             <Stack.Screen name={routes.clock.home.path} component={ClockHome} />

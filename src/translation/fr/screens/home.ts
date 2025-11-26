@@ -52,6 +52,10 @@ export const homeTranslations = {
       title: "APOD",
       subtitle: "// Image du jour de la NASA"
     },
+    lightpollution: {
+      title: "Pollution lumineuse",
+      subtitle: "// Carte mondiale de pollution lumineuse"
+    },
     satellite_tracker: {
       title: "Suivi de satellites",
       subtitle: "// Suivez n'importe quel satellite !"

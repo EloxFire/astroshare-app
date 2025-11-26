@@ -48,6 +48,10 @@ export const homeTranslations = {
       title: "APOD",
       subtitle: "// Astronomy Picture of the Day"
     },
+    lightpollution: {
+      title: "Light pollution",
+      subtitle: "// Worldwide light pollution map"
+    },
     satellite_tracker: {
       title: "Satellites tracking",
       subtitle: "// Track any satellite !"
