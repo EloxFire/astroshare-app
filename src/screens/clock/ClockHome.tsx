@@ -4,24 +4,40 @@ import { useAuth } from "../../contexts/AuthContext";
 import { useTranslation } from "../../hooks/useTranslation";
 import { sendAnalyticsEvent } from "../../helpers/scripts/analytics";
 import { eventTypes } from "../../helpers/constants/analytics";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import { globalStyles } from "../../styles/global";
 import { i18n } from "../../helpers/scripts/i18n";
 import { clockHomeStyles } from "../../styles/screens/clock/home";
+import { ClockCard } from "../../components/clock/ClockCard";
+import { getLocalSiderealTime } from "@observerly/astrometry";
+import { convertDecimalHoursToTime } from "../../helpers/scripts/astro/decimalHourToTime";
 import PageTitle from "../../components/commons/PageTitle";
 import dayjs, { Dayjs } from "dayjs";
-import { ClockCard } from "../../components/clock/ClockCard";
 
 export const ClockHome = ({ navigation }: any) => {
 
   const { currentUserLocation } = useSettings();
   const { currentUser } = useAuth()
   const { currentLocale } = useTranslation()
+  
   const [now, setNow] = useState<Dayjs>(dayjs());
+  const [Lst, setLst] = useState<string>("");
 
   useEffect(() => {
     const interval = setInterval(() => {
       setNow(dayjs());
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const longitude = currentUserLocation?.longitude ?? 0;
+      const time = new Date();
+      const lst = getLocalSiderealTime(time, longitude);
+      const stringLst = convertDecimalHoursToTime(lst).replace(':', 'h ').replace(':', 'm ') + 's';
+      setLst(stringLst);
     }, 1000);
 
     return () => clearInterval(interval);
@@ -58,12 +74,26 @@ export const ClockHome = ({ navigation }: any) => {
 
         <ClockCard
           time={now}
-          timezone={`${localTitle} • ${timezoneLabel}`}
+          timezone={{
+            title: localTitle,
+            subtitle: timezoneLabel
+          }}
           showAnalog
         />
         <ClockCard
           time={utcTime}
-          timezone={`${utcTitle} • ${utcSubtitle}`}
+          timezone={{
+            title: utcTitle,
+            subtitle: utcSubtitle
+          }}
+          showAnalog
+        />
+        <ClockCard
+          time={now}
+          timezone={{
+            title: i18n.t('clock.home.cards.sidereal.title'),
+            subtitle: i18n.t('clock.home.cards.sidereal.subtitle', { longitude: currentUserLocation.lon.toFixed(2) })
+          }}
           showAnalog
         />
       </ScrollView>

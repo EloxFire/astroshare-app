@@ -7,7 +7,10 @@ import { app_colors } from "../../helpers/constants";
 type ClockCardProps = {
   time: Dayjs;
   showAnalog: boolean;
-  timezone: string;
+  timezone: {
+    title: string;
+    subtitle: string;
+  }
 };
 
 const center = 60;
@@ -150,15 +153,16 @@ export const ClockCard = ({ time, showAnalog, timezone }: ClockCardProps) => {
 
   return (
     <View style={clockCardStyles.card}>
-      <View style={clockCardStyles.card.overlay} />
-      <View style={clockCardStyles.card.content}>
-        <View style={clockCardStyles.card.left}>
-          <Text style={clockCardStyles.card.left.label}>{timezone}</Text>
-          <Text style={clockCardStyles.card.left.time}>{digitalTime}</Text>
-          <Text style={clockCardStyles.card.left.meta}>{dateLabel}</Text>
+      <View style={clockCardStyles.overlay} />
+      <View style={clockCardStyles.content}>
+        <View style={clockCardStyles.left}>
+          <Text style={clockCardStyles.title}>{timezone.title}</Text>
+          <Text style={clockCardStyles.subtitle}>{timezone.subtitle}</Text>
+          <Text style={clockCardStyles.time}>{digitalTime}</Text>
+          <Text style={clockCardStyles.meta}>{dateLabel}</Text>
         </View>
         {showAnalog && (
-          <View style={clockCardStyles.card.analogWrapper}>
+          <View style={clockCardStyles.analogWrapper}>
             {renderAnalogFace(time)}
           </View>
         )}

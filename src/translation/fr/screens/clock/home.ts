@@ -6,8 +6,8 @@ export const clockHomeTranslation = {
       subtitle: "Fuseau détecté",
     },
     utc: {
-      title: "UTC",
-      subtitle: "Temps universel coordonné",
+      title: "Temps universel coordonné",
+      subtitle: "UTC",
     },
     custom: {
       title: "Fuseau personnalisé",
@@ -15,8 +15,8 @@ export const clockHomeTranslation = {
       placeholder: "Sélectionner un fuseau",
     },
     sidereal: {
-      title: "Temps sidéral local",
-      subtitle: "Calculé pour votre longitude",
+      title: "Temps local sidéral",
+      subtitle: "Calculé pour Lon = {{longitude}}°",
       longitude: "Longitude",
       lst: "LST",
     },
