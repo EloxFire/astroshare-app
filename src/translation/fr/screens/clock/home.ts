@@ -6,7 +6,7 @@ export const clockHomeTranslation = {
       subtitle: "Fuseau détecté",
     },
     utc: {
-      title: "Heure UTC",
+      title: "UTC",
       subtitle: "Temps universel coordonné",
     },
     custom: {

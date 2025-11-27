@@ -51,9 +51,9 @@ const LightPollutionMap: React.FC = ({navigation}: any) => {
     longitudeDelta: 360,
   };
 
-    const { currentUserLocation } = useSettings()
-    const { currentUser } = useAuth()
-    const { currentLocale } = useTranslation()
+  const { currentUserLocation } = useSettings()
+  const { currentUser } = useAuth()
+  const { currentLocale } = useTranslation()
 
   const mapRef = useRef<MapView | null>(null);
   const [showOverlay, setShowOverlay] = useState(true);
