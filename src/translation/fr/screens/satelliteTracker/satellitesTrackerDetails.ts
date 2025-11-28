@@ -34,5 +34,6 @@ export const satelliteTrackerDetailsTranslations = {
     time: "Heure",
     maxAltitude: "Altitude max",
     direction: "Direction",
+    magnitude: "Magnitude",
   }
 }

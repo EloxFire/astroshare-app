@@ -33,6 +33,10 @@ import {makeCalendarMapping} from "../../helpers/scripts/i18n/dayjsCalendarTimeC
 import { useAuth } from "../../contexts/AuthContext";
 import { sendAnalyticsEvent } from "../../helpers/scripts/analytics";
 import { eventTypes } from "../../helpers/constants/analytics";
+import { showToast } from "../../helpers/scripts/showToast";
+import { scheduleLocalNotification, unScheduleNotification } from "../../helpers/scripts/notifications/scheduleLocalNotification";
+import { isLocalNotificationPlanned, deleteLocalNotificationRecord } from "../../helpers/scripts/notifications/checkPlannedLocalNOtifications";
+import { getData, storeData } from "../../helpers/storage";
 
 export default function CelestialBodyOverview({ route, navigation }: any) {
 
@@ -43,6 +47,7 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
   const { object } = route.params;
 
   const [objectInfos, setObjectInfos] = useState<ComputedObjectInfos | null>(null);
+  const [isNotificationPlanned, setIsNotificationPlanned] = useState<boolean>(false);
   const [favouritePlanets, setFavouritePlanets] = useState<GlobalPlanet[]>([]);
   const [favouriteDSO, setFavouriteDSO] = useState<DSO[]>([]);
   const [favouriteStars, setFavouriteStars] = useState<Star[]>([]);
@@ -70,6 +75,23 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
     })()
   }, [])
 
+  const getNotificationStorageKey = () => {
+    const identifier = object?.ids || object?.name || getObjectName(object, 'all', true);
+    const safeIdentifier = `${identifier}`.replace(/[^a-zA-Z0-9_-]/g, '_');
+    return `notification_visibility_${getObjectFamily(object).toLowerCase()}_${safeIdentifier}`;
+  }
+
+  const checkNotification = async () => {
+    const planned = await isLocalNotificationPlanned(getNotificationStorageKey());
+    console.log(planned);
+    
+    setIsNotificationPlanned(planned);
+  }
+
+  useEffect(() => {
+    checkNotification();
+  }, [object]);
+
   const checkIsFav = () => {
     switch (getObjectFamily(object)) {
       case 'Planet':
@@ -96,6 +118,8 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
   }
 
   const handleFavorite = async () => {
+    const wasFav = !!checkIsFav()
+
     switch (getObjectFamily(object)) {
       case 'Planet':
         if(favouritePlanets.find(planet => planet.name === object.name)){
@@ -128,7 +152,49 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
         }
         break;
     }
-    sendAnalyticsEvent(currentUser, currentUserLocation, checkIsFav() ? 'remove_favorite' : 'add_favorite', eventTypes.BUTTON_CLICK, { objectName: getObjectName(object, 'all', true), objectType: getObjectType(object) }, currentLocale)
+    sendAnalyticsEvent(currentUser, currentUserLocation, wasFav ? 'remove_favorite' : 'add_favorite', eventTypes.BUTTON_CLICK, { objectName: getObjectName(object, 'all', true), objectType: getObjectType(object) }, currentLocale)
+  }
+
+  const handleLocalNotification = async () => {
+    if(!objectInfos) {
+      showToast({message: i18n.t('common.errors.unknown'), type: 'error'})
+      return
+    }
+
+    const notificationKey = getNotificationStorageKey();
+    const objectName = getObjectName(object, 'all', true);
+
+    if(isNotificationPlanned){
+      const notificationId = await getData(notificationKey);
+      if(notificationId){
+        await unScheduleNotification(notificationId);
+      }
+      await deleteLocalNotificationRecord(notificationKey);
+      setIsNotificationPlanned(false);
+      showToast({message: i18n.t('notifications.successRemove'), type: 'success', duration: 4000});
+      sendAnalyticsEvent(currentUser, currentUserLocation, 'Visibility notification removed', eventTypes.BUTTON_CLICK, { objectName, objectType: getObjectType(object) }, currentLocale);
+      return;
+    }
+
+    const nextVisibility = objectInfos.visibilityInfos.objectNextRise;
+    if(!nextVisibility || nextVisibility.isBefore(dayjs())){
+      showToast({message: i18n.t('notifications.objectVisibility.noNext'), type: 'error'});
+      return;
+    }
+
+    const notif = await scheduleLocalNotification({
+      title: i18n.t('notifications.objectVisibility.title', { object_name: objectName }),
+      body: i18n.t('notifications.objectVisibility.body', { object_name: objectName }),
+      data: { object, type: getObjectFamily(object) },
+      date: nextVisibility.toDate(),
+    });
+
+    if(notif){
+      setIsNotificationPlanned(true);
+      await storeData(notificationKey, notif);
+      showToast({message: i18n.t('notifications.successSchedule'), type: 'success', duration: 4000});
+      sendAnalyticsEvent(currentUser, currentUserLocation, 'Visibility notification scheduled', eventTypes.BUTTON_CLICK, { objectName, objectType: getObjectType(object), visibilityDate: nextVisibility.toISOString() }, currentLocale);
+    }
   }
 
   return (
@@ -239,7 +305,7 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
                   fullWidth backgroundColor={app_colors.white}
                   small
                   textColor={app_colors.black}
-                  onPress={() => navigation.push(routes.planetarium.path, {defaultObject: object})}
+                  onPress={() => navigation.push(routes.skymaps.planetarium.path, {defaultObject: object})}
                   align={"center"}
                   disabled
                 />
@@ -288,6 +354,23 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
                   <DSOValues chipValue chipColor={objectInfos.visibilityInfos.binoculars.backgroundColor} chipForegroundColor={objectInfos.visibilityInfos.binoculars.foregroundColor} title={i18n.t('common.observation.binoculars')} value={objectInfos.visibilityInfos.binoculars.label}/>
                   <DSOValues chipValue chipColor={objectInfos.visibilityInfos.telescope.backgroundColor} chipForegroundColor={objectInfos.visibilityInfos.telescope.foregroundColor} title={i18n.t('common.observation.telescope')} value={objectInfos.visibilityInfos.telescope.label}/>
                 </>
+              )
+            }
+            {
+              objectInfos && !objectInfos?.visibilityInfos.isCurrentlyVisible && objectInfos.visibilityInfos.isVisibleThisNight && (
+                <View style={{marginTop: 10}}>
+                  <SimpleButton
+                    text={isNotificationPlanned ? i18n.t('notifications.objectVisibility.remove') : i18n.t('notifications.objectVisibility.schedule')}
+                    fullWidth
+                    backgroundColor={app_colors.white}
+                    icon={isNotificationPlanned ? require('../../../assets/icons/FiBellOff.png') : require('../../../assets/icons/FiBell.png')}
+                    iconColor={isNotificationPlanned ? app_colors.black : app_colors.black}
+                    textColor={app_colors.black}
+                    small
+                    align="center"
+                    onPress={() => handleLocalNotification()}
+                  />
+                </View>
               )
             }
             <View style={{marginTop: 10}}>

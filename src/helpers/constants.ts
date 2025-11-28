@@ -80,6 +80,11 @@ export const storageKeys = {
     data: 'launchesData',
   },
   notificationsId: 'notificationsId',
+  notifications: {
+    satellitePrefix: 'notification_satellite_',
+    issPassPrefix: 'notification_isspass_',
+    celestialObjectVisibilityPrefix: 'notification_objectvisibility_',
+  },
   pushToken: 'pushToken',
   issPasses: 'issPasses', // TODO: cleanup old key
   satellites: {
