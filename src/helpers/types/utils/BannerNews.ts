@@ -3,6 +3,8 @@ export type BannerNews = {
   title: string
   description: string
   icon: string
+  startDate: Date | null
+  endDate: Date | null
   colors: string // String of colors (hex) separated by semicolon exemple #FFFFFF;#000000
   type: 'internal' | 'external' | 'none'
   visible: boolean
