@@ -110,6 +110,7 @@ export const commonTranslations = {
     nextSetToday: "Prochain coucher aujourd'hui",
     nextRiseTomorrow: "Prochain lever demain",
     nextSetTomorrow: "Prochain coucher demain",
+    circumpolar: "Circumpolaire",
   },
   observation: {
     title: "Observation",

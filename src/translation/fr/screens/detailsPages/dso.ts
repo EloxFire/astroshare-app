@@ -15,5 +15,9 @@ export const dsoTranslations = {
     dimensions: "Dimensions",
     apparentSize: "Taille apparente",
     age: "Âge",
+  },
+  ephemeris: {
+    nextRise: "Prochaine élévation",
+    nextSet: "Prochaine descente",
   }
 }

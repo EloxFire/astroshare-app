@@ -9,7 +9,7 @@ export const searchResultCardStyles = {
     borderWidth: 1,
     borderColor: app_colors.white_no_opacity,
     width: 250,
-    height: 230,
+    height: 200,
     display: 'flex' as 'flex',
     flexDirection: 'column' as 'column',
     justifyContent: 'space-between' as 'space-between',
@@ -67,6 +67,7 @@ export const searchResultCardStyles = {
       display: 'flex' as 'flex',
       flexDirection: 'row' as 'row',
       justifyContent: 'space-between' as 'space-between',
+      alignItems: 'center' as 'center',
 
       chip:{
         paddingVertical: 2,

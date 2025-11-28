@@ -1,9 +1,6 @@
 import React, {useState} from "react";
 import {ActivityIndicator, FlatList, ListRenderItemInfo, SafeAreaView, View} from "react-native";
 import {planetariumSearchModalStyles} from "../../styles/components/skymap/planetariumSearchModal";
-import InputWithIcon from "../forms/InputWithIcon";
-import ScreenInfo from "../ScreenInfo";
-import SimpleButton from "../commons/buttons/SimpleButton";
 import {app_colors} from "../../helpers/constants";
 import {universalObjectSearch} from "../../helpers/scripts/universalObjectSearch";
 import {useSolarSystem} from "../../contexts/SolarSystemContext";
@@ -11,10 +8,9 @@ import {DSO} from "../../helpers/types/DSO";
 import {GlobalPlanet} from "../../helpers/types/GlobalPlanet";
 import {Star} from "../../helpers/types/Star";
 import CelestialBodyCardLite from "../cards/CelestialBodyCardLite";
-import {getObjectFamily} from "../../helpers/scripts/astro/objects/getObjectFamily";
-import SearchResultCard from "../cards/SearchResultCard";
-import SearchPlanetResultCard from "../cards/SearchPlanetResultCard";
-import SearchStarResultCard from "../cards/SearchStarResultCard";
+import InputWithIcon from "../forms/InputWithIcon";
+import ScreenInfo from "../ScreenInfo";
+import SimpleButton from "../commons/buttons/SimpleButton";
 
 interface PlanetariumSearchModalProps {
   onClose: () => void;
@@ -38,21 +34,6 @@ export default function PlanetariumSearchModal({ onClose, navigation }: Planetar
     setData(mergedResults)
     setLoading(false);
   };
-
-  const handleRenderItem = ({item}: {item: DSO | GlobalPlanet | Star}) => {
-    const itemFamily = getObjectFamily(item)
-
-    switch (itemFamily) {
-      case 'DSO':
-        return <SearchResultCard object={item as DSO} navigation={navigation} />
-      case 'Planet':
-        return <SearchPlanetResultCard planet={item as GlobalPlanet} navigation={navigation} />
-      case 'Star':
-        return <SearchStarResultCard star={item as Star} navigation={navigation} />
-      default:
-        return <></>
-    }
-  }
 
 
   return (

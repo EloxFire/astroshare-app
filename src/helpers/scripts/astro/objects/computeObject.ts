@@ -6,9 +6,10 @@ import {convertHMSToDegreeFromString} from "../HmsToDegree";
 import {convertDMSToDegreeFromString} from "../DmsToDegree";
 import {calculateHorizonAngle} from "../calculateHorizonAngle";
 import {
+  Constellation,
   convertEquatorialToHorizontal,
   EquatorialCoordinate,
-  GeographicCoordinate, getBodyNextRise, getBodyNextSet, HorizontalCoordinate,
+  GeographicCoordinate, getBodyNextRise, getBodyNextSet, getConstellation, HorizontalCoordinate,
   isBodyAboveHorizon, isBodyCircumpolar, isBodyVisibleForNight, isTransitInstance, TransitInstance
 } from "@observerly/astrometry";
 import {ComputedObjectInfos} from "../../../types/objects/ComputedObjectInfos";
@@ -26,6 +27,7 @@ import {getObjectIcon} from "./getObjectIcon";
 import {ImageSourcePropType} from "react-native";
 import {getObjectType} from "./getObjectType";
 import {getObjectName} from "./getObjectName";
+import { getConstellationName } from "../../getConstellationName";
 
 interface ComputeObjectProps {
   object: DSO | Star | GlobalPlanet;
@@ -51,6 +53,9 @@ export const computeObject = (props: ComputeObjectProps): ComputedObjectInfos | 
       console.log('[computeObject] Error: could not convert ra and dec to degrees')
       return null;
     }
+
+    const objectConstellation: Constellation | undefined = getConstellation({ra: degRa, dec: degDec});
+    const localizedConstellationName: string = objectConstellation ? getConstellationName(objectConstellation.abbreviation) : 'N/A';
 
     let objectName: string = '';
     if(objectFamily === 'DSO'){
@@ -192,7 +197,9 @@ export const computeObject = (props: ComputeObjectProps): ComputedObjectInfos | 
       base: {
         family: objectFamily,
         type: objectType,
+        rawType: objectFamily === 'DSO' ? (props.object as DSO).type : objectFamily === 'Star' ? 'Star' : objectFamily === 'Planet' ? 'Planet' : 'Other',
         name: objectName,
+        constellation: localizedConstellationName,
         otherName: objectOtherName,
         icon: objectIcon,
         ra: props.object.ra,
@@ -205,6 +212,7 @@ export const computeObject = (props: ComputeObjectProps): ComputedObjectInfos | 
       },
       visibilityInfos: {
         isCurrentlyVisible: isCurrentlyVisible,
+        isCircumpolar: isObjectCircumpolar,
         isVisibleThisNight: isVisibleThisNight,
         visibilityLabel: isCurrentlyVisible ? i18n.t('common.visibility.visible') : i18n.t('common.visibility.notVisible'),
         objectNextRise: objectNextRise,
