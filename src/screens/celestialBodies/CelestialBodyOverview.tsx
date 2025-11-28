@@ -33,6 +33,8 @@ import {makeCalendarMapping} from "../../helpers/scripts/i18n/dayjsCalendarTimeC
 import { useAuth } from "../../contexts/AuthContext";
 import { sendAnalyticsEvent } from "../../helpers/scripts/analytics";
 import { eventTypes } from "../../helpers/constants/analytics";
+import { subscribeToObjectVisibility, unsubscribeFromObjectVisibility } from "../../helpers/api/notifications";
+import { showToast } from "../../helpers/scripts/showToast";
 
 export default function CelestialBodyOverview({ route, navigation }: any) {
 
@@ -96,6 +98,9 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
   }
 
   const handleFavorite = async () => {
+    const wasFav = !!checkIsFav()
+    const objectId = `${getObjectFamily(object)}_${object?.ids || object?.name || getObjectName(object, 'all', true)}`
+
     switch (getObjectFamily(object)) {
       case 'Planet':
         if(favouritePlanets.find(planet => planet.name === object.name)){
@@ -128,7 +133,42 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
         }
         break;
     }
-    sendAnalyticsEvent(currentUser, currentUserLocation, checkIsFav() ? 'remove_favorite' : 'add_favorite', eventTypes.BUTTON_CLICK, { objectName: getObjectName(object, 'all', true), objectType: getObjectType(object) }, currentLocale)
+    sendAnalyticsEvent(currentUser, currentUserLocation, wasFav ? 'remove_favorite' : 'add_favorite', eventTypes.BUTTON_CLICK, { objectName: getObjectName(object, 'all', true), objectType: getObjectType(object) }, currentLocale)
+
+    if (!objectId) return
+
+    try {
+      if (!wasFav) {
+        const subscribed = await subscribeToObjectVisibility({
+          objectId,
+          objectName: getObjectName(object, 'all', true),
+          objectFamily: getObjectFamily(object),
+          coordinates: { ra: object.ra, dec: object.dec },
+          location: currentUserLocation,
+          locale: currentLocale,
+          userId: currentUser?.uid,
+        })
+
+        if (subscribed) {
+          showToast({ message: i18n.t('common.notifications.visibilitySubscribed'), type: 'success' })
+        } else {
+          showToast({ message: i18n.t('common.notifications.pushTokenError'), type: 'error' })
+        }
+      } else {
+        const unsubscribed = await unsubscribeFromObjectVisibility({
+          objectId,
+          userId: currentUser?.uid,
+        })
+
+        if (unsubscribed) {
+          showToast({ message: i18n.t('common.notifications.visibilityUnsubscribed'), type: 'success' })
+        } else {
+          showToast({ message: i18n.t('common.notifications.pushTokenError'), type: 'error' })
+        }
+      }
+    } catch (error) {
+      console.log('[Notifications] Error handling favorite subscription', error)
+    }
   }
 
   return (
@@ -239,7 +279,7 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
                   fullWidth backgroundColor={app_colors.white}
                   small
                   textColor={app_colors.black}
-                  onPress={() => navigation.push(routes.planetarium.path, {defaultObject: object})}
+                  onPress={() => navigation.push(routes.skymaps.planetarium.path, {defaultObject: object})}
                   align={"center"}
                   disabled
                 />

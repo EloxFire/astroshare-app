@@ -79,6 +79,11 @@ export const storageKeys = {
     lastUpdate: 'launchesLastUpdate',
     data: 'launchesData',
   },
+  notifications: {
+    visibilityPrefix: 'notification_visibility_',
+    satellitePrefix: 'notification_satellite_',
+    launchesAll: 'notification_launches_all',
+  },
   notificationsId: 'notificationsId',
   pushToken: 'pushToken',
   issPasses: 'issPasses', // TODO: cleanup old key

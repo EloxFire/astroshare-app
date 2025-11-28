@@ -7,6 +7,11 @@ export const satelliteTrackerDetailsTranslations = {
     country: "Country (flyover)",
     unknown: "Unknown",
   },
+  notifications: {
+    subscribe: "Enable pass notifications",
+    unsubscribe: "Disable pass notifications",
+    cta: "Pass notifications",
+  },
   nextPasses: {
     title: "Next passes",
     subtitle: "Your position: ",

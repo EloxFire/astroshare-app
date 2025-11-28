@@ -1,5 +1,10 @@
 export const launchesScreenTranslations = {
   lastUpdate: 'Last update : {{lastUpdate}}',
+  notifications: {
+    subscribeAll: 'Subscribe to launch notifications',
+    unsubscribeAll: 'Unsubscribe from launch notifications',
+    cta: 'Global notifications',
+  },
   launchCards: {
     mission: 'Mission :',
     date: 'Date',

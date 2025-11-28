@@ -5,7 +5,7 @@ import { i18n } from '../../helpers/scripts/i18n'
 import { useTranslation } from '../../hooks/useTranslation'
 import { globalStyles } from '../../styles/global'
 import PageTitle from '../../components/commons/PageTitle'
-import {app_colors} from '../../helpers/constants'
+import {app_colors, storageKeys} from '../../helpers/constants'
 import DSOValues from '../../components/commons/DSOValues'
 import getCountryFlag from 'country-flag-icons/unicode'
 import MapView, { Circle, Marker, PROVIDER_GOOGLE, Polyline } from 'react-native-maps'
@@ -28,6 +28,9 @@ import { convertDDtoDMS } from '../../helpers/scripts/convertDDtoDMSCoords'
 import { useLaunchData } from '../../contexts/LaunchContext'
 import { LaunchData } from '../../helpers/types/LaunchData'
 import LaunchCard from '../../components/cards/LaunchCard'
+import { getData, removeData, storeData } from '../../helpers/storage'
+import { subscribeToSatellitePasses, unsubscribeFromSatellitePasses } from '../../helpers/api/notifications'
+import { showToast } from '../../helpers/scripts/showToast'
 
 export default function SatelliteTrackerDetails({ route, navigation }: any) {
 
@@ -48,6 +51,8 @@ export default function SatelliteTrackerDetails({ route, navigation }: any) {
   const [positions, setPositions] = useState<any[]>([])
   const [currentCountry, setCurrentCountry] = useState<any>(null)
   const [hasLoadedInitialData, setHasLoadedInitialData] = useState<boolean>(false)
+  const [isSatelliteSubscribed, setIsSatelliteSubscribed] = useState<boolean>(false)
+  const [satNotificationLoading, setSatNotificationLoading] = useState<boolean>(false)
 
   useEffect(() => {
     sendAnalyticsEvent(currentUser, currentUserLocation, 'Satellite Tracker Details Screen View', eventTypes.SCREEN_VIEW, {noradId}, currentLocale)
@@ -203,6 +208,13 @@ export default function SatelliteTrackerDetails({ route, navigation }: any) {
     }
   }, [satellitePasses])
 
+  useEffect(() => {
+    (async () => {
+      const stored = await getData(`${storageKeys.notifications.satellitePrefix}${noradId}`)
+      setIsSatelliteSubscribed(!!stored)
+    })()
+  }, [noradId])
+
   const centerSatelliteOnMap = (mapRef: any, satelliteInfos: any) => {
     if (mapRef.current && satelliteInfos) {
       mapRef.current.animateToRegion({
@@ -211,6 +223,49 @@ export default function SatelliteTrackerDetails({ route, navigation }: any) {
         latitudeDelta: 0,
         longitudeDelta: 1000,
       }, 1000);
+    }
+  }
+
+  const handleSatelliteNotifications = async () => {
+    if (satNotificationLoading) return
+
+    setSatNotificationLoading(true)
+    const storageKey = `${storageKeys.notifications.satellitePrefix}${noradId}`
+
+    try {
+      if (!isSatelliteSubscribed) {
+        const subscribed = await subscribeToSatellitePasses({
+          noradId,
+          location: currentUserLocation,
+          locale: currentLocale,
+          userId: currentUser?.uid,
+        })
+
+        if (subscribed) {
+          setIsSatelliteSubscribed(true)
+          await storeData(storageKey, '1')
+          showToast({ message: i18n.t('common.notifications.satelliteSubscribed'), type: 'success' })
+        } else {
+          showToast({ message: i18n.t('common.notifications.pushTokenError'), type: 'error' })
+        }
+      } else {
+        const unsubscribed = await unsubscribeFromSatellitePasses({
+          noradId,
+          userId: currentUser?.uid,
+        })
+
+        if (unsubscribed) {
+          setIsSatelliteSubscribed(false)
+          await removeData(storageKey)
+          showToast({ message: i18n.t('common.notifications.satelliteUnsubscribed'), type: 'success' })
+        } else {
+          showToast({ message: i18n.t('common.notifications.pushTokenError'), type: 'error' })
+        }
+      }
+    } catch (error) {
+      console.log('[Notifications] Error toggling satellite passes notifications', error)
+    } finally {
+      setSatNotificationLoading(false)
     }
   }
   
@@ -306,6 +361,15 @@ export default function SatelliteTrackerDetails({ route, navigation }: any) {
             <View style={satelliteTrackerStyles.content.nextPasses}>
               <Text style={satelliteTrackerStyles.content.nextPasses.title}>{i18n.t('satelliteTrackers.details.nextPasses.title')}</Text>
               <Text style={satelliteTrackerStyles.content.nextPasses.subtitle}>{i18n.t('satelliteTrackers.details.nextPasses.subtitle')}{currentUserLocation.common_name}</Text>
+              <View style={{ marginVertical: 10 }}>
+                <SimpleButton
+                  text={isSatelliteSubscribed ? i18n.t('satelliteTrackers.details.notifications.unsubscribe') : i18n.t('satelliteTrackers.details.notifications.subscribe')}
+                  onPress={() => handleSatelliteNotifications()}
+                  disabled={satNotificationLoading}
+                  fullWidth
+                  align={'center'}
+                />
+              </View>
               <View style={satelliteTrackerStyles.content.nextPasses.container}>
                 {
                   satellitePasses.length > 0 && !satellitePassesLoading &&
