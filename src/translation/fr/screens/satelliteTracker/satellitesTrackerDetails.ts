@@ -32,8 +32,8 @@ export const satelliteTrackerDetailsTranslations = {
   },
   passCard: {
     time: "Heure",
-    maxAltitude: "Altitude max",
-    direction: "Direction",
-    magnitude: "Magnitude",
+    maxAltitude: "Alt. max",
+    direction: "Dir.",
+    magnitude: "Mag",
   }
 }

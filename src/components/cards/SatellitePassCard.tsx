@@ -109,13 +109,20 @@ export default function SatellitePassCard({ satname, pass, passIndex, navigation
         <View style={satellitePassCardStyles.column}>
           <Text style={satellitePassCardStyles.column.title}>{i18n.t('satelliteTrackers.details.passCard.magnitude')}</Text>
           <Text style={satellitePassCardStyles.column.value}>{pass.mag !== 100000 ? pass.mag : 'N/A'}</Text>
-          <Text style={[satellitePassCardStyles.column.title, {marginTop: 5}]}>{i18n.t('satelliteTrackers.details.passCard.direction')}</Text>
+        </View>
+
+
+        <View style={satellitePassCardStyles.column}>
+          <Text style={satellitePassCardStyles.column.title}>{i18n.t('satelliteTrackers.details.passCard.direction')}</Text>
           <Text style={satellitePassCardStyles.column.value}>{pass.startAzCompass}</Text>
         </View>
         <View style={satellitePassCardStyles.column}>
           <Text style={satellitePassCardStyles.column.title}>{i18n.t('satelliteTrackers.details.passCard.time')}</Text>
           <Text style={satellitePassCardStyles.column.value}>{dayjs.unix(pass.startUTC).format('HH:mm')}</Text>
-          <Text style={[satellitePassCardStyles.column.title, {marginTop: 5}]}>{i18n.t('satelliteTrackers.details.passCard.maxAltitude')}</Text>
+        </View>
+
+        <View style={satellitePassCardStyles.column}>
+          <Text style={satellitePassCardStyles.column.title}>{i18n.t('satelliteTrackers.details.passCard.maxAltitude')}</Text>
           <Text style={satellitePassCardStyles.column.value}>{pass.maxEl}°</Text>
         </View>
 

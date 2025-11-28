@@ -21,8 +21,8 @@ export const satellitePassCardStyles = {
       gap: 10,
 
       icon: {
-        width: 45,
-        height: 45,
+        width: 35,
+        height: 35,
       },
 
       title: {
