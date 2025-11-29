@@ -10,7 +10,7 @@ import { i18n } from "../../helpers/scripts/i18n";
 import { clockHomeStyles } from "../../styles/screens/clock/home";
 import { ClockCard } from "../../components/clock/ClockCard";
 import { getLocalSiderealTime } from "@observerly/astrometry";
-import { convertDecimalHoursToTime } from "../../helpers/scripts/astro/decimalHourToTime";
+import { convertDecimalHoursToDate, convertDecimalHoursToTime } from "../../helpers/scripts/astro/decimalHourToTime";
 import PageTitle from "../../components/commons/PageTitle";
 import dayjs, { Dayjs } from "dayjs";
 
@@ -21,7 +21,7 @@ export const ClockHome = ({ navigation }: any) => {
   const { currentLocale } = useTranslation()
   
   const [now, setNow] = useState<Dayjs>(dayjs());
-  const [Lst, setLst] = useState<string>("");
+  const [localSiderialTime, setLocalSiderialTime] = useState<number>(0);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -33,11 +33,10 @@ export const ClockHome = ({ navigation }: any) => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      const longitude = currentUserLocation?.longitude ?? 0;
-      const time = new Date();
-      const lst = getLocalSiderealTime(time, longitude);
-      const stringLst = convertDecimalHoursToTime(lst).replace(':', 'h ').replace(':', 'm ') + 's';
-      setLst(stringLst);
+      const now = new Date()
+      const LST = getLocalSiderealTime(now, currentUserLocation.lon) // Local sidereal time en dégrés
+      setLocalSiderialTime(LST)
+      
     }, 1000);
 
     return () => clearInterval(interval);
@@ -89,7 +88,7 @@ export const ClockHome = ({ navigation }: any) => {
           showAnalog
         />
         <ClockCard
-          time={now}
+          time={convertDecimalHoursToDate(localSiderialTime)}
           timezone={{
             title: i18n.t('clock.home.cards.sidereal.title'),
             subtitle: i18n.t('clock.home.cards.sidereal.subtitle', { longitude: currentUserLocation.lon.toFixed(2) })

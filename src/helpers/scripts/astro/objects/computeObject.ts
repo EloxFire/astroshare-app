@@ -37,6 +37,9 @@ interface ComputeObjectProps {
 }
 
 export const computeObject = (props: ComputeObjectProps): ComputedObjectInfos | null => {
+  const referenceNow = dayjs();
+  const referenceDate = referenceNow.toDate();
+
   if(!props.object){
     console.log('[computeObject] Error: object is null')
     return null;
@@ -82,28 +85,69 @@ export const computeObject = (props: ComputeObjectProps): ComputedObjectInfos | 
 
     // VISIBILITE ACTUELLE ET POUR LA NUIT
     const target: EquatorialCoordinate = {ra: degRa, dec: degDec}
-    const isCurrentlyVisible: boolean = isBodyAboveHorizon(new Date(), props.observer, target, horizonAngle)
-    const isVisibleThisNight: boolean = isBodyVisibleForNight(new Date(), props.observer, target, horizonAngle)
+    const isCurrentlyVisible: boolean = isBodyAboveHorizon(referenceDate, props.observer, target, horizonAngle)
+    const isVisibleThisNight: boolean = isBodyVisibleForNight(referenceDate, props.observer, target, horizonAngle)
     const isObjectCircumpolar: boolean = isBodyCircumpolar(props.observer, target, horizonAngle);
-    const objectCurrentAltitude: number = convertEquatorialToHorizontal(new Date(), props.observer, target).alt;
-    const objectCurrentAzimuth: number = convertEquatorialToHorizontal(new Date(), props.observer, target).az;
+    const currentHorizontal = convertEquatorialToHorizontal(referenceDate, props.observer, target);
+    const objectCurrentAltitude: number = currentHorizontal.alt;
+    const objectCurrentAzimuth: number = currentHorizontal.az;
 
 
     // CALCUL HEURES DE LEVER ET COUCHER
     let objectNextRise: Dayjs | null = null;
     let objectNextSet: Dayjs | null = null;
+    const findNextHorizonCrossing = (direction: 'rise' | 'set'): Dayjs | null => {
+      const stepMinutes = 5;
+      const maxMinutes = 36 * 60; // search up to 36h ahead
+      const startTime = referenceNow;
+      let previousTime = startTime;
+      let previousAlt = convertEquatorialToHorizontal(startTime.toDate(), props.observer, target).alt;
+
+      for (let minutes = stepMinutes; minutes <= maxMinutes; minutes += stepMinutes) {
+        const currentTime = startTime.add(minutes, 'minute');
+        const currentAlt = convertEquatorialToHorizontal(currentTime.toDate(), props.observer, target).alt;
+
+        if (direction === 'rise' && previousAlt < horizonAngle && currentAlt >= horizonAngle) {
+          const fraction = (horizonAngle - previousAlt) / (currentAlt - previousAlt);
+          return previousTime.add(stepMinutes * fraction, 'minute');
+        }
+
+        if (direction === 'set' && previousAlt >= horizonAngle && currentAlt < horizonAngle) {
+          const fraction = (previousAlt - horizonAngle) / (previousAlt - currentAlt);
+          return previousTime.add(stepMinutes * fraction, 'minute');
+        }
+
+        previousAlt = currentAlt;
+        previousTime = currentTime;
+      }
+
+      return null;
+    }
     
 
     if(!isObjectCircumpolar) {
-      const nextRise: false | TransitInstance = getBodyNextRise(new Date(), props.observer, target, horizonAngle);
-      const nextSet: boolean | TransitInstance = getBodyNextSet(new Date(), props.observer, target, horizonAngle);
+      const nextRise: false | TransitInstance = getBodyNextRise(referenceDate, props.observer, target, horizonAngle);
+      const nextSet: boolean | TransitInstance = getBodyNextSet(referenceDate, props.observer, target, horizonAngle);
 
       if(isTransitInstance(nextRise)){
-        objectNextRise = dayjs(nextRise.datetime).add(dayjs().utcOffset(), 'minutes');
+        console.log('[computeObject] Next rise datetime (UTC): ', nextRise.datetime);
+        
+        objectNextRise = dayjs(nextRise.datetime);
       }
 
       if(isTransitInstance(nextSet)){
-        objectNextSet = dayjs(nextSet.datetime).add(dayjs().utcOffset(), 'minutes');
+        objectNextSet = dayjs(nextSet.datetime);
+      }
+
+      const scannedRise = findNextHorizonCrossing('rise');
+      const scannedSet = findNextHorizonCrossing('set');
+
+      if(scannedRise && (!objectNextRise || scannedRise.isBefore(objectNextRise))){
+        objectNextRise = scannedRise;
+      }
+
+      if(scannedSet && (!objectNextSet || scannedSet.isBefore(objectNextSet))){
+        objectNextSet = scannedSet;
       }
     }
 

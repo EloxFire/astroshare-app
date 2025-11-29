@@ -54,7 +54,10 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
 
   useEffect(() => {
     const observer = { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }
-    setObjectInfos(computeObject({ object, observer, lang: currentLocale, altitude: 341 }));
+    const computedObject = computeObject({ object, observer, lang: currentLocale, altitude: 341 });
+    console.log(JSON.stringify(computedObject?.visibilityInfos));
+    
+    setObjectInfos(computedObject);
   }, [])
 
   useEffect(() => {
