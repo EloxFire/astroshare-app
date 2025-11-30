@@ -2,7 +2,11 @@ export const dsoTranslations = {
   title: "Détails de l'objet",
   subtitle: "// Tout ce que vous devez connaître !",
   labels: {
-    magnitude: "Magnitude",
+    vMag: "V Mag (Apparente)",
+    bMag: "B Mag",
+    jMag: "J Mag",
+    hMag: "H Mag",
+    kMag: "K Mag",
     type: "Type",
     rightAscension: "Ascension droite",
     declination: "Déclinaison",

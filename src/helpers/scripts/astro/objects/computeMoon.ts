@@ -26,6 +26,7 @@ interface computeMoonProps {
 export const computeMoon = ({date, observer}: computeMoonProps): ComputedMoonInfos => {
   const referenceNow = dayjs(date);
   const referenceDate = referenceNow.toDate();
+  const localOffsetMinutes = referenceNow.utcOffset();
   const moonEquatorialCoords: EquatorialCoordinate = getLunarEquatorialCoordinate(referenceDate)
   const moonHorizontalCoords: HorizontalCoordinate = convertEquatorialToHorizontal(referenceDate, observer, moonEquatorialCoords)
   const altitude: number = 341;
@@ -74,11 +75,11 @@ export const computeMoon = ({date, observer}: computeMoonProps): ComputedMoonInf
   let moonSetTime: Dayjs | null = null;
 
   if (isTransitInstance(moonRise)) {
-    moonRiseTime = dayjs(moonRise.datetime);
+    moonRiseTime = dayjs(moonRise.datetime).add(localOffsetMinutes, 'minute');
   }
 
   if (isTransitInstance(moonSet)) {
-    moonSetTime = dayjs(moonSet.datetime);
+    moonSetTime = dayjs(moonSet.datetime).add(localOffsetMinutes, 'minute');
   }
 
   const scannedRise = findNextHorizonCrossing('rise');

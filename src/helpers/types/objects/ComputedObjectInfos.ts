@@ -14,9 +14,13 @@ export type ComputedObjectInfos = {
     dec: string | number;
     degRa: number;
     degDec: number;
-    mag: number | string;
     alt: string;
     az: string;
+    v_mag?: number;
+    b_mag?: number;
+    j_mag?: number;
+    k_mag?: number;
+    h_mag?: number;
   },
   visibilityInfos: {
     isCurrentlyVisible: boolean;

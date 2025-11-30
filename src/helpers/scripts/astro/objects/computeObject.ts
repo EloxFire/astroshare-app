@@ -39,6 +39,7 @@ interface ComputeObjectProps {
 export const computeObject = (props: ComputeObjectProps): ComputedObjectInfos | null => {
   const referenceNow = dayjs();
   const referenceDate = referenceNow.toDate();
+  const localOffsetMinutes = referenceNow.utcOffset();
 
   if(!props.object){
     console.log('[computeObject] Error: object is null')
@@ -132,11 +133,11 @@ export const computeObject = (props: ComputeObjectProps): ComputedObjectInfos | 
       if(isTransitInstance(nextRise)){
         console.log('[computeObject] Next rise datetime (UTC): ', nextRise.datetime);
         
-        objectNextRise = dayjs(nextRise.datetime);
+        objectNextRise = dayjs(nextRise.datetime).add(localOffsetMinutes, 'minute');
       }
 
       if(isTransitInstance(nextSet)){
-        objectNextSet = dayjs(nextSet.datetime);
+        objectNextSet = dayjs(nextSet.datetime).add(localOffsetMinutes, 'minute');
       }
 
       const scannedRise = findNextHorizonCrossing('rise');
@@ -152,33 +153,49 @@ export const computeObject = (props: ComputeObjectProps): ComputedObjectInfos | 
     }
 
     // GESTION MAGNITUDE SELON TYPE D'OBJET
-    let objectMagnitude: number;
+    let objectMagnitude: {v: number | undefined, b: number | undefined, j: number | undefined, k: number | undefined, h: number | undefined} = {v: 0, b: 0, j: 0, k: 0, h: 0};
     switch (objectFamily) {
       case "DSO":
-        objectMagnitude = (props.object as DSO).v_mag as number || (props.object as DSO).b_mag as number;
+        objectMagnitude = {
+          v: typeof (props.object as DSO).v_mag === 'string' ? undefined : (props.object as DSO).v_mag as number,
+          b: typeof (props.object as DSO).b_mag === 'string' ? undefined : (props.object as DSO).b_mag as number,
+          j: typeof (props.object as DSO).j_mag === 'string' ? undefined : (props.object as DSO).j_mag as number,
+          k: typeof (props.object as DSO).k_mag === 'string' ? undefined : (props.object as DSO).k_mag as number,
+          h: typeof (props.object as DSO).h_mag === 'string' ? undefined : (props.object as DSO).h_mag as number,
+        }
         break;
       case "Star":
-        objectMagnitude = (props.object as Star).V;
+        objectMagnitude = {
+          v: (props.object as Star).V,
+          b: undefined,
+          j: undefined,
+          k: undefined,
+          h: undefined,
+        }
         break;
       case "Planet":
-        objectMagnitude = getPlanetMagnitude((props.object as GlobalPlanet).name);
+        objectMagnitude = {
+          v: getPlanetMagnitude((props.object as GlobalPlanet).name),
+          b: undefined,
+          j: undefined,
+          k: undefined,
+          h: undefined,
+        }
         break;
-      default:
-        objectMagnitude = 10000;
     }
 
     // GESTION BADGES VISIBILITE INSTRUMENTS
     const nakedEyesVisibilityInfos = {
-      label: objectMagnitude < 6 ? i18n.t('common.visibility.visible') : i18n.t('common.visibility.notVisible'),
+      label: objectMagnitude.v ? objectMagnitude.v < 6 ? i18n.t('common.visibility.visible') : i18n.t('common.visibility.notVisible') : i18n.t('common.errors.unknown'),
       icon: require('../../../../../assets/icons/FiEye.png'),
-      backgroundColor: objectMagnitude < 6 ? app_colors.green_eighty : app_colors.red_eighty,
+      backgroundColor: objectMagnitude.v ? objectMagnitude.v < 6 ? app_colors.green_eighty : app_colors.red_eighty : app_colors.white_eighty,
       foregroundColor: app_colors.white
     }
 
     const binocularsVisibilityInfos = {
-      label: objectMagnitude < 10 ? i18n.t('common.visibility.visible') : i18n.t('common.visibility.notVisible'),
+      label: objectMagnitude.v ? objectMagnitude.v < 10 ? i18n.t('common.visibility.visible') : i18n.t('common.visibility.notVisible') : i18n.t('common.errors.unknown'),
       icon: require('../../../../../assets/icons/FiEye.png'),
-      backgroundColor: objectMagnitude < 10 ? app_colors.green_eighty : app_colors.red_eighty,
+      backgroundColor: objectMagnitude.v ? objectMagnitude.v < 10 ? app_colors.green_eighty : app_colors.red_eighty : app_colors.white_eighty,
       foregroundColor: app_colors.white
     }
 
@@ -250,7 +267,11 @@ export const computeObject = (props: ComputeObjectProps): ComputedObjectInfos | 
         dec: props.object.dec,
         degRa: degRa,
         degDec: degDec,
-        mag: objectFamily === 'Planet' ? objectMagnitude + ' (max)' : objectMagnitude,
+        v_mag: objectMagnitude.v,
+        b_mag: objectMagnitude.b,
+        j_mag: objectMagnitude.j,
+        k_mag: objectMagnitude.k,
+        h_mag: objectMagnitude.h,
         alt: objectCurrentAltitude.toFixed(2) + '°',
         az: Math.round(objectCurrentAzimuth) + '°',
       },

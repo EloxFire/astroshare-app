@@ -111,6 +111,7 @@ export const commonTranslations = {
     nextRiseTomorrow: "Prochain lever demain",
     nextSetTomorrow: "Prochain coucher demain",
     circumpolar: "Circumpolaire",
+    alwaysVisible: "Toujours visible, objet circumpolaire",
   },
   observation: {
     title: "Observation",
