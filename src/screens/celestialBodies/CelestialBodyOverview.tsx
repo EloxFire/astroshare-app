@@ -14,7 +14,6 @@ import {ComputedObjectInfos} from "../../helpers/types/objects/ComputedObjectInf
 import {astroImages, constellationsImages, planetsImages} from "../../helpers/scripts/loadImages";
 import {app_colors, storageKeys} from "../../helpers/constants";
 import {getObjectFamily} from "../../helpers/scripts/astro/objects/getObjectFamily";
-import {getConstellationName} from "../../helpers/scripts/getConstellationName";
 import DSOValues from "../../components/commons/DSOValues";
 import SimpleButton from "../../components/commons/buttons/SimpleButton";
 import {prettyRa} from "../../helpers/scripts/astro/prettyCoords";
