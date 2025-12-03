@@ -1,5 +1,5 @@
-import React, {useEffect, useMemo, useState} from 'react';
-import {ActivityIndicator, Platform, ScrollView, Text, TextInput, View} from "react-native";
+import React, {useState} from 'react';
+import {ScrollView, Text, View} from "react-native";
 import {globalStyles} from "../../styles/global";
 import {i18n} from "../../helpers/scripts/i18n";
 import {observationPlannerScreenStyles} from "../../styles/screens/observationPlanner/observationPlannerScreen";
@@ -8,9 +8,6 @@ import {useSettings} from "../../contexts/AppSettingsContext";
 import {useSolarSystem} from "../../contexts/SolarSystemContext";
 import {useStarCatalog} from "../../contexts/StarsContext";
 import {useSpot} from "../../contexts/ObservationSpotContext";
-import {DSO} from "../../helpers/types/DSO";
-import {Star} from "../../helpers/types/Star";
-import {GlobalPlanet} from "../../helpers/types/GlobalPlanet";
 import {routes} from "../../helpers/routes";
 import { capitalize } from '../../helpers/scripts/utils/formatters/capitalize';
 import { app_colors } from '../../helpers/constants';
@@ -20,32 +17,9 @@ import SimpleButton from '../../components/commons/buttons/SimpleButton';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import BigButton from '../../components/commons/buttons/BigButton';
 import InputWithIcon from '../../components/forms/InputWithIcon';
-
-
-type PlannerFilters = {
-  magnitudeLimit: number;
-  minAltitude: number;
-  maxSizeArcmin?: number | null;
-  includePlanets: boolean;
-  includeStars: boolean;
-  includeDSO: boolean;
-  fovWidth?: number | null; // in degrees
-  fovHeight?: number | null; // in degrees
-}
-
-type NumericFilterKeys = 'magnitudeLimit' | 'minAltitude' | 'maxSizeArcmin' | 'fovWidth' | 'fovHeight';
-
-type PlannedObject = {
-  object: DSO | Star | GlobalPlanet;
-  peakAltitude: number;
-  peakAzimuth: number;
-  peakTime: Dayjs;
-  visibilityPercent: number;
-  visibilityGraph: { altitudes: number[]; hours: string[] };
-  magnitude?: number;
-  angularSizeDeg?: number | null;
-  fitsInFov?: boolean | null;
-}
+import { DSO } from '../../helpers/types/DSO';
+import { GlobalPlanet } from '../../helpers/types/GlobalPlanet';
+import { Star } from '../../helpers/types/Star';
 
 function ObservationPlannerScreen({navigation}: any) {
   const { currentLocale } = useTranslation();
@@ -69,11 +43,15 @@ function ObservationPlannerScreen({navigation}: any) {
 
   // Gestion des autres filtres pour l'étape 3
   // Magnitude
-  const [minMag, setMinMag] = useState<number>(12);
-  const [maxMag, setMaxMag] = useState<number>(0);
-  // Taille angulaire
-  const [maxAngularSizeArcmin, setMaxAngularSizeArcmin] = useState<number>(60);
-  const [minAngularSizeArcmin, setMinAngularSizeArcmin] = useState<number>(0);
+  const [minMag, setMinMag] = useState<number | null>(null);
+  const [maxMag, setMaxMag] = useState<number | null>(null);
+  // Altitude 
+  const [minAlt, setMinAlt] = useState<number | null>(null);
+  const [maxAlt, setMaxAlt] = useState<number | null>(null);
+
+  // Paramètres et état de la recherche
+  const [maxResults, setMaxResults] = useState<number>(10);
+  const [resultsList, setResultsList] = useState<((DSO | GlobalPlanet | Star)[]) | null>(null);
 
 
   return (
@@ -218,7 +196,7 @@ function ObservationPlannerScreen({navigation}: any) {
               <View style={observationPlannerScreenStyles.content.row}>
                 <SimpleButton
                   icon={require('../../../assets/icons/FiCalendar.png')}
-                  text={capitalize(startDate.format('DD-MM-YYYY'))}
+                  text={capitalize(startDate.format('ddd DD MMM YYYY'))}
                   textColor={app_colors.white}
                   align='flex-start'
                   onPress={() => setShowStartPicker(true)}
@@ -238,7 +216,7 @@ function ObservationPlannerScreen({navigation}: any) {
               <View style={observationPlannerScreenStyles.content.row}>
                 <SimpleButton
                   icon={require('../../../assets/icons/FiCalendar.png')}
-                  text={capitalize(endDate.format('DD-MM-YYYY'))}
+                  text={capitalize(endDate.format('ddd DD MMM YYYY'))}
                   textColor={app_colors.white}
                   align='flex-start'
                   onPress={() => setShowEndDatePicker(true)}
@@ -265,19 +243,60 @@ function ObservationPlannerScreen({navigation}: any) {
 
           {/* OTHER FILTERS */}
           <View style={observationPlannerScreenStyles.content.bloc}>
-            <Text style={observationPlannerScreenStyles.content.bloc.title}>3. Autres filtres</Text>
+            <Text style={observationPlannerScreenStyles.content.bloc.title}>3. Autres filtres (optionnels)</Text>
 
             <Text style={observationPlannerScreenStyles.content.bloc.subtitle}>Magnitude</Text>
             <View style={observationPlannerScreenStyles.content.row}>
-              <InputWithIcon type='number' value={minMag.toString()} placeholder='Mag min' changeEvent={(value) => setMinMag(parseInt(value))} />
-              <InputWithIcon type='number' value={maxMag.toString()} placeholder='Mag max' changeEvent={(value) => setMaxMag(parseInt(value))} />
+              <InputWithIcon type='number' value={minMag ? minMag.toString() : undefined} placeholder='Mag min' changeEvent={(value) => setMinMag(parseInt(value))} additionalStyles={{marginVertical: 0}} />
+              <InputWithIcon type='number' value={maxMag ? maxMag.toString() : undefined} placeholder='Mag max' changeEvent={(value) => setMaxMag(parseInt(value))} additionalStyles={{marginVertical: 0}} />
             </View>
             
-            <Text style={observationPlannerScreenStyles.content.bloc.subtitle}>Magnitude</Text>
+            <Text style={observationPlannerScreenStyles.content.bloc.subtitle}>Altitude</Text>
             <View style={observationPlannerScreenStyles.content.row}>
-              {/* HERE GOES THE FIRST ROW OF FILTERS */}
+              <InputWithIcon type='number' value={minAlt ? minAlt.toString() : undefined} placeholder='Alt min (°)' changeEvent={(value) => setMinAlt(parseInt(value))} additionalStyles={{marginVertical: 0}} />
+              <InputWithIcon type='number' value={maxAlt ? maxAlt.toString() : undefined} placeholder='Alt max (°)' changeEvent={(value) => setMaxAlt(parseInt(value))} additionalStyles={{marginVertical: 0}} />
             </View>
           </View>
+
+          {/* RESULTS */}
+          {
+            !resultsList && (
+              <SimpleButton
+                icon={require('../../../assets/icons/FiSearch.png')}
+                text="Lancer la recherche"
+                onPress={() => {}}
+                backgroundColor={app_colors.white}
+                textColor={app_colors.black}
+                iconColor={app_colors.black}
+                fullWidth
+                align='center'
+                textAdditionalStyles={{fontFamily: 'GilroyBlack'}}
+              />
+            )
+          }
+          {
+            resultsList && resultsList.length === 0 && (
+              <View style={observationPlannerScreenStyles.content.bloc}>
+                <Text style={observationPlannerScreenStyles.content.bloc.title}>4. Résultats</Text>
+                
+                <Text style={observationPlannerScreenStyles.content.bloc.subtitle}>Aucun résultat ne correspond à vos critères</Text>
+              </View>
+            )
+          }
+          {
+            resultsList && resultsList.length > 0 && (
+              <View style={observationPlannerScreenStyles.content.bloc}>
+                <Text style={observationPlannerScreenStyles.content.bloc.title}>4. Résultats</Text>
+                <Text style={observationPlannerScreenStyles.content.bloc.subtitle}>Nombre d'objets correspondants : 0</Text>
+                <BigButton
+                  icon={require('../../../assets/icons/FiSearch.png')}
+                  text="Lancer la recherche"
+                  onPress={() => {}}
+                  disabled={true}
+                />
+              </View>
+            )
+          }
         </View>
       </ScrollView>
     </View>
