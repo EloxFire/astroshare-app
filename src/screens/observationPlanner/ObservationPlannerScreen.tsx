@@ -1,41 +1,26 @@
 import React, {useEffect, useMemo, useState} from 'react';
 import {ActivityIndicator, Platform, ScrollView, Text, TextInput, View} from "react-native";
 import {globalStyles} from "../../styles/global";
-import PageTitle from "../../components/commons/PageTitle";
 import {i18n} from "../../helpers/scripts/i18n";
 import {observationPlannerScreenStyles} from "../../styles/screens/observationPlanner/observationPlannerScreen";
-import DateTimePicker, {DateTimePickerEvent} from "@react-native-community/datetimepicker";
-import dayjs, {Dayjs} from "dayjs";
-import SimpleButton from "../../components/commons/buttons/SimpleButton";
-import {app_colors, sampleDSO} from "../../helpers/constants";
-import ToggleButton from "../../components/commons/buttons/ToggleButton";
 import {useTranslation} from "../../hooks/useTranslation";
 import {useSettings} from "../../contexts/AppSettingsContext";
 import {useSolarSystem} from "../../contexts/SolarSystemContext";
 import {useStarCatalog} from "../../contexts/StarsContext";
-import {calculateHorizonAngle} from "../../helpers/scripts/astro/calculateHorizonAngle";
-import {extractNumbers} from "../../helpers/scripts/extractNumbers";
 import {useSpot} from "../../contexts/ObservationSpotContext";
-import {convertHMSToDegreeFromString} from "../../helpers/scripts/astro/HmsToDegree";
-import {convertDMSToDegreeFromString} from "../../helpers/scripts/astro/DmsToDegree";
-import {
-  convertEquatorialToHorizontal,
-  EquatorialCoordinate,
-  GeographicCoordinate
-} from "@observerly/astrometry";
 import {DSO} from "../../helpers/types/DSO";
 import {Star} from "../../helpers/types/Star";
 import {GlobalPlanet} from "../../helpers/types/GlobalPlanet";
-import {getObjectName} from "../../helpers/scripts/astro/objects/getObjectName";
-import {getObjectType} from "../../helpers/scripts/astro/objects/getObjectType";
-import {getObjectFamily} from "../../helpers/scripts/astro/objects/getObjectFamily";
-import {getPlanetMagnitude} from "../../helpers/scripts/astro/objects/getPlanetMagnitude";
-import {observationPlannerComponentsStyles} from "../../styles/components/observationPlanner/planner";
-import SimpleBadge from "../../components/badges/SimpleBadge";
-import {astroImages} from "../../helpers/scripts/loadImages";
-import {getWindDir} from "../../helpers/scripts/getWindDir";
-import VisibilityGraph from "../../components/graphs/VisibilityGraph";
 import {routes} from "../../helpers/routes";
+import { capitalize } from '../../helpers/scripts/utils/formatters/capitalize';
+import { app_colors } from '../../helpers/constants';
+import dayjs, {Dayjs} from "dayjs";
+import PageTitle from "../../components/commons/PageTitle";
+import SimpleButton from '../../components/commons/buttons/SimpleButton';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import BigButton from '../../components/commons/buttons/BigButton';
+import InputWithIcon from '../../components/forms/InputWithIcon';
+
 
 type PlannerFilters = {
   magnitudeLimit: number;
@@ -62,102 +47,6 @@ type PlannedObject = {
   fitsInFov?: boolean | null;
 }
 
-const fallbackDSO: DSO = sampleDSO;
-const curatedDSOList: DSO[] = [
-  fallbackDSO,
-  {
-    name: "M31",
-    type: "G",
-    ra: "00:42:44.3",
-    dec: "41:16:09",
-    const: "And",
-    maj_ax: 190,
-    min_ax: 60,
-    pos_ang: "",
-    b_mag: 4.4,
-    v_mag: 3.4,
-    j_mag: "",
-    h_mag: "",
-    k_mag: "",
-    surf_br: "",
-    hubble: "",
-    pax: "",
-    pm_ra: 0,
-    pm_dec: 0,
-    rad_vel: -300,
-    redshift: -0.001001,
-    cstar_u_mag: "",
-    cstar_b_mag: "",
-    cstar_v_mag: "",
-    m: 31,
-    ngc: 224,
-    ic: "",
-    cstar_name: "",
-    identifiers: "",
-    common_names: "Andromeda Galaxy",
-    ned_notes: "",
-    open_ngc_notes: "",
-    sources: "",
-    image_url: "",
-    distance: 2.5,
-    dist_unit: "Mly",
-    dimensions: "190 x 60",
-    discovered_by: "",
-    discovery_year: "",
-    apparent_size: "190' x 60'",
-    age: ""
-  },
-  {
-    name: "M45",
-    type: "OpC",
-    ra: "03:47:00",
-    dec: "24:07:00",
-    const: "Tau",
-    maj_ax: 110,
-    min_ax: 100,
-    pos_ang: "",
-    b_mag: 1.6,
-    v_mag: 1.6,
-    j_mag: "",
-    h_mag: "",
-    k_mag: "",
-    surf_br: "",
-    hubble: "",
-    pax: "",
-    pm_ra: 0,
-    pm_dec: 0,
-    rad_vel: 0,
-    redshift: 0,
-    cstar_u_mag: "",
-    cstar_b_mag: "",
-    cstar_v_mag: "",
-    m: 45,
-    ngc: 1432,
-    ic: "",
-    cstar_name: "",
-    identifiers: "",
-    common_names: "Pleiades",
-    ned_notes: "",
-    open_ngc_notes: "",
-    sources: "",
-    image_url: "",
-    distance: 0.444,
-    dist_unit: "kly",
-    dimensions: "110 x 100",
-    discovered_by: "",
-    discovery_year: "",
-    apparent_size: "110'",
-    age: ""
-  }
-];
-
-const fallbackBrightStars: Star[] = [
-  { ids: "Betelgeuse", ra: 88.7929, dec: 7.4071, V: 0.42, sp_type: "M2Iab" },
-  { ids: "Rigel", ra: 78.6345, dec: -8.2016, V: 0.13, sp_type: "B8Ia" },
-  { ids: "Vega", ra: 279.2347, dec: 38.7837, V: 0.03, sp_type: "A0V" },
-  { ids: "Capella", ra: 79.1723, dec: 45.9979, V: 0.08, sp_type: "G8III" },
-];
-
 function ObservationPlannerScreen({navigation}: any) {
   const { currentLocale } = useTranslation();
   const { currentUserLocation } = useSettings();
@@ -165,356 +54,27 @@ function ObservationPlannerScreen({navigation}: any) {
   const { planets } = useSolarSystem();
   const { starsCatalog, starCatalogLoading } = useStarCatalog();
 
-  const [startDate, setStartDate] = useState<Dayjs>(dayjs().minute(0));
-  const [endDate, setEndDate] = useState<Dayjs>(dayjs().add(3, 'hour').minute(0));
-  const [showStartPicker, setShowStartPicker] = useState(false);
-  const [showEndPicker, setShowEndPicker] = useState(false);
-  const [filters, setFilters] = useState<PlannerFilters>({
-    magnitudeLimit: 8,
-    minAltitude: 20,
-    maxSizeArcmin: 200,
-    includePlanets: true,
-    includeStars: true,
-    includeDSO: true,
-    fovWidth: 1.5,
-    fovHeight: 1,
-  });
-  const [filterInputs, setFilterInputs] = useState<Record<NumericFilterKeys, string>>({
-    magnitudeLimit: '8',
-    minAltitude: '20',
-    maxSizeArcmin: '200',
-    fovWidth: '1.5',
-    fovHeight: '1',
-  });
+  // Gestion des dates de début et de fin de la session d'observation
+  const [startDate, setStartDate] = useState<Dayjs>(dayjs());
+  const [startTime, setStartTime] = useState<string>(dayjs().add(1, 'hour').startOf('hour').format('HH:mm'));
+  const [showStartPicker, setShowStartPicker] = useState<boolean>(false);
+  const [showStartTimePicker, setShowStartTimePicker] = useState<boolean>(false);
+  const [endDate, setEndDate] = useState<Dayjs>(dayjs().add(1, 'hour'));
+  const [endTime, setEndTime] = useState<string>(dayjs().add(2, 'hour').startOf('hour').format('HH:mm'));
+  const [showEndDatePicker, setShowEndDatePicker] = useState<boolean>(false);
+  const [showEndTimePicker, setShowEndTimePicker] = useState<boolean>(false);
+  const [dsoEnabled, setDsoEnabled] = useState<boolean>(true);
+  const [starsEnabled, setStarsEnabled] = useState<boolean>(true);
+  const [planetsEnabled, setPlanetsEnabled] = useState<boolean>(true);
 
-  const [plannedObjects, setPlannedObjects] = useState<PlannedObject[]>([]);
-  const [loadingPlan, setLoadingPlan] = useState<boolean>(false);
+  // Gestion des autres filtres pour l'étape 3
+  // Magnitude
+  const [minMag, setMinMag] = useState<number>(12);
+  const [maxMag, setMaxMag] = useState<number>(0);
+  // Taille angulaire
+  const [maxAngularSizeArcmin, setMaxAngularSizeArcmin] = useState<number>(60);
+  const [minAngularSizeArcmin, setMinAngularSizeArcmin] = useState<number>(0);
 
-  const horizonAngle = useMemo(() => {
-    const altitude = selectedSpot ? extractNumbers(selectedSpot.equipments.altitude) : extractNumbers(defaultAltitude);
-    return calculateHorizonAngle(altitude || 341);
-  }, [selectedSpot, defaultAltitude]);
-
-  const handleDateChange = (type: 'start' | 'end', event: DateTimePickerEvent, date?: Date) => {
-    if (event.type === 'dismissed') {
-      type === 'start' ? setShowStartPicker(false) : setShowEndPicker(false);
-      return;
-    }
-
-    if (!date) return;
-
-    if (type === 'start') {
-      const newStart = dayjs(date);
-      setStartDate(newStart);
-      if (newStart.isAfter(endDate)) {
-        setEndDate(newStart.add(2, 'hour'));
-      }
-      if (Platform.OS === 'android') setShowStartPicker(false);
-    } else {
-      const newEnd = dayjs(date);
-      if (newEnd.isBefore(startDate)) {
-        setEndDate(startDate.add(1, 'hour'));
-      } else {
-        setEndDate(newEnd);
-      }
-      if (Platform.OS === 'android') setShowEndPicker(false);
-    }
-  };
-
-  const parseEquatorialCoords = (object: DSO | Star | GlobalPlanet): EquatorialCoordinate | null => {
-    const family = getObjectFamily(object);
-    if (family === 'DSO') {
-      const ra = convertHMSToDegreeFromString(object.ra as string);
-      const dec = convertDMSToDegreeFromString(object.dec as string);
-      if (!ra || !dec) return null;
-      return { ra, dec };
-    }
-    if (family === 'Star' || family === 'Planet') {
-      return { ra: object.ra as number, dec: object.dec as number };
-    }
-    return null;
-  };
-
-  const parseAngularSizeDeg = (object: DSO | Star | GlobalPlanet): number | null => {
-    if (getObjectFamily(object) !== 'DSO') return null;
-    const rawSize = (object as DSO).apparent_size || (object as DSO).dimensions;
-    if (!rawSize || rawSize === "") return null;
-    const matches = `${rawSize}`.match(/[\d.,]+/g);
-    if (!matches || matches.length === 0) return null;
-    const sizeValue = Math.max(...matches.map((value) => parseFloat(value.replace(',', '.'))));
-    if (Number.isNaN(sizeValue)) return null;
-    if (`${rawSize}`.includes('°')) return sizeValue;
-    if (`${rawSize}`.includes('"')) return sizeValue / 3600;
-    return sizeValue / 60;
-  };
-
-  const getMagnitude = (object: DSO | Star | GlobalPlanet): number | undefined => {
-    const family = getObjectFamily(object);
-    if (family === 'DSO') {
-      const vMag = (object as DSO).v_mag;
-      return typeof vMag === 'number' ? vMag : undefined;
-    }
-    if (family === 'Star') {
-      return (object as Star).V;
-    }
-    if (family === 'Planet') {
-      return getPlanetMagnitude((object as GlobalPlanet).name);
-    }
-    return undefined;
-  };
-
-  const buildCandidates = (): (DSO | Star | GlobalPlanet)[] => {
-    const candidates: (DSO | Star | GlobalPlanet)[] = [];
-    if (filters.includePlanets) {
-      const visiblePlanets = planets.filter((planet: GlobalPlanet) => planet.name !== 'Earth');
-      candidates.push(...visiblePlanets);
-    }
-    if (filters.includeDSO) {
-      candidates.push(...curatedDSOList);
-    }
-    if (filters.includeStars) {
-      const sourceStars = starsCatalog && starsCatalog.length > 0 ? starsCatalog : fallbackBrightStars;
-      const brightStars = sourceStars
-        .filter((star: Star) => !filters.magnitudeLimit || star.V <= filters.magnitudeLimit + 1)
-        .sort((a: Star, b: Star) => a.V - b.V)
-        .slice(0, 35);
-      candidates.push(...brightStars);
-    }
-    return candidates;
-  };
-
-  const computeVisibilityProfile = (object: DSO | Star | GlobalPlanet): PlannedObject | null => {
-    if (!currentUserLocation) return null;
-    const coords = parseEquatorialCoords(object);
-    if (!coords) return null;
-    const minAltitude = Math.max(filters.minAltitude, horizonAngle);
-
-    const observer: GeographicCoordinate = {
-      latitude: currentUserLocation.lat,
-      longitude: currentUserLocation.lon,
-    };
-
-    const minutesSpan = Math.max(30, endDate.diff(startDate, 'minute'));
-    const stepMinutes = minutesSpan <= 120 ? 15 : 30;
-    const samples: number = Math.ceil(minutesSpan / stepMinutes);
-
-    const altitudes: number[] = [];
-    const hours: string[] = [];
-    let bestAltitude = -90;
-    let bestAzimuth = 0;
-    let bestTime = startDate;
-    let visibleCount = 0;
-
-    for (let i = 0; i <= samples; i++) {
-      const currentTime = startDate.add(i * stepMinutes, 'minute');
-      if (currentTime.isAfter(endDate)) break;
-      const horizontal = convertEquatorialToHorizontal(currentTime.toDate(), observer, coords);
-      altitudes.push(horizontal.alt);
-      hours.push(currentTime.format('HH:mm'));
-
-      if (horizontal.alt > bestAltitude) {
-        bestAltitude = horizontal.alt;
-        bestAzimuth = horizontal.az;
-        bestTime = currentTime;
-      }
-      if (horizontal.alt >= minAltitude) visibleCount += 1;
-    }
-
-    if (altitudes.length === 0) return null;
-
-    const visibilityPercent = Math.round((visibleCount / altitudes.length) * 100);
-    if (visibleCount === 0) return null;
-
-    const magnitude = getMagnitude(object);
-    if (filters.magnitudeLimit && magnitude !== undefined && magnitude > filters.magnitudeLimit) {
-      return null;
-    }
-
-    const angularSizeDeg = parseAngularSizeDeg(object);
-    if (filters.maxSizeArcmin && angularSizeDeg && angularSizeDeg * 60 > filters.maxSizeArcmin) {
-      return null;
-    }
-
-    let fitsInFov: boolean | null = null;
-    if (filters.fovHeight && filters.fovWidth && angularSizeDeg) {
-      const maxAllowed = Math.min(filters.fovHeight, filters.fovWidth);
-      fitsInFov = angularSizeDeg <= maxAllowed;
-    }
-
-    return {
-      object,
-      peakAltitude: bestAltitude,
-      peakAzimuth: bestAzimuth,
-      peakTime: bestTime,
-      visibilityPercent,
-      visibilityGraph: { altitudes, hours },
-      magnitude,
-      angularSizeDeg,
-      fitsInFov,
-    };
-  };
-
-  const planObservations = () => {
-    setLoadingPlan(true);
-    const candidates = buildCandidates();
-    const computed = candidates
-      .map(computeVisibilityProfile)
-      .filter((item): item is PlannedObject => item !== null)
-      .sort((a, b) => {
-        if (a.peakTime.isSame(b.peakTime)) {
-          return b.peakAltitude - a.peakAltitude;
-        }
-        return a.peakTime.valueOf() - b.peakTime.valueOf();
-      });
-
-    setPlannedObjects(computed);
-    setLoadingPlan(false);
-  };
-
-  useEffect(() => {
-    planObservations();
-  }, [startDate, endDate, filters, currentUserLocation, planets, starsCatalog, starCatalogLoading]);
-
-  const handleFilterChange = (key: NumericFilterKeys, value: string) => {
-    setFilterInputs((prev) => ({ ...prev, [key]: value }));
-    if (value === '') {
-      if (key === 'maxSizeArcmin' || key === 'fovHeight' || key === 'fovWidth') {
-        setFilters((prev) => ({ ...prev, [key]: null } as PlannerFilters));
-      }
-      return;
-    }
-    const parsedValue = parseFloat(value.replace(',', '.'));
-    if (Number.isNaN(parsedValue)) {
-      return;
-    }
-    setFilters((prev) => ({ ...prev, [key]: parsedValue } as PlannerFilters));
-  };
-
-  const resetFilters = () => {
-    setFilters({
-      magnitudeLimit: 8,
-      minAltitude: 20,
-      maxSizeArcmin: 200,
-      includePlanets: true,
-      includeStars: true,
-      includeDSO: true,
-      fovWidth: 1.5,
-      fovHeight: 1,
-    });
-    setFilterInputs({
-      magnitudeLimit: '8',
-      minAltitude: '20',
-      maxSizeArcmin: '200',
-      fovWidth: '1.5',
-      fovHeight: '1',
-    });
-  };
-
-  const renderInput = (label: string, value: string, key: NumericFilterKeys, placeholder?: string) => (
-    <View style={observationPlannerComponentsStyles.inputGroup}>
-      <Text style={observationPlannerComponentsStyles.inputGroup.label}>{label}</Text>
-      <TextInput
-        placeholder={placeholder}
-        placeholderTextColor={app_colors.white_sixty}
-        style={observationPlannerComponentsStyles.inputGroup.input}
-        value={value}
-        keyboardType="decimal-pad"
-        onChangeText={(text) => handleFilterChange(key, text)}
-      />
-    </View>
-  );
-
-  const renderPlannedCard = (item: PlannedObject, index: number) => {
-    const objectName = getObjectName(item.object as any, 'all', true);
-    const typeLabel = getObjectType(item.object as any);
-
-    return (
-      <View key={`${objectName}-${index}`} style={observationPlannerComponentsStyles.card}>
-        <View style={observationPlannerComponentsStyles.card.header}>
-          <View>
-            <Text style={observationPlannerComponentsStyles.card.title}>{objectName}</Text>
-            <Text style={observationPlannerComponentsStyles.card.subtitle}>{typeLabel}</Text>
-          </View>
-          <SimpleBadge
-            text={`${i18n.t('observationPlanner.results.order')} #${index + 1}`}
-            icon={astroImages['CONSTELLATION']}
-            backgroundColor={app_colors.white_no_opacity}
-            foregroundColor={app_colors.white}
-            noBorder
-            small
-          />
-        </View>
-        <View style={observationPlannerComponentsStyles.card.badges}>
-          <SimpleBadge
-            text={`${i18n.t('observationPlanner.results.altitude')} ${item.peakAltitude.toFixed(1)}°`}
-            icon={require('../../../assets/icons/FiTrendingUp.png')}
-            backgroundColor={app_colors.green_eighty}
-            foregroundColor={app_colors.white}
-            small
-          />
-          <SimpleBadge
-            text={`${i18n.t('observationPlanner.results.bestAt')} ${item.peakTime.locale(currentLocale).format('HH:mm')}`}
-            icon={require('../../../assets/icons/FiClock.png')}
-            backgroundColor={app_colors.white_no_opacity}
-            foregroundColor={app_colors.white}
-            small
-          />
-          <SimpleBadge
-            text={`${i18n.t('observationPlanner.results.visibility', { percent: item.visibilityPercent })}`}
-            icon={require('../../../assets/icons/FiEye.png')}
-            backgroundColor={app_colors.white_no_opacity}
-            foregroundColor={app_colors.white}
-            small
-          />
-          <SimpleBadge
-            text={`${getWindDir(item.peakAzimuth)} • ${Math.round(item.peakAzimuth)}°`}
-            icon={require('../../../assets/icons/FiCompass.png')}
-            backgroundColor={app_colors.white_no_opacity}
-            foregroundColor={app_colors.white}
-            small
-          />
-        </View>
-        <View style={observationPlannerComponentsStyles.card.badges}>
-          {item.magnitude !== undefined && (
-            <SimpleBadge
-              text={`${i18n.t('observationPlanner.results.magnitude')} ${item.magnitude.toFixed(1)}`}
-              icon={require('../../../assets/icons/FiStar.png')}
-              backgroundColor={app_colors.white_no_opacity}
-              foregroundColor={app_colors.white}
-              small
-            />
-          )}
-          {item.angularSizeDeg && (
-            <SimpleBadge
-              text={`${i18n.t('observationPlanner.results.size')} ${(item.angularSizeDeg * 60).toFixed(0)}'`}
-              icon={require('../../../assets/icons/FiRuler.png')}
-              backgroundColor={app_colors.white_no_opacity}
-              foregroundColor={app_colors.white}
-              small
-            />
-          )}
-          {item.fitsInFov !== null && (
-            <SimpleBadge
-              text={item.fitsInFov ? i18n.t('observationPlanner.results.fov.ok') : i18n.t('observationPlanner.results.fov.ko')}
-              icon={require('../../../assets/icons/FiViewPoint.png')}
-              backgroundColor={item.fitsInFov ? app_colors.green_eighty : app_colors.red_eighty}
-              foregroundColor={app_colors.white}
-              small
-            />
-          )}
-        </View>
-        <VisibilityGraph visibilityGraph={item.visibilityGraph} />
-        <SimpleButton
-          text={i18n.t('observationPlanner.results.details')}
-          icon={require('../../../assets/icons/FiChevronRight.png')}
-          onPress={() => navigation.push(routes.celestialBodies.details.path, { object: item.object })}
-          fullWidth
-          align="center"
-          backgroundColor={app_colors.white_no_opacity}
-        />
-      </View>
-    );
-  };
 
   return (
     <View style={globalStyles.body}>
@@ -525,120 +85,198 @@ function ObservationPlannerScreen({navigation}: any) {
         backRoute={routes.home.path}
       />
       <View style={globalStyles.screens.separator} />
-
-      {showStartPicker && (
-        <DateTimePicker
-          value={startDate.toDate()}
-          mode="datetime"
-          display="default"
-          onChange={(event, date) => handleDateChange('start', event, date)}
-          accentColor={app_colors.yellow}
-        />
-      )}
-
-      {showEndPicker && (
-        <DateTimePicker
-          value={endDate.toDate()}
-          mode="datetime"
-          display="default"
-          onChange={(event, date) => handleDateChange('end', event, date)}
-          accentColor={app_colors.yellow}
-        />
-      )}
-
       <ScrollView>
         <View style={observationPlannerScreenStyles.content}>
-          <View style={globalStyles.globalContainer}>
-            <Text style={observationPlannerComponentsStyles.sectionTitle}>{i18n.t('observationPlanner.window.title')}</Text>
-            <Text style={observationPlannerComponentsStyles.sectionSubtitle}>{i18n.t('observationPlanner.window.subtitle')}</Text>
-            <View style={observationPlannerComponentsStyles.row}>
-              <SimpleButton
-                icon={require('../../../assets/icons/FiCalendar.png')}
-                text={`${i18n.t('observationPlanner.window.start')} • ${startDate.format('DD MMM HH:mm')}`}
-                onPress={() => setShowStartPicker(true)}
-                fullWidth
-                align="flex-start"
-                backgroundColor={app_colors.white_no_opacity}
-              />
-              <SimpleButton
-                icon={require('../../../assets/icons/FiCalendar.png')}
-                text={`${i18n.t('observationPlanner.window.end')} • ${endDate.format('DD MMM HH:mm')}`}
-                onPress={() => setShowEndPicker(true)}
-                fullWidth
-                align="flex-start"
-                backgroundColor={app_colors.white_no_opacity}
-              />
+          
+          {/* TEMPORAL BLOC */}
+          <View style={observationPlannerScreenStyles.content.bloc}>
+            <Text style={observationPlannerScreenStyles.content.bloc.title}>1. Durée de la session</Text>
+
+            {
+              showStartPicker && (
+                <DateTimePicker
+                  value={startDate.toDate()}
+                  mode='date'
+                  display='default'
+                  themeVariant={'dark'}
+                  onChange={(event, selectedDate) => {
+                    if (event.type === 'dismissed') {
+                      setShowStartPicker(false)
+                    }
+                    if (event.type === 'set' && selectedDate) {
+                      console.log("Setting start date:", selectedDate);
+                      
+                      setShowStartPicker(false)
+                      setStartDate(dayjs(selectedDate))
+
+                      // If new start date is after end date, set end date to start date and endTime to startTime + 3h
+                      if (dayjs(selectedDate).isAfter(endDate)) {
+                        const newEndDate = dayjs(selectedDate);
+                        const [startHour, startMinute] = startTime.split(':').map(Number);
+                        const newEndTime = dayjs(selectedDate).hour(startHour).minute(startMinute).add(3, 'hour');
+                        
+                        setEndDate(newEndDate);
+                        setEndTime(newEndTime.format('HH:mm'));
+                      }
+                    }
+                  }}
+                />
+              )
+            }
+
+            {
+              showStartTimePicker && (
+                <DateTimePicker
+                  value={startDate.toDate()}
+                  mode='time'
+                  display='default'
+                  themeVariant={'dark'}
+                  onChange={(event, selectedDate) => {
+                    if (event.type === 'dismissed') {
+                      setShowStartTimePicker(false)
+                    }
+                    if (event.type === 'set' && selectedDate) {
+                      setShowStartTimePicker(false)
+                      setStartTime(dayjs(selectedDate).format('HH:mm'))
+
+                      // If new start time is after end time on the same day, adjust end time to +3H
+                      const startDateTime = startDate.hour(Number(dayjs(selectedDate).format('HH'))).minute(Number(dayjs(selectedDate).format('mm')));
+                      const endDateTime = endDate.hour(Number(endTime.split(':')[0])).minute(Number(endTime.split(':')[1]));
+                      if (startDate.isSame(endDate) && startDateTime.isAfter(endDateTime)) {
+                        const adjustedEndTime = startDateTime.add(3, 'hour');
+                        setEndTime(adjustedEndTime.format('HH:mm'));
+                      }
+                    }
+                  }}
+                />
+              )
+            }
+
+            {
+              showEndDatePicker && (
+                <DateTimePicker
+                  value={endDate.toDate()}
+                  mode='date'
+                  display='default'
+                  themeVariant={'dark'}
+                  onChange={(event, selectedDate) => {
+                    if (event.type === 'dismissed') {
+                      setShowEndDatePicker(false)
+                    }
+                    if (event.type === 'set' && selectedDate) {
+                      console.log("Setting end date:", selectedDate);
+                      
+                      setShowEndDatePicker(false)
+                      setEndDate(dayjs(selectedDate))
+
+                      // If new end date is before start date, set start date to end date and startTime to endTime - 3h
+                      if (dayjs(selectedDate).isBefore(startDate)) {
+                        const newStartDate = dayjs(selectedDate);
+                        const [endHour, endMinute] = endTime.split(':').map(Number);
+                        const newStartTime = dayjs(selectedDate).hour(endHour).minute(endMinute).subtract(3, 'hour');
+                        
+                        setStartDate(newStartDate);
+                        setStartTime(newStartTime.format('HH:mm'));
+                      }
+                    }
+                  }}
+                />
+              )
+            }
+
+            {
+              showEndTimePicker && (
+                <DateTimePicker
+                  value={endDate.toDate()}
+                  mode='time'
+                  display='default'
+                  themeVariant={'dark'}
+                  onChange={(event, selectedDate) => {
+                    if (event.type === 'dismissed') {
+                      setShowEndTimePicker(false)
+                    }
+                    if (event.type === 'set' && selectedDate) {
+                      setShowEndTimePicker(false)
+                      setEndTime(dayjs(selectedDate).format('HH:mm'))
+
+                      // If new end time is before start time on the same day, adjust start time to -3H
+                      const startDateTime = startDate.hour(Number(startTime.split(':')[0])).minute(Number(startTime.split(':')[1]));
+                      const endDateTime = endDate.hour(Number(dayjs(selectedDate).format('HH'))).minute(Number(dayjs(selectedDate).format('mm')));
+                      if (endDate.isSame(startDate) && endDateTime.isBefore(startDateTime)) {
+                        const adjustedStartTime = endDateTime.subtract(3, 'hour');
+                        setStartTime(adjustedStartTime.format('HH:mm'));
+                      }
+                    }
+                  }}
+                />
+              )
+            }
+            
+
+            <View>
+              <Text style={observationPlannerScreenStyles.content.bloc.subtitle}>Date et heure de début</Text>
+              <View style={observationPlannerScreenStyles.content.row}>
+                <SimpleButton
+                  icon={require('../../../assets/icons/FiCalendar.png')}
+                  text={capitalize(startDate.format('DD-MM-YYYY'))}
+                  textColor={app_colors.white}
+                  align='flex-start'
+                  onPress={() => setShowStartPicker(true)}
+                />
+                <SimpleButton
+                  icon={require('../../../assets/icons/FiClock.png')}
+                  text={capitalize(startTime.replace(':', 'h'))}
+                  textColor={app_colors.white}
+                  align='flex-start'
+                  onPress={() => setShowStartTimePicker(true)}
+                />
+              </View>
             </View>
-            <SimpleButton
-              icon={require('../../../assets/icons/FiRepeat.png')}
-              text={i18n.t('observationPlanner.window.resetTonight')}
-              onPress={() => {
-                const now = dayjs();
-                setStartDate(now);
-                setEndDate(now.add(3, 'hour'));
-              }}
-              align="flex-start"
-              backgroundColor={app_colors.white_no_opacity}
-            />
+
+            <View>
+              <Text style={observationPlannerScreenStyles.content.bloc.subtitle}>Date et heure de fin</Text>
+              <View style={observationPlannerScreenStyles.content.row}>
+                <SimpleButton
+                  icon={require('../../../assets/icons/FiCalendar.png')}
+                  text={capitalize(endDate.format('DD-MM-YYYY'))}
+                  textColor={app_colors.white}
+                  align='flex-start'
+                  onPress={() => setShowEndDatePicker(true)}
+                />
+                <SimpleButton
+                  icon={require('../../../assets/icons/FiClock.png')}
+                  text={capitalize(endTime.replace(':', 'h'))}
+                  textColor={app_colors.white}
+                  align='flex-start'
+                  onPress={() => setShowEndTimePicker(true)}
+                />
+              </View>
+            </View>
           </View>
 
-          <View style={globalStyles.globalContainer}>
-            <Text style={observationPlannerComponentsStyles.sectionTitle}>{i18n.t('observationPlanner.filters.title')}</Text>
-            <Text style={observationPlannerComponentsStyles.sectionSubtitle}>{i18n.t('observationPlanner.filters.subtitle')}</Text>
-            <View style={observationPlannerComponentsStyles.row}>
-              <ToggleButton
-                title={i18n.t('observationPlanner.filters.targets.planets')}
-                toggled={filters.includePlanets}
-                onToggle={() => setFilters((prev) => ({ ...prev, includePlanets: !prev.includePlanets }))}
-              />
-              <ToggleButton
-                title={i18n.t('observationPlanner.filters.targets.stars')}
-                toggled={filters.includeStars}
-                onToggle={() => setFilters((prev) => ({ ...prev, includeStars: !prev.includeStars }))}
-              />
-              <ToggleButton
-                title={i18n.t('observationPlanner.filters.targets.dso')}
-                toggled={filters.includeDSO}
-                onToggle={() => setFilters((prev) => ({ ...prev, includeDSO: !prev.includeDSO }))}
-              />
-            </View>
+          {/* FILTERS */}
+          <View style={observationPlannerScreenStyles.content.bloc}>
+            <Text style={observationPlannerScreenStyles.content.bloc.title}>2. Type d'objets</Text>
 
-            <View style={observationPlannerComponentsStyles.inputsRow}>
-              {renderInput(i18n.t('observationPlanner.filters.magnitude'), filterInputs.magnitudeLimit, 'magnitudeLimit')}
-              {renderInput(i18n.t('observationPlanner.filters.minAltitude'), filterInputs.minAltitude, 'minAltitude')}
-            </View>
-            <View style={observationPlannerComponentsStyles.inputsRow}>
-              {renderInput(i18n.t('observationPlanner.filters.maxSize'), filterInputs.maxSizeArcmin, 'maxSizeArcmin', "ex: 200")}
-              {renderInput(i18n.t('observationPlanner.filters.fov.width'), filterInputs.fovWidth, 'fovWidth')}
-              {renderInput(i18n.t('observationPlanner.filters.fov.height'), filterInputs.fovHeight, 'fovHeight')}
-            </View>
-            <View style={observationPlannerComponentsStyles.row}>
-              <SimpleButton
-                text={i18n.t('observationPlanner.filters.reset')}
-                icon={require('../../../assets/icons/FiTrash.png')}
-                onPress={resetFilters}
-                backgroundColor={app_colors.white_no_opacity}
-                align="flex-start"
-              />
-              <SimpleButton
-                text={i18n.t('observationPlanner.filters.refresh')}
-                icon={require('../../../assets/icons/FiFilter.png')}
-                onPress={planObservations}
-                backgroundColor={app_colors.white_no_opacity}
-                align="flex-start"
-              />
-            </View>
-            <Text style={observationPlannerComponentsStyles.helperText}>{i18n.t('observationPlanner.filters.helper')}</Text>
+            <BigButton isChecked={planetsEnabled} onPress={() => setPlanetsEnabled(!planetsEnabled)} hasCheckbox icon={require('../../../assets/icons/astro/planets/color/JUPITER.png')} text='Planètes' />
+            <BigButton isChecked={dsoEnabled} onPress={() => setDsoEnabled(!dsoEnabled)} hasCheckbox icon={require('../../../assets/icons/astro/CL+N.png')} text='Objets du ciel profond' />
+            <BigButton isChecked={starsEnabled} onPress={() => setStarsEnabled(!starsEnabled)} hasCheckbox icon={require('../../../assets/icons/astro/BRIGHTSTAR.png')} text='Étoiles brillantes' />
           </View>
 
-          <View style={globalStyles.globalContainer}>
-            <Text style={observationPlannerComponentsStyles.sectionTitle}>{i18n.t('observationPlanner.results.title')}</Text>
-            <Text style={observationPlannerComponentsStyles.sectionSubtitle}>{i18n.t('observationPlanner.results.subtitle')}</Text>
-            {loadingPlan && <ActivityIndicator color={app_colors.white} />}
-            {!loadingPlan && plannedObjects.length === 0 && (
-              <Text style={observationPlannerComponentsStyles.helperText}>{i18n.t('observationPlanner.results.empty')}</Text>
-            )}
-            {!loadingPlan && plannedObjects.map(renderPlannedCard)}
+          {/* OTHER FILTERS */}
+          <View style={observationPlannerScreenStyles.content.bloc}>
+            <Text style={observationPlannerScreenStyles.content.bloc.title}>3. Autres filtres</Text>
+
+            <Text style={observationPlannerScreenStyles.content.bloc.subtitle}>Magnitude</Text>
+            <View style={observationPlannerScreenStyles.content.row}>
+              <InputWithIcon type='number' value={minMag.toString()} placeholder='Mag min' changeEvent={(value) => setMinMag(parseInt(value))} />
+              <InputWithIcon type='number' value={maxMag.toString()} placeholder='Mag max' changeEvent={(value) => setMaxMag(parseInt(value))} />
+            </View>
+            
+            <Text style={observationPlannerScreenStyles.content.bloc.subtitle}>Magnitude</Text>
+            <View style={observationPlannerScreenStyles.content.row}>
+              {/* HERE GOES THE FIRST ROW OF FILTERS */}
+            </View>
           </View>
         </View>
       </ScrollView>
