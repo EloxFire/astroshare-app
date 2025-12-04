@@ -11,15 +11,18 @@ import {useSpot} from "../../contexts/ObservationSpotContext";
 import {routes} from "../../helpers/routes";
 import { capitalize } from '../../helpers/scripts/utils/formatters/capitalize';
 import { app_colors } from '../../helpers/constants';
+import { DSO } from '../../helpers/types/DSO';
+import { GlobalPlanet } from '../../helpers/types/GlobalPlanet';
+import { Star } from '../../helpers/types/Star';
 import dayjs, {Dayjs} from "dayjs";
 import PageTitle from "../../components/commons/PageTitle";
 import SimpleButton from '../../components/commons/buttons/SimpleButton';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import BigButton from '../../components/commons/buttons/BigButton';
 import InputWithIcon from '../../components/forms/InputWithIcon';
-import { DSO } from '../../helpers/types/DSO';
-import { GlobalPlanet } from '../../helpers/types/GlobalPlanet';
-import { Star } from '../../helpers/types/Star';
+import { ObservationPlannerParams, planObservationNight } from '../../helpers/scripts/astro/planner/observationPlanner';
+import { showToast } from '../../helpers/scripts/showToast';
+import { useDsoCatalog } from '../../contexts/DSOContext';
 
 function ObservationPlannerScreen({navigation}: any) {
   const { currentLocale } = useTranslation();
@@ -27,6 +30,9 @@ function ObservationPlannerScreen({navigation}: any) {
   const { selectedSpot, defaultAltitude } = useSpot();
   const { planets } = useSolarSystem();
   const { starsCatalog, starCatalogLoading } = useStarCatalog();
+  const { dsoCatalog } = useDsoCatalog();
+
+  const [isPlanning, setIsPlanning] = useState<boolean>(false);
 
   // Gestion des dates de début et de fin de la session d'observation
   const [startDate, setStartDate] = useState<Dayjs>(dayjs());
@@ -38,7 +44,7 @@ function ObservationPlannerScreen({navigation}: any) {
   const [showEndDatePicker, setShowEndDatePicker] = useState<boolean>(false);
   const [showEndTimePicker, setShowEndTimePicker] = useState<boolean>(false);
   const [dsoEnabled, setDsoEnabled] = useState<boolean>(true);
-  const [starsEnabled, setStarsEnabled] = useState<boolean>(true);
+  const [starsEnabled, setStarsEnabled] = useState<boolean>(false);
   const [planetsEnabled, setPlanetsEnabled] = useState<boolean>(true);
 
   // Gestion des autres filtres pour l'étape 3
@@ -52,6 +58,45 @@ function ObservationPlannerScreen({navigation}: any) {
   // Paramètres et état de la recherche
   const [maxResults, setMaxResults] = useState<number>(10);
   const [resultsList, setResultsList] = useState<((DSO | GlobalPlanet | Star)[]) | null>(null);
+
+  const handleSearch = async () => {
+    setIsPlanning(true);
+    try {
+
+      const observationParams: ObservationPlannerParams = {
+        dsoCatalog,
+        starsCatalog,
+        planetsCatalog: planets,
+        location: { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon },
+        date: {
+          start: startDate,
+          end: endDate,
+          startTime: startDate.hour(Number(startTime.split(':')[0])).minute(Number(startTime.split(':')[1])),
+          endTime: endDate.hour(Number(endTime.split(':')[0])).minute(Number(endTime.split(':')[1])),
+        },
+        objects: {
+          dso: dsoEnabled,
+          planets: planetsEnabled,
+          stars: starsEnabled
+        },
+        magnitude: {
+          min: minMag,
+          max: maxMag
+        },
+        altitude: {
+          min: minAlt,
+          max: maxAlt
+        }
+      }
+
+      await planObservationNight(observationParams);
+    } catch (error) {
+      console.error("Error during observation planning:", error);
+      showToast({message: "Une erreur est survenue lors de la planification de l'observation.", type: 'error'});
+    } finally {
+      setIsPlanning(false);
+    }
+  }
 
 
   return (
@@ -264,11 +309,12 @@ function ObservationPlannerScreen({navigation}: any) {
               <SimpleButton
                 icon={require('../../../assets/icons/FiSearch.png')}
                 text="Lancer la recherche"
-                onPress={() => {}}
+                onPress={() => handleSearch()}
                 backgroundColor={app_colors.white}
                 textColor={app_colors.black}
                 iconColor={app_colors.black}
                 fullWidth
+                loading={isPlanning}
                 align='center'
                 textAdditionalStyles={{fontFamily: 'GilroyBlack'}}
               />
