@@ -11,6 +11,7 @@ export interface ObservationPlannerParams {
   dsoCatalog: DSO[];
   planetsCatalog: GlobalPlanet[];
   starsCatalog: Star[];
+  perObjectObsTime?: number;
   location: {
     latitude: number;
     longitude: number;
@@ -34,6 +35,7 @@ export interface ObservationPlannerParams {
     min: number | null;
     max: number | null;
   }
+  maxResults: number | null;
 }
 
 export const planObservationNight = async (params: ObservationPlannerParams): Promise<(DSO | GlobalPlanet | Star)[]> => {
@@ -48,6 +50,7 @@ export const planObservationNight = async (params: ObservationPlannerParams): Pr
   const observer: GeographicCoordinate = { latitude, longitude };
   const windowMinutes = Math.max(1, params.date.endTime.diff(params.date.startTime, "minute"));
   const stepMinutes = Math.min(30, Math.max(5, Math.floor(windowMinutes / 12) || 5));
+  const perObjectObsTimeMinutes = Math.max(1, params.perObjectObsTime ?? 5);
   const sampleTimes: Date[] = [];
 
   for (let minutes = 0; minutes <= windowMinutes; minutes += stepMinutes) {
@@ -68,6 +71,8 @@ export const planObservationNight = async (params: ObservationPlannerParams): Pr
     maxAltitude: number;
     visibleCount: number;
     magnitude: number | null;
+    firstVisible: Date;
+    lastVisible: Date;
   };
 
   const scoredResults: ScoredObservation[] = [];
@@ -88,6 +93,8 @@ export const planObservationNight = async (params: ObservationPlannerParams): Pr
 
     let visibleCount = 0;
     let maxAltitude = Number.NEGATIVE_INFINITY;
+    let firstVisible: Date | null = null;
+    let lastVisible: Date | null = null;
 
     for (const moment of sampleTimes) {
       const { alt } = convertEquatorialToHorizontal(moment, observer, coords);
@@ -96,6 +103,8 @@ export const planObservationNight = async (params: ObservationPlannerParams): Pr
       }
       if (alt >= altitudeMin && (!useAltitudeMax || alt <= altitudeMax)) {
         visibleCount += 1;
+        if (!firstVisible) firstVisible = moment;
+        lastVisible = moment;
       }
     }
 
@@ -106,6 +115,8 @@ export const planObservationNight = async (params: ObservationPlannerParams): Pr
       maxAltitude,
       visibleCount,
       magnitude: magnitude ?? null,
+      firstVisible: firstVisible as Date,
+      lastVisible: lastVisible as Date,
     });
   };
 
@@ -142,6 +153,7 @@ export const planObservationNight = async (params: ObservationPlannerParams): Pr
   /* END OF PHASE 1 */
 
   const magnitudeOrInfinity = (value: number | null) => (value === null ? Number.POSITIVE_INFINITY : value);
+  const timeOrInfinity = (value: Date | null | undefined) => (value ? value.getTime() : Number.POSITIVE_INFINITY);
   const getName = (obj: DSO | GlobalPlanet | Star) => {
     if ("name" in obj && obj.name) return String(obj.name);
     if ("identifiers" in obj && (obj as any).identifiers) return String((obj as any).identifiers);
@@ -149,17 +161,86 @@ export const planObservationNight = async (params: ObservationPlannerParams): Pr
     return "";
   };
 
-  scoredResults.sort((a, b) => {
-    if (b.maxAltitude !== a.maxAltitude) return b.maxAltitude - a.maxAltitude;
-    if (b.visibleCount !== a.visibleCount) return b.visibleCount - a.visibleCount;
+  const getCategory = (obj: DSO | GlobalPlanet | Star): "dso" | "planet" | "star" | "unknown" => {
+    if ("V" in obj) return "star";
+    if ("type" in obj) return "dso";
+    if ("name" in obj) return "planet";
+    return "unknown";
+  };
 
+  const compareByVisibilityAndMagnitude = (a: ScoredObservation, b: ScoredObservation) => {
+    const lastVisibleDelta = timeOrInfinity(a.lastVisible) - timeOrInfinity(b.lastVisible);
+    if (lastVisibleDelta !== 0) return lastVisibleDelta;
+
+    const firstVisibleDelta = timeOrInfinity(a.firstVisible) - timeOrInfinity(b.firstVisible);
+    if (firstVisibleDelta !== 0) return firstVisibleDelta;
+
+    if (b.visibleCount !== a.visibleCount) return b.visibleCount - a.visibleCount;
     const magnitudeDelta = magnitudeOrInfinity(a.magnitude) - magnitudeOrInfinity(b.magnitude);
     if (magnitudeDelta !== 0) return magnitudeDelta;
+
+    if (b.maxAltitude !== a.maxAltitude) return b.maxAltitude - a.maxAltitude;
 
     const aName = getName(a.object);
     const bName = getName(b.object);
     return aName.localeCompare(bName);
-  });
+  };
 
-  return scoredResults.map(({ object }) => object);
+  const buckets: Record<ReturnType<typeof getCategory>, ScoredObservation[]> = {
+    dso: [],
+    planet: [],
+    star: [],
+    unknown: [],
+  };
+
+  for (const result of scoredResults) {
+    buckets[getCategory(result.object)].push(result);
+  }
+
+  Object.values(buckets).forEach(bucket => bucket.sort(compareByVisibilityAndMagnitude));
+
+  const windowSlots = Math.max(1, Math.floor(windowMinutes / perObjectObsTimeMinutes));
+  const maxResults = Math.min(params.maxResults ?? 10, windowSlots);
+  const selectedObjects: (DSO | GlobalPlanet | Star)[] = [];
+
+  type BucketEntry = {
+    type: ReturnType<typeof getCategory>;
+    items: ScoredObservation[];
+    index: number;
+  };
+
+  const bucketQueue: BucketEntry[] = (["dso", "planet", "star", "unknown"] as const)
+    .map(type => ({ type, items: buckets[type], index: 0 }))
+    .filter(entry => entry.items.length > 0);
+
+  let lastSelectedType: ReturnType<typeof getCategory> | null = null;
+
+  while (selectedObjects.length < maxResults && bucketQueue.length > 0) {
+    const availableBuckets = bucketQueue.filter(entry => entry.index < entry.items.length);
+    if (availableBuckets.length === 0) break;
+
+    const candidateBuckets = availableBuckets.filter(entry => entry.type !== lastSelectedType);
+    const pool = candidateBuckets.length > 0 ? candidateBuckets : availableBuckets;
+
+    const chosenBucket = pool.reduce<BucketEntry | null>((best, entry) => {
+      if (!best) return entry;
+      const bestTime = timeOrInfinity(best.items[best.index]?.lastVisible);
+      const entryTime = timeOrInfinity(entry.items[entry.index]?.lastVisible);
+      return entryTime < bestTime ? entry : best;
+    }, null);
+
+    if (!chosenBucket) break;
+
+    selectedObjects.push(chosenBucket.items[chosenBucket.index].object);
+    chosenBucket.index += 1;
+    lastSelectedType = chosenBucket.type;
+
+    for (let i = bucketQueue.length - 1; i >= 0; i -= 1) {
+      if (bucketQueue[i].index >= bucketQueue[i].items.length) {
+        bucketQueue.splice(i, 1);
+      }
+    }
+  }
+
+  return selectedObjects;
 };

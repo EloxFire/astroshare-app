@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {ScrollView, Text, View} from "react-native";
+import {KeyboardAvoidingView, Platform, ScrollView, Text, View} from "react-native";
 import {globalStyles} from "../../styles/global";
 import {i18n} from "../../helpers/scripts/i18n";
 import {observationPlannerScreenStyles} from "../../styles/screens/observationPlanner/observationPlannerScreen";
@@ -13,6 +13,9 @@ import { capitalize } from '../../helpers/scripts/utils/formatters/capitalize';
 import { app_colors } from '../../helpers/constants';
 import { DSO } from '../../helpers/types/DSO';
 import { GlobalPlanet } from '../../helpers/types/GlobalPlanet';
+import { ObservationPlannerParams, planObservationNight } from '../../helpers/scripts/astro/planner/observationPlanner';
+import { showToast } from '../../helpers/scripts/showToast';
+import { useDsoCatalog } from '../../contexts/DSOContext';
 import { Star } from '../../helpers/types/Star';
 import dayjs, {Dayjs} from "dayjs";
 import PageTitle from "../../components/commons/PageTitle";
@@ -20,9 +23,7 @@ import SimpleButton from '../../components/commons/buttons/SimpleButton';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import BigButton from '../../components/commons/buttons/BigButton';
 import InputWithIcon from '../../components/forms/InputWithIcon';
-import { ObservationPlannerParams, planObservationNight } from '../../helpers/scripts/astro/planner/observationPlanner';
-import { showToast } from '../../helpers/scripts/showToast';
-import { useDsoCatalog } from '../../contexts/DSOContext';
+import SearchResultCard from '../../components/cards/SearchResultCard';
 
 function ObservationPlannerScreen({navigation}: any) {
   const { currentLocale } = useTranslation();
@@ -56,7 +57,8 @@ function ObservationPlannerScreen({navigation}: any) {
   const [maxAlt, setMaxAlt] = useState<number | null>(null);
 
   // Paramètres et état de la recherche
-  const [maxResults, setMaxResults] = useState<number>(10);
+  const [maxResults, setMaxResults] = useState<number | null>(null);
+  const [perObjectObsTime, setPerObjectObsTime] = useState<number>(5);
   const [resultsList, setResultsList] = useState<((DSO | GlobalPlanet | Star)[]) | null>(null);
 
   const handleSearch = async () => {
@@ -64,6 +66,7 @@ function ObservationPlannerScreen({navigation}: any) {
     try {
 
       const observationParams: ObservationPlannerParams = {
+        maxResults,
         dsoCatalog,
         starsCatalog,
         planetsCatalog: planets,
@@ -86,10 +89,12 @@ function ObservationPlannerScreen({navigation}: any) {
         altitude: {
           min: minAlt,
           max: maxAlt
-        }
+        },
+        perObjectObsTime,
       }
 
-      await planObservationNight(observationParams);
+      const observations = await planObservationNight(observationParams);
+      setResultsList(observations);
     } catch (error) {
       console.error("Error during observation planning:", error);
       showToast({message: "Une erreur est survenue lors de la planification de l'observation.", type: 'error'});
@@ -100,6 +105,10 @@ function ObservationPlannerScreen({navigation}: any) {
 
 
   return (
+    <KeyboardAvoidingView
+      style={{flex: 1, backgroundColor: app_colors.black}}
+      behavior='padding'
+    >
     <View style={globalStyles.body}>
       <PageTitle
         navigation={navigation}
@@ -108,7 +117,11 @@ function ObservationPlannerScreen({navigation}: any) {
         backRoute={routes.home.path}
       />
       <View style={globalStyles.screens.separator} />
-      <ScrollView>
+      <ScrollView
+        keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="on-drag"
+        contentContainerStyle={{paddingBottom: 32, flexGrow: 1}}
+      >
         <View style={observationPlannerScreenStyles.content}>
           
           {/* TEMPORAL BLOC */}
@@ -301,6 +314,23 @@ function ObservationPlannerScreen({navigation}: any) {
               <InputWithIcon type='number' value={minAlt ? minAlt.toString() : undefined} placeholder='Alt min (°)' changeEvent={(value) => setMinAlt(parseInt(value))} additionalStyles={{marginVertical: 0}} />
               <InputWithIcon type='number' value={maxAlt ? maxAlt.toString() : undefined} placeholder='Alt max (°)' changeEvent={(value) => setMaxAlt(parseInt(value))} additionalStyles={{marginVertical: 0}} />
             </View>
+
+            <Text style={observationPlannerScreenStyles.content.bloc.subtitle}>Nombre max de résultats</Text>
+            <View style={observationPlannerScreenStyles.content.row}>
+              <InputWithIcon type='number' value={maxResults ? maxResults.toString() : undefined} placeholder='Résultats max (10 par défaut)' changeEvent={(value) => setMaxResults(parseInt(value))} additionalStyles={{marginVertical: 0}} />
+              {/* <InputWithIcon type='number' value={maxAlt ? maxAlt.toString() : undefined} placeholder='Alt max (°)' changeEvent={(value) => setMaxAlt(parseInt(value))} additionalStyles={{marginVertical: 0}} /> */}
+            </View>
+
+            <Text style={observationPlannerScreenStyles.content.bloc.subtitle}>Temps par objet (minutes)</Text>
+            <View style={observationPlannerScreenStyles.content.row}>
+              <InputWithIcon
+                type='number'
+                value={perObjectObsTime ? perObjectObsTime.toString() : undefined}
+                placeholder='5 min par objet par défaut'
+                changeEvent={(value) => setPerObjectObsTime(parseInt(value) || 5)}
+                additionalStyles={{marginVertical: 0}}
+              />
+            </View>
           </View>
 
           {/* RESULTS */}
@@ -333,19 +363,19 @@ function ObservationPlannerScreen({navigation}: any) {
             resultsList && resultsList.length > 0 && (
               <View style={observationPlannerScreenStyles.content.bloc}>
                 <Text style={observationPlannerScreenStyles.content.bloc.title}>4. Résultats</Text>
-                <Text style={observationPlannerScreenStyles.content.bloc.subtitle}>Nombre d'objets correspondants : 0</Text>
-                <BigButton
-                  icon={require('../../../assets/icons/FiSearch.png')}
-                  text="Lancer la recherche"
-                  onPress={() => {}}
-                  disabled={true}
-                />
+                <Text style={observationPlannerScreenStyles.content.bloc.subtitle}>Objets recommandés pour votre session d'observation :</Text>
+                {
+                  resultsList.map((obj, index) => (
+                    <SearchResultCard key={index} object={obj} navigation={navigation} />
+                  ))
+                }
               </View>
             )
           }
         </View>
       </ScrollView>
     </View>
+    </KeyboardAvoidingView>
   );
 }
 
