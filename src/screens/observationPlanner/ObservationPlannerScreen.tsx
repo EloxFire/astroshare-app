@@ -58,7 +58,7 @@ function ObservationPlannerScreen({navigation}: any) {
 
   // Paramètres et état de la recherche
   const [maxResults, setMaxResults] = useState<number | null>(null);
-  const [perObjectObsTime, setPerObjectObsTime] = useState<number>(5);
+  const [perObjectObsTime, setPerObjectObsTime] = useState<number | null>(null);
   const [resultsList, setResultsList] = useState<((DSO | GlobalPlanet | Star)[]) | null>(null);
 
   const handleSearch = async () => {
@@ -70,12 +70,13 @@ function ObservationPlannerScreen({navigation}: any) {
         dsoCatalog,
         starsCatalog,
         planetsCatalog: planets,
+        perObjectObsTime,
         location: { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon },
         date: {
-          start: startDate,
-          end: endDate,
-          startTime: startDate.hour(Number(startTime.split(':')[0])).minute(Number(startTime.split(':')[1])),
-          endTime: endDate.hour(Number(endTime.split(':')[0])).minute(Number(endTime.split(':')[1])),
+          start: startDate, // Date only
+          end: endDate, // Date only
+          startTime: startDate.hour(Number(startTime.split(':')[0])).minute(Number(startTime.split(':')[1])), // Date with time
+          endTime: endDate.hour(Number(endTime.split(':')[0])).minute(Number(endTime.split(':')[1])), // Date with time
         },
         objects: {
           dso: dsoEnabled,
@@ -90,7 +91,6 @@ function ObservationPlannerScreen({navigation}: any) {
           min: minAlt,
           max: maxAlt
         },
-        perObjectObsTime,
       }
 
       const observations = await planObservationNight(observationParams);
@@ -326,7 +326,7 @@ function ObservationPlannerScreen({navigation}: any) {
               <InputWithIcon
                 type='number'
                 value={perObjectObsTime ? perObjectObsTime.toString() : undefined}
-                placeholder='5 min par objet par défaut'
+                placeholder='5 min par défaut'
                 changeEvent={(value) => setPerObjectObsTime(parseInt(value) || 5)}
                 additionalStyles={{marginVertical: 0}}
               />
