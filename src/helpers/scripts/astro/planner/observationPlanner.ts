@@ -6,12 +6,14 @@ import { getPlanetMagnitude } from "../objects/getPlanetMagnitude";
 import { DSO } from "../../../types/DSO";
 import { GlobalPlanet } from "../../../types/GlobalPlanet";
 import { Star } from "../../../types/Star";
+import { computeObject } from "../objects/computeObject";
 
 export interface ObservationPlannerParams {
   dsoCatalog: DSO[];
   planetsCatalog: GlobalPlanet[];
   starsCatalog: Star[];
   perObjectObsTime: number | null; // in minutes
+  locale: string;
   location: {
     latitude: number;
     longitude: number;
@@ -50,21 +52,23 @@ export const planObservationNight = async (params: ObservationPlannerParams): Pr
 
 
   try {
-    // Build a for loop over dates from start to end in DEFAULT_OBS_TIME_PER_OBJECT minutes increments
-    for (let currentTime = params.date.startTime; currentTime.isBefore(params.date.endTime); currentTime = currentTime.add(DEFAULT_OBS_TIME_PER_OBJECT, 'minute')) {
-      if(params.objects.dso) {
-        for (const dso of params.dsoCatalog) {
-          const degRa = convertHMSToDegreeFromString(dso.ra);
-          const degDec = convertDMSToDegreeFromString(dso.dec);
-          const target: EquatorialCoordinate = { ra: degRa, dec: degDec };
+    for(let i = 0; i < OBS_COUNT_LIMIT; i++) { // Pour chaque créneau d'observation possible
+      let dsosVisible: DSO[] = [];
+      let planetsVisible: GlobalPlanet[] = [];
+      let starsVisible: Star[] = [];
 
-          if(isBodyAboveHorizon(currentTime.toDate(), OBSERVER, target, MINIMUM_ALTITUDE_DEGREE)) {
-            RESULTS_CATALOG.push(dso);
+      const currentObsTime = params.date.startTime.add(i * DEFAULT_OBS_TIME_PER_OBJECT, 'minute');
+
+      // DSOs
+      if(params.objects.dso){
+        params.dsoCatalog.forEach((dso: DSO) => {
+          const dsoInfos =  computeObject({object: dso, observer: OBSERVER, lang: params.locale, altitude: 341});
+          if(dsoInfos) {
+            console.log(`[planObservationNight] DSO ${dsoInfos.base.name} computed for observation step ${i}`);
+            
           }
-        }
+        })
       }
-      console.log(`[planObservationNight] After DSO check at ${currentTime.format('HH:mm')}, found ${RESULTS_CATALOG.length} objects.`);
-      
     }
   } catch (error) {
     console.log(`[planObservationNight] Erreur lors de la planification de la nuit d'observation : ${error}`);

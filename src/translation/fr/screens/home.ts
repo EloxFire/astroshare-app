@@ -17,8 +17,8 @@ export const homeTranslations = {
   },
   buttons: {
     observationPlanner: {
-      title: "Planifier des observations",
-      subtitle: "// Préparez vos sessions"
+      title: "Planifier une observation",
+      subtitle: "// Préparez votre session"
     },
     weather: {
       title: "Météo en direct",

@@ -71,6 +71,7 @@ function ObservationPlannerScreen({navigation}: any) {
         starsCatalog,
         planetsCatalog: planets,
         perObjectObsTime,
+        locale: currentLocale,
         location: { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon },
         date: {
           start: startDate, // Date only

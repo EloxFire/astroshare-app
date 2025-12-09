@@ -131,7 +131,7 @@ export const computeObject = (props: ComputeObjectProps): ComputedObjectInfos | 
       const nextSet: boolean | TransitInstance = getBodyNextSet(referenceDate, props.observer, target, horizonAngle);
 
       if(isTransitInstance(nextRise)){
-        console.log('[computeObject] Next rise datetime (UTC): ', nextRise.datetime);
+        // console.log('[computeObject] Next rise datetime (UTC): ', nextRise.datetime);
         
         objectNextRise = dayjs(nextRise.datetime).add(localOffsetMinutes, 'minute');
       }
