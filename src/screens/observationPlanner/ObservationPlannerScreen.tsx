@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {KeyboardAvoidingView, Platform, ScrollView, Text, View} from "react-native";
+import {KeyboardAvoidingView, Modal, Platform, ScrollView, Text, View} from "react-native";
 import {globalStyles} from "../../styles/global";
 import {i18n} from "../../helpers/scripts/i18n";
 import {observationPlannerScreenStyles} from "../../styles/screens/observationPlanner/observationPlannerScreen";
@@ -24,6 +24,8 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import BigButton from '../../components/commons/buttons/BigButton';
 import InputWithIcon from '../../components/forms/InputWithIcon';
 import SearchResultCard from '../../components/cards/SearchResultCard';
+import { ObservationPlannerModalContent } from '../../helpers/types/observationPlanner/ObservationPlannerModalContent';
+import { getSunData } from '../../helpers/scripts/astro/solar/sunData';
 
 function ObservationPlannerScreen({navigation}: any) {
   const { currentLocale } = useTranslation();
@@ -34,6 +36,8 @@ function ObservationPlannerScreen({navigation}: any) {
   const { dsoCatalog } = useDsoCatalog();
 
   const [isPlanning, setIsPlanning] = useState<boolean>(false);
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
+  const [modalContent, setModalContent] = useState<ObservationPlannerModalContent | null>(null);
 
   // Gestion des dates de début et de fin de la session d'observation
   const [startDate, setStartDate] = useState<Dayjs>(dayjs());
@@ -61,6 +65,41 @@ function ObservationPlannerScreen({navigation}: any) {
   const [perObjectObsTime, setPerObjectObsTime] = useState<number | null>(null);
   const [resultsList, setResultsList] = useState<((DSO | GlobalPlanet | Star)[]) | null>(null);
 
+  const checkVisibility = () => {
+    // Check if sun is below horizon at the start date/time
+    // If not, display modal to warn user that his session will not be optimal and still completly or partially in daylight
+    const ephemeris = getSunData(startDate, { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon });
+    if(ephemeris.visibility.sunset?.isAfter(startDate.hour(Number(startTime.split(':')[0])).minute(Number(startTime.split(':')[1]))) ) {
+      setModalVisible(true);
+      setModalContent({
+        type: 'warn',
+        title: "Attention",
+        text: "Le Soleil sera au-dessus de l'horizon au début de votre session d'observation.\n\nCela peut affecter la visibilité des objets célestes. Voulez-vous continuer ?",
+        buttons: [
+          {
+            backgroundColor: app_colors.black,
+            foregroundColor: app_colors.white,
+            borderColor: app_colors.white_twenty,
+            label: "Annuler",
+            onPress: () => setModalVisible(false),
+          },
+          {
+            label: "Continuer",
+            onPress: () => {
+              setModalVisible(false);
+              handleSearch();
+            },
+            backgroundColor: app_colors.white,
+            foregroundColor: app_colors.black,
+            borderColor: app_colors.white
+          },
+        ]
+      });
+    }else{
+      handleSearch();
+    }
+  }
+
   const handleSearch = async () => {
     setIsPlanning(true);
     try {
@@ -85,8 +124,8 @@ function ObservationPlannerScreen({navigation}: any) {
           stars: starsEnabled
         },
         magnitude: {
-          min: minMag,
-          max: maxMag
+          min: minMag || -30,
+          max: maxMag || 10
         },
         altitude: {
           min: minAlt,
@@ -123,6 +162,42 @@ function ObservationPlannerScreen({navigation}: any) {
         keyboardDismissMode="on-drag"
         contentContainerStyle={{paddingBottom: 32, flexGrow: 1}}
       >
+        {/* MODAL */}
+        <Modal visible={modalVisible} transparent animationType='fade'>
+          <View style={observationPlannerScreenStyles.modal}>
+            {
+              modalContent && (
+                <View style={observationPlannerScreenStyles.modal.content}>
+                  <Text style={{...observationPlannerScreenStyles.content.bloc.title, textAlign: 'center', marginBottom: 15, color: modalContent.type === 'error' ? 'red' : modalContent.type === 'warn' ? 'orange' : 'blue'}}>{modalContent.title}</Text>
+                  <Text style={{...observationPlannerScreenStyles.content.bloc.subtitle, textAlign: 'center', marginBottom: 25, color: app_colors.white}}>{modalContent.text}</Text>
+                  
+                  <View style={observationPlannerScreenStyles.modal.buttons}>
+                    {
+                      modalContent.buttons.map((button, index) => (
+                        <SimpleButton
+                          active
+                          activeBorderColor={button.borderColor}
+                          key={index}
+                          text={button.label}
+                          onPress={button.onPress}
+                          backgroundColor={button.backgroundColor}
+                          textColor={button.foregroundColor}
+                          iconColor={button.foregroundColor}
+                          align='center'
+                          width='30%'
+                          textAdditionalStyles={{fontFamily: 'GilroyBlack'}}
+                        />
+                      ))
+                    }
+                  </View>
+                </View>
+              )
+            }
+          </View>
+        </Modal>
+
+
+        {/* PAGE CONTENT */}
         <View style={observationPlannerScreenStyles.content}>
           
           {/* TEMPORAL BLOC */}
@@ -340,7 +415,7 @@ function ObservationPlannerScreen({navigation}: any) {
               <SimpleButton
                 icon={require('../../../assets/icons/FiSearch.png')}
                 text="Lancer la recherche"
-                onPress={() => handleSearch()}
+                onPress={() => checkVisibility()}
                 backgroundColor={app_colors.white}
                 textColor={app_colors.black}
                 iconColor={app_colors.black}

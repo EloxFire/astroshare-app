@@ -1,6 +1,30 @@
+import { Dimensions } from "react-native";
 import { app_colors } from "../../../helpers/constants";
 
 export const observationPlannerScreenStyles = {
+
+  modal: {
+    flex: 1,
+    justifyContent: 'center' as 'center',
+    alignItems: 'center' as 'center',
+    backgroundColor: app_colors.black_skymap,
+
+    content: {
+      width: Dimensions.get('window').width - 20,
+      backgroundColor: app_colors.black,
+      borderWidth: 1,
+      borderColor: app_colors.white_twenty,
+      borderRadius: 20,
+      padding: 20,
+    },
+
+    buttons: {
+      display: 'flex' as 'flex',
+      flexDirection: 'row' as 'row',
+      justifyContent: 'space-around' as 'space-around',
+    }
+  },
+
   content:{
     display: 'flex' as 'flex',
     flexDirection: 'column' as 'column',
