@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { app_colors, cmeImageSrc, cmeVideoSrc, sunImagesSrcWavelengths, sunImagesSrcWavelengthsBackup, sunVideoSrcWavelengths } from '../helpers/constants'
+import { app_colors, cmeImageSrc, cmeVideoSrc, sunImagesSrcWavelengths, sunImagesSrcWavelengthsBackup, sunVideoSrcWavelengths, sunVideoSrcWavelengthsBackup } from '../helpers/constants'
 import { Dimensions, ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import { globalStyles } from '../styles/global'
 import { solarWeatherStyles } from '../styles/screens/solarWeather'
@@ -24,6 +24,16 @@ import {sendAnalyticsEvent} from "../helpers/scripts/analytics";
 import {eventTypes} from "../helpers/constants/analytics";
 import {routes} from "../helpers/routes";
 import DisclaimerBar from '../components/banners/DisclaimerBar'
+import EphemerisBar from '../components/weather/EphemerisBar'
+import dayjs from 'dayjs'
+import { getSunData } from '../helpers/scripts/astro/solar/sunData'
+import { ComputedSunInfos } from '../helpers/types/objects/ComputedSunInfos'
+import { calculateDayPercentage } from '../helpers/scripts/astro/calculateDayPercentage'
+import DSOValues from '../components/commons/DSOValues'
+import { convertDegreesRaToHMS } from '../helpers/scripts/astro/coords/convertDegreesRaToHMS'
+import { convertDegreesDecToDMS } from '../helpers/scripts/astro/coords/convertDegreesDecToDms'
+import { formatKm } from '../helpers/scripts/utils/formatters/formaters'
+import VisibilityGraph from '../components/graphs/VisibilityGraph'
 
 export default function SolarWeather({ navigation }: any) {
 
@@ -32,6 +42,8 @@ export default function SolarWeather({ navigation }: any) {
   const { currentLocale } = useTranslation()
 
   const videoRef = useRef(null);
+
+  const [sunData, setSunData] = useState<ComputedSunInfos | null>(null);
 
   // SUN
   const [loadingImage, setLoadingImage] = useState<boolean>(false)
@@ -64,6 +76,14 @@ export default function SolarWeather({ navigation }: any) {
   useEffect(() => {
     handleChangeSunImage(currentImageFilter, 'img')
     handleChangeCMEImage(currentCmeImageFilter, 'img')
+  }, [])
+
+  useEffect(() => {
+    const periodicUpdate = setInterval(() => {
+      setSunData(getSunData(dayjs(), { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }))
+    }, 1000); // 2 minutes
+
+    return () => clearInterval(periodicUpdate);
   }, [])
 
   const handleChangeSunImage = (filter: ESunFilterBackup, type: 'img' | 'video') => {
@@ -103,6 +123,37 @@ export default function SolarWeather({ navigation }: any) {
       </View>
       <ScrollView>
         <View>
+          {/* SUN EPHEMERIS */}
+          <View style={solarWeatherStyles.container}>
+            <Text style={solarWeatherStyles.container.title}>{i18n.t('solarWeather.containers.ephemerids.title')}</Text>
+            <Text style={solarWeatherStyles.container.subtitle}>{i18n.t('solarWeather.containers.ephemerids.subtitle')}</Text>
+
+            {
+              sunData && sunData.visibility.sunrise && sunData.visibility.sunset && (
+                <>
+                  <View style={{ marginTop: 30 }}>
+                    <EphemerisBar
+                      mode={sunData.visibility.isCurrentlyVisible ? 'day' : 'night'}
+                      percentage={calculateDayPercentage(sunData.visibility.sunrise, sunData.visibility.sunset, sunData.visibility.isCurrentlyVisible ? 0 : 1)}
+                      sunrise={sunData.visibility.sunrise.format('HH:mm')}
+                      sunset={sunData.visibility.sunset.format('HH:mm')}
+                      riseIcon={require('../../assets/icons/FiSunrise.png')}
+                      setIcon={require('../../assets/icons/FiSunset.png')}
+                    />
+                  </View>
+                  <DSOValues title={"Ascension droite"} value={convertDegreesRaToHMS(sunData?.base.ra || 0)} chipValue wideChip />
+                  <DSOValues title={"Déclinaison"} value={convertDegreesDecToDMS(sunData?.base.dec || 0)} chipValue wideChip />
+                  <DSOValues title={"Diamètre angulaire"} value={sunData?.base.angularDiameter.toFixed(2)} chipValue wideChip />
+                  <DSOValues title={"Distance"} value={formatKm(sunData?.base.distance, currentLocale)} chipValue wideChip />
+                  <DSOValues title={"Altitude"} value={`${sunData.base.alt.toFixed(2)}°`} chipValue wideChip />
+                  <DSOValues title={"Constellation"} value={sunData.base.constellation} chipValue wideChip />
+
+                  <VisibilityGraph visibilityGraph={sunData.visibility.visibilityGraph} />
+                </>
+              )
+            }
+          </View>
+
           {/* SUN CONTAINER */}
           <View style={solarWeatherStyles.container}>
             <View style={{ display: 'flex', flexDirection: 'row' }}>
@@ -122,9 +173,9 @@ export default function SolarWeather({ navigation }: any) {
                 <Image priority={'high'} placeholder={localizedImagePlaceholders[i18n.locale]} source={!currentImageUrl ? undefined : { uri: currentImageUrl }} style={solarWeatherStyles.sunImage} />
                 :
                 <>
-                  {/* <Video
+                  <Video
                     ref={videoRef}
-                    source={{ uri: sunVideoSrcWavelengths[currentImageFilter] + '?' + new Date() }}
+                    source={{ uri: sunVideoSrcWavelengthsBackup[currentImageFilter] + '?' + new Date() }}
                     isMuted={true}
                     shouldPlay={true}
                     rate={2.0}
@@ -133,7 +184,7 @@ export default function SolarWeather({ navigation }: any) {
                     style={{ width: Dimensions.get('window').width - 40, height: Dimensions.get('window').width - 40, marginVertical: 10, borderRadius: 10, opacity: loadingImage ? .1 : 1, borderWidth: 1, borderColor: app_colors.white_twenty }}
                   >
                     <Image placeholder={localizedVideoPlaceholders[i18n.locale]} style={{ width: Dimensions.get('window').width - 40, height: Dimensions.get('window').width - 40, marginVertical: 10, borderRadius: 10 }} />
-                  </Video> */}
+                  </Video>
                 </>
             }
             <View style={solarWeatherStyles.container.buttons}>

@@ -1,6 +1,10 @@
 export const solarWeatherTranslations = {
   disclaimer: "En raison de problèmes techniques sur le serveur SDO, les images en direct utilisent une source de donnée de secour, fonctionnant en mode dégradé. Les vidéos ne sont pas disponible. Les équipes de la NASA travaillent à la résolution du problème.",
   containers: {
+    ephemerids: {
+      title: "Éphémérides solaires",
+      subtitle: "Position et dimensions apparentes du Soleil"
+    },
     instrument: "Instrument : %{currentImageFilter}",
     emc: "Éjections de Masse Coronale (EMC)",
     sunspots: "Tâches solaires (Régions actives)",
