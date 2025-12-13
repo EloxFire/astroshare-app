@@ -171,5 +171,8 @@ export const planObservationNight = async (params: ObservationPlannerParams): Pr
     
   }
 
+  // TODO : Need results prioritization : Planets > DSOs > Stars.
+  // Within each category, sort by visibility duration, then by maximum altitude, then by magnitude.
+  // Within DSOs, prioritize by type Galaxies = Nebulaes > Globular Clusters > Open Clusters.
   return RESULTS_CATALOG;
 };
