@@ -26,6 +26,7 @@ import InputWithIcon from '../../components/forms/InputWithIcon';
 import SearchResultCard from '../../components/cards/SearchResultCard';
 import { ObservationPlannerModalContent } from '../../helpers/types/observationPlanner/ObservationPlannerModalContent';
 import { getSunData } from '../../helpers/scripts/astro/solar/sunData';
+import { ObservationPlannerObjectCard } from '../../components/cards/ObservationPlannerObjectCard';
 
 function ObservationPlannerScreen({navigation}: any) {
   const { currentLocale } = useTranslation();
@@ -442,7 +443,7 @@ function ObservationPlannerScreen({navigation}: any) {
                 <Text style={observationPlannerScreenStyles.content.bloc.subtitle}>Objets recommandés pour votre session d'observation :</Text>
                 {
                   resultsList.map((obj, index) => (
-                    <SearchResultCard key={index} object={obj} navigation={navigation} />
+                    <ObservationPlannerObjectCard key={index} object={obj} navigation={navigation} />
                   ))
                 }
               </View>

@@ -77,108 +77,93 @@ export const planObservationNight = async (params: ObservationPlannerParams): Pr
     }
 
 
-    /*
-      Get all visible objects (isBodyAboveHorizon) among the preFilteredDSOs, preFilteredStars, and planetsCatalog
-      Three phases : Start of the observation window, Mid observation window, End of the observation window
-      For each phase, check which objects are above the horizon and within the altitude limits
-      Store them in a map with the object as key and the number of phases it is visible as value
-    */
-    const visibleObjectsMap: Map<DSO | GlobalPlanet | Star, number> = new Map();
-
-    const observationPhases: Dayjs[] = [
-      params.date.startTime,
-      params.date.startTime.add(OBS_WINDOW_TIME_MINUTES / 2, 'minute'),
-      params.date.endTime
+    const effectiveMinAltitude = params.altitude.min ?? MINIMUM_ALTITUDE_DEGREE;
+    const effectiveMaxAltitude = params.altitude.max ?? MAXIMUM_ALTITUDE_DEGREE;
+    const phases: Date[] = [
+      params.date.startTime.toDate(),
+      params.date.startTime.add(OBS_WINDOW_TIME_MINUTES / 2, 'minute').toDate(),
+      params.date.endTime.toDate()
     ];
 
-    for(const phaseTime of observationPhases){
-      // DSOs
-      if(params.objects.dso){
-        for(const dso of preFilteredDSOs){
-          const equatorialCoord: EquatorialCoordinate = {
-            ra: convertHMSToDegreeFromString(dso.ra),
-            dec: convertDMSToDegreeFromString(dso.dec)
-          };
-          const horizontalCoord = convertEquatorialToHorizontal(equatorialCoord, OBSERVER, phaseTime.toDate());
-          if(isBodyAboveHorizon(horizontalCoord)){
-            const altitude = horizontalCoord.altitude;
-            // Check altitude limits
-            if((params.altitude.min === null || altitude >= params.altitude.min) &&
-               (params.altitude.max === null || altitude <= params.altitude.max)){
-              // Object is visible in this phase
-              const currentCount = visibleObjectsMap.get(dso) || 0;
-              visibleObjectsMap.set(dso, currentCount + 1);
-            }
-          }
-        }
+    const getTypePriority = (object: DSO | GlobalPlanet | Star): number => {
+      if (!('const' in object) && !('ids' in object)) return 2; // Planets first
+      if ('ids' in object) return 1; // Stars next
+      return 0; // DSOs last
+    };
+
+    const getMagnitude = (object: DSO | GlobalPlanet | Star): number | null => {
+      if ('const' in object) {
+        return typeof object.v_mag === 'number' ? object.v_mag : null;
+      }
+      if ('ids' in object) {
+        return typeof object.V === 'number' ? object.V : null;
+      }
+      return getPlanetMagnitude(object.name);
+    };
+
+    const visibleObjects = new Map<DSO | GlobalPlanet | Star, { count: number; maxAlt: number; magnitude: number | null; typePriority: number }>();
+    const addVisibility = (object: DSO | GlobalPlanet | Star, coords: EquatorialCoordinate) => {
+      if (!Number.isFinite(coords.ra) || !Number.isFinite(coords.dec)) return;
+
+      let visibilityCount = 0;
+      let peakAltitude = -Infinity;
+      for (const phase of phases) {
+        if (!isBodyAboveHorizon(phase, OBSERVER, coords, effectiveMinAltitude)) continue;
+        const { alt } = convertEquatorialToHorizontal(phase, OBSERVER, coords);
+        if (alt < effectiveMinAltitude || alt > effectiveMaxAltitude) continue;
+        visibilityCount++;
+        if (alt > peakAltitude) peakAltitude = alt;
       }
 
-      // Stars
-      if(params.objects.stars){
-        for(const star of preFilteredStars){
-          const equatorialCoord: EquatorialCoordinate = {
-            ra: convertHMSToDegreeFromString(star.RA),
-            dec: convertDMSToDegreeFromString(star.DEC)
-          };
-          const horizontalCoord = convertEquatorialToHorizontal(equatorialCoord, OBSERVER, phaseTime.toDate());
-          if(isBodyAboveHorizon(horizontalCoord)){
-            const altitude = horizontalCoord.altitude;
-            // Check altitude limits
-            if((params.altitude.min === null || altitude >= params.altitude.min) &&
-               (params.altitude.max === null || altitude <= params.altitude.max)){
-              // Object is visible in this phase
-              const currentCount = visibleObjectsMap.get(star) || 0;
-              visibleObjectsMap.set(star, currentCount + 1);
-            }
-          }
-        }
+      if (visibilityCount > 0) {
+        visibleObjects.set(object, {
+          count: visibilityCount,
+          maxAlt: peakAltitude,
+          magnitude: getMagnitude(object),
+          typePriority: getTypePriority(object)
+        });
       }
+    };
 
-      // Planets
-      if(params.objects.planets){
-        for(const planet of params.planetsCatalog){
-          const computedPlanet = computeObject({object: planet, observer: OBSERVER, lang: params.locale, altitude: 341});
-          const horizontalCoord = computedPlanet.horizontal;
-          if(isBodyAboveHorizon(horizontalCoord)){
-            const altitude = horizontalCoord.altitude;
-            // Check altitude limits
-            if((params.altitude.min === null || altitude >= params.altitude.min) &&
-               (params.altitude.max === null || altitude <= params.altitude.max)){
-              // Object is visible in this phase
-              const currentCount = visibleObjectsMap.get(planet) || 0;
-              visibleObjectsMap.set(planet, currentCount + 1);
-            }
-          }
-        }
+    if (params.objects.dso) {
+      for (const dso of preFilteredDSOs) {
+        const ra = convertHMSToDegreeFromString(dso.ra);
+        const dec = convertDMSToDegreeFromString(dso.dec);
+        if (!Number.isFinite(ra) || !Number.isFinite(dec)) continue;
+        addVisibility(dso, { ra, dec });
       }
     }
 
-    console.log(`[planObservationNight] ${visibleObjectsMap.size} objects visible in at least one phase`);
+    if (params.objects.stars) {
+      for (const star of preFilteredStars) {
+        if (!Number.isFinite(star.ra) || !Number.isFinite(star.dec)) continue;
+        addVisibility(star, { ra: star.ra, dec: star.dec });
+      }
+    }
 
-    /*
-      Now, sort the visible objects by the number of phases they are visible in (descending)
-      Then select the top N objects based on the observation count limit and max results
-    */
-    const sortedVisibleObjects = Array.from(visibleObjectsMap.entries())
-      .sort((a, b) => b[1] - a[1]) // Sort by visibility count descending
-      .map(entry => entry[0]); // Extract the objects
+    if (params.objects.planets) {
+      for (const planet of params.planetsCatalog) {
+        if (!Number.isFinite(planet.ra) || !Number.isFinite(planet.dec)) continue;
+        addVisibility(planet, { ra: planet.ra, dec: planet.dec });
+      }
+    }
 
-    const finalSelectionCount = params.maxResults !== null 
-      ? Math.min(OBS_COUNT_LIMIT, params.maxResults) 
-      : OBS_COUNT_LIMIT;
+    const sortedVisibleObjects = Array.from(visibleObjects.entries()).sort((a, b) => {
+      const infoA = a[1];
+      const infoB = b[1];
+      if (infoA.typePriority !== infoB.typePriority) return infoB.typePriority - infoA.typePriority;
+      if (infoA.count !== infoB.count) return infoB.count - infoA.count;
+      if (infoA.maxAlt !== infoB.maxAlt) return infoB.maxAlt - infoA.maxAlt;
+      const magA = infoA.magnitude ?? Number.POSITIVE_INFINITY;
+      const magB = infoB.magnitude ?? Number.POSITIVE_INFINITY;
+      if (magA !== magB) return magA - magB;
+      return 0;
+    });
+    const observationLimit = Math.max(0, Math.floor(OBS_COUNT_LIMIT));
+    const maxResultsLimit = params.maxResults ?? Number.POSITIVE_INFINITY;
+    const selectionLimit = Math.min(observationLimit || maxResultsLimit, maxResultsLimit, sortedVisibleObjects.length);
 
-    const finalPlannedObjects = sortedVisibleObjects.slice(0, finalSelectionCount);
-
-    console.log(`[planObservationNight] Planning complete with ${finalPlannedObjects.length} objects selected`);
-
-    return finalPlannedObjects;
-
-    /*
-      Note: This is a basic implementation and can be further enhanced by considering factors like:
-      - Optimal sequencing based on sky position to minimize telescope movement
-      - Prioritization based on object type or user preferences
-      - Dynamic adjustment based on real-time conditions (e.g., weather, seeing)
-    */
+    RESULTS_CATALOG.push(...sortedVisibleObjects.slice(0, selectionLimit).map(([object]) => object));
 
 
   } catch (error) {
@@ -186,5 +171,5 @@ export const planObservationNight = async (params: ObservationPlannerParams): Pr
     
   }
 
-  return [];
+  return RESULTS_CATALOG;
 };
