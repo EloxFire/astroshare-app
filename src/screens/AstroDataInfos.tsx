@@ -70,6 +70,14 @@ export default function AstroDataInfos({ navigation }: any) {
             <Text style={globalStyles.sections.title}>{i18n.t('astroDataInfos.eclipses.title')}</Text>
             <Text style={[globalStyles.sections.text, { marginBottom: 10 }]}>{i18n.t('astroDataInfos.eclipses.text1')}</Text>
           </View>
+          <View style={globalStyles.globalContainer}>
+            <Text style={globalStyles.sections.title}>{i18n.t('astroDataInfos.lightpollution.title')}</Text>
+            <Text style={[globalStyles.sections.text, { marginBottom: 10 }]}>{i18n.t('astroDataInfos.lightpollution.text1')}</Text>
+          </View>
+          <View style={globalStyles.globalContainer}>
+            <Text style={globalStyles.sections.title}>{i18n.t('astroDataInfos.observationPlanner.title')}</Text>
+            <Text style={[globalStyles.sections.text, { marginBottom: 10 }]}>{i18n.t('astroDataInfos.observationPlanner.text1')}</Text>
+          </View>
         </View>
       </ScrollView>
     </View>

@@ -52,5 +52,13 @@ export const astroDataInfosTranslations = {
   eclipses: {
     title: "Éclipses solaires et lunaires",
     text1: "Les informations sur les éclipses affichées dans l'application sont calculées grâce à l'API de l'IMCCE (Institut de Mécanique Céleste et de Calcul des Éphémérides)",
+  },
+  lightpollution: {
+    title: "Pollution lumineuse",
+    text1: "Les données de pollution lumineuse utilisées dans l'application proviennent de la carte mondiale de pollution lumineuse 'New World Atlas of Artificial Night Sky Brightness' réalisée en 2016 par des chercheurs de l'Université de Princeton et de l'Université d'État de l'Arizona.",
+  },
+  observationPlanner: {
+    title: "Planificateur d'observation",
+    text1: "Les données utilisées pour le planificateur d'observation proviennent de la base de donnée d'objets du ciel profond personnalisée de l'application et de calculs astronomiques internes réalisés avec l'outil indépendant : Observerly.",
   }
 }

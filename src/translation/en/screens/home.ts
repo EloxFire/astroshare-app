@@ -44,6 +44,10 @@ export const homeTranslations = {
       title: "Calculator",
       subtitle: "// Your astronomical calculator"
     },
+    clock: {
+      title: "Clock",
+      subtitle: "// All the important time formats!"
+    },
     apod: {
       title: "APOD",
       subtitle: "// Astronomy Picture of the Day"
