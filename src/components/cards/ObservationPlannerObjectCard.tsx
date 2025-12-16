@@ -9,7 +9,7 @@ import { useTranslation } from "../../hooks/useTranslation";
 import { useSettings } from "../../contexts/AppSettingsContext";
 import { useAuth } from "../../contexts/AuthContext";
 import { computeObject } from "../../helpers/scripts/astro/objects/computeObject";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import { app_colors } from "../../helpers/constants";
 import VisibilityGraph from "../graphs/VisibilityGraph";
 import DSOValues from "../commons/DSOValues";
@@ -20,9 +20,10 @@ import { getWindDir } from "../../helpers/scripts/getWindDir";
 interface ObservationPlannerObjectCardProps {
   object: Star | GlobalPlanet | DSO;
   navigation: any;
+  date: Dayjs;
 }
 
-export const ObservationPlannerObjectCard = ({ object, navigation }: ObservationPlannerObjectCardProps) => {
+export const ObservationPlannerObjectCard = ({ object, navigation, date }: ObservationPlannerObjectCardProps) => {
 
   const { currentUserLocation } = useSettings();
   const { currentUser } = useAuth()
@@ -39,7 +40,8 @@ export const ObservationPlannerObjectCard = ({ object, navigation }: Observation
         object: object,
         observer: { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon },
         lang: currentLocale,
-        altitude: 341
+        altitude: 341,
+        date: date,
       }));
     }
   }, [object, currentUserLocation, currentUser, currentLocale])
@@ -91,7 +93,7 @@ export const ObservationPlannerObjectCard = ({ object, navigation }: Observation
                   />
 
                   <View>
-                    <DSOValues title="Magnitude apparente" value={computedObject.base.v_mag} chipValue wideChip />
+                    <DSOValues title="Magnitude apparente" value={`${computedObject.base.v_mag} ${computedObject.base.family === "Planet" ? "(Max)" : ""}`} chipValue wideChip />
                     <DSOValues title="RA" value={prettyRa(computedObject.base.ra)} chipValue wideChip />
                     <DSOValues title="Dec" value={prettyDec(computedObject.base.dec)} chipValue wideChip />
                     <DSOValues title="Alt / Az" value={`${computedObject.base.alt} / ${computedObject.base.az} (${getWindDir(parseInt(computedObject.base.az))})`} chipValue wideChip />

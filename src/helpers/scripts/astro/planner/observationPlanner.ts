@@ -161,14 +161,17 @@ export const planObservationNight = async (params: ObservationPlannerParams): Pr
     const sortedVisibleObjects = Array.from(visibleObjects.entries()).sort((a, b) => {
       const infoA = a[1];
       const infoB = b[1];
+      const magA = infoA.magnitude ?? Number.POSITIVE_INFINITY;
+      const magB = infoB.magnitude ?? Number.POSITIVE_INFINITY;
+      const bothAreDsoOrStar = infoA.categoryPriority <= 1 && infoB.categoryPriority <= 1;
+
       if (infoA.categoryPriority !== infoB.categoryPriority) return infoB.categoryPriority - infoA.categoryPriority;
       if (infoA.categoryPriority === 1 && infoB.categoryPriority === 1 && infoA.dsoTypePriority !== infoB.dsoTypePriority) {
         return infoB.dsoTypePriority - infoA.dsoTypePriority;
       }
+      if (bothAreDsoOrStar && magA !== magB) return magA - magB;
       if (infoA.count !== infoB.count) return infoB.count - infoA.count;
       if (infoA.maxAlt !== infoB.maxAlt) return infoB.maxAlt - infoA.maxAlt;
-      const magA = infoA.magnitude ?? Number.POSITIVE_INFINITY;
-      const magB = infoB.magnitude ?? Number.POSITIVE_INFINITY;
       if (magA !== magB) return magA - magB;
       return 0;
     });

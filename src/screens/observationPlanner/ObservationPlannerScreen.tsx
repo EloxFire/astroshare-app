@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {KeyboardAvoidingView, Modal, Platform, ScrollView, Text, View} from "react-native";
 import {globalStyles} from "../../styles/global";
 import {i18n} from "../../helpers/scripts/i18n";
@@ -17,16 +17,15 @@ import { ObservationPlannerParams, planObservationNight } from '../../helpers/sc
 import { showToast } from '../../helpers/scripts/showToast';
 import { useDsoCatalog } from '../../contexts/DSOContext';
 import { Star } from '../../helpers/types/Star';
+import { ObservationPlannerModalContent } from '../../helpers/types/observationPlanner/ObservationPlannerModalContent';
+import { getSunData } from '../../helpers/scripts/astro/solar/sunData';
+import { ObservationPlannerObjectCard } from '../../components/cards/ObservationPlannerObjectCard';
 import dayjs, {Dayjs} from "dayjs";
 import PageTitle from "../../components/commons/PageTitle";
 import SimpleButton from '../../components/commons/buttons/SimpleButton';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import BigButton from '../../components/commons/buttons/BigButton';
 import InputWithIcon from '../../components/forms/InputWithIcon';
-import SearchResultCard from '../../components/cards/SearchResultCard';
-import { ObservationPlannerModalContent } from '../../helpers/types/observationPlanner/ObservationPlannerModalContent';
-import { getSunData } from '../../helpers/scripts/astro/solar/sunData';
-import { ObservationPlannerObjectCard } from '../../components/cards/ObservationPlannerObjectCard';
 
 function ObservationPlannerScreen({navigation}: any) {
   const { currentLocale } = useTranslation();
@@ -66,11 +65,33 @@ function ObservationPlannerScreen({navigation}: any) {
   const [perObjectObsTime, setPerObjectObsTime] = useState<number | null>(null);
   const [resultsList, setResultsList] = useState<((DSO | GlobalPlanet | Star)[]) | null>(null);
 
+  useEffect(() => {
+    if (!currentUserLocation) return;
+
+    const observer = { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon };
+    const sessionDate = startDate.startOf('day');
+    const sunData = getSunData(sessionDate, observer);
+    const nextDaySunData = getSunData(sessionDate.add(1, 'day'), observer);
+    const sunset = sunData.visibility.sunset;
+    const sunrise = nextDaySunData.visibility.sunrise;
+
+    if (sunset) {
+      setStartTime(sunset.format('HH:mm'));
+    }
+
+    if (sunrise) {
+      setEndDate(sessionDate.add(1, 'day'));
+      setEndTime(sunrise.format('HH:mm'));
+    }
+  }, [currentUserLocation, startDate]);
+
   const checkVisibility = () => {
     // Check if sun is below horizon at the start date/time
-    // If not, display modal to warn user that his session will not be optimal and still completly or partially in daylight
-    const ephemeris = getSunData(startDate, { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon });
-    if(ephemeris.visibility.sunset?.isAfter(startDate.hour(Number(startTime.split(':')[0])).minute(Number(startTime.split(':')[1]))) ) {
+    const startDateTime = startDate
+      .hour(Number(startTime.split(':')[0]))
+      .minute(Number(startTime.split(':')[1]));
+    const ephemeris = getSunData(startDateTime, { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon });
+    if(ephemeris.visibility.isCurrentlyVisible) {
       setModalVisible(true);
       setModalContent({
         type: 'warn',
@@ -103,6 +124,7 @@ function ObservationPlannerScreen({navigation}: any) {
 
   const handleSearch = async () => {
     setIsPlanning(true);
+    setResultsList(null);
     try {
 
       const observationParams: ObservationPlannerParams = {
@@ -343,6 +365,7 @@ function ObservationPlannerScreen({navigation}: any) {
                   align='flex-start'
                   onPress={() => setShowStartTimePicker(true)}
                 />
+
               </View>
             </View>
 
@@ -443,7 +466,7 @@ function ObservationPlannerScreen({navigation}: any) {
                 <Text style={observationPlannerScreenStyles.content.bloc.subtitle}>Objets recommandés pour votre session d'observation :</Text>
                 {
                   resultsList.map((obj, index) => (
-                    <ObservationPlannerObjectCard key={index} object={obj} navigation={navigation} />
+                    <ObservationPlannerObjectCard key={index} object={obj} navigation={navigation} date={startDate.hour(Number(startTime.split(':')[0])).minute(Number(startTime.split(':')[1]))} />
                   ))
                 }
 

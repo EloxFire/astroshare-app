@@ -9,11 +9,11 @@ export const getPlanetMagnitude = (planet: string): number => {
     case 'Jupiter':
       return -2.9;
     case 'Saturn':
-      return -0.4;
+      return -0.2;
     case 'Uranus':
-      return -5.3;
+      return 5.3;
     case 'Neptune':
-      return -7.8;
+      return 7.8;
     default:
       return 0;
   }

@@ -34,10 +34,11 @@ interface ComputeObjectProps {
   observer: GeographicCoordinate;
   lang: string;
   altitude?: number;
+  date?: Dayjs;
 }
 
 export const computeObject = (props: ComputeObjectProps): ComputedObjectInfos | null => {
-  const referenceNow = dayjs();
+  const referenceNow = props.date && props.date.isValid() ? props.date : dayjs();
   const referenceDate = referenceNow.toDate();
   const localOffsetMinutes = referenceNow.utcOffset();
 
@@ -212,7 +213,7 @@ export const computeObject = (props: ComputeObjectProps): ComputedObjectInfos | 
     // I need to get the object altitude every 1 hour.
     const objectAltitudes: number[] = [];
     const altitudesHours: string[] = [];
-    const now: Dayjs = dayjs()
+    const now: Dayjs = referenceNow;
     const H: number = 6; // Number of hours to compute visibility graph
     for (let i = -H; i <= H; i++) {
       const date: Dayjs = now.add(i, 'hour');
