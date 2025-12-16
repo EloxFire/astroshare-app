@@ -3,7 +3,7 @@ import {DSO} from "./types/DSO";
 export const app_colors = {
   black: '#000000',
   black_modal: 'rgba(0,0,0,0.90)',
-  black_skymap: 'rgba(0,0,0,0.88)',
+  black_skymap: 'rgba(0,0,0,0.70)',
   black_eighty: '#00000080',
   black_sixty: '#00000060',
   black_forty: '#00000040',
@@ -80,6 +80,11 @@ export const storageKeys = {
     data: 'launchesData',
   },
   notificationsId: 'notificationsId',
+  notifications: {
+    satellitePrefix: 'notification_satellite_',
+    issPassPrefix: 'notification_isspass_',
+    celestialObjectVisibilityPrefix: 'notification_objectvisibility_',
+  },
   pushToken: 'pushToken',
   issPasses: 'issPasses', // TODO: cleanup old key
   satellites: {
@@ -176,6 +181,14 @@ export const sunVideoSrcWavelengths = {
   'AIA_131': 'https://sdo.gsfc.nasa.gov/assets/img/latest/mpeg/latest_512_0131.mp4',
   'AIA_335': 'https://sdo.gsfc.nasa.gov/assets/img/latest/mpeg/latest_512_0335.mp4',
   'AIA_1600': 'https://sdo.gsfc.nasa.gov/assets/img/latest/mpeg/latest_512_1600.mp4',
+}
+
+export const sunVideoSrcWavelengthsBackup = {
+  'HMI_CONTINUUM': 'https://soho.nascom.nasa.gov/data/LATEST/current_hmiigrsmall.mp4',
+  'EIT_195': 'https://soho.nascom.nasa.gov/data/LATEST/current_eit195small.mp4',
+  'EIT_284': 'https://soho.nascom.nasa.gov/data/LATEST/current_eit284small.mp4',
+  'EIT_171': 'https://soho.nascom.nasa.gov/data/LATEST/current_eit171small.mp4',
+  'EIT_304': 'https://soho.nascom.nasa.gov/data/LATEST/current_eit304small.mp4',
 }
 
 

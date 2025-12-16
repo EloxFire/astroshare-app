@@ -29,6 +29,7 @@ export const planetTranslations = {
       surfaceTemperature: "Temp (surface)",
       naturalSatellites: "Satellites",
       inclination: "Inclinaison axe",
+      sunDistance: "Distance Soleil",
     }
   },
   units: {

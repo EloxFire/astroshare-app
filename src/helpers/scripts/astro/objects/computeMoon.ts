@@ -24,31 +24,87 @@ interface computeMoonProps {
 }
 
 export const computeMoon = ({date, observer}: computeMoonProps): ComputedMoonInfos => {
-  const moonEquatorialCoords: EquatorialCoordinate = getLunarEquatorialCoordinate(date)
-  const moonHorizontalCoords: HorizontalCoordinate = convertEquatorialToHorizontal(date, observer, moonEquatorialCoords)
+  const referenceNow = dayjs(date);
+  const referenceDate = referenceNow.toDate();
+  const localOffsetMinutes = referenceNow.utcOffset();
+  const moonEquatorialCoords: EquatorialCoordinate = getLunarEquatorialCoordinate(referenceDate)
+  const moonHorizontalCoords: HorizontalCoordinate = convertEquatorialToHorizontal(referenceDate, observer, moonEquatorialCoords)
   const altitude: number = 341;
   const horizonAngle: number = calculateHorizonAngle(altitude);
 
 
   // Visibility infos calculation
-  const isMoonCurrentlyVisible: boolean = isBodyAboveHorizon(date, observer, moonEquatorialCoords, horizonAngle)
-  const isMoonVisibleThisNight: boolean = isBodyVisibleForNight(date, observer, moonEquatorialCoords, horizonAngle)
+  const isMoonCurrentlyVisible: boolean = isBodyAboveHorizon(referenceDate, observer, moonEquatorialCoords, horizonAngle)
+  const isMoonVisibleThisNight: boolean = isBodyVisibleForNight(referenceDate, observer, moonEquatorialCoords, horizonAngle)
 
-  const moonRise = getBodyNextRise(date, observer, moonEquatorialCoords, horizonAngle)
-  const moonSet = getBodyNextSet(date, observer, moonEquatorialCoords, horizonAngle)
+  const findNextHorizonCrossing = (direction: 'rise' | 'set'): Dayjs | null => {
+    const stepMinutes = 5;
+    const maxMinutes = 36 * 60;
+    const startTime = referenceNow;
+    let previousTime = startTime;
+    let previousAlt = convertEquatorialToHorizontal(startTime.toDate(), observer, moonEquatorialCoords).alt;
+
+    for (let minutes = stepMinutes; minutes <= maxMinutes; minutes += stepMinutes) {
+      const currentTime = startTime.add(minutes, 'minute');
+      const currentAlt = convertEquatorialToHorizontal(currentTime.toDate(), observer, moonEquatorialCoords).alt;
+
+      if (direction === 'rise' && previousAlt < horizonAngle && currentAlt >= horizonAngle) {
+        const fraction = (horizonAngle - previousAlt) / (currentAlt - previousAlt);
+        return previousTime.add(stepMinutes * fraction, 'minute');
+      }
+
+      if (direction === 'set' && previousAlt >= horizonAngle && currentAlt < horizonAngle) {
+        const fraction = (previousAlt - horizonAngle) / (previousAlt - currentAlt);
+        return previousTime.add(stepMinutes * fraction, 'minute');
+      }
+
+      previousAlt = currentAlt;
+      previousTime = currentTime;
+    }
+
+    return null;
+  }
+
+  const moonRise = getBodyNextRise(referenceDate, observer, moonEquatorialCoords, horizonAngle)
+  const moonSet = getBodyNextSet(referenceDate, observer, moonEquatorialCoords, horizonAngle)
 
 
   let moonrise = i18n.t('common.errors.simple')
   let moonset = i18n.t('common.errors.simple')
-  if (isTransitInstance(moonRise) && isTransitInstance(moonSet)) {
-    moonrise = dayjs(moonRise.datetime).add(2, 'h').format('HH:mm').replace(':', 'h') //.isBefore(dayjs(moonRise.datetime)) ? moonrise = "Déjà\nlevée" : moonrise = dayjs(moonRise.datetime).add(2, 'h').format('HH:mm').replace(':', 'h')
-    moonset = dayjs(moonSet.datetime).add(2, 'h').format('HH:mm').replace(':', 'h')
+  let moonRiseTime: Dayjs | null = null;
+  let moonSetTime: Dayjs | null = null;
+
+  if (isTransitInstance(moonRise)) {
+    moonRiseTime = dayjs(moonRise.datetime).add(localOffsetMinutes, 'minute');
+  }
+
+  if (isTransitInstance(moonSet)) {
+    moonSetTime = dayjs(moonSet.datetime).add(localOffsetMinutes, 'minute');
+  }
+
+  const scannedRise = findNextHorizonCrossing('rise');
+  const scannedSet = findNextHorizonCrossing('set');
+
+  if (scannedRise && (!moonRiseTime || scannedRise.isBefore(moonRiseTime))) {
+    moonRiseTime = scannedRise;
+  }
+
+  if (scannedSet && (!moonSetTime || scannedSet.isBefore(moonSetTime))) {
+    moonSetTime = scannedSet;
+  }
+
+  if (moonRiseTime) {
+    moonrise = moonRiseTime.format('HH:mm').replace(':', 'h')
+  }
+
+  if (moonSetTime) {
+    moonset = moonSetTime.format('HH:mm').replace(':', 'h')
   }
 
   // COMPUTE OBJECT VISIBILITY GRAPH.
   const objectAltitudes: number[] = [];
   const altitudesHours: string[] = [];
-  const now: Dayjs = dayjs()
+  const now: Dayjs = referenceNow
   const H: number = 6;
   for (let i = -H; i <= H; i++) {
     const date: Dayjs = now.add(i, 'hour');
@@ -68,19 +124,20 @@ export const computeMoon = ({date, observer}: computeMoonProps): ComputedMoonInf
     "Waning Crescent": i18n.t('common.moon_phases.waning_crescent'),
   }
 
-  const currentMoonPhase: string = moonPhasesList[getLunarPhase(date)];
-  const currentMoonIcon: ImageSourcePropType = moonIcons[getLunarPhase(date)]
-  const currentMoonAge: number =  Math.floor(getLunarAge(date).age);
-  const currentMoonIllumination: number = getLunarIllumination(date)
-  const currentMoonDistance: number = Math.floor(getLunarDistance(date) / 1000)
-  const currentMoonElongation: number = Math.floor(getLunarElongation(date))
-  const isCurrentlyNewMoon: boolean = isNewMoon(date)
-  const isCurrentlyFullMoon: boolean = isFullMoon(date)
-  const currentMoonAngularDiameter: number = getLunarAngularDiameter(date)
-  const currentMoonPhaseAngle = getLunarPhaseAngle(date)
+  const lunarPhaseKey = getLunarPhase(referenceDate);
+  const currentMoonPhase: string = moonPhasesList[lunarPhaseKey];
+  const currentMoonIcon: ImageSourcePropType = moonIcons[lunarPhaseKey]
+  const currentMoonAge: number =  Math.floor(getLunarAge(referenceDate).age);
+  const currentMoonIllumination: number = getLunarIllumination(referenceDate)
+  const currentMoonDistance: number = Math.floor(getLunarDistance(referenceDate) / 1000)
+  const currentMoonElongation: number = Math.floor(getLunarElongation(referenceDate))
+  const isCurrentlyNewMoon: boolean = isNewMoon(referenceDate)
+  const isCurrentlyFullMoon: boolean = isFullMoon(referenceDate)
+  const currentMoonAngularDiameter: number = getLunarAngularDiameter(referenceDate)
+  const currentMoonPhaseAngle = getLunarPhaseAngle(referenceDate)
 
-  const nextNewMoon = getNextNewMoon(date)
-  const nextFullMoon = getNextFullMoon(date)
+  const nextNewMoon = getNextNewMoon(referenceDate)
+  const nextFullMoon = getNextFullMoon(referenceDate)
 
   return {
     base: {

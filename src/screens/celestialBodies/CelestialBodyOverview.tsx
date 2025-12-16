@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {globalStyles} from "../../styles/global";
 import PageTitle from "../../components/commons/PageTitle";
 import {Image, ScrollView, Text, TouchableOpacity, View} from "react-native";
@@ -14,7 +14,6 @@ import {ComputedObjectInfos} from "../../helpers/types/objects/ComputedObjectInf
 import {astroImages, constellationsImages, planetsImages} from "../../helpers/scripts/loadImages";
 import {app_colors, storageKeys} from "../../helpers/constants";
 import {getObjectFamily} from "../../helpers/scripts/astro/objects/getObjectFamily";
-import {getConstellationName} from "../../helpers/scripts/getConstellationName";
 import DSOValues from "../../components/commons/DSOValues";
 import SimpleButton from "../../components/commons/buttons/SimpleButton";
 import {prettyRa} from "../../helpers/scripts/astro/prettyCoords";
@@ -33,6 +32,11 @@ import {makeCalendarMapping} from "../../helpers/scripts/i18n/dayjsCalendarTimeC
 import { useAuth } from "../../contexts/AuthContext";
 import { sendAnalyticsEvent } from "../../helpers/scripts/analytics";
 import { eventTypes } from "../../helpers/constants/analytics";
+import { showToast } from "../../helpers/scripts/showToast";
+import { scheduleLocalNotification, unScheduleNotification } from "../../helpers/scripts/notifications/scheduleLocalNotification";
+import { isLocalNotificationPlanned, deleteLocalNotificationRecord } from "../../helpers/scripts/notifications/checkPlannedLocalNOtifications";
+import { getData, storeData } from "../../helpers/storage";
+import ConstellationObjectMap from "../../components/maps/ConstellationObjectMap";
 
 export default function CelestialBodyOverview({ route, navigation }: any) {
 
@@ -43,13 +47,29 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
   const { object } = route.params;
 
   const [objectInfos, setObjectInfos] = useState<ComputedObjectInfos | null>(null);
+  const [isNotificationPlanned, setIsNotificationPlanned] = useState<boolean>(false);
   const [favouritePlanets, setFavouritePlanets] = useState<GlobalPlanet[]>([]);
   const [favouriteDSO, setFavouriteDSO] = useState<DSO[]>([]);
   const [favouriteStars, setFavouriteStars] = useState<Star[]>([]);
 
+  const objectConstellationAbbr = useMemo(() => {
+    if (getObjectFamily(object) === 'DSO' && object.const) {
+      return object.const;
+    }
+
+    if (objectInfos?.base?.degRa && objectInfos?.base?.degDec) {
+      return getConstellation({ ra: objectInfos.base.degRa, dec: objectInfos.base.degDec })?.abbreviation;
+    }
+
+    return undefined;
+  }, [object, objectInfos]);
+
   useEffect(() => {
     const observer = { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }
-    setObjectInfos(computeObject({ object, observer, lang: currentLocale, altitude: 341 }));
+    const computedObject = computeObject({ object, observer, lang: currentLocale, altitude: 341 });
+    console.log(JSON.stringify(computedObject?.visibilityInfos));
+    
+    setObjectInfos(computedObject);
   }, [])
 
   useEffect(() => {
@@ -69,6 +89,23 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
       if(favsStars) setFavouriteStars(favsStars)
     })()
   }, [])
+
+  const getNotificationStorageKey = () => {
+    const identifier = object?.ids || object?.name || getObjectName(object, 'all', true);
+    const safeIdentifier = `${identifier}`.replace(/[^a-zA-Z0-9_-]/g, '_');
+    return `notification_visibility_${getObjectFamily(object).toLowerCase()}_${safeIdentifier}`;
+  }
+
+  const checkNotification = async () => {
+    const planned = await isLocalNotificationPlanned(getNotificationStorageKey());
+    console.log(planned);
+    
+    setIsNotificationPlanned(planned);
+  }
+
+  useEffect(() => {
+    checkNotification();
+  }, [object]);
 
   const checkIsFav = () => {
     switch (getObjectFamily(object)) {
@@ -96,6 +133,8 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
   }
 
   const handleFavorite = async () => {
+    const wasFav = !!checkIsFav()
+
     switch (getObjectFamily(object)) {
       case 'Planet':
         if(favouritePlanets.find(planet => planet.name === object.name)){
@@ -128,7 +167,49 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
         }
         break;
     }
-    sendAnalyticsEvent(currentUser, currentUserLocation, checkIsFav() ? 'remove_favorite' : 'add_favorite', eventTypes.BUTTON_CLICK, { objectName: getObjectName(object, 'all', true), objectType: getObjectType(object) }, currentLocale)
+    sendAnalyticsEvent(currentUser, currentUserLocation, wasFav ? 'remove_favorite' : 'add_favorite', eventTypes.BUTTON_CLICK, { objectName: getObjectName(object, 'all', true), objectType: getObjectType(object) }, currentLocale)
+  }
+
+  const handleLocalNotification = async () => {
+    if(!objectInfos) {
+      showToast({message: i18n.t('common.errors.unknown'), type: 'error'})
+      return
+    }
+
+    const notificationKey = getNotificationStorageKey();
+    const objectName = getObjectName(object, 'all', true);
+
+    if(isNotificationPlanned){
+      const notificationId = await getData(notificationKey);
+      if(notificationId){
+        await unScheduleNotification(notificationId);
+      }
+      await deleteLocalNotificationRecord(notificationKey);
+      setIsNotificationPlanned(false);
+      showToast({message: i18n.t('notifications.successRemove'), type: 'success', duration: 4000});
+      sendAnalyticsEvent(currentUser, currentUserLocation, 'Visibility notification removed', eventTypes.BUTTON_CLICK, { objectName, objectType: getObjectType(object) }, currentLocale);
+      return;
+    }
+
+    const nextVisibility = objectInfos.visibilityInfos.objectNextRise;
+    if(!nextVisibility || nextVisibility.isBefore(dayjs())){
+      showToast({message: i18n.t('notifications.objectVisibility.noNext'), type: 'error'});
+      return;
+    }
+
+    const notif = await scheduleLocalNotification({
+      title: i18n.t('notifications.objectVisibility.title', { object_name: objectName }),
+      body: i18n.t('notifications.objectVisibility.body', { object_name: objectName }),
+      data: { object, type: getObjectFamily(object) },
+      date: nextVisibility.toDate(),
+    });
+
+    if(notif){
+      setIsNotificationPlanned(true);
+      await storeData(notificationKey, notif);
+      showToast({message: i18n.t('notifications.successSchedule'), type: 'success', duration: 4000});
+      sendAnalyticsEvent(currentUser, currentUserLocation, 'Visibility notification scheduled', eventTypes.BUTTON_CLICK, { objectName, objectType: getObjectType(object), visibilityDate: nextVisibility.toISOString() }, currentLocale);
+    }
   }
 
   return (
@@ -210,71 +291,42 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
           <Text style={celestialBodiesOverviewStyles.content.sectionTitle}>Informations générales</Text>
 
           <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
-            <View style={{width: getObjectFamily(object) === 'Planet' ? '100%' : '70%', paddingTop: 10, display: 'flex', flexDirection: "column", justifyContent: 'space-between'}}>
+            <View style={{width: getObjectFamily(object) === 'Planet' ? '100%' : '100%', paddingTop: 10, display: 'flex', flexDirection: "column", justifyContent: 'space-between'}}>
               <View>
-                <DSOValues small={getObjectFamily(object) !== 'Planet'} title={i18n.t('detailsPages.dso.labels.type')} value={getObjectType(object)} />
-                <DSOValues small={getObjectFamily(object) !== 'Planet'} title={i18n.t('detailsPages.dso.labels.rightAscension')} value={typeof(object.ra) === 'number' ? convertDegreesRaToHMS(object.ra) : prettyRa(object.ra)} />
-                <DSOValues small={getObjectFamily(object) !== 'Planet'} title={i18n.t('detailsPages.dso.labels.declination')} value={typeof(object.dec) === 'number' ? convertDegreesDecToDMS(object.dec) : prettyRa(object.dec)} />
-                <DSOValues small={getObjectFamily(object) !== 'Planet'} title={i18n.t('detailsPages.dso.labels.magnitude')} value={objectInfos?.base.mag} />
+                <DSOValues title={i18n.t('detailsPages.dso.labels.type')} value={getObjectType(object)} />
+                <DSOValues title={i18n.t('detailsPages.dso.labels.constellation')} value={objectInfos?.base.constellation} />
+                <DSOValues title={i18n.t('detailsPages.dso.labels.rightAscension')} value={typeof(object.ra) === 'number' ? convertDegreesRaToHMS(object.ra) : prettyRa(object.ra)} />
+                <DSOValues title={i18n.t('detailsPages.dso.labels.declination')} value={typeof(object.dec) === 'number' ? convertDegreesDecToDMS(object.dec) : prettyRa(object.dec)} />
+
                 {
                   getObjectFamily(object) === 'Planet' && objectInfos?.planetAdditionalInfos && (
                     <>
-                      <DSOValues small={getObjectFamily(object) !== 'Planet'} title={i18n.t('detailsPages.planets.labels.symbol')} value={objectInfos.planetAdditionalInfos.symbol} />
-                      <DSOValues small={getObjectFamily(object) !== 'Planet'} title={i18n.t('detailsPages.planets.labels.position')} value={objectInfos.planetAdditionalInfos.solarSystemPosition} />
-                      <DSOValues small={getObjectFamily(object) !== 'Planet'} title={i18n.t('detailsPages.planets.labels.inclination')} value={objectInfos.planetAdditionalInfos.inclination} />
-                      <DSOValues small={getObjectFamily(object) !== 'Planet'} title={i18n.t('detailsPages.planets.labels.mass')} value={objectInfos.planetAdditionalInfos.mass} />
-                      <DSOValues small={getObjectFamily(object) !== 'Planet'} title={i18n.t('detailsPages.planets.labels.orbitalPeriod')} value={objectInfos.planetAdditionalInfos.orbitalPeriod} />
-                      <DSOValues small={getObjectFamily(object) !== 'Planet'} title={i18n.t('detailsPages.planets.labels.distanceSun')} value={objectInfos.planetAdditionalInfos.distanceToSun} />
-                      <DSOValues small={getObjectFamily(object) !== 'Planet'} title={i18n.t('detailsPages.planets.labels.diameter')} value={objectInfos.planetAdditionalInfos.diameter} />
-                      <DSOValues small={getObjectFamily(object) !== 'Planet'} title={i18n.t('detailsPages.planets.labels.short.surfaceTemperature')} value={objectInfos.planetAdditionalInfos.surfaceTemperature} />
-                      <DSOValues small={getObjectFamily(object) !== 'Planet'} title={i18n.t('detailsPages.planets.labels.short.naturalSatellites')} value={objectInfos.planetAdditionalInfos.naturalSatellites} />
+                      <DSOValues title={i18n.t('detailsPages.planets.labels.symbol')} value={objectInfos.planetAdditionalInfos.symbol} />
+                      <DSOValues title={i18n.t('detailsPages.planets.labels.position')} value={objectInfos.planetAdditionalInfos.solarSystemPosition} />
+                      <DSOValues title={i18n.t('detailsPages.planets.labels.inclination')} value={objectInfos.planetAdditionalInfos.inclination} />
+                      <DSOValues title={i18n.t('detailsPages.planets.labels.mass')} value={objectInfos.planetAdditionalInfos.mass} />
+                      <DSOValues title={i18n.t('detailsPages.planets.labels.orbitalPeriod')} value={objectInfos.planetAdditionalInfos.orbitalPeriod} />
+                      <DSOValues title={i18n.t('detailsPages.planets.labels.distanceSun')} value={objectInfos.planetAdditionalInfos.distanceToSun} />
+                      <DSOValues title={i18n.t('detailsPages.planets.labels.diameter')} value={objectInfos.planetAdditionalInfos.diameter} />
+                      <DSOValues title={i18n.t('detailsPages.planets.labels.short.surfaceTemperature')} value={objectInfos.planetAdditionalInfos.surfaceTemperature} />
+                      <DSOValues title={i18n.t('detailsPages.planets.labels.short.naturalSatellites')} value={objectInfos.planetAdditionalInfos.naturalSatellites} />
                     </>
                   )
                 }
               </View>
 
-              <View style={{marginTop: 10}}>
+              {/* <View style={{marginTop: 10}}>
                 <SimpleButton
                   text={`Voir dans le planétarium\n(Bientôt disponible)`}
                   fullWidth backgroundColor={app_colors.white}
                   small
                   textColor={app_colors.black}
-                  onPress={() => navigation.push(routes.planetarium.path, {defaultObject: object})}
+                  onPress={() => navigation.push(routes.skymaps.planetarium.path, {defaultObject: object})}
                   align={"center"}
                   disabled
                 />
-              </View>
+              </View> */}
             </View>
-
-            {
-              getObjectFamily(object) !== 'Planet' &&
-              <View style={[celestialBodiesOverviewStyles.content.positionContainer.content.constel, {justifyContent: getObjectFamily(object) === 'Planet' ? 'flex-start' : 'center'}]}>
-                <View>
-                  <View style={{padding: 5, borderWidth: 1, borderColor: app_colors.white_twenty, borderRadius: 10, display: 'flex', justifyContent: 'center'}}>
-                    {
-                      getObjectFamily(object) === 'DSO' && (
-                        <Image resizeMode={"contain"} source={constellationsImages[object.const]} style={celestialBodiesOverviewStyles.content.positionContainer.content.constel.image} />
-                      )
-                    }
-                    {
-                      getObjectFamily(object) === 'Star' && (
-                        <Image resizeMode={"contain"} source={constellationsImages[getConstellation({ ra: object.ra, dec: object.dec })?.abbreviation || "OTHER"]} style={celestialBodiesOverviewStyles.content.positionContainer.content.constel.image} />
-                      )
-                    }
-                  </View>
-                  {
-                    getObjectFamily(object) === 'DSO' && (
-                      <Text style={[celestialBodiesOverviewStyles.content.sectionTitle, {textAlign: 'center', marginTop: 10}]}>{getConstellationName(object.const)}</Text>
-                    )
-                  }
-                  {
-                    getObjectFamily(object) === 'Star' && (
-                      <Text style={[celestialBodiesOverviewStyles.content.sectionTitle, {textAlign: 'center', marginTop: 10}]}>{getConstellationName(getConstellation({ ra: object.ra, dec: object.dec })?.abbreviation || "OTHER")}</Text>
-                    )
-                  }
-                </View>
-              </View>
-            }
           </View>
         </View>
 
@@ -290,27 +342,81 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
                 </>
               )
             }
+            {
+              objectInfos && !objectInfos?.visibilityInfos.isCurrentlyVisible && objectInfos.visibilityInfos.isVisibleThisNight && (
+                <View style={{marginTop: 10}}>
+                  <SimpleButton
+                    text={isNotificationPlanned ? i18n.t('notifications.objectVisibility.remove') : i18n.t('notifications.objectVisibility.schedule')}
+                    fullWidth
+                    backgroundColor={app_colors.white}
+                    icon={isNotificationPlanned ? require('../../../assets/icons/FiBellOff.png') : require('../../../assets/icons/FiBell.png')}
+                    iconColor={isNotificationPlanned ? app_colors.black : app_colors.black}
+                    textColor={app_colors.black}
+                    small
+                    align="center"
+                    onPress={() => handleLocalNotification()}
+                  />
+                </View>
+              )
+            }
+            <Text style={[celestialBodiesOverviewStyles.content.sectionTitle, {marginTop: 15}]}>Magnitude</Text>
+            <View style={{marginTop: 10}}>
+              { objectInfos?.base.v_mag && <DSOValues title={i18n.t('detailsPages.dso.labels.vMag')} value={objectInfos?.base.v_mag} chipValue />}
+              { objectInfos?.base.b_mag && <DSOValues title={i18n.t('detailsPages.dso.labels.bMag')} value={objectInfos?.base.b_mag} chipValue />}
+              { objectInfos?.base.j_mag && <DSOValues title={i18n.t('detailsPages.dso.labels.jMag')} value={objectInfos?.base.j_mag} chipValue />}
+              { objectInfos?.base.h_mag && <DSOValues title={i18n.t('detailsPages.dso.labels.hMag')} value={objectInfos?.base.h_mag} chipValue />}
+              { objectInfos?.base.k_mag && <DSOValues title={i18n.t('detailsPages.dso.labels.kMag')} value={objectInfos?.base.k_mag} chipValue />}
+            </View>
             <View style={{marginTop: 10}}>
               <Text style={celestialBodiesOverviewStyles.content.sectionTitle}>Lever et coucher</Text>
-              <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 30}}>
-                <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 10}}>
-                  <Image source={require('../../../assets/icons/FiSunrise.png')} style={{width: 24, height: 24}}/>
-                  <Text style={celestialBodiesOverviewStyles.content.text}>{
-                    objectInfos?.visibilityInfos.isCurrentlyVisible ? i18n.t('common.visibility.alreadyUp') : objectInfos?.visibilityInfos.objectNextRise?.locale(currentLocale).calendar(dayjs(), makeCalendarMapping())
-                  }</Text>
-                </View>
-                <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 10}}>
-                  <Image source={require('../../../assets/icons/FiSunset.png')} style={{width: 24, height: 24}}/>
-                  <Text style={celestialBodiesOverviewStyles.content.text}>{
-                    !objectInfos?.visibilityInfos.isCurrentlyVisible ? i18n.t('common.visibility.alreadyDown') : objectInfos?.visibilityInfos.objectNextSet?.locale(currentLocale).calendar(dayjs() , makeCalendarMapping())
-                  }</Text>
-                </View>
-              </View>
+              {
+                objectInfos?.visibilityInfos.isCircumpolar ? (
+                  <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 10}}>
+                    <Image source={require('../../../assets/icons/FiSunrise.png')} style={{width: 24, height: 24}}/>
+                    <Text style={celestialBodiesOverviewStyles.content.text}>{
+                      objectInfos?.visibilityInfos.isCurrentlyVisible ? i18n.t('common.visibility.alwaysVisible') : objectInfos?.visibilityInfos.objectNextRise?.locale(currentLocale).calendar(dayjs(), makeCalendarMapping())
+                    }</Text>
+                  </View>
+                ) : (
+                  <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 30}}>
+                    <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 10}}>
+                      <Image source={require('../../../assets/icons/FiSunrise.png')} style={{width: 24, height: 24}}/>
+                      <Text style={celestialBodiesOverviewStyles.content.text}>{
+                        objectInfos?.visibilityInfos.isCurrentlyVisible ? i18n.t('common.visibility.alreadyUp') : objectInfos?.visibilityInfos.objectNextRise?.locale(currentLocale).calendar(dayjs(), makeCalendarMapping())
+                      }</Text>
+                    </View>
+                    <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 10}}>
+                      <Image source={require('../../../assets/icons/FiSunset.png')} style={{width: 24, height: 24}}/>
+                      <Text style={celestialBodiesOverviewStyles.content.text}>{
+                        !objectInfos?.visibilityInfos.isCurrentlyVisible ? i18n.t('common.visibility.alreadyDown') : objectInfos?.visibilityInfos.objectNextSet?.locale(currentLocale).calendar(dayjs() , makeCalendarMapping())
+                      }</Text>
+                    </View>
+                  </View>
+                )
+              }
             </View>
             <Text style={[celestialBodiesOverviewStyles.content.sectionTitle, {marginTop: 15, marginBottom: -10}]}>Altitude de l'objet</Text>
             <VisibilityGraph
               visibilityGraph={{altitudes: objectInfos?.visibilityInfos.visibilityGraph.altitudes || [], hours: objectInfos?.visibilityInfos.visibilityGraph.hours || []}}
             />
+          </View>
+        </View>
+
+        <View style={[celestialBodiesOverviewStyles.content.visibilityContainer, {marginBottom: getObjectFamily(object) === 'Planet' ? 50 : 0 }]}>
+          <Text style={celestialBodiesOverviewStyles.content.sectionTitle}>Position</Text>
+          <View style={{paddingTop: 10}}>
+            {
+              objectInfos ? (
+                <ConstellationObjectMap
+                  ra={objectInfos.base.degRa}
+                  dec={objectInfos.base.degDec}
+                  objectName={getObjectName(object, 'all', true)}
+                  constellationAbbreviation={objectConstellationAbbr}
+                />
+              ) : (
+                <Text style={celestialBodiesOverviewStyles.content.text}>Chargement de la carte...</Text>
+              )
+            }
           </View>
         </View>
 

@@ -3,7 +3,7 @@ import { View } from 'react-native'
 import dayjs from 'dayjs';
 import { Circle, Line, Svg, Text as SvgText } from 'react-native-svg';
 import { app_colors } from '../../helpers/constants';
-import { convertDecimalHoursToTime } from '../../helpers/scripts/astro/decimalHourToTime';
+import { convertDecimalHoursToDate } from '../../helpers/scripts/astro/decimalHourToTime';
 import DSOValues from '../commons/DSOValues';
 import { shortDmsCoord } from '../../helpers/scripts/shortenDmsCoord';
 import { getHourAngle, getLocalSiderealTime } from '@observerly/astrometry';
@@ -68,7 +68,7 @@ export default function NorthenPolarScope() {
       <View style={{ width: '100%' }}>
         <DSOValues title={i18n.t('scopeAlignment.polarClock.longitude')} chipValue chipColor={app_colors.grey} value={shortDmsCoord(currentUserLocation.dms.dms_lon)} />
         <DSOValues title={i18n.t('scopeAlignment.polarClock.local_time')} chipValue chipColor={app_colors.grey} value={dayjs(new Date()).format('HH:mm:ss').replace(':', 'h ').replace(':', 'm ') + 's'} />
-        <DSOValues title={i18n.t('scopeAlignment.polarClock.local_sidereal_time')} chipValue chipColor={app_colors.grey} value={convertDecimalHoursToTime(localSiderialTime).replace(':', 'h ').replace(':', 'm ') + 's'} />
+        <DSOValues title={i18n.t('scopeAlignment.polarClock.local_sidereal_time')} chipValue chipColor={app_colors.grey} value={convertDecimalHoursToDate(localSiderialTime).format('HH:mm:ss').replace(':', 'h ').replace(':', 'm ') + 's'} />
         <DSOValues title={i18n.t('scopeAlignment.polarClock.hour_angle')} chipValue chipColor={app_colors.grey} value={hourAngle.toFixed(2)} />
       </View>
       <Svg style={{ backgroundColor: 'transparent' }} height={svgHeight} width={svgWidth}>

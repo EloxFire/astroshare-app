@@ -1,5 +1,5 @@
-import React, {useEffect, useRef, useState} from "react";
-import {ScrollView, Text, TextInput, TouchableOpacity, View} from "react-native";
+import React, {useEffect, useState} from "react";
+import {ScrollView, Text, TouchableOpacity, View} from "react-native";
 import PageTitle from "../../components/commons/PageTitle";
 import {i18n} from "../../helpers/scripts/i18n";
 import {globalStyles} from "../../styles/global";
@@ -22,8 +22,6 @@ import {sendAnalyticsEvent} from "../../helpers/scripts/analytics";
 import {eventTypes} from "../../helpers/constants/analytics";
 import { calculateExitPupil } from "../../helpers/scripts/math/calculateExitPupil";
 import { calculateResolvingPower } from "../../helpers/scripts/math/calculateResolvingPower";
-import SelectDropdown from "react-native-select-dropdown";
-import { planetaryConjunctionStyles } from "../../styles/screens/transits/planetaryConjunction";
 
 export default function CalculationHome({ navigation }: any) {
 
@@ -31,7 +29,8 @@ export default function CalculationHome({ navigation }: any) {
   const { currentUser } = useAuth()
   const { currentLocale } = useTranslation()
 
-  const [focalLength, setFocalLength] = useState<number | undefined>(undefined);
+  const [focalLengthInput, setFocalLengthInput] = useState<string>('');
+  const [focalUnit, setFocalUnit] = useState<'mm' | 'inch'>('mm');
   const [diameter, setDiameter] = useState<number | undefined>(undefined);
   const [eyepieceFocalLength, setEyepieceFocalLength] = useState<number | undefined>(undefined);
   const [eyepieceField, setEyepieceField] = useState<number | undefined>(undefined);
@@ -47,21 +46,24 @@ export default function CalculationHome({ navigation }: any) {
   const [resolvingPower, setResolvingPower] = useState<string | undefined>(undefined);
 
 
-  const pupilSelectorRef = useRef<SelectDropdown>(null);
-
   useEffect(() => {
     sendAnalyticsEvent(currentUser, currentUserLocation, 'Calculations screen view', eventTypes.SCREEN_VIEW, {}, currentLocale)
   }, []);
 
+  const t = (path: string, params?: Record<string, any>) => i18n.t(`calculations.home.${path}`, params);
+
   const computeCalculations = () => {
+    const parsedFocalInput = focalLengthInput ? parseFloat(focalLengthInput.replace(',', '.')) : undefined;
+    const focalLength = parsedFocalInput ? (focalUnit === 'mm' ? parsedFocalInput : parsedFocalInput * 25.4) : undefined;
+
     if(!focalLength && !diameter && !eyepieceFocalLength && !pixelSize){
-      showToast({message: "Veuillez renseigner au moins deux valeurs", type: "error"});
+      showToast({message: t('actions.missingValues'), type: "error"});
       return;
     }
 
     setFD(calculateFD(focalLength, diameter));
     setMagnification(calculateMagnification(focalLength, eyepieceFocalLength));
-    setMinMagnification(calculateMinMagnification(diameter));
+    setMinMagnification(calculateMinMagnification(diameter, selectedPupil));
     setSampling(calculateSampling(focalLength, pixelSize));
     setFov(calculateApparentFov(focalLength, eyepieceFocalLength, eyepieceField));
     setExitPupil(calculateExitPupil(diameter, focalLength, eyepieceFocalLength));
@@ -69,10 +71,13 @@ export default function CalculationHome({ navigation }: any) {
   }
 
   const resetCalculations = () => {
-    setFocalLength(undefined);
+    setFocalLengthInput('');
+    setFocalUnit('mm');
     setDiameter(undefined);
     setEyepieceFocalLength(undefined);
+    setEyepieceField(undefined);
     setPixelSize(undefined);
+    setSelectedPupil(6);
     setFD(undefined);
     setMagnification(undefined);
     setMinMagnification(undefined);
@@ -83,8 +88,68 @@ export default function CalculationHome({ navigation }: any) {
   }
 
   const handlePixelSize = (e: string) => {
-    setPixelSize(e.replace(/[^\d.]/g, ''))
+    const sanitized = e.replace(/,/g, '.').replace(/[^\d.]/g, '');
+    setPixelSize(sanitized === '' ? undefined : sanitized)
   }
+
+  const handleFocalLengthChange = (value: string) => {
+    const sanitized = value.replace(/,/g, '.').replace(/[^\d.]/g, '');
+    setFocalLengthInput(sanitized);
+  };
+
+  const handleUnitChange = (unit: 'mm' | 'inch') => {
+    if(unit === focalUnit){
+      return;
+    }
+
+    if(focalLengthInput){
+      const parsedValue = parseFloat(focalLengthInput.replace(',', '.'));
+      if(!isNaN(parsedValue)){
+        const converted = focalUnit === 'mm' ? parsedValue / 25.4 : parsedValue * 25.4;
+        const formatted = Number.isInteger(converted) ? converted.toString() : converted.toFixed(2).replace(/\.?0+$/, '');
+        setFocalLengthInput(formatted);
+      }
+    }
+
+    setFocalUnit(unit);
+  }
+
+  const handleDiameterChange = (value: string) => {
+    const sanitized = value.replace(/,/g, '.').replace(/[^\d.]/g, '');
+    setDiameter(sanitized === '' ? undefined : parseFloat(sanitized));
+  };
+
+  const handleEyepieceFocalLengthChange = (value: string) => {
+    const sanitized = value.replace(/,/g, '.').replace(/[^\d.]/g, '');
+    setEyepieceFocalLength(sanitized === '' ? undefined : parseFloat(sanitized));
+  };
+
+  const handleEyepieceFieldChange = (value: string) => {
+    const sanitized = value.replace(/,/g, '.').replace(/[^\d.]/g, '');
+    setEyepieceField(sanitized === '' ? undefined : parseFloat(sanitized));
+  };
+
+  const renderResultCard = (
+    title: string,
+    description: string,
+    value: string | undefined,
+    fallbackExpression: string,
+    fallbackNote?: string,
+  ) => (
+    <View style={calculationHomeStyles.resultCard}>
+      <Text style={calculationHomeStyles.resultTitle}>{title}</Text>
+      <Text style={calculationHomeStyles.resultDescription}>{description}</Text>
+      {
+        value ?
+          <MathComponent expression={value}/>
+          :
+          <View style={{gap: 6}}>
+            <MathComponent expression={fallbackExpression}/>
+            {fallbackNote && <Text style={calculationHomeStyles.resultDescription}>{fallbackNote}</Text>}
+          </View>
+      }
+    </View>
+  );
 
   return (
     <View style={globalStyles.body}>
@@ -95,185 +160,190 @@ export default function CalculationHome({ navigation }: any) {
         backRoute={routes.home.path}
       />
       <View style={globalStyles.screens.separator} />
-        <ScrollView contentContainerStyle={{display: 'flex', flexDirection: 'column', gap: 10, paddingBottom: 80}}>
-          <View style={calculationHomeStyles.content}>
-            <Text style={[calculationHomeStyles.content.description, {opacity: 1, fontFamily: 'GilroyRegular', fontSize: 15}]}>Entrez les informations dont vous disposez, le calculateur s'occupe du reste !</Text>
+      <ScrollView contentContainerStyle={{display: 'flex', flexDirection: 'column', gap: 16, paddingBottom: 100}}>
+        <Text style={[calculationHomeStyles.content.description, {opacity: 1, fontFamily: 'GilroyRegular', fontSize: 15}]}>
+          {t('intro')}
+        </Text>
 
-            <View style={{display: 'flex', flexDirection: 'row', gap: 10}}>
-              <InputWithIcon keyboardType={"numeric"} additionalStyles={{marginVertical: 0}} search={() => {}} placeholder={"Focale télescope (mm)"} changeEvent={(e) => setFocalLength(parseInt(e))} value={focalLength ? focalLength.toString() : ""} type={"number"}/>
-              <InputWithIcon keyboardType={"numeric"} additionalStyles={{marginVertical: 0}} search={() => {}} placeholder={"Diamètre télescope (mm)"} changeEvent={(e) => setDiameter(parseInt(e))} value={diameter ? diameter.toString() : ""} type={"number"}/>
-            </View>
-            <View style={{display: 'flex', flexDirection: 'row', gap: 10}}>
-              <InputWithIcon keyboardType={"numeric"} additionalStyles={{marginVertical: 0}} search={() => {}} placeholder={"Focale oculaire (mm)"} changeEvent={(e) => setEyepieceFocalLength(parseInt(e))} value={eyepieceFocalLength ? eyepieceFocalLength.toString() : ""} type={"number"}/>
-              <InputWithIcon keyboardType={"numeric"} additionalStyles={{marginVertical: 0}} search={() => {}} placeholder={"Champ oculaire (°)"} changeEvent={(e) => setEyepieceField(parseInt(e))} value={eyepieceField ? eyepieceField.toString() : ""} type={"number"}/>
-            </View>
-            <View style={{display: 'flex', flexDirection: 'row', gap: 10, width: '50%', paddingRight: 5}}>
-              <InputWithIcon keyboardType={"default"} additionalStyles={{marginVertical: 0}} search={() => {}} placeholder={"Taille pixel caméra (µm)"} changeEvent={(e) => handlePixelSize(e)} value={pixelSize ? pixelSize.toString() : ""} type={"text"}/>
-              {/* <SelectDropdown
-                ref={pupilSelectorRef}
-                data={[5, 6, 7]}
-                onSelect={(selectedItem, index) => {
-                  setSelectedPupil(selectedItem)
-                }}
-                defaultValue={selectedPupil}
-                renderButton={() => (
-                  <View style={[planetaryConjunctionStyles.content.parameters.dropdown, {width: '100%', borderColor: app_colors.white_no_opacity}]}>
-                    <View style={planetaryConjunctionStyles.content.parameters.dropdown.withIcon}>
-                      <Text style={[planetaryConjunctionStyles.content.parameters.dropdown.text, {fontSize: 12}]}>{selectedPupil} mm</Text>
-                    </View>
-                  </View>
-                )}
-                renderItem={(item, index) => (
-                  <TouchableOpacity style={planetaryConjunctionStyles.content.parameters.dropdown.list.item} onPress={() => {
-                    setSelectedPupil(item)
-                    pupilSelectorRef.current?.closeDropdown()
-                  }}>
-                    <Text style={[planetaryConjunctionStyles.content.parameters.dropdown.text, {paddingLeft: 10}]}>{item} mm</Text>
-                  </TouchableOpacity>
-                )}
-              /> */}
-            </View>
-
-
-            <SimpleButton
-              text={"Calculer"}
-              icon={require('../../../assets/icons/FiCpu.png')}
-              backgroundColor={app_colors.white}
-              textColor={app_colors.black}
-              fullWidth
-              small
-              onPress={() => computeCalculations()}
-              iconColor={app_colors.black}
-              align={'center'}
-            />
-            {
-              (fD || magnification || minMagnification || sampling) &&
-                <SimpleButton
-                  text={"Effacer"}
-                  icon={require('../../../assets/icons/FiTrash.png')}
-                  backgroundColor={app_colors.white}
-                  textColor={app_colors.black}
-                  fullWidth
-                  small
-                  onPress={() => resetCalculations()}
-                  iconColor={app_colors.black}
-                  align={'center'}
+        <View style={calculationHomeStyles.sectionCard}>
+          <View style={calculationHomeStyles.sectionHeader}>
+            <Text style={calculationHomeStyles.sectionTitle}>{t('sections.instrument.title')}</Text>
+            {/* <Text style={calculationHomeStyles.sectionSubtitle}>{t('sections.instrument.subtitle')}</Text> */}
+          </View>
+          <View>
+            <View style={{display: 'flex', flexDirection: 'row', marginBottom: 10}}>
+              <View style={{flex: 1, marginRight: 10}}>
+                <Text style={calculationHomeStyles.label}>{t('sections.instrument.focalLabel')}</Text>
+                <InputWithIcon
+                  keyboardType={"numeric"}
+                  additionalStyles={{marginVertical: 0}}
+                  search={() => {}}
+                  placeholder={t('sections.instrument.focalPlaceholder', { unit: t(`units.${focalUnit}`) })}
+                  changeEvent={(e) => handleFocalLengthChange(e)}
+                  value={focalLengthInput}
+                  type={"number"}
                 />
-            }
-
-            <View style={calculationHomeStyles.content.container}>
-              <View>
-                <Text style={calculationHomeStyles.content.title}>Rapport focale</Text>
-                <Text style={calculationHomeStyles.content.description}>Permet de calculer le rapport f/D d'un instrument optique.</Text>
               </View>
-              {
-                fD ?
-                <MathComponent expression={fD}/>
-                :
-                <View>
-                  <MathComponent expression={`f/D = \\frac{F}{D}`}/>
-                  <Text style={calculationHomeStyles.content.description}>F = focale instrument et D = diamètre instrument</Text>
+              <View>
+                <Text style={calculationHomeStyles.label}>{t('sections.instrument.unitLabel')}</Text>
+                <View style={calculationHomeStyles.chipRow}>
+                  {[
+                    {label: t('units.mm'), value: 'mm'},
+                    {label: t('units.inch'), value: 'inch'},
+                  ].map((unit) => {
+                    const isActive = focalUnit === unit.value;
+                    return (
+                      <TouchableOpacity
+                        key={unit.value}
+                        onPress={() => handleUnitChange(unit.value as 'mm' | 'inch')}
+                        style={[calculationHomeStyles.chip, isActive && calculationHomeStyles.chipActive]}
+                      >
+                        <Text style={calculationHomeStyles.chipText}>{unit.label}</Text>
+                      </TouchableOpacity>
+                    )
+                  })}
                 </View>
-              }
+              </View>
             </View>
-
-            <View style={calculationHomeStyles.content.container}>
-              <View>
-                <Text style={calculationHomeStyles.content.title}>Grossissement</Text>
-                <Text style={calculationHomeStyles.content.description}>Permet de connaître le grossissement obtenu avec un oculaire donné.</Text>
-              </View>
-              {
-                magnification ?
-                <MathComponent expression={magnification}/>
-                :
-                <View>
-                  <MathComponent expression={`G = \\frac{F}{f}`} />
-                  <Text style={calculationHomeStyles.content.description}>F = focale instrument et f = focale oculaire</Text>
-                </View>
-              }
-            </View>
-
-            <View style={calculationHomeStyles.content.container}>
-              <View>
-                <Text style={calculationHomeStyles.content.title}>Grossissement minimum</Text>
-                <Text style={calculationHomeStyles.content.description}>Indique le grossissement minimum pour une pupille de sortie optimale selon l'instrument.</Text>
-              </View>
-              {
-                minMagnification ?
-                <MathComponent expression={minMagnification}/>
-                :
-                <View>
-                  <MathComponent expression={`G_{min} = \\frac{D}{7}`} />
-                  <Text style={calculationHomeStyles.content.description}>D = diamètre instrument</Text>
-                </View>
-              }
-            </View>
-
-            <View style={calculationHomeStyles.content.container}>
-              <View>
-                <Text style={calculationHomeStyles.content.title}>Échantillonnage</Text>
-                <Text style={calculationHomeStyles.content.description}>Détermine la résolution en secondes d'arc par pixel pour l'imagerie. (En seconde d'arc / pixel)</Text>
-              </View>
-              {
-                sampling ?
-                <MathComponent expression={sampling}/>
-                :
-                <View>
-                  <MathComponent expression={`S = \\frac{206.3 \\times p}{F}`} />
-                  <Text style={calculationHomeStyles.content.description}>p = taille pixel caméra (µm) et F = focale instrument (mm)</Text>
-                </View>
-              }
-            </View>
-
-            <View style={calculationHomeStyles.content.container}>
-              <View>
-                <Text style={calculationHomeStyles.content.title}>Champ réel</Text>
-                <Text style={calculationHomeStyles.content.description}>Détermine le champ de vision pour un oculaire donné. (En minutes d'arc)</Text>
-              </View>
-              {
-                fov ?
-                <MathComponent expression={fov}/>
-                :
-                <View>
-                  <MathComponent expression={`FoV = \\frac{C}{G}`} />
-                  <Text style={calculationHomeStyles.content.description}>C = champ oculaire (°) et G = grossissement</Text>
-                </View>
-              }
-            </View>
-
-            <View style={calculationHomeStyles.content.container}>
-              <View>
-                <Text style={calculationHomeStyles.content.title}>Pupille de sortie</Text>
-                <Text style={calculationHomeStyles.content.description}>Détermine le diamètre de la pupille de sortie pour un oculaire donné. (En mm)</Text>
-              </View>
-              {
-                exitPupil ?
-                <MathComponent expression={exitPupil}/>
-                :
-                <View>
-                  <MathComponent expression={`P = \\frac{D}{G}`} />
-                  <Text style={calculationHomeStyles.content.description}>D = diamètre instrument (mm) et G = grossissement</Text>
-                </View>
-              }
-            </View>
-
-            <View style={calculationHomeStyles.content.container}>
-              <View>
-                <Text style={calculationHomeStyles.content.title}>Pouvoir séparateur</Text>
-                <Text style={calculationHomeStyles.content.description}>Détermine la capacité de l'instrument à distinguer deux objets proches. (En secondes d'arc)</Text>
-              </View>
-              {
-                resolvingPower ?
-                <MathComponent expression={resolvingPower}/>
-                :
-                <View>
-                  <MathComponent expression={`Ps = \\frac{120}{D}`} />
-                  <Text style={calculationHomeStyles.content.description}>D = diamètre instrument (mm)</Text>
-                </View>
-              }
+            <View style={{flex: 1}}>
+              <Text style={calculationHomeStyles.label}>{t('sections.instrument.diameterLabel')}</Text>
+              <InputWithIcon keyboardType={"numeric"} additionalStyles={{marginVertical: 0}} search={() => {}} placeholder={t('sections.instrument.diameterLabel')} changeEvent={(e) => handleDiameterChange(e)} value={diameter ? diameter.toString() : ""} type={"number"}/>
             </View>
           </View>
-        </ScrollView>
+        </View>
+
+        <View style={calculationHomeStyles.sectionCard}>
+          <View style={calculationHomeStyles.sectionHeader}>
+            <Text style={calculationHomeStyles.sectionTitle}>{t('sections.eyepiece.title')}</Text>
+            {/* <Text style={calculationHomeStyles.sectionSubtitle}>{t('sections.eyepiece.subtitle')}</Text> */}
+          </View>
+          <View style={calculationHomeStyles.row}>
+            <View style={{flex: 1}}>
+              <Text style={calculationHomeStyles.label}>{t('sections.eyepiece.focalLabel')}</Text>
+              <InputWithIcon keyboardType={"numeric"} additionalStyles={{marginVertical: 0}} search={() => {}} placeholder={t('sections.eyepiece.focalPlaceholder')} changeEvent={(e) => handleEyepieceFocalLengthChange(e)} value={eyepieceFocalLength ? eyepieceFocalLength.toString() : ""} type={"number"}/>
+            </View>
+            <View style={{flex: 1}}>
+              <Text style={calculationHomeStyles.label}>{t('sections.eyepiece.fieldLabel')}</Text>
+              <InputWithIcon keyboardType={"numeric"} additionalStyles={{marginVertical: 0}} search={() => {}} placeholder={t('sections.eyepiece.fieldPlaceholder')} changeEvent={(e) => handleEyepieceFieldChange(e)} value={eyepieceField ? eyepieceField.toString() : ""} type={"number"}/>
+            </View>
+          </View>
+        </View>
+
+        <View style={calculationHomeStyles.sectionCard}>
+          <View style={calculationHomeStyles.sectionHeader}>
+            <Text style={calculationHomeStyles.sectionTitle}>{t('sections.camera.title')}</Text>
+            {/* <Text style={calculationHomeStyles.sectionSubtitle}>{t('sections.camera.subtitle')}</Text> */}
+          </View>
+          <View style={calculationHomeStyles.row}>
+            <View style={{flex: 1}}>
+              <Text style={calculationHomeStyles.label}>{t('sections.camera.pixelLabel')}</Text>
+              <InputWithIcon keyboardType={"default"} additionalStyles={{marginVertical: 0}} search={() => {}} placeholder={t('sections.camera.pixelPlaceholder')} changeEvent={(e) => handlePixelSize(e)} value={pixelSize ? pixelSize.toString() : ""} type={"text"}/>
+            </View>
+            <View style={{flex: 1}}>
+              <Text style={calculationHomeStyles.label}>{t('sections.camera.exitPupilLabel')}</Text>
+              <View style={calculationHomeStyles.chipRow}>
+                {[5, 6, 7].map((pupilValue) => {
+                  const isActive = selectedPupil === pupilValue;
+                  return (
+                    <TouchableOpacity
+                      key={pupilValue}
+                      onPress={() => setSelectedPupil(pupilValue as 5 | 6 | 7)}
+                      style={[calculationHomeStyles.chip, isActive && calculationHomeStyles.chipActive]}
+                    >
+                      <Text style={calculationHomeStyles.chipText}>{pupilValue} mm</Text>
+                    </TouchableOpacity>
+                  )
+                })}
+              </View>
+            </View>
+          </View>
+        </View>
+
+        <View style={calculationHomeStyles.actionRow}>
+          <SimpleButton
+            text={t('actions.compute')}
+            icon={require('../../../assets/icons/FiCpu.png')}
+            backgroundColor={app_colors.white}
+            textColor={app_colors.black}
+            fullWidth
+            small
+            onPress={() => computeCalculations()}
+            iconColor={app_colors.black}
+            align={'center'}
+          />
+          {
+            (fD || magnification || minMagnification || sampling) &&
+              <SimpleButton
+                text={t('actions.reset')}
+                icon={require('../../../assets/icons/FiTrash.png')}
+                backgroundColor={app_colors.white}
+                textColor={app_colors.black}
+                fullWidth
+                small
+                onPress={() => resetCalculations()}
+                iconColor={app_colors.black}
+                align={'center'}
+              />
+          }
+        </View>
+
+        <View style={calculationHomeStyles.sectionHeader}>
+          <Text style={calculationHomeStyles.sectionTitle}>{t('sections.results.title')}</Text>
+          <Text style={calculationHomeStyles.sectionSubtitle}>{t('sections.results.subtitle')}</Text>
+        </View>
+
+        <View style={calculationHomeStyles.resultGrid}>
+          {renderResultCard(
+            t('sections.results.cards.focalRatio.title'),
+            t('sections.results.cards.focalRatio.description'),
+            fD,
+            `f/D = \\frac{F}{D}`,
+            t('sections.results.cards.focalRatio.fallbackNote')
+          )}
+          {renderResultCard(
+            t('sections.results.cards.magnification.title'),
+            t('sections.results.cards.magnification.description'),
+            magnification,
+            `G = \\frac{F}{f}`,
+            t('sections.results.cards.magnification.fallbackNote')
+          )}
+          {renderResultCard(
+            t('sections.results.cards.minMagnification.title'),
+            t('sections.results.cards.minMagnification.description'),
+            minMagnification,
+            `G_{min} = \\frac{D}{${selectedPupil}}`,
+            t('sections.results.cards.minMagnification.fallbackNote', { pupil: selectedPupil })
+          )}
+          {renderResultCard(
+            t('sections.results.cards.sampling.title'),
+            t('sections.results.cards.sampling.description'),
+            sampling,
+            `S = \\frac{206.3 \\times p}{F}`,
+            t('sections.results.cards.sampling.fallbackNote')
+          )}
+          {renderResultCard(
+            t('sections.results.cards.fov.title'),
+            t('sections.results.cards.fov.description'),
+            fov,
+            `FoV = \\frac{C}{G}`,
+            t('sections.results.cards.fov.fallbackNote')
+          )}
+          {renderResultCard(
+            t('sections.results.cards.exitPupil.title'),
+            t('sections.results.cards.exitPupil.description'),
+            exitPupil,
+            `P = \\frac{D}{G}`,
+            t('sections.results.cards.exitPupil.fallbackNote')
+          )}
+          {renderResultCard(
+            t('sections.results.cards.resolvingPower.title'),
+            t('sections.results.cards.resolvingPower.description'),
+            resolvingPower,
+            `Ps = \\frac{120}{D}`,
+            t('sections.results.cards.resolvingPower.fallbackNote')
+          )}
+        </View>
+      </ScrollView>
     </View>
   );
 }

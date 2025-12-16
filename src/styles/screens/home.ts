@@ -15,7 +15,7 @@ export const homeStyles = {
   searchResults: {
     marginBottom: 25,
     marginTop: 10,
-    height: 230,
+    height: 200,
   },
   nasaTools: {
     display: 'flex' as 'flex',

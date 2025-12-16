@@ -4,13 +4,8 @@ import { getCountryByCode } from '../../helpers/scripts/utils/getCountryByCode'
 import { i18n } from '../../helpers/scripts/i18n'
 import { useTranslation } from '../../hooks/useTranslation'
 import { globalStyles } from '../../styles/global'
-import PageTitle from '../../components/commons/PageTitle'
-import {app_colors} from '../../helpers/constants'
-import DSOValues from '../../components/commons/DSOValues'
-import getCountryFlag from 'country-flag-icons/unicode'
-import MapView, { Circle, Marker, PROVIDER_GOOGLE, Polyline } from 'react-native-maps'
+import {app_colors, storageKeys} from '../../helpers/constants'
 import { mapStyle } from '../../helpers/mapJsonStyle'
-import SimpleButton from '../../components/commons/buttons/SimpleButton'
 import {useSettings} from "../../contexts/AppSettingsContext";
 import {SatellitePass} from "../../helpers/types/IssPass";
 import {useAuth} from "../../contexts/AuthContext";
@@ -18,15 +13,20 @@ import {sendAnalyticsEvent} from "../../helpers/scripts/analytics";
 import {eventTypes} from "../../helpers/constants/analytics";
 import { getLocationName } from '../../helpers/api/getLocationFromCoords'
 import { LocationObject } from '../../helpers/types/LocationObject'
-import dayjs from 'dayjs'
 import { getWeather } from '../../helpers/api/getWeather'
 import { getTimeFromLaunch } from '../../helpers/scripts/utils/getTimeFromLaunch'
 import { satelliteTrackerStyles } from '../../styles/screens/satelliteTracker/satelliteTrackerStyles'
 import { KNOWN_NORAD_IDS } from '../../helpers/constants/norad'
-import SatellitePassCard from '../../components/cards/SatellitePassCard'
 import { convertDDtoDMS } from '../../helpers/scripts/convertDDtoDMSCoords'
 import { useLaunchData } from '../../contexts/LaunchContext'
 import { LaunchData } from '../../helpers/types/LaunchData'
+import MapView, { Circle, Marker, PROVIDER_GOOGLE, Polyline } from 'react-native-maps'
+import PageTitle from '../../components/commons/PageTitle'
+import DSOValues from '../../components/commons/DSOValues'
+import getCountryFlag from 'country-flag-icons/unicode'
+import SimpleButton from '../../components/commons/buttons/SimpleButton'
+import dayjs from 'dayjs'
+import SatellitePassCard from '../../components/cards/SatellitePassCard'
 import LaunchCard from '../../components/cards/LaunchCard'
 
 export default function SatelliteTrackerDetails({ route, navigation }: any) {
@@ -213,8 +213,6 @@ export default function SatelliteTrackerDetails({ route, navigation }: any) {
       }, 1000);
     }
   }
-  
-
 
   return (
     <View style={globalStyles.body}>

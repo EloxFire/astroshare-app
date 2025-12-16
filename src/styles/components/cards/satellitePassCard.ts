@@ -6,7 +6,7 @@ export const satellitePassCardStyles = {
     flexDirection: "row" as "row",
     alignItems: "center" as "center",
     gap: 10,
-    height: 60,
+    // height: 60,
     backgroundColor: app_colors.white_no_opacity,
     borderRadius: 10,
     padding: 10,
@@ -17,12 +17,12 @@ export const satellitePassCardStyles = {
       display: "flex" as "flex",
       flexDirection: "row" as "row",
       alignItems: "center" as "center",
-      width: "30%" as "30%",
+      // width: "30%" as "30%",
       gap: 10,
 
       icon: {
-        width: 40,
-        height: 40,
+        width: 35,
+        height: 35,
       },
 
       title: {
@@ -53,7 +53,7 @@ export const satellitePassCardStyles = {
   column: {
     display: "flex" as "flex",
     flexDirection: "column" as "column",
-    gap: 5,
+    // gap: 5,
 
     title: {
       color: app_colors.white_eighty,

@@ -39,6 +39,7 @@ import {calculationsTranslations} from "./screens/calculations";
 import {cardsTranslations} from "./components/cards";
 import {apodTranslations} from "./screens/apod";
 import { resourcesScreensTranslations } from "./screens/resources";
+import { clockTranslations } from "./screens/clock";
 
 export const frTranslations = {
   onboarding: onboardingTranslations,
@@ -83,5 +84,6 @@ export const frTranslations = {
   widgetsManager: widgetManagerTranslations,
   calculations: calculationsTranslations,
   apod: apodTranslations,
-  resources: resourcesScreensTranslations
+  resources: resourcesScreensTranslations,
+  clock: clockTranslations,
 }

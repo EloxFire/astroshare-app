@@ -5,12 +5,9 @@ import { homeStyles } from '../styles/screens/home'
 import { DSO } from '../helpers/types/DSO'
 import { app_colors } from '../helpers/constants'
 import { GlobalPlanet } from '../helpers/types/GlobalPlanet'
-import SearchResultCard from './cards/SearchResultCard'
-import SearchPlanetResultCard from './cards/SearchPlanetResultCard'
 import { Star } from '../helpers/types/Star'
-import SearchStarResultCard from './cards/SearchStarResultCard'
 import { i18n } from '../helpers/scripts/i18n'
-import {getObjectFamily} from "../helpers/scripts/astro/objects/getObjectFamily";
+import SearchResultCard from './cards/SearchResultCard'
 
 interface HomeSearchResultsProps {
   results: DSO[]
@@ -30,21 +27,6 @@ export default function HomeSearchResults({ results, planetResults, onReset, nav
     const mergedResults: (DSO | GlobalPlanet | Star)[] = [...planetResults, ...results, ...starsResults]
     setData(mergedResults)
   }, [results, planetResults, starsResults])
-
-  const handleRenderItem = ({item}: {item: DSO | GlobalPlanet | Star}) => {
-    const itemFamily = getObjectFamily(item)
-
-    switch (itemFamily) {
-      case 'DSO':
-        return <SearchResultCard object={item as DSO} navigation={navigation} />
-      case 'Planet':
-        return <SearchPlanetResultCard planet={item as GlobalPlanet} navigation={navigation} />
-      case 'Star':
-        return <SearchStarResultCard star={item as Star} navigation={navigation} />
-      default:
-        return <></>
-    }
-  }
 
   return (
     <View>
@@ -75,7 +57,7 @@ export default function HomeSearchResults({ results, planetResults, onReset, nav
           horizontal
           data={data}
           ListEmptyComponent={<View></View>}
-          renderItem={handleRenderItem}
+          renderItem={({ item }) => <SearchResultCard object={item} navigation={navigation} />}
           keyExtractor={item => `${item.dec}-${item.ra}`}
         />
       </SafeAreaView>

@@ -5,19 +5,26 @@ export type ComputedObjectInfos = {
   base:{
     family: "DSO" | "Star" | "Planet" | "Other";
     type: string;
+    rawType: string;
     name: string;
     otherName?: string;
+    constellation: string | undefined;
     icon: ImageSourcePropType;
     ra: string | number;
     dec: string | number;
     degRa: number;
     degDec: number;
-    mag: number | string;
     alt: string;
     az: string;
+    v_mag?: number;
+    b_mag?: number;
+    j_mag?: number;
+    k_mag?: number;
+    h_mag?: number;
   },
   visibilityInfos: {
     isCurrentlyVisible: boolean;
+    isCircumpolar: boolean;
     isVisibleThisNight: boolean;
     visibilityLabel: string;
     visibilityBackgroundColor: string;

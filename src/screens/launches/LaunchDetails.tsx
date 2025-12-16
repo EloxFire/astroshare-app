@@ -23,7 +23,6 @@ import {useSettings} from "../../contexts/AppSettingsContext";
 import {useAuth} from "../../contexts/AuthContext";
 import {sendAnalyticsEvent} from "../../helpers/scripts/analytics";
 import {eventTypes} from "../../helpers/constants/analytics";
-import {routes} from "../../helpers/routes";
 
 interface LaunchCardProps {
   route: any
@@ -80,7 +79,6 @@ export default function LaunchDetails({ route, navigation }: LaunchCardProps): R
         sendAnalyticsEvent(currentUser, currentUserLocation, 'Launch notification removed', eventTypes.BUTTON_CLICK, {launchId: launch.id, launch_name: launch.name, launch_date: launch.net}, currentLocale)
       }
     } else {
-      // Add notification
       const notif = await scheduleLocalNotification({
         title: i18n.t('notifications.launches.title', {mission_name: launch.name.split('|')[1].trim()}),
         body: i18n.t('notifications.launches.body', {mission_name: launch.name.split('|')[1].trim(), operator_name: launch.launch_service_provider.name.length > 30 ? launch.launch_service_provider.abbrev : truncate(launch.launch_service_provider.name, 30)}),

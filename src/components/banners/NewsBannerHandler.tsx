@@ -21,7 +21,15 @@ export default function NewsBannerHandler({ navigation }: Props) {
     (async () => {
       const news = await axios.get(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/news`)
       const visibleBanners = news.data.data.filter((banner: BannerNews) => banner.visible === true)
-      const sortedBannerByOrder = visibleBanners.sort((a: BannerNews, b: BannerNews) => {
+
+      const currentDate = new Date();
+      const filteredBanners = visibleBanners.filter((banner: BannerNews) => {
+        const startDateValid = banner.startDate ? new Date(banner.startDate) <= currentDate : true;
+        const endDateValid = banner.endDate ? new Date(banner.endDate) >= currentDate : true;
+        return startDateValid && endDateValid;
+      });
+
+      const sortedBannerByOrder = filteredBanners.sort((a: BannerNews, b: BannerNews) => {
         return a.order - b.order
       })
       setBanners(sortedBannerByOrder)

@@ -6,9 +6,10 @@ import {convertHMSToDegreeFromString} from "../HmsToDegree";
 import {convertDMSToDegreeFromString} from "../DmsToDegree";
 import {calculateHorizonAngle} from "../calculateHorizonAngle";
 import {
+  Constellation,
   convertEquatorialToHorizontal,
   EquatorialCoordinate,
-  GeographicCoordinate, getBodyNextRise, getBodyNextSet, HorizontalCoordinate,
+  GeographicCoordinate, getBodyNextRise, getBodyNextSet, getConstellation, HorizontalCoordinate,
   isBodyAboveHorizon, isBodyCircumpolar, isBodyVisibleForNight, isTransitInstance, TransitInstance
 } from "@observerly/astrometry";
 import {ComputedObjectInfos} from "../../../types/objects/ComputedObjectInfos";
@@ -26,15 +27,21 @@ import {getObjectIcon} from "./getObjectIcon";
 import {ImageSourcePropType} from "react-native";
 import {getObjectType} from "./getObjectType";
 import {getObjectName} from "./getObjectName";
+import { getConstellationName } from "../../getConstellationName";
 
 interface ComputeObjectProps {
   object: DSO | Star | GlobalPlanet;
   observer: GeographicCoordinate;
   lang: string;
   altitude?: number;
+  date?: Dayjs;
 }
 
 export const computeObject = (props: ComputeObjectProps): ComputedObjectInfos | null => {
+  const referenceNow = props.date && props.date.isValid() ? props.date : dayjs();
+  const referenceDate = referenceNow.toDate();
+  const localOffsetMinutes = referenceNow.utcOffset();
+
   if(!props.object){
     console.log('[computeObject] Error: object is null')
     return null;
@@ -51,6 +58,9 @@ export const computeObject = (props: ComputeObjectProps): ComputedObjectInfos | 
       console.log('[computeObject] Error: could not convert ra and dec to degrees')
       return null;
     }
+
+    const objectConstellation: Constellation | undefined = getConstellation({ra: degRa, dec: degDec});
+    const localizedConstellationName: string = objectConstellation ? getConstellationName(objectConstellation.abbreviation) : 'N/A';
 
     let objectName: string = '';
     if(objectFamily === 'DSO'){
@@ -77,59 +87,116 @@ export const computeObject = (props: ComputeObjectProps): ComputedObjectInfos | 
 
     // VISIBILITE ACTUELLE ET POUR LA NUIT
     const target: EquatorialCoordinate = {ra: degRa, dec: degDec}
-    const isCurrentlyVisible: boolean = isBodyAboveHorizon(new Date(), props.observer, target, horizonAngle)
-    const isVisibleThisNight: boolean = isBodyVisibleForNight(new Date(), props.observer, target, horizonAngle)
+    const isCurrentlyVisible: boolean = isBodyAboveHorizon(referenceDate, props.observer, target, horizonAngle)
+    const isVisibleThisNight: boolean = isBodyVisibleForNight(referenceDate, props.observer, target, horizonAngle)
     const isObjectCircumpolar: boolean = isBodyCircumpolar(props.observer, target, horizonAngle);
-    const objectCurrentAltitude: number = convertEquatorialToHorizontal(new Date(), props.observer, target).alt;
-    const objectCurrentAzimuth: number = convertEquatorialToHorizontal(new Date(), props.observer, target).az;
+    const currentHorizontal = convertEquatorialToHorizontal(referenceDate, props.observer, target);
+    const objectCurrentAltitude: number = currentHorizontal.alt;
+    const objectCurrentAzimuth: number = currentHorizontal.az;
 
 
     // CALCUL HEURES DE LEVER ET COUCHER
     let objectNextRise: Dayjs | null = null;
     let objectNextSet: Dayjs | null = null;
+    const findNextHorizonCrossing = (direction: 'rise' | 'set'): Dayjs | null => {
+      const stepMinutes = 5;
+      const maxMinutes = 36 * 60; // search up to 36h ahead
+      const startTime = referenceNow;
+      let previousTime = startTime;
+      let previousAlt = convertEquatorialToHorizontal(startTime.toDate(), props.observer, target).alt;
+
+      for (let minutes = stepMinutes; minutes <= maxMinutes; minutes += stepMinutes) {
+        const currentTime = startTime.add(minutes, 'minute');
+        const currentAlt = convertEquatorialToHorizontal(currentTime.toDate(), props.observer, target).alt;
+
+        if (direction === 'rise' && previousAlt < horizonAngle && currentAlt >= horizonAngle) {
+          const fraction = (horizonAngle - previousAlt) / (currentAlt - previousAlt);
+          return previousTime.add(stepMinutes * fraction, 'minute');
+        }
+
+        if (direction === 'set' && previousAlt >= horizonAngle && currentAlt < horizonAngle) {
+          const fraction = (previousAlt - horizonAngle) / (previousAlt - currentAlt);
+          return previousTime.add(stepMinutes * fraction, 'minute');
+        }
+
+        previousAlt = currentAlt;
+        previousTime = currentTime;
+      }
+
+      return null;
+    }
     
 
     if(!isObjectCircumpolar) {
-      const nextRise: false | TransitInstance = getBodyNextRise(new Date(), props.observer, target, horizonAngle);
-      const nextSet: boolean | TransitInstance = getBodyNextSet(new Date(), props.observer, target, horizonAngle);
+      const nextRise: false | TransitInstance = getBodyNextRise(referenceDate, props.observer, target, horizonAngle);
+      const nextSet: boolean | TransitInstance = getBodyNextSet(referenceDate, props.observer, target, horizonAngle);
 
       if(isTransitInstance(nextRise)){
-        objectNextRise = dayjs(nextRise.datetime).add(dayjs().utcOffset(), 'minutes');
+        // console.log('[computeObject] Next rise datetime (UTC): ', nextRise.datetime);
+        
+        objectNextRise = dayjs(nextRise.datetime).add(localOffsetMinutes, 'minute');
       }
 
       if(isTransitInstance(nextSet)){
-        objectNextSet = dayjs(nextSet.datetime).add(dayjs().utcOffset(), 'minutes');
+        objectNextSet = dayjs(nextSet.datetime).add(localOffsetMinutes, 'minute');
+      }
+
+      const scannedRise = findNextHorizonCrossing('rise');
+      const scannedSet = findNextHorizonCrossing('set');
+
+      if(scannedRise && (!objectNextRise || scannedRise.isBefore(objectNextRise))){
+        objectNextRise = scannedRise;
+      }
+
+      if(scannedSet && (!objectNextSet || scannedSet.isBefore(objectNextSet))){
+        objectNextSet = scannedSet;
       }
     }
 
     // GESTION MAGNITUDE SELON TYPE D'OBJET
-    let objectMagnitude: number;
+    let objectMagnitude: {v: number | undefined, b: number | undefined, j: number | undefined, k: number | undefined, h: number | undefined} = {v: 0, b: 0, j: 0, k: 0, h: 0};
     switch (objectFamily) {
       case "DSO":
-        objectMagnitude = (props.object as DSO).v_mag as number || (props.object as DSO).b_mag as number;
+        objectMagnitude = {
+          v: typeof (props.object as DSO).v_mag === 'string' ? undefined : (props.object as DSO).v_mag as number,
+          b: typeof (props.object as DSO).b_mag === 'string' ? undefined : (props.object as DSO).b_mag as number,
+          j: typeof (props.object as DSO).j_mag === 'string' ? undefined : (props.object as DSO).j_mag as number,
+          k: typeof (props.object as DSO).k_mag === 'string' ? undefined : (props.object as DSO).k_mag as number,
+          h: typeof (props.object as DSO).h_mag === 'string' ? undefined : (props.object as DSO).h_mag as number,
+        }
         break;
       case "Star":
-        objectMagnitude = (props.object as Star).V;
+        objectMagnitude = {
+          v: (props.object as Star).V,
+          b: undefined,
+          j: undefined,
+          k: undefined,
+          h: undefined,
+        }
         break;
       case "Planet":
-        objectMagnitude = getPlanetMagnitude((props.object as GlobalPlanet).name);
+        objectMagnitude = {
+          v: getPlanetMagnitude((props.object as GlobalPlanet).name),
+          b: undefined,
+          j: undefined,
+          k: undefined,
+          h: undefined,
+        }
         break;
-      default:
-        objectMagnitude = 10000;
     }
 
     // GESTION BADGES VISIBILITE INSTRUMENTS
     const nakedEyesVisibilityInfos = {
-      label: objectMagnitude < 6 ? i18n.t('common.visibility.visible') : i18n.t('common.visibility.notVisible'),
+      label: objectMagnitude.v ? objectMagnitude.v < 6 ? i18n.t('common.visibility.visible') : i18n.t('common.visibility.notVisible') : i18n.t('common.errors.unknown'),
       icon: require('../../../../../assets/icons/FiEye.png'),
-      backgroundColor: objectMagnitude < 6 ? app_colors.green_eighty : app_colors.red_eighty,
+      backgroundColor: objectMagnitude.v ? objectMagnitude.v < 6 ? app_colors.green_eighty : app_colors.red_eighty : app_colors.white_eighty,
       foregroundColor: app_colors.white
     }
 
     const binocularsVisibilityInfos = {
-      label: objectMagnitude < 10 ? i18n.t('common.visibility.visible') : i18n.t('common.visibility.notVisible'),
+      label: objectMagnitude.v ? objectMagnitude.v < 10 ? i18n.t('common.visibility.visible') : i18n.t('common.visibility.notVisible') : i18n.t('common.errors.unknown'),
       icon: require('../../../../../assets/icons/FiEye.png'),
-      backgroundColor: objectMagnitude < 10 ? app_colors.green_eighty : app_colors.red_eighty,
+      backgroundColor: objectMagnitude.v ? objectMagnitude.v < 10 ? app_colors.green_eighty : app_colors.red_eighty : app_colors.white_eighty,
       foregroundColor: app_colors.white
     }
 
@@ -146,7 +213,7 @@ export const computeObject = (props: ComputeObjectProps): ComputedObjectInfos | 
     // I need to get the object altitude every 1 hour.
     const objectAltitudes: number[] = [];
     const altitudesHours: string[] = [];
-    const now: Dayjs = dayjs()
+    const now: Dayjs = referenceNow;
     const H: number = 6; // Number of hours to compute visibility graph
     for (let i = -H; i <= H; i++) {
       const date: Dayjs = now.add(i, 'hour');
@@ -192,19 +259,26 @@ export const computeObject = (props: ComputeObjectProps): ComputedObjectInfos | 
       base: {
         family: objectFamily,
         type: objectType,
+        rawType: objectFamily === 'DSO' ? (props.object as DSO).type : objectFamily === 'Star' ? 'Star' : objectFamily === 'Planet' ? 'Planet' : 'Other',
         name: objectName,
+        constellation: localizedConstellationName,
         otherName: objectOtherName,
         icon: objectIcon,
         ra: props.object.ra,
         dec: props.object.dec,
         degRa: degRa,
         degDec: degDec,
-        mag: objectFamily === 'Planet' ? objectMagnitude + ' (max)' : objectMagnitude,
+        v_mag: objectMagnitude.v,
+        b_mag: objectMagnitude.b,
+        j_mag: objectMagnitude.j,
+        k_mag: objectMagnitude.k,
+        h_mag: objectMagnitude.h,
         alt: objectCurrentAltitude.toFixed(2) + '°',
         az: Math.round(objectCurrentAzimuth) + '°',
       },
       visibilityInfos: {
         isCurrentlyVisible: isCurrentlyVisible,
+        isCircumpolar: isObjectCircumpolar,
         isVisibleThisNight: isVisibleThisNight,
         visibilityLabel: isCurrentlyVisible ? i18n.t('common.visibility.visible') : i18n.t('common.visibility.notVisible'),
         objectNextRise: objectNextRise,

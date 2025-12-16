@@ -17,8 +17,8 @@ export const homeTranslations = {
   },
   buttons: {
     observationPlanner: {
-      title: "Planifier des observations",
-      subtitle: "// Préparez vos sessions"
+      title: "Planifier une observation",
+      subtitle: "// Préparez votre session"
     },
     weather: {
       title: "Météo en direct",
@@ -44,9 +44,17 @@ export const homeTranslations = {
       title: "Calculateur",
       subtitle: "// Votre calculateur astronomique"
     },
+    clock: {
+      title: "Horloge",
+      subtitle: "// Tous les formats temporels importants !"
+    },
     apod: {
       title: "APOD",
       subtitle: "// Image du jour de la NASA"
+    },
+    lightpollution: {
+      title: "Pollution lumineuse",
+      subtitle: "// Carte mondiale de pollution lumineuse"
     },
     satellite_tracker: {
       title: "Suivi de satellites",
