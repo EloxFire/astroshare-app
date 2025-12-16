@@ -128,6 +128,8 @@ export const commonTranslations = {
     apparentMagnitude: "Magnitude apparente",
     absoluteMagnitude: "Magnitude absolue",
     angularSeparation: "Séparation angulaire",
+    angularDiameter: "Diamètre angulaire",
+    constellation: "Constellation",
   },
   planets: {
     Sun: "Soleil",

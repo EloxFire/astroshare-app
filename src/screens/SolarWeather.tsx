@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { app_colors, cmeImageSrc, cmeVideoSrc, sunImagesSrcWavelengths, sunImagesSrcWavelengthsBackup, sunVideoSrcWavelengths, sunVideoSrcWavelengthsBackup } from '../helpers/constants'
-import { Dimensions, ScrollView, Text, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, Dimensions, ScrollView, Text, TouchableOpacity, View } from 'react-native'
 import { globalStyles } from '../styles/global'
 import { solarWeatherStyles } from '../styles/screens/solarWeather'
 import { ESunFilter, ESunFilterBackup } from '../helpers/types/SunFilter'
@@ -129,27 +129,29 @@ export default function SolarWeather({ navigation }: any) {
             <Text style={solarWeatherStyles.container.subtitle}>{i18n.t('solarWeather.containers.ephemerids.subtitle')}</Text>
 
             {
-              sunData && sunData.visibility.sunrise && sunData.visibility.sunset && (
+              sunData && sunData.visibility.sunrise && sunData.visibility.sunset ? (
                 <>
                   <View style={{ marginTop: 30 }}>
-                    <EphemerisBar
-                      mode={sunData.visibility.isCurrentlyVisible ? 'day' : 'night'}
-                      percentage={calculateDayPercentage(sunData.visibility.sunrise, sunData.visibility.sunset, sunData.visibility.isCurrentlyVisible ? 0 : 1)}
-                      sunrise={sunData.visibility.sunrise.format('HH:mm')}
-                      sunset={sunData.visibility.sunset.format('HH:mm')}
-                      riseIcon={require('../../assets/icons/FiSunrise.png')}
-                      setIcon={require('../../assets/icons/FiSunset.png')}
+                  <EphemerisBar
+                    mode={sunData.visibility.isCurrentlyVisible ? 'day' : 'night'}
+                    percentage={calculateDayPercentage(sunData.visibility.sunrise, sunData.visibility.sunset, sunData.visibility.isCurrentlyVisible ? 0 : 1)}
+                    sunrise={sunData.visibility.sunrise.format('HH:mm')}
+                    sunset={sunData.visibility.sunset.format('HH:mm')}
+                      riseIcon={sunData.visibility.isCurrentlyVisible ? require('../../assets/icons/FiSunrise.png') : require('../../assets/icons/FiSunset.png')}
+                      setIcon={sunData.visibility.isCurrentlyVisible ? require('../../assets/icons/FiSunset.png') : require('../../assets/icons/FiSunrise.png')}
                     />
                   </View>
-                  <DSOValues title={"Ascension droite"} value={convertDegreesRaToHMS(sunData?.base.ra || 0)} chipValue wideChip />
-                  <DSOValues title={"Déclinaison"} value={convertDegreesDecToDMS(sunData?.base.dec || 0)} chipValue wideChip />
-                  <DSOValues title={"Diamètre angulaire"} value={sunData?.base.angularDiameter.toFixed(2)} chipValue wideChip />
-                  <DSOValues title={"Distance"} value={formatKm(sunData?.base.distance, currentLocale)} chipValue wideChip />
-                  <DSOValues title={"Altitude"} value={`${sunData.base.alt.toFixed(2)}°`} chipValue wideChip />
-                  <DSOValues title={"Constellation"} value={sunData.base.constellation} chipValue wideChip />
+                  <DSOValues title={i18n.t('common.coordinates.rightAscension')} value={convertDegreesRaToHMS(sunData.base.ra)} chipValue wideChip />
+                  <DSOValues title={i18n.t('common.coordinates.declination')} value={convertDegreesDecToDMS(sunData.base.dec)} chipValue wideChip />
+                  <DSOValues title={i18n.t('common.coordinates.angularDiameter')} value={sunData.base.angularDiameter.toFixed(2)} chipValue wideChip />
+                  <DSOValues title={i18n.t('common.coordinates.distance')} value={formatKm(sunData.base.distance, currentLocale)} chipValue wideChip />
+                  <DSOValues title={i18n.t('common.coordinates.altitude')} value={`${sunData.base.alt.toFixed(2)}°`} chipValue wideChip />
+                  <DSOValues title={i18n.t('common.coordinates.constellation')} value={sunData.base.constellation} chipValue wideChip />
 
                   <VisibilityGraph visibilityGraph={sunData.visibility.visibilityGraph} />
                 </>
+              ) : (
+                <ActivityIndicator size="large" color={app_colors.white} style={{ marginTop: 20 }} />
               )
             }
           </View>
@@ -166,7 +168,7 @@ export default function SolarWeather({ navigation }: any) {
             </View>
             <Text style={solarWeatherStyles.container.title}>{i18n.t('solarWeather.containers.instrument', { currentImageFilter: currentImageFilter })}</Text>
             <Text style={[solarWeatherStyles.container.subtitle, { opacity: 1 }]}>{i18n.t('solarWeather.containers.zone', { zone: loadingImage ? i18n.t('common.loadings.simple') : i18n.t(`solarWeather.studyZones.${currentImageFilter}`) })}</Text>
-            <Text style={solarWeatherStyles.container.subtitle}>Source : NASA & ESA SOHO (Solar and Heliospheric Observatory)</Text>
+            <Text style={solarWeatherStyles.container.subtitle}>{i18n.t('solarWeather.sources.sdoSoho')}</Text>
             <Text style={[solarWeatherStyles.container.subtitle, solarWeatherStyles.container.disclaimer]}>{i18n.t('solarWeather.containers.disclaimer')}</Text>
             {
               isImageMode ?
@@ -209,7 +211,7 @@ export default function SolarWeather({ navigation }: any) {
               </TouchableOpacity>
             </View>
             <Text style={solarWeatherStyles.container.title}>{i18n.t('solarWeather.containers.emc')}</Text>
-            <Text style={solarWeatherStyles.container.subtitle}>Source : NASA / SoHO (Solar and Heliospheric Observatory)</Text>
+            <Text style={solarWeatherStyles.container.subtitle}>{i18n.t('solarWeather.sources.soho')}</Text>
             {
               isCmeImageMode ?
                 <Image priority={'high'} placeholder={localizedImagePlaceholders[i18n.locale]} source={!currentCmeImageUrl ? undefined : { uri: currentCmeImageUrl }} style={solarWeatherStyles.sunImage} />
@@ -241,7 +243,7 @@ export default function SolarWeather({ navigation }: any) {
           {/* SUNSPOTS CONTAINER */}
           <View style={solarWeatherStyles.container}>
             <Text style={solarWeatherStyles.container.title}>{i18n.t('solarWeather.containers.sunspots')}</Text>
-            <Text style={solarWeatherStyles.container.subtitle}>Source : NASA / SoHO (Solar and Heliospheric Observatory)</Text>
+            <Text style={solarWeatherStyles.container.subtitle}>{i18n.t('solarWeather.sources.soho')}</Text>
             {/*<DisclaimerBar message={"Service temporairement indisponible."} type={"error"}/>*/}
             <Image placeholder={localizedImagePlaceholders[i18n.locale]} source={{ uri: "https://soho.nascom.nasa.gov/data/synoptic/sunspots_earth/mdi_sunspots.jpg" + '?' + new Date() }} style={solarWeatherStyles.sunImage} />
           </View>
@@ -249,22 +251,22 @@ export default function SolarWeather({ navigation }: any) {
           {/* AURORA CONTAINER */}
           <View style={solarWeatherStyles.container}>
             <Text style={solarWeatherStyles.container.title}>{i18n.t('solarWeather.containers.northenAurora')}</Text>
-            <Text style={solarWeatherStyles.container.subtitle}>Source : NOAA Space Weather Prediction Center</Text>
+            <Text style={solarWeatherStyles.container.subtitle}>{i18n.t('solarWeather.sources.noaa')}</Text>
             <Image placeholder={localizedForecastPlaceholders[i18n.locale]} source={{ uri: "https://services.swpc.noaa.gov/images/animations/ovation/north/latest.jpg" + '?' + new Date() }} style={solarWeatherStyles.sunImage} />
           </View>
 
           <View style={solarWeatherStyles.container}>
             <Text style={solarWeatherStyles.container.title}>{i18n.t('solarWeather.containers.southernAurora')}</Text>
-            <Text style={solarWeatherStyles.container.subtitle}>Source : NOAA Space Weather Prediction Center</Text>
+            <Text style={solarWeatherStyles.container.subtitle}>{i18n.t('solarWeather.sources.noaa')}</Text>
             <Image placeholder={localizedForecastPlaceholders[i18n.locale]} source={{ uri: "https://services.swpc.noaa.gov/images/animations/ovation/south/latest.jpg" + '?' + new Date() }} style={solarWeatherStyles.sunImage} />
           </View>
 
           {/* KP INDEXES CONTAINER */}
           <View style={solarWeatherStyles.container}>
             <Text style={solarWeatherStyles.container.title}>{i18n.t('solarWeather.containers.kpIndexes')}</Text>
-            <Text style={[solarWeatherStyles.container.subtitle, {marginBottom: 10}]}>Source : SWPC (Space Weather Prediction Center) / NOAA (National Oceanic and Atmospheric Administration)</Text>
-            <Text style={[solarWeatherStyles.container.subtitle, {marginBottom: 10}]}>Les horaires suivantes sont en UTC</Text>
-            <Text style={[solarWeatherStyles.container.subtitle, {marginBottom: 10}]}>Ce graphique affiche des tranches de 3 heures. Il est mis à jour toutes les 3 heures.</Text>
+            <Text style={[solarWeatherStyles.container.subtitle, {marginBottom: 10}]}>{i18n.t('solarWeather.sources.noaa')}</Text>
+            <Text style={[solarWeatherStyles.container.subtitle, {marginBottom: 10}]}>{i18n.t('solarWeather.sources.kpNotice')}</Text>
+            <Text style={[solarWeatherStyles.container.subtitle, {marginBottom: 10}]}>{i18n.t('solarWeather.sources.kpExplanation')}</Text>
             {
               isProUser(currentUser) ?
                 <KpChart />
@@ -276,19 +278,19 @@ export default function SolarWeather({ navigation }: any) {
           {/* SOLAR WINDS CONTAINER */}
           <View style={solarWeatherStyles.container}>
             <Text style={solarWeatherStyles.container.title}>{i18n.t('solarWeather.containers.solarWinds')}</Text>
-            <Text style={[solarWeatherStyles.container.subtitle, {marginBottom: 10}]}>Source : SWPC (Space Weather Prediction Center) / NOAA (National Oceanic and Atmospheric Administration)</Text>
-            <Text style={[solarWeatherStyles.container.subtitle, {marginBottom: 10}]}>Les horaires suivantes sont en UTC</Text>
+            <Text style={[solarWeatherStyles.container.subtitle, {marginBottom: 10}]}>{i18n.t('solarWeather.sources.noaa')}</Text>
+            <Text style={[solarWeatherStyles.container.subtitle, {marginBottom: 10}]}>{i18n.t('solarWeather.sources.kpNotice')}</Text>
             {
               isProUser(currentUser) ?
                 <>
                   {
                     solarWindData.length !== 0 && (
                       <>
-                        <Text style={[solarWeatherStyles.container.title, {fontSize: 15, marginBottom: 10}]}>Vitesse (Km/h)</Text>
+                        <Text style={[solarWeatherStyles.container.title, {fontSize: 15, marginBottom: 10}]}>{i18n.t('solarWeather.solarWinds.speed')}</Text>
                         <LineGraph yMin={100} yMax={1200} data={solarWindData} field={"speed"} lineColor={app_colors.turquoise} leftMargin={55} rightMargin={10}/>
-                        <Text style={[solarWeatherStyles.container.title, {fontSize: 15, marginBottom: 10}]}>Densité (p/cm³)</Text>
+                        <Text style={[solarWeatherStyles.container.title, {fontSize: 15, marginBottom: 10}]}>{i18n.t('solarWeather.solarWinds.density')}</Text>
                         <LineGraph yMin={-4} yMax={100} data={solarWindData} field={"density"} lineColor={app_colors.green} leftMargin={55} rightMargin={10}/>
-                        <Text style={[solarWeatherStyles.container.title, {fontSize: 15, marginBottom: 10}]}>Température (°K)</Text>
+                        <Text style={[solarWeatherStyles.container.title, {fontSize: 15, marginBottom: 10}]}>{i18n.t('solarWeather.solarWinds.temperature')}</Text>
                         <LineGraph shortNumbers yMin={-100000} yMax={600000} data={solarWindData} field={"temperature"} lineColor={app_colors.orange} leftMargin={65} rightMargin={10}/>
                       </>
                     )

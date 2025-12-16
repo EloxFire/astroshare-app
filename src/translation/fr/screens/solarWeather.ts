@@ -20,6 +20,18 @@ export const solarWeatherTranslations = {
     },
     disclaimer: "Données de secours, fonctionnement en mode dégradé"
   },
+  sources: {
+    sdoSoho: "Source : NASA & ESA SOHO (Solar and Heliospheric Observatory)",
+    soho: "Source : NASA / SoHO (Solar and Heliospheric Observatory)",
+    noaa: "Source : NOAA Space Weather Prediction Center",
+    kpNotice: "Les horaires suivantes sont en UTC",
+    kpExplanation: "Ce graphique affiche des tranches de 3 heures. Il est mis à jour toutes les 3 heures.",
+  },
+  solarWinds: {
+    speed: "Vitesse (Km/h)",
+    density: "Densité (p/cm³)",
+    temperature: "Température (°K)",
+  },
   studyZones: {
     HMI_IC: "Soleil en lumière visible",
     AIA_193: "Couronne solaire",
