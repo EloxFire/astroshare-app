@@ -55,6 +55,9 @@ export const planObservationNight = async (params: ObservationPlannerParams): Pr
     let preFilteredDSOs: DSO[] = [];
     if(params.objects.dso){
       preFilteredDSOs = params.dsoCatalog.filter((dso: DSO) => {
+        // Skip asterisms
+        if ((dso.type || '').toLowerCase() === '*ass') return false;
+
         // Magnitude filter
         // If v_mag is a string, skip the object
         if(typeof dso.v_mag === 'string') return false;

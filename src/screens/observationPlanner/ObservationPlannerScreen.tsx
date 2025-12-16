@@ -30,9 +30,8 @@ import InputWithIcon from '../../components/forms/InputWithIcon';
 function ObservationPlannerScreen({navigation}: any) {
   const { currentLocale } = useTranslation();
   const { currentUserLocation } = useSettings();
-  const { selectedSpot, defaultAltitude } = useSpot();
   const { planets } = useSolarSystem();
-  const { starsCatalog, starCatalogLoading } = useStarCatalog();
+  const { starsCatalog } = useStarCatalog();
   const { dsoCatalog } = useDsoCatalog();
 
   const [isPlanning, setIsPlanning] = useState<boolean>(false);
@@ -44,8 +43,8 @@ function ObservationPlannerScreen({navigation}: any) {
   const [startTime, setStartTime] = useState<string>(dayjs().add(1, 'hour').startOf('hour').format('HH:mm'));
   const [showStartPicker, setShowStartPicker] = useState<boolean>(false);
   const [showStartTimePicker, setShowStartTimePicker] = useState<boolean>(false);
-  const [endDate, setEndDate] = useState<Dayjs>(dayjs().add(1, 'hour'));
-  const [endTime, setEndTime] = useState<string>(dayjs().add(2, 'hour').startOf('hour').format('HH:mm'));
+  const [endDate, setEndDate] = useState<Dayjs>(dayjs().add(3, 'hour'));
+  const [endTime, setEndTime] = useState<string>(dayjs().add(3, 'hour').startOf('hour').format('HH:mm'));
   const [showEndDatePicker, setShowEndDatePicker] = useState<boolean>(false);
   const [showEndTimePicker, setShowEndTimePicker] = useState<boolean>(false);
   const [dsoEnabled, setDsoEnabled] = useState<boolean>(true);
@@ -64,26 +63,6 @@ function ObservationPlannerScreen({navigation}: any) {
   const [maxResults, setMaxResults] = useState<number | null>(null);
   const [perObjectObsTime, setPerObjectObsTime] = useState<number | null>(null);
   const [resultsList, setResultsList] = useState<((DSO | GlobalPlanet | Star)[]) | null>(null);
-
-  useEffect(() => {
-    if (!currentUserLocation) return;
-
-    const observer = { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon };
-    const sessionDate = startDate.startOf('day');
-    const sunData = getSunData(sessionDate, observer);
-    const nextDaySunData = getSunData(sessionDate.add(1, 'day'), observer);
-    const sunset = sunData.visibility.sunset;
-    const sunrise = nextDaySunData.visibility.sunrise;
-
-    if (sunset) {
-      setStartTime(sunset.format('HH:mm'));
-    }
-
-    if (sunrise) {
-      setEndDate(sessionDate.add(1, 'day'));
-      setEndTime(sunrise.format('HH:mm'));
-    }
-  }, [currentUserLocation, startDate]);
 
   const checkVisibility = () => {
     // Check if sun is below horizon at the start date/time
@@ -271,13 +250,17 @@ function ObservationPlannerScreen({navigation}: any) {
                       setShowStartTimePicker(false)
                     }
                     if (event.type === 'set' && selectedDate) {
+                      console.log("Setting start time:", selectedDate);
+                      
                       setShowStartTimePicker(false)
                       setStartTime(dayjs(selectedDate).format('HH:mm'))
 
                       // If new start time is after end time on the same day, adjust end time to +3H
                       const startDateTime = startDate.hour(Number(dayjs(selectedDate).format('HH'))).minute(Number(dayjs(selectedDate).format('mm')));
                       const endDateTime = endDate.hour(Number(endTime.split(':')[0])).minute(Number(endTime.split(':')[1]));
-                      if (startDate.isSame(endDate) && startDateTime.isAfter(endDateTime)) {
+                      if (startDate.isSame(endDate, 'day') && startDateTime.isAfter(endDateTime)) {
+                        console.log("Adjusting end time to +3 hours");
+                        
                         const adjustedEndTime = startDateTime.add(3, 'hour');
                         setEndTime(adjustedEndTime.format('HH:mm'));
                       }
@@ -337,9 +320,14 @@ function ObservationPlannerScreen({navigation}: any) {
                       // If new end time is before start time on the same day, adjust start time to -3H
                       const startDateTime = startDate.hour(Number(startTime.split(':')[0])).minute(Number(startTime.split(':')[1]));
                       const endDateTime = endDate.hour(Number(dayjs(selectedDate).format('HH'))).minute(Number(dayjs(selectedDate).format('mm')));
-                      if (endDate.isSame(startDate) && endDateTime.isBefore(startDateTime)) {
-                        const adjustedStartTime = endDateTime.subtract(3, 'hour');
-                        setStartTime(adjustedStartTime.format('HH:mm'));
+                      if (endDate.isSame(startDate, 'day') && endDateTime.isBefore(startDateTime)) {
+                        const adjustedStartDateTime = endDateTime.subtract(3, 'hour');
+                        setStartTime(adjustedStartDateTime.format('HH:mm'));
+
+                        // Keep start date in sync when the 3h shift crosses midnight
+                        if (!adjustedStartDateTime.isSame(startDate, 'day')) {
+                          setStartDate(adjustedStartDateTime.startOf('day'));
+                        }
                       }
                     }
                   }}
