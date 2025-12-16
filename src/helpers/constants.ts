@@ -183,6 +183,14 @@ export const sunVideoSrcWavelengths = {
   'AIA_1600': 'https://sdo.gsfc.nasa.gov/assets/img/latest/mpeg/latest_512_1600.mp4',
 }
 
+export const sunVideoSrcWavelengthsBackup = {
+  'HMI_CONTINUUM': 'https://soho.nascom.nasa.gov/data/LATEST/current_hmiigrsmall.mp4',
+  'EIT_195': 'https://soho.nascom.nasa.gov/data/LATEST/current_eit195small.mp4',
+  'EIT_284': 'https://soho.nascom.nasa.gov/data/LATEST/current_eit284small.mp4',
+  'EIT_171': 'https://soho.nascom.nasa.gov/data/LATEST/current_eit171small.mp4',
+  'EIT_304': 'https://soho.nascom.nasa.gov/data/LATEST/current_eit304small.mp4',
+}
+
 
 export const cmeImageSrc = {
   'C2': 'https://soho.nascom.nasa.gov/data/realtime/c2/512/latest.jpg',

@@ -1,6 +1,10 @@
 export const solarWeatherTranslations = {
   disclaimer: "En raison de problèmes techniques sur le serveur SDO, les images en direct utilisent une source de donnée de secour, fonctionnant en mode dégradé. Les vidéos ne sont pas disponible. Les équipes de la NASA travaillent à la résolution du problème.",
   containers: {
+    ephemerids: {
+      title: "Éphémérides solaires",
+      subtitle: "Position et dimensions apparentes du Soleil"
+    },
     instrument: "Instrument : %{currentImageFilter}",
     emc: "Éjections de Masse Coronale (EMC)",
     sunspots: "Tâches solaires (Régions actives)",
@@ -15,6 +19,18 @@ export const solarWeatherTranslations = {
       video: "Vidéo"
     },
     disclaimer: "Données de secours, fonctionnement en mode dégradé"
+  },
+  sources: {
+    sdoSoho: "Source : NASA & ESA SOHO (Solar and Heliospheric Observatory)",
+    soho: "Source : NASA / SoHO (Solar and Heliospheric Observatory)",
+    noaa: "Source : NOAA Space Weather Prediction Center",
+    kpNotice: "Les horaires suivantes sont en UTC",
+    kpExplanation: "Ce graphique affiche des tranches de 3 heures. Il est mis à jour toutes les 3 heures.",
+  },
+  solarWinds: {
+    speed: "Vitesse (Km/h)",
+    density: "Densité (p/cm³)",
+    temperature: "Température (°K)",
   },
   studyZones: {
     HMI_IC: "Soleil en lumière visible",

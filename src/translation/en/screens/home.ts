@@ -17,8 +17,8 @@ export const homeTranslations = {
   },
   buttons: {
     observationPlanner: {
-      title: "Plan observations",
-      subtitle: "// Prepare your sessions"
+      title: "Plan an observation",
+      subtitle: "// Prepare your session"
     },
     weather: {
       title: "Real-time weather",
@@ -43,6 +43,10 @@ export const homeTranslations = {
     calculations: {
       title: "Calculator",
       subtitle: "// Your astronomical calculator"
+    },
+    clock: {
+      title: "Clock",
+      subtitle: "// All the important time formats!"
     },
     apod: {
       title: "APOD",

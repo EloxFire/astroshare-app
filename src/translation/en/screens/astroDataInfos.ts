@@ -52,5 +52,13 @@ export const astroDataInfosTranslations = {
   eclipses: {
     title: "Solar and Lunar Eclipses",
     text1: "The information on eclipses displayed in the application is calculated using the IMCCE API (Institut de Mécanique Céleste et de Calcul des Éphémérides)",
+  },
+  lightpollution: {
+    title: "Light pollution",
+    text1: "The light pollution data used in the application comes from the global light pollution map \"New World Atlas of Artificial Night Sky Brightness\" produced in 2016 by researchers from Princeton University and Arizona State University.",
+  },
+  observationPlanner: {
+    title: "Observation planner",
+    text1: "The data used for the observation planner comes from the app's custom deep sky object database and from internal astronomical computations powered by the independent tool: Observerly.",
   }
 }

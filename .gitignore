@@ -13,6 +13,9 @@ dist/
 web-build/
 # eas.json
 
+#VSCode
+.vscode/
+
 # Native
 *.orig.*
 *.jks
