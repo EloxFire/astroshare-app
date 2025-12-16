@@ -85,10 +85,19 @@ export const planObservationNight = async (params: ObservationPlannerParams): Pr
       params.date.endTime.toDate()
     ];
 
-    const getTypePriority = (object: DSO | GlobalPlanet | Star): number => {
-      if (!('const' in object) && !('ids' in object)) return 2; // Planets first
-      if ('ids' in object) return 1; // Stars next
-      return 0; // DSOs last
+    const getCategoryPriority = (object: DSO | GlobalPlanet | Star): number => {
+      if (!('const' in object) && !('ids' in object)) return 2; // Planets
+      if ('const' in object) return 1; // DSOs
+      return 0; // Stars
+    };
+
+    const getDsoTypePriority = (object: DSO | GlobalPlanet | Star): number => {
+      if (!('const' in object)) return -1;
+      const type = object.type.toLowerCase();
+      if (type.includes('galaxy') || type.includes('nebula')) return 3;
+      if (type.includes('globular')) return 2;
+      if (type.includes('open cluster')) return 1;
+      return 0;
     };
 
     const getMagnitude = (object: DSO | GlobalPlanet | Star): number | null => {
@@ -101,7 +110,7 @@ export const planObservationNight = async (params: ObservationPlannerParams): Pr
       return getPlanetMagnitude(object.name);
     };
 
-    const visibleObjects = new Map<DSO | GlobalPlanet | Star, { count: number; maxAlt: number; magnitude: number | null; typePriority: number }>();
+    const visibleObjects = new Map<DSO | GlobalPlanet | Star, { count: number; maxAlt: number; magnitude: number | null; categoryPriority: number; dsoTypePriority: number }>();
     const addVisibility = (object: DSO | GlobalPlanet | Star, coords: EquatorialCoordinate) => {
       if (!Number.isFinite(coords.ra) || !Number.isFinite(coords.dec)) return;
 
@@ -120,7 +129,8 @@ export const planObservationNight = async (params: ObservationPlannerParams): Pr
           count: visibilityCount,
           maxAlt: peakAltitude,
           magnitude: getMagnitude(object),
-          typePriority: getTypePriority(object)
+          categoryPriority: getCategoryPriority(object),
+          dsoTypePriority: getDsoTypePriority(object)
         });
       }
     };
@@ -151,7 +161,10 @@ export const planObservationNight = async (params: ObservationPlannerParams): Pr
     const sortedVisibleObjects = Array.from(visibleObjects.entries()).sort((a, b) => {
       const infoA = a[1];
       const infoB = b[1];
-      if (infoA.typePriority !== infoB.typePriority) return infoB.typePriority - infoA.typePriority;
+      if (infoA.categoryPriority !== infoB.categoryPriority) return infoB.categoryPriority - infoA.categoryPriority;
+      if (infoA.categoryPriority === 1 && infoB.categoryPriority === 1 && infoA.dsoTypePriority !== infoB.dsoTypePriority) {
+        return infoB.dsoTypePriority - infoA.dsoTypePriority;
+      }
       if (infoA.count !== infoB.count) return infoB.count - infoA.count;
       if (infoA.maxAlt !== infoB.maxAlt) return infoB.maxAlt - infoA.maxAlt;
       const magA = infoA.magnitude ?? Number.POSITIVE_INFINITY;
@@ -168,11 +181,7 @@ export const planObservationNight = async (params: ObservationPlannerParams): Pr
 
   } catch (error) {
     console.log(`[planObservationNight] Erreur lors de la planification de la nuit d'observation : ${error}`);
-    
   }
 
-  // TODO : Need results prioritization : Planets > DSOs > Stars.
-  // Within each category, sort by visibility duration, then by maximum altitude, then by magnitude.
-  // Within DSOs, prioritize by type Galaxies = Nebulaes > Globular Clusters > Open Clusters.
   return RESULTS_CATALOG;
 };

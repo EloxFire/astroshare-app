@@ -446,6 +446,34 @@ function ObservationPlannerScreen({navigation}: any) {
                     <ObservationPlannerObjectCard key={index} object={obj} navigation={navigation} />
                   ))
                 }
+
+                <View style={{marginTop: 10, gap: 10}}>
+                  <SimpleButton
+                    icon={require('../../../assets/icons/FiSearch.png')}
+                    text="Relancer la recherche"
+                    onPress={() => checkVisibility()}
+                    backgroundColor={app_colors.white}
+                    textColor={app_colors.black}
+                    iconColor={app_colors.black}
+                    fullWidth
+                    loading={isPlanning}
+                    align='center'
+                    textAdditionalStyles={{fontFamily: 'GilroyBlack'}}
+                  />
+
+                  <SimpleButton
+                    icon={require('../../../assets/icons/FiTrash.png')}
+                    text="Supprimer la recherche"
+                    onPress={() => setResultsList(null)}
+                    backgroundColor={app_colors.red_eighty}
+                    textColor={app_colors.white}
+                    iconColor={app_colors.white}
+                    fullWidth
+                    loading={isPlanning}
+                    align='center'
+                    textAdditionalStyles={{fontFamily: 'GilroyBlack'}}
+                  />
+                </View>
               </View>
             )
           }

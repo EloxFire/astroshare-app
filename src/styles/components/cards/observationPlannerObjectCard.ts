@@ -22,6 +22,14 @@ export const observationPlannerObjectCardStyles = {
       resizeMode: 'contain' as 'contain',
     },
 
+    expandArrow: {
+      width: 20,
+      height: 20,
+      resizeMode: 'contain' as 'contain',
+      marginLeft: 'auto' as 'auto',
+      tintColor: app_colors.white_sixty,
+    },
+
     primaryInfos: {
       title: {
         color: app_colors.white,
