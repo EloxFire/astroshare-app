@@ -24,6 +24,8 @@ import HomeSearchModule from '../components/forms/HomeSearchModule';
 import HomeWidgetDisplay from '../components/widgets/HomeWidgetDisplay';
 import NewsBannerHandler from "../components/banners/NewsBannerHandler";
 import AppUpdateModal from '../components/modals/AppUpdateModal';
+import { useDsoCatalog } from '../contexts/DSOContext';
+import { useStarCatalog } from '../contexts/StarsContext';
 
 export default function Home({ navigation }: any) {
   const { hasInternetConnection, currentUserLocation } = useSettings()
@@ -31,6 +33,8 @@ export default function Home({ navigation }: any) {
   const { currentUser } = useAuth()
   const { currentLocale } = useTranslation()
   const { homeNewsBannerVisible } = useSettings()
+  const { dsoCatalogLoading } = useDsoCatalog();
+  const { starsCatalogLoading } = useStarCatalog();
 
   const [pushToken, setPushToken] = React.useState<string | null>(null)
   const [appUpdateModalVisible, setAppUpdateModalVisible] = useState(false);
@@ -84,7 +88,7 @@ export default function Home({ navigation }: any) {
           <Text style={globalStyles.sections.title}>{i18n.t('home.tools.title')}</Text>
           <Text style={globalStyles.sections.subtitle}>{i18n.t('home.tools.subtitle')}</Text>
           <View style={homeStyles.toolsSuggestions.buttons}>
-            <BigButton disabled={!hasInternetConnection || !currentUserLocation} navigation={navigation} targetScreen={routes.observationPlanner.path} text={i18n.t('home.buttons.observationPlanner.title')} subtitle={i18n.t('home.buttons.observationPlanner.subtitle')} icon={require('../../assets/icons/FiCalendar.png')} />
+            <BigButton disabled={!hasInternetConnection || !currentUserLocation || dsoCatalogLoading || starsCatalogLoading} navigation={navigation} targetScreen={routes.observationPlanner.path} text={i18n.t('home.buttons.observationPlanner.title')} subtitle={i18n.t('home.buttons.observationPlanner.subtitle')} icon={require('../../assets/icons/FiCalendar.png')} />
             <BigButton disabled={!hasInternetConnection || !currentUserLocation} navigation={navigation} targetScreen={routes.weather.path} text={i18n.t('home.buttons.weather.title')} subtitle={i18n.t('home.buttons.weather.subtitle')} icon={require('../../assets/icons/FiSun.png')} />
             <BigButton disabled={!hasInternetConnection || !currentUserLocation} navigation={navigation} targetScreen={routes.moonPhases.path} text={i18n.t('home.buttons.moon_phases.title')} subtitle={i18n.t('home.buttons.moon_phases.subtitle')} icon={require('../../assets/icons/FiMoon.png')} />
             <BigButton disabled={!hasInternetConnection} navigation={navigation} targetScreen={routes.solarWeather.path} text={i18n.t('home.buttons.solar_weather.title')} subtitle={i18n.t('home.buttons.solar_weather.subtitle')} icon={require('../../assets/icons/SolarWind.png')} />
