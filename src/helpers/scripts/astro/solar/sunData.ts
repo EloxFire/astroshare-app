@@ -107,7 +107,7 @@ export const getSunData = (date: Dayjs, observer: GeographicCoordinate): Compute
       angularDiameter: angularSize,
       distance: distance,
       constellation: localizedConstellationName,
-      icon: require('../../../../../assets/icons/FiSun.png')
+      icon: require('../../../../../assets/icons/astro/planets/color/SUN.png')
     },
     visibility: {
       isCurrentlyVisible: isCurrentlyVisible,

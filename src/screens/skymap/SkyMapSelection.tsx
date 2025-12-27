@@ -56,7 +56,7 @@ export default function SkyMapSelection({ navigation }: any) {
             onPress={() => navigation.navigate(routes.skymaps.flatmap.path)}
           />
           <ToolButton
-            disabled={true}
+            disabled={false}
             text={i18n.t('skymap.buttons.planetarium.title')}
             subtitle={i18n.t('skymap.buttons.planetarium.subtitle')}
             image={require('../../../assets/images/tools/skymap.png')}

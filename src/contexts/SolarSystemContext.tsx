@@ -2,6 +2,8 @@ import React, { ReactNode, createContext, useContext, useEffect, useState } from
 import { useSettings } from './AppSettingsContext'
 import { convertEquatorialToHorizontal, earth, EclipticCoordinate, EquatorialCoordinate, getLunarEquatorialCoordinate, getLunarPhase, getPlanetaryPositions, HorizontalCoordinate, Planet } from '@observerly/astrometry'
 import { GlobalPlanet } from '../helpers/types/GlobalPlanet'
+import { astroshareApi } from '../helpers/api'
+import dayjs from 'dayjs'
 
 const SolarSystemContext = createContext<any>({})
 
@@ -44,12 +46,15 @@ export function SolarSystemProvider({ children }: SolarSystemProviderProps) {
     // console.log(JSON.stringify(getPlanetaryPositions(new Date(), { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }), null, 2))
   }
 
-  const getMoon = () => {
+  const getMoon = async () => {
     if (!currentUserLocation) return;
 
     const eqCoords = getLunarEquatorialCoordinate(new Date())
     const horizontalCoords = convertEquatorialToHorizontal(new Date(), { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }, { ra: eqCoords.ra, dec: eqCoords.dec })
     const phase = getLunarPhase(new Date())
+
+    const response = await astroshareApi.get('/moon/illustration?date=' + dayjs().format('YYYY-MM-DD'))
+    const moonImage = response.data.url
 
 
     const moonCoords = {
@@ -57,7 +62,8 @@ export function SolarSystemProvider({ children }: SolarSystemProviderProps) {
       dec: eqCoords.dec,
       alt: horizontalCoords.alt,
       az: horizontalCoords.az,
-      phase: phase
+      phase: phase,
+      currentIconUrl: moonImage
     }
 
     setMoonCoords(moonCoords)

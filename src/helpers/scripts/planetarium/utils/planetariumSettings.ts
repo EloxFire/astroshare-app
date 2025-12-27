@@ -17,6 +17,7 @@ export const meshGroupsNames = {
   background: 'background',
   stars: 'stars',
   planets: 'planets',
+  sun: 'sun',
   moon: 'moon',
   dso: 'dso',
   constellations: 'constellations',
@@ -30,6 +31,5 @@ export const meshGroupsNames = {
     stars: 'starLabels',
     planets: 'planetLabels',
     dso: 'dsoLabels',
-    moon: 'moonLabels',
   }
 }

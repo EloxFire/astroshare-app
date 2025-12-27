@@ -58,13 +58,21 @@ export const onShowAtmosphere = (scene: THREE.Scene) => {
 
 export const onShowPlanets = (scene: THREE.Scene) => {
   console.log('[Planetarium] Toggling planets...');
-  const planets = scene.getObjectByName(meshGroupsNames.planets);
-  if (planets) {
-    const currentStatus = planets.visible
-    planets.visible = !currentStatus;
-  } else {
-    console.warn('Planets not found in the scene.');
-  }
+  const targets = [
+    meshGroupsNames.planets,
+    meshGroupsNames.moon,
+    meshGroupsNames.sun,
+  ];
+
+  targets.forEach((name) => {
+    const object = scene.getObjectByName(name);
+    if (object) {
+      const currentStatus = object.visible;
+      object.visible = !currentStatus;
+    } else {
+      console.warn(`${name} not found in the scene.`);
+    }
+  });
 }
 
 export const onShowMoon = (scene: THREE.Scene) => {

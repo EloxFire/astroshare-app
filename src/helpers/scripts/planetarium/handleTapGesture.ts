@@ -39,7 +39,7 @@ export const handleTapStart = (
     return;
   }
 
-  const priority = ["planet", "star", "dso"];
+  const priority = ["planet", "sun", "moon", "star", "dso"];
   for (const type of priority) {
     const target = intersects.find((i) => i.object.userData?.type === type);
     if (!target || !target.object.userData?.onTap) continue;
@@ -53,6 +53,9 @@ export const handleTapStart = (
       target.object.userData.onTap(target.object.userData.index);
     } else if (type === "planet") {
       console.log(`[handleTap] Taping Planet : ${target.object.userData.name}`);
+      target.object.userData.onTap();
+    } else if (type === "sun" || type === "moon") {
+      console.log(`[handleTap] Taping ${type}`);
       target.object.userData.onTap();
     }
 
@@ -81,7 +84,7 @@ export const handleTapStart = (
       selectionCircleObject.scale.set(1, 1, 1);
       selectionCircleObject.lookAt(camera.position);
       selectionCircleObject.visible = true;
-    } else if (type === "planet") {
+    } else if (type === "planet" || type === "sun") {
       target.object.getWorldPosition(point);
 
       selectionCircleObject.position.copy(point);

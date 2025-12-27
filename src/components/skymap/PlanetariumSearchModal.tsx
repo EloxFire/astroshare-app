@@ -11,6 +11,8 @@ import CelestialBodyCardLite from "../cards/CelestialBodyCardLite";
 import InputWithIcon from "../forms/InputWithIcon";
 import ScreenInfo from "../ScreenInfo";
 import SimpleButton from "../commons/buttons/SimpleButton";
+import {useStarCatalog} from "../../contexts/StarsContext";
+import {useDsoCatalog} from "../../contexts/DSOContext";
 
 interface PlanetariumSearchModalProps {
   onClose: () => void;
@@ -20,15 +22,22 @@ interface PlanetariumSearchModalProps {
 export default function PlanetariumSearchModal({ onClose, navigation }: PlanetariumSearchModalProps) {
 
   const {planets} = useSolarSystem()
+  const {starsCatalog} = useStarCatalog();
+  const {dsoCatalog} = useDsoCatalog();
 
   const [loading, setLoading] = useState<boolean>(false);
   const [searchString, setSearchString] = useState<string>('');
   const [data, setData] = useState<(DSO | GlobalPlanet | Star)[]>([])
 
   const handleSearch = async () => {
+    if (!searchString.trim()) {
+      setData([]);
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     console.log("Searching for:", searchString);
-    const {planetResults, starsResults, dsoResults} = await universalObjectSearch(searchString, planets)
+    const {planetResults, starsResults, dsoResults} = await universalObjectSearch(searchString, planets, starsCatalog, dsoCatalog)
 
     const mergedResults: (DSO | GlobalPlanet | Star)[] = [...planetResults, ...dsoResults, ...starsResults]
     setData(mergedResults)

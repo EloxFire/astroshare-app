@@ -95,44 +95,6 @@ export function createStars(starsCatalog: Star[], setUiInfos: React.Dispatch<any
       }
     }
   };
-
-
-  // const starLabels: THREE.Object3D[] = [];
-  //
-  // for (let i = 0; i < starCount; i++) {
-  //   const star = starsCatalog[i];
-  //
-  //   if (star.V >= 2) continue;
-  //
-  //   const { x, y, z } = convertSphericalToCartesian(10, star.ra, star.dec);
-  //
-  //   const canvas = document.createElement('canvas');
-  //   canvas.width = 256;
-  //   canvas.height = 64;
-  //   const context = canvas.getContext('2d')!;
-  //   context.fillStyle = 'red';
-  //   context.font = '24px sans-serif';
-  //   context.textAlign = 'center';
-  //   context.fillText(getBrightStarName(star.ids), canvas.width / 2, canvas.height / 2 + 8);
-  //
-  //   const texture = new THREE.CanvasTexture(canvas);
-  //   const material = new THREE.SpriteMaterial({ map: texture, transparent: true });
-  //   const sprite = new THREE.Sprite(material);
-  //   sprite.scale.set(2, 0.5, 1); // adapte à ta scène
-  //
-  //   // Position juste sous l’étoile (y - offset)
-  //   sprite.position.set(x, y - 0.5, z);
-  //
-  //   starLabels.push(sprite);
-  //   console.log(`[GLView] Star label created: ${getBrightStarName(star.ids)}`);
-  // }
-  //
-  //
-  // const group = new THREE.Group();
-  // group.add(starsCloud);
-  // starLabels.forEach(label => group.add(label));
-  // console.log("[GLView] Stars created");
-  // return group;
   starsCloud.name = meshGroupsNames.stars;
 
   console.log("[GLView] Stars created");

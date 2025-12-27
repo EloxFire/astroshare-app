@@ -220,7 +220,7 @@ export default function PlanetariumUI({ navigation, infos, onShowGround, onShowC
                   <View style={{width: '100%', marginTop: 20}}>
                     <DSOValues title={i18n.t('detailsPages.dso.labels.rightAscension')} value={typeof(objectInfos.base.ra) === 'number' ? convertDegreesRaToHMS(objectInfos.base.ra) : prettyRa(objectInfos.base.ra)}/>
                     <DSOValues title={i18n.t('detailsPages.dso.labels.declination')} value={typeof(objectInfos.base.dec) === 'number' ? convertDegreesDecToDMS(objectInfos.base.dec) : prettyDec(objectInfos.base.dec)}/>
-                    <DSOValues title={i18n.t('detailsPages.dso.labels.magnitude')} value={objectInfos.base.mag}/>
+                    <DSOValues title={i18n.t('detailsPages.dso.labels.magnitude')} value={objectInfos.base.v_mag}/>
 
                     {
                       objectInfos.dsoAdditionalInfos && (

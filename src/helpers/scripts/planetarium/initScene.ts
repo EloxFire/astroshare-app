@@ -21,6 +21,9 @@ import {createAzimuthalGrid} from "./createAzimutalGrid";
 import {getGlobePosition} from "./utils/getGlobePosition";
 import {hex_colors} from "../../constants";
 import {meshGroupsNames} from "./utils/planetariumSettings";
+import {createSun} from "./createSun";
+import {ComputedSunInfos} from "../../types/objects/ComputedSunInfos";
+import {DSO} from "../../types/DSO";
 
 export const initScene = (
   gl: ExpoWebGLRenderingContext,
@@ -28,6 +31,8 @@ export const initScene = (
   starsCatalog: Star[],
   planetList: GlobalPlanet[],
   moonCoords: (EquatorialCoordinate & HorizontalCoordinate & { phase: string }),
+  getDsoCatalog: () => DSO[],
+  sunData: ComputedSunInfos,
   setObjectInfos: React.Dispatch<any>,
   currentLocale: string,
   observer: GeographicCoordinate
@@ -79,8 +84,9 @@ export const initScene = (
 
   const stars = createStars(starsCatalog, setObjectInfos)
   const planets = createPlanets(planetList, setObjectInfos)
-  const moon = createMoon(moonCoords, setObjectInfos, groundTotalQuaternion, camera)
-  const dso = createDSO(setObjectInfos);
+  const moon = createMoon(moonCoords, setObjectInfos)
+  const sun = createSun(sunData, setObjectInfos)
+  const dso = createDSO(getDsoCatalog, setObjectInfos);
   const {eqGrid1, eqGrid2, eqGrid3} = createEquatorialGrid(hex_colors.blue, .5);
   const {azGrid1, azGrid2, azGrid3} = createAzimuthalGrid(hex_colors.violet, .5);
 
@@ -104,7 +110,7 @@ export const initScene = (
   const initialEuler = new THREE.Euler().setFromQuaternion(groundTotalQuaternion, 'YXZ');
   setInitialAngles(initialEuler.y, initialEuler.x);
 
-  scene.add(selectionCircle, eqGrid, azGrid, ground, background, atmosphere, stars, planets, moon, light, dso, constellations);
+  scene.add(selectionCircle, eqGrid, azGrid, ground, background, atmosphere, stars, planets, moon, sun, light, dso, constellations);
 
 
   console.log("[GLView] Scene initialized")
