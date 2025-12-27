@@ -42,7 +42,7 @@ export const initScene = (
   renderer: ExpoTHREE.Renderer,
   ground: THREE.Mesh,
   atmosphere: THREE.Mesh,
-  selectionCircle: THREE.Line,
+  selectionCircle: THREE.Object3D,
   grids: {
     eqGrid: THREE.Group,
     azGrid: THREE.Group,

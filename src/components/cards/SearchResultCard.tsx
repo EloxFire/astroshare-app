@@ -91,7 +91,7 @@ export default function SearchResultCard({ object, navigation }: SearchResultCar
               }
             </View>
             <View style={searchResultCardStyles.card.body}>
-              <DSOValues small title={i18n.t('detailsPages.dso.labels.magnitude')} value={objectInfos.base.mag} />
+              <DSOValues small title={i18n.t('detailsPages.dso.labels.magnitude')} value={objectInfos.base.v_mag} />
               <DSOValues small title={i18n.t('detailsPages.dso.labels.constellation')} value={objectInfos.base.constellation} />
               {
                 objectInfos.base.family === 'Planet' ? (

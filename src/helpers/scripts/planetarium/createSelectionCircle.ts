@@ -2,30 +2,38 @@ import * as THREE from 'three';
 import {planetariumRenderOrders} from "./utils/planetariumSettings";
 
 /**
- * Crée un cercle de sélection visible autour d’un objet cliqué.
- * Utilise RingGeometry pour éviter le remplissage central.
- * @param radius Rayon initial (sera redimensionné dynamiquement)
- * @param color Couleur du cercle (par défaut rouge)
- * @returns Un objet THREE.Line prêt à ajouter à la scène
+ * Selection marker with ring + crosshair style.
  */
-export function createSelectionCircle(radius: number = 1, color: number = 0xff0000): THREE.Line {
-  // Utilise RingGeometry pour faire uniquement un contour de cercle
-  const ringGeometry = new THREE.RingGeometry(radius * 0.98, radius, 64);
-
-  // Transforme les triangles en contour de ligne
-  const edgeGeometry = new THREE.EdgesGeometry(ringGeometry);
-
+export function createSelectionCircle(radius: number = 1, color: number = 0xff0000): THREE.Group {
   const material = new THREE.LineBasicMaterial({
     color,
     transparent: true,
-    opacity: 0.9,
+    opacity: 0.95,
     depthTest: false,
   });
 
-  const circle = new THREE.LineSegments(edgeGeometry, material);
-  circle.visible = false;
+  const ringGeometry = new THREE.RingGeometry(radius * 0.9, radius, 64);
+  const edgeGeometry = new THREE.EdgesGeometry(ringGeometry);
+  const ring = new THREE.LineSegments(edgeGeometry, material);
+  ring.renderOrder = planetariumRenderOrders.selectionCircle;
 
-  circle.renderOrder = planetariumRenderOrders.selectionCircle;
+  const crosshairGeom = new THREE.BufferGeometry();
+  const lenOuter = 1.1;
+  const lenInner = 0.35;
+  const vertices = new Float32Array([
+    -lenOuter, 0, 0, -lenInner, 0, 0,
+     lenOuter, 0, 0,  lenInner, 0, 0,
+    0, -lenOuter, 0, 0, -lenInner, 0,
+    0,  lenOuter, 0, 0,  lenInner, 0,
+  ]);
+  crosshairGeom.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
+  const crosshair = new THREE.LineSegments(crosshairGeom, material);
+  crosshair.renderOrder = planetariumRenderOrders.selectionCircle;
 
-  return circle;
+  const group = new THREE.Group();
+  group.add(ring, crosshair);
+  group.visible = false;
+  group.userData.baseScale = { x: 1, y: 1, z: 1 };
+
+  return group;
 }

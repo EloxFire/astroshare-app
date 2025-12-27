@@ -30,9 +30,10 @@ interface PlanetariumUIProps {
   onShowPlanets: () => void;
   onShowDSO: () => void;
   onCenterObject: () => void;
+  onSelectObject: (obj: DSO | GlobalPlanet | Star) => void;
 }
 
-export default function PlanetariumUI({ navigation, infos, onShowGround, onShowConstellations, onShowAzGrid, onShowEqGrid, onShowDSO, onShowPlanets, onCenterObject }: PlanetariumUIProps) {
+export default function PlanetariumUI({ navigation, infos, onShowGround, onShowConstellations, onShowAzGrid, onShowEqGrid, onShowDSO, onShowPlanets, onCenterObject, onSelectObject }: PlanetariumUIProps) {
 
   const {currentUserLocation} = useSettings();
   const {currentLocale} = useTranslation();
@@ -101,6 +102,7 @@ export default function PlanetariumUI({ navigation, infos, onShowGround, onShowC
         showSearchBar && (
           <PlanetariumSearchModal
             onClose={() => setShowSearchBar(false)}
+            onSelect={(obj) => onSelectObject(obj)}
             navigation={navigation}
           />
         )

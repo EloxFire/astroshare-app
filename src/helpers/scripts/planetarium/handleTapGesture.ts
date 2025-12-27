@@ -9,7 +9,7 @@ export const handleTapStart = (
   event: GestureStateChangeEvent<TapGestureHandlerEventPayload>,
   sceneRef: React.MutableRefObject<THREE.Scene | null>,
   cameraRef: React.MutableRefObject<THREE.PerspectiveCamera | null>,
-  selectionCircle: React.MutableRefObject<THREE.Line | null>,
+  selectionCircle: React.MutableRefObject<THREE.Object3D | null>,
   setObjectInfos: React.Dispatch<any>
 ) => {
   console.log("[GLView] Tap gesture started");
@@ -19,6 +19,11 @@ export const handleTapStart = (
   const selectionCircleObject = selectionCircle.current!;
 
   if (!camera || !scene) return;
+
+  const setSelectionScale = (x: number, y: number, z: number) => {
+    selectionCircleObject.scale.set(x, y, z);
+    selectionCircleObject.userData.baseScale = { x, y, z };
+  };
 
   const raycaster = new THREE.Raycaster();
   raycaster.near = 9;
@@ -73,7 +78,7 @@ export const handleTapStart = (
       target.object.localToWorld(point);
 
       selectionCircleObject.position.copy(point);
-      selectionCircleObject.scale.set(0.200, 0.200, 0.200);
+      setSelectionScale(0.200, 0.200, 0.200);
       selectionCircleObject.lookAt(camera.position);
       selectionCircleObject.visible = true;
 
@@ -81,14 +86,14 @@ export const handleTapStart = (
       target.object.getWorldPosition(point);
 
       selectionCircleObject.position.copy(point);
-      selectionCircleObject.scale.set(1, 1, 1);
+      setSelectionScale(1, 1, 1);
       selectionCircleObject.lookAt(camera.position);
       selectionCircleObject.visible = true;
     } else if (type === "planet" || type === "sun") {
       target.object.getWorldPosition(point);
 
       selectionCircleObject.position.copy(point);
-      selectionCircleObject.scale.set(1, 1, 1);
+      setSelectionScale(1, 1, 1);
       selectionCircleObject.lookAt(camera.position);
       selectionCircleObject.visible = true;
 
@@ -109,7 +114,7 @@ export const handleTapStart = (
 
         // Mise à jour du cercle
         selectionCircleObject.position.copy(center);
-        selectionCircleObject.scale.set(majorAxis, minorAxis, 1);
+        setSelectionScale(majorAxis, minorAxis, 1);
         selectionCircleObject.lookAt(camera.position);
         selectionCircleObject.visible = true;
       } else {
