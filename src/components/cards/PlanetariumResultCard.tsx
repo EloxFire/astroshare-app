@@ -22,6 +22,8 @@ import { eventTypes } from '../../helpers/constants/analytics';
 import { i18n } from '../../helpers/scripts/i18n';
 import { searchResultCardStyles } from '../../styles/components/searchResultCard';
 import DSOValues from '../commons/DSOValues';
+import { objectCardLiteStyles } from '../../styles/components/cards/objectCardLite';
+import { getWindDir } from '../../helpers/scripts/getWindDir';
 
 interface PlanetariumResultCardProps {
   object: Star | DSO | GlobalPlanet
@@ -48,70 +50,66 @@ export default function PlanetariumResultCard({ object, onPress, navigation }: P
     onPress()
   }
 
-  const renderNeededEphemeris = (): ReactNode => {
-    if (!objectInfos) return null;
-
-    if(objectInfos.visibilityInfos.isCircumpolar) {
-      return i18n.t('common.visibility.circumpolar')
-    }
-
-    if(!objectInfos.visibilityInfos.isVisibleThisNight) {
-      return i18n.t('common.visibility.notVisible')
-    }
-
-    return (
-      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
-        <Image style={{width: 10, height: 10}} source={require('../../../assets/icons/FiSunrise.png')} />
-        <Text style={{ color: app_colors.white, fontFamily: 'GiloryRegular', fontSize: 12 }}>{objectInfos.visibilityInfos.objectNextRise?.format('HH:mm')}</Text>
-        <Image style={{width: 10, height: 10, marginLeft: 10}} source={require('../../../assets/icons/FiSunset.png')} />
-        <Text style={{ color: app_colors.white, fontFamily: 'GiloryRegular', fontSize: 12 }}>{objectInfos.visibilityInfos.objectNextSet?.format('HH:mm')}</Text>
-      </View>
-    )
-  }
-
 
   return (
     <TouchableOpacity onPress={handleClickCard}>
-      <View style={searchResultCardStyles.card}>
+      <View style={objectCardLiteStyles.card}>
       {
         objectInfos ? (
           <>
-            <View style={searchResultCardStyles.card.header}>
-              <View>
-                <Text style={searchResultCardStyles.card.header.title}>{objectInfos.base.name}</Text>
-                <Text style={searchResultCardStyles.card.header.subtitle}>{objectInfos.base.otherName}</Text>
-              </View>
+            <Image source={getObjectIcon(object)} style={objectCardLiteStyles.card.icon} />
+            <View style={objectCardLiteStyles.card.data}>
               {
-                objectInfos.base.family === 'Planet' && (
-                  <Image style={searchResultCardStyles.card.image} source={astroImages[objectInfos?.base.name.toUpperCase()]} />
-                ) 
-              } 
-              {
-                objectInfos.base.family === 'DSO' && (
-                  <Image style={searchResultCardStyles.card.image} source={astroImages[objectInfos.base.rawType.toUpperCase()]} />
-                )
-              }
-              {
-                objectInfos.base.family === 'Star' && (
-                  <Image style={searchResultCardStyles.card.image} source={astroImages['BRIGHTSTAR']} />
-                )
-              }
-            </View>
-            <View style={searchResultCardStyles.card.body}>
-              <DSOValues small title={i18n.t('detailsPages.dso.labels.magnitude')} value={objectInfos.base.v_mag} />
-              <DSOValues small title={i18n.t('detailsPages.dso.labels.constellation')} value={objectInfos.base.constellation} />
-              {
-                objectInfos.base.family === 'Planet' ? (
-                  <DSOValues small title={i18n.t('detailsPages.planets.labels.distanceSun')} value={objectInfos.planetAdditionalInfos?.distanceToSun} />
+                objectInfos?.base.otherName ? (
+                  <View style={[objectCardLiteStyles.card.header, {flexDirection: 'row', alignItems: 'center', gap: 5}]}>
+                    <Text style={objectCardLiteStyles.card.data.title}>{objectInfos?.base.otherName || ''}</Text>
+                    <Text style={objectCardLiteStyles.card.data.subtitle}>({getObjectName(object, 'all', false)})</Text>
+                  </View>
                 ) : (
-                  <DSOValues small title={i18n.t('detailsPages.dso.labels.type')} value={objectInfos.base.type} />
+                  <View style={[objectCardLiteStyles.card.header, {flexDirection: 'row', gap: 5}]}>
+                    <Text style={objectCardLiteStyles.card.data.title}>{objectInfos?.base.name}</Text>
+                  </View>
                 )
               }
-              <DSOValues small title={i18n.t('common.visibility.title')} value={renderNeededEphemeris()} />
-            </View>
-            <View style={searchResultCardStyles.card.footer}>
-              <Text style={[searchResultCardStyles.card.footer.chip, { backgroundColor: objectInfos.visibilityInfos.isCurrentlyVisible ? app_colors.green_eighty : app_colors.red_eighty }]}>{objectInfos.visibilityInfos.isCurrentlyVisible ? i18n.t('common.visibility.visible') : i18n.t('common.visibility.notVisible')}</Text>
-              <Text style={[searchResultCardStyles.card.footer.chip, { backgroundColor: app_colors.white_forty, color: app_colors.white }]}>{i18n.t('common.other.more')}</Text>
+              {
+                objectInfos && (
+                  <View style={objectCardLiteStyles.card.data.badges}>
+                    <SimpleBadge
+                      text={objectInfos.visibilityInfos.visibilityLabel}
+                      icon={objectInfos.visibilityInfos.visibilityIcon}
+                      backgroundColor={objectInfos.visibilityInfos.visibilityBackgroundColor}
+                      foregroundColor={objectInfos.visibilityInfos.visibilityForegroundColor}
+                      noBorder
+                      small
+                    />
+                    {
+                      getObjectFamily(object) === 'DSO' && (object as DSO).m !== "" && (
+                        <SimpleBadge
+                          text={((object) as DSO).const}
+                          icon={astroImages['CONSTELLATION']}
+                          iconColor={app_colors.white}
+                          small
+                        />
+                      )
+                    }
+                    {
+                      objectInfos && (
+                        <>
+                          <SimpleBadge
+                            text={objectInfos.base.alt}
+                            icon={require('../../../assets/icons/FiAngleRight.png')}
+                          />
+                          <SimpleBadge
+                            text={getWindDir(parseFloat(objectInfos.base.az))}
+                            icon={require('../../../assets/icons/FiCompass.png')}
+                          />
+                        </>
+      
+                      )
+                    }
+                  </View>
+                )
+              }
             </View>
           </>
         ) : (

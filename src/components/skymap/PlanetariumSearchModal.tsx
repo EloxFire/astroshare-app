@@ -121,7 +121,6 @@ export default function PlanetariumSearchModal({ onClose, navigation, onSelect }
           <FlatList
             ref={resultsFlatListRef}
             scrollEnabled={data.length > 1}
-            horizontal
             data={data}
             ListEmptyComponent={<View></View>}
             renderItem={({ item }) => (

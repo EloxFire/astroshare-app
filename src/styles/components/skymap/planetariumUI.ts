@@ -60,7 +60,7 @@ export const planetariumUIStyles = {
 
     uiButton: {
       position: 'absolute' as 'absolute',
-      top: StatusBar.currentHeight! + 10,
+      top: StatusBar.currentHeight!,
       right: 10,
       display: 'flex' as 'flex',
       flexDirection: 'row' as 'row',
@@ -92,7 +92,7 @@ export const planetariumUIStyles = {
       },
 
       search: {
-        top: StatusBar.currentHeight! + DEFAULT_UI_BUTTON_SIZE + DEFAULT_UI_BUTTON_PADDING + DEFAULT_UI_BUTTON_GAP,
+        top: StatusBar.currentHeight! + DEFAULT_UI_BUTTON_SIZE + DEFAULT_UI_BUTTON_GAP,
       }
     },
 
