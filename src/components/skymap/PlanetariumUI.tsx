@@ -31,9 +31,10 @@ interface PlanetariumUIProps {
   onShowDSO: () => void;
   onCenterObject: () => void;
   onSelectObject: (obj: DSO | GlobalPlanet | Star) => void;
+  onShowAtmosphere?: () => void;
 }
 
-export default function PlanetariumUI({ navigation, infos, onShowGround, onShowConstellations, onShowAzGrid, onShowEqGrid, onShowDSO, onShowPlanets, onCenterObject, onSelectObject }: PlanetariumUIProps) {
+export default function PlanetariumUI({ navigation, infos, onShowGround, onShowConstellations, onShowAzGrid, onShowEqGrid, onShowDSO, onShowPlanets, onCenterObject, onSelectObject, onShowAtmosphere }: PlanetariumUIProps) {
 
   const {currentUserLocation} = useSettings();
   const {currentLocale} = useTranslation();
@@ -135,6 +136,12 @@ export default function PlanetariumUI({ navigation, infos, onShowGround, onShowC
               <Image style={planetariumUIStyles.container.layersModal.button.icon} source={require('../../../assets/icons/FiMountain.png')} />
               <Text style={planetariumUIStyles.container.layersModal.button.text}>Terrain</Text>
             </TouchableOpacity>
+            {onShowAtmosphere && (
+              <TouchableOpacity style={planetariumUIStyles.container.layersModal.button} onPress={() => onShowAtmosphere()}>
+                <Image style={planetariumUIStyles.container.layersModal.button.icon} source={require('../../../assets/icons/FiCloud.png')} />
+                <Text style={planetariumUIStyles.container.layersModal.button.text}>Atmosphère</Text>
+              </TouchableOpacity>
+            )}
           </View>
         )
       }

@@ -19,7 +19,8 @@ export function createStars(starsCatalog: Star[], setUiInfos: React.Dispatch<any
   const starCount = starsCatalog.length;
   const positions = new Float32Array(starCount * 3);
   const sizes = new Float32Array(starCount);
-  const colors = new Float32Array(starCount * 4);
+  const colors = new Float32Array(starCount * 3);
+  const visibilities = new Float32Array(starCount);
 
   for (let i: number = 0; i < starCount; i++) {
     const star: Star = starsCatalog[i];
@@ -36,28 +37,40 @@ export function createStars(starsCatalog: Star[], setUiInfos: React.Dispatch<any
     colors[i3] = r;
     colors[i3 + 1] = g;
     colors[i3 + 2] = b;
+
+    const mag = typeof star.V === 'number' ? star.V : 6;
+    visibilities[i] = THREE.MathUtils.clamp((6 - mag) / 6, 0, 1);
   }
 
   const geometry = new THREE.BufferGeometry();
   geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
   geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
-  geometry.setAttribute('color', new THREE.BufferAttribute(colors, 4));
+  geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+  geometry.setAttribute('visibility', new THREE.BufferAttribute(visibilities, 1));
 
   const material = new THREE.ShaderMaterial({
+    uniforms: {
+      uNightFactor: { value: 1.0 },
+    },
     vertexShader: `
       attribute float size;
-      attribute vec4 color;
-      varying vec4 vColor;
+      attribute vec3 color;
+      attribute float visibility;
+      varying vec3 vColor;
+      varying float vVisibility;
       
       void main() {
         vColor = color;
+        vVisibility = visibility;
         gl_PointSize = size;
         gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
       }
     `,
     fragmentShader:`
       precision mediump float;
-      varying vec4 vColor;
+      varying vec3 vColor;
+      varying float vVisibility;
+      uniform float uNightFactor;
       
       void main() {
         vec2 coord = gl_PointCoord - vec2(0.5);
@@ -67,8 +80,12 @@ export function createStars(starsCatalog: Star[], setUiInfos: React.Dispatch<any
         if (dist > 0.5) {
           discard;
         }
+
+        float brightness = clamp(uNightFactor * (0.35 + vVisibility * 0.85), 0.0, 1.0);
+        float fade = smoothstep(0.02, 0.55, brightness);
+        vec3 rgb = vColor * fade;
       
-        gl_FragColor = vColor;
+        gl_FragColor = vec4(rgb, fade);
       }
     `,
     depthWrite: false,

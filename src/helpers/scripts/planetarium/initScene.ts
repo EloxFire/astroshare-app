@@ -24,6 +24,7 @@ import {meshGroupsNames} from "./utils/planetariumSettings";
 import {createSun} from "./createSun";
 import {ComputedSunInfos} from "../../types/objects/ComputedSunInfos";
 import {DSO} from "../../types/DSO";
+import {convertSphericalToCartesian} from "./utils/convertSphericalToCartesian";
 
 export const initScene = (
   gl: ExpoWebGLRenderingContext,
@@ -66,7 +67,8 @@ export const initScene = (
 
   const background = createBackground()
   const ground = createGround(currentUserLocation)
-  const atmosphere = createAtmosphere();
+  const sunDirection = convertSphericalToCartesian(1, sunData.base.ra, sunData.base.dec);
+  const atmosphere = createAtmosphere(sunDirection, sunData.base.alt);
   const constellations = drawConstellations()
   const selectionCircle = createSelectionCircle()
 

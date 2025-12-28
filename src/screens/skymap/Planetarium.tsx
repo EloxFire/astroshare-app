@@ -114,6 +114,8 @@ export default function Planetarium({ route, navigation }: any) {
   const { planets, moonCoords } = useSolarSystem()
   const { dsoCatalog } = useDsoCatalog();
   const dsoCatalogRef = useRef<DSO[]>([]);
+  const atmosphereEnabledRef = useRef<boolean>(true);
+  const lastSunDataRef = useRef<ComputedSunInfos | null>(null);
 
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
   const sceneRef = useRef<THREE.Scene | null>(null);
@@ -185,6 +187,114 @@ export default function Planetarium({ route, navigation }: any) {
     }
     return getObjectFamily(obj as any);
   };
+
+  const applyFullVisibility = useCallback(() => {
+    if (!sceneRef.current) return;
+    const stars = sceneRef.current.getObjectByName(meshGroupsNames.stars) as THREE.Points | null;
+    const dsoGroup = sceneRef.current.getObjectByName(meshGroupsNames.dso) as THREE.Group | null;
+    const background = sceneRef.current.getObjectByName(meshGroupsNames.background) as THREE.Mesh | null;
+
+    if (stars && stars.material instanceof THREE.ShaderMaterial && (stars.material as THREE.ShaderMaterial).uniforms?.uNightFactor) {
+      const mat = stars.material as THREE.ShaderMaterial;
+      mat.uniforms.uNightFactor.value = 1;
+    }
+
+    if (background && background.material instanceof THREE.MeshBasicMaterial) {
+      const mat = background.material as THREE.MeshBasicMaterial;
+      mat.opacity = 1;
+      mat.transparent = true;
+    }
+
+    if (dsoGroup) {
+      dsoGroup.traverse((child) => {
+        const mesh = child as THREE.Mesh;
+        if (!mesh.material) return;
+
+        const applyOpacity = (material: THREE.Material) => {
+          const shaderMat = material as THREE.ShaderMaterial;
+          shaderMat.opacity = 1;
+          shaderMat.transparent = true;
+          shaderMat.needsUpdate = true;
+        };
+
+        if (Array.isArray(mesh.material)) {
+          mesh.material.forEach((mat) => applyOpacity(mat));
+        } else {
+          applyOpacity(mesh.material);
+        }
+      });
+    }
+  }, []);
+
+  const updateAtmosphereAndVisibility = useCallback((sunData: ComputedSunInfos) => {
+    lastSunDataRef.current = sunData;
+    if (!sceneRef.current) return;
+
+    if (!atmosphereEnabledRef.current) {
+      applyFullVisibility();
+      return;
+    }
+
+    const atmosphere = atmosphereRef.current;
+    const stars = sceneRef.current.getObjectByName(meshGroupsNames.stars) as THREE.Points | null;
+    const dsoGroup = sceneRef.current.getObjectByName(meshGroupsNames.dso) as THREE.Group | null;
+    const background = sceneRef.current.getObjectByName(meshGroupsNames.background) as THREE.Mesh | null;
+
+    const sunDirection = convertSphericalToCartesian(1, sunData.base.ra, sunData.base.dec).normalize();
+    const sunAltitude = sunData.base.alt;
+
+    const dayMix = THREE.MathUtils.clamp((sunAltitude + 6) / 12, 0, 1);
+    const twilight = THREE.MathUtils.clamp(1 - Math.abs(sunAltitude) / 8, 0, 1);
+    const nightFactor = THREE.MathUtils.clamp(-sunAltitude / 15, 0, 1);
+    const dsoVisibility = THREE.MathUtils.clamp((nightFactor - 0.35) / 0.65, 0, 1);
+
+    if (atmosphere && atmosphere.material instanceof THREE.ShaderMaterial) {
+      const mat = atmosphere.material as THREE.ShaderMaterial;
+      if (mat.uniforms.uSunDirection?.value) {
+        (mat.uniforms.uSunDirection.value as THREE.Vector3).copy(sunDirection);
+      }
+      if (mat.uniforms.uMixDay) {
+        mat.uniforms.uMixDay.value = dayMix;
+      }
+      if (mat.uniforms.uTwilight) {
+        mat.uniforms.uTwilight.value = twilight;
+      }
+      if (mat.uniforms.uBaseOpacity) {
+        mat.uniforms.uBaseOpacity.value = THREE.MathUtils.lerp(0.25, 0.75, Math.max(dayMix, twilight));
+      }
+    }
+
+    if (stars && stars.material instanceof THREE.ShaderMaterial && (stars.material as THREE.ShaderMaterial).uniforms?.uNightFactor) {
+      const mat = stars.material as THREE.ShaderMaterial;
+      mat.uniforms.uNightFactor.value = nightFactor;
+    }
+
+    if (background && background.material instanceof THREE.MeshBasicMaterial) {
+      const mat = background.material as THREE.MeshBasicMaterial;
+      mat.opacity = nightFactor;
+      mat.transparent = true;
+    }
+
+    if (dsoGroup) {
+      dsoGroup.traverse((child) => {
+        const mesh = child as THREE.Mesh;
+        if (!mesh.material) return;
+
+        const applyOpacity = (material: THREE.Material) => {
+          const shaderMat = material as THREE.ShaderMaterial;
+          shaderMat.opacity = dsoVisibility;
+          shaderMat.transparent = true;
+          shaderMat.needsUpdate = true;
+        };
+
+        if (Array.isArray(mesh.material)) {
+          mesh.material.forEach((mat) => applyOpacity(mat));
+        } else {
+          applyOpacity(mesh.material);
+        }
+      });
+    }
+  }, [applyFullVisibility]);
 
   const findSceneTarget = useCallback((obj: PlanetariumSelectableObject): THREE.Object3D | null => {
     if (!sceneRef.current) return null;
@@ -399,6 +509,7 @@ export default function Planetarium({ route, navigation }: any) {
     const sunData = getSunData(dayjs(), observer);
     const { x, y, z } = convertSphericalToCartesian(9.6, sunData.base.ra, sunData.base.dec);
     sunMesh.position.set(x, y, z);
+    updateAtmosphereAndVisibility(sunData);
     sunMesh.userData.onTap = () => {
       const updatedSunData = getSunData(dayjs(), observer);
       const sunInfo: PlanetariumSelectableObject = {
@@ -412,7 +523,7 @@ export default function Planetarium({ route, navigation }: any) {
       setObjectInfos(sunInfo);
       setComputedObjectInfos(buildComputedObjectInfosFromSun(updatedSunData));
     };
-  }, [currentUserLocation, currentLocale]);
+  }, [currentUserLocation, currentLocale, updateAtmosphereAndVisibility]);
 
   useEffect(() => {
     if (initialSelectionHandled.current) return;
@@ -470,6 +581,7 @@ export default function Planetarium({ route, navigation }: any) {
     eqGridRef.current = grids.eqGrid;
     groundTotalQuaternionRef.current = quaternions.groundTotalQuaternion;
 
+    updateAtmosphereAndVisibility(sunData);
     setGlViewParams({width: gl.drawingBufferWidth, height: gl.drawingBufferHeight});
     setPlanetariumLoading(false);
 
@@ -553,6 +665,22 @@ export default function Planetarium({ route, navigation }: any) {
               onCenterObject={() => {
                 if (objectInfos && computedObjectInfos) {
                   focusOnObject(objectInfos, computedObjectInfos);
+                }
+              }}
+              onShowAtmosphere={() => {
+                if (!sceneRef.current) return;
+                const atmosphere = atmosphereRef.current;
+                if (!atmosphere) return;
+                const nextVisible = !atmosphere.visible;
+                atmosphere.visible = nextVisible;
+                atmosphereEnabledRef.current = nextVisible;
+
+                if (!nextVisible) {
+                  applyFullVisibility();
+                } else {
+                  const observer = { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon };
+                  const sunData = lastSunDataRef.current ?? getSunData(dayjs(), observer);
+                  updateAtmosphereAndVisibility(sunData);
                 }
               }}
           />
