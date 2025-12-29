@@ -93,6 +93,10 @@ export const planetariumUIStyles = {
 
       search: {
         top: StatusBar.currentHeight! + DEFAULT_UI_BUTTON_SIZE + DEFAULT_UI_BUTTON_GAP,
+      },
+
+      timeline: {
+        top: StatusBar.currentHeight! + (DEFAULT_UI_BUTTON_SIZE + DEFAULT_UI_BUTTON_GAP) * 2,
       }
     },
 
@@ -158,6 +162,93 @@ export const planetariumUIStyles = {
           }
         }
       }
+    },
+
+    timelineModal: {
+      overlay: {
+        position: 'absolute' as 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        zIndex: 12,
+        justifyContent: 'flex-end' as 'flex-end',
+        alignItems: 'center' as 'center',
+        padding: 20,
+        // backgroundColor: app_colors.b
+      },
+
+      compactCard: {
+        flexDirection: 'row' as 'row',
+        alignItems: 'center' as 'center',
+        justifyContent: 'space-between' as 'space-between',
+        width: '100%' as '100%',
+        gap: 20,
+        backgroundColor: app_colors.black_skymap,
+        paddingVertical: 16,
+        paddingHorizontal: 18,
+        borderRadius: 14,
+        borderWidth: 1,
+        borderColor: app_colors.white_twenty,
+      },
+
+      column: {
+        alignItems: 'center' as 'center',
+        gap: 6,
+      },
+
+      arrowRow: {
+        flexDirection: 'row' as 'row',
+        gap: 8,
+        alignItems: 'center' as 'center',
+      },
+
+      chevronButton: {
+        padding: 6,
+      },
+
+      chevron: {
+        width: 18,
+        height: 18,
+        tintColor: app_colors.white,
+      },
+
+      value: {
+        color: app_colors.white,
+        fontSize: 20,
+        fontFamily: 'DMMonoRegular',
+      },
+
+      centerColumn: {
+        alignItems: 'center' as 'center',
+        gap: 10,
+      },
+
+      iconButton: {
+        width: 36,
+        height: 36,
+        borderRadius: 18,
+        borderWidth: 1,
+        borderColor: app_colors.white_twenty,
+        alignItems: 'center' as 'center',
+        justifyContent: 'center' as 'center',
+      },
+
+      centerIcon: {
+        width: 20,
+        height: 20,
+        tintColor: app_colors.white,
+      },
+
+      closeButton: {
+        marginTop: 12,
+      },
+
+      closeIcon: {
+        width: 26,
+        height: 26,
+        tintColor: app_colors.white_sixty,
+      },
     },
 
     generalInfosBar: {

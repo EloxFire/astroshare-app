@@ -18,13 +18,14 @@ import {createAtmosphere} from "./createAtmosphere";
 import {setInitialAngles} from "./handlePanGesture";
 import {createEquatorialGrid} from "./createEquatorialGrid";
 import {createAzimuthalGrid} from "./createAzimutalGrid";
-import {getGlobePosition} from "./utils/getGlobePosition";
 import {hex_colors} from "../../constants";
 import {meshGroupsNames} from "./utils/planetariumSettings";
 import {createSun} from "./createSun";
 import {ComputedSunInfos} from "../../types/objects/ComputedSunInfos";
 import {DSO} from "../../types/DSO";
 import {convertSphericalToCartesian} from "./utils/convertSphericalToCartesian";
+import { Dayjs } from "dayjs";
+import {convertHorizontalToEquatorial} from "@observerly/astrometry";
 
 export const initScene = (
   gl: ExpoWebGLRenderingContext,
@@ -36,7 +37,8 @@ export const initScene = (
   sunData: ComputedSunInfos,
   setObjectInfos: React.Dispatch<any>,
   currentLocale: string,
-  observer: GeographicCoordinate
+  observer: GeographicCoordinate,
+  referenceDate: Dayjs
 ): {
   scene: THREE.Scene,
   camera: THREE.PerspectiveCamera,
@@ -66,7 +68,7 @@ export const initScene = (
   scene.add( axesHelper );
 
   const background = createBackground()
-  const ground = createGround(currentUserLocation)
+  const ground = createGround(currentUserLocation, referenceDate.toDate())
   const sunDirection = convertSphericalToCartesian(1, sunData.base.ra, sunData.base.dec);
   const atmosphere = createAtmosphere(sunDirection, sunData.base.alt);
   const constellations = drawConstellations()
@@ -97,7 +99,13 @@ export const initScene = (
   const eqGrid = new THREE.Group();
   const azGrid = new THREE.Group();
 
-  azGrid.lookAt(getGlobePosition(currentUserLocation.lat, currentUserLocation.lon))
+  const zenithEq = convertHorizontalToEquatorial(referenceDate.toDate(), { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }, { alt: 90, az: 0 });
+  const northEq = convertHorizontalToEquatorial(referenceDate.toDate(), { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }, { alt: 0, az: 0 });
+  const zenithVec = convertSphericalToCartesian(5, zenithEq.ra, zenithEq.dec);
+  const northVec = convertSphericalToCartesian(5, northEq.ra, northEq.dec).normalize();
+
+  azGrid.up.copy(northVec);
+  azGrid.lookAt(zenithVec);
 
   azGrid.add(azGrid1);
   eqGrid.add(eqGrid1);

@@ -1,9 +1,10 @@
 import * as THREE from 'three';
-import {getGlobePosition} from "./utils/getGlobePosition";
 import {LocationObject} from "../../types/LocationObject";
 import {meshGroupsNames, planetariumRenderOrders} from "./utils/planetariumSettings";
+import {convertHorizontalToEquatorial} from "@observerly/astrometry";
+import {convertSphericalToCartesian} from "./utils/convertSphericalToCartesian";
 
-export const createGround = (currentUserLocation: LocationObject) => {
+export const createGround = (currentUserLocation: LocationObject, date: Date = new Date()) => {
   console.log("[GLView] Creating ground...");
   const vertexShader = `
     varying vec4 vPos;
@@ -32,8 +33,14 @@ export const createGround = (currentUserLocation: LocationObject) => {
   groundShader.side = THREE.BackSide;
 
   const ground = new THREE.Mesh(groundGeometry, groundShader);
-  const lookAtVec = getGlobePosition(currentUserLocation.lat, currentUserLocation.lon);
-  ground.lookAt(lookAtVec);
+
+  const zenithEq = convertHorizontalToEquatorial(date, { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }, { alt: 90, az: 0 });
+  const northEq = convertHorizontalToEquatorial(date, { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }, { alt: 0, az: 0 });
+  const zenithVec = convertSphericalToCartesian(5, zenithEq.ra, zenithEq.dec);
+  const northVec = convertSphericalToCartesian(5, northEq.ra, northEq.dec).normalize();
+
+  ground.up.copy(northVec);
+  ground.lookAt(zenithVec);
 
 
   // On récupère l'orientation calculée et on la stocke dans une propriété custom

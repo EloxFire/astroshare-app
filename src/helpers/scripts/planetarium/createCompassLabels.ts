@@ -10,7 +10,8 @@ import {getGlobePosition} from "./utils/getGlobePosition";
  */
 export function createCompassLabels(
   radius: number = 10,
-  location: LocationObject
+  location: LocationObject,
+  date: Date = new Date()
 ): THREE.Group {
   const group = new THREE.Group();
   const loader = new ExpoTHREE.TextureLoader();
@@ -22,7 +23,7 @@ export function createCompassLabels(
     { letter: 'O', angle: -Math.PI / 2, file: require('../../../../assets/images/planetarium/compass/W.png') },
   ];
 
-  const lookAtVec = getGlobePosition(location.lat, location.lon);
+  const lookAtVec = getGlobePosition(location.lat, location.lon, date);
 
   labels.forEach(({ letter, angle, file }) => {
     const texture = loader.load(file);
@@ -45,4 +46,3 @@ export function createCompassLabels(
   group.name = 'CompassLabelsPNG';
   return group;
 }
-

@@ -13,6 +13,8 @@ import {useSolarSystem} from "../../contexts/SolarSystemContext";
 import {initScene} from "../../helpers/scripts/planetarium/initScene";
 import {
   applyInertia,
+  azAngle,
+  altAngle,
   handlePanChange,
   handlePanEnd,
   handlePanStart, inertiaEnabled, setInitialAngles
@@ -37,7 +39,7 @@ import {DSO} from "../../helpers/types/DSO";
 import {ComputedObjectInfos} from "../../helpers/types/objects/ComputedObjectInfos";
 import {computeObject} from "../../helpers/scripts/astro/objects/computeObject";
 import {useDsoCatalog} from "../../contexts/DSOContext";
-import dayjs from "dayjs";
+import dayjs, {Dayjs} from "dayjs";
 import {getSunData} from "../../helpers/scripts/astro/solar/sunData";
 import {convertSphericalToCartesian} from "../../helpers/scripts/planetarium/utils/convertSphericalToCartesian";
 import {meshGroupsNames} from "../../helpers/scripts/planetarium/utils/planetariumSettings";
@@ -45,6 +47,16 @@ import {ComputedSunInfos} from "../../helpers/types/objects/ComputedSunInfos";
 import {i18n} from "../../helpers/scripts/i18n";
 import {getObjectFamily} from "../../helpers/scripts/astro/objects/getObjectFamily";
 import {Polaris} from "../../helpers/constants";
+import {
+  convertEquatorialToHorizontal,
+  EquatorialCoordinate,
+  getLunarEquatorialCoordinate,
+  getLunarPhase,
+  getPlanetaryPositions,
+  HorizontalCoordinate
+} from "@observerly/astrometry";
+import {moonIcons} from "../../helpers/scripts/loadImages";
+import {convertHorizontalToEquatorial} from "@observerly/astrometry";
 
 type PlanetariumSelectableObject = Star | GlobalPlanet | DSO | {
   family: 'Sun' | 'Moon';
@@ -55,6 +67,8 @@ type PlanetariumSelectableObject = Star | GlobalPlanet | DSO | {
   phase?: string;
   v_mag?: number;
 };
+
+type MoonDetails = EquatorialCoordinate & HorizontalCoordinate & { phase: string; currentIconUrl?: string };
 
 const buildComputedObjectInfosFromSun = (sunData: ComputedSunInfos): ComputedObjectInfos => {
   const visibilityBadge = {
@@ -134,6 +148,12 @@ export default function Planetarium({ route, navigation }: any) {
   const [computedSource, setComputedSource] = useState<PlanetariumSelectableObject | null>(null);
   const [shouldFocusSelection, setShouldFocusSelection] = useState<boolean>(false);
   const initialSelectionHandled = useRef<boolean>(false);
+  const [referenceDate, setReferenceDate] = useState<Dayjs>(dayjs());
+  const [isTimelinePlaying, setIsTimelinePlaying] = useState<boolean>(true);
+  const playIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const [planetsAtDate, setPlanetsAtDate] = useState<GlobalPlanet[]>(planets);
+  const [moonAtDate, setMoonAtDate] = useState<MoonDetails>(moonCoords as MoonDetails);
+  const [sunDataAtDate, setSunDataAtDate] = useState<ComputedSunInfos | null>(null);
 
   const normalizeKey = useCallback((value: string | number | undefined | null) => `${value ?? ''}`.toLowerCase().replace(/[^a-z0-9]/g, ''), []);
 
@@ -165,7 +185,7 @@ export default function Planetarium({ route, navigation }: any) {
 
     if (family === 'Planet') {
       const normalizedName = normalizeKey((rawObject as GlobalPlanet).name);
-      return planets.find((planet: GlobalPlanet) => normalizeKey(planet.name) === normalizedName) || rawObject;
+      return planetsAtDate.find((planet: GlobalPlanet) => normalizeKey(planet.name) === normalizedName) || rawObject;
     }
 
     if (family === 'DSO') {
@@ -179,7 +199,7 @@ export default function Planetarium({ route, navigation }: any) {
     }
 
     return rawObject;
-  }, [planets, dsoCatalog, starsCatalog, normalizeKey, buildDsoMeshKey]);
+  }, [planetsAtDate, dsoCatalog, starsCatalog, normalizeKey, buildDsoMeshKey]);
 
   const determineFamily = (obj: PlanetariumSelectableObject) => {
     if ('family' in obj && (obj.family === 'Sun' || obj.family === 'Moon')) {
@@ -444,10 +464,92 @@ export default function Planetarium({ route, navigation }: any) {
   }, [dsoCatalog]);
 
   useEffect(() => {
+    if (!currentUserLocation) return;
+
+    const observer = { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon };
+    const safeDate = referenceDate && referenceDate.isValid() ? referenceDate : dayjs();
+
+    setSunDataAtDate(getSunData(safeDate, observer));
+    setPlanetsAtDate(getPlanetaryPositions(safeDate.toDate(), observer));
+
+    const eq = getLunarEquatorialCoordinate(safeDate.toDate());
+    const horizontal = convertEquatorialToHorizontal(safeDate.toDate(), observer, { ra: eq.ra, dec: eq.dec });
+    const phase = getLunarPhase(safeDate.toDate());
+
+    setMoonAtDate({
+      ra: eq.ra,
+      dec: eq.dec,
+      alt: horizontal.alt,
+      az: horizontal.az,
+      phase,
+      currentIconUrl: (moonCoords as MoonDetails)?.currentIconUrl
+    });
+  }, [currentUserLocation, moonCoords, referenceDate]);
+
+  useEffect(() => {
+    if (!isTimelinePlaying) {
+      if (playIntervalRef.current) {
+        clearInterval(playIntervalRef.current);
+        playIntervalRef.current = null;
+      }
+      return;
+    }
+
+    playIntervalRef.current = setInterval(() => {
+      setReferenceDate((prev) => (prev && prev.isValid() ? prev.add(1, 'second') : dayjs().add(1, 'second')));
+    }, 1000);
+
+    return () => {
+      if (playIntervalRef.current) {
+        clearInterval(playIntervalRef.current);
+        playIntervalRef.current = null;
+      }
+    };
+  }, [isTimelinePlaying]);
+
+  const realignSceneToReferenceDate = useCallback(() => {
+    if (!groundRef.current || !cameraRef.current) return;
+    const zenithEq = convertHorizontalToEquatorial(referenceDate.toDate(), { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }, { alt: 90, az: 0 });
+    const northEq = convertHorizontalToEquatorial(referenceDate.toDate(), { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }, { alt: 0, az: 0 });
+    const zenithVec = convertSphericalToCartesian(5, zenithEq.ra, zenithEq.dec);
+    const northVec = convertSphericalToCartesian(5, northEq.ra, northEq.dec).normalize();
+
+    groundRef.current.up.copy(northVec);
+    groundRef.current.lookAt(zenithVec);
+    groundRef.current.userData.baseQuaternion = groundRef.current.quaternion.clone();
+
+    const baseQ = groundRef.current.userData.baseQuaternion as THREE.Quaternion;
+    const q1 = new THREE.Quaternion();
+    const q2 = new THREE.Quaternion();
+    const y1 = new THREE.Vector3(0, 0, 1);
+    const x1 = new THREE.Vector3(1, 0, 0);
+    q1.setFromAxisAngle(y1, azAngle);
+    q2.setFromAxisAngle(x1, altAngle);
+
+    const groundTotalQuaternion = baseQ.clone().multiply(q1).multiply(q2);
+    if (!groundTotalQuaternionRef.current) {
+      groundTotalQuaternionRef.current = new THREE.Quaternion();
+    }
+    groundTotalQuaternionRef.current.copy(groundTotalQuaternion);
+
+    cameraRef.current.setRotationFromQuaternion(groundTotalQuaternion.normalize());
+
+    if (azGridRef.current) {
+      azGridRef.current.up.copy(northVec);
+      azGridRef.current.lookAt(zenithVec);
+    }
+  }, [currentUserLocation.lat, currentUserLocation.lon, referenceDate]);
+
+  useEffect(() => {
     return () => {
       shutdownPlanetarium(sceneRef.current!)
     }
   }, []);
+
+  useEffect(() => {
+    if (planetariumLoading) return;
+    realignSceneToReferenceDate();
+  }, [planetariumLoading, realignSceneToReferenceDate]);
 
   useEffect(() => {
     if(!objectInfos || !currentUserLocation) {
@@ -462,7 +564,7 @@ export default function Planetarium({ route, navigation }: any) {
     };
 
     if ('family' in objectInfos && objectInfos.family === 'Sun') {
-      const sunData = getSunData(dayjs(), observer);
+      const sunData = getSunData(referenceDate, observer);
       setComputedObjectInfos(buildComputedObjectInfosFromSun(sunData));
       setComputedSource(objectInfos);
       return;
@@ -472,9 +574,10 @@ export default function Planetarium({ route, navigation }: any) {
       object: objectInfos,
       observer: observer,
       lang: currentLocale,
+      date: referenceDate,
     }));
     setComputedSource(objectInfos);
-  }, [objectInfos, currentLocale, currentUserLocation])
+  }, [objectInfos, currentLocale, currentUserLocation, referenceDate])
 
   useEffect(() => {
     if (!sceneRef.current) return;
@@ -482,12 +585,18 @@ export default function Planetarium({ route, navigation }: any) {
     if (!planetsGroup) return;
 
     planetsGroup.children.forEach((child) => {
-      const planetData = planets.find((planet: GlobalPlanet) => planet.name === child.name);
+      const planetData = planetsAtDate.find((planet: GlobalPlanet) => planet.name === child.name);
       if (!planetData) return;
       const { x, y, z } = convertSphericalToCartesian(9.9, planetData.ra, planetData.dec);
       child.position.set(x, y, z);
+      child.userData = {
+        ...(child.userData || {}),
+        onTap: () => {
+          setObjectInfos(planetData);
+        }
+      };
     });
-  }, [planets]);
+  }, [planetsAtDate]);
 
   useEffect(() => {
     if (!sceneRef.current) return;
@@ -496,9 +605,22 @@ export default function Planetarium({ route, navigation }: any) {
     const moonMesh = moonGroup.children.find((child) => child.userData?.type === 'moon') as THREE.Mesh | undefined;
     if (!moonMesh) return;
 
-    const { x, y, z } = convertSphericalToCartesian(9.8, moonCoords.ra, moonCoords.dec);
+    const { x, y, z } = convertSphericalToCartesian(9.8, moonAtDate.ra, moonAtDate.dec);
     moonMesh.position.set(x, y, z);
-  }, [moonCoords]);
+    moonMesh.userData = {
+      ...(moonMesh.userData || {}),
+      onTap: () => {
+        setObjectInfos({
+          family: 'Moon',
+          name: 'Moon',
+          ra: moonAtDate.ra,
+          dec: moonAtDate.dec,
+          icon: moonAtDate.currentIconUrl ? { uri: moonAtDate.currentIconUrl } : moonIcons[moonAtDate.phase] || moonIcons['Full'],
+          phase: moonAtDate.phase,
+        });
+      }
+    };
+  }, [moonAtDate]);
 
   useEffect(() => {
     if (!sceneRef.current) return;
@@ -506,12 +628,12 @@ export default function Planetarium({ route, navigation }: any) {
     if (!sunMesh) return;
 
     const observer = { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon };
-    const sunData = getSunData(dayjs(), observer);
+    const sunData = sunDataAtDate ?? getSunData(referenceDate, observer);
     const { x, y, z } = convertSphericalToCartesian(9.6, sunData.base.ra, sunData.base.dec);
     sunMesh.position.set(x, y, z);
     updateAtmosphereAndVisibility(sunData);
     sunMesh.userData.onTap = () => {
-      const updatedSunData = getSunData(dayjs(), observer);
+      const updatedSunData = getSunData(referenceDate, observer);
       const sunInfo: PlanetariumSelectableObject = {
         family: 'Sun',
         name: updatedSunData.base.name,
@@ -523,7 +645,7 @@ export default function Planetarium({ route, navigation }: any) {
       setObjectInfos(sunInfo);
       setComputedObjectInfos(buildComputedObjectInfosFromSun(updatedSunData));
     };
-  }, [currentUserLocation, currentLocale, updateAtmosphereAndVisibility]);
+  }, [currentUserLocation, currentLocale, referenceDate, sunDataAtDate, updateAtmosphereAndVisibility]);
 
   useEffect(() => {
     if (initialSelectionHandled.current) return;
@@ -557,19 +679,20 @@ export default function Planetarium({ route, navigation }: any) {
 
   const _onContextCreate = async (gl: ExpoWebGLRenderingContext) => {
     const observer = {latitude: currentUserLocation.lat, longitude: currentUserLocation.lon};
-    const sunData = getSunData(dayjs(), observer);
+    const sunData = sunDataAtDate ?? getSunData(referenceDate, observer);
 
     const {scene, camera, renderer, ground, selectionCircle, atmosphere, grids, quaternions} = initScene(
       gl,
       currentUserLocation,
       starsCatalog.filter((star: Star) => star.V < 6),
-      planets,
-      moonCoords,
+      planetsAtDate,
+      moonAtDate,
       () => dsoCatalogRef.current,
       sunData,
       setObjectInfos,
       currentLocale,
-      observer
+      observer,
+      referenceDate
     );
     sceneRef.current = scene;
     cameraRef.current = camera;
@@ -667,6 +790,16 @@ export default function Planetarium({ route, navigation }: any) {
                   focusOnObject(objectInfos, computedObjectInfos);
                 }
               }}
+              timelineDate={referenceDate}
+              isTimelinePlaying={isTimelinePlaying}
+              onToggleTimelinePlay={() => setIsTimelinePlaying((prev) => !prev)}
+              onChangeTimelineDate={(next) => {
+                setReferenceDate(next);
+              }}
+              onResetTimelineDate={() => {
+                setIsTimelinePlaying(true);
+                setReferenceDate(dayjs());
+              }}
               onShowAtmosphere={() => {
                 if (!sceneRef.current) return;
                 const atmosphere = atmosphereRef.current;
@@ -679,7 +812,7 @@ export default function Planetarium({ route, navigation }: any) {
                   applyFullVisibility();
                 } else {
                   const observer = { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon };
-                  const sunData = lastSunDataRef.current ?? getSunData(dayjs(), observer);
+                  const sunData = lastSunDataRef.current ?? getSunData(referenceDate, observer);
                   updateAtmosphereAndVisibility(sunData);
                 }
               }}
