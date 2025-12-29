@@ -1,8 +1,8 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useEffect, useMemo, useRef, useState} from "react";
 import {Image, Text, TouchableOpacity, View} from "react-native";
 import {planetariumUIStyles} from "../../styles/components/skymap/planetariumUI";
 import {useSettings} from "../../contexts/AppSettingsContext";
-import {Dayjs} from "dayjs";
+import dayjs, {Dayjs} from "dayjs";
 import {isNight} from "@observerly/astrometry";
 import {ComputedObjectInfos} from "../../helpers/types/objects/ComputedObjectInfos";
 import {DSO} from "../../helpers/types/DSO";
@@ -18,6 +18,8 @@ import {convertDegreesRaToHMS} from "../../helpers/scripts/astro/coords/convertD
 import {prettyDec, prettyRa} from "../../helpers/scripts/astro/prettyCoords";
 import {convertDegreesDecToDMS} from "../../helpers/scripts/astro/coords/convertDegreesDecToDms";
 import PlanetariumSearchModal from "./PlanetariumSearchModal";
+import { useTranslation } from "../../hooks/useTranslation";
+import { makeCalendarMapping } from "../../helpers/scripts/i18n/dayjsCalendarTimeCustom";
 
 interface PlanetariumUIProps {
   navigation: any;
@@ -31,6 +33,8 @@ interface PlanetariumUIProps {
   onCenterObject: () => void;
   onSelectObject: (obj: DSO | GlobalPlanet | Star) => void;
   onShowAtmosphere?: () => void;
+  isFollowing: boolean;
+  onToggleFollow: () => void;
   timelineDate: Dayjs;
   onChangeTimelineDate: (next: Dayjs) => void;
   onResetTimelineDate: () => void;
@@ -38,9 +42,10 @@ interface PlanetariumUIProps {
   isTimelinePlaying: boolean;
 }
 
-export default function PlanetariumUI({ navigation, infos, onShowGround, onShowConstellations, onShowAzGrid, onShowEqGrid, onShowDSO, onShowPlanets, onCenterObject, onSelectObject, onShowAtmosphere, timelineDate, onChangeTimelineDate, onResetTimelineDate, onToggleTimelinePlay, isTimelinePlaying }: PlanetariumUIProps) {
+export default function PlanetariumUI({ navigation, infos, onShowGround, onShowConstellations, onShowAzGrid, onShowEqGrid, onShowDSO, onShowPlanets, onCenterObject, onSelectObject, onShowAtmosphere, isFollowing, onToggleFollow, timelineDate, onChangeTimelineDate, onResetTimelineDate, onToggleTimelinePlay, isTimelinePlaying }: PlanetariumUIProps) {
 
   const {currentUserLocation} = useSettings();
+  const {currentLocale} = useTranslation();
   const [currentTime, setCurrentTime] = useState<string>(timelineDate.format('HH:mm:ss'));
   const [isNightTime, setIsNightTime] = useState<boolean>(false);
 
@@ -58,7 +63,7 @@ export default function PlanetariumUI({ navigation, infos, onShowGround, onShowC
   }, [timelineDate, currentUserLocation]);
 
   useEffect(() => {
-    console.log("[PlanetariumUI] Infos updated:", infos);
+    // console.log("[PlanetariumUI] Infos updated:", infos);
     const nextKey = infos ? `${infos.base.name}-${infos.base.type}` : null;
     if (nextKey !== lastObjectKeyRef.current) {
       setCurrentInfoTab(0);
@@ -90,10 +95,6 @@ export default function PlanetariumUI({ navigation, infos, onShowGround, onShowC
     setShowLayerModal(false);
   }
 
-  useEffect(() => {
-    console.log("[PlanetariumUI] Object Infos updated:", objectInfos?.base.otherName, objectInfos?.base.name, objectInfos?.base.type);
-  }, [objectInfos])
-
   const adjustTimeline = (unit: 'second' | 'minute' | 'hour' | 'day' | 'month' | 'year', delta: number) => {
     onChangeTimelineDate(timelineDate.add(delta, unit));
   };
@@ -102,6 +103,150 @@ export default function PlanetariumUI({ navigation, infos, onShowGround, onShowC
     onResetTimelineDate();
     setShowTimelineModal(false);
   };
+
+  const objectInfoContent = useMemo(() => {
+    if (!objectInfos) return null;
+
+    return (
+      <View>
+        <View style={{display: 'flex', flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-start', gap: 8, marginTop: 10}}>
+          <SimpleButton active={currentInfoTab === 0} small text="Infos" icon={require('../../../assets/icons/FiInfo.png')} backgroundColor={app_colors.black_skymap} textColor={app_colors.white} onPress={() => setCurrentInfoTab(0)} />
+          <SimpleButton active={currentInfoTab === 1} small text="Visibilité" icon={require('../../../assets/icons/FiEye.png')} backgroundColor={app_colors.black_skymap} textColor={app_colors.white} onPress={() => setCurrentInfoTab(1)} />
+          <SimpleButton active={currentInfoTab === 2} small text="Détails" icon={require('../../../assets/icons/FiFileText.png')} backgroundColor={app_colors.black_skymap} textColor={app_colors.white} onPress={() => setCurrentInfoTab(2)} />
+          <SimpleButton active={isFollowing} small text="Suivre" icon={require('../../../assets/icons/FiCompass.png')} backgroundColor={app_colors.black_skymap} textColor={app_colors.white} onPress={() => onToggleFollow()} />
+        </View>
+
+        {currentInfoTab === 0 && (
+          <View style={planetariumUIStyles.container.generalInfosBar.body}>
+            <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'flex-start', width: '100%', gap: 10}}>
+              <View style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-end'}}>
+                <Image style={planetariumUIStyles.container.generalInfosBar.body.image} source={objectInfos.base.icon} />
+              </View>
+              <View style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-start'}}>
+                <Text style={planetariumUIStyles.container.generalInfosBar.body.title}>{objectInfos.base.otherName || objectInfos.base.name}</Text>
+                <Text style={planetariumUIStyles.container.generalInfosBar.body.subtitle}>{objectInfos.base.type}</Text>
+              </View>
+              <View style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-end', flex: 1, gap: 5}}>
+                <SimpleBadge
+                  text={objectInfos.visibilityInfos.visibilityLabel}
+                  backgroundColor={objectInfos.visibilityInfos.visibilityBackgroundColor}
+                  foregroundColor={objectInfos.visibilityInfos.visibilityForegroundColor}
+                  icon={objectInfos.visibilityInfos.visibilityIcon}
+                />
+
+                <SimpleBadge
+                  text={objectInfos.base.alt}
+                  backgroundColor={app_colors.white_twenty}
+                  foregroundColor={app_colors.white}
+                  icon={require('../../../assets/icons/FiAngleRight.png')}
+                />
+              </View>
+            </View>
+          </View>
+        )}
+
+        {currentInfoTab === 1 && (
+          <View style={planetariumUIStyles.container.generalInfosBar.body}>
+            <View style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-start', marginBottom: 10, width: '100%'}}>
+              <Text style={planetariumUIStyles.container.generalInfosBar.body.text}>Heures de lever et coucher</Text>
+
+              {
+                objectInfos?.visibilityInfos.isCircumpolar ? (
+                  <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 10}}>
+                    <Image source={require('../../../assets/icons/FiSunrise.png')} style={{width: 24, height: 24}}/>
+                    <Text style={planetariumUIStyles.container.generalInfosBar.body.text}>{
+                      objectInfos?.visibilityInfos.isCurrentlyVisible ? i18n.t('common.visibility.alwaysVisible') : objectInfos?.visibilityInfos.objectNextRise?.locale(currentLocale).calendar(dayjs(), makeCalendarMapping())
+                    }</Text>
+                  </View>
+                ) : (
+                  <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 30}}>
+                    <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 10}}>
+                      <Image source={require('../../../assets/icons/FiSunrise.png')} style={{width: 24, height: 24}}/>
+                      <Text style={planetariumUIStyles.container.generalInfosBar.body.text}>{
+                        objectInfos?.visibilityInfos.isCurrentlyVisible ? i18n.t('common.visibility.alreadyUp') : objectInfos?.visibilityInfos.objectNextRise?.locale(currentLocale).calendar(dayjs(), makeCalendarMapping())
+                      }</Text>
+                    </View>
+                    <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 10}}>
+                      <Image source={require('../../../assets/icons/FiSunset.png')} style={{width: 24, height: 24}}/>
+                      <Text style={planetariumUIStyles.container.generalInfosBar.body.text}>{
+                        !objectInfos?.visibilityInfos.isCurrentlyVisible ? i18n.t('common.visibility.alreadyDown') : objectInfos?.visibilityInfos.objectNextSet?.locale(currentLocale).calendar(dayjs() , makeCalendarMapping())
+                      }</Text>
+                    </View>
+                  </View>
+                )
+              }
+            </View>
+            <VisibilityGraph visibilityGraph={objectInfos.visibilityInfos.visibilityGraph}/>
+          </View>
+        )}
+
+        {currentInfoTab === 2 && (
+          <View style={planetariumUIStyles.container.generalInfosBar.body}>
+            <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'flex-start', width: '100%', gap: 10}}>
+              <View style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-end'}}>
+                <Image style={planetariumUIStyles.container.generalInfosBar.body.image} source={objectInfos.base.icon} />
+              </View>
+              <View style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-start'}}>
+                <Text style={planetariumUIStyles.container.generalInfosBar.body.title}>{objectInfos.base.otherName || objectInfos.base.name}</Text>
+                <Text style={planetariumUIStyles.container.generalInfosBar.body.subtitle}>{objectInfos.base.type}</Text>
+              </View>
+              <View style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-end', flex: 1, gap: 5}}>
+                <SimpleBadge
+                  text={objectInfos.visibilityInfos.visibilityLabel}
+                  backgroundColor={objectInfos.visibilityInfos.visibilityBackgroundColor}
+                  foregroundColor={objectInfos.visibilityInfos.visibilityForegroundColor}
+                  icon={objectInfos.visibilityInfos.visibilityIcon}
+                />
+
+                <SimpleBadge
+                  text={objectInfos.base.alt}
+                  backgroundColor={app_colors.white_twenty}
+                  foregroundColor={app_colors.white}
+                  icon={require('../../../assets/icons/FiAngleRight.png')}
+                />
+              </View>
+            </View>
+            <View style={{width: '100%', marginTop: 20}}>
+              <DSOValues title={i18n.t('detailsPages.dso.labels.rightAscension')} value={typeof(objectInfos.base.ra) === 'number' ? convertDegreesRaToHMS(objectInfos.base.ra) : prettyRa(objectInfos.base.ra)}/>
+              <DSOValues title={i18n.t('detailsPages.dso.labels.declination')} value={typeof(objectInfos.base.dec) === 'number' ? convertDegreesDecToDMS(objectInfos.base.dec) : prettyDec(objectInfos.base.dec)}/>
+              <DSOValues title={i18n.t('detailsPages.dso.labels.magnitude')} value={objectInfos.base.v_mag}/>
+
+              {objectInfos.dsoAdditionalInfos && (
+                <>
+                  <DSOValues title={"Discovered by"} value={objectInfos.dsoAdditionalInfos.discovered_by}/>
+                  <DSOValues title={"Discovery year"} value={objectInfos.dsoAdditionalInfos.discovery_year}/>
+                  <DSOValues title={"Distance"} value={objectInfos.dsoAdditionalInfos.distance}/>
+                  <DSOValues title={"Dimensions"} value={objectInfos.dsoAdditionalInfos.dimensions}/>
+                  <DSOValues title={"Apparent size"} value={objectInfos.dsoAdditionalInfos.apparent_size}/>
+                  <DSOValues title={"Age"} value={objectInfos.dsoAdditionalInfos.age}/>
+                </>
+              )}
+
+              {objectInfos.planetAdditionalInfos && (
+                <>
+                  <DSOValues title={i18n.t('detailsPages.planets.labels.symbol')} value={objectInfos.planetAdditionalInfos.symbol} />
+                  <DSOValues title={i18n.t('detailsPages.planets.labels.position')} value={objectInfos.planetAdditionalInfos.solarSystemPosition} />
+                  <DSOValues title={i18n.t('detailsPages.planets.labels.inclination')} value={objectInfos.planetAdditionalInfos.inclination} />
+                  <DSOValues title={i18n.t('detailsPages.planets.labels.mass')} value={objectInfos.planetAdditionalInfos.mass} />
+                  <DSOValues title={i18n.t('detailsPages.planets.labels.orbitalPeriod')} value={objectInfos.planetAdditionalInfos.orbitalPeriod} />
+                  <DSOValues title={i18n.t('detailsPages.planets.labels.distanceSun')} value={objectInfos.planetAdditionalInfos.distanceToSun} />
+                  <DSOValues title={i18n.t('detailsPages.planets.labels.diameter')} value={objectInfos.planetAdditionalInfos.diameter} />
+                  <DSOValues title={i18n.t('detailsPages.planets.labels.short.surfaceTemperature')} value={objectInfos.planetAdditionalInfos.surfaceTemperature} />
+                  <DSOValues title={i18n.t('detailsPages.planets.labels.short.naturalSatellites')} value={objectInfos.planetAdditionalInfos.naturalSatellites} />
+                </>
+              )}
+
+              <View style={{marginTop: 10, paddingTop: 10, borderTopColor: app_colors.white_twenty, borderTopWidth: 1}}>
+                <DSOValues chipValue chipColor={objectInfos.visibilityInfos.nakedEye.backgroundColor} chipForegroundColor={objectInfos.visibilityInfos.nakedEye.foregroundColor} title={i18n.t('common.observation.nakedEye')} value={objectInfos.visibilityInfos.nakedEye.label}/>
+                <DSOValues chipValue chipColor={objectInfos.visibilityInfos.binoculars.backgroundColor} chipForegroundColor={objectInfos.visibilityInfos.binoculars.foregroundColor} title={i18n.t('common.observation.binoculars')} value={objectInfos.visibilityInfos.binoculars.label}/>
+                <DSOValues chipValue chipColor={objectInfos.visibilityInfos.telescope.backgroundColor} chipForegroundColor={objectInfos.visibilityInfos.telescope.foregroundColor} title={i18n.t('common.observation.telescope')} value={objectInfos.visibilityInfos.telescope.label}/>
+              </View>
+            </View>
+          </View>
+        )}
+      </View>
+    );
+  }, [objectInfos, currentInfoTab, onCenterObject, isFollowing, onToggleFollow]);
 
   return (
     <View style={planetariumUIStyles.container}>
@@ -117,6 +262,13 @@ export default function PlanetariumUI({ navigation, infos, onShowGround, onShowC
       <TouchableOpacity style={[planetariumUIStyles.container.uiButton, planetariumUIStyles.container.buttons.timeline]} onPress={() => handleShowTimeline()}>
         <Image style={planetariumUIStyles.container.uiButton.icon} source={require('../../../assets/icons/FiClock.png')} />
       </TouchableOpacity>
+      {/* {
+        objectInfos && (
+          <TouchableOpacity style={[planetariumUIStyles.container.uiButton, planetariumUIStyles.container.buttons.followObject]} onPress={() => onToggleFollow()}>
+            <Image style={planetariumUIStyles.container.uiButton.icon} source={require('../../../assets/icons/FiCrosshair.png')} />
+          </TouchableOpacity>
+        )
+      } */}
 
       {
         showSearchBar && (
@@ -226,127 +378,10 @@ export default function PlanetariumUI({ navigation, infos, onShowGround, onShowC
           <View style={planetariumUIStyles.container.generalInfosBar}>
             <View style={planetariumUIStyles.container.generalInfosBar.header}>
               <Text  style={planetariumUIStyles.container.generalInfosBar.header.location}>{currentUserLocation.common_name}</Text>
-              <Text style={planetariumUIStyles.container.generalInfosBar.header.clock}>{currentTime.replace(':', 'h')}</Text>
+              <Text style={planetariumUIStyles.container.generalInfosBar.header.clock}>{currentTime}</Text>
               <Text  style={planetariumUIStyles.container.generalInfosBar.header.location}>{isNightTime ? "(Nuit)" : "(Journée)"}</Text>
             </View>
-            {objectInfos && (
-              <View>
-                <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', marginTop: 10}}>
-                  <SimpleButton active={currentInfoTab === 0} small text="Infos" icon={require('../../../assets/icons/FiInfo.png')} backgroundColor={app_colors.black_skymap} textColor={app_colors.white} onPress={() => setCurrentInfoTab(0)} />
-                  <SimpleButton active={currentInfoTab === 1} small text="Visibilité" icon={require('../../../assets/icons/FiEye.png')} backgroundColor={app_colors.black_skymap} textColor={app_colors.white} onPress={() => setCurrentInfoTab(1)} />
-                  <SimpleButton active={currentInfoTab === 2} small text="Détails" icon={require('../../../assets/icons/FiFileText.png')} backgroundColor={app_colors.black_skymap} textColor={app_colors.white} onPress={() => setCurrentInfoTab(2)} />
-                  <SimpleButton active={currentInfoTab === 3} small text="Centrer" icon={require('../../../assets/icons/FiCrosshair.png')} backgroundColor={app_colors.black_skymap} textColor={app_colors.white} onPress={() => onCenterObject()} />
-                </View>
-                {
-                  objectInfos && currentInfoTab === 0 && (
-                    <View style={planetariumUIStyles.container.generalInfosBar.body}>
-                      <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'flex-start', width: '100%', gap: 10}}>
-                        <View style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-end'}}>
-                          <Image style={planetariumUIStyles.container.generalInfosBar.body.image} source={objectInfos.base.icon} />
-                        </View>
-                        <View style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-start'}}>
-                          <Text style={planetariumUIStyles.container.generalInfosBar.body.title}>{objectInfos.base.otherName || objectInfos.base.name}</Text>
-                          <Text style={planetariumUIStyles.container.generalInfosBar.body.subtitle}>{objectInfos.base.type}</Text>
-                        </View>
-                        <View style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-end', flex: 1, gap: 5}}>
-                          <SimpleBadge
-                            text={objectInfos.visibilityInfos.visibilityLabel}
-                            backgroundColor={objectInfos.visibilityInfos.visibilityBackgroundColor}
-                            foregroundColor={objectInfos.visibilityInfos.visibilityForegroundColor}
-                            icon={objectInfos.visibilityInfos.visibilityIcon}
-                          />
-    
-                          <SimpleBadge
-                            text={objectInfos.base.alt}
-                            backgroundColor={app_colors.white_twenty}
-                            foregroundColor={app_colors.white}
-                            icon={require('../../../assets/icons/FiAngleRight.png')}
-                          />
-                        </View>
-                      </View>
-                    </View>
-                  )
-                }
-    
-                {
-                  objectInfos && currentInfoTab === 1 && (
-                    <View style={planetariumUIStyles.container.generalInfosBar.body}>
-                      <VisibilityGraph visibilityGraph={objectInfos.visibilityInfos.visibilityGraph}/>
-                    </View>
-                  )
-                }
-    
-                {
-                  objectInfos && currentInfoTab === 2 && (
-                    <View style={planetariumUIStyles.container.generalInfosBar.body}>
-                      <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'flex-start', width: '100%', gap: 10}}>
-                        <View style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-end'}}>
-                          <Image style={planetariumUIStyles.container.generalInfosBar.body.image} source={objectInfos.base.icon} />
-                        </View>
-                        <View style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-start'}}>
-                          <Text style={planetariumUIStyles.container.generalInfosBar.body.title}>{objectInfos.base.otherName || objectInfos.base.name}</Text>
-                          <Text style={planetariumUIStyles.container.generalInfosBar.body.subtitle}>{objectInfos.base.type}</Text>
-                        </View>
-                        <View style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-end', flex: 1, gap: 5}}>
-                          <SimpleBadge
-                            text={objectInfos.visibilityInfos.visibilityLabel}
-                            backgroundColor={objectInfos.visibilityInfos.visibilityBackgroundColor}
-                            foregroundColor={objectInfos.visibilityInfos.visibilityForegroundColor}
-                            icon={objectInfos.visibilityInfos.visibilityIcon}
-                          />
-    
-                          <SimpleBadge
-                            text={objectInfos.base.alt}
-                            backgroundColor={app_colors.white_twenty}
-                            foregroundColor={app_colors.white}
-                            icon={require('../../../assets/icons/FiAngleRight.png')}
-                          />
-                        </View>
-                      </View>
-                      <View style={{width: '100%', marginTop: 20}}>
-                        <DSOValues title={i18n.t('detailsPages.dso.labels.rightAscension')} value={typeof(objectInfos.base.ra) === 'number' ? convertDegreesRaToHMS(objectInfos.base.ra) : prettyRa(objectInfos.base.ra)}/>
-                        <DSOValues title={i18n.t('detailsPages.dso.labels.declination')} value={typeof(objectInfos.base.dec) === 'number' ? convertDegreesDecToDMS(objectInfos.base.dec) : prettyDec(objectInfos.base.dec)}/>
-                        <DSOValues title={i18n.t('detailsPages.dso.labels.magnitude')} value={objectInfos.base.v_mag}/>
-    
-                        {
-                          objectInfos.dsoAdditionalInfos && (
-                            <>
-                              <DSOValues title={"Discovered by"} value={objectInfos.dsoAdditionalInfos.discovered_by}/>
-                              <DSOValues title={"Discovery year"} value={objectInfos.dsoAdditionalInfos.discovery_year}/>
-                              <DSOValues title={"Distance"} value={objectInfos.dsoAdditionalInfos.distance}/>
-                              <DSOValues title={"Dimensions"} value={objectInfos.dsoAdditionalInfos.dimensions}/>
-                              <DSOValues title={"Apparent size"} value={objectInfos.dsoAdditionalInfos.apparent_size}/>
-                              <DSOValues title={"Age"} value={objectInfos.dsoAdditionalInfos.age}/>
-                            </>
-                          )
-                        }
-                        {
-                          objectInfos.planetAdditionalInfos && (
-                            <>
-                              <DSOValues title={i18n.t('detailsPages.planets.labels.symbol')} value={objectInfos.planetAdditionalInfos.symbol} />
-                              <DSOValues title={i18n.t('detailsPages.planets.labels.position')} value={objectInfos.planetAdditionalInfos.solarSystemPosition} />
-                              <DSOValues title={i18n.t('detailsPages.planets.labels.inclination')} value={objectInfos.planetAdditionalInfos.inclination} />
-                              <DSOValues title={i18n.t('detailsPages.planets.labels.mass')} value={objectInfos.planetAdditionalInfos.mass} />
-                              <DSOValues title={i18n.t('detailsPages.planets.labels.orbitalPeriod')} value={objectInfos.planetAdditionalInfos.orbitalPeriod} />
-                              <DSOValues title={i18n.t('detailsPages.planets.labels.distanceSun')} value={objectInfos.planetAdditionalInfos.distanceToSun} />
-                              <DSOValues title={i18n.t('detailsPages.planets.labels.diameter')} value={objectInfos.planetAdditionalInfos.diameter} />
-                              <DSOValues title={i18n.t('detailsPages.planets.labels.short.surfaceTemperature')} value={objectInfos.planetAdditionalInfos.surfaceTemperature} />
-                              <DSOValues title={i18n.t('detailsPages.planets.labels.short.naturalSatellites')} value={objectInfos.planetAdditionalInfos.naturalSatellites} />
-                            </>
-                          )
-                        }
-    
-                        <View style={{marginTop: 10, paddingTop: 10, borderTopColor: app_colors.white_twenty, borderTopWidth: 1}}>
-                          <DSOValues chipValue chipColor={objectInfos.visibilityInfos.nakedEye.backgroundColor} chipForegroundColor={objectInfos.visibilityInfos.nakedEye.foregroundColor} title={i18n.t('common.observation.nakedEye')} value={objectInfos.visibilityInfos.nakedEye.label}/>
-                          <DSOValues chipValue chipColor={objectInfos.visibilityInfos.binoculars.backgroundColor} chipForegroundColor={objectInfos.visibilityInfos.binoculars.foregroundColor} title={i18n.t('common.observation.binoculars')} value={objectInfos.visibilityInfos.binoculars.label}/>
-                          <DSOValues chipValue chipColor={objectInfos.visibilityInfos.telescope.backgroundColor} chipForegroundColor={objectInfos.visibilityInfos.telescope.foregroundColor} title={i18n.t('common.observation.telescope')} value={objectInfos.visibilityInfos.telescope.label}/>
-                        </View>
-                      </View>
-                    </View>
-                  )
-                }
-              </View>
-            )}
+            {objectInfos && objectInfoContent}
           </View>
         )
       }

@@ -91,8 +91,8 @@ export const initScene = (
   const moon = createMoon(moonCoords, setObjectInfos)
   const sun = createSun(sunData, setObjectInfos)
   const dso = createDSO(getDsoCatalog, setObjectInfos);
-  const {eqGrid1, eqGrid2, eqGrid3} = createEquatorialGrid(hex_colors.blue, .5);
-  const {azGrid1, azGrid2, azGrid3} = createAzimuthalGrid(hex_colors.violet, .5);
+  const {eqGrid1, eqGrid2, eqGrid3} = createEquatorialGrid(hex_colors.blue, 1.4);
+  const {azGrid1, azGrid2, azGrid3} = createAzimuthalGrid(hex_colors.violet, 1.4);
 
   const light = new THREE.AmbientLight(0xffffff);
 

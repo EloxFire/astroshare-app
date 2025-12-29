@@ -23,7 +23,7 @@ export const createGround = (currentUserLocation: LocationObject, date: Date = n
   const groundShader = new THREE.ShaderMaterial({
     vertexShader: vertexShader,
     fragmentShader: fragmentShader,
-    depthWrite: false,
+    depthWrite: true,
     depthTest: true,
     transparent: true,
     blending: THREE.NormalBlending,

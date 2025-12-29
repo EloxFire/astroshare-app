@@ -148,6 +148,7 @@ export default function Planetarium({ route, navigation }: any) {
   const [computedSource, setComputedSource] = useState<PlanetariumSelectableObject | null>(null);
   const [shouldFocusSelection, setShouldFocusSelection] = useState<boolean>(false);
   const initialSelectionHandled = useRef<boolean>(false);
+  const [followSelection, setFollowSelection] = useState<boolean>(false);
   const [referenceDate, setReferenceDate] = useState<Dayjs>(dayjs());
   const [isTimelinePlaying, setIsTimelinePlaying] = useState<boolean>(true);
   const playIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -156,6 +157,7 @@ export default function Planetarium({ route, navigation }: any) {
   const [sunDataAtDate, setSunDataAtDate] = useState<ComputedSunInfos | null>(null);
 
   const normalizeKey = useCallback((value: string | number | undefined | null) => `${value ?? ''}`.toLowerCase().replace(/[^a-z0-9]/g, ''), []);
+  const toggleFollow = useCallback(() => setFollowSelection((prev) => !prev), []);
 
   const buildDsoMeshKey = useCallback((dso: DSO) => {
     const digits = (input: string | number | undefined | null) => `${input ?? ''}`.replace(/\D/g, '');
@@ -349,8 +351,19 @@ export default function Planetarium({ route, navigation }: any) {
       return target;
     }
 
+    if (family === 'Star') {
+      const baseRa = (obj as Star).ra ?? computedObjectInfos?.base.degRa;
+      const baseDec = (obj as Star).dec ?? computedObjectInfos?.base.degDec;
+      if (baseRa != null && baseDec != null) {
+        const pos = convertSphericalToCartesian(10, baseRa, baseDec);
+        const proxy = new THREE.Object3D();
+        proxy.position.copy(pos);
+        return proxy;
+      }
+    }
+
     return null;
-  }, [buildDsoMeshKey, normalizeKey]);
+  }, [buildDsoMeshKey, normalizeKey, computedObjectInfos?.base.degRa, computedObjectInfos?.base.degDec]);
 
   const updateSelectionCircle = useCallback((target: THREE.Object3D | null, family: string) => {
     const selectionCircle = selectionCircleRef.current;
@@ -397,6 +410,15 @@ export default function Planetarium({ route, navigation }: any) {
         const uniformScale = mesh.scale ? Math.max(mesh.scale.x, mesh.scale.y, mesh.scale.z) : 1;
         radius = mesh.geometry.boundingSphere.radius * uniformScale;
       }
+    }
+
+    if (family === 'star') {
+      const starScale = 0.22;
+      selectionCircle.position.copy(point);
+      setScale(starScale, starScale, starScale);
+      selectionCircle.lookAt(camera.position);
+      selectionCircle.visible = true;
+      return;
     }
 
     const padding = family === 'planet' || family === 'sun' || family === 'moon' ? 2.2 : 1.6;
@@ -450,6 +472,12 @@ export default function Planetarium({ route, navigation }: any) {
       adjustCameraFovForTarget(target, normalizedFamily);
     }
   }, [adjustCameraFovForTarget, findSceneTarget, updateSelectionCircle]);
+
+  const handleCenterObject = useCallback(() => {
+    if (objectInfos && computedObjectInfos) {
+      focusOnObject(objectInfos, computedObjectInfos);
+    }
+  }, [computedObjectInfos, focusOnObject, objectInfos]);
 
   useEffect(() => {
     StatusBar.setHidden(true);
@@ -552,9 +580,32 @@ export default function Planetarium({ route, navigation }: any) {
   }, [planetariumLoading, realignSceneToReferenceDate]);
 
   useEffect(() => {
+    if (!objectInfos || !computedObjectInfos) return;
+    const target = findSceneTarget(objectInfos);
+    const family = determineFamily(objectInfos);
+    const normalizedFamily = `${family ?? ''}`.toLowerCase();
+
+    updateSelectionCircle(target, normalizedFamily);
+
+    if (followSelection && groundRef.current && cameraRef.current) {
+      goTo(
+        computedObjectInfos.base.degRa,
+        computedObjectInfos.base.degDec,
+        cameraRef.current,
+        groundRef.current,
+        setInitialAngles
+      );
+      if (target) {
+        adjustCameraFovForTarget(target, normalizedFamily);
+      }
+    }
+  }, [referenceDate, objectInfos, computedObjectInfos, followSelection, findSceneTarget, determineFamily, updateSelectionCircle, adjustCameraFovForTarget]);
+
+  useEffect(() => {
     if(!objectInfos || !currentUserLocation) {
       setComputedObjectInfos(null);
       setComputedSource(null);
+      setFollowSelection(false);
       return;
     }
 
@@ -743,7 +794,10 @@ export default function Planetarium({ route, navigation }: any) {
   }, [computedObjectInfos, computedSource, focusOnObject, objectInfos, planetariumLoading, shouldFocusSelection]);
 
   const panGesture = Gesture.Pan()
-    .onStart((e: GestureStateChangeEvent<PanGestureHandlerEventPayload>) => handlePanStart(e))
+    .onStart((e: GestureStateChangeEvent<PanGestureHandlerEventPayload>) => {
+      if (followSelection) setFollowSelection(false);
+      handlePanStart(e);
+    })
     .onChange((e: GestureUpdateEvent<PanGestureHandlerEventPayload & PanGestureChangeEventPayload>) => {
       handlePanChange(
         e,
@@ -755,7 +809,10 @@ export default function Planetarium({ route, navigation }: any) {
     .onEnd((e: GestureStateChangeEvent<PanGestureHandlerEventPayload>) => handlePanEnd(e))
 
   const pinchGesture = Gesture.Pinch()
-    .onTouchesDown((e: GestureTouchEvent) => handlePinchTouchDown(e, cameraRef, glViewParams.width))
+    .onTouchesDown((e: GestureTouchEvent) => {
+      if (followSelection) setFollowSelection(false);
+      handlePinchTouchDown(e, cameraRef, glViewParams.width);
+    })
     .onTouchesMove((e: GestureTouchEvent) => handlePinchTouchMove(e, cameraRef, glViewParams.width))
 
   const tapGesture = Gesture.Tap()
@@ -785,11 +842,9 @@ export default function Planetarium({ route, navigation }: any) {
               onShowGround={() => onShowGround(sceneRef.current!)}
               onShowPlanets={() => onShowPlanets(sceneRef.current!)}
               onShowDSO={() => onShowDSO(sceneRef.current!)}
-              onCenterObject={() => {
-                if (objectInfos && computedObjectInfos) {
-                  focusOnObject(objectInfos, computedObjectInfos);
-                }
-              }}
+              onCenterObject={handleCenterObject}
+              isFollowing={followSelection}
+              onToggleFollow={toggleFollow}
               timelineDate={referenceDate}
               isTimelinePlaying={isTimelinePlaying}
               onToggleTimelinePlay={() => setIsTimelinePlaying((prev) => !prev)}
