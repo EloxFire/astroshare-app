@@ -4,18 +4,14 @@ import {meshGroupsNames, planetariumRenderOrders} from "./utils/planetariumSetti
 export const createAtmosphere = (sunDirection?: THREE.Vector3, sunAltitude?: number) => {
   const initialAltitude = typeof sunAltitude === 'number' ? sunAltitude : -90;
   const initialDayMix = THREE.MathUtils.clamp((initialAltitude + 6) / 12, 0, 1);
-  const initialTwilight = THREE.MathUtils.clamp(1 - Math.abs(initialAltitude) / 8, 0, 1);
 
   const atmosphereMaterial = new THREE.ShaderMaterial({
     uniforms: {
-      uColorNight: { value: new THREE.Color(0x0a1224) },
-      uColorDay: { value: new THREE.Color(0x72a5ff) },
-      uColorHorizonWarm: { value: new THREE.Color(0xff6b3d) },
-      uColorHorizonCool: { value: new THREE.Color(0xc367ff) },
+      uColorNight: { value: new THREE.Color(0x060c18) },
+      uColorDay: { value: new THREE.Color(0x6fa0e4) },
       uSunDirection: { value: sunDirection ? sunDirection.clone().normalize() : new THREE.Vector3(0, 0, 1) },
       uMixDay: { value: initialDayMix },
-      uTwilight: { value: initialTwilight },
-      uBaseOpacity: { value: 0.55 },
+      uBaseOpacity: { value: 0.62 },
     },
     vertexShader: `
       varying vec3 vWorldPosition;
@@ -31,21 +27,29 @@ export const createAtmosphere = (sunDirection?: THREE.Vector3, sunAltitude?: num
       uniform vec3 uSunDirection;
       uniform vec3 uColorNight;
       uniform vec3 uColorDay;
-      uniform vec3 uColorHorizonWarm;
-      uniform vec3 uColorHorizonCool;
       uniform float uMixDay;
-      uniform float uTwilight;
       uniform float uBaseOpacity;
 
       void main() {
-        float sunFacing = max(0.0, dot(normalize(uSunDirection), normalize(vWorldPosition)));
-        float glow = pow(sunFacing, 2.5);
+        vec3 dir = normalize(vWorldPosition);
+        vec3 sunDir = normalize(uSunDirection);
+        float sunFacing = clamp(dot(sunDir, dir), 0.0, 1.0);
+        float horizonBand = pow(clamp(1.0 - abs(dir.y), 0.0, 1.0), 1.7);
 
-        vec3 twilight = mix(uColorHorizonWarm, uColorHorizonCool, sunFacing);
-        vec3 sky = mix(uColorNight, uColorDay, clamp(uMixDay, 0.0, 1.0));
-        sky = mix(sky, twilight, clamp(uTwilight, 0.0, 1.0) * glow);
+        float dayFactor = clamp(uMixDay, 0.0, 1.0);
+        vec3 baseSky = mix(uColorNight, uColorDay, dayFactor);
 
-        float opacity = clamp(uBaseOpacity * (0.4 + 0.8 * max(uMixDay, uTwilight)), 0.12, 0.88);
+        // Subtle brightening toward sun and horizon for daytime, without warm sunset tint
+        float sunBoost = sunFacing * dayFactor;
+        float horizonLift = horizonBand * dayFactor;
+        vec3 sky = baseSky + uColorDay * (0.35 * sunBoost + 0.22 * horizonLift);
+        sky = mix(baseSky, sky, clamp(dayFactor + sunBoost, 0.0, 1.0));
+
+        // Slightly deepen zenith for a more realistic dome gradient
+        float zenithFactor = pow(clamp(dir.y * 0.5 + 0.5, 0.0, 1.0), 0.8);
+        sky = mix(baseSky * 0.85, sky, zenithFactor);
+
+        float opacity = clamp(uBaseOpacity * (0.4 + 0.6 * dayFactor), 0.14, 0.82);
         gl_FragColor = vec4(sky, opacity);
       }
     `,

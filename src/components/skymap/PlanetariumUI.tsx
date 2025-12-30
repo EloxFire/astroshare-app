@@ -1,5 +1,6 @@
-import React, {useEffect, useMemo, useRef, useState} from "react";
-import {Image, Text, TouchableOpacity, View} from "react-native";
+import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
+import {Image, LayoutChangeEvent, PanResponder, Text, TouchableOpacity, View} from "react-native";
+import {LinearGradient} from "expo-linear-gradient";
 import {planetariumUIStyles} from "../../styles/components/skymap/planetariumUI";
 import {useSettings} from "../../contexts/AppSettingsContext";
 import dayjs, {Dayjs} from "dayjs";
@@ -20,6 +21,7 @@ import {convertDegreesDecToDMS} from "../../helpers/scripts/astro/coords/convert
 import PlanetariumSearchModal from "./PlanetariumSearchModal";
 import { useTranslation } from "../../hooks/useTranslation";
 import { makeCalendarMapping } from "../../helpers/scripts/i18n/dayjsCalendarTimeCustom";
+import {getSunData} from "../../helpers/scripts/astro/solar/sunData";
 
 interface PlanetariumUIProps {
   navigation: any;
@@ -48,6 +50,12 @@ export default function PlanetariumUI({ navigation, infos, onShowGround, onShowC
   const {currentLocale} = useTranslation();
   const [currentTime, setCurrentTime] = useState<string>(timelineDate.format('HH:mm:ss'));
   const [isNightTime, setIsNightTime] = useState<boolean>(false);
+  const SLIDER_RANGE_HOURS = 12;
+  const sliderAnchorRef = useRef<Dayjs>(dayjs());
+  const [sliderOffsetHours, setSliderOffsetHours] = useState<number>(0);
+  const [sliderWidth, setSliderWidth] = useState<number>(0);
+  const sliderFrameRef = useRef<number | null>(null);
+  const pendingSliderRatioRef = useRef<number | null>(null);
 
   const [showLayerModal, setShowLayerModal] = useState<boolean>(false);
   const [showSearchBar, setShowSearchBar] = useState<boolean>(false);
@@ -61,6 +69,24 @@ export default function PlanetariumUI({ navigation, infos, onShowGround, onShowC
     setCurrentTime(timelineDate.format('HH:mm:ss'));
     setIsNightTime(isNight(timelineDate.toDate(), {latitude: currentUserLocation.lat, longitude: currentUserLocation.lon}));
   }, [timelineDate, currentUserLocation]);
+
+  useEffect(() => {
+    const anchor = sliderAnchorRef.current;
+    const deltaMinutes = timelineDate.diff(anchor, 'minute');
+    const clampedMinutes = Math.min(Math.max(deltaMinutes, -SLIDER_RANGE_HOURS * 60), SLIDER_RANGE_HOURS * 60);
+    setSliderOffsetHours(clampedMinutes / 60);
+  }, [SLIDER_RANGE_HOURS, timelineDate]);
+
+  const observer = useMemo(() => {
+    if (!currentUserLocation) return null;
+    return { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon };
+  }, [currentUserLocation]);
+
+  const sunTimes = useMemo(() => {
+    if (!observer) return { sunrise: null as Dayjs | null, sunset: null as Dayjs | null };
+    const sunData = getSunData(timelineDate, observer);
+    return { sunrise: sunData.visibility.sunrise, sunset: sunData.visibility.sunset };
+  }, [observer, timelineDate]);
 
   useEffect(() => {
     // console.log("[PlanetariumUI] Infos updated:", infos);
@@ -90,6 +116,9 @@ export default function PlanetariumUI({ navigation, infos, onShowGround, onShowC
   }
 
   const handleShowTimeline = () => {
+    if (!showTimelineModal) {
+      sliderAnchorRef.current = timelineDate;
+    }
     setShowTimelineModal(!showTimelineModal);
     setShowSearchBar(false);
     setShowLayerModal(false);
@@ -103,6 +132,113 @@ export default function PlanetariumUI({ navigation, infos, onShowGround, onShowC
     onResetTimelineDate();
     setShowTimelineModal(false);
   };
+
+  const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
+
+  const sliderPercent = useMemo(() => {
+    return clamp((sliderOffsetHours + SLIDER_RANGE_HOURS) / (SLIDER_RANGE_HOURS * 2), 0, 1);
+  }, [SLIDER_RANGE_HOURS, sliderOffsetHours]);
+
+  const handleSliderLayout = (event: LayoutChangeEvent) => {
+    setSliderWidth(event.nativeEvent.layout.width);
+  };
+
+  const setTimelineFromRatio = useCallback((ratio: number) => {
+    const clamped = clamp(ratio, 0, 1);
+    pendingSliderRatioRef.current = clamped;
+
+    if (sliderFrameRef.current !== null) return;
+
+    sliderFrameRef.current = requestAnimationFrame(() => {
+      const nextRatio = pendingSliderRatioRef.current;
+      pendingSliderRatioRef.current = null;
+      sliderFrameRef.current = null;
+      if (nextRatio === null) return;
+
+      const minutesFromAnchor = (nextRatio * SLIDER_RANGE_HOURS * 2 - SLIDER_RANGE_HOURS) * 60;
+      const nextDate = sliderAnchorRef.current.add(minutesFromAnchor, 'minute');
+      onChangeTimelineDate(nextDate);
+    });
+  }, [SLIDER_RANGE_HOURS, onChangeTimelineDate]);
+
+  const sliderPanResponder = useMemo(() => PanResponder.create({
+    onStartShouldSetPanResponder: () => true,
+    onMoveShouldSetPanResponder: () => true,
+    onPanResponderGrant: (evt) => {
+      if (!sliderWidth) return;
+      const ratio = clamp(evt.nativeEvent.locationX / sliderWidth, 0, 1);
+      setTimelineFromRatio(ratio);
+    },
+    onPanResponderMove: (evt) => {
+      if (!sliderWidth) return;
+      const ratio = clamp(evt.nativeEvent.locationX / sliderWidth, 0, 1);
+      setTimelineFromRatio(ratio);
+    },
+  }), [setTimelineFromRatio, sliderWidth]);
+
+  const timelinePhaseLabel = useMemo(() => {
+    const { sunrise, sunset } = sunTimes;
+    if (sunrise && timelineDate.isBefore(sunrise.add(40, 'minute'))) return 'Dawn';
+    if (sunrise && sunset && timelineDate.isAfter(sunrise) && timelineDate.isBefore(sunset)) {
+      if (timelineDate.isAfter(sunset.subtract(40, 'minute'))) return 'Dusk';
+      return 'Daylight';
+    }
+    return 'Night';
+  }, [sunTimes, timelineDate]);
+
+  const timelineGradient = useMemo(() => {
+    const nightColor = '#09192c';
+    const dayColor = '#09192c'; // remove bright daylight color from timeline
+    const twilightColor = '#1bb5ff';
+
+    const rangeStart = sliderAnchorRef.current.subtract(SLIDER_RANGE_HOURS, 'hour');
+    const rangeEnd = sliderAnchorRef.current.add(SLIDER_RANGE_HOURS, 'hour');
+    const totalMinutes = Math.max(rangeEnd.diff(rangeStart, 'minute'), 1);
+    const { sunrise, sunset } = sunTimes;
+
+    if (!sunrise || !sunset) {
+      const isNightPhase = observer ? isNight(timelineDate.toDate(), observer) : true;
+      return {
+        colors: isNightPhase ? [nightColor, nightColor] : [dayColor, dayColor],
+        locations: [0, 1]
+      };
+    }
+
+    const sunrisePos = clamp(sunrise.diff(rangeStart, 'minute') / totalMinutes, 0, 1);
+    const sunsetPos = clamp(sunset.diff(rangeStart, 'minute') / totalMinutes, 0, 1);
+    const dawnStart = clamp(sunrisePos - 0.05, 0, 1);
+    const dawnEnd = clamp(sunrisePos + 0.05, 0, 1);
+    const duskStart = clamp(sunsetPos - 0.05, 0, 1);
+    const duskEnd = clamp(sunsetPos + 0.05, 0, 1);
+
+    return {
+      colors: [
+        nightColor,
+        twilightColor,
+        dayColor,
+        dayColor,
+        twilightColor,
+        nightColor,
+      ],
+      locations: [
+        0,
+        dawnStart,
+        dawnEnd,
+        duskStart,
+        duskEnd,
+        1,
+      ]
+    };
+  }, [SLIDER_RANGE_HOURS, observer, sunTimes, timelineDate]);
+
+  const sliderThumbLeft = sliderWidth ? sliderPercent * sliderWidth : sliderPercent * 240;
+  useEffect(() => {
+    return () => {
+      if (sliderFrameRef.current !== null) {
+        cancelAnimationFrame(sliderFrameRef.current);
+      }
+    };
+  }, []);
 
   const objectInfoContent = useMemo(() => {
     if (!objectInfos) return null;
@@ -319,56 +455,70 @@ export default function PlanetariumUI({ navigation, infos, onShowGround, onShowC
 
       {
         showTimelineModal && (
-          <View style={planetariumUIStyles.container.timelineModal.overlay}>
-            <View style={planetariumUIStyles.container.timelineModal.compactCard}>
-              <View style={planetariumUIStyles.container.timelineModal.column}>
-                <View style={planetariumUIStyles.container.timelineModal.arrowRow}>
-                  {['year', 'month', 'day'].map((unit) => (
-                    <TouchableOpacity key={unit} style={planetariumUIStyles.container.timelineModal.chevronButton} onPress={() => adjustTimeline(unit as any, 1)}>
-                      <Image style={planetariumUIStyles.container.timelineModal.chevron} source={require('../../../assets/icons/FiChevronUp.png')} />
-                    </TouchableOpacity>
-                  ))}
+          <View pointerEvents="box-none" style={planetariumUIStyles.container.timelineModal}>
+            <View pointerEvents="box-only" style={planetariumUIStyles.container.timelineModal.compactCard}>
+              <View style={planetariumUIStyles.container.timelineModal.row}>
+                <View style={planetariumUIStyles.container.timelineModal.column}>
+                  <View style={planetariumUIStyles.container.timelineModal.arrowRow}>
+                    {['year', 'month', 'day'].map((unit) => (
+                      <TouchableOpacity key={unit} style={planetariumUIStyles.container.timelineModal.chevronButton} onPress={() => adjustTimeline(unit as any, 1)}>
+                        <Image style={planetariumUIStyles.container.timelineModal.chevron} source={require('../../../assets/icons/FiChevronUp.png')} />
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                  <Text style={planetariumUIStyles.container.timelineModal.value}>{timelineDate.format('YYYY-MM-DD')}</Text>
+                  <View style={planetariumUIStyles.container.timelineModal.arrowRow}>
+                    {['year', 'month', 'day'].map((unit) => (
+                      <TouchableOpacity key={unit} style={planetariumUIStyles.container.timelineModal.chevronButton} onPress={() => adjustTimeline(unit as any, -1)}>
+                        <Image style={planetariumUIStyles.container.timelineModal.chevron} source={require('../../../assets/icons/FiChevronDown.png')} />
+                      </TouchableOpacity>
+                    ))}
+                  </View>
                 </View>
-                <Text style={planetariumUIStyles.container.timelineModal.value}>{timelineDate.format('YYYY-MM-DD')}</Text>
-                <View style={planetariumUIStyles.container.timelineModal.arrowRow}>
-                  {['year', 'month', 'day'].map((unit) => (
-                    <TouchableOpacity key={unit} style={planetariumUIStyles.container.timelineModal.chevronButton} onPress={() => adjustTimeline(unit as any, -1)}>
-                      <Image style={planetariumUIStyles.container.timelineModal.chevron} source={require('../../../assets/icons/FiChevronDown.png')} />
-                    </TouchableOpacity>
-                  ))}
+
+                <View style={planetariumUIStyles.container.timelineModal.centerColumn}>
+                  <TouchableOpacity style={planetariumUIStyles.container.timelineModal.iconButton} onPress={() => handleResetTimeline()}>
+                    <Image style={planetariumUIStyles.container.timelineModal.centerIcon} source={require('../../../assets/icons/FiRepeat.png')} />
+                  </TouchableOpacity>
+                  <TouchableOpacity style={planetariumUIStyles.container.timelineModal.iconButton} onPress={() => onToggleTimelinePlay()}>
+                    <Image style={planetariumUIStyles.container.timelineModal.centerIcon} source={isTimelinePlaying ? require('../../../assets/icons/FiPause.png') : require('../../../assets/icons/FiPlay.png')} />
+                  </TouchableOpacity>
+                </View>
+
+                <View style={planetariumUIStyles.container.timelineModal.column}>
+                  <View style={planetariumUIStyles.container.timelineModal.arrowRow}>
+                    {['hour', 'minute', 'second'].map((unit) => (
+                      <TouchableOpacity key={unit} style={planetariumUIStyles.container.timelineModal.chevronButton} onPress={() => adjustTimeline(unit as any, 1)}>
+                        <Image style={planetariumUIStyles.container.timelineModal.chevron} source={require('../../../assets/icons/FiChevronUp.png')} />
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                  <Text style={planetariumUIStyles.container.timelineModal.value}>{timelineDate.format('HH:mm:ss')}</Text>
+                  <View style={planetariumUIStyles.container.timelineModal.arrowRow}>
+                    {['hour', 'minute', 'second'].map((unit) => (
+                      <TouchableOpacity key={unit} style={planetariumUIStyles.container.timelineModal.chevronButton} onPress={() => adjustTimeline(unit as any, -1)}>
+                        <Image style={planetariumUIStyles.container.timelineModal.chevron} source={require('../../../assets/icons/FiChevronDown.png')} />
+                      </TouchableOpacity>
+                    ))}
+                  </View>
                 </View>
               </View>
 
-              <View style={planetariumUIStyles.container.timelineModal.centerColumn}>
-                <TouchableOpacity style={planetariumUIStyles.container.timelineModal.iconButton} onPress={() => handleResetTimeline()}>
-                  <Image style={planetariumUIStyles.container.timelineModal.centerIcon} source={require('../../../assets/icons/FiRepeat.png')} />
-                </TouchableOpacity>
-                <TouchableOpacity style={planetariumUIStyles.container.timelineModal.iconButton} onPress={() => onToggleTimelinePlay()}>
-                  <Image style={planetariumUIStyles.container.timelineModal.centerIcon} source={isTimelinePlaying ? require('../../../assets/icons/FiPause.png') : require('../../../assets/icons/FiPlay.png')} />
-                </TouchableOpacity>
-              </View>
-
-              <View style={planetariumUIStyles.container.timelineModal.column}>
-                <View style={planetariumUIStyles.container.timelineModal.arrowRow}>
-                  {['hour', 'minute', 'second'].map((unit) => (
-                    <TouchableOpacity key={unit} style={planetariumUIStyles.container.timelineModal.chevronButton} onPress={() => adjustTimeline(unit as any, 1)}>
-                      <Image style={planetariumUIStyles.container.timelineModal.chevron} source={require('../../../assets/icons/FiChevronUp.png')} />
-                    </TouchableOpacity>
-                  ))}
+              <View style={planetariumUIStyles.container.timelineModal.sliderBlock}>
+                <View style={planetariumUIStyles.container.timelineModal.sliderLabels}>
+                  <Text style={planetariumUIStyles.container.timelineModal.sliderLabel}>-12h</Text>
+                  <Text style={planetariumUIStyles.container.timelineModal.sliderLabel}>+12h</Text>
                 </View>
-                <Text style={planetariumUIStyles.container.timelineModal.value}>{timelineDate.format('HH:mm:ss')}</Text>
-                <View style={planetariumUIStyles.container.timelineModal.arrowRow}>
-                  {['hour', 'minute', 'second'].map((unit) => (
-                    <TouchableOpacity key={unit} style={planetariumUIStyles.container.timelineModal.chevronButton} onPress={() => adjustTimeline(unit as any, -1)}>
-                      <Image style={planetariumUIStyles.container.timelineModal.chevron} source={require('../../../assets/icons/FiChevronDown.png')} />
-                    </TouchableOpacity>
-                  ))}
+                <View
+                  style={planetariumUIStyles.container.timelineModal.sliderTrack}
+                  onLayout={handleSliderLayout}
+                  {...sliderPanResponder.panHandlers}
+                >
+                  <View style={[planetariumUIStyles.container.timelineModal.sliderThumb, { left: sliderThumbLeft - 10 }]} />
                 </View>
+                <Text style={planetariumUIStyles.container.timelineModal.sliderStatus}>{timelinePhaseLabel}</Text>
               </View>
             </View>
-            <TouchableOpacity style={planetariumUIStyles.container.timelineModal.closeButton} onPress={() => setShowTimelineModal(false)}>
-              <Image style={planetariumUIStyles.container.timelineModal.closeIcon} source={require('../../../assets/icons/FiXCircle.png')} />
-            </TouchableOpacity>
           </View>
         )
       }

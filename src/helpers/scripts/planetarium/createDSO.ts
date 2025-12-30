@@ -50,6 +50,7 @@ export const createDSO = (getDsoCatalog: () => DSO[], setUiInfos: React.Dispatch
 
     const fragmentShader = `
       uniform sampler2D map;
+      uniform float uVisibility;
       varying vec2 vUv;
 
       void main() {
@@ -63,13 +64,14 @@ export const createDSO = (getDsoCatalog: () => DSO[], setUiInfos: React.Dispatch
           alpha = smoothstep(0.0, border, dist);
         }
 
-        gl_FragColor = vec4(color.rgb, color.a * alpha);
+        gl_FragColor = vec4(color.rgb * uVisibility, color.a * alpha * uVisibility);
       }
     `;
 
     const nebulaeMaterial = new THREE.ShaderMaterial({
       uniforms: {
         map: { value: texture },
+        uVisibility: { value: 1.0 },
       },
       vertexShader,
       fragmentShader,

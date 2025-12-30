@@ -234,7 +234,11 @@ export default function Planetarium({ route, navigation }: any) {
 
         const applyOpacity = (material: THREE.Material) => {
           const shaderMat = material as THREE.ShaderMaterial;
-          shaderMat.opacity = 1;
+          if ((shaderMat as THREE.ShaderMaterial).uniforms?.uVisibility) {
+            (shaderMat.uniforms as any).uVisibility.value = 1;
+          } else {
+            shaderMat.opacity = 1;
+          }
           shaderMat.transparent = true;
           shaderMat.needsUpdate = true;
         };
@@ -304,7 +308,11 @@ export default function Planetarium({ route, navigation }: any) {
 
         const applyOpacity = (material: THREE.Material) => {
           const shaderMat = material as THREE.ShaderMaterial;
-          shaderMat.opacity = dsoVisibility;
+          if ((shaderMat as THREE.ShaderMaterial).uniforms?.uVisibility) {
+            (shaderMat.uniforms as any).uVisibility.value = dsoVisibility;
+          } else {
+            shaderMat.opacity = dsoVisibility;
+          }
           shaderMat.transparent = true;
           shaderMat.needsUpdate = true;
         };

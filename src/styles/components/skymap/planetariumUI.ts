@@ -169,21 +169,16 @@ export const planetariumUIStyles = {
     },
 
     timelineModal: {
-      overlay: {
-        position: 'absolute' as 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        zIndex: 12,
-        justifyContent: 'flex-end' as 'flex-end',
-        alignItems: 'center' as 'center',
-        padding: 20,
-        // backgroundColor: app_colors.b
-      },
+
+      display: 'flex' as 'flex',
+      flexDirection: 'column' as 'column',
+      alignItems: 'center' as 'center',
+      justifyContent: 'flex-end' as 'flex-end',
+      height: '100%' as '100%',
+      paddingBottom: 25,
 
       compactCard: {
-        flexDirection: 'row' as 'row',
+        flexDirection: 'column' as 'column',
         alignItems: 'center' as 'center',
         justifyContent: 'space-between' as 'space-between',
         width: '100%' as '100%',
@@ -194,6 +189,13 @@ export const planetariumUIStyles = {
         borderRadius: 14,
         borderWidth: 1,
         borderColor: app_colors.white_twenty,
+      },
+
+      row: {
+        flexDirection: 'row' as 'row',
+        justifyContent: 'space-between' as 'space-between',
+        width: '100%' as '100%',
+        alignItems: 'center' as 'center',
       },
 
       column: {
@@ -252,6 +254,52 @@ export const planetariumUIStyles = {
         width: 26,
         height: 26,
         tintColor: app_colors.white_sixty,
+      },
+
+      sliderBlock: {
+        width: '100%' as '100%',
+        gap: 6,
+        marginTop: 6,
+      },
+
+      sliderLabels: {
+        flexDirection: 'row' as 'row',
+        justifyContent: 'space-between' as 'space-between',
+        paddingHorizontal: 4,
+      },
+
+      sliderLabel: {
+        color: app_colors.white_sixty,
+        fontFamily: 'DMMonoRegular',
+        fontSize: 12,
+      },
+
+      sliderTrack: {
+        position: 'relative' as 'relative',
+        height: 5,
+        borderRadius: 10,
+        backgroundColor: app_colors.white_twenty,
+        width: '100%' as '100%',
+      },
+
+      sliderThumb: {
+        position: 'absolute' as 'absolute',
+        top: -7,
+        width: 20,
+        height: 20,
+        borderRadius: 10,
+        backgroundColor: app_colors.turquoise,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.35,
+        shadowRadius: 3,
+        elevation: 2,
+      },
+
+      sliderStatus: {
+        color: app_colors.white_sixty,
+        fontFamily: 'GilroyRegular',
+        fontSize: 13,
       },
     },
 
