@@ -26,6 +26,7 @@ import {DSO} from "../../types/DSO";
 import {convertSphericalToCartesian} from "./utils/convertSphericalToCartesian";
 import { Dayjs } from "dayjs";
 import {convertHorizontalToEquatorial} from "@observerly/astrometry";
+import {createCompassLabels} from "./createCompassLabels";
 
 export const initScene = (
   gl: ExpoWebGLRenderingContext,
@@ -50,6 +51,7 @@ export const initScene = (
     eqGrid: THREE.Group,
     azGrid: THREE.Group,
   },
+  compassLabels: THREE.Group,
   quaternions: {
     groundTotalQuaternion: Quaternion,
   }
@@ -73,6 +75,7 @@ export const initScene = (
   const atmosphere = createAtmosphere(sunDirection, sunData.base.alt);
   const constellations = drawConstellations()
   const selectionCircle = createSelectionCircle()
+  const compassLabels = createCompassLabels(0.98, currentUserLocation, referenceDate.toDate());
 
   // Camera position locked to the ground
   const q1: Quaternion = new THREE.Quaternion;
@@ -120,7 +123,7 @@ export const initScene = (
   const initialEuler = new THREE.Euler().setFromQuaternion(groundTotalQuaternion, 'YXZ');
   setInitialAngles(initialEuler.y, initialEuler.x);
 
-  scene.add(selectionCircle, eqGrid, azGrid, ground, background, atmosphere, stars, planets, moon, sun, light, dso, constellations);
+  scene.add(selectionCircle, eqGrid, azGrid, compassLabels, ground, background, atmosphere, stars, planets, moon, sun, light, dso, constellations);
 
 
   console.log("[GLView] Scene initialized")
@@ -135,6 +138,7 @@ export const initScene = (
       eqGrid: eqGrid,
       azGrid: azGrid,
     },
+    compassLabels: compassLabels,
     quaternions: {
       groundTotalQuaternion: groundTotalQuaternion,
     }

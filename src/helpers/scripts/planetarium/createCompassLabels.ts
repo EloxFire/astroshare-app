@@ -1,48 +1,103 @@
 import * as THREE from 'three';
 import * as ExpoTHREE from 'expo-three';
-import { LocationObject } from '../../types/LocationObject';
-import {getGlobePosition} from "./utils/getGlobePosition";
+import {convertEquatorialToHorizontal, convertHorizontalToEquatorial} from '@observerly/astrometry';
+import {LocationObject} from '../../types/LocationObject';
+import {convertSphericalToCartesian} from './utils/convertSphericalToCartesian';
+import {meshGroupsNames, planetariumRenderOrders} from './utils/planetariumSettings';
+import {Polaris} from '../../constants';
 
-/**
- * Crée les 4 lettres cardinales (N, E, S, O) sous forme de meshes avec images PNG.
- * @param radius Rayon du cercle d'horizon
- * @param location Position de l'utilisateur pour orienter les lettres
- */
+type CardinalLetter = 'N' | 'E' | 'S' | 'W';
+
+const CARDINAL_LABELS: { letter: CardinalLetter; file: any }[] = [
+  { letter: 'N', file: require('../../../../assets/images/planetarium/compass/N.png') },
+  { letter: 'E', file: require('../../../../assets/images/planetarium/compass/E.png') },
+  { letter: 'S', file: require('../../../../assets/images/planetarium/compass/S.png') },
+  { letter: 'W', file: require('../../../../assets/images/planetarium/compass/W.png') },
+];
+
+const normalizeDegrees = (deg: number) => {
+  const wrapped = deg % 360;
+  return wrapped < 0 ? wrapped + 360 : wrapped;
+};
+
+const getCardinalAzimuths = (location: LocationObject, date: Date) => {
+  const polarisHorizontal = convertEquatorialToHorizontal(
+    date,
+    { latitude: location.lat, longitude: location.lon },
+    { ra: Polaris.ra, dec: Polaris.dec }
+  );
+
+  const northAz = Number.isFinite(polarisHorizontal.az) ? normalizeDegrees(polarisHorizontal.az) : 0;
+
+  return {
+    N: northAz,
+    E: normalizeDegrees(northAz + 90),
+    S: normalizeDegrees(northAz + 180),
+    W: normalizeDegrees(northAz + 270),
+  } as const;
+};
+
+const positionCompassLetter = (
+  sprite: THREE.Object3D,
+  azimuth: number,
+  location: LocationObject,
+  date: Date,
+  radius: number
+) => {
+  const horizontal = { alt: 0, az: azimuth };
+  const equatorial = convertHorizontalToEquatorial(
+    date,
+    { latitude: location.lat, longitude: location.lon },
+    horizontal
+  );
+  const position = convertSphericalToCartesian(radius, equatorial.ra, equatorial.dec);
+  sprite.position.copy(position);
+};
+
+export function updateCompassLabels(
+  group: THREE.Group | null,
+  location: LocationObject,
+  date: Date = new Date(),
+  radius: number = 0.98
+) {
+  if (!group) return;
+
+  const azimuths = getCardinalAzimuths(location, date);
+
+  group.children.forEach((child) => {
+    const letter = (child.userData?.letter || '') as CardinalLetter;
+    const azimuth = azimuths[letter];
+    if (azimuth === undefined) return;
+
+    positionCompassLetter(child, azimuth, location, date, radius);
+  });
+}
+
 export function createCompassLabels(
-  radius: number = 10,
+  radius: number = 0.98,
   location: LocationObject,
   date: Date = new Date()
 ): THREE.Group {
   const group = new THREE.Group();
   const loader = new ExpoTHREE.TextureLoader();
 
-  const labels = [
-    { letter: 'N', angle: 0, file: require('../../../../assets/images/planetarium/compass/N.png') },
-    { letter: 'E', angle: Math.PI / 2, file: require('../../../../assets/images/planetarium/compass/E.png') },
-    { letter: 'S', angle: Math.PI, file: require('../../../../assets/images/planetarium/compass/S.png') },
-    { letter: 'O', angle: -Math.PI / 2, file: require('../../../../assets/images/planetarium/compass/W.png') },
-  ];
-
-  const lookAtVec = getGlobePosition(location.lat, location.lon, date);
-
-  labels.forEach(({ letter, angle, file }) => {
+  CARDINAL_LABELS.forEach(({ letter, file }) => {
     const texture = loader.load(file);
-    const material = new THREE.MeshBasicMaterial({ map: texture, transparent: true });
-    const geometry = new THREE.PlaneGeometry(1, 1);
-    const mesh = new THREE.Mesh(geometry, material);
-
-    mesh.position.set(
-      Math.cos(angle) * radius,
-      0.01,
-      Math.sin(angle) * radius
-    );
-
-    // Utilise getGlobePosition pour orienter correctement la lettre
-    mesh.lookAt(lookAtVec);
-
-    group.add(mesh);
+    const material = new THREE.SpriteMaterial({
+      map: texture,
+      transparent: true,
+      depthTest: false,
+      depthWrite: false,
+    });
+    const sprite = new THREE.Sprite(material);
+    sprite.userData.letter = letter;
+    sprite.renderOrder = planetariumRenderOrders.labels;
+    sprite.scale.set(0.05, 0.05, 0.05);
+    group.add(sprite);
   });
 
-  group.name = 'CompassLabelsPNG';
+  updateCompassLabels(group, location, date, radius);
+
+  group.name = meshGroupsNames.compassLabels;
   return group;
 }

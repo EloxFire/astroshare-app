@@ -30,7 +30,7 @@ import {
   onShowAzGrid,
   onShowConstellations, onShowDSO,
   onShowEqGrid,
-  onShowGround, onShowPlanets
+  onShowGround, onShowPlanets, onShowCompassLabels
 } from "../../helpers/scripts/planetarium/ui/toggle";
 import {useTranslation} from "../../hooks/useTranslation";
 import {goTo} from "../../helpers/scripts/planetarium/utils/gotTo";
@@ -47,6 +47,7 @@ import {ComputedSunInfos} from "../../helpers/types/objects/ComputedSunInfos";
 import {i18n} from "../../helpers/scripts/i18n";
 import {getObjectFamily} from "../../helpers/scripts/astro/objects/getObjectFamily";
 import {Polaris} from "../../helpers/constants";
+import {updateCompassLabels} from "../../helpers/scripts/planetarium/createCompassLabels";
 import {
   convertEquatorialToHorizontal,
   EquatorialCoordinate,
@@ -139,6 +140,7 @@ export default function Planetarium({ route, navigation }: any) {
   const selectionCircleRef = useRef<THREE.Object3D | null>(null);
   const azGridRef = useRef<THREE.Group | null>(null);
   const eqGridRef = useRef<THREE.Group | null>(null);
+  const compassLabelsRef = useRef<THREE.Group | null>(null);
   const groundTotalQuaternionRef = useRef<THREE.Quaternion | null>(null);
 
   const [planetariumLoading, setPlanetariumLoading] = useState<boolean>(true);
@@ -545,8 +547,9 @@ export default function Planetarium({ route, navigation }: any) {
 
   const realignSceneToReferenceDate = useCallback(() => {
     if (!groundRef.current || !cameraRef.current) return;
-    const zenithEq = convertHorizontalToEquatorial(referenceDate.toDate(), { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }, { alt: 90, az: 0 });
-    const northEq = convertHorizontalToEquatorial(referenceDate.toDate(), { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }, { alt: 0, az: 0 });
+    const referenceDateAsDate = referenceDate.toDate();
+    const zenithEq = convertHorizontalToEquatorial(referenceDateAsDate, { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }, { alt: 90, az: 0 });
+    const northEq = convertHorizontalToEquatorial(referenceDateAsDate, { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }, { alt: 0, az: 0 });
     const zenithVec = convertSphericalToCartesian(5, zenithEq.ra, zenithEq.dec);
     const northVec = convertSphericalToCartesian(5, northEq.ra, northEq.dec).normalize();
 
@@ -573,6 +576,10 @@ export default function Planetarium({ route, navigation }: any) {
     if (azGridRef.current) {
       azGridRef.current.up.copy(northVec);
       azGridRef.current.lookAt(zenithVec);
+    }
+
+    if (compassLabelsRef.current) {
+      updateCompassLabels(compassLabelsRef.current, currentUserLocation, referenceDateAsDate, 0.98);
     }
   }, [currentUserLocation.lat, currentUserLocation.lon, referenceDate]);
 
@@ -740,7 +747,7 @@ export default function Planetarium({ route, navigation }: any) {
     const observer = {latitude: currentUserLocation.lat, longitude: currentUserLocation.lon};
     const sunData = sunDataAtDate ?? getSunData(referenceDate, observer);
 
-    const {scene, camera, renderer, ground, selectionCircle, atmosphere, grids, quaternions} = initScene(
+    const {scene, camera, renderer, ground, selectionCircle, atmosphere, grids, compassLabels, quaternions} = initScene(
       gl,
       currentUserLocation,
       starsCatalog.filter((star: Star) => star.V < 6),
@@ -761,6 +768,7 @@ export default function Planetarium({ route, navigation }: any) {
     selectionCircleRef.current = selectionCircle;
     azGridRef.current = grids.azGrid;
     eqGridRef.current = grids.eqGrid;
+    compassLabelsRef.current = compassLabels;
     groundTotalQuaternionRef.current = quaternions.groundTotalQuaternion;
 
     updateAtmosphereAndVisibility(sunData);
@@ -850,6 +858,7 @@ export default function Planetarium({ route, navigation }: any) {
               onShowGround={() => onShowGround(sceneRef.current!)}
               onShowPlanets={() => onShowPlanets(sceneRef.current!)}
               onShowDSO={() => onShowDSO(sceneRef.current!)}
+              onShowCompassLabels={() => onShowCompassLabels(sceneRef.current!)}
               onCenterObject={handleCenterObject}
               isFollowing={followSelection}
               onToggleFollow={toggleFollow}

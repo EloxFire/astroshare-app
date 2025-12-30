@@ -8,7 +8,7 @@ export const planetariumRenderOrders = {
   azGrid: -10,
   eqGrid: -9,
   constellations: -5,
-  labels: -2,
+  labels: 15,
   ground: 11,
   selectionCircle: 12,
 }

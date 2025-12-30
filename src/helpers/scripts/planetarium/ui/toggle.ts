@@ -38,10 +38,20 @@ export const onShowGround = (scene: THREE.Scene) => {
   console.log('[Planetarium] Toggling ground...');
   const ground = scene.getObjectByName(meshGroupsNames.ground);
   if (ground) {
-    const currentStatus = ground.visible
-    ground.visible = !currentStatus;
+    const nextVisible = !ground.visible;
+    ground.visible = nextVisible;
   } else {
     console.warn('Ground not found in the scene.');
+  }
+}
+
+export const onShowCompassLabels = (scene: THREE.Scene) => {
+  console.log('[Planetarium] Toggling compass labels...');
+  const compassLabels = scene.getObjectByName(meshGroupsNames.compassLabels);
+  if (compassLabels) {
+    compassLabels.visible = !compassLabels.visible;
+  } else {
+    console.warn('Compass labels not found in the scene.');
   }
 }
 

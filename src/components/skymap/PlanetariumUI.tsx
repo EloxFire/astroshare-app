@@ -32,6 +32,7 @@ interface PlanetariumUIProps {
   onShowGround: () => void;
   onShowPlanets: () => void;
   onShowDSO: () => void;
+  onShowCompassLabels: () => void;
   onCenterObject: () => void;
   onSelectObject: (obj: DSO | GlobalPlanet | Star) => void;
   onShowAtmosphere?: () => void;
@@ -44,7 +45,7 @@ interface PlanetariumUIProps {
   isTimelinePlaying: boolean;
 }
 
-export default function PlanetariumUI({ navigation, infos, onShowGround, onShowConstellations, onShowAzGrid, onShowEqGrid, onShowDSO, onShowPlanets, onCenterObject, onSelectObject, onShowAtmosphere, isFollowing, onToggleFollow, timelineDate, onChangeTimelineDate, onResetTimelineDate, onToggleTimelinePlay, isTimelinePlaying }: PlanetariumUIProps) {
+export default function PlanetariumUI({ navigation, infos, onShowGround, onShowConstellations, onShowAzGrid, onShowEqGrid, onShowDSO, onShowPlanets, onShowCompassLabels, onCenterObject, onSelectObject, onShowAtmosphere, isFollowing, onToggleFollow, timelineDate, onChangeTimelineDate, onResetTimelineDate, onToggleTimelinePlay, isTimelinePlaying }: PlanetariumUIProps) {
 
   const {currentUserLocation} = useSettings();
   const {currentLocale} = useTranslation();
@@ -442,6 +443,10 @@ export default function PlanetariumUI({ navigation, infos, onShowGround, onShowC
             <TouchableOpacity style={planetariumUIStyles.container.layersModal.button} onPress={() => onShowGround()}>
               <Image style={planetariumUIStyles.container.layersModal.button.icon} source={require('../../../assets/icons/FiMountain.png')} />
               <Text style={planetariumUIStyles.container.layersModal.button.text}>Terrain</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={planetariumUIStyles.container.layersModal.button} onPress={() => onShowCompassLabels()}>
+              <Image style={planetariumUIStyles.container.layersModal.button.icon} source={require('../../../assets/icons/FiCompass.png')} />
+              <Text style={planetariumUIStyles.container.layersModal.button.text}>Boussole</Text>
             </TouchableOpacity>
             {onShowAtmosphere && (
               <TouchableOpacity style={planetariumUIStyles.container.layersModal.button} onPress={() => onShowAtmosphere()}>
