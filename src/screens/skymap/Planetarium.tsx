@@ -143,6 +143,7 @@ export default function Planetarium({ route, navigation }: any) {
   const eqGridRef = useRef<THREE.Group | null>(null);
   const compassLabelsRef = useRef<THREE.Group | null>(null);
   const constellationLabelsRef = useRef<THREE.Group | null>(null);
+  const zenithDirectionRef = useRef<THREE.Vector3 | null>(null);
   const groundTotalQuaternionRef = useRef<THREE.Quaternion | null>(null);
 
   const [planetariumLoading, setPlanetariumLoading] = useState<boolean>(true);
@@ -555,6 +556,7 @@ export default function Planetarium({ route, navigation }: any) {
     const zenithVec = convertSphericalToCartesian(5, zenithEq.ra, zenithEq.dec);
     const northVec = convertSphericalToCartesian(5, northEq.ra, northEq.dec).normalize();
 
+    zenithDirectionRef.current = zenithVec.clone().normalize();
     groundRef.current.up.copy(northVec);
     groundRef.current.lookAt(zenithVec);
     groundRef.current.userData.baseQuaternion = groundRef.current.quaternion.clone();
@@ -748,6 +750,9 @@ export default function Planetarium({ route, navigation }: any) {
   const _onContextCreate = async (gl: ExpoWebGLRenderingContext) => {
     const observer = {latitude: currentUserLocation.lat, longitude: currentUserLocation.lon};
     const sunData = sunDataAtDate ?? getSunData(referenceDate, observer);
+    const zenithEq = convertHorizontalToEquatorial(referenceDate.toDate(), observer, { alt: 90, az: 0 });
+    const initialZenithVec = convertSphericalToCartesian(1, zenithEq.ra, zenithEq.dec).normalize();
+    zenithDirectionRef.current = initialZenithVec;
 
     const {scene, camera, renderer, ground, selectionCircle, atmosphere, grids, compassLabels, quaternions} = initScene(
       gl,
@@ -793,7 +798,10 @@ export default function Planetarium({ route, navigation }: any) {
       }
 
       if (constellationLabelsRef.current && cameraRef.current) {
-        updateConstellationLabelSizes(constellationLabelsRef.current, cameraRef.current);
+        updateConstellationLabelSizes(constellationLabelsRef.current, cameraRef.current, {
+          zenithDirection: zenithDirectionRef.current,
+          groundVisible: groundRef.current?.visible,
+        });
       }
 
       if (rendererRef.current && sceneRef.current && cameraRef.current) {
@@ -840,7 +848,7 @@ export default function Planetarium({ route, navigation }: any) {
 
   const tapGesture = Gesture.Tap()
     .maxDuration(250)
-    .onEnd((e) => handleTapStart(e, sceneRef, cameraRef, selectionCircleRef, setObjectInfos));
+    .onEnd((e) => handleTapStart(e, sceneRef, cameraRef, selectionCircleRef, groundRef, zenithDirectionRef, setObjectInfos));
 
 
   const movementGestures: SimultaneousGesture = Gesture.Simultaneous(panGesture, pinchGesture);

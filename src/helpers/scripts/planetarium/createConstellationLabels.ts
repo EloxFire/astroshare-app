@@ -60,9 +60,16 @@ export const createConstellationLabels = (radius: number = 9.65, baseFov: number
 
 export const updateConstellationLabelSizes = (
   group: THREE.Group | null,
-  camera: THREE.PerspectiveCamera | null
+  camera: THREE.PerspectiveCamera | null,
+  options?: {
+    zenithDirection?: THREE.Vector3 | null;
+    groundVisible?: boolean;
+  }
 ) => {
   if (!group || !camera) return;
+
+  const normalizedZenith = options?.zenithDirection ? options.zenithDirection.clone().normalize() : null;
+  const shouldCullBelowGround = !!options?.groundVisible && !!normalizedZenith;
 
   const baseFov: number = group.userData?.baseFov ?? DEFAULT_BASE_FOV;
   const baseFovTan = Math.tan(THREE.MathUtils.degToRad(0.5 * baseFov));
@@ -77,5 +84,13 @@ export const updateConstellationLabelSizes = (
     const baseScale = child.userData?.baseScale as THREE.Vector3 | undefined;
     if (!baseScale) return;
     child.scale.set(baseScale.x * scaleFactor, baseScale.y * scaleFactor, baseScale.z ?? 1);
+
+    if (shouldCullBelowGround) {
+      const direction = child.position.clone().normalize();
+      const aboveHorizon = direction.dot(normalizedZenith!) >= 0;
+      child.visible = group.visible && aboveHorizon;
+    } else {
+      child.visible = group.visible;
+    }
   });
 };

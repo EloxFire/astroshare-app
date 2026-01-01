@@ -10,6 +10,8 @@ export const handleTapStart = (
   sceneRef: React.MutableRefObject<THREE.Scene | null>,
   cameraRef: React.MutableRefObject<THREE.PerspectiveCamera | null>,
   selectionCircle: React.MutableRefObject<THREE.Object3D | null>,
+  groundRef: React.MutableRefObject<THREE.Mesh | null>,
+  zenithDirectionRef: React.MutableRefObject<THREE.Vector3 | null>,
   setObjectInfos: React.Dispatch<any>
 ) => {
   console.log("[GLView] Tap gesture started");
@@ -17,6 +19,8 @@ export const handleTapStart = (
   const camera = cameraRef.current;
   const scene = sceneRef.current;
   const selectionCircleObject = selectionCircle.current!;
+  const ground = groundRef.current;
+  const zenithDirection = zenithDirectionRef.current ? zenithDirectionRef.current.clone().normalize() : null;
 
   if (!camera || !scene) return;
 
@@ -38,7 +42,15 @@ export const handleTapStart = (
 
   const intersects = raycaster.intersectObjects(scene.children, true);
 
-  if (intersects.length === 0) {
+  const shouldCullBelowGround = !!ground?.visible && !!zenithDirection;
+  const filteredIntersects = shouldCullBelowGround
+    ? intersects.filter((hit) => {
+        const pointDirection = hit.point.clone().normalize();
+        return pointDirection.lengthSq() > 0 && pointDirection.dot(zenithDirection!) >= 0;
+      })
+    : intersects;
+
+  if (filteredIntersects.length === 0) {
     console.log("[GLView] No intersection found");
     selectionCircleObject.visible = false;
     return;
@@ -46,7 +58,7 @@ export const handleTapStart = (
 
   const priority = ["planet", "sun", "moon", "star", "dso"];
   for (const type of priority) {
-    const target = intersects.find((i) => i.object.userData?.type === type);
+    const target = filteredIntersects.find((i) => i.object.userData?.type === type);
     if (!target || !target.object.userData?.onTap) continue;
 
     // Appel du comportement
