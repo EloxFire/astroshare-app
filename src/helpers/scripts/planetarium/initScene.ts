@@ -27,6 +27,7 @@ import {convertSphericalToCartesian} from "./utils/convertSphericalToCartesian";
 import { Dayjs } from "dayjs";
 import {convertHorizontalToEquatorial} from "@observerly/astrometry";
 import {createCompassLabels} from "./createCompassLabels";
+import {createConstellationLabels} from "./createConstellationLabels";
 
 export const initScene = (
   gl: ExpoWebGLRenderingContext,
@@ -74,6 +75,7 @@ export const initScene = (
   const sunDirection = convertSphericalToCartesian(1, sunData.base.ra, sunData.base.dec);
   const atmosphere = createAtmosphere(sunDirection, sunData.base.alt);
   const constellations = drawConstellations()
+  const constellationLabels = createConstellationLabels(9.65, camera.fov);
   const selectionCircle = createSelectionCircle()
   const compassLabels = createCompassLabels(0.98, currentUserLocation, referenceDate.toDate());
 
@@ -123,7 +125,7 @@ export const initScene = (
   const initialEuler = new THREE.Euler().setFromQuaternion(groundTotalQuaternion, 'YXZ');
   setInitialAngles(initialEuler.y, initialEuler.x);
 
-  scene.add(selectionCircle, eqGrid, azGrid, compassLabels, ground, background, atmosphere, stars, planets, moon, sun, light, dso, constellations);
+  scene.add(selectionCircle, eqGrid, azGrid, compassLabels, ground, background, atmosphere, stars, planets, moon, sun, light, dso, constellations, constellationLabels);
 
 
   console.log("[GLView] Scene initialized")

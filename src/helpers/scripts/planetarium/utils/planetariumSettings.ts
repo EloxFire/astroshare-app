@@ -21,6 +21,7 @@ export const meshGroupsNames = {
   moon: 'moon',
   dso: 'dso',
   constellations: 'constellations',
+  constellationLabels: 'constellationLabels',
   ground: 'ground',
   atmosphere: 'atmosphere',
   selectionCircle: 'selectionCircle',

@@ -28,6 +28,7 @@ interface PlanetariumUIProps {
   infos: ComputedObjectInfos | null;
   onShowEqGrid: () => void;
   onShowConstellations: () => void;
+  onShowConstellationLabels: () => void;
   onShowAzGrid: () => void;
   onShowGround: () => void;
   onShowPlanets: () => void;
@@ -45,7 +46,7 @@ interface PlanetariumUIProps {
   isTimelinePlaying: boolean;
 }
 
-export default function PlanetariumUI({ navigation, infos, onShowGround, onShowConstellations, onShowAzGrid, onShowEqGrid, onShowDSO, onShowPlanets, onShowCompassLabels, onCenterObject, onSelectObject, onShowAtmosphere, isFollowing, onToggleFollow, timelineDate, onChangeTimelineDate, onResetTimelineDate, onToggleTimelinePlay, isTimelinePlaying }: PlanetariumUIProps) {
+export default function PlanetariumUI({ navigation, infos, onShowGround, onShowConstellations, onShowConstellationLabels, onShowAzGrid, onShowEqGrid, onShowDSO, onShowPlanets, onShowCompassLabels, onCenterObject, onSelectObject, onShowAtmosphere, isFollowing, onToggleFollow, timelineDate, onChangeTimelineDate, onResetTimelineDate, onToggleTimelinePlay, isTimelinePlaying }: PlanetariumUIProps) {
 
   const {currentUserLocation} = useSettings();
   const {currentLocale} = useTranslation();
@@ -423,6 +424,10 @@ export default function PlanetariumUI({ navigation, infos, onShowGround, onShowC
             <TouchableOpacity style={planetariumUIStyles.container.layersModal.button} onPress={() => onShowConstellations()}>
               <Image style={planetariumUIStyles.container.layersModal.button.icon} source={require('../../../assets/icons/FiConstellation.png')} />
               <Text style={planetariumUIStyles.container.layersModal.button.text}>Constel</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={planetariumUIStyles.container.layersModal.button} onPress={() => onShowConstellationLabels()}>
+              <Image style={planetariumUIStyles.container.layersModal.button.icon} source={require('../../../assets/icons/FiFileText.png')} />
+              <Text style={planetariumUIStyles.container.layersModal.button.text}>Labels</Text>
             </TouchableOpacity>
             <TouchableOpacity style={planetariumUIStyles.container.layersModal.button} onPress={() => onShowEqGrid()}>
               <Image style={planetariumUIStyles.container.layersModal.button.icon} source={require('../../../assets/icons/FiEqGrid.png')} />

@@ -28,7 +28,7 @@ import {Star} from "../../helpers/types/Star";
 import {shutdownPlanetarium} from "../../helpers/scripts/planetarium/shutdownPlanetarium";
 import {
   onShowAzGrid,
-  onShowConstellations, onShowDSO,
+  onShowConstellations, onShowConstellationLabels, onShowDSO,
   onShowEqGrid,
   onShowGround, onShowPlanets, onShowCompassLabels
 } from "../../helpers/scripts/planetarium/ui/toggle";
@@ -48,6 +48,7 @@ import {i18n} from "../../helpers/scripts/i18n";
 import {getObjectFamily} from "../../helpers/scripts/astro/objects/getObjectFamily";
 import {Polaris} from "../../helpers/constants";
 import {updateCompassLabels} from "../../helpers/scripts/planetarium/createCompassLabels";
+import {updateConstellationLabelSizes} from "../../helpers/scripts/planetarium/createConstellationLabels";
 import {
   convertEquatorialToHorizontal,
   EquatorialCoordinate,
@@ -141,6 +142,7 @@ export default function Planetarium({ route, navigation }: any) {
   const azGridRef = useRef<THREE.Group | null>(null);
   const eqGridRef = useRef<THREE.Group | null>(null);
   const compassLabelsRef = useRef<THREE.Group | null>(null);
+  const constellationLabelsRef = useRef<THREE.Group | null>(null);
   const groundTotalQuaternionRef = useRef<THREE.Quaternion | null>(null);
 
   const [planetariumLoading, setPlanetariumLoading] = useState<boolean>(true);
@@ -769,6 +771,7 @@ export default function Planetarium({ route, navigation }: any) {
     azGridRef.current = grids.azGrid;
     eqGridRef.current = grids.eqGrid;
     compassLabelsRef.current = compassLabels;
+    constellationLabelsRef.current = scene.getObjectByName(meshGroupsNames.constellationLabels) as THREE.Group | null;
     groundTotalQuaternionRef.current = quaternions.groundTotalQuaternion;
 
     updateAtmosphereAndVisibility(sunData);
@@ -787,6 +790,10 @@ export default function Planetarium({ route, navigation }: any) {
         const pulse = 1 + 0.06 * Math.sin(performance.now() * 0.006);
         const { x, y, z } = selectionCircleRef.current.userData.baseScale;
         selectionCircleRef.current.scale.set(x * pulse, y * pulse, z * pulse);
+      }
+
+      if (constellationLabelsRef.current && cameraRef.current) {
+        updateConstellationLabelSizes(constellationLabelsRef.current, cameraRef.current);
       }
 
       if (rendererRef.current && sceneRef.current && cameraRef.current) {
@@ -854,6 +861,7 @@ export default function Planetarium({ route, navigation }: any) {
               }}
               onShowAzGrid={() => onShowAzGrid(sceneRef.current!)}
               onShowConstellations={() => onShowConstellations(sceneRef.current!)}
+              onShowConstellationLabels={() => onShowConstellationLabels(sceneRef.current!)}
               onShowEqGrid={() => onShowEqGrid(sceneRef.current!)}
               onShowGround={() => onShowGround(sceneRef.current!)}
               onShowPlanets={() => onShowPlanets(sceneRef.current!)}

@@ -34,6 +34,16 @@ export const onShowConstellations = (scene: THREE.Scene) => {
   }
 }
 
+export const onShowConstellationLabels = (scene: THREE.Scene) => {
+  console.log('[Planetarium] Toggling constellation labels...');
+  const constellationLabels = scene.getObjectByName(meshGroupsNames.constellationLabels);
+  if (constellationLabels) {
+    constellationLabels.visible = !constellationLabels.visible;
+  } else {
+    console.warn('Constellation labels not found in the scene.');
+  }
+}
+
 export const onShowGround = (scene: THREE.Scene) => {
   console.log('[Planetarium] Toggling ground...');
   const ground = scene.getObjectByName(meshGroupsNames.ground);
