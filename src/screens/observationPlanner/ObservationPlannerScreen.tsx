@@ -74,18 +74,18 @@ function ObservationPlannerScreen({navigation}: any) {
       setModalVisible(true);
       setModalContent({
         type: 'warn',
-        title: "Attention",
-        text: "Le Soleil sera au-dessus de l'horizon au début de votre session d'observation.\n\nCela peut affecter la visibilité des objets célestes. Voulez-vous continuer ?",
+        title: i18n.t('observationPlanner.screen.modal.sunAboveHorizon.title'),
+        text: i18n.t('observationPlanner.screen.modal.sunAboveHorizon.text'),
         buttons: [
           {
             backgroundColor: app_colors.black,
             foregroundColor: app_colors.white,
             borderColor: app_colors.white_twenty,
-            label: "Annuler",
+            label: i18n.t('observationPlanner.screen.modal.sunAboveHorizon.cancel'),
             onPress: () => setModalVisible(false),
           },
           {
-            label: "Continuer",
+            label: i18n.t('observationPlanner.screen.modal.sunAboveHorizon.continue'),
             onPress: () => {
               setModalVisible(false);
               handleSearch();
@@ -139,7 +139,7 @@ function ObservationPlannerScreen({navigation}: any) {
       setResultsList(observations);
     } catch (error) {
       console.error("Error during observation planning:", error);
-      showToast({message: "Une erreur est survenue lors de la planification de l'observation.", type: 'error'});
+      showToast({message: i18n.t('observationPlanner.screen.errors.planning'), type: 'error'});
     } finally {
       setIsPlanning(false);
     }
@@ -204,7 +204,7 @@ function ObservationPlannerScreen({navigation}: any) {
           
           {/* TEMPORAL BLOC */}
           <View style={observationPlannerScreenStyles.content.bloc}>
-            <Text style={observationPlannerScreenStyles.content.bloc.title}>1. Durée de la session</Text>
+            <Text style={observationPlannerScreenStyles.content.bloc.title}>{i18n.t('observationPlanner.screen.steps.sessionDuration')}</Text>
 
             {
               showStartPicker && (
@@ -337,7 +337,7 @@ function ObservationPlannerScreen({navigation}: any) {
             
 
             <View>
-              <Text style={observationPlannerScreenStyles.content.bloc.subtitle}>Date et heure de début</Text>
+              <Text style={observationPlannerScreenStyles.content.bloc.subtitle}>{i18n.t('observationPlanner.screen.labels.startDateTime')}</Text>
               <View style={observationPlannerScreenStyles.content.row}>
                 <SimpleButton
                   icon={require('../../../assets/icons/FiCalendar.png')}
@@ -358,7 +358,7 @@ function ObservationPlannerScreen({navigation}: any) {
             </View>
 
             <View>
-              <Text style={observationPlannerScreenStyles.content.bloc.subtitle}>Date et heure de fin</Text>
+              <Text style={observationPlannerScreenStyles.content.bloc.subtitle}>{i18n.t('observationPlanner.screen.labels.endDateTime')}</Text>
               <View style={observationPlannerScreenStyles.content.row}>
                 <SimpleButton
                   icon={require('../../../assets/icons/FiCalendar.png')}
@@ -380,41 +380,41 @@ function ObservationPlannerScreen({navigation}: any) {
 
           {/* FILTERS */}
           <View style={observationPlannerScreenStyles.content.bloc}>
-            <Text style={observationPlannerScreenStyles.content.bloc.title}>2. Type d'objets</Text>
+            <Text style={observationPlannerScreenStyles.content.bloc.title}>{i18n.t('observationPlanner.screen.steps.objectTypes')}</Text>
 
-            <BigButton isChecked={planetsEnabled} onPress={() => setPlanetsEnabled(!planetsEnabled)} hasCheckbox icon={require('../../../assets/icons/astro/planets/color/JUPITER.png')} text='Planètes' />
-            <BigButton isChecked={dsoEnabled} onPress={() => setDsoEnabled(!dsoEnabled)} hasCheckbox icon={require('../../../assets/icons/astro/CL+N.png')} text='Objets du ciel profond' />
-            <BigButton isChecked={starsEnabled} onPress={() => setStarsEnabled(!starsEnabled)} hasCheckbox icon={require('../../../assets/icons/astro/BRIGHTSTAR.png')} text='Étoiles brillantes' />
+            <BigButton isChecked={planetsEnabled} onPress={() => setPlanetsEnabled(!planetsEnabled)} hasCheckbox icon={require('../../../assets/icons/astro/planets/color/JUPITER.png')} text={i18n.t('observationPlanner.filters.targets.planets')} />
+            <BigButton isChecked={dsoEnabled} onPress={() => setDsoEnabled(!dsoEnabled)} hasCheckbox icon={require('../../../assets/icons/astro/CL+N.png')} text={i18n.t('observationPlanner.filters.targets.dso')} />
+            <BigButton isChecked={starsEnabled} onPress={() => setStarsEnabled(!starsEnabled)} hasCheckbox icon={require('../../../assets/icons/astro/BRIGHTSTAR.png')} text={i18n.t('observationPlanner.filters.targets.stars')} />
           </View>
 
           {/* OTHER FILTERS */}
           <View style={observationPlannerScreenStyles.content.bloc}>
-            <Text style={observationPlannerScreenStyles.content.bloc.title}>3. Autres filtres (optionnels)</Text>
+            <Text style={observationPlannerScreenStyles.content.bloc.title}>{i18n.t('observationPlanner.screen.steps.otherFilters')}</Text>
 
-            <Text style={observationPlannerScreenStyles.content.bloc.subtitle}>Magnitude</Text>
+            <Text style={observationPlannerScreenStyles.content.bloc.subtitle}>{i18n.t('observationPlanner.screen.labels.magnitude')}</Text>
             <View style={observationPlannerScreenStyles.content.row}>
-              <InputWithIcon type='number' value={minMag ? minMag.toString() : undefined} placeholder='Mag min' changeEvent={(value) => setMinMag(parseInt(value))} additionalStyles={{marginVertical: 0}} />
-              <InputWithIcon type='number' value={maxMag ? maxMag.toString() : undefined} placeholder='Mag max' changeEvent={(value) => setMaxMag(parseInt(value))} additionalStyles={{marginVertical: 0}} />
+              <InputWithIcon type='number' value={minMag ? minMag.toString() : undefined} placeholder={i18n.t('observationPlanner.screen.placeholders.minMag')} changeEvent={(value) => setMinMag(parseInt(value))} additionalStyles={{marginVertical: 0}} />
+              <InputWithIcon type='number' value={maxMag ? maxMag.toString() : undefined} placeholder={i18n.t('observationPlanner.screen.placeholders.maxMag')} changeEvent={(value) => setMaxMag(parseInt(value))} additionalStyles={{marginVertical: 0}} />
             </View>
             
-            <Text style={observationPlannerScreenStyles.content.bloc.subtitle}>Altitude</Text>
+            <Text style={observationPlannerScreenStyles.content.bloc.subtitle}>{i18n.t('observationPlanner.screen.labels.altitude')}</Text>
             <View style={observationPlannerScreenStyles.content.row}>
-              <InputWithIcon type='number' value={minAlt ? minAlt.toString() : undefined} placeholder='Alt min (°)' changeEvent={(value) => setMinAlt(parseInt(value))} additionalStyles={{marginVertical: 0}} />
-              <InputWithIcon type='number' value={maxAlt ? maxAlt.toString() : undefined} placeholder='Alt max (°)' changeEvent={(value) => setMaxAlt(parseInt(value))} additionalStyles={{marginVertical: 0}} />
+              <InputWithIcon type='number' value={minAlt ? minAlt.toString() : undefined} placeholder={i18n.t('observationPlanner.screen.placeholders.minAlt')} changeEvent={(value) => setMinAlt(parseInt(value))} additionalStyles={{marginVertical: 0}} />
+              <InputWithIcon type='number' value={maxAlt ? maxAlt.toString() : undefined} placeholder={i18n.t('observationPlanner.screen.placeholders.maxAlt')} changeEvent={(value) => setMaxAlt(parseInt(value))} additionalStyles={{marginVertical: 0}} />
             </View>
 
-            <Text style={observationPlannerScreenStyles.content.bloc.subtitle}>Nombre max de résultats</Text>
+            <Text style={observationPlannerScreenStyles.content.bloc.subtitle}>{i18n.t('observationPlanner.screen.labels.maxResults')}</Text>
             <View style={observationPlannerScreenStyles.content.row}>
-              <InputWithIcon type='number' value={maxResults ? maxResults.toString() : undefined} placeholder='Résultats max (10 par défaut)' changeEvent={(value) => setMaxResults(parseInt(value))} additionalStyles={{marginVertical: 0}} />
+              <InputWithIcon type='number' value={maxResults ? maxResults.toString() : undefined} placeholder={i18n.t('observationPlanner.screen.placeholders.maxResults')} changeEvent={(value) => setMaxResults(parseInt(value))} additionalStyles={{marginVertical: 0}} />
               {/* <InputWithIcon type='number' value={maxAlt ? maxAlt.toString() : undefined} placeholder='Alt max (°)' changeEvent={(value) => setMaxAlt(parseInt(value))} additionalStyles={{marginVertical: 0}} /> */}
             </View>
 
-            <Text style={observationPlannerScreenStyles.content.bloc.subtitle}>Temps par objet (minutes)</Text>
+            <Text style={observationPlannerScreenStyles.content.bloc.subtitle}>{i18n.t('observationPlanner.screen.labels.perObjectTime')}</Text>
             <View style={observationPlannerScreenStyles.content.row}>
               <InputWithIcon
                 type='number'
                 value={perObjectObsTime ? perObjectObsTime.toString() : undefined}
-                placeholder='5 min par défaut'
+                placeholder={i18n.t('observationPlanner.screen.placeholders.perObjectTime')}
                 changeEvent={(value) => setPerObjectObsTime(parseInt(value) || 5)}
                 additionalStyles={{marginVertical: 0}}
               />
@@ -426,7 +426,7 @@ function ObservationPlannerScreen({navigation}: any) {
             !resultsList && (
               <SimpleButton
                 icon={require('../../../assets/icons/FiSearch.png')}
-                text="Lancer la recherche"
+                text={i18n.t('observationPlanner.screen.buttons.search')}
                 onPress={() => checkVisibility()}
                 backgroundColor={app_colors.white}
                 textColor={app_colors.black}
@@ -441,17 +441,17 @@ function ObservationPlannerScreen({navigation}: any) {
           {
             resultsList && resultsList.length === 0 && (
               <View style={observationPlannerScreenStyles.content.bloc}>
-                <Text style={observationPlannerScreenStyles.content.bloc.title}>4. Résultats</Text>
+                <Text style={observationPlannerScreenStyles.content.bloc.title}>{i18n.t('observationPlanner.screen.steps.results')}</Text>
                 
-                <Text style={observationPlannerScreenStyles.content.bloc.subtitle}>Aucun résultat ne correspond à vos critères</Text>
+                <Text style={observationPlannerScreenStyles.content.bloc.subtitle}>{i18n.t('observationPlanner.screen.messages.empty')}</Text>
               </View>
             )
           }
           {
             resultsList && resultsList.length > 0 && (
               <View style={observationPlannerScreenStyles.content.bloc}>
-                <Text style={observationPlannerScreenStyles.content.bloc.title}>4. Résultats</Text>
-                <Text style={observationPlannerScreenStyles.content.bloc.subtitle}>Objets recommandés pour votre session d'observation :</Text>
+                <Text style={observationPlannerScreenStyles.content.bloc.title}>{i18n.t('observationPlanner.screen.steps.results')}</Text>
+                <Text style={observationPlannerScreenStyles.content.bloc.subtitle}>{i18n.t('observationPlanner.screen.messages.recommended')}</Text>
                 {
                   resultsList.map((obj, index) => (
                     <ObservationPlannerObjectCard key={index} object={obj} navigation={navigation} date={startDate.hour(Number(startTime.split(':')[0])).minute(Number(startTime.split(':')[1]))} />
@@ -461,7 +461,7 @@ function ObservationPlannerScreen({navigation}: any) {
                 <View style={{marginTop: 10, gap: 10}}>
                   <SimpleButton
                     icon={require('../../../assets/icons/FiSearch.png')}
-                    text="Relancer la recherche"
+                    text={i18n.t('observationPlanner.screen.buttons.searchAgain')}
                     onPress={() => checkVisibility()}
                     backgroundColor={app_colors.white}
                     textColor={app_colors.black}
@@ -474,7 +474,7 @@ function ObservationPlannerScreen({navigation}: any) {
 
                   <SimpleButton
                     icon={require('../../../assets/icons/FiTrash.png')}
-                    text="Supprimer la recherche"
+                    text={i18n.t('observationPlanner.screen.buttons.clear')}
                     onPress={() => setResultsList(null)}
                     backgroundColor={app_colors.red_eighty}
                     textColor={app_colors.white}
