@@ -28,10 +28,7 @@ export const createPlanets = (planets: GlobalPlanet[], setUiInfos: React.Dispatc
       index: planet.name,
       onTap: () => {
         console.log(`[GLView] Planet tapped: ${planet.name}`);
-        setUiInfos({
-          object: planet,
-          meshPosition: new THREE.Vector3(x, y, z),
-        });
+        setUiInfos(planet);
       }
     };
 

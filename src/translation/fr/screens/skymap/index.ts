@@ -11,7 +11,7 @@ export const skymapTranslations = {
     },
     planetarium: {
       title: "Planétarium 3D",
-      subtitle: "// Bientôt disponible !"
+      subtitle: "// Explorez le ciel en direct !"
     },
     constellations: {
       title: "Cartes des constellations",

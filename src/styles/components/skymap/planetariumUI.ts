@@ -18,13 +18,13 @@ export const planetariumUIStyles = {
     paddingHorizontal: 10,
 
     layersModal: {
-      backgroundColor: app_colors.black_skymap,
+      backgroundColor: app_colors.black_modal,
       padding: 10,
       position: 'absolute' as 'absolute',
-      top: StatusBar.currentHeight! + DEFAULT_UI_BUTTON_GAP,
+      top: StatusBar.currentHeight!,
       right: 65,
       zIndex: 10,
-      width: 200,
+      width: 230,
       gap: 10,
       display: 'flex' as 'flex',
       borderRadius: 10,
@@ -41,12 +41,12 @@ export const planetariumUIStyles = {
         alignItems: 'center' as 'center',
         justifyContent: 'center' as 'center',
         gap: 5,
-        width: 50,
-        height: 50,
+        width: 60,
+        height: 60,
 
         icon: {
-          width: 30,
-          height: 30,
+          width: 35,
+          height: 35,
           tintColor: app_colors.white_sixty,
         },
 
@@ -60,13 +60,13 @@ export const planetariumUIStyles = {
 
     uiButton: {
       position: 'absolute' as 'absolute',
-      top: StatusBar.currentHeight! + 10,
+      top: StatusBar.currentHeight!,
       right: 10,
       display: 'flex' as 'flex',
       flexDirection: 'row' as 'row',
       alignItems: 'center' as 'center',
       zIndex: 10,
-      backgroundColor: app_colors.black_skymap,
+      backgroundColor: app_colors.black_modal,
       padding: 8,
       borderRadius: 10,
       borderWidth: 1,
@@ -92,7 +92,15 @@ export const planetariumUIStyles = {
       },
 
       search: {
-        top: StatusBar.currentHeight! + DEFAULT_UI_BUTTON_SIZE + DEFAULT_UI_BUTTON_PADDING + DEFAULT_UI_BUTTON_GAP,
+        top: StatusBar.currentHeight! + DEFAULT_UI_BUTTON_SIZE + DEFAULT_UI_BUTTON_GAP,
+      },
+
+      timeline: {
+        top: StatusBar.currentHeight! + (DEFAULT_UI_BUTTON_SIZE + DEFAULT_UI_BUTTON_GAP) * 2,
+      },
+
+      followObject: {
+        top: StatusBar.currentHeight! + (DEFAULT_UI_BUTTON_SIZE + DEFAULT_UI_BUTTON_GAP) * 3,
       }
     },
 
@@ -105,7 +113,7 @@ export const planetariumUIStyles = {
       width: Dimensions.get('window').width - 20,
 
       input: {
-        backgroundColor: app_colors.black_skymap,
+        backgroundColor: app_colors.black_modal,
         borderRadius: 10,
         borderWidth: 1,
         borderColor: app_colors.white_twenty,
@@ -118,7 +126,7 @@ export const planetariumUIStyles = {
       },
 
       results: {
-        backgroundColor: app_colors.black_skymap,
+        backgroundColor: app_colors.black_modal,
         borderRadius: 10,
         borderWidth: 1,
         borderColor: app_colors.white_twenty,
@@ -127,7 +135,7 @@ export const planetariumUIStyles = {
       },
 
       categories: {
-        backgroundColor: app_colors.black_skymap,
+        backgroundColor: app_colors.black_modal,
         borderRadius: 10,
         borderWidth: 1,
         borderColor: app_colors.white_twenty,
@@ -158,6 +166,141 @@ export const planetariumUIStyles = {
           }
         }
       }
+    },
+
+    timelineModal: {
+
+      display: 'flex' as 'flex',
+      flexDirection: 'column' as 'column',
+      alignItems: 'center' as 'center',
+      justifyContent: 'flex-end' as 'flex-end',
+      height: '100%' as '100%',
+      paddingBottom: 25,
+
+      compactCard: {
+        flexDirection: 'column' as 'column',
+        alignItems: 'center' as 'center',
+        justifyContent: 'space-between' as 'space-between',
+        width: '100%' as '100%',
+        gap: 20,
+        backgroundColor: app_colors.black_modal,
+        paddingVertical: 16,
+        paddingHorizontal: 18,
+        borderRadius: 14,
+        borderWidth: 1,
+        borderColor: app_colors.white_twenty,
+      },
+
+      row: {
+        flexDirection: 'row' as 'row',
+        justifyContent: 'space-between' as 'space-between',
+        width: '100%' as '100%',
+        alignItems: 'center' as 'center',
+      },
+
+      column: {
+        alignItems: 'center' as 'center',
+        gap: 6,
+      },
+
+      arrowRow: {
+        flexDirection: 'row' as 'row',
+        gap: 8,
+        alignItems: 'center' as 'center',
+      },
+
+      chevronButton: {
+        padding: 6,
+      },
+
+      chevron: {
+        width: 18,
+        height: 18,
+        tintColor: app_colors.white,
+      },
+
+      value: {
+        color: app_colors.white,
+        fontSize: 20,
+        fontFamily: 'DMMonoRegular',
+      },
+
+      centerColumn: {
+        alignItems: 'center' as 'center',
+        gap: 10,
+      },
+
+      iconButton: {
+        width: 36,
+        height: 36,
+        borderRadius: 18,
+        borderWidth: 1,
+        borderColor: app_colors.white_twenty,
+        alignItems: 'center' as 'center',
+        justifyContent: 'center' as 'center',
+      },
+
+      centerIcon: {
+        width: 20,
+        height: 20,
+        tintColor: app_colors.white,
+      },
+
+      closeButton: {
+        marginTop: 12,
+      },
+
+      closeIcon: {
+        width: 26,
+        height: 26,
+        tintColor: app_colors.white_sixty,
+      },
+
+      sliderBlock: {
+        width: '100%' as '100%',
+        gap: 6,
+        marginTop: 6,
+      },
+
+      sliderLabels: {
+        flexDirection: 'row' as 'row',
+        justifyContent: 'space-between' as 'space-between',
+        paddingHorizontal: 4,
+      },
+
+      sliderLabel: {
+        color: app_colors.white_sixty,
+        fontFamily: 'DMMonoRegular',
+        fontSize: 12,
+      },
+
+      sliderTrack: {
+        position: 'relative' as 'relative',
+        height: 5,
+        borderRadius: 10,
+        backgroundColor: app_colors.white_twenty,
+        width: '100%' as '100%',
+      },
+
+      sliderThumb: {
+        position: 'absolute' as 'absolute',
+        top: -7,
+        width: 20,
+        height: 20,
+        borderRadius: 10,
+        backgroundColor: app_colors.turquoise,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.35,
+        shadowRadius: 3,
+        elevation: 2,
+      },
+
+      sliderStatus: {
+        color: app_colors.white_sixty,
+        fontFamily: 'GilroyRegular',
+        fontSize: 13,
+      },
     },
 
     generalInfosBar: {
@@ -193,7 +336,7 @@ export const planetariumUIStyles = {
         flexDirection: 'column' as 'column',
         justifyContent: 'space-between' as 'space-between',
         alignItems: 'center' as 'center',
-        backgroundColor: app_colors.black_skymap,
+        backgroundColor: app_colors.black_modal,
         borderWidth: 1,
         borderColor: app_colors.white_twenty,
         borderRadius: 10,
@@ -210,6 +353,13 @@ export const planetariumUIStyles = {
           color: app_colors.white,
           fontSize: 20,
           fontFamily: 'GilroyBlack'
+        },
+
+        text: {
+          color: app_colors.white,
+          fontSize: 15,
+          fontFamily: 'GilroyRegular',
+          textAlign: 'center' as 'center',
         },
 
         subtitle: {

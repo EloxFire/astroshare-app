@@ -4,13 +4,11 @@ import {convertSphericalToCartesian} from "./utils/convertSphericalToCartesian";
 import {planetTextures} from "../../constants";
 import {EquatorialCoordinate, HorizontalCoordinate} from "@observerly/astrometry";
 import {meshGroupsNames, planetariumRenderOrders} from "./utils/planetariumSettings";
-import {createTextLabel} from "./createLabel";
+import {moonIcons} from "../loadImages";
 
 export const createMoon = (
-  moonCoords: (EquatorialCoordinate & HorizontalCoordinate & { phase: string }),
+  moonCoords: (EquatorialCoordinate & HorizontalCoordinate & { phase: string, currentIconUrl?: string }),
   setUiInfos: React.Dispatch<any>,
-  groundQuaternion: THREE.Quaternion,
-  camera: THREE.PerspectiveCamera,
 ) => {
   console.log("[GLView] Creating moon...")
   const { x, y, z } = convertSphericalToCartesian(9.8, moonCoords.ra, moonCoords.dec);
@@ -26,23 +24,25 @@ export const createMoon = (
     index: 'moon',
     onTap: () => {
       console.log(`[GLView] Moon tapped: ${moonCoords.phase}`);
-      const { x, y, z } = convertSphericalToCartesian(10, moonCoords.ra, moonCoords.dec);
+      console.log(`[GLView] Moon image URL: ${moonCoords.currentIconUrl}`);
+      
       setUiInfos({
-        object: moonCoords,
-        meshPosition: new THREE.Vector3(x, y, z),
+        family: 'Moon',
+        name: 'Moon',
+        ra: moonCoords.ra,
+        dec: moonCoords.dec,
+        icon: moonCoords.currentIconUrl ? { uri: moonCoords.currentIconUrl } : moonIcons[moonCoords.phase] || moonIcons['Full'],
+        phase: moonCoords.phase,
       });
     }
   };
 
-  const moonLabel = createTextLabel("Lune", moonMesh.position, groundQuaternion, camera);
-
   moonMesh.renderOrder = planetariumRenderOrders.moon;
-  moonMesh.name = meshGroupsNames.planets;
-  moonLabel.renderOrder = planetariumRenderOrders.moon;
-  moonLabel.name = meshGroupsNames.labels.moon;
+  moonMesh.name = meshGroupsNames.moon;
 
   const moonGroup = new THREE.Group();
-  moonGroup.add(moonMesh, moonLabel);
+  moonGroup.add(moonMesh);
+  moonGroup.name = meshGroupsNames.moon;
 
   console.log("[GLView] Moon created")
   return moonGroup;

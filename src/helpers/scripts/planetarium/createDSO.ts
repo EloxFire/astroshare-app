@@ -3,8 +3,11 @@ import * as ExpoTHREE from "expo-three";
 import planetariumImages from '../../planetarium_images.json';
 import { convertSphericalToCartesian } from "./utils/convertSphericalToCartesian";
 import {meshGroupsNames, planetariumRenderOrders} from "./utils/planetariumSettings";
+import {DSO} from "../../types/DSO";
 
-export const createDSO = (setUiInfos: React.Dispatch<any>) => {
+const normalizeKey = (value: string) => value.toLowerCase().replace(/\s+/g, '');
+
+export const createDSO = (getDsoCatalog: () => DSO[], setUiInfos: React.Dispatch<any>) => {
   console.log("[GLView] Creating Deep Sky Objects...");
 
   const dsoMeshes: THREE.Group = new THREE.Group();
@@ -47,6 +50,7 @@ export const createDSO = (setUiInfos: React.Dispatch<any>) => {
 
     const fragmentShader = `
       uniform sampler2D map;
+      uniform float uVisibility;
       varying vec2 vUv;
 
       void main() {
@@ -60,13 +64,14 @@ export const createDSO = (setUiInfos: React.Dispatch<any>) => {
           alpha = smoothstep(0.0, border, dist);
         }
 
-        gl_FragColor = vec4(color.rgb, color.a * alpha);
+        gl_FragColor = vec4(color.rgb * uVisibility, color.a * alpha * uVisibility);
       }
     `;
 
     const nebulaeMaterial = new THREE.ShaderMaterial({
       uniforms: {
         map: { value: texture },
+        uVisibility: { value: 1.0 },
       },
       vertexShader,
       fragmentShader,
@@ -86,27 +91,49 @@ export const createDSO = (setUiInfos: React.Dispatch<any>) => {
       onTap: () => {
         const selectedImage = image.imageUrl.split('/').pop()!.split('.')[0]
         console.log(`[GLView] DSO tapped: ${selectedImage}`);
-        const { x, y, z } = convertSphericalToCartesian(9.7, image.worldCoords[0][0][0], image.worldCoords[0][0][1]);
+        const catalog = getDsoCatalog();
+        const normalizedKey = normalizeKey(selectedImage);
+        const parsedKey = normalizedKey.match(/^(ic|m|n)(\d+)/);
+        const prefix = parsedKey?.[1];
+        const numericKey = parsedKey?.[2] ?? '';
 
-        // Fetch Astroshare api to get object data
-        fetch(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/dso/${selectedImage}`)
-          .then(response => response.json())
-          .then(data => {
-            console.log("[GLView] DSO data fetched:", data.dsoObject);
-            if (!data) {
-              console.error("[GLView] No data found for DSO:", selectedImage);
-              setUiInfos(null);
-              return;
-            }else{
-              setUiInfos({
-                object: data.dsoObject,
-                meshPosition: new THREE.Vector3(x, y, z),
-              });
+        console.log("[GLView] Searching DSO in catalog with key:", normalizedKey, "numeric part:", numericKey);
+
+        const extractDigits = (value: string | number | null | undefined) => `${value ?? ''}`.toLowerCase().replace(/\D/g, '');
+
+        const dsoFromCatalog =
+          catalog.find((dso) => {
+            if (!numericKey) return false;
+
+            if (prefix === 'ic') {
+              return extractDigits(dso.ic) === numericKey;
             }
-          })
-          .catch(error => {
-            console.error("[GLView] Error fetching DSO data:", error);
+
+            if (prefix === 'm') {
+              return extractDigits(dso.m) === numericKey;
+            }
+
+            if (prefix === 'n') {
+              return extractDigits(dso.ngc) === numericKey;
+            }
+
+            return false;
+          }) ??
+          catalog.find((dso) => {
+            const nameMatch = normalizeKey(dso.name) === normalizedKey;
+            const identifiersMatch = normalizeKey(dso.identifiers ?? '').includes(normalizedKey);
+            console.log(`[GLView] Fallback DSO match check for ${selectedImage}: nameMatch=${nameMatch}, identifiersMatch=${identifiersMatch}`);
+            
+            return nameMatch || identifiersMatch;
           });
+
+        if (!dsoFromCatalog) {
+          console.warn("[GLView] No cached DSO found for:", selectedImage);
+          setUiInfos(null);
+          return;
+        }
+
+        setUiInfos(dsoFromCatalog);
       }
     };
 

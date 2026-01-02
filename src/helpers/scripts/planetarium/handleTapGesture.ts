@@ -9,7 +9,9 @@ export const handleTapStart = (
   event: GestureStateChangeEvent<TapGestureHandlerEventPayload>,
   sceneRef: React.MutableRefObject<THREE.Scene | null>,
   cameraRef: React.MutableRefObject<THREE.PerspectiveCamera | null>,
-  selectionCircle: React.MutableRefObject<THREE.Line | null>,
+  selectionCircle: React.MutableRefObject<THREE.Object3D | null>,
+  groundRef: React.MutableRefObject<THREE.Mesh | null>,
+  zenithDirectionRef: React.MutableRefObject<THREE.Vector3 | null>,
   setObjectInfos: React.Dispatch<any>
 ) => {
   console.log("[GLView] Tap gesture started");
@@ -17,8 +19,15 @@ export const handleTapStart = (
   const camera = cameraRef.current;
   const scene = sceneRef.current;
   const selectionCircleObject = selectionCircle.current!;
+  const ground = groundRef.current;
+  const zenithDirection = zenithDirectionRef.current ? zenithDirectionRef.current.clone().normalize() : null;
 
   if (!camera || !scene) return;
+
+  const setSelectionScale = (x: number, y: number, z: number) => {
+    selectionCircleObject.scale.set(x, y, z);
+    selectionCircleObject.userData.baseScale = { x, y, z };
+  };
 
   const raycaster = new THREE.Raycaster();
   raycaster.near = 9;
@@ -33,15 +42,23 @@ export const handleTapStart = (
 
   const intersects = raycaster.intersectObjects(scene.children, true);
 
-  if (intersects.length === 0) {
+  const shouldCullBelowGround = !!ground?.visible && !!zenithDirection;
+  const filteredIntersects = shouldCullBelowGround
+    ? intersects.filter((hit) => {
+        const pointDirection = hit.point.clone().normalize();
+        return pointDirection.lengthSq() > 0 && pointDirection.dot(zenithDirection!) >= 0;
+      })
+    : intersects;
+
+  if (filteredIntersects.length === 0) {
     console.log("[GLView] No intersection found");
     selectionCircleObject.visible = false;
     return;
   }
 
-  const priority = ["planet", "star", "dso"];
+  const priority = ["planet", "sun", "moon", "star", "dso"];
   for (const type of priority) {
-    const target = intersects.find((i) => i.object.userData?.type === type);
+    const target = filteredIntersects.find((i) => i.object.userData?.type === type);
     if (!target || !target.object.userData?.onTap) continue;
 
     // Appel du comportement
@@ -53,6 +70,9 @@ export const handleTapStart = (
       target.object.userData.onTap(target.object.userData.index);
     } else if (type === "planet") {
       console.log(`[handleTap] Taping Planet : ${target.object.userData.name}`);
+      target.object.userData.onTap();
+    } else if (type === "sun" || type === "moon") {
+      console.log(`[handleTap] Taping ${type}`);
       target.object.userData.onTap();
     }
 
@@ -70,7 +90,7 @@ export const handleTapStart = (
       target.object.localToWorld(point);
 
       selectionCircleObject.position.copy(point);
-      selectionCircleObject.scale.set(0.200, 0.200, 0.200);
+      setSelectionScale(0.200, 0.200, 0.200);
       selectionCircleObject.lookAt(camera.position);
       selectionCircleObject.visible = true;
 
@@ -78,14 +98,14 @@ export const handleTapStart = (
       target.object.getWorldPosition(point);
 
       selectionCircleObject.position.copy(point);
-      selectionCircleObject.scale.set(1, 1, 1);
+      setSelectionScale(1, 1, 1);
       selectionCircleObject.lookAt(camera.position);
       selectionCircleObject.visible = true;
-    } else if (type === "planet") {
+    } else if (type === "planet" || type === "sun") {
       target.object.getWorldPosition(point);
 
       selectionCircleObject.position.copy(point);
-      selectionCircleObject.scale.set(1, 1, 1);
+      setSelectionScale(1, 1, 1);
       selectionCircleObject.lookAt(camera.position);
       selectionCircleObject.visible = true;
 
@@ -106,7 +126,7 @@ export const handleTapStart = (
 
         // Mise à jour du cercle
         selectionCircleObject.position.copy(center);
-        selectionCircleObject.scale.set(majorAxis, minorAxis, 1);
+        setSelectionScale(majorAxis, minorAxis, 1);
         selectionCircleObject.lookAt(camera.position);
         selectionCircleObject.visible = true;
       } else {

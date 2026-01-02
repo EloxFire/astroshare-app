@@ -18,9 +18,16 @@ import {createAtmosphere} from "./createAtmosphere";
 import {setInitialAngles} from "./handlePanGesture";
 import {createEquatorialGrid} from "./createEquatorialGrid";
 import {createAzimuthalGrid} from "./createAzimutalGrid";
-import {getGlobePosition} from "./utils/getGlobePosition";
 import {hex_colors} from "../../constants";
 import {meshGroupsNames} from "./utils/planetariumSettings";
+import {createSun} from "./createSun";
+import {ComputedSunInfos} from "../../types/objects/ComputedSunInfos";
+import {DSO} from "../../types/DSO";
+import {convertSphericalToCartesian} from "./utils/convertSphericalToCartesian";
+import { Dayjs } from "dayjs";
+import {convertHorizontalToEquatorial} from "@observerly/astrometry";
+import {createCompassLabels} from "./createCompassLabels";
+import {createConstellationLabels} from "./createConstellationLabels";
 
 export const initScene = (
   gl: ExpoWebGLRenderingContext,
@@ -28,20 +35,24 @@ export const initScene = (
   starsCatalog: Star[],
   planetList: GlobalPlanet[],
   moonCoords: (EquatorialCoordinate & HorizontalCoordinate & { phase: string }),
+  getDsoCatalog: () => DSO[],
+  sunData: ComputedSunInfos,
   setObjectInfos: React.Dispatch<any>,
   currentLocale: string,
-  observer: GeographicCoordinate
+  observer: GeographicCoordinate,
+  referenceDate: Dayjs
 ): {
   scene: THREE.Scene,
   camera: THREE.PerspectiveCamera,
   renderer: ExpoTHREE.Renderer,
   ground: THREE.Mesh,
   atmosphere: THREE.Mesh,
-  selectionCircle: THREE.Line,
+  selectionCircle: THREE.Object3D,
   grids: {
     eqGrid: THREE.Group,
     azGrid: THREE.Group,
   },
+  compassLabels: THREE.Group,
   quaternions: {
     groundTotalQuaternion: Quaternion,
   }
@@ -60,10 +71,13 @@ export const initScene = (
   scene.add( axesHelper );
 
   const background = createBackground()
-  const ground = createGround(currentUserLocation)
-  const atmosphere = createAtmosphere();
+  const ground = createGround(currentUserLocation, referenceDate.toDate())
+  const sunDirection = convertSphericalToCartesian(1, sunData.base.ra, sunData.base.dec);
+  const atmosphere = createAtmosphere(sunDirection, sunData.base.alt);
   const constellations = drawConstellations()
+  const constellationLabels = createConstellationLabels(9.65, camera.fov);
   const selectionCircle = createSelectionCircle()
+  const compassLabels = createCompassLabels(0.98, currentUserLocation, referenceDate.toDate());
 
   // Camera position locked to the ground
   const q1: Quaternion = new THREE.Quaternion;
@@ -79,17 +93,24 @@ export const initScene = (
 
   const stars = createStars(starsCatalog, setObjectInfos)
   const planets = createPlanets(planetList, setObjectInfos)
-  const moon = createMoon(moonCoords, setObjectInfos, groundTotalQuaternion, camera)
-  const dso = createDSO(setObjectInfos);
-  const {eqGrid1, eqGrid2, eqGrid3} = createEquatorialGrid(hex_colors.blue, .5);
-  const {azGrid1, azGrid2, azGrid3} = createAzimuthalGrid(hex_colors.violet, .5);
+  const moon = createMoon(moonCoords, setObjectInfos)
+  const sun = createSun(sunData, setObjectInfos)
+  const dso = createDSO(getDsoCatalog, setObjectInfos);
+  const {eqGrid1, eqGrid2, eqGrid3} = createEquatorialGrid(hex_colors.blue, 1.4);
+  const {azGrid1, azGrid2, azGrid3} = createAzimuthalGrid(hex_colors.violet, 1.4);
 
   const light = new THREE.AmbientLight(0xffffff);
 
   const eqGrid = new THREE.Group();
   const azGrid = new THREE.Group();
 
-  azGrid.lookAt(getGlobePosition(currentUserLocation.lat, currentUserLocation.lon))
+  const zenithEq = convertHorizontalToEquatorial(referenceDate.toDate(), { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }, { alt: 90, az: 0 });
+  const northEq = convertHorizontalToEquatorial(referenceDate.toDate(), { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }, { alt: 0, az: 0 });
+  const zenithVec = convertSphericalToCartesian(5, zenithEq.ra, zenithEq.dec);
+  const northVec = convertSphericalToCartesian(5, northEq.ra, northEq.dec).normalize();
+
+  azGrid.up.copy(northVec);
+  azGrid.lookAt(zenithVec);
 
   azGrid.add(azGrid1);
   eqGrid.add(eqGrid1);
@@ -104,7 +125,7 @@ export const initScene = (
   const initialEuler = new THREE.Euler().setFromQuaternion(groundTotalQuaternion, 'YXZ');
   setInitialAngles(initialEuler.y, initialEuler.x);
 
-  scene.add(selectionCircle, eqGrid, azGrid, ground, background, atmosphere, stars, planets, moon, light, dso, constellations);
+  scene.add(selectionCircle, eqGrid, azGrid, compassLabels, ground, background, atmosphere, stars, planets, moon, sun, light, dso, constellations, constellationLabels);
 
 
   console.log("[GLView] Scene initialized")
@@ -119,6 +140,7 @@ export const initScene = (
       eqGrid: eqGrid,
       azGrid: azGrid,
     },
+    compassLabels: compassLabels,
     quaternions: {
       groundTotalQuaternion: groundTotalQuaternion,
     }

@@ -314,18 +314,6 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
                   )
                 }
               </View>
-
-              {/* <View style={{marginTop: 10}}>
-                <SimpleButton
-                  text={`Voir dans le planétarium\n(Bientôt disponible)`}
-                  fullWidth backgroundColor={app_colors.white}
-                  small
-                  textColor={app_colors.black}
-                  onPress={() => navigation.push(routes.skymaps.planetarium.path, {defaultObject: object})}
-                  align={"center"}
-                  disabled
-                />
-              </View> */}
             </View>
           </View>
         </View>
@@ -415,6 +403,23 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
                 />
               ) : (
                 <Text style={celestialBodiesOverviewStyles.content.text}>Chargement de la carte...</Text>
+              )
+            }
+          </View>
+          <View>
+            {
+              objectInfos && (
+                <View style={{marginTop: 10}}>
+                  <SimpleButton
+                    text={`Voir dans le planétarium 3D`}
+                    fullWidth
+                    backgroundColor={app_colors.white}
+                    small
+                    textColor={app_colors.black}
+                    onPress={() => navigation.push(routes.skymaps.planetarium.path, {defaultObject: object})}
+                    align={"center"}
+                  />
+                </View>
               )
             }
           </View>

@@ -15,6 +15,7 @@ import {useTranslation} from "../../hooks/useTranslation";
 import {sendAnalyticsEvent} from "../../helpers/scripts/analytics";
 import {eventTypes} from "../../helpers/constants/analytics";
 import { isProUser } from '../../helpers/scripts/auth/checkUserRole'
+import { useDsoCatalog } from '../../contexts/DSOContext'
 
 export default function SkyMapSelection({ navigation }: any) {
 
@@ -22,6 +23,7 @@ export default function SkyMapSelection({ navigation }: any) {
   const { currentUser } = useAuth()
   const { currentLocale } = useTranslation()
   const { starCatalogLoading, starsLoaded, starsTotal, starsLoadedPercentage } = useStarCatalog();
+  const { dsoCatalogLoading } = useDsoCatalog();
 
   useEffect(() => {
     sendAnalyticsEvent(currentUser, currentUserLocation, 'Skymap selection screen view', eventTypes.SCREEN_VIEW, {}, currentLocale)
@@ -56,7 +58,7 @@ export default function SkyMapSelection({ navigation }: any) {
             onPress={() => navigation.navigate(routes.skymaps.flatmap.path)}
           />
           <ToolButton
-            disabled={true}
+            disabled={starCatalogLoading || dsoCatalogLoading}
             text={i18n.t('skymap.buttons.planetarium.title')}
             subtitle={i18n.t('skymap.buttons.planetarium.subtitle')}
             image={require('../../../assets/images/tools/skymap.png')}

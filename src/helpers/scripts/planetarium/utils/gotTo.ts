@@ -2,58 +2,35 @@ import * as THREE from "three";
 import { altAngle, azAngle } from "../handlePanGesture";
 
 export function goTo(
-  ra: number | undefined,
-  dec: number | undefined,
+  raDeg: number | undefined,
+  decDeg: number | undefined,
   camera: THREE.PerspectiveCamera,
   ground: THREE.Mesh,
   updateAngles: (az: number, alt: number) => void
 ) {
-  if (ra === undefined || dec === undefined) {
+  if (raDeg === undefined || decDeg === undefined) {
     console.warn("[goTo] RA or Dec is undefined, cannot move camera.");
     return;
   }
 
-  console.log("[goTo] Target RA:", ra, "Dec:", dec);
-  console.log("[goTo] Current azAngle:", azAngle, "altAngle:", altAngle);
+  const baseQ = ground.userData.baseQuaternion as THREE.Quaternion | undefined;
+  if (!baseQ) {
+    console.warn("[goTo] Missing baseQuaternion on ground, cannot orient camera.");
+    return;
+  }
 
-  // Approche différente : utiliser la direction actuelle de la caméra
-  // et calculer les angles nécessaires pour pointer vers l'objet
+  // Convertir RA/Dec (degrés) en vecteur équatorial unitaire
+  const targetEquatorial = raDecToCartesian(raDeg, decDeg);
 
-  // 1. Convertir RA/Dec en vecteur 3D dans le référentiel équatorial
-  const targetEquatorial = raDecToCartesian(ra, dec);
+  // Amener ce vecteur dans le référentiel local (avant rotations az/alt)
+  const targetLocal = targetEquatorial.clone().applyQuaternion(baseQ.clone().invert()).normalize();
 
-  // 2. Transformer ce vecteur dans le référentiel local (horizontal)
-  const baseQ = ground.userData.baseQuaternion as THREE.Quaternion;
-  const targetLocal = targetEquatorial.clone().applyQuaternion(baseQ);
+  // Résoudre les angles avec le même référentiel que handlePanGesture
+  // Après rotations : x = -sinAlt * sinAz ; y = sinAlt * cosAz ; z = -cosAlt
+  const targetAlt = Math.acos(Math.min(1, Math.max(-1, -targetLocal.z)));
+  const sinAlt = Math.sin(targetAlt);
+  const targetAz = sinAlt < 1e-6 ? 0 : Math.atan2(-targetLocal.x, targetLocal.y);
 
-  console.log("[goTo] Target in local frame:", targetLocal.toArray());
-
-  // 3. Calculer les angles pour que la caméra pointe vers ce vecteur
-  // En analysant handlePanGesture, il semble que :
-  // - azAngle : rotation autour de l'axe Z (vertical)
-  // - altAngle : rotation autour de l'axe X (horizontal)
-
-  // Pour pointer vers targetLocal, on inverse le problème :
-  // On veut que la direction de la caméra (initialement -Z)
-  // corresponde à targetLocal après les rotations
-
-  // La direction initiale de la caméra est (0, 0, -1)
-  // Après rotation azimuth puis altitude, elle devient :
-  // direction = R_alt * R_az * (0, 0, -1)
-
-  // On veut : R_alt * R_az * (0, 0, -1) = targetLocal
-  // Donc : R_az * (0, 0, -1) = R_alt^-1 * targetLocal
-
-  // Calculons les angles nécessaires
-  const targetAz = Math.atan2(targetLocal.x, targetLocal.y);
-
-  // Pour l'altitude, on utilise l'angle entre le vecteur cible et le plan horizontal
-  const horizontalLength = Math.sqrt(targetLocal.x * targetLocal.x + targetLocal.y * targetLocal.y);
-  const targetAlt = Math.atan2(horizontalLength, -targetLocal.z); // -z car la caméra regarde vers -Z
-
-  console.log("[goTo] Calculated target azimuth:", targetAz, "altitude:", targetAlt);
-
-  // 4. Animer vers ces angles
   animateToPosition(targetAz, targetAlt, camera, ground, updateAngles);
 }
 
@@ -138,8 +115,11 @@ function normalizeAngle(angle: number): number {
   return normalized;
 }
 
-function raDecToCartesian(ra: number, dec: number): THREE.Vector3 {
+function raDecToCartesian(raDeg: number, decDeg: number): THREE.Vector3 {
+  const ra = THREE.MathUtils.degToRad(raDeg);
+  const dec = THREE.MathUtils.degToRad(decDeg);
   const cosDec = Math.cos(dec);
+
   return new THREE.Vector3(
     Math.cos(ra) * cosDec,
     Math.sin(ra) * cosDec,

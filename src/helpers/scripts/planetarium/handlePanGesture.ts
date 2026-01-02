@@ -82,16 +82,20 @@ export const applyInertia = (cameraRef: React.MutableRefObject<THREE.Perspective
   const ground = groundRef.current!;
   if (!camera) return;
 
+  const safeWidth = camWdth || 1;
+  const fov = camera.getEffectiveFOV();
+  const fovScale = Math.max(0.35, Math.min(1, fov / 90)); // keep some speed when zoomed-in while damping extreme close-ups
+
   const q1 = new THREE.Quaternion();
   const q2 = new THREE.Quaternion();
 
   const Y = new THREE.Vector3(0, 0, 1);
   const X = new THREE.Vector3(1, 0, 0);
 
-  let newAzAngle = azAngle + getEffectiveAngularResolution(camera.getEffectiveFOV(), camWdth) * vX * 0.01;
+  let newAzAngle = azAngle + getEffectiveAngularResolution(fov, safeWidth) * vX * 0.01 * fovScale;
   q1.setFromAxisAngle(Y, newAzAngle);
 
-  let newAltAngle = altAngle + getEffectiveAngularResolution(camera.getEffectiveFOV(), camWdth) * vY * 0.01;
+  let newAltAngle = altAngle + getEffectiveAngularResolution(fov, safeWidth) * vY * 0.01 * fovScale;
   newAltAngle = Math.max(0, Math.min(Math.PI, newAltAngle));
   q2.setFromAxisAngle(X, newAltAngle);
 

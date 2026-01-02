@@ -34,14 +34,34 @@ export const onShowConstellations = (scene: THREE.Scene) => {
   }
 }
 
+export const onShowConstellationLabels = (scene: THREE.Scene) => {
+  console.log('[Planetarium] Toggling constellation labels...');
+  const constellationLabels = scene.getObjectByName(meshGroupsNames.constellationLabels);
+  if (constellationLabels) {
+    constellationLabels.visible = !constellationLabels.visible;
+  } else {
+    console.warn('Constellation labels not found in the scene.');
+  }
+}
+
 export const onShowGround = (scene: THREE.Scene) => {
   console.log('[Planetarium] Toggling ground...');
   const ground = scene.getObjectByName(meshGroupsNames.ground);
   if (ground) {
-    const currentStatus = ground.visible
-    ground.visible = !currentStatus;
+    const nextVisible = !ground.visible;
+    ground.visible = nextVisible;
   } else {
     console.warn('Ground not found in the scene.');
+  }
+}
+
+export const onShowCompassLabels = (scene: THREE.Scene) => {
+  console.log('[Planetarium] Toggling compass labels...');
+  const compassLabels = scene.getObjectByName(meshGroupsNames.compassLabels);
+  if (compassLabels) {
+    compassLabels.visible = !compassLabels.visible;
+  } else {
+    console.warn('Compass labels not found in the scene.');
   }
 }
 
@@ -58,13 +78,21 @@ export const onShowAtmosphere = (scene: THREE.Scene) => {
 
 export const onShowPlanets = (scene: THREE.Scene) => {
   console.log('[Planetarium] Toggling planets...');
-  const planets = scene.getObjectByName(meshGroupsNames.planets);
-  if (planets) {
-    const currentStatus = planets.visible
-    planets.visible = !currentStatus;
-  } else {
-    console.warn('Planets not found in the scene.');
-  }
+  const targets = [
+    meshGroupsNames.planets,
+    meshGroupsNames.moon,
+    meshGroupsNames.sun,
+  ];
+
+  targets.forEach((name) => {
+    const object = scene.getObjectByName(name);
+    if (object) {
+      const currentStatus = object.visible;
+      object.visible = !currentStatus;
+    } else {
+      console.warn(`${name} not found in the scene.`);
+    }
+  });
 }
 
 export const onShowMoon = (scene: THREE.Scene) => {
