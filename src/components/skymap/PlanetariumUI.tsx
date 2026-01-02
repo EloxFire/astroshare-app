@@ -50,8 +50,13 @@ export default function PlanetariumUI({ navigation, infos, onShowGround, onShowC
 
   const {currentUserLocation} = useSettings();
   const {currentLocale} = useTranslation();
-  const [currentTime, setCurrentTime] = useState<string>(timelineDate.format('HH:mm:ss'));
+  const [currentTime, setCurrentTime] = useState<string>(timelineDate.format('HH:mm'));
   const [isNightTime, setIsNightTime] = useState<boolean>(false);
+  const displayAnchorRef = useRef<Dayjs>(timelineDate);
+  const wallClockAnchorRef = useRef<number>(Date.now());
+  const clockRafRef = useRef<number | null>(null);
+  const lastClockStringRef = useRef<string>(currentTime);
+  const lastIsNightRef = useRef<boolean>(false);
   const SLIDER_RANGE_HOURS = 12;
   const sliderAnchorRef = useRef<Dayjs>(dayjs());
   const [sliderOffsetHours, setSliderOffsetHours] = useState<number>(0);
@@ -68,9 +73,53 @@ export default function PlanetariumUI({ navigation, infos, onShowGround, onShowC
   const lastObjectKeyRef = useRef<string | null>(null);
 
   useEffect(() => {
-    setCurrentTime(timelineDate.format('HH:mm:ss'));
-    setIsNightTime(isNight(timelineDate.toDate(), {latitude: currentUserLocation.lat, longitude: currentUserLocation.lon}));
+    displayAnchorRef.current = timelineDate;
+    wallClockAnchorRef.current = Date.now();
+    const initialClock = timelineDate.format('HH:mm');
+    lastClockStringRef.current = initialClock;
+    setCurrentTime(initialClock);
+    const nightFlag = isNight(timelineDate.toDate(), {latitude: currentUserLocation.lat, longitude: currentUserLocation.lon});
+    lastIsNightRef.current = nightFlag;
+    setIsNightTime(nightFlag);
   }, [timelineDate, currentUserLocation]);
+
+  useEffect(() => {
+    if (clockRafRef.current !== null) {
+      cancelAnimationFrame(clockRafRef.current);
+      clockRafRef.current = null;
+    }
+
+    if (!isTimelinePlaying) {
+      return;
+    }
+
+    const tick = () => {
+      const elapsedMs = Date.now() - wallClockAnchorRef.current;
+      const displayDate = displayAnchorRef.current.add(elapsedMs, 'millisecond');
+      const nextClock = displayDate.format('HH:mm');
+      if (nextClock !== lastClockStringRef.current) {
+        lastClockStringRef.current = nextClock;
+        setCurrentTime(nextClock);
+
+        const nightFlag = isNight(displayDate.toDate(), { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon });
+        if (nightFlag !== lastIsNightRef.current) {
+          lastIsNightRef.current = nightFlag;
+          setIsNightTime(nightFlag);
+        }
+      }
+
+      clockRafRef.current = requestAnimationFrame(tick);
+    };
+
+    clockRafRef.current = requestAnimationFrame(tick);
+
+    return () => {
+      if (clockRafRef.current !== null) {
+        cancelAnimationFrame(clockRafRef.current);
+        clockRafRef.current = null;
+      }
+    };
+  }, [currentUserLocation, isTimelinePlaying]);
 
   useEffect(() => {
     const anchor = sliderAnchorRef.current;
@@ -514,7 +563,7 @@ export default function PlanetariumUI({ navigation, infos, onShowGround, onShowC
                 </View>
               </View>
 
-              <View style={planetariumUIStyles.container.timelineModal.sliderBlock}>
+              {/* <View style={planetariumUIStyles.container.timelineModal.sliderBlock}>
                 <View style={planetariumUIStyles.container.timelineModal.sliderLabels}>
                   <Text style={planetariumUIStyles.container.timelineModal.sliderLabel}>-12h</Text>
                   <Text style={planetariumUIStyles.container.timelineModal.sliderLabel}>+12h</Text>
@@ -527,7 +576,7 @@ export default function PlanetariumUI({ navigation, infos, onShowGround, onShowC
                   <View style={[planetariumUIStyles.container.timelineModal.sliderThumb, { left: sliderThumbLeft - 10 }]} />
                 </View>
                 <Text style={planetariumUIStyles.container.timelineModal.sliderStatus}>{timelinePhaseLabel}</Text>
-              </View>
+              </View> */}
             </View>
           </View>
         )

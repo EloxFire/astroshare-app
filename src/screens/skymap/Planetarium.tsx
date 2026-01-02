@@ -144,6 +144,9 @@ export default function Planetarium({ route, navigation }: any) {
   const compassLabelsRef = useRef<THREE.Group | null>(null);
   const constellationLabelsRef = useRef<THREE.Group | null>(null);
   const zenithDirectionRef = useRef<THREE.Vector3 | null>(null);
+  const lastEphemerisUpdateRef = useRef<Dayjs | null>(null);
+  const lastObjectComputeRef = useRef<Dayjs | null>(null);
+  const lastObjectKeyRef = useRef<string | null>(null);
   const groundTotalQuaternionRef = useRef<THREE.Quaternion | null>(null);
 
   const [planetariumLoading, setPlanetariumLoading] = useState<boolean>(true);
@@ -510,6 +513,11 @@ export default function Planetarium({ route, navigation }: any) {
     const observer = { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon };
     const safeDate = referenceDate && referenceDate.isValid() ? referenceDate : dayjs();
 
+    if (isTimelinePlaying && lastEphemerisUpdateRef.current && safeDate.diff(lastEphemerisUpdateRef.current, 'second') < 5) {
+      return;
+    }
+    lastEphemerisUpdateRef.current = safeDate;
+
     setSunDataAtDate(getSunData(safeDate, observer));
     setPlanetsAtDate(getPlanetaryPositions(safeDate.toDate(), observer));
 
@@ -525,7 +533,7 @@ export default function Planetarium({ route, navigation }: any) {
       phase,
       currentIconUrl: (moonCoords as MoonDetails)?.currentIconUrl
     });
-  }, [currentUserLocation, moonCoords, referenceDate]);
+  }, [currentUserLocation, isTimelinePlaying, moonCoords, referenceDate]);
 
   useEffect(() => {
     if (!isTimelinePlaying) {
@@ -625,6 +633,8 @@ export default function Planetarium({ route, navigation }: any) {
       setComputedObjectInfos(null);
       setComputedSource(null);
       setFollowSelection(false);
+      lastObjectKeyRef.current = null;
+      lastObjectComputeRef.current = null;
       return;
     }
 
@@ -632,6 +642,26 @@ export default function Planetarium({ route, navigation }: any) {
       latitude: currentUserLocation.lat,
       longitude: currentUserLocation.lon
     };
+
+    const objectKey = (() => {
+      if ('ids' in objectInfos) return `star-${(objectInfos as Star).ids}`;
+      const rawName = (objectInfos as any).name ?? (objectInfos as any).base?.name ?? '';
+      const rawFamily = 'family' in objectInfos ? (objectInfos as any).family : getObjectFamily(objectInfos as any);
+      return `${rawFamily ?? 'obj'}-${rawName}`;
+    })();
+
+    const safeDate = referenceDate && referenceDate.isValid() ? referenceDate : dayjs();
+    if (
+      isTimelinePlaying &&
+      lastObjectKeyRef.current === objectKey &&
+      lastObjectComputeRef.current &&
+      safeDate.diff(lastObjectComputeRef.current, 'second') < 5
+    ) {
+      return;
+    }
+
+    lastObjectKeyRef.current = objectKey;
+    lastObjectComputeRef.current = safeDate;
 
     if ('family' in objectInfos && objectInfos.family === 'Sun') {
       const sunData = getSunData(referenceDate, observer);
@@ -647,7 +677,7 @@ export default function Planetarium({ route, navigation }: any) {
       date: referenceDate,
     }));
     setComputedSource(objectInfos);
-  }, [objectInfos, currentLocale, currentUserLocation, referenceDate])
+  }, [objectInfos, currentLocale, currentUserLocation, referenceDate, isTimelinePlaying])
 
   useEffect(() => {
     if (!sceneRef.current) return;
