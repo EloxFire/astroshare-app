@@ -10,7 +10,6 @@ import { getObject, storeObject } from "../../helpers/storage"
 import { globalStyles } from "../../styles/global"
 import { checklistsHomeStyles } from "../../styles/screens/checklists/home"
 import InputWithIcon from "../../components/forms/InputWithIcon"
-import AsyncStorage from "@react-native-async-storage/async-storage"
 
 type ChecklistItem = { id: string; text: string; completed: boolean }
 type Checklist = { id: string; title: string; description?: string; items: ChecklistItem[] }

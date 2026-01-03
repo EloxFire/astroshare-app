@@ -121,7 +121,6 @@ export const celestialBodiesOverviewStyles = {
       borderWidth: 1,
       padding: 10,
       borderRadius: 10,
-      marginBottom: 50,
 
       infos: {
         display: 'flex' as 'flex',
@@ -130,6 +129,15 @@ export const celestialBodiesOverviewStyles = {
         marginTop: 10,
         gap: 10,
       }
+    },
+
+    personnalNotes: {
+      backgroundColor: app_colors.white_no_opacity,
+      borderColor: app_colors.white_no_opacity,
+      borderWidth: 1,
+      padding: 10,
+      borderRadius: 10,
+      marginBottom: 50,
     }
   }
 }

@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import {globalStyles} from "../../styles/global";
 import PageTitle from "../../components/commons/PageTitle";
-import {Image, ScrollView, Text, TouchableOpacity, View} from "react-native";
+import {Image, ScrollView, Text, TextInput, TouchableOpacity, View} from "react-native";
 import {i18n} from "../../helpers/scripts/i18n";
 import {celestialBodiesOverviewStyles} from "../../styles/screens/celestialBodies/celestialBodies";
 import {getObjectIcon} from "../../helpers/scripts/astro/objects/getObjectIcon";
@@ -38,6 +38,12 @@ import { isLocalNotificationPlanned, deleteLocalNotificationRecord } from "../..
 import { getData, storeData } from "../../helpers/storage";
 import ConstellationObjectMap from "../../components/maps/ConstellationObjectMap";
 
+type ObservationFlags = {
+  observed: boolean;
+  photographed: boolean;
+  sketched: boolean;
+};
+
 export default function CelestialBodyOverview({ route, navigation }: any) {
 
   const {currentUser} = useAuth()
@@ -51,6 +57,18 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
   const [favouritePlanets, setFavouritePlanets] = useState<GlobalPlanet[]>([]);
   const [favouriteDSO, setFavouriteDSO] = useState<DSO[]>([]);
   const [favouriteStars, setFavouriteStars] = useState<Star[]>([]);
+  const [personalNotes, setPersonalNotes] = useState<string>('');
+  const [observationFlags, setObservationFlags] = useState<ObservationFlags>({
+    observed: false,
+    photographed: false,
+    sketched: false,
+  });
+
+  const notesStorageKey = useMemo(() => {
+    const identifier = object?.ids || object?.name || getObjectName(object, 'all', true);
+    const safeIdentifier = `${identifier}`.replace(/[^a-zA-Z0-9_-]/g, '_');
+    return `notes_${getObjectFamily(object).toLowerCase()}_${safeIdentifier}`;
+  }, [object]);
 
   const objectConstellationAbbr = useMemo(() => {
     if (getObjectFamily(object) === 'DSO' && object.const) {
@@ -89,6 +107,27 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
       if(favsStars) setFavouriteStars(favsStars)
     })()
   }, [])
+
+  useEffect(() => {
+    (async () => {
+      const savedNotes = await getObject(notesStorageKey);
+      if(savedNotes){
+        setPersonalNotes(savedNotes.notes || '');
+        setObservationFlags({
+          observed: !!(savedNotes.flags?.observed ?? savedNotes.observed),
+          photographed: !!(savedNotes.flags?.photographed ?? savedNotes.photographed),
+          sketched: !!(savedNotes.flags?.sketched ?? savedNotes.sketched),
+        });
+      }else{
+        setPersonalNotes('');
+        setObservationFlags({
+          observed: false,
+          photographed: false,
+          sketched: false,
+        });
+      }
+    })()
+  }, [notesStorageKey])
 
   const getNotificationStorageKey = () => {
     const identifier = object?.ids || object?.name || getObjectName(object, 'all', true);
@@ -210,6 +249,50 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
       showToast({message: i18n.t('notifications.successSchedule'), type: 'success', duration: 4000});
       sendAnalyticsEvent(currentUser, currentUserLocation, 'Visibility notification scheduled', eventTypes.BUTTON_CLICK, { objectName, objectType: getObjectType(object), visibilityDate: nextVisibility.toISOString() }, currentLocale);
     }
+  }
+
+  const persistNotes = (nextNotes: string, nextFlags: ObservationFlags) => {
+    storeObject(notesStorageKey, {
+      objectId: object?.ids || object?.name || getObjectName(object, 'all', true),
+      objectName: getObjectName(object, 'all', true),
+      objectType: getObjectFamily(object),
+      notes: nextNotes,
+      flags: nextFlags,
+      updatedAt: dayjs().toISOString(),
+    });
+  }
+
+  const handleNotesChange = (text: string) => {
+    setPersonalNotes(text);
+    persistNotes(text, observationFlags);
+  }
+
+  const handleToggleFlag = (flag: keyof ObservationFlags) => {
+    const nextFlags = { ...observationFlags, [flag]: !observationFlags[flag] };
+    setObservationFlags(nextFlags);
+    persistNotes(personalNotes, nextFlags);
+  }
+
+  const renderFlagButton = (flag: keyof ObservationFlags, label: string, activeColor: string) => {
+    const isActive = observationFlags[flag];
+
+    return (
+      <TouchableOpacity
+        style={{
+          flex: 1,
+          paddingVertical: 10,
+          paddingHorizontal: 8,
+          borderRadius: 8,
+          borderWidth: 1,
+          borderColor: isActive ? activeColor : app_colors.white_twenty,
+          backgroundColor: isActive ? activeColor : app_colors.white_no_opacity,
+          alignItems: 'center',
+        }}
+        onPress={() => handleToggleFlag(flag)}
+      >
+        <Text style={{color: isActive ? app_colors.black : app_colors.white, fontWeight: '600'}}>{label}</Text>
+      </TouchableOpacity>
+    )
   }
 
   return (
@@ -444,6 +527,36 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
             </View>
           )
         }
+
+        <View style={celestialBodiesOverviewStyles.content.personnalNotes}>
+          <Text style={celestialBodiesOverviewStyles.content.sectionTitle}>Vos notes</Text>
+
+          <View style={{gap: 10}}>
+            <TextInput
+              multiline
+              value={personalNotes}
+              onChangeText={(text) => handleNotesChange(text)}
+              placeholder={"Ajoutez vos notes personnelles..."}
+              placeholderTextColor={app_colors.white_sixty}
+              style={{
+                minHeight: 120,
+                borderRadius: 10,
+                borderWidth: 1,
+                borderColor: app_colors.white_twenty,
+                padding: 10,
+                color: app_colors.white,
+                textAlignVertical: 'top',
+                backgroundColor: app_colors.white_no_opacity,
+              }}
+            />
+
+            <View style={{flexDirection: 'row', gap: 10}}>
+              {renderFlagButton('observed', 'Observé', app_colors.green)}
+              {renderFlagButton('photographed', 'Photographié', app_colors.orange)}
+              {renderFlagButton('sketched', 'Croquis', app_colors.violet)}
+            </View>
+          </View>
+        </View>
       </ScrollView>
     </View>
   );
