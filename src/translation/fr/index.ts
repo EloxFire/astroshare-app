@@ -40,6 +40,7 @@ import {cardsTranslations} from "./components/cards";
 import {apodTranslations} from "./screens/apod";
 import { resourcesScreensTranslations } from "./screens/resources";
 import { clockTranslations } from "./screens/clock";
+import { checklistManagerTranslations } from "./screens/checklists";
 
 export const frTranslations = {
   onboarding: onboardingTranslations,
@@ -86,4 +87,5 @@ export const frTranslations = {
   apod: apodTranslations,
   resources: resourcesScreensTranslations,
   clock: clockTranslations,
+  checklistManager: checklistManagerTranslations,
 }

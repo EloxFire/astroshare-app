@@ -80,6 +80,7 @@ import ResourceDetails from './src/screens/resources/ResourceDetails';
 import { ClockHome } from './src/screens/clock/ClockHome';
 import LightPollutionMap from './src/screens/lightpollution/Map';
 import { DsoContextProvider } from './src/contexts/DSOContext';
+import { ChecklistsHome } from './src/screens/checklists/ChecklistsHome';
 
 dayjs.locale('fr');
 dayjs.extend(LocalizedFormat)
@@ -167,6 +168,7 @@ export default function App() {
                               <Stack.Screen name={routes.solarWeather.path} component={SolarWeather} />
                               <Stack.Screen name={routes.apod.path} component={Apod} />
                               <Stack.Screen name={routes.calculations.home.path} component={CalculationHome} />
+                              <Stack.Screen name={routes.checklistManager.home.path} component={ChecklistsHome} />
 
                               {/*TRANSITS SCREENS*/}
                               <Stack.Screen name={routes.transits.home.path} component={TransitsScreen} />

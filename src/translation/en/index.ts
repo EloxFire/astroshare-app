@@ -40,6 +40,7 @@ import {widgetManagerTranslations} from "./screens/widgetManager";
 import {transitsTranslations} from "./screens/transits";
 import { clockTranslations } from "./screens/clock";
 import { resourcesScreensTranslations } from "./screens/resources";
+import { checklistManagerTranslations } from "./screens/checklists";
 
 export const enTranslations = {
   onboarding: onboardingTranslations,
@@ -84,4 +85,5 @@ export const enTranslations = {
   satelliteTrackers: satelliteTrackerTranslations,
   clock: clockTranslations,
   resources: resourcesScreensTranslations,
+  checklistManager: checklistManagerTranslations,
 }

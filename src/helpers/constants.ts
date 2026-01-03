@@ -75,6 +75,7 @@ export const storageKeys = {
   favouritePlanets: 'favouritePlanets',
   favouriteStars: 'favouriteStars',
   homeWidgets: 'selectedHomeWidget',
+  checklists: 'checklists',
   launches: {
     lastUpdate: 'launchesLastUpdate',
     data: 'launchesData',
