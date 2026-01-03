@@ -37,7 +37,7 @@ export default function NewsBannerHandler({ navigation }: Props) {
   }, [])
 
   return (
-    <SafeAreaView>
+    <View style={{marginTop: 10}}>
       <FlatList
         ref={flatListRef}
         data={banners}
@@ -67,7 +67,7 @@ export default function NewsBannerHandler({ navigation }: Props) {
       />
       <View>
       {/*  Item Dots */}
-        <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'center', marginVertical: banners.length > 0 ? 10 : 0}}>
+        <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'center', marginTop: banners.length > 0 ? 10 : 0}}>
           <View style={{flexDirection: 'row'}}>
             {banners.map((_, index) => (
               <View
@@ -84,6 +84,6 @@ export default function NewsBannerHandler({ navigation }: Props) {
           </View>
         </View>
       </View>
-    </SafeAreaView>
+    </View>
   )
 }

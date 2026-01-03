@@ -79,23 +79,32 @@ export default function Home({ navigation }: any) {
       <AppUpdateModal isVisible={appUpdateModalVisible} onClose={onAppUpdateModalClose} />
       <AppHeader navigation={navigation} />
       <BannerHandler />
+        {homeNewsBannerVisible && <NewsBannerHandler navigation={navigation} />}
       <LocationHeader />
       <HomeSearchModule navigation={navigation} />
-      {homeNewsBannerVisible && <NewsBannerHandler navigation={navigation} />}
-      <ScrollView style={{ borderTopWidth: 1, borderTopColor: app_colors.white_twenty }}>
+      <ScrollView style={{ borderTopWidth: 0.5, borderTopColor: app_colors.white_twenty }}>
         <HomeWidgetDisplay />
         <View style={homeStyles.toolsSuggestions}>
-          <Text style={globalStyles.sections.title}>{i18n.t('home.tools.title')}</Text>
-          <Text style={globalStyles.sections.subtitle}>{i18n.t('home.tools.subtitle')}</Text>
+          <Text style={globalStyles.sections.title}>{i18n.t('home.prepare.title')}</Text>
+          <Text style={globalStyles.sections.subtitle}>{i18n.t('home.prepare.subtitle')}</Text>
           <View style={homeStyles.toolsSuggestions.buttons}>
-            <BigButton disabled={!hasInternetConnection || !currentUserLocation || dsoCatalogLoading || starsCatalogLoading} navigation={navigation} targetScreen={routes.observationPlanner.path} text={i18n.t('home.buttons.observationPlanner.title')} subtitle={i18n.t('home.buttons.observationPlanner.subtitle')} icon={require('../../assets/icons/FiCalendar.png')} />
             <BigButton disabled={!hasInternetConnection || !currentUserLocation} navigation={navigation} targetScreen={routes.weather.path} text={i18n.t('home.buttons.weather.title')} subtitle={i18n.t('home.buttons.weather.subtitle')} icon={require('../../assets/icons/FiSun.png')} />
+            <ToolButton isPremium={!isProUser(currentUser)} disabled={!hasInternetConnection || !isProUser(currentUser)} navigation={navigation} targetScreen={routes.lightpollution.home.path} text={i18n.t('home.buttons.lightpollution.title')} subtitle={i18n.t('home.buttons.lightpollution.subtitle')} image={require('../../assets/images/tools/lightpollutionmap.png')} />
             <BigButton disabled={!hasInternetConnection || !currentUserLocation} navigation={navigation} targetScreen={routes.moonPhases.path} text={i18n.t('home.buttons.moon_phases.title')} subtitle={i18n.t('home.buttons.moon_phases.subtitle')} icon={require('../../assets/icons/FiMoon.png')} />
-            <BigButton disabled={!hasInternetConnection} navigation={navigation} targetScreen={routes.solarWeather.path} text={i18n.t('home.buttons.solar_weather.title')} subtitle={i18n.t('home.buttons.solar_weather.subtitle')} icon={require('../../assets/icons/SolarWind.png')} />
-            <BigButton disabled={!hasInternetConnection || !currentUserLocation} navigation={navigation} targetScreen={routes.clock.home.path} text={i18n.t('home.buttons.clock.title')} subtitle={i18n.t('home.buttons.clock.subtitle')} icon={require('../../assets/icons/FiClock.png')} />
-            <BigButton disabled={!currentUserLocation} navigation={navigation} targetScreen={routes.scopeAlignment.path} text={i18n.t('home.buttons.scope_alignment.title')} subtitle={i18n.t('home.buttons.scope_alignment.subtitle')} icon={require('../../assets/icons/FiCompass.png')} />
-            <BigButton navigation={navigation} targetScreen={routes.calculations.home.path} text={i18n.t('home.buttons.calculations.title')} subtitle={i18n.t('home.buttons.calculations.subtitle')} icon={require('../../assets/icons/FiCpu.png')} />
             <BigButton disabled={!hasInternetConnection || !currentUserLocation} navigation={navigation} targetScreen={routes.transits.home.path} text={i18n.t('home.buttons.transits.title')} subtitle={i18n.t('home.buttons.transits.subtitle')} icon={require('../../assets/icons/FiTransit.png')} />
+            <BigButton disabled={!hasInternetConnection || !currentUserLocation || dsoCatalogLoading || starsCatalogLoading} navigation={navigation} targetScreen={routes.observationPlanner.path} text={i18n.t('home.buttons.observationPlanner.title')} subtitle={i18n.t('home.buttons.observationPlanner.subtitle')} icon={require('../../assets/icons/FiCalendar.png')} />
+            <BigButton navigation={navigation} targetScreen={routes.checklistManager.home.path} text={i18n.t('home.buttons.checklist_manager.title')} subtitle={i18n.t('home.buttons.checklist_manager.subtitle')} icon={require('../../assets/icons/FiFileText.png')} />
+          </View>
+        </View>
+        <View style={homeStyles.toolsSuggestions}>
+          <Text style={globalStyles.sections.title}>{i18n.t('home.outdoor.title')}</Text>
+          <Text style={globalStyles.sections.subtitle}>{i18n.t('home.outdoor.subtitle')}</Text>
+          <View style={homeStyles.toolsSuggestions.buttons}>
+            <BigButton disabled={!currentUserLocation} navigation={navigation} targetScreen={routes.scopeAlignment.path} text={i18n.t('home.buttons.scope_alignment.title')} subtitle={i18n.t('home.buttons.scope_alignment.subtitle')} icon={require('../../assets/icons/FiCompass.png')} />
+            <BigButton disabled={!hasInternetConnection || !currentUserLocation} navigation={navigation} targetScreen={routes.clock.home.path} text={i18n.t('home.buttons.clock.title')} subtitle={i18n.t('home.buttons.clock.subtitle')} icon={require('../../assets/icons/FiClock.png')} />
+            <BigButton disabled={!hasInternetConnection} navigation={navigation} targetScreen={routes.solarWeather.path} text={i18n.t('home.buttons.solar_weather.title')} subtitle={i18n.t('home.buttons.solar_weather.subtitle')} icon={require('../../assets/icons/SolarWind.png')} />
+            <ToolButton disabled={!hasInternetConnection || !currentUserLocation} navigation={navigation} targetScreen={routes.skymaps.home.path} text={i18n.t('home.buttons.skymap_generator.title')} subtitle={i18n.t('home.buttons.skymap_generator.subtitle')} image={require('../../assets/images/tools/skymap.png')} />
+            <BigButton navigation={navigation} targetScreen={routes.calculations.home.path} text={i18n.t('home.buttons.calculations.title')} subtitle={i18n.t('home.buttons.calculations.subtitle')} icon={require('../../assets/icons/FiCpu.png')} />
           </View>
         </View>
         {
@@ -112,8 +121,6 @@ export default function Home({ navigation }: any) {
           <Text style={globalStyles.sections.title}>{i18n.t('home.other_tools.title')}</Text>
           <Text style={globalStyles.sections.subtitle}>{i18n.t('home.other_tools.subtitle')}</Text>
           <View style={homeStyles.nasaTools.buttons}>
-            <ToolButton isPremium={!isProUser(currentUser)} disabled={!hasInternetConnection || !isProUser(currentUser)} navigation={navigation} targetScreen={routes.lightpollution.home.path} text={i18n.t('home.buttons.lightpollution.title')} subtitle={i18n.t('home.buttons.lightpollution.subtitle')} image={require('../../assets/images/tools/lightpollutionmap.png')} />
-            <ToolButton disabled={!hasInternetConnection || !currentUserLocation} navigation={navigation} targetScreen={routes.skymaps.home.path} text={i18n.t('home.buttons.skymap_generator.title')} subtitle={i18n.t('home.buttons.skymap_generator.subtitle')} image={require('../../assets/images/tools/skymap.png')} />
             <ToolButton disabled={!hasInternetConnection} navigation={navigation} targetScreen={routes.satelliteTracker.path} text={i18n.t('home.buttons.satellite_tracker.title')} subtitle={i18n.t('home.buttons.satellite_tracker.subtitle')} image={require('../../assets/images/tools/satellite.png')} />
             <ToolButton disabled={!hasInternetConnection || launchContextLoading} navigation={navigation} targetScreen={routes.launchesScreen.path} text={i18n.t('home.buttons.launches_screen.title')} subtitle={i18n.t('home.buttons.launches_screen.subtitle')} image={require('../../assets/images/tools/launches.png')} />
             <ToolButton disabled={!hasInternetConnection} navigation={navigation} targetScreen={routes.apod.path} text={i18n.t('home.buttons.apod.title')} subtitle={i18n.t('home.buttons.apod.subtitle')} image={require('../../assets/images/tools/apod.png')} />

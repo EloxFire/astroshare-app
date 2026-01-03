@@ -26,6 +26,9 @@ export const routes = {
   launchDetails: {path: 'LaunchDetails', requirements: []},
   observationPlanner: {path: 'ObservationPlannerScreen', requirements: []},
 
+  checklistManager: {
+    home: { path: 'ChecklistManagerScreen', requirements: [] },
+  },
   clock: {
     home: { path: 'ClockScreen', requirements: [] },
   },
