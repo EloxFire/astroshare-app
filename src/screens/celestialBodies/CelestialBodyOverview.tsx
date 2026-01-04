@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import {globalStyles} from "../../styles/global";
 import PageTitle from "../../components/commons/PageTitle";
-import {Image, ScrollView, Text, TextInput, TouchableOpacity, View} from "react-native";
+import {Image, ImageBackground, ImageSourcePropType, ScrollView, Text, TextInput, TouchableOpacity, View} from "react-native";
 import {i18n} from "../../helpers/scripts/i18n";
 import {celestialBodiesOverviewStyles} from "../../styles/screens/celestialBodies/celestialBodies";
 import {getObjectIcon} from "../../helpers/scripts/astro/objects/getObjectIcon";
@@ -37,6 +37,7 @@ import { scheduleLocalNotification, unScheduleNotification } from "../../helpers
 import { isLocalNotificationPlanned, deleteLocalNotificationRecord } from "../../helpers/scripts/notifications/checkPlannedLocalNOtifications";
 import { getData, storeData } from "../../helpers/storage";
 import ConstellationObjectMap from "../../components/maps/ConstellationObjectMap";
+import { LinearGradient } from "expo-linear-gradient";
 
 type ObservationFlags = {
   observed: boolean;
@@ -273,25 +274,19 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
     persistNotes(personalNotes, nextFlags);
   }
 
-  const renderFlagButton = (flag: keyof ObservationFlags, label: string, activeColor: string) => {
+  const renderFlagButton = (flag: keyof ObservationFlags, label: string, icon: ImageSourcePropType) => {
     const isActive = observationFlags[flag];
 
     return (
-      <TouchableOpacity
-        style={{
-          flex: 1,
-          paddingVertical: 10,
-          paddingHorizontal: 8,
-          borderRadius: 8,
-          borderWidth: 1,
-          borderColor: isActive ? activeColor : app_colors.white_twenty,
-          backgroundColor: isActive ? activeColor : app_colors.white_no_opacity,
-          alignItems: 'center',
-        }}
+      <SimpleButton
+        active={isActive}
         onPress={() => handleToggleFlag(flag)}
-      >
-        <Text style={{color: isActive ? app_colors.black : app_colors.white, fontWeight: '600'}}>{label}</Text>
-      </TouchableOpacity>
+        icon={icon}
+        iconColor={isActive ? app_colors.black : app_colors.white_sixty}
+        text={label}
+        textColor={isActive ? app_colors.black : app_colors.white_sixty}
+        backgroundColor={isActive ? app_colors.white : app_colors.white_twenty}
+      />
     )
   }
 
@@ -510,28 +505,33 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
 
         {
           objectInfos && objectInfos.dsoAdditionalInfos && (
-            <View style={celestialBodiesOverviewStyles.content.moreContainer}>
-              <Text style={celestialBodiesOverviewStyles.content.sectionTitle}>{getObjectName(object, 'all', true)} en détails</Text>
+            <ImageBackground style={celestialBodiesOverviewStyles.content.moreContainer} source={objectInfos.dsoAdditionalInfos.image} resizeMode="cover" imageStyle={{borderRadius: 10}}>
+              <LinearGradient
+                colors={['rgba(0,0,0,1)', 'rgba(0,0,0,0.4)']}
+                style={{borderRadius: 10, padding: 10}}
+              >
+                <Text style={celestialBodiesOverviewStyles.content.sectionTitle}>{getObjectName(object, 'all', true)} en détails</Text>
 
-              <View style={celestialBodiesOverviewStyles.content.moreContainer.infos}>
-                <Image resizeMode={"contain"} source={objectInfos.dsoAdditionalInfos.image} style={{width: 80, height: 80, borderRadius: 10, borderWidth: 1, borderColor: app_colors.white_twenty}} />
-                <View style={{flex: 1}}>
-                  <DSOValues title={i18n.t('detailsPages.dso.generalInfos.discoveredBy')} value={objectInfos.dsoAdditionalInfos.discovered_by}/>
-                  <DSOValues title={i18n.t('detailsPages.dso.generalInfos.discoveryYear')} value={objectInfos.dsoAdditionalInfos.discovery_year}/>
-                  <DSOValues title={i18n.t('detailsPages.dso.generalInfos.distance')} value={objectInfos.dsoAdditionalInfos.distance}/>
-                  <DSOValues title={i18n.t('detailsPages.dso.generalInfos.dimensions')} value={objectInfos.dsoAdditionalInfos.dimensions}/>
-                  <DSOValues title={i18n.t('detailsPages.dso.generalInfos.apparentSize')} value={objectInfos.dsoAdditionalInfos.apparent_size}/>
-                  <DSOValues title={i18n.t('detailsPages.dso.generalInfos.age')} value={objectInfos.dsoAdditionalInfos.age}/>
+                <View style={celestialBodiesOverviewStyles.content.moreContainer.infos}>
+                  {/* <Image resizeMode={"contain"} source={objectInfos.dsoAdditionalInfos.image} style={{width: 80, height: 80, borderRadius: 10, borderWidth: 1, borderColor: app_colors.white_twenty}} /> */}
+                  <View style={{flex: 1}}>
+                    <DSOValues title={i18n.t('detailsPages.dso.generalInfos.discoveredBy')} value={objectInfos.dsoAdditionalInfos.discovered_by}/>
+                    <DSOValues title={i18n.t('detailsPages.dso.generalInfos.discoveryYear')} value={objectInfos.dsoAdditionalInfos.discovery_year}/>
+                    <DSOValues title={i18n.t('detailsPages.dso.generalInfos.distance')} value={objectInfos.dsoAdditionalInfos.distance}/>
+                    <DSOValues title={i18n.t('detailsPages.dso.generalInfos.dimensions')} value={objectInfos.dsoAdditionalInfos.dimensions}/>
+                    <DSOValues title={i18n.t('detailsPages.dso.generalInfos.apparentSize')} value={objectInfos.dsoAdditionalInfos.apparent_size}/>
+                    <DSOValues title={i18n.t('detailsPages.dso.generalInfos.age')} value={objectInfos.dsoAdditionalInfos.age}/>
+                  </View>
                 </View>
-              </View>
-            </View>
+              </LinearGradient>
+            </ImageBackground>
           )
         }
 
         <View style={celestialBodiesOverviewStyles.content.personnalNotes}>
-          <Text style={celestialBodiesOverviewStyles.content.sectionTitle}>Vos notes</Text>
+          <Text style={celestialBodiesOverviewStyles.content.sectionTitle}>Ajoutez des notes personnelles</Text>
 
-          <View style={{gap: 10}}>
+          <View style={{gap: 20, marginTop: 10}}>
             <TextInput
               multiline
               value={personalNotes}
@@ -550,10 +550,16 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
               }}
             />
 
-            <View style={{flexDirection: 'row', gap: 10}}>
-              {renderFlagButton('observed', 'Observé', app_colors.green)}
-              {renderFlagButton('photographed', 'Photographié', app_colors.orange)}
-              {renderFlagButton('sketched', 'Croquis', app_colors.violet)}
+            <View style={{display: 'flex', flexDirection: 'column', gap: 10}}>
+              <View>
+                <Text style={celestialBodiesOverviewStyles.content.sectionTitle}>Votre expérience avec {getObjectName(object, 'all', true)}</Text>
+                <Text style={celestialBodiesOverviewStyles.content.sectionSubtitle}>Cochez ce que vous avez réalisé avec cet objet</Text>
+              </View>
+              <View style={{flexDirection: 'row', gap: 10}}>
+                {renderFlagButton('observed', 'Observé', require('../../../assets/icons/FiEye.png'))}
+                {renderFlagButton('photographed', 'Photographié', require('../../../assets/icons/FiCamera.png'))}
+                {renderFlagButton('sketched', 'Croquis', require('../../../assets/icons/FiPenTool.png'))}
+              </View>
             </View>
           </View>
         </View>

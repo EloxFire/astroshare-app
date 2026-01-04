@@ -39,7 +39,8 @@ module.exports = {
         apiKey: process.env.GOOGLE_MAPS_API_KEY
       }
     },
-    package: "fr.eavagliano.astroshare"
+    package: "fr.eavagliano.astroshare",
+    softwareKeyboardLayoutMode: "pan"
   },
   web: {
     favicon: "./assets/favicon.png"
