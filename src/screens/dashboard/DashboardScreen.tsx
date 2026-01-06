@@ -18,13 +18,25 @@ export const DashboardScreen = ({ navigation }: any) => {
     observedMessierSet,
     recentActivities,
     latestAchievement,
+    typeObservedCounts,
   } = useDashboardData({ notify: false });
+
+  const observedTypes = {
+    galaxy: typeObservedCounts?.galaxy ?? 0,
+    nebula: typeObservedCounts?.nebula ?? 0,
+    cluster: typeObservedCounts?.cluster ?? 0,
+    star: typeObservedCounts?.star ?? 0,
+  };
 
   const statsCards = [
     { label: i18n.t("dashboard.stats.favorites"), value: stats.favorites, icon: require("../../../assets/icons/FiHeart.png") },
     { label: i18n.t("dashboard.stats.observed"), value: stats.observed, icon: require("../../../assets/icons/FiEye.png") },
     { label: i18n.t("dashboard.stats.photographs"), value: stats.photographs, icon: require("../../../assets/icons/FiCamera.png") },
     { label: i18n.t("dashboard.stats.sketches"), value: stats.sketches, icon: require("../../../assets/icons/FiPenTool.png") },
+    { label: i18n.t("dashboard.stats.galaxies"), value: observedTypes.galaxy, icon: require("../../../assets/icons/astro/G.png") },
+    { label: i18n.t("dashboard.stats.nebulae"), value: observedTypes.nebula, icon: require("../../../assets/icons/astro/NEB.png") },
+    { label: i18n.t("dashboard.stats.clusters"), value: observedTypes.cluster, icon: require("../../../assets/icons/astro/GCL.png") },
+    { label: i18n.t("dashboard.stats.stars"), value: observedTypes.star, icon: require("../../../assets/icons/astro/STAR.png") },
   ];
 
   const clampedProgress = Math.min(100, Math.max(0, messierProgress));

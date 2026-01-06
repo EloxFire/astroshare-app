@@ -6,6 +6,10 @@ export const dashboardTranslations = {
     observed: "Observations",
     photographs: "Photographies",
     sketches: "Croquis",
+    galaxies: "Galaxies observées",
+    nebulae: "Nébuleuses observées",
+    clusters: "Amas observés",
+    stars: "Étoiles observées",
   },
   sections: {
     stats: {

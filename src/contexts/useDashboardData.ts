@@ -62,6 +62,7 @@ export const useDashboardData = (options?: UseDashboardDataOptions) => {
   const [messierPhotographed, setMessierPhotographed] = useState<number[]>([]);
   const [messierSketched, setMessierSketched] = useState<number[]>([]);
   const [recentActivities, setRecentActivities] = useState<ActivityItem[]>([]);
+  const [latestUnlockedId, setLatestUnlockedId] = useState<string | null>(null);
   const [plannerSearchCount, setPlannerSearchCount] = useState(0);
   const [meta, setMeta] = useState({
     messierObservedCount: 0,
@@ -173,9 +174,13 @@ export const useDashboardData = (options?: UseDashboardDataOptions) => {
       return null;
     };
 
-    const detectObservedType = (note: StoredNote): "star" | "galaxy" | "nebula" | "cluster" | null => {
+    const detectObservedType = (note: StoredNote): "star" | "galaxy" | "nebula" | "cluster" | "planet" | null => {
       const raw = (note.objectTypeDetail || note.objectType || "").toString();
       const value = normalize(raw);
+
+      if (note.objectType?.toLowerCase() === "planet" || value.includes("planet")) {
+        return "planet";
+      }
 
       if (note.objectType?.toLowerCase() === "star" || value.includes("etoile") || value.includes("star")) {
         return "star";
@@ -323,31 +328,30 @@ export const useDashboardData = (options?: UseDashboardDataOptions) => {
         observedPlanets: Array.from(observedPlanets),
       };
       setMeta(nextMeta);
+      const wasHydrated = hasHydratedUnlockedRef.current;
+      await hydratePrevUnlocked();
 
-      if (notify) {
-        const wasHydrated = hasHydratedUnlockedRef.current;
-        await hydratePrevUnlocked();
+      const categories = buildAchievementsCategories(nextMeta);
+      const unlockedIds = categories.flatMap((cat) => cat.items.filter((i) => i.achieved).map((i) => i.id));
+      const previousUnlocked = prevUnlockedRef.current;
+      const newIds = unlockedIds.filter((id) => !previousUnlocked.includes(id));
+      const nextUnlockedOrdered = newIds.length ? [...previousUnlocked, ...newIds] : previousUnlocked;
+      const latestId = newIds.length
+        ? newIds[newIds.length - 1]
+        : nextUnlockedOrdered[nextUnlockedOrdered.length - 1];
+      setLatestUnlockedId(latestId ?? null);
 
-        const categories = buildAchievementsCategories(nextMeta);
-        const unlockedIds = categories.flatMap((cat) => cat.items.filter((i) => i.achieved).map((i) => i.id));
-        const previousUnlocked = prevUnlockedRef.current;
-        const newIds = unlockedIds.filter((id) => !previousUnlocked.includes(id));
-        const hasUnlockedListChanged =
-          unlockedIds.length !== previousUnlocked.length ||
-          unlockedIds.some((id, index) => id !== previousUnlocked[index]);
-
-        if (wasHydrated && newIds.length > 0) {
-          const newlyUnlockedId = newIds[newIds.length - 1];
-          const newlyUnlocked = categories.flatMap((cat) => cat.items).find((i) => i.id === newlyUnlockedId);
-          if (newlyUnlocked) {
-            showAchievementToast({ title: newlyUnlocked.title });
-          }
+      if (notify && wasHydrated && newIds.length > 0) {
+        const newlyUnlockedId = newIds[newIds.length - 1];
+        const newlyUnlocked = categories.flatMap((cat) => cat.items).find((i) => i.id === newlyUnlockedId);
+        if (newlyUnlocked) {
+          showAchievementToast({ title: newlyUnlocked.title });
         }
+      }
 
-        if (!wasHydrated || hasUnlockedListChanged) {
-          syncPrevUnlocked(unlockedIds);
-          await storeObject(storageKeys.dashboardAchievementsUnlocked, unlockedIds);
-        }
+      if (newIds.length > 0) {
+        syncPrevUnlocked(nextUnlockedOrdered);
+        await storeObject(storageKeys.dashboardAchievementsUnlocked, nextUnlockedOrdered);
       }
     } catch (error) {
       console.warn("[Dashboard] Unable to load dashboard data", error);
@@ -397,9 +401,9 @@ export const useDashboardData = (options?: UseDashboardDataOptions) => {
   }, [messierProgress, stats, plannerSearchCount, meta]);
 
   const latestAchievement = useMemo(() => {
-    const unlocked = achievementsCategories.flatMap((cat) => cat.items.filter((i) => i.achieved));
-    return unlocked[unlocked.length - 1] || null;
-  }, [achievementsCategories]);
+    if (!latestUnlockedId) return null;
+    return achievementsCategories.flatMap((cat) => cat.items).find((i) => i.id === latestUnlockedId) || null;
+  }, [achievementsCategories, latestUnlockedId]);
 
   return {
     loading,
@@ -413,6 +417,7 @@ export const useDashboardData = (options?: UseDashboardDataOptions) => {
     messierCatalog,
     messierProgress,
     recentActivities,
+    typeObservedCounts: meta.typeObservedCounts,
     achievementsCategories,
     latestAchievement,
     reload: loadDashboardData,

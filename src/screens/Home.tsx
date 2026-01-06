@@ -121,7 +121,7 @@ export default function Home({ navigation }: any) {
           <Text style={globalStyles.sections.title}>{i18n.t('home.other_tools.title')}</Text>
           <Text style={globalStyles.sections.subtitle}>{i18n.t('home.other_tools.subtitle')}</Text>
           <View style={homeStyles.nasaTools.buttons}>
-            <ToolButton disabled={!hasInternetConnection} navigation={navigation} targetScreen={routes.dashboard.home.path} text={i18n.t('home.buttons.dashboard.title')} subtitle={i18n.t('home.buttons.dashboard.subtitle')} image={require('../../assets/images/tools/satellite.png')} />
+            <ToolButton disabled={!hasInternetConnection} navigation={navigation} targetScreen={routes.dashboard.home.path} text={i18n.t('home.buttons.dashboard.title')} subtitle={i18n.t('home.buttons.dashboard.subtitle')} image={require('../../assets/images/tools/observationjournal.png')} />
             <ToolButton disabled={!hasInternetConnection} navigation={navigation} targetScreen={routes.satelliteTracker.path} text={i18n.t('home.buttons.satellite_tracker.title')} subtitle={i18n.t('home.buttons.satellite_tracker.subtitle')} image={require('../../assets/images/tools/satellite.png')} />
             <ToolButton disabled={!hasInternetConnection || launchContextLoading} navigation={navigation} targetScreen={routes.launchesScreen.path} text={i18n.t('home.buttons.launches_screen.title')} subtitle={i18n.t('home.buttons.launches_screen.subtitle')} image={require('../../assets/images/tools/launches.png')} />
             <ToolButton disabled={!hasInternetConnection} navigation={navigation} targetScreen={routes.apod.path} text={i18n.t('home.buttons.apod.title')} subtitle={i18n.t('home.buttons.apod.subtitle')} image={require('../../assets/images/tools/apod.png')} />
