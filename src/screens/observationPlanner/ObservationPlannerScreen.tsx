@@ -10,7 +10,7 @@ import {useStarCatalog} from "../../contexts/StarsContext";
 import {useSpot} from "../../contexts/ObservationSpotContext";
 import {routes} from "../../helpers/routes";
 import { capitalize } from '../../helpers/scripts/utils/formatters/capitalize';
-import { app_colors } from '../../helpers/constants';
+import { app_colors, storageKeys } from '../../helpers/constants';
 import { DSO } from '../../helpers/types/DSO';
 import { GlobalPlanet } from '../../helpers/types/GlobalPlanet';
 import { ObservationPlannerParams, planObservationNight } from '../../helpers/scripts/astro/planner/observationPlanner';
@@ -26,6 +26,8 @@ import SimpleButton from '../../components/commons/buttons/SimpleButton';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import BigButton from '../../components/commons/buttons/BigButton';
 import InputWithIcon from '../../components/forms/InputWithIcon';
+import { getData, storeData } from '../../helpers/storage';
+import { DeviceEventEmitter } from 'react-native';
 
 function ObservationPlannerScreen({navigation}: any) {
   const { currentLocale } = useTranslation();
@@ -101,10 +103,22 @@ function ObservationPlannerScreen({navigation}: any) {
     }
   }
 
+  const incrementSearchCounter = async () => {
+    try {
+      const existing = await getData(storageKeys.dashboardPlannerSearches);
+      const current = existing ? parseInt(existing, 10) || 0 : 0;
+      await storeData(storageKeys.dashboardPlannerSearches, String(current + 1));
+      DeviceEventEmitter.emit('dashboardRefresh');
+    } catch (error) {
+      console.warn('[ObservationPlanner] Unable to increment search counter', error);
+    }
+  };
+
   const handleSearch = async () => {
     setIsPlanning(true);
     setResultsList(null);
     try {
+      await incrementSearchCounter();
 
       const observationParams: ObservationPlannerParams = {
         maxResults,

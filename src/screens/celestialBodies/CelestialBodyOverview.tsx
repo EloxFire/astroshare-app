@@ -38,6 +38,7 @@ import { isLocalNotificationPlanned, deleteLocalNotificationRecord } from "../..
 import { getData, storeData } from "../../helpers/storage";
 import ConstellationObjectMap from "../../components/maps/ConstellationObjectMap";
 import { LinearGradient } from "expo-linear-gradient";
+import { DeviceEventEmitter } from "react-native";
 
 type ObservationFlags = {
   observed: boolean;
@@ -252,26 +253,34 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
     }
   }
 
-  const persistNotes = (nextNotes: string, nextFlags: ObservationFlags) => {
-    storeObject(notesStorageKey, {
+  const persistNotes = async (nextNotes: string, nextFlags: ObservationFlags) => {
+    const magnitude = objectInfos?.base?.v_mag ?? objectInfos?.base?.magnitude ?? null;
+    const messierNumber = (object as any)?.m ? Number((object as any).m) : null;
+    const objectTypeDetail = getObjectType(object);
+
+    await storeObject(notesStorageKey, {
       objectId: object?.ids || object?.name || getObjectName(object, 'all', true),
       objectName: getObjectName(object, 'all', true),
       objectType: getObjectFamily(object),
+      objectTypeDetail,
+      magnitude,
+      messierNumber,
       notes: nextNotes,
       flags: nextFlags,
       updatedAt: dayjs().toISOString(),
     });
+    DeviceEventEmitter.emit('dashboardRefresh');
   }
 
-  const handleNotesChange = (text: string) => {
+  const handleNotesChange = async (text: string) => {
     setPersonalNotes(text);
-    persistNotes(text, observationFlags);
+    await persistNotes(text, observationFlags);
   }
 
-  const handleToggleFlag = (flag: keyof ObservationFlags) => {
+  const handleToggleFlag = async (flag: keyof ObservationFlags) => {
     const nextFlags = { ...observationFlags, [flag]: !observationFlags[flag] };
     setObservationFlags(nextFlags);
-    persistNotes(personalNotes, nextFlags);
+    await persistNotes(personalNotes, nextFlags);
   }
 
   const renderFlagButton = (flag: keyof ObservationFlags, label: string, icon: ImageSourcePropType) => {

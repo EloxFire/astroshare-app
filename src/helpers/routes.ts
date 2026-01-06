@@ -1,5 +1,3 @@
-import { c, constellations } from "@observerly/astrometry";
-
 export const routes = {
   onboarding: { path: 'Onboarding', requirements: [] },
   tutorial: { path: 'Tutorial', requirements: [] },
@@ -26,6 +24,12 @@ export const routes = {
   launchDetails: {path: 'LaunchDetails', requirements: []},
   observationPlanner: {path: 'ObservationPlannerScreen', requirements: []},
 
+
+  dashboard: {
+    home: { path: 'DashboardScreen', requirements: [] },
+    achievements: { path: 'DashboardAchievementsScreen', requirements: [] },
+    messier: { path: 'DashboardMessierCatalogScreen', requirements: [] },
+  },
   checklistManager: {
     home: { path: 'ChecklistManagerScreen', requirements: [] },
   },

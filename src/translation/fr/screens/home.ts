@@ -20,6 +20,10 @@ export const homeTranslations = {
     subtitle: "Restez informé et apprenez de nouvelles choses"
   },
   buttons: {
+    dashboard: {
+      title: "Journal d'observation",
+      subtitle: "// Suivez vos activités astronomiques"
+    },
     checklist_manager: {
       title: "Checklists",
       subtitle: "// Organisez vos tâches et observations"

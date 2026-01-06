@@ -106,6 +106,8 @@ export const storageKeys = {
     userSkippedVersion: 'userSkippedVersion',
     lastAvailableVersion: 'lastAvailableVersion',
   },
+  dashboardAchievementsUnlocked: 'dashboardAchievementsUnlocked',
+  dashboardPlannerSearches: 'dashboardPlannerSearches',
   hiddenPremiumAccess: 'hasHiddenPremiumAccess',
   homeNewsBannerVisible: 'homeNewsBannerVisible',
 }
