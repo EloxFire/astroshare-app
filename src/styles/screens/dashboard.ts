@@ -179,35 +179,39 @@ export const dashboardStyles = {
       paddingVertical: 9,
       paddingHorizontal: 10,
       gap: 4,
-    },
-
-    meta: {
       display: "flex" as "flex",
       flexDirection: "row" as "row",
-      alignItems: "center" as "center",
       justifyContent: "space-between" as "space-between",
+
+      icon: {
+        width: 30,
+        height: 30,
+        marginRight: 10,
+      },
+  
+      title: {
+        color: app_colors.white,
+        fontFamily: "GilroyBlack" as "GilroyBlack",
+        fontSize: 14,
+        flex: 1,
+      },
+  
+      time: {
+        color: app_colors.white_sixty,
+        fontFamily: "DMMonoRegular" as "DMMonoRegular",
+        fontSize: 10,
+        marginLeft: 8,
+      },
+      
+      description: {
+        color: app_colors.white,
+        fontFamily: "GilroyRegular" as "GilroyRegular",
+        fontSize: 12,
+        lineHeight: 18,
+      },
     },
 
-    title: {
-      color: app_colors.white,
-      fontFamily: "GilroyBlack" as "GilroyBlack",
-      fontSize: 14,
-      flex: 1,
-    },
 
-    time: {
-      color: app_colors.white_sixty,
-      fontFamily: "DMMonoRegular" as "DMMonoRegular",
-      fontSize: 10,
-      marginLeft: 8,
-    },
-
-    description: {
-      color: app_colors.white,
-      fontFamily: "GilroyRegular" as "GilroyRegular",
-      fontSize: 12,
-      lineHeight: 18,
-    },
   },
 
   achievements: {

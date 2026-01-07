@@ -8,41 +8,12 @@ import { DSO } from "../helpers/types/DSO";
 import { buildAchievementsCategories, AchievementCategory } from "../screens/dashboard/achievementsConfig";
 import { showAchievementToast } from "../helpers/scripts/showToast";
 import { DeviceEventEmitter } from "react-native";
+import { ActivityItem } from "../helpers/types/dashboard/ActivityItem";
+import { MessierItem } from "../helpers/types/dashboard/MessierItem";
+import { StoredNote } from "../helpers/types/dashboard/StoredNote";
+import { astroImages } from "../helpers/scripts/loadImages";
+import { i18n } from "../helpers/scripts/i18n";
 
-type ObservationFlags = {
-  observed?: boolean;
-  photographed?: boolean;
-  sketched?: boolean;
-};
-
-type StoredNote = {
-  objectId?: string;
-  objectName?: string;
-  objectType?: string;
-  objectTypeDetail?: string;
-  messierNumber?: number;
-  magnitude?: number;
-  notes?: string;
-  flags?: ObservationFlags;
-  observed?: boolean;
-  photographed?: boolean;
-  sketched?: boolean;
-  updatedAt?: string;
-};
-
-export type ActivityItem = {
-  id: string;
-  title: string;
-  description: string;
-  timestamp?: string;
-};
-
-export type MessierItem = {
-  id: string;
-  label: string;
-  commonName?: string;
-  number: number;
-};
 
 export const TOTAL_MESSIER_OBJECTS = 110;
 
@@ -130,12 +101,12 @@ export const useDashboardData = (options?: UseDashboardDataOptions) => {
     const sketched = flags.sketched ?? note.sketched;
 
     const actions = [];
-    if (observed) actions.push("Observed");
-    if (photographed) actions.push("Photographed");
-    if (sketched) actions.push("Sketched");
-    if (note.notes && actions.length === 0) actions.push("Notes updated");
+    if (observed) actions.push(i18n.t("dashboard.sections.recent.actions.observed"));
+    if (photographed) actions.push(i18n.t("dashboard.sections.recent.actions.photographed"));
+    if (sketched) actions.push(i18n.t("dashboard.sections.recent.actions.sketched"));
+    if (note.notes && actions.length === 0) actions.push(i18n.t("dashboard.sections.recent.actions.notesUpdated"));
 
-    return actions.length ? actions.join(" • ") : "Activity logged";
+    return actions.length ? actions.join(" • ") : i18n.t("dashboard.sections.recent.actions.activityLogged");
   };
 
   const loadDashboardData = useCallback(async () => {
@@ -275,22 +246,54 @@ export const useDashboardData = (options?: UseDashboardDataOptions) => {
           if (note.notes && note.notes.trim().length > 0) notesCount += 1;
 
           const typeDetail = detectObservedType(note);
+          const planetName = matchPlanet(note);
           if (typeDetail) {
             if (!typeObservedCounts[typeDetail]) typeObservedCounts[typeDetail] = 0;
             if (observed) typeObservedCounts[typeDetail] += 1;
           }
 
           if (observed && (note.objectType === "Planet" || typeDetail === "planet")) {
-            const planetName = matchPlanet(note);
             if (planetName && planetName !== "earth") {
               observedPlanets.add(planetName);
             }
           }
 
+          const getActivityIcon = () => {
+            if (typeDetail === "planet" && planetName) {
+              const key = planetName.toUpperCase();
+              if (astroImages[key]) return astroImages[key];
+            }
+
+            const rawDetail = (note.objectTypeDetail || "").toUpperCase();
+            if (rawDetail && astroImages[rawDetail]) return astroImages[rawDetail];
+
+            const rawType = (note.objectType || "").toUpperCase();
+            if (rawType === "STAR") return astroImages.BRIGHTSTAR;
+            if (rawType === "PLANET" && planetName) {
+              const key = planetName.toUpperCase();
+              if (astroImages[key]) return astroImages[key];
+            }
+            if (rawType && astroImages[rawType]) return astroImages[rawType];
+
+            switch (typeDetail) {
+              case "star":
+                return astroImages.BRIGHTSTAR;
+              case "galaxy":
+                return astroImages.G;
+              case "nebula":
+                return astroImages.NEB;
+              case "cluster":
+                return astroImages.OCL;
+              default:
+                return astroImages.OTHER;
+            }
+          };
+
           activities.push({
             id: `${key}-${index}`,
             title: note.objectName || "Unknown object",
             description: buildActivityLabel(note),
+            icon: getActivityIcon(),
             timestamp: note.updatedAt,
           });
         });
@@ -312,7 +315,7 @@ export const useDashboardData = (options?: UseDashboardDataOptions) => {
       setMessierObserved(Array.from(new Set(messierNumbers)));
       setMessierPhotographed(Array.from(new Set(messierPhoto)));
       setMessierSketched(Array.from(new Set(messierSketch)));
-      setRecentActivities(activities.slice(0, 15));
+      setRecentActivities(activities);
       const plannerCount = parseInt((await getData(storageKeys.dashboardPlannerSearches)) || "0", 10) || 0;
       setPlannerSearchCount(plannerCount);
 

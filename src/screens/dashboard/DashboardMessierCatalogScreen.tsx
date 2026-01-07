@@ -54,6 +54,7 @@ export const DashboardMessierCatalogScreen = ({ navigation }: any) => {
               {i18n.t("dashboard.sections.messier.progressLabel", {
                 observed: observedMessierSet.size,
                 total: TOTAL_MESSIER_OBJECTS,
+                count: observedMessierSet.size,
               })}
             </Text>
           </View>

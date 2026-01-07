@@ -9,6 +9,7 @@ import { routes } from "../../helpers/routes";
 import { i18n } from "../../helpers/scripts/i18n";
 import { app_colors } from "../../helpers/constants";
 import { useDashboardData, TOTAL_MESSIER_OBJECTS } from "../../contexts/useDashboardData";
+import { DashboardRecentActivityCard } from "../../components/cards/DashboardRecentActivityCard";
 
 export const DashboardScreen = ({ navigation }: any) => {
   const {
@@ -29,14 +30,14 @@ export const DashboardScreen = ({ navigation }: any) => {
   };
 
   const statsCards = [
-    { label: i18n.t("dashboard.stats.favorites"), value: stats.favorites, icon: require("../../../assets/icons/FiHeart.png") },
-    { label: i18n.t("dashboard.stats.observed"), value: stats.observed, icon: require("../../../assets/icons/FiEye.png") },
-    { label: i18n.t("dashboard.stats.photographs"), value: stats.photographs, icon: require("../../../assets/icons/FiCamera.png") },
-    { label: i18n.t("dashboard.stats.sketches"), value: stats.sketches, icon: require("../../../assets/icons/FiPenTool.png") },
-    { label: i18n.t("dashboard.stats.galaxies"), value: observedTypes.galaxy, icon: require("../../../assets/icons/astro/G.png") },
-    { label: i18n.t("dashboard.stats.nebulae"), value: observedTypes.nebula, icon: require("../../../assets/icons/astro/NEB.png") },
-    { label: i18n.t("dashboard.stats.clusters"), value: observedTypes.cluster, icon: require("../../../assets/icons/astro/GCL.png") },
-    { label: i18n.t("dashboard.stats.stars"), value: observedTypes.star, icon: require("../../../assets/icons/astro/STAR.png") },
+    { label: i18n.t("dashboard.stats.favorites", { count: stats.favorites }), value: stats.favorites, icon: require("../../../assets/icons/FiHeart.png") },
+    { label: i18n.t("dashboard.stats.observed", { count: stats.observed }), value: stats.observed, icon: require("../../../assets/icons/FiEye.png") },
+    { label: i18n.t("dashboard.stats.photographs", { count: stats.photographs }), value: stats.photographs, icon: require("../../../assets/icons/FiCamera.png") },
+    { label: i18n.t("dashboard.stats.sketches", { count: stats.sketches }), value: stats.sketches, icon: require("../../../assets/icons/FiPenTool.png") },
+    { label: i18n.t("dashboard.stats.galaxies", { count: observedTypes.galaxy }), value: observedTypes.galaxy, icon: require("../../../assets/icons/astro/G.png") },
+    { label: i18n.t("dashboard.stats.nebulae", { count: observedTypes.nebula }), value: observedTypes.nebula, icon: require("../../../assets/icons/astro/NEB.png") },
+    { label: i18n.t("dashboard.stats.clusters", { count: observedTypes.cluster }), value: observedTypes.cluster, icon: require("../../../assets/icons/astro/GCL.png") },
+    { label: i18n.t("dashboard.stats.stars", { count: observedTypes.star }), value: observedTypes.star, icon: require("../../../assets/icons/astro/BRIGHTSTAR.png") },
   ];
 
   const clampedProgress = Math.min(100, Math.max(0, messierProgress));
@@ -85,6 +86,7 @@ export const DashboardScreen = ({ navigation }: any) => {
               {i18n.t("dashboard.sections.messier.progressLabel", {
                 observed: observedMessierSet.size,
                 total: TOTAL_MESSIER_OBJECTS,
+                count: observedMessierSet.size,
               })}
             </Text>
           </View>
@@ -106,20 +108,17 @@ export const DashboardScreen = ({ navigation }: any) => {
             {recentActivities.length === 0 && (
               <Text style={dashboardStyles.sectionSubtitle}>{i18n.t("dashboard.sections.recent.empty")}</Text>
             )}
-            {recentActivities.slice(0, 5).map((activity) => (
-              <View key={activity.id} style={dashboardStyles.activities.item}>
-                <View style={dashboardStyles.activities.meta}>
-                  <Text style={dashboardStyles.activities.title} numberOfLines={1}>{activity.title}</Text>
-                  <Text style={dashboardStyles.activities.time}>
-                    {activity.timestamp && dayjs(activity.timestamp).isValid()
-                      ? dayjs(activity.timestamp).fromNow()
-                      : i18n.t("dashboard.sections.recent.noDate")}
-                  </Text>
-                </View>
-                <Text style={dashboardStyles.activities.description} numberOfLines={2}>{activity.description}</Text>
-              </View>
+            {recentActivities.slice(0, 3).map((activity) => (
+              <DashboardRecentActivityCard key={activity.id} activity={activity} />
             ))}
           </View>
+          <Pressable
+            style={dashboardStyles.linkButton}
+            onPress={() => navigation.navigate(routes.dashboard.activities.path)}
+          >
+            <Text style={dashboardStyles.linkButton.text}>{i18n.t("dashboard.actions.viewActivities")}</Text>
+            <Image source={require("../../../assets/icons/FiChevronRight.png")} style={dashboardStyles.linkButton.icon} />
+          </Pressable>
         </View>
 
         <View style={dashboardStyles.section}>

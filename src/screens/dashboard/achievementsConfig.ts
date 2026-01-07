@@ -74,17 +74,20 @@ export const buildAchievementsCategories = (stats: DashboardStats): AchievementC
       title: i18n.t("dashboard.pages.achievements.categories.messier"),
       items: [
         ...buildStep("messier_observed", messierSteps, stats.messierObservedCount, {
-          suffix: i18n.t("dashboard.achievements.messier.observed"),
+          titleBuilder: (target) =>
+            i18n.t("dashboard.achievements.messier.observed", { count: target }),
           descriptionBuilder: (target) =>
             i18n.t("dashboard.achievements.messierDescriptions.observed", { count: target }),
         }),
         ...buildStep("messier_photo", messierSteps, stats.messierPhotographedCount, {
-          suffix: i18n.t("dashboard.achievements.messier.photographed"),
+          titleBuilder: (target) =>
+            i18n.t("dashboard.achievements.messier.photographed", { count: target }),
           descriptionBuilder: (target) =>
             i18n.t("dashboard.achievements.messierDescriptions.photographed", { count: target }),
         }),
         ...buildStep("messier_sketched", messierSteps, stats.messierSketchedCount, {
-          suffix: i18n.t("dashboard.achievements.messier.sketched"),
+          titleBuilder: (target) =>
+            i18n.t("dashboard.achievements.messier.sketched", { count: target }),
           descriptionBuilder: (target) =>
             i18n.t("dashboard.achievements.messierDescriptions.sketched", { count: target }),
         }),
@@ -100,19 +103,22 @@ export const buildAchievementsCategories = (stats: DashboardStats): AchievementC
             typeSteps,
             observedTypes[type as keyof typeof observedTypes],
             {
-              suffix: i18n.t(`dashboard.achievements.exploration.${type}`),
+              titleBuilder: (target) =>
+                i18n.t(`dashboard.achievements.exploration.${type}`, { count: target }),
               descriptionBuilder: (target) =>
                 i18n.t(`dashboard.achievements.explorationDescriptions.${type}`, { count: target }),
             }
           )
         ),
         ...buildStep("notes_count", miscSteps, stats.notesCount, {
-          suffix: i18n.t("dashboard.achievements.exploration.notes"),
+          titleBuilder: (target) =>
+            i18n.t("dashboard.achievements.exploration.notes", { count: target }),
           descriptionBuilder: (target) =>
             i18n.t("dashboard.achievements.explorationDescriptions.notes", { count: target }),
         }),
         ...buildStep("planner_searches", miscSteps, stats.plannerSearchCount, {
-          suffix: i18n.t("dashboard.achievements.exploration.planner"),
+          titleBuilder: (target) =>
+            i18n.t("dashboard.achievements.exploration.planner", { count: target }),
           descriptionBuilder: (target) =>
             i18n.t("dashboard.achievements.explorationDescriptions.planner", { count: target }),
         }),
