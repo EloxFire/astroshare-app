@@ -153,6 +153,52 @@ export const celestialBodiesOverviewStyles = {
         borderRadius: 8,
         borderWidth: 1,
         alignItems: 'center' as 'center',
+      },
+
+      experienceAction: {
+        flex: 1,
+        gap: 6,
+      },
+
+      counterRow: {
+        marginTop: 6,
+        paddingVertical: 8,
+        paddingHorizontal: 10,
+        borderRadius: 8,
+        borderWidth: 1,
+        borderColor: app_colors.white_twenty,
+        backgroundColor: app_colors.white_no_opacity,
+        display: 'flex' as 'flex',
+        flexDirection: 'row' as 'row',
+        alignItems: 'center' as 'center',
+        justifyContent: 'space-between' as 'space-between',
+      },
+
+      counterButton: {
+        width: 34,
+        height: 34,
+        borderRadius: 8,
+        alignItems: 'center' as 'center',
+        justifyContent: 'center' as 'center',
+        backgroundColor: app_colors.white_twenty,
+        borderWidth: 1,
+        borderColor: app_colors.white_twenty,
+      },
+
+      counterButtonDisabled: {
+        opacity: 0.4,
+      },
+
+      counterButtonLabel: {
+        fontFamily: 'GilroyBlack',
+        color: app_colors.white,
+        fontSize: 16,
+      },
+
+      counterValue: {
+        fontFamily: 'GilroyBlack',
+        color: app_colors.white,
+        fontSize: 16,
       }
     }
   }

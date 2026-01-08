@@ -69,6 +69,13 @@ export const DashboardScreen = ({ navigation }: any) => {
               </View>
             ))}
           </View>
+          <Pressable
+            style={dashboardStyles.linkButton}
+            onPress={() => navigation.navigate(routes.dashboard.stats.path)}
+          >
+            <Text style={dashboardStyles.linkButton.text}>{i18n.t("dashboard.actions.viewAllStats")}</Text>
+            <Image source={require("../../../assets/icons/FiChevronRight.png")} style={dashboardStyles.linkButton.icon} />
+          </Pressable>
         </View>
 
         <View style={dashboardStyles.section}>

@@ -20,6 +20,7 @@ type DashboardStats = {
   messierPhotographedCount: number;
   messierSketchedCount: number;
   typeObservedCounts: Record<string, number>;
+  typeObservedTotals?: Record<string, number>;
   notesCount: number;
   plannerSearchCount: number;
   highMagObservedCount: number;

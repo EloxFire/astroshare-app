@@ -9,8 +9,8 @@ export type StoredNote = {
   magnitude?: number;
   notes?: string;
   flags?: ObservationFlags;
-  observed?: boolean;
-  photographed?: boolean;
-  sketched?: boolean;
+  observed?: number | boolean;
+  photographed?: number | boolean;
+  sketched?: number | boolean;
   updatedAt?: string;
 };

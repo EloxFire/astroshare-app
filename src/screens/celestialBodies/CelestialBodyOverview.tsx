@@ -39,11 +39,33 @@ import { getData, storeData } from "../../helpers/storage";
 import ConstellationObjectMap from "../../components/maps/ConstellationObjectMap";
 import { LinearGradient } from "expo-linear-gradient";
 import { DeviceEventEmitter } from "react-native";
+import { ObservationFlags } from "../../helpers/types/dashboard/ObservationFlags";
 
-type ObservationFlags = {
-  observed: boolean;
-  photographed: boolean;
-  sketched: boolean;
+type ObservationCounts = Required<ObservationFlags>;
+
+const normalizeCountValue = (value?: number | boolean | null): number => {
+  if (typeof value === "number" && Number.isFinite(value)) return Math.max(0, Math.floor(value));
+  if (value === true) return 1;
+  if (value === false || value == null) return 0;
+
+  const parsed = Number(value);
+  if (Number.isFinite(parsed)) return Math.max(0, Math.floor(parsed));
+  return 0;
+};
+
+const normalizeObservationCounts = (
+  flags?: ObservationFlags | null,
+  legacy?: Partial<Record<keyof ObservationCounts, number | boolean>>
+): ObservationCounts => ({
+  observed: normalizeCountValue(flags?.observed ?? legacy?.observed),
+  photographed: normalizeCountValue(flags?.photographed ?? legacy?.photographed),
+  sketched: normalizeCountValue(flags?.sketched ?? legacy?.sketched),
+});
+
+const defaultObservationCounts: ObservationCounts = {
+  observed: 0,
+  photographed: 0,
+  sketched: 0,
 };
 
 export default function CelestialBodyOverview({ route, navigation }: any) {
@@ -60,11 +82,7 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
   const [favouriteDSO, setFavouriteDSO] = useState<DSO[]>([]);
   const [favouriteStars, setFavouriteStars] = useState<Star[]>([]);
   const [personalNotes, setPersonalNotes] = useState<string>('');
-  const [observationFlags, setObservationFlags] = useState<ObservationFlags>({
-    observed: false,
-    photographed: false,
-    sketched: false,
-  });
+  const [observationCounts, setObservationCounts] = useState<ObservationCounts>(defaultObservationCounts);
 
   const notesStorageKey = useMemo(() => {
     const identifier = object?.ids || object?.name || getObjectName(object, 'all', true);
@@ -115,18 +133,10 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
       const savedNotes = await getObject(notesStorageKey);
       if(savedNotes){
         setPersonalNotes(savedNotes.notes || '');
-        setObservationFlags({
-          observed: !!(savedNotes.flags?.observed ?? savedNotes.observed),
-          photographed: !!(savedNotes.flags?.photographed ?? savedNotes.photographed),
-          sketched: !!(savedNotes.flags?.sketched ?? savedNotes.sketched),
-        });
+        setObservationCounts(normalizeObservationCounts(savedNotes.flags, savedNotes));
       }else{
         setPersonalNotes('');
-        setObservationFlags({
-          observed: false,
-          photographed: false,
-          sketched: false,
-        });
+        setObservationCounts(defaultObservationCounts);
       }
     })()
   }, [notesStorageKey])
@@ -253,7 +263,7 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
     }
   }
 
-  const persistNotes = async (nextNotes: string, nextFlags: ObservationFlags) => {
+  const persistNotes = async (nextNotes: string, nextFlags: ObservationCounts) => {
     const magnitude = objectInfos?.base?.v_mag ?? objectInfos?.base?.magnitude ?? null;
     const messierNumber = (object as any)?.m ? Number((object as any).m) : null;
     const objectTypeDetail = getObjectType(object);
@@ -267,6 +277,9 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
       messierNumber,
       notes: nextNotes,
       flags: nextFlags,
+      observed: nextFlags.observed > 0,
+      photographed: nextFlags.photographed > 0,
+      sketched: nextFlags.sketched > 0,
       updatedAt: dayjs().toISOString(),
     });
     DeviceEventEmitter.emit('dashboardRefresh');
@@ -274,28 +287,53 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
 
   const handleNotesChange = async (text: string) => {
     setPersonalNotes(text);
-    await persistNotes(text, observationFlags);
+    await persistNotes(text, observationCounts);
   }
 
-  const handleToggleFlag = async (flag: keyof ObservationFlags) => {
-    const nextFlags = { ...observationFlags, [flag]: !observationFlags[flag] };
-    setObservationFlags(nextFlags);
-    await persistNotes(personalNotes, nextFlags);
-  }
+  const handleUpdateObservationCount = (flag: keyof ObservationCounts, delta: number) => {
+    setObservationCounts((prev) => {
+      const nextValue = Math.max(0, prev[flag] + delta);
+      const nextFlags = { ...prev, [flag]: nextValue };
+      persistNotes(personalNotes, nextFlags);
+      return nextFlags;
+    });
+  };
 
-  const renderFlagButton = (flag: keyof ObservationFlags, label: string, icon: ImageSourcePropType) => {
-    const isActive = observationFlags[flag];
+  const renderObservationControl = (flag: keyof ObservationCounts, label: string, icon: ImageSourcePropType) => {
+    const count = observationCounts[flag];
+    const isActive = count > 0;
 
     return (
-      <SimpleButton
-        active={isActive}
-        onPress={() => handleToggleFlag(flag)}
-        icon={icon}
-        iconColor={isActive ? app_colors.black : app_colors.white_sixty}
-        text={label}
-        textColor={isActive ? app_colors.black : app_colors.white_sixty}
-        backgroundColor={isActive ? app_colors.white : app_colors.white_twenty}
-      />
+      <View style={celestialBodiesOverviewStyles.content.personnalNotes.experienceAction}>
+        <SimpleButton
+          active={isActive}
+          onPress={() => handleUpdateObservationCount(flag, 1)}
+          icon={icon}
+          iconColor={isActive ? app_colors.black : app_colors.white_sixty}
+          text={label}
+          textColor={isActive ? app_colors.black : app_colors.white_sixty}
+          backgroundColor={isActive ? app_colors.white : app_colors.white_twenty}
+        />
+        <View style={celestialBodiesOverviewStyles.content.personnalNotes.counterRow}>
+          <TouchableOpacity
+            onPress={() => handleUpdateObservationCount(flag, -1)}
+            style={[
+              celestialBodiesOverviewStyles.content.personnalNotes.counterButton,
+              count === 0 && celestialBodiesOverviewStyles.content.personnalNotes.counterButtonDisabled,
+            ]}
+            disabled={count === 0}
+          >
+            <Text style={celestialBodiesOverviewStyles.content.personnalNotes.counterButtonLabel}>-</Text>
+          </TouchableOpacity>
+          <Text style={celestialBodiesOverviewStyles.content.personnalNotes.counterValue}>x{count}</Text>
+          <TouchableOpacity
+            onPress={() => handleUpdateObservationCount(flag, 1)}
+            style={celestialBodiesOverviewStyles.content.personnalNotes.counterButton}
+          >
+            <Text style={celestialBodiesOverviewStyles.content.personnalNotes.counterButtonLabel}>+</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
     )
   }
 
@@ -562,12 +600,12 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
             <View style={{display: 'flex', flexDirection: 'column', gap: 10}}>
               <View>
                 <Text style={celestialBodiesOverviewStyles.content.sectionTitle}>Votre expérience avec {getObjectName(object, 'all', true)}</Text>
-                <Text style={celestialBodiesOverviewStyles.content.sectionSubtitle}>Cochez ce que vous avez réalisé avec cet objet</Text>
+                <Text style={celestialBodiesOverviewStyles.content.sectionSubtitle}>Suivez combien de fois vous avez observé, photographié ou dessiné cet objet</Text>
               </View>
               <View style={{flexDirection: 'row', gap: 10}}>
-                {renderFlagButton('observed', 'Observé', require('../../../assets/icons/FiEye.png'))}
-                {renderFlagButton('photographed', 'Photographié', require('../../../assets/icons/FiCamera.png'))}
-                {renderFlagButton('sketched', 'Croquis', require('../../../assets/icons/FiPenTool.png'))}
+                {renderObservationControl('observed', 'Observé', require('../../../assets/icons/FiEye.png'))}
+                {renderObservationControl('photographed', 'Photographié', require('../../../assets/icons/FiCamera.png'))}
+                {renderObservationControl('sketched', 'Croquis', require('../../../assets/icons/FiPenTool.png'))}
               </View>
             </View>
           </View>

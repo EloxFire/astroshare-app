@@ -30,6 +30,7 @@ export const routes = {
     achievements: { path: 'DashboardAchievementsScreen', requirements: [] },
     activities: { path: 'DashboardActivitiesScreen', requirements: [] },
     messier: { path: 'DashboardMessierCatalogScreen', requirements: [] },
+    stats: { path: 'DashboardAllStatsScreen', requirements: [] },
   },
   checklistManager: {
     home: { path: 'ChecklistManagerScreen', requirements: [] },

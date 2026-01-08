@@ -1,5 +1,5 @@
 export type ObservationFlags = {
-  observed?: boolean;
-  photographed?: boolean;
-  sketched?: boolean;
+  observed?: number;
+  photographed?: number;
+  sketched?: number;
 };

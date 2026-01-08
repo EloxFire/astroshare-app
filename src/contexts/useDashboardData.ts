@@ -7,7 +7,7 @@ import { getData, getObject, storeObject } from "../helpers/storage";
 import { DSO } from "../helpers/types/DSO";
 import { buildAchievementsCategories, AchievementCategory } from "../screens/dashboard/achievementsConfig";
 import { showAchievementToast } from "../helpers/scripts/showToast";
-import { DeviceEventEmitter } from "react-native";
+import { DeviceEventEmitter, ImageSourcePropType } from "react-native";
 import { ActivityItem } from "../helpers/types/dashboard/ActivityItem";
 import { MessierItem } from "../helpers/types/dashboard/MessierItem";
 import { StoredNote } from "../helpers/types/dashboard/StoredNote";
@@ -20,6 +20,17 @@ export const TOTAL_MESSIER_OBJECTS = 110;
 type UseDashboardDataOptions = {
   refreshTrigger?: any;
   notify?: boolean;
+};
+
+type ObjectObservationStat = {
+  key: string;
+  name: string;
+  type: string;
+  observed: number;
+  photographed: number;
+  sketched: number;
+  icon: ImageSourcePropType;
+  lastUpdated?: string | null;
 };
 
 export const useDashboardData = (options?: UseDashboardDataOptions) => {
@@ -40,12 +51,14 @@ export const useDashboardData = (options?: UseDashboardDataOptions) => {
     messierPhotographedCount: 0,
     messierSketchedCount: 0,
     typeObservedCounts: {} as Record<string, number>,
+    typeObservedTotals: {} as Record<string, number>,
     notesCount: 0,
     plannerSearchCount: 0,
     highMagObservedCount: 0,
     highMagPhotographedCount: 0,
     observedPlanets: [] as string[],
   });
+  const [objectStats, setObjectStats] = useState<ObjectObservationStat[]>([]);
   const [, setPrevUnlocked] = useState<string[]>([]);
   const prevUnlockedRef = useRef<string[]>([]);
   const hasHydratedUnlockedRef = useRef(false);
@@ -94,16 +107,63 @@ export const useDashboardData = (options?: UseDashboardDataOptions) => {
     return null;
   };
 
-  const buildActivityLabel = (note: StoredNote) => {
+  const normalizeObservationCount = (value?: number | boolean): number => {
+    if (typeof value === "number" && Number.isFinite(value)) return Math.max(0, Math.floor(value));
+    if (value === true) return 1;
+    if (value === false || value == null) return 0;
+    const parsed = Number(value);
+    if (Number.isFinite(parsed)) return Math.max(0, Math.floor(parsed));
+    return 0;
+  };
+
+  const getObservationCounts = (note: StoredNote) => {
     const flags = note.flags || {};
-    const observed = flags.observed ?? note.observed;
-    const photographed = flags.photographed ?? note.photographed;
-    const sketched = flags.sketched ?? note.sketched;
+    return {
+      observed: normalizeObservationCount(flags.observed ?? note.observed),
+      photographed: normalizeObservationCount(flags.photographed ?? note.photographed),
+      sketched: normalizeObservationCount(flags.sketched ?? note.sketched),
+    };
+  };
+
+  const getActivityIcon = (note: StoredNote, typeDetail: string | null, planetName: string | null) => {
+    if (typeDetail === "planet" && planetName) {
+      const key = planetName.toUpperCase();
+      if (astroImages[key]) return astroImages[key];
+    }
+
+    const rawDetail = (note.objectTypeDetail || "").toUpperCase();
+    if (rawDetail && astroImages[rawDetail]) return astroImages[rawDetail];
+
+    const rawType = (note.objectType || "").toUpperCase();
+    if (rawType === "STAR") return astroImages.BRIGHTSTAR;
+    if (rawType === "PLANET" && planetName) {
+      const key = planetName.toUpperCase();
+      if (astroImages[key]) return astroImages[key];
+    }
+    if (rawType && astroImages[rawType]) return astroImages[rawType];
+
+    switch (typeDetail) {
+      case "star":
+        return astroImages.BRIGHTSTAR;
+      case "galaxy":
+        return astroImages.G;
+      case "nebula":
+        return astroImages.NEB;
+      case "cluster":
+        return astroImages.OCL;
+      default:
+        return astroImages.OTHER;
+    }
+  };
+
+  const buildActivityLabel = (note: StoredNote) => {
+    const counts = getObservationCounts(note);
 
     const actions = [];
-    if (observed) actions.push(i18n.t("dashboard.sections.recent.actions.observed"));
-    if (photographed) actions.push(i18n.t("dashboard.sections.recent.actions.photographed"));
-    if (sketched) actions.push(i18n.t("dashboard.sections.recent.actions.sketched"));
+    const formatAction = (label: string, count: number) => (count > 1 ? `${label} (x${count})` : label);
+    if (counts.observed > 0) actions.push(formatAction(i18n.t("dashboard.sections.recent.actions.observed"), counts.observed));
+    if (counts.photographed > 0) actions.push(formatAction(i18n.t("dashboard.sections.recent.actions.photographed"), counts.photographed));
+    if (counts.sketched > 0) actions.push(formatAction(i18n.t("dashboard.sections.recent.actions.sketched"), counts.sketched));
     if (note.notes && actions.length === 0) actions.push(i18n.t("dashboard.sections.recent.actions.notesUpdated"));
 
     return actions.length ? actions.join(" • ") : i18n.t("dashboard.sections.recent.actions.activityLogged");
@@ -198,18 +258,20 @@ export const useDashboardData = (options?: UseDashboardDataOptions) => {
       const keys = await AsyncStorage.getAllKeys();
       const noteKeys = keys.filter((key) => key.startsWith("notes_"));
 
-      let observedCount = 0;
-      let photographsCount = 0;
-      let sketchesCount = 0;
+      let observedTotal = 0;
+      let photographsTotal = 0;
+      let sketchesTotal = 0;
       const messierNumbers: number[] = [];
       const activities: ActivityItem[] = [];
       const messierPhoto: number[] = [];
       const messierSketch: number[] = [];
       let notesCount = 0;
-      const typeObservedCounts: Record<string, number> = {};
+      const typeObservedTotals: Record<string, number> = {};
+      const typeObservedSets: Record<string, Set<string>> = {};
       const highMagObserved = new Set<string>();
       const highMagPhotographed = new Set<string>();
       const observedPlanets = new Set<string>();
+      const objectStatsMap = new Map<string, ObjectObservationStat>();
 
       if (noteKeys.length) {
         const entries = await AsyncStorage.multiGet(noteKeys);
@@ -218,28 +280,28 @@ export const useDashboardData = (options?: UseDashboardDataOptions) => {
           const note = safeParseNote(value);
           if (!note) return;
 
-          const flags = note.flags || {};
-          const observed = Boolean(flags.observed ?? note.observed);
-          const photographed = Boolean(flags.photographed ?? note.photographed);
-          const sketched = Boolean(flags.sketched ?? note.sketched);
+          const { observed, photographed, sketched } = getObservationCounts(note);
+          const hasObserved = observed > 0;
+          const hasPhotographed = photographed > 0;
+          const hasSketched = sketched > 0;
           const objectKey = note.objectId || note.objectName || key;
-
-          if (observed) observedCount += 1;
-          if (photographed) photographsCount += 1;
-          if (sketched) sketchesCount += 1;
+          const objectName = note.objectName || "Unknown object";
+          observedTotal += observed;
+          photographsTotal += photographed;
+          sketchesTotal += sketched;
 
           const magnitude = typeof note.magnitude === "number" ? note.magnitude : null;
-          if (observed && magnitude !== null && magnitude > 10) highMagObserved.add(objectKey);
-          if (photographed && magnitude !== null && magnitude > 10) highMagPhotographed.add(objectKey);
+          if (hasObserved && magnitude !== null && magnitude > 10) highMagObserved.add(objectKey);
+          if (hasPhotographed && magnitude !== null && magnitude > 10) highMagPhotographed.add(objectKey);
 
           const messierNumber = note.messierNumber || parseMessierNumber(note.objectName);
-          if (observed && messierNumber) {
+          if (hasObserved && messierNumber) {
             messierNumbers.push(messierNumber);
           }
-          if (photographed && messierNumber) {
+          if (hasPhotographed && messierNumber) {
             messierPhoto.push(messierNumber);
           }
-          if (sketched && messierNumber) {
+          if (hasSketched && messierNumber) {
             messierSketch.push(messierNumber);
           }
 
@@ -247,53 +309,45 @@ export const useDashboardData = (options?: UseDashboardDataOptions) => {
 
           const typeDetail = detectObservedType(note);
           const planetName = matchPlanet(note);
-          if (typeDetail) {
-            if (!typeObservedCounts[typeDetail]) typeObservedCounts[typeDetail] = 0;
-            if (observed) typeObservedCounts[typeDetail] += 1;
+          const safeType = typeDetail ?? "other";
+          if (hasObserved) {
+            if (!typeObservedSets[safeType]) typeObservedSets[safeType] = new Set<string>();
+            typeObservedSets[safeType].add(objectKey);
+            if (!typeObservedTotals[safeType]) typeObservedTotals[safeType] = 0;
+            typeObservedTotals[safeType] += observed;
           }
 
-          if (observed && (note.objectType === "Planet" || typeDetail === "planet")) {
+          if (hasObserved && (note.objectType === "Planet" || typeDetail === "planet")) {
             if (planetName && planetName !== "earth") {
               observedPlanets.add(planetName);
             }
           }
 
-          const getActivityIcon = () => {
-            if (typeDetail === "planet" && planetName) {
-              const key = planetName.toUpperCase();
-              if (astroImages[key]) return astroImages[key];
-            }
+          const noteIcon = getActivityIcon(note, typeDetail, planetName);
+          const existingStat = objectStatsMap.get(objectKey);
+          const latestDate = (() => {
+            const existingDate = existingStat?.lastUpdated;
+            if (!existingDate) return note.updatedAt || null;
+            if (!note.updatedAt) return existingDate;
+            return dayjs(note.updatedAt).isAfter(dayjs(existingDate)) ? note.updatedAt : existingDate;
+          })();
 
-            const rawDetail = (note.objectTypeDetail || "").toUpperCase();
-            if (rawDetail && astroImages[rawDetail]) return astroImages[rawDetail];
-
-            const rawType = (note.objectType || "").toUpperCase();
-            if (rawType === "STAR") return astroImages.BRIGHTSTAR;
-            if (rawType === "PLANET" && planetName) {
-              const key = planetName.toUpperCase();
-              if (astroImages[key]) return astroImages[key];
-            }
-            if (rawType && astroImages[rawType]) return astroImages[rawType];
-
-            switch (typeDetail) {
-              case "star":
-                return astroImages.BRIGHTSTAR;
-              case "galaxy":
-                return astroImages.G;
-              case "nebula":
-                return astroImages.NEB;
-              case "cluster":
-                return astroImages.OCL;
-              default:
-                return astroImages.OTHER;
-            }
-          };
+          objectStatsMap.set(objectKey, {
+            key: objectKey,
+            name: existingStat?.name || objectName,
+            type: existingStat?.type || safeType,
+            observed: (existingStat?.observed || 0) + observed,
+            photographed: (existingStat?.photographed || 0) + photographed,
+            sketched: (existingStat?.sketched || 0) + sketched,
+            icon: existingStat?.icon || noteIcon,
+            lastUpdated: latestDate,
+          });
 
           activities.push({
             id: `${key}-${index}`,
             title: note.objectName || "Unknown object",
             description: buildActivityLabel(note),
-            icon: getActivityIcon(),
+            icon: noteIcon,
             timestamp: note.updatedAt,
           });
         });
@@ -308,10 +362,13 @@ export const useDashboardData = (options?: UseDashboardDataOptions) => {
 
       setStats({
         favorites: totalFavorites,
-        observed: observedCount,
-        photographs: photographsCount,
-        sketches: sketchesCount,
+        observed: observedTotal,
+        photographs: photographsTotal,
+        sketches: sketchesTotal,
       });
+      const typeObservedCountsUnique = Object.fromEntries(
+        Object.entries(typeObservedSets).map(([type, set]) => [type, set.size])
+      );
       setMessierObserved(Array.from(new Set(messierNumbers)));
       setMessierPhotographed(Array.from(new Set(messierPhoto)));
       setMessierSketched(Array.from(new Set(messierSketch)));
@@ -323,7 +380,8 @@ export const useDashboardData = (options?: UseDashboardDataOptions) => {
         messierObservedCount: new Set(messierNumbers).size,
         messierPhotographedCount: new Set(messierPhoto).size,
         messierSketchedCount: new Set(messierSketch).size,
-        typeObservedCounts,
+        typeObservedCounts: typeObservedCountsUnique,
+        typeObservedTotals,
         notesCount,
         plannerSearchCount: plannerCount,
         highMagObservedCount: highMagObserved.size,
@@ -331,6 +389,10 @@ export const useDashboardData = (options?: UseDashboardDataOptions) => {
         observedPlanets: Array.from(observedPlanets),
       };
       setMeta(nextMeta);
+      const objectStatsList = Array.from(objectStatsMap.values()).sort(
+        (a, b) => (b.observed || 0) - (a.observed || 0)
+      );
+      setObjectStats(objectStatsList);
       const wasHydrated = hasHydratedUnlockedRef.current;
       await hydratePrevUnlocked();
 
@@ -421,8 +483,10 @@ export const useDashboardData = (options?: UseDashboardDataOptions) => {
     messierProgress,
     recentActivities,
     typeObservedCounts: meta.typeObservedCounts,
+    typeObservedTotals: meta.typeObservedTotals,
     achievementsCategories,
     latestAchievement,
+    objectStats,
     reload: loadDashboardData,
     dsoCatalog,
   };

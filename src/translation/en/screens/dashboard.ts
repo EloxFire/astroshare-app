@@ -83,6 +83,7 @@ export const dashboardTranslations = {
     viewMessier: "Open Messier catalog",
     viewAchievements: "View all achievements",
     viewActivities: "View all activities",
+    viewAllStats: "View all stats",
   },
   pages: {
     achievements: {
@@ -102,6 +103,37 @@ export const dashboardTranslations = {
     activities: {
       title: "Activity log",
       subtitle: "Browse all your observations, photos and notes",
+    },
+    stats: {
+      title: "All statistics",
+      subtitle: "Deep dive into your observations",
+    },
+  },
+  allStats: {
+    filters: {
+      observed: "Most observed",
+      photographed: "Most photographed",
+      sketched: "Most sketched",
+    },
+    objects: {
+      title: "Most observed objects",
+      subtitle: "Ranked by the selected action",
+      empty: "No observations recorded yet.",
+      line: "{{observed}} obs • {{photographed}} photos • {{sketched}} sketches",
+    },
+    types: {
+      title: "Most observed types",
+      subtitle: "Total observations by type",
+      empty: "No observation types available.",
+      line: "{{observations}} observations • {{unique}} unique objects",
+      labels: {
+        star: "Stars",
+        galaxy: "Galaxies",
+        nebula: "Nebulae",
+        cluster: "Clusters",
+        planet: "Planets",
+        other: "Other",
+      },
     },
   },
   achievements: {

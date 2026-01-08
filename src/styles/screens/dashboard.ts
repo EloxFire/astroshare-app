@@ -338,4 +338,88 @@ export const dashboardStyles = {
       fontSize: 12,
     },
   },
+
+  filters: {
+    row: {
+      display: "flex" as "flex",
+      flexDirection: "row" as "row",
+      gap: 8,
+      marginBottom: 8,
+      flexWrap: "wrap" as "wrap",
+    },
+  },
+
+  rankings: {
+    list: {
+      display: "flex" as "flex",
+      flexDirection: "column" as "column",
+      gap: 8,
+    },
+
+    item: {
+      display: "flex" as "flex",
+      flexDirection: "row" as "row",
+      alignItems: "center" as "center",
+      gap: 8,
+      backgroundColor: app_colors.white_no_opacity,
+      borderRadius: 10,
+      paddingHorizontal: 10,
+      paddingVertical: 8,
+    },
+
+    indexBadge: {
+      width: 26,
+      height: 26,
+      borderRadius: 8,
+      borderWidth: 1,
+      borderColor: app_colors.white_twenty,
+      alignItems: "center" as "center",
+      justifyContent: "center" as "center",
+      backgroundColor: app_colors.black,
+    },
+
+    indexText: {
+      color: app_colors.white,
+      fontFamily: "GilroyBlack" as "GilroyBlack",
+      fontSize: 12,
+    },
+
+    icon: {
+      width: 32,
+      height: 32,
+      tintColor: app_colors.white,
+    },
+
+    info: {
+      flex: 1,
+      display: "flex" as "flex",
+      flexDirection: "column" as "column",
+      gap: 2,
+    },
+
+    title: {
+      color: app_colors.white,
+      fontFamily: "GilroyBlack" as "GilroyBlack",
+      fontSize: 13,
+    },
+
+    subtitle: {
+      color: app_colors.white_sixty,
+      fontFamily: "DMMonoRegular" as "DMMonoRegular",
+      fontSize: 11,
+    },
+
+    countPill: {
+      backgroundColor: app_colors.white_twenty,
+      paddingHorizontal: 10,
+      paddingVertical: 6,
+      borderRadius: 8,
+    },
+
+    countText: {
+      color: app_colors.white,
+      fontFamily: "GilroyBlack" as "GilroyBlack",
+      fontSize: 12,
+    },
+  },
 };

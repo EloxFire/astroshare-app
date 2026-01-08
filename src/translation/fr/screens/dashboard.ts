@@ -83,6 +83,7 @@ export const dashboardTranslations = {
     viewMessier: "Ouvrir le catalogue Messier",
     viewAchievements: "Voir tous les succès",
     viewActivities: "Voir toute votre activité",
+    viewAllStats: "Voir toutes les statistiques",
   },
   pages: {
     achievements: {
@@ -102,6 +103,37 @@ export const dashboardTranslations = {
     activities: {
       title: "Historique des activités",
       subtitle: "Consultez toutes vos observations, photos et notes",
+    },
+    stats: {
+      title: "Statistiques détaillées",
+      subtitle: "Explorez vos observations en profondeur",
+    },
+  },
+  allStats: {
+    filters: {
+      observed: "Objets les plus observés",
+      photographed: "Objets les plus photographiés",
+      sketched: "Objets les plus dessinés",
+    },
+    objects: {
+      title: "Objets les plus observés",
+      subtitle: "Classement selon l'action choisie",
+      empty: "Aucune observation enregistrée pour le moment.",
+      line: "{{observed}} obs • {{photographed}} photos • {{sketched}} croquis",
+    },
+    types: {
+      title: "Types les plus observés",
+      subtitle: "Total des observations par type",
+      empty: "Aucun type d'observation disponible.",
+      line: "{{observations}} observations • {{unique}} objets uniques",
+      labels: {
+        star: "Étoiles",
+        galaxy: "Galaxies",
+        nebula: "Nébuleuses",
+        cluster: "Amas",
+        planet: "Planètes",
+        other: "Autres",
+      },
     },
   },
   achievements: {
