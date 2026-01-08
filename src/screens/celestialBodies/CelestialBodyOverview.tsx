@@ -264,7 +264,7 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
   }
 
   const persistNotes = async (nextNotes: string, nextFlags: ObservationCounts) => {
-    const magnitude = objectInfos?.base?.v_mag ?? objectInfos?.base?.magnitude ?? null;
+    const magnitude = objectInfos?.base?.v_mag ?? objectInfos?.base?.b_mag ?? null;
     const messierNumber = (object as any)?.m ? Number((object as any).m) : null;
     const objectTypeDetail = getObjectType(object);
 
@@ -304,34 +304,27 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
     const isActive = count > 0;
 
     return (
-      <View style={celestialBodiesOverviewStyles.content.personnalNotes.experienceAction}>
-        <SimpleButton
-          active={isActive}
-          onPress={() => handleUpdateObservationCount(flag, 1)}
-          icon={icon}
-          iconColor={isActive ? app_colors.black : app_colors.white_sixty}
-          text={label}
-          textColor={isActive ? app_colors.black : app_colors.white_sixty}
-          backgroundColor={isActive ? app_colors.white : app_colors.white_twenty}
-        />
-        <View style={celestialBodiesOverviewStyles.content.personnalNotes.counterRow}>
-          <TouchableOpacity
+      <View style={[celestialBodiesOverviewStyles.content.personnalNotes.experienceAction]}>
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <Image source={icon} style={{width: 24, height: 24, marginRight: 10, tintColor: isActive ? app_colors.white : app_colors.white_sixty}} />
+          <Text style={[celestialBodiesOverviewStyles.content.personnalNotes.experienceAction.label, {color: isActive ? app_colors.white : app_colors.white_sixty}]}>{label}</Text>
+        </View>
+        <View style={celestialBodiesOverviewStyles.content.personnalNotes.experienceAction.counterRow}>
+          <SimpleButton
+            icon={require('../../../assets/icons/FiMinus.png')}
+            small
+            iconColor={count === 0 ? app_colors.white_sixty : app_colors.white}
+            active={count > 0}
             onPress={() => handleUpdateObservationCount(flag, -1)}
-            style={[
-              celestialBodiesOverviewStyles.content.personnalNotes.counterButton,
-              count === 0 && celestialBodiesOverviewStyles.content.personnalNotes.counterButtonDisabled,
-            ]}
             disabled={count === 0}
-          >
-            <Text style={celestialBodiesOverviewStyles.content.personnalNotes.counterButtonLabel}>-</Text>
-          </TouchableOpacity>
-          <Text style={celestialBodiesOverviewStyles.content.personnalNotes.counterValue}>x{count}</Text>
-          <TouchableOpacity
+          />
+          <Text style={celestialBodiesOverviewStyles.content.personnalNotes.experienceAction.counterRow.counterValue}>x{count}</Text>
+          <SimpleButton
+            icon={require('../../../assets/icons/FiPlus.png')}
+            small
+            active={count > 0}
             onPress={() => handleUpdateObservationCount(flag, 1)}
-            style={celestialBodiesOverviewStyles.content.personnalNotes.counterButton}
-          >
-            <Text style={celestialBodiesOverviewStyles.content.personnalNotes.counterButtonLabel}>+</Text>
-          </TouchableOpacity>
+          />
         </View>
       </View>
     )
@@ -597,12 +590,12 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
               }}
             />
 
-            <View style={{display: 'flex', flexDirection: 'column', gap: 10}}>
+            <View style={{display: 'flex', flexDirection: 'column', gap: 5}}>
               <View>
                 <Text style={celestialBodiesOverviewStyles.content.sectionTitle}>Votre expérience avec {getObjectName(object, 'all', true)}</Text>
                 <Text style={celestialBodiesOverviewStyles.content.sectionSubtitle}>Suivez combien de fois vous avez observé, photographié ou dessiné cet objet</Text>
               </View>
-              <View style={{flexDirection: 'row', gap: 10}}>
+              <View style={{flexDirection: 'column', gap: 10}}>
                 {renderObservationControl('observed', 'Observé', require('../../../assets/icons/FiEye.png'))}
                 {renderObservationControl('photographed', 'Photographié', require('../../../assets/icons/FiCamera.png'))}
                 {renderObservationControl('sketched', 'Croquis', require('../../../assets/icons/FiPenTool.png'))}
