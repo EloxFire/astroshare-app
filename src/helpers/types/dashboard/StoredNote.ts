@@ -5,6 +5,7 @@ export type StoredNote = {
   objectName?: string;
   objectType?: string;
   objectTypeDetail?: string;
+  objectTypeCode?: string;
   messierNumber?: number;
   magnitude?: number;
   notes?: string;

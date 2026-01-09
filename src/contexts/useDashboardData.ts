@@ -13,9 +13,208 @@ import { MessierItem } from "../helpers/types/dashboard/MessierItem";
 import { StoredNote } from "../helpers/types/dashboard/StoredNote";
 import { astroImages } from "../helpers/scripts/loadImages";
 import { i18n } from "../helpers/scripts/i18n";
+import { objectTypesTranslations as frObjectTypes } from "../translation/fr/common/objectTypes";
+import { objectTypesTranslations as enObjectTypes } from "../translation/en/common/objectTypes";
 
 
 export const TOTAL_MESSIER_OBJECTS = 110;
+
+type ObservedType = "star" | "galaxy" | "nebula" | "cluster" | "planet";
+type ObservedTypeWithOther = ObservedType | "other";
+
+const normalize = (value?: string | null) =>
+  (value ?? "")
+    .toString()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z]/g, "");
+
+const TYPE_CODE_ALIASES: Record<string, string> = {
+  cln: "CL+N",
+  drkn: "DRKN",
+  g: "G",
+  gcl: "GCL",
+  ggroup: "GGROUP",
+  gpair: "GPAIR",
+  gtrpl: "GTRPL",
+  hii: "HII",
+  neb: "NEB",
+  ocl: "OCL",
+  pn: "PN",
+  snr: "SNR",
+  rfn: "RFN",
+  star: "STAR",
+  starass: "*ASS",
+  dblstar: "**",
+};
+
+const TYPE_LABEL_TO_CODE: Record<string, string> = {};
+
+[frObjectTypes, enObjectTypes].forEach((dict) => {
+  Object.entries(dict).forEach(([key, label]) => {
+    const normalized = normalize(label);
+    if (!normalized) return;
+    const code = TYPE_CODE_ALIASES[key] || key.toUpperCase();
+    TYPE_LABEL_TO_CODE[normalized] = code;
+  });
+});
+
+const typeCategoryFromCode = (code?: string | null): ObservedType | null => {
+  const value = code?.toUpperCase();
+  switch (value) {
+    case "G":
+    case "GGROUP":
+    case "GPAIR":
+    case "GTRPL":
+      return "galaxy";
+    case "GCL":
+    case "OCL":
+      return "cluster";
+    case "CL+N":
+      return "nebula";
+    case "NEB":
+    case "PN":
+    case "SNR":
+    case "HII":
+    case "RFN":
+    case "DRKN":
+      return "nebula";
+    case "*":
+    case "*ASS":
+    case "**":
+    case "STAR":
+      return "star";
+    case "PLANET":
+      return "planet";
+    default:
+      return null;
+  }
+};
+
+const typeCodeFromDetail = (detail?: string | null): string | null => {
+  const raw = (detail || "").trim();
+  const upperRaw = raw.toUpperCase();
+  if (upperRaw && astroImages[upperRaw]) return upperRaw;
+
+  const normalized = normalize(detail);
+  if (!normalized) return null;
+
+  if (TYPE_LABEL_TO_CODE[normalized]) return TYPE_LABEL_TO_CODE[normalized];
+
+  if ((normalized.includes("nebula") || normalized.includes("nebuleuse")) && normalized.includes("cluster")) return "CL+N";
+  if (normalized.includes("cln")) return "CL+N";
+  if (normalized.includes("supernova")) return "SNR";
+  if (normalized.includes("planetary") || normalized.includes("planetaire")) return "PN";
+  if (normalized.includes("hii")) return "HII";
+  if (normalized.includes("reflection") || normalized.includes("reflexion")) return "RFN";
+  if (normalized.includes("dark") || normalized.includes("sombre") || normalized.includes("obscur")) return "DRKN";
+  if (normalized.includes("globular") || normalized.includes("globulaire")) return "GCL";
+  if (normalized.includes("opencluster") || normalized.includes("amasouvert")) return "OCL";
+  if (normalized.includes("cluster") || normalized.includes("amas")) return "OCL";
+  if (normalized.includes("galax")) return "G";
+  if (normalized.includes("asterism") || normalized.includes("asterisme")) return "*ASS";
+  if (normalized.includes("double")) return "**";
+  if (normalized.includes("etoile") || normalized.includes("star")) return "STAR";
+  if (normalized.includes("neb")) return "NEB";
+  if (normalized.includes("planet")) return "PLANET";
+
+  return null;
+};
+
+const resolveNoteTypeCode = (note: StoredNote): string | null => {
+  if (note.objectTypeCode) return String(note.objectTypeCode).toUpperCase();
+
+  const directDetailCode = typeCodeFromDetail(note.objectTypeDetail);
+  if (directDetailCode) return directDetailCode;
+
+  const rawType = (note.objectType || "").toUpperCase();
+  if (rawType === "STAR") return "STAR";
+  if (rawType === "PLANET") return "PLANET";
+
+  return null;
+};
+
+const detectObservedType = (note: StoredNote, typeCode: string | null, planetName: string | null): ObservedType | null => {
+  const categoryFromCode = typeCategoryFromCode(typeCode);
+  if (categoryFromCode) return categoryFromCode;
+
+  const rawType = (note.objectType || "").toLowerCase();
+  if (rawType === "planet" || planetName) return "planet";
+  if (rawType === "star") return "star";
+
+  const codeFromDetail = typeCodeFromDetail(note.objectTypeDetail);
+  const categoryFromDetail = typeCategoryFromCode(codeFromDetail);
+  if (categoryFromDetail) return categoryFromDetail;
+
+  const normalizedDetail = normalize(note.objectTypeDetail || note.objectType);
+  if (!normalizedDetail) return null;
+
+  if (normalizedDetail.includes("planet")) return "planet";
+  if (normalizedDetail.includes("etoile") || normalizedDetail.includes("star")) return "star";
+  if (normalizedDetail.includes("galax")) return "galaxy";
+  if (normalizedDetail.includes("cluster") || normalizedDetail.includes("amas")) return "cluster";
+  if (normalizedDetail.includes("neb")) return "nebula";
+
+  return null;
+};
+
+const getActivityIcon = (
+  note: StoredNote,
+  typeDetail: ObservedType | null,
+  planetName: string | null,
+  typeCode: string | null
+) => {
+  const iconFromCode = (code?: string | null) => {
+    const value = code?.toUpperCase();
+    if (!value) return null;
+    if (astroImages[value]) return astroImages[value];
+    if (value === "STAR") return astroImages.BRIGHTSTAR;
+    return null;
+  };
+
+  const codeIcon = iconFromCode(typeCode);
+  if (codeIcon) return codeIcon;
+
+  if (typeDetail === "planet" && planetName) {
+    const key = planetName.toUpperCase();
+    if (astroImages[key]) return astroImages[key];
+  }
+
+  const fallbackDetailIcon = iconFromCode(typeCodeFromDetail(note.objectTypeDetail));
+  if (fallbackDetailIcon) return fallbackDetailIcon;
+
+  const byCategory = (() => {
+    switch (typeDetail) {
+      case "star":
+        return astroImages.BRIGHTSTAR;
+      case "galaxy":
+        return astroImages.G;
+      case "nebula":
+        return astroImages.NEB;
+      case "cluster":
+        return astroImages.OCL;
+      case "planet":
+        return planetName ? (astroImages[planetName.toUpperCase()] || astroImages.SATURN) : astroImages.SATURN;
+      default:
+        return null;
+    }
+  })();
+
+  if (byCategory) return byCategory;
+
+  const rawDetail = (note.objectTypeDetail || "").toUpperCase();
+  if (rawDetail && astroImages[rawDetail]) return astroImages[rawDetail];
+
+  const rawType = (note.objectType || "").toUpperCase();
+  if (rawType === "PLANET" && planetName && astroImages[planetName.toUpperCase()]) {
+    return astroImages[planetName.toUpperCase()];
+  }
+  if (rawType === "PLANET") return astroImages.SATURN;
+  if (rawType === "STAR") return astroImages.BRIGHTSTAR;
+
+  return astroImages.OTHER;
+};
 
 type UseDashboardDataOptions = {
   refreshTrigger?: any;
@@ -125,37 +324,6 @@ export const useDashboardData = (options?: UseDashboardDataOptions) => {
     };
   };
 
-  const getActivityIcon = (note: StoredNote, typeDetail: string | null, planetName: string | null) => {
-    if (typeDetail === "planet" && planetName) {
-      const key = planetName.toUpperCase();
-      if (astroImages[key]) return astroImages[key];
-    }
-
-    const rawDetail = (note.objectTypeDetail || "").toUpperCase();
-    if (rawDetail && astroImages[rawDetail]) return astroImages[rawDetail];
-
-    const rawType = (note.objectType || "").toUpperCase();
-    if (rawType === "STAR") return astroImages.BRIGHTSTAR;
-    if (rawType === "PLANET" && planetName) {
-      const key = planetName.toUpperCase();
-      if (astroImages[key]) return astroImages[key];
-    }
-    if (rawType && astroImages[rawType]) return astroImages[rawType];
-
-    switch (typeDetail) {
-      case "star":
-        return astroImages.BRIGHTSTAR;
-      case "galaxy":
-        return astroImages.G;
-      case "nebula":
-        return astroImages.NEB;
-      case "cluster":
-        return astroImages.OCL;
-      default:
-        return astroImages.OTHER;
-    }
-  };
-
   const buildActivityLabel = (note: StoredNote) => {
     const counts = getObservationCounts(note);
 
@@ -171,14 +339,6 @@ export const useDashboardData = (options?: UseDashboardDataOptions) => {
 
   const loadDashboardData = useCallback(async () => {
     setLoading(true);
-
-    const normalize = (value?: string | null) =>
-      (value ?? "")
-        .toString()
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .toLowerCase()
-        .replace(/[^a-z]/g, "");
 
     const planetAliases: Record<string, string> = {
       mercury: "mercury",
@@ -202,44 +362,6 @@ export const useDashboardData = (options?: UseDashboardDataOptions) => {
         const match = planetAliases[normalized];
         if (match) return match;
       }
-      return null;
-    };
-
-    const detectObservedType = (note: StoredNote): "star" | "galaxy" | "nebula" | "cluster" | "planet" | null => {
-      const raw = (note.objectTypeDetail || note.objectType || "").toString();
-      const value = normalize(raw);
-
-      if (note.objectType?.toLowerCase() === "planet" || value.includes("planet")) {
-        return "planet";
-      }
-
-      if (note.objectType?.toLowerCase() === "star" || value.includes("etoile") || value.includes("star")) {
-        return "star";
-      }
-
-      if (
-        value.includes("galax") ||
-        ["g", "ggroup", "gpair", "gtrpl"].includes(value)
-      ) {
-        return "galaxy";
-      }
-
-      if (
-        value.includes("neb") ||
-        value.includes("nebule") ||
-        ["pn", "snr", "hii", "rfn", "drkn", "cln"].includes(value)
-      ) {
-        return "nebula";
-      }
-
-      if (
-        value.includes("cluster") ||
-        value.includes("amas") ||
-        ["gcl", "ocl"].includes(value)
-      ) {
-        return "cluster";
-      }
-
       return null;
     };
 
@@ -307,9 +429,10 @@ export const useDashboardData = (options?: UseDashboardDataOptions) => {
 
           if (note.notes && note.notes.trim().length > 0) notesCount += 1;
 
-          const typeDetail = detectObservedType(note);
           const planetName = matchPlanet(note);
-          const safeType = typeDetail ?? "other";
+          const typeCode = resolveNoteTypeCode(note);
+          const typeDetail = detectObservedType(note, typeCode, planetName);
+          const safeType: ObservedTypeWithOther = typeDetail ?? "other";
           if (hasObserved) {
             if (!typeObservedSets[safeType]) typeObservedSets[safeType] = new Set<string>();
             typeObservedSets[safeType].add(objectKey);
@@ -317,13 +440,13 @@ export const useDashboardData = (options?: UseDashboardDataOptions) => {
             typeObservedTotals[safeType] += observed;
           }
 
-          if (hasObserved && (note.objectType === "Planet" || typeDetail === "planet")) {
+          if (hasObserved && (note.objectType === "Planet" || safeType === "planet")) {
             if (planetName && planetName !== "earth") {
               observedPlanets.add(planetName);
             }
           }
 
-          const noteIcon = getActivityIcon(note, typeDetail, planetName);
+          const noteIcon = getActivityIcon(note, typeDetail, planetName, typeCode);
           const existingStat = objectStatsMap.get(objectKey);
           const latestDate = (() => {
             const existingDate = existingStat?.lastUpdated;

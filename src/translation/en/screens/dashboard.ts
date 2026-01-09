@@ -116,16 +116,16 @@ export const dashboardTranslations = {
       sketched: "Most sketched",
     },
     objects: {
-      title: "Most observed objects",
+      title: "Top ranked objects",
       subtitle: "Ranked by the selected action",
       empty: "No observations recorded yet.",
       line: "{{observed}} obs • {{photographed}} photos • {{sketched}} sketches",
     },
     types: {
-      title: "Most observed types",
+      title: "Top ranked object types",
       subtitle: "Total observations by type",
       empty: "No observation types available.",
-      line: "{{observations}} observations • {{unique}} unique objects",
+      line: "{{observations}} obs • {{unique}} unique objects",
       labels: {
         star: "Stars",
         galaxy: "Galaxies",

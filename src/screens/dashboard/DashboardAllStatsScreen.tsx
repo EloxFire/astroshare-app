@@ -7,12 +7,22 @@ import { useDashboardData } from "../../contexts/useDashboardData";
 import { i18n } from "../../helpers/scripts/i18n";
 import SimpleButton from "../../components/commons/buttons/SimpleButton";
 import { app_colors } from "../../helpers/constants";
+import { astroImages } from "../../helpers/scripts/loadImages";
 
 type ObjectMetric = "observed" | "photographed" | "sketched";
 
 export const DashboardAllStatsScreen = ({ navigation }: any) => {
   const { stats, objectStats, typeObservedTotals, typeObservedCounts } = useDashboardData({ notify: false });
   const [selectedMetric, setSelectedMetric] = useState<ObjectMetric>("observed");
+
+  const typeIcons: Record<string, any> = {
+    star: astroImages.BRIGHTSTAR,
+    galaxy: astroImages.G,
+    nebula: astroImages.NEB,
+    cluster: astroImages.OCL,
+    planet: astroImages.SATURN,
+    other: astroImages.OTHER,
+  };
 
   const metricFilters: { key: ObjectMetric; label: string; icon: any }[] = [
     { key: "observed", label: i18n.t("dashboard.allStats.filters.observed"), icon: require("../../../assets/icons/FiEye.png") },
@@ -80,6 +90,8 @@ export const DashboardAllStatsScreen = ({ navigation }: any) => {
               <SimpleButton
                 key={filter.key}
                 small
+                fullWidth
+                align="center"
                 active={selectedMetric === filter.key}
                 onPress={() => setSelectedMetric(filter.key)}
                 icon={filter.icon}
@@ -132,7 +144,11 @@ export const DashboardAllStatsScreen = ({ navigation }: any) => {
                 <View style={dashboardStyles.rankings.indexBadge}>
                   <Text style={dashboardStyles.rankings.indexText}>{index + 1}</Text>
                 </View>
-                <View style={[dashboardStyles.rankings.icon, { backgroundColor: app_colors.white_no_opacity, borderRadius: 8 }]} />
+                <Image
+                  source={typeIcons[type] || astroImages.OTHER}
+                  style={dashboardStyles.rankings.icon}
+                  resizeMode="contain"
+                />
                 <View style={dashboardStyles.rankings.info}>
                   <Text style={dashboardStyles.rankings.title}>
                     {i18n.t(`dashboard.allStats.types.labels.${type}`, { defaultValue: type })}
@@ -155,4 +171,3 @@ export const DashboardAllStatsScreen = ({ navigation }: any) => {
     </View>
   );
 };
-

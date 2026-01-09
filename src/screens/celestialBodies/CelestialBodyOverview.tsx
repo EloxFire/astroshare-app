@@ -267,12 +267,22 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
     const magnitude = objectInfos?.base?.v_mag ?? objectInfos?.base?.b_mag ?? null;
     const messierNumber = (object as any)?.m ? Number((object as any).m) : null;
     const objectTypeDetail = getObjectType(object);
+    const objectFamily = getObjectFamily(object);
+    const rawTypeCode = (() => {
+      if (objectFamily === "DSO") {
+        return (object as any)?.type ? String((object as any).type).toUpperCase() : null;
+      }
+      if (objectFamily === "Star") return "STAR";
+      if (objectFamily === "Planet") return "PLANET";
+      return null;
+    })();
 
     await storeObject(notesStorageKey, {
       objectId: object?.ids || object?.name || getObjectName(object, 'all', true),
       objectName: getObjectName(object, 'all', true),
-      objectType: getObjectFamily(object),
+      objectType: objectFamily,
       objectTypeDetail,
+      objectTypeCode: rawTypeCode || undefined,
       magnitude,
       messierNumber,
       notes: nextNotes,

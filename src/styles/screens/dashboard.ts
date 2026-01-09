@@ -19,22 +19,22 @@ export const dashboardStyles = {
 
   sectionHeader: {
     display: "flex" as "flex",
-    flexDirection: "row" as "row",
-    alignItems: "center" as "center",
+    flexDirection: "column" as "column",
+    alignItems: "flex-start" as "flex-start",
     justifyContent: "space-between" as "space-between",
-    gap: 8,
+    marginBottom: 5,
   },
 
   sectionTitle: {
     color: app_colors.white,
     fontFamily: "GilroyBlack" as "GilroyBlack",
-    fontSize: 16,
+    fontSize: 18,
   },
 
   sectionSubtitle: {
     color: app_colors.white_sixty,
     fontFamily: "DMMonoRegular" as "DMMonoRegular",
-    fontSize: 10,
+    fontSize: 12,
   },
 
   statGrid: {
@@ -192,7 +192,7 @@ export const dashboardStyles = {
       title: {
         color: app_colors.white,
         fontFamily: "GilroyBlack" as "GilroyBlack",
-        fontSize: 14,
+        fontSize: 16,
         flex: 1,
       },
   
@@ -400,7 +400,7 @@ export const dashboardStyles = {
     title: {
       color: app_colors.white,
       fontFamily: "GilroyBlack" as "GilroyBlack",
-      fontSize: 13,
+      fontSize: 16,
     },
 
     subtitle: {
