@@ -30,7 +30,7 @@ export const toolButtonStyles = {
 
     text: {
       color: app_colors.white,
-      fontSize: 20,
+      fontSize: 16,
       fontFamily: 'GilroyBlack',
       textTransform: 'uppercase' as 'uppercase',
       lineHeight: 25,

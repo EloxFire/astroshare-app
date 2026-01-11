@@ -12,27 +12,33 @@ export const bigButtonStyles = {
     borderRadius: 10,
     padding: 8,
     width: '100%' as '100%',
-    marginBottom: 10,
     height: 55,
-
+    
     icon: {
       width: 30,
       height: 30,
       marginRight: 10,
     },
-
+    
     text: {
       color: app_colors.white,
       fontSize: 15,
       fontFamily: 'GilroyMedium',
       textTransform: 'uppercase' as 'uppercase',
     },
-
+    
     subtitle: {
       color: app_colors.white,
-      opacity: .6,
+      // opacity: .6,
       fontSize: 10,
       fontFamily: 'DMMonoRegular',
+    },
+    
+    image: {
+      marginBottom: 10,
+      width: '100%' as '100%',
+      height: 55,
+      borderRadius: 10,
     }
   }
 }
