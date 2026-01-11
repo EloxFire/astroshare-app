@@ -5,13 +5,13 @@ import { ScrollView, Text, View } from "react-native";
 import PageTitle from "../../components/commons/PageTitle";
 import { BannerNews } from "../../helpers/types/utils/BannerNews";
 import NewsBar from "../../components/banners/NewsBar";
-import BigButton from "../../components/commons/buttons/BigButton";
 import { useSettings } from "../../contexts/AppSettingsContext";
 import axios from "axios";
 import { sendAnalyticsEvent } from "../../helpers/scripts/analytics";
 import { useAuth } from "../../contexts/AuthContext";
 import { useTranslation } from "../../hooks/useTranslation";
 import { eventTypes } from "../../helpers/constants/analytics";
+import ToolButton from "../../components/commons/buttons/ToolButton";
 
 export default function NewsBannerManager({ navigation }: any) {
 
@@ -48,7 +48,7 @@ export default function NewsBannerManager({ navigation }: any) {
       />
       <View style={globalStyles.screens.separator} />
       <View style={{marginVertical: 10}}>
-        <BigButton icon={require('../../../assets/icons/FiNewspaper.png')} text={i18n.t('settings.buttons.newsBannerManager.title')} hasCheckbox isChecked={homeNewsBannerVisible} onPress={() => handleHomeNewsBanner()} />
+        <ToolButton icon={require('../../../assets/icons/FiNewspaper.png')} text={i18n.t('settings.buttons.newsBannerManager.title')} hasCheckbox isChecked={homeNewsBannerVisible} onPress={() => handleHomeNewsBanner()} />
       </View>
       <Text style={[globalStyles.sections.title, {marginBottom: 10}]}>Les dernières actualités</Text>
       <ScrollView>
@@ -70,6 +70,7 @@ export default function NewsBannerManager({ navigation }: any) {
                   externalLink={banner.externalLink}
                   internalRoute={banner.internalRoute}
                   navigation={navigation}
+                  order={banner.order}
                 />
               )
             })

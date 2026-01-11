@@ -24,10 +24,10 @@ import dayjs, {Dayjs} from "dayjs";
 import PageTitle from "../../components/commons/PageTitle";
 import SimpleButton from '../../components/commons/buttons/SimpleButton';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import BigButton from '../../components/commons/buttons/BigButton';
 import InputWithIcon from '../../components/forms/InputWithIcon';
 import { getData, storeData } from '../../helpers/storage';
 import { DeviceEventEmitter } from 'react-native';
+import ToolButton from '../../components/commons/buttons/ToolButton';
 
 function ObservationPlannerScreen({navigation}: any) {
   const { currentLocale } = useTranslation();
@@ -396,9 +396,9 @@ function ObservationPlannerScreen({navigation}: any) {
           <View style={observationPlannerScreenStyles.content.bloc}>
             <Text style={observationPlannerScreenStyles.content.bloc.title}>{i18n.t('observationPlanner.screen.steps.objectTypes')}</Text>
 
-            <BigButton isChecked={planetsEnabled} onPress={() => setPlanetsEnabled(!planetsEnabled)} hasCheckbox icon={require('../../../assets/icons/astro/planets/color/JUPITER.png')} text={i18n.t('observationPlanner.filters.targets.planets')} />
-            <BigButton isChecked={dsoEnabled} onPress={() => setDsoEnabled(!dsoEnabled)} hasCheckbox icon={require('../../../assets/icons/astro/CL+N.png')} text={i18n.t('observationPlanner.filters.targets.dso')} />
-            <BigButton isChecked={starsEnabled} onPress={() => setStarsEnabled(!starsEnabled)} hasCheckbox icon={require('../../../assets/icons/astro/BRIGHTSTAR.png')} text={i18n.t('observationPlanner.filters.targets.stars')} />
+            <ToolButton isChecked={planetsEnabled} onPress={() => setPlanetsEnabled(!planetsEnabled)} hasCheckbox icon={require('../../../assets/icons/astro/planets/color/JUPITER.png')} text={i18n.t('observationPlanner.filters.targets.planets')} />
+            <ToolButton isChecked={dsoEnabled} onPress={() => setDsoEnabled(!dsoEnabled)} hasCheckbox icon={require('../../../assets/icons/astro/CL+N.png')} text={i18n.t('observationPlanner.filters.targets.dso')} />
+            <ToolButton isChecked={starsEnabled} onPress={() => setStarsEnabled(!starsEnabled)} hasCheckbox icon={require('../../../assets/icons/astro/BRIGHTSTAR.png')} text={i18n.t('observationPlanner.filters.targets.stars')} />
           </View>
 
           {/* OTHER FILTERS */}

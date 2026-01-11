@@ -17,7 +17,6 @@ import { checkAppUpdate } from '../helpers/scripts/utils/checkAppUpdate';
 import { isProUser } from '../helpers/scripts/auth/checkUserRole';
 import LocationHeader from '../components/LocationHeader';
 import AppHeader from '../components/commons/AppHeader';
-import BigButton from '../components/commons/buttons/BigButton';
 import BannerHandler from '../components/banners/BannerHandler';
 import ToolButton from '../components/commons/buttons/ToolButton';
 import HomeSearchModule from '../components/forms/HomeSearchModule';
