@@ -1,5 +1,5 @@
 import React from 'react'
-import { ActivityIndicator, Image, ImageSourcePropType, Text, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, DimensionValue, Image, ImageSourcePropType, Text, TouchableOpacity, View } from 'react-native'
 import { simpleButtonStyles } from '../../../styles/components/commons/buttons/simpleButton'
 import { app_colors } from '../../../helpers/constants'
 
@@ -17,7 +17,7 @@ interface BigButtonProps {
   activeBorderColor?: string
   align?: 'center' | 'flex-start' | 'flex-end' | 'space-between' | 'space-around' | 'space-evenly'
   textAdditionalStyles?: any
-  width?: string
+  width?: DimensionValue
   loading?: boolean
 }
 
@@ -32,7 +32,7 @@ export default function SimpleButton({ text, icon, onPress, disabled, small, ico
     display: 'flex' as 'flex',
     flexDirection: 'row' as 'row',
     alignItems: 'center' as 'center',
-    width: fullWidth ? '100%' as '100%' : width ? width : 'auto' as 'auto',
+    width: fullWidth ? ('100%' as DimensionValue) : width,
     opacity: disabled ? .5 : 1,
     padding: small ? 8 : 10,
     borderWidth: 1,

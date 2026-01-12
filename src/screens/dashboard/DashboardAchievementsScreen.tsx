@@ -36,8 +36,8 @@ export const DashboardAchievementsScreen: React.FC<DashboardAchievementsScreenPr
   const { achievementsCategories }: { achievementsCategories: AchievementCategory[] } = useDashboardData({ notify: false });
   const initialState = useMemo(
     () =>
-      achievementsCategories.reduce<Record<string, boolean>>((acc, cat) => {
-        acc[cat.id] = false;
+      achievementsCategories.reduce<Record<string, boolean>>((acc, cat, index) => {
+        acc[cat.id] = index === 0;
         return acc;
       }, {}),
     [achievementsCategories]
@@ -63,12 +63,32 @@ export const DashboardAchievementsScreen: React.FC<DashboardAchievementsScreenPr
       <View style={globalStyles.screens.separator} />
 
       <ScrollView style={{ flex: 1 }} contentContainerStyle={dashboardStyles.content}>
-        {achievementsCategories.map((category) => (
-          <View key={category.id} style={dashboardStyles.section}>
+        {achievementsCategories.map((category) => {
+          const achievedCount = category.items.filter((item) => item.achieved).length;
+          const totalCount = category.items.length;
+          const categoryProgress = totalCount > 0 ? Math.round((achievedCount / totalCount) * 100) : 0;
+
+          return (
+            <View key={category.id} style={dashboardStyles.section}>
             <Pressable style={dashboardStyles.sectionHeader} onPress={() => toggleCategory(category.id)}>
-              <View style={{ flex: 1 }}>
-                <Text style={dashboardStyles.sectionTitle}>{category.title}</Text>
+              <View style={{ flex: 1, gap: 6 }}>
+                <View style={dashboardStyles.achievements.categoryTitleRow}>
+                  <Text style={dashboardStyles.sectionTitle}>{category.title}</Text>
+                  <View style={dashboardStyles.achievements.categoryStats}>
+                    <Text style={dashboardStyles.achievements.categoryStatsText}>
+                      {i18n.t("dashboard.sections.achievements.badge.unlocked")} {achievedCount}/{totalCount}
+                    </Text>
+                    <Text style={dashboardStyles.achievements.categoryStatsText}>{categoryProgress}%</Text>
+                  </View>
+                </View>
                 <Text style={dashboardStyles.sectionSubtitle}>{i18n.t("dashboard.sections.achievements.subtitle")}</Text>
+                <View style={dashboardStyles.achievements.categoryProgress}>
+                  <View style={dashboardStyles.progress.barSmall}>
+                    <View
+                      style={[dashboardStyles.progress.fill, { width: `${categoryProgress}%` as const }]}
+                    />
+                  </View>
+                </View>
                 {expanded[category.id] === false && (
                   (() => {
                     const next = category.items.find((item) => !item.achieved);
@@ -146,6 +166,22 @@ export const DashboardAchievementsScreen: React.FC<DashboardAchievementsScreenPr
                       </View>
                       <Text style={dashboardStyles.achievements.description}>{achievement.description}</Text>
 
+                      {hasProgress && (
+                        <View style={dashboardStyles.achievements.progressCompact}>
+                          <View style={dashboardStyles.progress.barSmall}>
+                            <View
+                              style={[
+                                dashboardStyles.progress.fillMuted,
+                                { width: `${progressPercent}%` as const },
+                              ]}
+                            />
+                          </View>
+                          <Text style={dashboardStyles.achievements.progressCompactText}>
+                            {achievement.current ?? 0}/{achievement.target ?? 0}
+                          </Text>
+                        </View>
+                      )}
+
                       {isExpanded && hasProgress && (
                         <View style={dashboardStyles.achievements.progress}>
                           <View style={dashboardStyles.progress.bar}>
@@ -170,7 +206,8 @@ export const DashboardAchievementsScreen: React.FC<DashboardAchievementsScreenPr
               </View>
             )}
           </View>
-        ))}
+          );
+        })}
       </ScrollView>
     </View>
   );

@@ -93,9 +93,21 @@ export const dashboardStyles = {
       overflow: "hidden" as "hidden",
     },
 
+    barSmall: {
+      height: 6,
+      borderRadius: 10,
+      backgroundColor: app_colors.white_twenty,
+      overflow: "hidden" as "hidden",
+    },
+
     fill: {
       height: "100%" as "100%",
       backgroundColor: app_colors.green_eighty,
+    },
+
+    fillMuted: {
+      height: "100%" as "100%",
+      backgroundColor: app_colors.white_sixty,
     },
 
     text: {
@@ -249,6 +261,38 @@ export const dashboardStyles = {
       tintColor: app_colors.white,
     },
 
+    categoryTitleRow: {
+      display: "flex" as "flex",
+      flexDirection: "row" as "row",
+      alignItems: "center" as "center",
+      justifyContent: "space-between" as "space-between",
+      gap: 10,
+    },
+
+    categoryStats: {
+      display: "flex" as "flex",
+      flexDirection: "row" as "row",
+      alignItems: "center" as "center",
+      gap: 8,
+      paddingVertical: 4,
+      paddingHorizontal: 8,
+      borderRadius: 20,
+      backgroundColor: app_colors.white_twenty,
+    },
+
+    categoryStatsText: {
+      color: app_colors.white,
+      fontFamily: "DMMonoRegular" as "DMMonoRegular",
+      fontSize: 10,
+    },
+
+    categoryProgress: {
+      display: "flex" as "flex",
+      flexDirection: "row" as "row",
+      alignItems: "center" as "center",
+      gap: 8,
+    },
+
     title: {
       color: app_colors.white,
       fontFamily: "GilroyBlack" as "GilroyBlack",
@@ -267,6 +311,21 @@ export const dashboardStyles = {
       flexDirection: "column" as "column",
       gap: 6,
     },
+
+    progressCompact: {
+      marginTop: 4,
+      display: "flex" as "flex",
+      flexDirection: "row" as "row",
+      alignItems: "center" as "center",
+      gap: 8,
+    },
+
+    progressCompactText: {
+      color: app_colors.white_sixty,
+      fontFamily: "DMMonoRegular" as "DMMonoRegular",
+      fontSize: 10,
+    },
+
     progressText: {
       color: app_colors.white,
       fontFamily: "DMMonoRegular" as "DMMonoRegular",
