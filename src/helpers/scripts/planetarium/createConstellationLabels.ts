@@ -2,7 +2,6 @@ import * as THREE from 'three';
 import * as ExpoTHREE from 'expo-three';
 import { constellationsAsterisms } from '../astro/constellationsAsterisms';
 import { convertSphericalToCartesian } from './utils/convertSphericalToCartesian';
-import { getConstellationName } from '../getConstellationName';
 import { constellationsImages, constellationsLabelImages } from '../loadImages';
 import { meshGroupsNames, planetariumRenderOrders } from './utils/planetariumSettings';
 

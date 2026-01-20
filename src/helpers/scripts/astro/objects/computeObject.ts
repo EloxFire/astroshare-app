@@ -267,7 +267,7 @@ export const computeObject = (props: ComputeObjectProps): ComputedObjectInfos | 
     let degRa: number = objectFamily === 'DSO' ? convertHMSToDegreeFromString(props.object.ra as string) : props.object.ra as number
     let degDec: number = objectFamily === 'DSO' ? convertDMSToDegreeFromString(props.object.dec as string) : props.object.dec as number
 
-    if(!degRa || !degDec) {
+    if(!Number.isFinite(degRa) || !Number.isFinite(degDec)) {
       console.log('[computeObject] Error: could not convert ra and dec to degrees')
       return null;
     }

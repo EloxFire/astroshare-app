@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Image, ScrollView, Text, View } from "react-native";
 import PageTitle from "../../components/commons/PageTitle";
 import { globalStyles } from "../../styles/global";
@@ -8,10 +8,25 @@ import { i18n } from "../../helpers/scripts/i18n";
 import SimpleButton from "../../components/commons/buttons/SimpleButton";
 import { app_colors } from "../../helpers/constants";
 import { astroImages } from "../../helpers/scripts/loadImages";
+import { useSettings } from "../../contexts/AppSettingsContext";
+import { useAuth } from "../../contexts/AuthContext";
+import { useTranslation } from "../../hooks/useTranslation";
+import { sendAnalyticsEvent } from "../../helpers/scripts/analytics";
+import { eventTypes } from "../../helpers/constants/analytics";
 
 type ObjectMetric = "observed" | "photographed" | "sketched";
 
 export const DashboardAllStatsScreen = ({ navigation }: any) => {
+
+  const { currentUserLocation } = useSettings();
+  const { currentUser } = useAuth()
+  const { currentLocale } = useTranslation()
+
+  useEffect(() => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'Dashboard detailed statistics screen view', eventTypes.SCREEN_VIEW, {}, currentLocale)
+  }, [])
+
+
   const { stats, objectStats, typeObservedTotals, typeObservedCounts } = useDashboardData({ notify: false });
   const [selectedMetric, setSelectedMetric] = useState<ObjectMetric>("observed");
 

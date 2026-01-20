@@ -70,10 +70,12 @@ export const dashboardTranslations = {
     achievements: {
       title: "Succès & badges",
       subtitle: "Objectifs à atteindre",
+      info: "Les succès sont des objectifs que vous pouvez atteindre en fonction de vos observations et activités. Débloquez-les pour suivre vos progrès et célébrer vos réalisations astronomiques !",
       badge: {
         unlocked: "Débloqué",
         locked: "Verrouillé",
       },
+      lastAchievementTitle: "Dernier succès débloqué",
       previewEmpty: "Aucun succès pour le moment.",
       progressLabel: "Progression : {{current}} / {{target}}",
     },

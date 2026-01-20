@@ -458,6 +458,19 @@ function ObservationPlannerScreen({navigation}: any) {
                 <Text style={observationPlannerScreenStyles.content.bloc.title}>{i18n.t('observationPlanner.screen.steps.results')}</Text>
                 
                 <Text style={observationPlannerScreenStyles.content.bloc.subtitle}>{i18n.t('observationPlanner.screen.messages.empty')}</Text>
+
+                <SimpleButton
+                  icon={require('../../../assets/icons/FiTrash.png')}
+                  text={i18n.t('observationPlanner.screen.buttons.clear')}
+                  onPress={() => setResultsList(null)}
+                  backgroundColor={app_colors.red_eighty}
+                  textColor={app_colors.white}
+                  iconColor={app_colors.white}
+                  fullWidth
+                  loading={isPlanning}
+                  align='center'
+                  textAdditionalStyles={{fontFamily: 'GilroyBlack'}}
+                />
               </View>
             )
           }

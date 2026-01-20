@@ -1,5 +1,5 @@
-import React from "react";
-import { ActivityIndicator, Image, Pressable, ScrollView, Text, View } from "react-native";
+import React, { useEffect } from "react";
+import { ActivityIndicator, Image, Pressable, ScrollView, Text, Touchable, TouchableOpacity, View } from "react-native";
 import dayjs from "dayjs";
 import PageTitle from "../../components/commons/PageTitle";
 import SimpleBadge from "../../components/badges/SimpleBadge";
@@ -10,8 +10,24 @@ import { i18n } from "../../helpers/scripts/i18n";
 import { app_colors } from "../../helpers/constants";
 import { useDashboardData, TOTAL_MESSIER_OBJECTS } from "../../contexts/useDashboardData";
 import { DashboardRecentActivityCard } from "../../components/cards/DashboardRecentActivityCard";
+import { AchievementCard } from "../../components/dashboard/achievements/AchievementCard";
+import * as Progress from "react-native-progress";
+import { useSettings } from "../../contexts/AppSettingsContext";
+import { useAuth } from "../../contexts/AuthContext";
+import { useTranslation } from "../../hooks/useTranslation";
+import { sendAnalyticsEvent } from "../../helpers/scripts/analytics";
+import { eventTypes } from "../../helpers/constants/analytics";
 
 export const DashboardScreen = ({ navigation }: any) => {
+
+  const { currentUserLocation } = useSettings();
+  const { currentUser } = useAuth()
+  const { currentLocale } = useTranslation()
+
+  useEffect(() => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'Dashboard screen view', eventTypes.SCREEN_VIEW, {}, currentLocale)
+  }, [])
+
   const {
     loading,
     stats,
@@ -41,7 +57,6 @@ export const DashboardScreen = ({ navigation }: any) => {
   ];
 
   const clampedProgress = Math.min(100, Math.max(0, messierProgress));
-  const progressWidth: `${number}%` = `${clampedProgress}%`;
 
   return (
     <View style={globalStyles.body}>
@@ -69,13 +84,13 @@ export const DashboardScreen = ({ navigation }: any) => {
               </View>
             ))}
           </View>
-          <Pressable
+          <TouchableOpacity
             style={dashboardStyles.linkButton}
             onPress={() => navigation.navigate(routes.dashboard.stats.path)}
           >
             <Text style={dashboardStyles.linkButton.text}>{i18n.t("dashboard.actions.viewAllStats")}</Text>
             <Image source={require("../../../assets/icons/FiChevronRight.png")} style={dashboardStyles.linkButton.icon} />
-          </Pressable>
+          </TouchableOpacity>
         </View>
 
         <View style={dashboardStyles.section}>
@@ -85,25 +100,34 @@ export const DashboardScreen = ({ navigation }: any) => {
               {i18n.t("dashboard.sections.messier.subtitle", { progress: messierProgress })}
             </Text>
           </View>
-          <View style={dashboardStyles.progress.wrapper}>
+          <Progress.Bar
+            progress={clampedProgress / 100}
+            width={null}
+            color={app_colors.green_eighty}
+            unfilledColor={app_colors.white_forty}
+            borderWidth={0}
+            height={10}
+            borderRadius={5}
+          />
+          <Text style={dashboardStyles.progress.text}>
+            {i18n.t("dashboard.sections.messier.progressLabel", {
+              observed: observedMessierSet.size,
+              total: TOTAL_MESSIER_OBJECTS,
+              count: observedMessierSet.size,
+            })}
+          </Text>
+          {/* <View style={dashboardStyles.progress.wrapper}>
             <View style={dashboardStyles.progress.bar}>
               <View style={[dashboardStyles.progress.fill, { width: progressWidth }]} />
             </View>
-            <Text style={dashboardStyles.progress.text}>
-              {i18n.t("dashboard.sections.messier.progressLabel", {
-                observed: observedMessierSet.size,
-                total: TOTAL_MESSIER_OBJECTS,
-                count: observedMessierSet.size,
-              })}
-            </Text>
-          </View>
-          <Pressable
+          </View> */}
+          <TouchableOpacity
             style={dashboardStyles.linkButton}
             onPress={() => navigation.navigate(routes.dashboard.messier.path)}
           >
             <Text style={dashboardStyles.linkButton.text}>{i18n.t("dashboard.actions.viewMessier")}</Text>
             <Image source={require("../../../assets/icons/FiChevronRight.png")} style={dashboardStyles.linkButton.icon} />
-          </Pressable>
+          </TouchableOpacity>
         </View>
 
         <View style={dashboardStyles.section}>
@@ -119,13 +143,13 @@ export const DashboardScreen = ({ navigation }: any) => {
               <DashboardRecentActivityCard key={activity.id} activity={activity} />
             ))}
           </View>
-          <Pressable
+          <TouchableOpacity
             style={dashboardStyles.linkButton}
             onPress={() => navigation.navigate(routes.dashboard.activities.path)}
           >
             <Text style={dashboardStyles.linkButton.text}>{i18n.t("dashboard.actions.viewActivities")}</Text>
             <Image source={require("../../../assets/icons/FiChevronRight.png")} style={dashboardStyles.linkButton.icon} />
-          </Pressable>
+          </TouchableOpacity>
         </View>
 
         <View style={dashboardStyles.section}>
@@ -134,35 +158,25 @@ export const DashboardScreen = ({ navigation }: any) => {
             <Text style={dashboardStyles.sectionSubtitle}>{i18n.t("dashboard.sections.achievements.subtitle")}</Text>
           </View>
 
-          {latestAchievement ? (
-            <View
-              style={[
-                dashboardStyles.achievements.card,
-                latestAchievement.achieved && dashboardStyles.achievements.achieved,
-              ]}
-            >
-              <View style={dashboardStyles.achievements.header}>
-                <Text style={dashboardStyles.achievements.title}>{latestAchievement.title}</Text>
-                <SimpleBadge
-                  text={i18n.t("dashboard.sections.achievements.badge.unlocked")}
-                  backgroundColor={app_colors.green_eighty}
-                  foregroundColor={app_colors.black}
-                  small
+          {
+            latestAchievement && (
+              <View>
+                <Text style={[dashboardStyles.sectionTitle, {fontSize: 14, marginBottom: 5}]}>{i18n.t("dashboard.sections.achievements.lastAchievementTitle")}</Text>
+                <AchievementCard
+                  achievement={latestAchievement}
+                  progressPercent={1}
                 />
               </View>
-              <Text style={dashboardStyles.achievements.description}>{latestAchievement.description}</Text>
-            </View>
-          ) : (
-            <Text style={dashboardStyles.sectionSubtitle}>{i18n.t("dashboard.sections.achievements.previewEmpty")}</Text>
-          )}
+            )
+          }
 
-          <Pressable
+          <TouchableOpacity
             style={dashboardStyles.linkButton}
             onPress={() => navigation.navigate(routes.dashboard.achievements.path)}
           >
             <Text style={dashboardStyles.linkButton.text}>{i18n.t("dashboard.actions.viewAchievements")}</Text>
             <Image source={require("../../../assets/icons/FiChevronRight.png")} style={dashboardStyles.linkButton.icon} />
-          </Pressable>
+          </TouchableOpacity>
         </View>
 
         {loading && (

@@ -9,7 +9,7 @@ export const dashboardStyles = {
   },
 
   section: {
-    backgroundColor: app_colors.black,
+    backgroundColor: app_colors.white_no_opacity,
     borderColor: app_colors.white_twenty,
     borderWidth: 1,
     borderRadius: 12,
@@ -80,36 +80,6 @@ export const dashboardStyles = {
   },
 
   progress: {
-    wrapper: {
-      display: "flex" as "flex",
-      flexDirection: "column" as "column",
-      gap: 8,
-    },
-
-    bar: {
-      height: 10,
-      borderRadius: 10,
-      backgroundColor: app_colors.white_twenty,
-      overflow: "hidden" as "hidden",
-    },
-
-    barSmall: {
-      height: 6,
-      borderRadius: 10,
-      backgroundColor: app_colors.white_twenty,
-      overflow: "hidden" as "hidden",
-    },
-
-    fill: {
-      height: "100%" as "100%",
-      backgroundColor: app_colors.green_eighty,
-    },
-
-    fillMuted: {
-      height: "100%" as "100%",
-      backgroundColor: app_colors.white_sixty,
-    },
-
     text: {
       color: app_colors.white,
       fontFamily: "DMMonoRegular" as "DMMonoRegular",

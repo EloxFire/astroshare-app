@@ -87,6 +87,7 @@ import { DashboardMessierCatalogScreen } from './src/screens/dashboard/Dashboard
 import { DashboardActivitiesScreen } from './src/screens/dashboard/DashboardActivitiesScreen';
 import { DashboardAllStatsScreen } from './src/screens/dashboard/DashboardAllStatsScreen';
 import { DashboardAchievementsWatcher } from './src/components/watchers/DashboardAchievementsWatcher';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 dayjs.locale('fr');
 dayjs.extend(LocalizedFormat)
@@ -137,6 +138,12 @@ export default function App() {
       console.log('[Analytics] Analytics setup completed');
     })
   })
+
+
+  // DEBUG ONLY : FLUSH LOCAL STORAGE
+  // useEffect(() => {
+  //   AsyncStorage.clear()
+  // }, [])
 
   if (!appIsReady) {
     return (

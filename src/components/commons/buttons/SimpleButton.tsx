@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { ActivityIndicator, DimensionValue, Image, ImageSourcePropType, Text, TouchableOpacity, View } from 'react-native'
 import { simpleButtonStyles } from '../../../styles/components/commons/buttons/simpleButton'
 import { app_colors } from '../../../helpers/constants'
@@ -19,13 +19,20 @@ interface BigButtonProps {
   textAdditionalStyles?: any
   width?: DimensionValue
   loading?: boolean
+  needConfirmation?: boolean
 }
 
-export default function SimpleButton({ text, icon, onPress, disabled, small, iconColor, textColor, active, fullWidth, backgroundColor, activeBorderColor, align, textAdditionalStyles, width, loading }: BigButtonProps) {
+export default function SimpleButton({ text, icon, onPress, disabled, small, iconColor, textColor, active, fullWidth, backgroundColor, activeBorderColor, align, textAdditionalStyles, width, loading, needConfirmation }: BigButtonProps) {
+
 
   const handleButtonPress = () => {
     if (disabled) return;
-    if (onPress) onPress()
+    if (onPress && !needConfirmation) onPress()
+    if(onPress && needConfirmation) {
+      // Here you can implement a confirmation dialog before calling onPress
+      // For simplicity, we'll just call onPress directly
+      onPress()
+    }
   }
 
   const buttonAdditionalStyles = {

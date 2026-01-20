@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Image, Pressable, ScrollView, Text, View, type DimensionValue } from "react-native";
 import PageTitle from "../../components/commons/PageTitle";
 import SimpleBadge from "../../components/badges/SimpleBadge";
@@ -9,8 +9,15 @@ import { routes } from "../../helpers/routes";
 import { i18n } from "../../helpers/scripts/i18n";
 import { app_colors } from "../../helpers/constants";
 import SimpleButton from "../../components/commons/buttons/SimpleButton";
+import * as Progress from "react-native-progress";
+import { useSettings } from "../../contexts/AppSettingsContext";
+import { useAuth } from "../../contexts/AuthContext";
+import { useTranslation } from "../../hooks/useTranslation";
+import { sendAnalyticsEvent } from "../../helpers/scripts/analytics";
+import { eventTypes } from "../../helpers/constants/analytics";
 
 export const DashboardMessierCatalogScreen = ({ navigation }: any) => {
+
   const {
     messierCatalog,
     observedMessierSet,
@@ -20,7 +27,14 @@ export const DashboardMessierCatalogScreen = ({ navigation }: any) => {
     dsoCatalog,
   } = useDashboardData({ notify: false });
 
-  const progressWidth = `${Math.min(100, Math.max(0, messierProgress))}%` as DimensionValue;
+  const { currentUserLocation } = useSettings();
+  const { currentUser } = useAuth()
+  const { currentLocale } = useTranslation()
+
+  useEffect(() => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'Dashboard messier catalog statistics view', eventTypes.SCREEN_VIEW, {completed: messierProgress}, currentLocale)
+  }, [])
+
 
   const getMessierDso = (number: number) => {
     return (dsoCatalog as any[] | undefined)?.find((dso) => {
@@ -28,6 +42,14 @@ export const DashboardMessierCatalogScreen = ({ navigation }: any) => {
       return Number(dso.m) === number;
     });
   };
+
+  const handleMessierCardPress = (item: any) => {
+    const targetDso = getMessierDso(item.number);
+    if (targetDso) {
+      sendAnalyticsEvent(currentUser, currentUserLocation, 'Clicked messier catalog item from dashboard', eventTypes.BUTTON_CLICK, {messier: targetDso.m}, currentLocale)
+      navigation.navigate(routes.celestialBodies.details.path, { object: targetDso });
+    }
+  }
 
   return (
     <View style={globalStyles.body}>
@@ -46,18 +68,22 @@ export const DashboardMessierCatalogScreen = ({ navigation }: any) => {
               {i18n.t("dashboard.sections.messier.subtitle", { progress: messierProgress })}
             </Text>
           </View>
-          <View style={dashboardStyles.progress.wrapper}>
-            <View style={dashboardStyles.progress.bar}>
-              <View style={[dashboardStyles.progress.fill, { width: progressWidth }]} />
-            </View>
-            <Text style={dashboardStyles.progress.text}>
-              {i18n.t("dashboard.sections.messier.progressLabel", {
-                observed: observedMessierSet.size,
-                total: TOTAL_MESSIER_OBJECTS,
-                count: observedMessierSet.size,
-              })}
-            </Text>
-          </View>
+          <Progress.Bar
+            progress={messierProgress / 100}
+            width={null}
+            color={app_colors.green_eighty}
+            unfilledColor={app_colors.white_forty}
+            borderWidth={0}
+            height={10}
+            borderRadius={5}
+          />
+          <Text style={dashboardStyles.progress.text}>
+            {i18n.t("dashboard.sections.messier.progressLabel", {
+              observed: observedMessierSet.size,
+              total: TOTAL_MESSIER_OBJECTS,
+              count: observedMessierSet.size,
+            })}
+          </Text>
         </View>
 
         <View style={dashboardStyles.section}>
@@ -81,9 +107,7 @@ export const DashboardMessierCatalogScreen = ({ navigation }: any) => {
                   ]}
                   android_ripple={{ color: app_colors.white_twenty }}
                   onPress={() => {
-                    if (targetDso) {
-                      navigation.navigate(routes.celestialBodies.details.path, { object: targetDso });
-                    }
+                    handleMessierCardPress(item);
                   }}
                 >
                   <View style={dashboardStyles.messierCard.header}>

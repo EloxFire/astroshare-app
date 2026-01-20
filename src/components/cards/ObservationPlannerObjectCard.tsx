@@ -35,7 +35,7 @@ export const ObservationPlannerObjectCard = ({ object, navigation, date }: Obser
 
 
   useEffect(() => {
-    if(object && currentUserLocation && currentUser){
+    if(object && currentUserLocation){
       setComputedObject(computeObject({
         object: object,
         observer: { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon },
@@ -44,7 +44,7 @@ export const ObservationPlannerObjectCard = ({ object, navigation, date }: Obser
         date: date,
       }));
     }
-  }, [object, currentUserLocation, currentUser, currentLocale])
+  }, [object, currentUserLocation, currentLocale, date])
 
   return (
     <TouchableOpacity

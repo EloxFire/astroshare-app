@@ -307,6 +307,8 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
       persistNotes(personalNotes, nextFlags);
       return nextFlags;
     });
+
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'update_observation_count', eventTypes.BUTTON_CLICK, { objectName: getObjectName(object, 'all', true), objectType: getObjectType(object), count: observationCounts[flag] }, currentLocale)
   };
 
   const renderObservationControl = (flag: keyof ObservationCounts, label: string, icon: ImageSourcePropType) => {

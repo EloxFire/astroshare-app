@@ -10,6 +10,7 @@ import { getObject, storeObject } from "../../helpers/storage"
 import { globalStyles } from "../../styles/global"
 import { checklistsHomeStyles } from "../../styles/screens/checklists/home"
 import InputWithIcon from "../../components/forms/InputWithIcon"
+import { ChecklistComponent } from "../../components/checklists/ChecklistComponent"
 
 type ChecklistItem = { id: string; text: string; completed: boolean }
 type Checklist = { id: string; title: string; description?: string; items: ChecklistItem[] }
@@ -129,95 +130,21 @@ export const ChecklistsHome = ({ navigation }: any) => {
     const expanded = expandedChecklists[checklist.id]
 
     return (
-      <TouchableOpacity onPress={() => toggleChecklist(checklist.id)} key={checklist.id} style={checklistsHomeStyles.card} activeOpacity={0.6}>
-        <View style={checklistsHomeStyles.card.header}>
-          <View style={checklistsHomeStyles.card.header.meta}>
-            <Text style={checklistsHomeStyles.card.header.meta.title}>{checklist.title}</Text>
-            {checklist.description ? (
-              <Text style={checklistsHomeStyles.card.header.meta.description}>{checklist.description}</Text>
-            ) : null}
-            <Text style={checklistsHomeStyles.card.header.meta.progress}>
-              {i18n.t('checklistManager.checklist.progress', { done: completedCount, total: checklist.items.length })}
-            </Text>
-          </View>
-          <View style={checklistsHomeStyles.card.header.actions}>
-            <TouchableOpacity
-              onPress={() => handleDeleteChecklist(checklist.id)}
-              style={checklistsHomeStyles.card.header.deleteButton}
-              activeOpacity={0.6}
-            >
-              <Image source={require('../../../assets/icons/FiTrash.png')} style={checklistsHomeStyles.card.header.deleteButton.icon} />
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        {expanded && (
-          <View style={checklistsHomeStyles.items}>
-            {checklist.items.length === 0 ? (
-              <Text style={checklistsHomeStyles.items.empty}>{i18n.t('checklistManager.checklist.empty')}</Text>
-            ) : (
-              checklist.items.map(item => (
-                <View key={item.id} style={checklistsHomeStyles.items.row}>
-                  <TouchableOpacity
-                    onPress={() => handleToggleItem(checklist.id, item.id)}
-                    style={[
-                      checklistsHomeStyles.items.checkbox,
-                      item.completed && checklistsHomeStyles.items.checkbox.completed
-                    ]}
-                    activeOpacity={0.7}
-                  >
-                    {item.completed && (
-                      <Image
-                        source={require('../../../assets/icons/FiCheck.png')}
-                        style={checklistsHomeStyles.items.checkbox.icon}
-                      />
-                    )}
-                  </TouchableOpacity>
-                  <Text
-                    style={[
-                      checklistsHomeStyles.items.text,
-                      item.completed && checklistsHomeStyles.items.text.completed
-                    ]}
-                    numberOfLines={2}
-                  >
-                    {item.text}
-                  </Text>
-                  <TouchableOpacity
-                    onPress={() => handleDeleteItem(checklist.id, item.id)}
-                    style={checklistsHomeStyles.items.remove}
-                    activeOpacity={0.6}
-                  >
-                    <Image source={require('../../../assets/icons/FiXCircle.png')} style={checklistsHomeStyles.items.remove.icon} />
-                  </TouchableOpacity>
-                </View>
-              ))
-            )}
-          </View>
-        )}
-
-        {expanded && (
-          <View style={checklistsHomeStyles.addItem}>
-            <InputWithIcon
-              value={newItemInputs[checklist.id] || ''}
-              changeEvent={text => setNewItemInputs(prev => ({ ...prev, [checklist.id]: text }))}
-              placeholder={i18n.t('checklistManager.checklist.addItemPlaceholder')}
-              type="text"
-              search={() => handleAddItem(checklist.id)}
-            />
-            <SimpleButton
-              small
-              text={i18n.t('checklistManager.checklist.addItem')}
-              icon={require('../../../assets/icons/FiPlus.png')}
-              onPress={() => handleAddItem(checklist.id)}
-              fullWidth
-              align="center"
-              textColor={app_colors.black}
-              iconColor={app_colors.black}
-              backgroundColor={app_colors.white}
-            />
-          </View>
-        )}
-      </TouchableOpacity>
+      <ChecklistComponent
+        key={checklist.id}
+        checklist={checklist}
+        expanded={expanded}
+        onToggleExpand={() => toggleChecklist(checklist.id)}
+        onDelete={() => handleDeleteChecklist(checklist.id)}
+        completedCount={completedCount}
+        onUpdate={{
+          handleAddItem,
+          handleDeleteItem,
+          handleToggleItem,
+          newItemInput: newItemInputs[checklist.id] || '',
+          setNewItemInput: (text: string) => setNewItemInputs(prev => ({ ...prev, [checklist.id]: text })),
+        }}
+      />
     )
   }
 

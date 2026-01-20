@@ -309,7 +309,7 @@ export default function PlanetariumUI({ navigation, infos, onShowGround, onShowC
               <View style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-end'}}>
                 <Image style={planetariumUIStyles.container.generalInfosBar.body.image} source={objectInfos.base.icon} />
               </View>
-              <View style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-start'}}>
+              <View style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-start', maxWidth: '60%'}}>
                 <Text style={planetariumUIStyles.container.generalInfosBar.body.title}>{objectInfos.base.otherName || objectInfos.base.name}</Text>
                 <Text style={planetariumUIStyles.container.generalInfosBar.body.subtitle}>{objectInfos.base.type}</Text>
               </View>
