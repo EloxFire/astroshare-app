@@ -1,4 +1,12 @@
 export const homeTranslations = {
+  prepare: {
+    title: "Prepare your observation",
+    subtitle: "All the tools you need to prepare your observation"
+  },
+  outdoor: {
+    title: "Observation tools",
+    subtitle: "Tools to use while outdoor"
+  },
   tools: {
     title: "Your tools",
     subtitle: "Your custom tool box"
@@ -16,9 +24,17 @@ export const homeTranslations = {
     subtitle: "Stay informed and learn new things"
   },
   buttons: {
+    dashboard: {
+      title: "Observation logs",
+      subtitle: "// Keep track of your observations"
+    },
     observationPlanner: {
       title: "Plan an observation",
       subtitle: "// Prepare your session"
+    },
+    checklist_manager: {
+      title: "Checklists",
+      subtitle: "// Don't forget anything"
     },
     weather: {
       title: "Real-time weather",

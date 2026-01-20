@@ -7,7 +7,6 @@ import {useTranslation} from "../../hooks/useTranslation";
 import {useSettings} from "../../contexts/AppSettingsContext";
 import {useSolarSystem} from "../../contexts/SolarSystemContext";
 import {useStarCatalog} from "../../contexts/StarsContext";
-import {useSpot} from "../../contexts/ObservationSpotContext";
 import {routes} from "../../helpers/routes";
 import { capitalize } from '../../helpers/scripts/utils/formatters/capitalize';
 import { app_colors, storageKeys } from '../../helpers/constants';
@@ -480,7 +479,7 @@ function ObservationPlannerScreen({navigation}: any) {
                 <Text style={observationPlannerScreenStyles.content.bloc.title}>{i18n.t('observationPlanner.screen.steps.results')}</Text>
                 <Text style={observationPlannerScreenStyles.content.bloc.subtitle}>{i18n.t('observationPlanner.screen.messages.recommended')}</Text>
                 {
-                  resultsList.map((obj, index) => (
+                  resultsList.slice(0, maxResults || 10).map((obj, index) => (
                     <ObservationPlannerObjectCard key={index} object={obj} navigation={navigation} date={startDate.hour(Number(startTime.split(':')[0])).minute(Number(startTime.split(':')[1]))} />
                   ))
                 }

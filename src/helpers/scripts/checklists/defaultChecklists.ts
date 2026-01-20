@@ -1,41 +1,41 @@
 export const defaultChecklist = {
   id: 'default-checklist',
-  title: 'Default Checklist',
-  description: 'A default checklist template',
+  title: 'Liste par défaut',
+  description: 'Un modèle de liste par défaut pour vos sessions d\'observation.',
   items: [
     {
       id: 'red-lamp',
-      text: 'Bring a red flashlight',
+      text: 'Apportez une lampe rouge',
       completed: false,
     },
     {
       id: 'warm-clothes',
-      text: 'Wear warm clothes',
+      text: 'Portez des vêtements chauds',
       completed: false,
     },
     {
       id: 'snacks-drinks',
-      text: 'Pack snacks and drinks',
+      text: 'Apportez des encas et des boissons',
       completed: false,
     },
     {
       id: 'check-weather',
-      text: 'Check the weather forecast',
+      text: 'Vérifiez les prévisions météorologiques',
       completed: false,
     },
     {
       id: 'telescope-gear',
-      text: 'Bring all telescope gear',
+      text: 'Apportez tout le matériel du télescope',
       completed: false,
     },
     {
       id: 'star-charts',
-      text: 'Bring star charts or apps',
+      text: 'Apportez des cartes stellaires ou des applications',
       completed: false,
     },
     {
       id: 'plan-observation',
-      text: 'Plan your observation session',
+      text: 'Planifiez votre session d\'observation',
       completed: false,
     }
   ],

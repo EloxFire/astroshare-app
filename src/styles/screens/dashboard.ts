@@ -416,7 +416,6 @@ export const dashboardStyles = {
     icon: {
       width: 32,
       height: 32,
-      tintColor: app_colors.white,
     },
 
     info: {
