@@ -70,10 +70,12 @@ export const dashboardTranslations = {
     achievements: {
       title: "Achievements & badges",
       subtitle: "Milestones to reach",
+      info: "Achievements are goals you can unlock based on your observations and activities. Use them to track your progress and celebrate your astronomical milestones!",
       badge: {
         unlocked: "Unlocked",
         locked: "Locked",
       },
+      lastAchievementTitle: "Last unlocked achievement",
       previewEmpty: "No achievements yet.",
       progressLabel: "Progress: {{current}} / {{target}}",
     },

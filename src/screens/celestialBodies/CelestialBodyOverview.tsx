@@ -418,7 +418,7 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
 
 
         <View style={celestialBodiesOverviewStyles.content.positionContainer}>
-          <Text style={celestialBodiesOverviewStyles.content.sectionTitle}>Informations générales</Text>
+          <Text style={celestialBodiesOverviewStyles.content.sectionTitle}>{i18n.t('detailsPages.common.sections.generalInfos')}</Text>
 
           <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
             <View style={{width: getObjectFamily(object) === 'Planet' ? '100%' : '100%', paddingTop: 10, display: 'flex', flexDirection: "column", justifyContent: 'space-between'}}>
@@ -449,7 +449,7 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
         </View>
 
         <View style={[celestialBodiesOverviewStyles.content.visibilityContainer, {marginBottom: getObjectFamily(object) === 'Planet' ? 50 : 0 }]}>
-          <Text style={celestialBodiesOverviewStyles.content.sectionTitle}>Visibilité</Text>
+          <Text style={celestialBodiesOverviewStyles.content.sectionTitle}>{i18n.t('detailsPages.common.sections.visibility')}</Text>
           <View style={{paddingTop: 10}}>
             {
               objectInfos && (
@@ -477,7 +477,7 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
                 </View>
               )
             }
-            <Text style={[celestialBodiesOverviewStyles.content.sectionTitle, {marginTop: 15}]}>Magnitude</Text>
+            <Text style={[celestialBodiesOverviewStyles.content.sectionTitle, {marginTop: 15}]}>{i18n.t('detailsPages.common.sections.magnitude')}</Text>
             <View style={{marginTop: 10}}>
               { objectInfos?.base.v_mag && <DSOValues title={i18n.t('detailsPages.dso.labels.vMag')} value={objectInfos?.base.v_mag} chipValue />}
               { objectInfos?.base.b_mag && <DSOValues title={i18n.t('detailsPages.dso.labels.bMag')} value={objectInfos?.base.b_mag} chipValue />}
@@ -486,7 +486,7 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
               { objectInfos?.base.k_mag && <DSOValues title={i18n.t('detailsPages.dso.labels.kMag')} value={objectInfos?.base.k_mag} chipValue />}
             </View>
             <View style={{marginTop: 10}}>
-              <Text style={celestialBodiesOverviewStyles.content.sectionTitle}>Lever et coucher</Text>
+              <Text style={celestialBodiesOverviewStyles.content.sectionTitle}>{i18n.t('detailsPages.common.sections.riseAndSet')}</Text>
               {
                 objectInfos?.visibilityInfos.isCircumpolar ? (
                   <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 10}}>
@@ -513,7 +513,7 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
                 )
               }
             </View>
-            <Text style={[celestialBodiesOverviewStyles.content.sectionTitle, {marginTop: 15, marginBottom: -10}]}>Altitude de l'objet</Text>
+            <Text style={[celestialBodiesOverviewStyles.content.sectionTitle, {marginTop: 15, marginBottom: -10}]}>{i18n.t('detailsPages.common.sections.objectAltitude')}</Text>
             <VisibilityGraph
               visibilityGraph={{altitudes: objectInfos?.visibilityInfos.visibilityGraph.altitudes || [], hours: objectInfos?.visibilityInfos.visibilityGraph.hours || []}}
             />
@@ -521,7 +521,7 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
         </View>
 
         <View style={[celestialBodiesOverviewStyles.content.visibilityContainer, {marginBottom: getObjectFamily(object) === 'Planet' ? 50 : 0 }]}>
-          <Text style={celestialBodiesOverviewStyles.content.sectionTitle}>Position</Text>
+          <Text style={celestialBodiesOverviewStyles.content.sectionTitle}>{i18n.t('detailsPages.common.sections.position')}</Text>
           <View style={{paddingTop: 10}}>
             {
               objectInfos ? (
@@ -532,7 +532,7 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
                   constellationAbbreviation={objectConstellationAbbr}
                 />
               ) : (
-                <Text style={celestialBodiesOverviewStyles.content.text}>Chargement de la carte...</Text>
+                <Text style={celestialBodiesOverviewStyles.content.text}>{i18n.t('detailsPages.common.loadingMap')}</Text>
               )
             }
           </View>
@@ -541,7 +541,7 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
               objectInfos && (
                 <View style={{marginTop: 10}}>
                   <SimpleButton
-                    text={`Voir dans le planétarium 3D`}
+                    text={i18n.t('detailsPages.common.actions.viewIn3D')}
                     fullWidth
                     backgroundColor={app_colors.white}
                     small
@@ -562,7 +562,7 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
                 colors={['rgba(0,0,0,1)', 'rgba(0,0,0,0.4)']}
                 style={{borderRadius: 10, padding: 10}}
               >
-                <Text style={celestialBodiesOverviewStyles.content.sectionTitle}>{getObjectName(object, 'all', true)} en détails</Text>
+                <Text style={celestialBodiesOverviewStyles.content.sectionTitle}>{i18n.t('detailsPages.common.sections.detailsFor', { object: getObjectName(object, 'all', true) })}</Text>
 
                 <View style={celestialBodiesOverviewStyles.content.moreContainer.infos}>
                   {/* <Image resizeMode={"contain"} source={objectInfos.dsoAdditionalInfos.image} style={{width: 80, height: 80, borderRadius: 10, borderWidth: 1, borderColor: app_colors.white_twenty}} /> */}
@@ -581,14 +581,14 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
         }
 
         <View style={celestialBodiesOverviewStyles.content.personnalNotes}>
-          <Text style={celestialBodiesOverviewStyles.content.sectionTitle}>Ajoutez des notes personnelles</Text>
+          <Text style={celestialBodiesOverviewStyles.content.sectionTitle}>{i18n.t('detailsPages.common.sections.personalNotes')}</Text>
 
           <View style={{gap: 20, marginTop: 10}}>
             <TextInput
               multiline
               value={personalNotes}
               onChangeText={(text) => handleNotesChange(text)}
-              placeholder={"Ajoutez vos notes personnelles..."}
+              placeholder={i18n.t('detailsPages.common.placeholders.personalNotes')}
               placeholderTextColor={app_colors.white_sixty}
               style={{
                 minHeight: 120,
@@ -604,13 +604,13 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
 
             <View style={{display: 'flex', flexDirection: 'column', gap: 5}}>
               <View>
-                <Text style={celestialBodiesOverviewStyles.content.sectionTitle}>Votre expérience avec {getObjectName(object, 'all', true)}</Text>
-                <Text style={celestialBodiesOverviewStyles.content.sectionSubtitle}>Suivez combien de fois vous avez observé, photographié ou dessiné cet objet</Text>
+                <Text style={celestialBodiesOverviewStyles.content.sectionTitle}>{i18n.t('detailsPages.common.sections.experienceTitle', { object: getObjectName(object, 'all', true) })}</Text>
+                <Text style={celestialBodiesOverviewStyles.content.sectionSubtitle}>{i18n.t('detailsPages.common.sections.experienceSubtitle')}</Text>
               </View>
               <View style={{flexDirection: 'column', gap: 10}}>
-                {renderObservationControl('observed', 'Observé', require('../../../assets/icons/FiEye.png'))}
-                {renderObservationControl('photographed', 'Photographié', require('../../../assets/icons/FiCamera.png'))}
-                {renderObservationControl('sketched', 'Croquis', require('../../../assets/icons/FiPenTool.png'))}
+                {renderObservationControl('observed', i18n.t('detailsPages.common.observations.observed'), require('../../../assets/icons/FiEye.png'))}
+                {renderObservationControl('photographed', i18n.t('detailsPages.common.observations.photographed'), require('../../../assets/icons/FiCamera.png'))}
+                {renderObservationControl('sketched', i18n.t('detailsPages.common.observations.sketched'), require('../../../assets/icons/FiPenTool.png'))}
               </View>
             </View>
           </View>

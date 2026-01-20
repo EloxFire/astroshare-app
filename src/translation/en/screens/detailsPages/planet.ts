@@ -22,15 +22,19 @@ export const planetTranslations = {
     position: "Position",
     symbol: "Symbol",
     distanceSun: "Distance from the Sun",
+    characteristic: "Characteristic",
     rightAscension: "Right ascension",
     declination: "Declination",
     short: {
       surfaceTemperature: "Temp (surface)",
       naturalSatellites: "Satellites",
+      inclination: "Axis inclination",
+      sunDistance: "Sun distance",
     }
   },
   units: {
     orbitalPeriod: "years",
+    diameter: "AU",
     surfaceTemperature: "°C",
     mass: "x Earth",
     distanceSun: "AU",

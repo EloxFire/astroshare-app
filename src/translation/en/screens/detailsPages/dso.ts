@@ -2,6 +2,7 @@ export const dsoTranslations = {
   title: "DSO details",
   subtitle: "// Everything you need to know !",
   labels: {
+    magnitude: "Magnitude",
     vMag: "V Mag (Apparent)",
     bMag: "B Mag",
     jMag: "J Mag",
@@ -19,5 +20,9 @@ export const dsoTranslations = {
     dimensions: "Dimensions",
     apparentSize: "Apparent size",
     age: "Age",
+  },
+  ephemeris: {
+    nextRise: "Next rise",
+    nextSet: "Next set",
   }
 }
