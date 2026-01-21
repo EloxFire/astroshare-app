@@ -1,7 +1,11 @@
 export const homeTranslations = {
-  tools: {
-    title: "Vos outils",
-    subtitle: "Votre caisse à outils personnalisée"
+  prepare: {
+    title: "Préparer sa soirée",
+    subtitle: "Tout ce qu’il faut pour anticiper votre observation"
+  },
+  outdoor: {
+    title: "Observer",
+    subtitle: "Des repères précis pour observer en toute confiance"
   },
   pro_section: {
     title: "Explorez encore plus loin",
@@ -12,10 +16,18 @@ export const homeTranslations = {
     subtitle: "Explorez toujours plus !"
   },
   resources: {
-    title: "Apprendre",
+    title: "Ressources astronomiques",
     subtitle: "Restez informé et apprenez de nouvelles choses"
   },
   buttons: {
+    dashboard: {
+      title: "Journal d'observation",
+      subtitle: "// Suivez vos activités astronomiques"
+    },
+    checklist_manager: {
+      title: "Checklists",
+      subtitle: "// Organisez vos tâches et observations"
+    },
     observationPlanner: {
       title: "Planifier une observation",
       subtitle: "// Préparez votre session"

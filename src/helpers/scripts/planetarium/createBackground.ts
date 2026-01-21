@@ -15,6 +15,8 @@ export const createBackground = () => {
   const material = new THREE.MeshBasicMaterial({
     map: texture,
     side: THREE.BackSide,
+    transparent: true,
+    opacity: 1,
   });
 
   const geometry = new THREE.SphereGeometry(100, 64, 64);

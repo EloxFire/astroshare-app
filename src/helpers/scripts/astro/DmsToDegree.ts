@@ -7,7 +7,7 @@ export const convertDMSToDegreeFromString = (decString: string): number => {
 
   if (!match) {
     showToast({ message: 'Format D:M:S invalide', type: 'error' });
-    return 0;
+    return Number.NaN;
   }
 
   // Extraction des degrés, minutes et secondes à partir de la chaîne

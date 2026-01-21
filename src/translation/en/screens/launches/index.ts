@@ -32,6 +32,11 @@ export const launchesScreenTranslations = {
     notificationButton: {
       add: "Add a reminder",
       remove: "Remove reminder"
+    },
+    videos: {
+      title: "Related videos",
+      noVideos: "No videos found...",
+      watchOn: "Watch on {{platform}}",
     }
   }
 }

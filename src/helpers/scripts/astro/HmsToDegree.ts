@@ -8,7 +8,7 @@ export const convertHMSToDegreeFromString = (decString: string): number => {
   if (!match) {
     console.log(`[convertHMSToDegreeFromString] Format invalide pour la chaîne : ${decString}`);
     showToast({ message: 'Format D:M:S invalide', type: 'error' });
-    return 0;
+    return Number.NaN;
   }
 
   // Extraction des degrés, minutes et secondes à partir de la chaîne
@@ -20,5 +20,5 @@ export const convertHMSToDegreeFromString = (decString: string): number => {
   const decimalDegree = 15 * (hour + (minutes / 60) + (seconds / 3600));
 
   // Retourner la valeur positive ou négative en fonction de l'input
-  return decimalDegree || 0;
+  return decimalDegree;
 };

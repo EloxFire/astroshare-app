@@ -7,7 +7,6 @@ import { satelliteTrackerHomeStyles } from '../../styles/screens/satelliteTracke
 import PageTitle from '../../components/commons/PageTitle'
 import ToolButton from '../../components/commons/buttons/ToolButton'
 import ScreenInfo from '../../components/ScreenInfo'
-import { useSpacex } from '../../contexts/SpaceXContext'
 import {useSettings} from "../../contexts/AppSettingsContext";
 import {useAuth} from "../../contexts/AuthContext";
 import {useTranslation} from "../../hooks/useTranslation";
@@ -16,9 +15,7 @@ import {eventTypes} from "../../helpers/constants/analytics";
 import { isProUser } from '../../helpers/scripts/auth/checkUserRole'
 import { BASE_NORAD_IDS, KNOWN_NORAD_IDS } from '../../helpers/constants/norad'
 import DisclaimerBar from '../../components/banners/DisclaimerBar'
-import SimpleButton from '../../components/commons/buttons/SimpleButton'
 import { storageKeys } from '../../helpers/constants'
-import BigButton from '../../components/commons/buttons/BigButton'
 import { getObject, storeObject } from '../../helpers/storage'
 import { Satellite } from '../../helpers/types/satellites/Satellite'
 import { useIsFocused } from '@react-navigation/native'
@@ -79,7 +76,7 @@ export default function SatelliteTracker({ navigation }: any) {
           </View>
           <View style={satelliteTrackerHomeStyles.addContainer}>
             <Text style={satelliteTrackerHomeStyles.addContainer.title}>Mes satellites personnalisés</Text>
-            <BigButton
+            <ToolButton
               disabled={!isProUser(currentUser)}
               text={i18n.t('satelliteTrackers.home.buttons.custom.title')}
               subtitle={i18n.t('satelliteTrackers.home.buttons.custom.subtitle')}

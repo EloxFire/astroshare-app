@@ -41,4 +41,48 @@ export const observationPlannerTranslations = {
     },
     details: "Voir le détail",
   },
+  screen: {
+    modal: {
+      sunAboveHorizon: {
+        title: "Attention",
+        text: "Le Soleil sera au-dessus de l'horizon au début de votre session d'observation.\n\nCela peut affecter la visibilité des objets célestes. Voulez-vous continuer ?",
+        cancel: "Annuler",
+        continue: "Continuer",
+      },
+    },
+    steps: {
+      sessionDuration: "1. Durée de la session",
+      objectTypes: "2. Type d'objets",
+      otherFilters: "3. Autres filtres (optionnels)",
+      results: "4. Résultats",
+    },
+    labels: {
+      startDateTime: "Date et heure de début",
+      endDateTime: "Date et heure de fin",
+      magnitude: "Magnitude",
+      altitude: "Altitude",
+      maxResults: "Nombre max de résultats",
+      perObjectTime: "Temps par objet (minutes)",
+    },
+    placeholders: {
+      minMag: "Mag min",
+      maxMag: "Mag max",
+      minAlt: "Alt min (°)",
+      maxAlt: "Alt max (°)",
+      maxResults: "Résultats max (10 par défaut)",
+      perObjectTime: "5 min par défaut",
+    },
+    buttons: {
+      search: "Lancer la recherche",
+      searchAgain: "Relancer la recherche",
+      clear: "Supprimer la recherche",
+    },
+    messages: {
+      empty: "Aucun résultat ne correspond à vos critères",
+      recommended: "Objets recommandés pour votre session d'observation :",
+    },
+    errors: {
+      planning: "Une erreur est survenue lors de la planification de l'observation.",
+    },
+  },
 };

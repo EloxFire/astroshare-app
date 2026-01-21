@@ -96,7 +96,7 @@ export default function Apod({ navigation }: any) {
           !loadingMedia && error && (
             <View style={{height: Dimensions.get('window').height - 200, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
               <DisclaimerBar message={error} type='error' soft/>
-              <DisclaimerBar message={i18n.t('apod.errors.disclaimer')} type='error' soft/>
+              {/* <DisclaimerBar message={i18n.t('apod.errors.disclaimer')} type='error' soft/> SHUTDOWN GOUVERNEMENT AMERICAIN */}
             </View>
           )
         }

@@ -16,6 +16,8 @@ import DSOValues from "../commons/DSOValues";
 import { getObjectIcon } from "../../helpers/scripts/astro/objects/getObjectIcon";
 import { prettyDec, prettyRa } from "../../helpers/scripts/astro/prettyCoords";
 import { getWindDir } from "../../helpers/scripts/getWindDir";
+import SimpleButton from "../commons/buttons/SimpleButton";
+import { routes } from "../../helpers/routes";
 
 interface ObservationPlannerObjectCardProps {
   object: Star | GlobalPlanet | DSO;
@@ -35,7 +37,7 @@ export const ObservationPlannerObjectCard = ({ object, navigation, date }: Obser
 
 
   useEffect(() => {
-    if(object && currentUserLocation && currentUser){
+    if(object && currentUserLocation){
       setComputedObject(computeObject({
         object: object,
         observer: { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon },
@@ -44,7 +46,12 @@ export const ObservationPlannerObjectCard = ({ object, navigation, date }: Obser
         date: date,
       }));
     }
-  }, [object, currentUserLocation, currentUser, currentLocale])
+  }, [object, currentUserLocation, currentLocale, date])
+
+
+  const handleMoreDetails = () => {
+    navigation.navigate(routes.celestialBodies.details.path, {object: object})
+  }
 
   return (
     <TouchableOpacity
@@ -115,6 +122,16 @@ export const ObservationPlannerObjectCard = ({ object, navigation, date }: Obser
                       )
                     }
                   </View>
+
+                  <SimpleButton
+                    text="Voir plus de détails"
+                    align="center"
+                    onPress={() => handleMoreDetails()}
+                    fullWidth
+                    backgroundColor={app_colors.white}
+                    textColor={app_colors.black}
+                    textAdditionalStyles={{fontFamily: 'GilroyBlack'}}
+                  />
                 </View>
               )
             }

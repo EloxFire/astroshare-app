@@ -81,7 +81,7 @@ export default function SolarWeather({ navigation }: any) {
   useEffect(() => {
     const periodicUpdate = setInterval(() => {
       setSunData(getSunData(dayjs(), { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }))
-    }, 1000); // 2 minutes
+    }, 2000); // 2 seconds interval
 
     return () => clearInterval(periodicUpdate);
   }, [])
@@ -214,7 +214,7 @@ export default function SolarWeather({ navigation }: any) {
             <Text style={solarWeatherStyles.container.subtitle}>{i18n.t('solarWeather.sources.soho')}</Text>
             {
               isCmeImageMode ?
-                <Image priority={'high'} placeholder={localizedImagePlaceholders[i18n.locale]} source={!currentCmeImageUrl ? undefined : { uri: currentCmeImageUrl }} style={solarWeatherStyles.sunImage} />
+                <Image priority={'high'} placeholder={localizedImagePlaceholders[i18n.locale]} cachePolicy={'none'} source={!currentCmeImageUrl ? undefined : { uri: currentCmeImageUrl }} style={solarWeatherStyles.sunImage} />
                 :
                 <Video
                   ref={videoRef}
@@ -226,7 +226,7 @@ export default function SolarWeather({ navigation }: any) {
                   resizeMode={ResizeMode.CONTAIN}
                   style={{ width: Dimensions.get('window').width - 40, height: Dimensions.get('window').width - 40, marginVertical: 10, borderRadius: 10, opacity: loadingCME ? .1 : 1, borderWidth: 1, borderColor: app_colors.white_twenty }}
                 >
-                  <Image placeholder={localizedVideoPlaceholders[i18n.locale]} style={{ width: Dimensions.get('window').width - 40, height: Dimensions.get('window').width - 40, marginVertical: 10, borderRadius: 10 }} />
+                  <Image placeholder={localizedVideoPlaceholders[i18n.locale]} cachePolicy={'none'} style={{ width: Dimensions.get('window').width - 40, height: Dimensions.get('window').width - 40, marginVertical: 10, borderRadius: 10 }} />
                 </Video>
             }
             <View style={solarWeatherStyles.container.buttons}>
@@ -245,20 +245,20 @@ export default function SolarWeather({ navigation }: any) {
             <Text style={solarWeatherStyles.container.title}>{i18n.t('solarWeather.containers.sunspots')}</Text>
             <Text style={solarWeatherStyles.container.subtitle}>{i18n.t('solarWeather.sources.soho')}</Text>
             {/*<DisclaimerBar message={"Service temporairement indisponible."} type={"error"}/>*/}
-            <Image placeholder={localizedImagePlaceholders[i18n.locale]} source={{ uri: "https://soho.nascom.nasa.gov/data/synoptic/sunspots_earth/mdi_sunspots.jpg" + '?' + new Date() }} style={solarWeatherStyles.sunImage} />
+            <Image placeholder={localizedImagePlaceholders[i18n.locale]} cachePolicy={'none'} source={{ uri: "https://soho.nascom.nasa.gov/data/synoptic/sunspots_earth/mdi_sunspots.jpg" }} style={solarWeatherStyles.sunImage} />
           </View>
 
           {/* AURORA CONTAINER */}
           <View style={solarWeatherStyles.container}>
             <Text style={solarWeatherStyles.container.title}>{i18n.t('solarWeather.containers.northenAurora')}</Text>
             <Text style={solarWeatherStyles.container.subtitle}>{i18n.t('solarWeather.sources.noaa')}</Text>
-            <Image placeholder={localizedForecastPlaceholders[i18n.locale]} source={{ uri: "https://services.swpc.noaa.gov/images/animations/ovation/north/latest.jpg" + '?' + new Date() }} style={solarWeatherStyles.sunImage} />
+            <Image placeholder={localizedForecastPlaceholders[i18n.locale]} cachePolicy={'none'} source={{ uri: "https://services.swpc.noaa.gov/images/animations/ovation/north/latest.jpg" }} style={solarWeatherStyles.sunImage} />
           </View>
 
           <View style={solarWeatherStyles.container}>
             <Text style={solarWeatherStyles.container.title}>{i18n.t('solarWeather.containers.southernAurora')}</Text>
             <Text style={solarWeatherStyles.container.subtitle}>{i18n.t('solarWeather.sources.noaa')}</Text>
-            <Image placeholder={localizedForecastPlaceholders[i18n.locale]} source={{ uri: "https://services.swpc.noaa.gov/images/animations/ovation/south/latest.jpg" + '?' + new Date() }} style={solarWeatherStyles.sunImage} />
+            <Image placeholder={localizedForecastPlaceholders[i18n.locale]} cachePolicy={'none'} source={{ uri: "https://services.swpc.noaa.gov/images/animations/ovation/south/latest.jpg" }} style={solarWeatherStyles.sunImage} />
           </View>
 
           {/* KP INDEXES CONTAINER */}

@@ -13,6 +13,13 @@ export const celestialBodiesOverviewStyles = {
       textTransform: 'uppercase' as 'uppercase',
     },
 
+    sectionSubtitle: {
+      fontSize: 13,
+      fontFamily: 'GilroyRegular',
+      color: app_colors.white,
+      opacity: 0.5,
+    },
+
     text: {
       fontSize: 15,
       fontFamily: 'GilroyRegular',
@@ -119,9 +126,8 @@ export const celestialBodiesOverviewStyles = {
       backgroundColor: app_colors.white_no_opacity,
       borderColor: app_colors.white_no_opacity,
       borderWidth: 1,
-      padding: 10,
+      // padding: 10,
       borderRadius: 10,
-      marginBottom: 50,
 
       infos: {
         display: 'flex' as 'flex',
@@ -130,6 +136,51 @@ export const celestialBodiesOverviewStyles = {
         marginTop: 10,
         gap: 10,
       }
+    },
+
+    personnalNotes: {
+      backgroundColor: app_colors.white_no_opacity,
+      borderColor: app_colors.white_no_opacity,
+      borderWidth: 1,
+      padding: 10,
+      borderRadius: 10,
+      marginBottom: 50,
+
+
+      experienceAction: {
+        display: 'flex' as 'flex',
+        flexDirection: 'row' as 'row',
+        alignItems: 'center' as 'center',
+        justifyContent: 'space-between' as 'space-between',
+        borderRadius: 10,
+        backgroundColor: app_colors.white_no_opacity,
+        borderWidth: 1,
+        borderColor: app_colors.white_twenty,
+        padding: 5,
+
+        label: {
+          fontFamily: 'GilroyRegular',
+          color: app_colors.white,
+          fontSize: 16,
+        },
+        
+        counterRow: {
+          display: 'flex' as 'flex',
+          flexDirection: 'row' as 'row',
+          alignItems: 'center' as 'center',
+          justifyContent: 'space-between' as 'space-between',
+          gap: 5,
+          width: 130,
+
+          counterValue: {
+            fontFamily: 'DMMonoMedium',
+            color: app_colors.white,
+            fontSize: 16,
+          },
+
+          // backgroundColor: app_colors.white_eighty,
+        },
+      },
     }
   }
 }

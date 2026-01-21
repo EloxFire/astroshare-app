@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import {globalStyles} from "../../styles/global";
 import PageTitle from "../../components/commons/PageTitle";
-import {Image, ScrollView, Text, TouchableOpacity, View} from "react-native";
+import {Image, ImageBackground, ImageSourcePropType, ScrollView, Text, TextInput, TouchableOpacity, View} from "react-native";
 import {i18n} from "../../helpers/scripts/i18n";
 import {celestialBodiesOverviewStyles} from "../../styles/screens/celestialBodies/celestialBodies";
 import {getObjectIcon} from "../../helpers/scripts/astro/objects/getObjectIcon";
@@ -37,6 +37,36 @@ import { scheduleLocalNotification, unScheduleNotification } from "../../helpers
 import { isLocalNotificationPlanned, deleteLocalNotificationRecord } from "../../helpers/scripts/notifications/checkPlannedLocalNOtifications";
 import { getData, storeData } from "../../helpers/storage";
 import ConstellationObjectMap from "../../components/maps/ConstellationObjectMap";
+import { LinearGradient } from "expo-linear-gradient";
+import { DeviceEventEmitter } from "react-native";
+import { ObservationFlags } from "../../helpers/types/dashboard/ObservationFlags";
+
+type ObservationCounts = Required<ObservationFlags>;
+
+const normalizeCountValue = (value?: number | boolean | null): number => {
+  if (typeof value === "number" && Number.isFinite(value)) return Math.max(0, Math.floor(value));
+  if (value === true) return 1;
+  if (value === false || value == null) return 0;
+
+  const parsed = Number(value);
+  if (Number.isFinite(parsed)) return Math.max(0, Math.floor(parsed));
+  return 0;
+};
+
+const normalizeObservationCounts = (
+  flags?: ObservationFlags | null,
+  legacy?: Partial<Record<keyof ObservationCounts, number | boolean>>
+): ObservationCounts => ({
+  observed: normalizeCountValue(flags?.observed ?? legacy?.observed),
+  photographed: normalizeCountValue(flags?.photographed ?? legacy?.photographed),
+  sketched: normalizeCountValue(flags?.sketched ?? legacy?.sketched),
+});
+
+const defaultObservationCounts: ObservationCounts = {
+  observed: 0,
+  photographed: 0,
+  sketched: 0,
+};
 
 export default function CelestialBodyOverview({ route, navigation }: any) {
 
@@ -51,6 +81,14 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
   const [favouritePlanets, setFavouritePlanets] = useState<GlobalPlanet[]>([]);
   const [favouriteDSO, setFavouriteDSO] = useState<DSO[]>([]);
   const [favouriteStars, setFavouriteStars] = useState<Star[]>([]);
+  const [personalNotes, setPersonalNotes] = useState<string>('');
+  const [observationCounts, setObservationCounts] = useState<ObservationCounts>(defaultObservationCounts);
+
+  const notesStorageKey = useMemo(() => {
+    const identifier = object?.ids || object?.name || getObjectName(object, 'all', true);
+    const safeIdentifier = `${identifier}`.replace(/[^a-zA-Z0-9_-]/g, '_');
+    return `notes_${getObjectFamily(object).toLowerCase()}_${safeIdentifier}`;
+  }, [object]);
 
   const objectConstellationAbbr = useMemo(() => {
     if (getObjectFamily(object) === 'DSO' && object.const) {
@@ -89,6 +127,19 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
       if(favsStars) setFavouriteStars(favsStars)
     })()
   }, [])
+
+  useEffect(() => {
+    (async () => {
+      const savedNotes = await getObject(notesStorageKey);
+      if(savedNotes){
+        setPersonalNotes(savedNotes.notes || '');
+        setObservationCounts(normalizeObservationCounts(savedNotes.flags, savedNotes));
+      }else{
+        setPersonalNotes('');
+        setObservationCounts(defaultObservationCounts);
+      }
+    })()
+  }, [notesStorageKey])
 
   const getNotificationStorageKey = () => {
     const identifier = object?.ids || object?.name || getObjectName(object, 'all', true);
@@ -212,6 +263,85 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
     }
   }
 
+  const persistNotes = async (nextNotes: string, nextFlags: ObservationCounts) => {
+    const magnitude = objectInfos?.base?.v_mag ?? objectInfos?.base?.b_mag ?? null;
+    const messierNumber = (object as any)?.m ? Number((object as any).m) : null;
+    const objectTypeDetail = getObjectType(object);
+    const objectFamily = getObjectFamily(object);
+    const rawTypeCode = (() => {
+      if (objectFamily === "DSO") {
+        return (object as any)?.type ? String((object as any).type).toUpperCase() : null;
+      }
+      if (objectFamily === "Star") return "STAR";
+      if (objectFamily === "Planet") return "PLANET";
+      return null;
+    })();
+
+    await storeObject(notesStorageKey, {
+      objectId: object?.ids || object?.name || getObjectName(object, 'all', true),
+      objectName: getObjectName(object, 'all', true),
+      objectType: objectFamily,
+      objectTypeDetail,
+      objectTypeCode: rawTypeCode || undefined,
+      magnitude,
+      messierNumber,
+      notes: nextNotes,
+      flags: nextFlags,
+      observed: nextFlags.observed > 0,
+      photographed: nextFlags.photographed > 0,
+      sketched: nextFlags.sketched > 0,
+      updatedAt: dayjs().toISOString(),
+    });
+    DeviceEventEmitter.emit('dashboardRefresh');
+  }
+
+  const handleNotesChange = async (text: string) => {
+    setPersonalNotes(text);
+    await persistNotes(text, observationCounts);
+  }
+
+  const handleUpdateObservationCount = (flag: keyof ObservationCounts, delta: number) => {
+    setObservationCounts((prev) => {
+      const nextValue = Math.max(0, prev[flag] + delta);
+      const nextFlags = { ...prev, [flag]: nextValue };
+      persistNotes(personalNotes, nextFlags);
+      return nextFlags;
+    });
+
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'update_observation_count', eventTypes.BUTTON_CLICK, { objectName: getObjectName(object, 'all', true), objectType: getObjectType(object), count: observationCounts[flag] }, currentLocale)
+  };
+
+  const renderObservationControl = (flag: keyof ObservationCounts, label: string, icon: ImageSourcePropType) => {
+    const count = observationCounts[flag];
+    const isActive = count > 0;
+
+    return (
+      <View style={[celestialBodiesOverviewStyles.content.personnalNotes.experienceAction]}>
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <Image source={icon} style={{width: 24, height: 24, marginRight: 10, tintColor: isActive ? app_colors.white : app_colors.white_sixty}} />
+          <Text style={[celestialBodiesOverviewStyles.content.personnalNotes.experienceAction.label, {color: isActive ? app_colors.white : app_colors.white_sixty}]}>{label}</Text>
+        </View>
+        <View style={celestialBodiesOverviewStyles.content.personnalNotes.experienceAction.counterRow}>
+          <SimpleButton
+            icon={require('../../../assets/icons/FiMinus.png')}
+            small
+            iconColor={count === 0 ? app_colors.white_sixty : app_colors.white}
+            active={count > 0}
+            onPress={() => handleUpdateObservationCount(flag, -1)}
+            disabled={count === 0}
+          />
+          <Text style={celestialBodiesOverviewStyles.content.personnalNotes.experienceAction.counterRow.counterValue}>x{count}</Text>
+          <SimpleButton
+            icon={require('../../../assets/icons/FiPlus.png')}
+            small
+            active={count > 0}
+            onPress={() => handleUpdateObservationCount(flag, 1)}
+          />
+        </View>
+      </View>
+    )
+  }
+
   return (
     <View style={globalStyles.body}>
       <PageTitle
@@ -288,7 +418,7 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
 
 
         <View style={celestialBodiesOverviewStyles.content.positionContainer}>
-          <Text style={celestialBodiesOverviewStyles.content.sectionTitle}>Informations générales</Text>
+          <Text style={celestialBodiesOverviewStyles.content.sectionTitle}>{i18n.t('detailsPages.common.sections.generalInfos')}</Text>
 
           <View style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
             <View style={{width: getObjectFamily(object) === 'Planet' ? '100%' : '100%', paddingTop: 10, display: 'flex', flexDirection: "column", justifyContent: 'space-between'}}>
@@ -314,24 +444,12 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
                   )
                 }
               </View>
-
-              {/* <View style={{marginTop: 10}}>
-                <SimpleButton
-                  text={`Voir dans le planétarium\n(Bientôt disponible)`}
-                  fullWidth backgroundColor={app_colors.white}
-                  small
-                  textColor={app_colors.black}
-                  onPress={() => navigation.push(routes.skymaps.planetarium.path, {defaultObject: object})}
-                  align={"center"}
-                  disabled
-                />
-              </View> */}
             </View>
           </View>
         </View>
 
         <View style={[celestialBodiesOverviewStyles.content.visibilityContainer, {marginBottom: getObjectFamily(object) === 'Planet' ? 50 : 0 }]}>
-          <Text style={celestialBodiesOverviewStyles.content.sectionTitle}>Visibilité</Text>
+          <Text style={celestialBodiesOverviewStyles.content.sectionTitle}>{i18n.t('detailsPages.common.sections.visibility')}</Text>
           <View style={{paddingTop: 10}}>
             {
               objectInfos && (
@@ -359,7 +477,7 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
                 </View>
               )
             }
-            <Text style={[celestialBodiesOverviewStyles.content.sectionTitle, {marginTop: 15}]}>Magnitude</Text>
+            <Text style={[celestialBodiesOverviewStyles.content.sectionTitle, {marginTop: 15}]}>{i18n.t('detailsPages.common.sections.magnitude')}</Text>
             <View style={{marginTop: 10}}>
               { objectInfos?.base.v_mag && <DSOValues title={i18n.t('detailsPages.dso.labels.vMag')} value={objectInfos?.base.v_mag} chipValue />}
               { objectInfos?.base.b_mag && <DSOValues title={i18n.t('detailsPages.dso.labels.bMag')} value={objectInfos?.base.b_mag} chipValue />}
@@ -368,7 +486,7 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
               { objectInfos?.base.k_mag && <DSOValues title={i18n.t('detailsPages.dso.labels.kMag')} value={objectInfos?.base.k_mag} chipValue />}
             </View>
             <View style={{marginTop: 10}}>
-              <Text style={celestialBodiesOverviewStyles.content.sectionTitle}>Lever et coucher</Text>
+              <Text style={celestialBodiesOverviewStyles.content.sectionTitle}>{i18n.t('detailsPages.common.sections.riseAndSet')}</Text>
               {
                 objectInfos?.visibilityInfos.isCircumpolar ? (
                   <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 10}}>
@@ -395,7 +513,7 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
                 )
               }
             </View>
-            <Text style={[celestialBodiesOverviewStyles.content.sectionTitle, {marginTop: 15, marginBottom: -10}]}>Altitude de l'objet</Text>
+            <Text style={[celestialBodiesOverviewStyles.content.sectionTitle, {marginTop: 15, marginBottom: -10}]}>{i18n.t('detailsPages.common.sections.objectAltitude')}</Text>
             <VisibilityGraph
               visibilityGraph={{altitudes: objectInfos?.visibilityInfos.visibilityGraph.altitudes || [], hours: objectInfos?.visibilityInfos.visibilityGraph.hours || []}}
             />
@@ -403,7 +521,7 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
         </View>
 
         <View style={[celestialBodiesOverviewStyles.content.visibilityContainer, {marginBottom: getObjectFamily(object) === 'Planet' ? 50 : 0 }]}>
-          <Text style={celestialBodiesOverviewStyles.content.sectionTitle}>Position</Text>
+          <Text style={celestialBodiesOverviewStyles.content.sectionTitle}>{i18n.t('detailsPages.common.sections.position')}</Text>
           <View style={{paddingTop: 10}}>
             {
               objectInfos ? (
@@ -414,7 +532,24 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
                   constellationAbbreviation={objectConstellationAbbr}
                 />
               ) : (
-                <Text style={celestialBodiesOverviewStyles.content.text}>Chargement de la carte...</Text>
+                <Text style={celestialBodiesOverviewStyles.content.text}>{i18n.t('detailsPages.common.loadingMap')}</Text>
+              )
+            }
+          </View>
+          <View>
+            {
+              objectInfos && (
+                <View style={{marginTop: 10}}>
+                  <SimpleButton
+                    text={i18n.t('detailsPages.common.actions.viewIn3D')}
+                    fullWidth
+                    backgroundColor={app_colors.white}
+                    small
+                    textColor={app_colors.black}
+                    onPress={() => navigation.push(routes.skymaps.planetarium.path, {defaultObject: object})}
+                    align={"center"}
+                  />
+                </View>
               )
             }
           </View>
@@ -422,23 +557,64 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
 
         {
           objectInfos && objectInfos.dsoAdditionalInfos && (
-            <View style={celestialBodiesOverviewStyles.content.moreContainer}>
-              <Text style={celestialBodiesOverviewStyles.content.sectionTitle}>{getObjectName(object, 'all', true)} en détails</Text>
+            <ImageBackground style={celestialBodiesOverviewStyles.content.moreContainer} source={objectInfos.dsoAdditionalInfos.image} resizeMode="cover" imageStyle={{borderRadius: 10}}>
+              <LinearGradient
+                colors={['rgba(0,0,0,1)', 'rgba(0,0,0,0.4)']}
+                style={{borderRadius: 10, padding: 10}}
+              >
+                <Text style={celestialBodiesOverviewStyles.content.sectionTitle}>{i18n.t('detailsPages.common.sections.detailsFor', { object: getObjectName(object, 'all', true) })}</Text>
 
-              <View style={celestialBodiesOverviewStyles.content.moreContainer.infos}>
-                <Image resizeMode={"contain"} source={objectInfos.dsoAdditionalInfos.image} style={{width: 80, height: 80, borderRadius: 10, borderWidth: 1, borderColor: app_colors.white_twenty}} />
-                <View style={{flex: 1}}>
-                  <DSOValues title={i18n.t('detailsPages.dso.generalInfos.discoveredBy')} value={objectInfos.dsoAdditionalInfos.discovered_by}/>
-                  <DSOValues title={i18n.t('detailsPages.dso.generalInfos.discoveryYear')} value={objectInfos.dsoAdditionalInfos.discovery_year}/>
-                  <DSOValues title={i18n.t('detailsPages.dso.generalInfos.distance')} value={objectInfos.dsoAdditionalInfos.distance}/>
-                  <DSOValues title={i18n.t('detailsPages.dso.generalInfos.dimensions')} value={objectInfos.dsoAdditionalInfos.dimensions}/>
-                  <DSOValues title={i18n.t('detailsPages.dso.generalInfos.apparentSize')} value={objectInfos.dsoAdditionalInfos.apparent_size}/>
-                  <DSOValues title={i18n.t('detailsPages.dso.generalInfos.age')} value={objectInfos.dsoAdditionalInfos.age}/>
+                <View style={celestialBodiesOverviewStyles.content.moreContainer.infos}>
+                  {/* <Image resizeMode={"contain"} source={objectInfos.dsoAdditionalInfos.image} style={{width: 80, height: 80, borderRadius: 10, borderWidth: 1, borderColor: app_colors.white_twenty}} /> */}
+                  <View style={{flex: 1}}>
+                    <DSOValues title={i18n.t('detailsPages.dso.generalInfos.discoveredBy')} value={objectInfos.dsoAdditionalInfos.discovered_by}/>
+                    <DSOValues title={i18n.t('detailsPages.dso.generalInfos.discoveryYear')} value={objectInfos.dsoAdditionalInfos.discovery_year}/>
+                    <DSOValues title={i18n.t('detailsPages.dso.generalInfos.distance')} value={objectInfos.dsoAdditionalInfos.distance}/>
+                    <DSOValues title={i18n.t('detailsPages.dso.generalInfos.dimensions')} value={objectInfos.dsoAdditionalInfos.dimensions}/>
+                    <DSOValues title={i18n.t('detailsPages.dso.generalInfos.apparentSize')} value={objectInfos.dsoAdditionalInfos.apparent_size}/>
+                    <DSOValues title={i18n.t('detailsPages.dso.generalInfos.age')} value={objectInfos.dsoAdditionalInfos.age}/>
+                  </View>
                 </View>
-              </View>
-            </View>
+              </LinearGradient>
+            </ImageBackground>
           )
         }
+
+        <View style={celestialBodiesOverviewStyles.content.personnalNotes}>
+          <Text style={celestialBodiesOverviewStyles.content.sectionTitle}>{i18n.t('detailsPages.common.sections.personalNotes')}</Text>
+
+          <View style={{gap: 20, marginTop: 10}}>
+            <TextInput
+              multiline
+              value={personalNotes}
+              onChangeText={(text) => handleNotesChange(text)}
+              placeholder={i18n.t('detailsPages.common.placeholders.personalNotes')}
+              placeholderTextColor={app_colors.white_sixty}
+              style={{
+                minHeight: 120,
+                borderRadius: 10,
+                borderWidth: 1,
+                borderColor: app_colors.white_twenty,
+                padding: 10,
+                color: app_colors.white,
+                textAlignVertical: 'top',
+                backgroundColor: app_colors.white_no_opacity,
+              }}
+            />
+
+            <View style={{display: 'flex', flexDirection: 'column', gap: 5}}>
+              <View>
+                <Text style={celestialBodiesOverviewStyles.content.sectionTitle}>{i18n.t('detailsPages.common.sections.experienceTitle', { object: getObjectName(object, 'all', true) })}</Text>
+                <Text style={celestialBodiesOverviewStyles.content.sectionSubtitle}>{i18n.t('detailsPages.common.sections.experienceSubtitle')}</Text>
+              </View>
+              <View style={{flexDirection: 'column', gap: 10}}>
+                {renderObservationControl('observed', i18n.t('detailsPages.common.observations.observed'), require('../../../assets/icons/FiEye.png'))}
+                {renderObservationControl('photographed', i18n.t('detailsPages.common.observations.photographed'), require('../../../assets/icons/FiCamera.png'))}
+                {renderObservationControl('sketched', i18n.t('detailsPages.common.observations.sketched'), require('../../../assets/icons/FiPenTool.png'))}
+              </View>
+            </View>
+          </View>
+        </View>
       </ScrollView>
     </View>
   );

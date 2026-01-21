@@ -80,6 +80,14 @@ import ResourceDetails from './src/screens/resources/ResourceDetails';
 import { ClockHome } from './src/screens/clock/ClockHome';
 import LightPollutionMap from './src/screens/lightpollution/Map';
 import { DsoContextProvider } from './src/contexts/DSOContext';
+import { ChecklistsHome } from './src/screens/checklists/ChecklistsHome';
+import { DashboardScreen } from './src/screens/dashboard/DashboardScreen';
+import { DashboardAchievementsScreen } from './src/screens/dashboard/DashboardAchievementsScreen';
+import { DashboardMessierCatalogScreen } from './src/screens/dashboard/DashboardMessierCatalogScreen';
+import { DashboardActivitiesScreen } from './src/screens/dashboard/DashboardActivitiesScreen';
+import { DashboardAllStatsScreen } from './src/screens/dashboard/DashboardAllStatsScreen';
+import { DashboardAchievementsWatcher } from './src/components/watchers/DashboardAchievementsWatcher';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 dayjs.locale('fr');
 dayjs.extend(LocalizedFormat)
@@ -131,6 +139,12 @@ export default function App() {
     })
   })
 
+
+  // DEBUG ONLY : FLUSH LOCAL STORAGE
+  // useEffect(() => {
+  //   AsyncStorage.clear()
+  // }, [])
+
   if (!appIsReady) {
     return (
       <View style={loadingSplashStyles.container}>
@@ -150,6 +164,7 @@ export default function App() {
                     <StarsContextProvider>
                       <SpaceXContextProvider>
                         <LaunchDataContextProvider>
+                            <DashboardAchievementsWatcher />
                             <StatusBar animated style="light" translucent />
 
                             <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -167,6 +182,12 @@ export default function App() {
                               <Stack.Screen name={routes.solarWeather.path} component={SolarWeather} />
                               <Stack.Screen name={routes.apod.path} component={Apod} />
                               <Stack.Screen name={routes.calculations.home.path} component={CalculationHome} />
+                              <Stack.Screen name={routes.checklistManager.home.path} component={ChecklistsHome} />
+                              <Stack.Screen name={routes.dashboard.home.path} component={DashboardScreen} />
+                              <Stack.Screen name={routes.dashboard.achievements.path} component={DashboardAchievementsScreen} />
+                              <Stack.Screen name={routes.dashboard.activities.path} component={DashboardActivitiesScreen} />
+                              <Stack.Screen name={routes.dashboard.messier.path} component={DashboardMessierCatalogScreen} />
+                              <Stack.Screen name={routes.dashboard.stats.path} component={DashboardAllStatsScreen} />
 
                               {/*TRANSITS SCREENS*/}
                               <Stack.Screen name={routes.transits.home.path} component={TransitsScreen} />
