@@ -15,6 +15,15 @@ export const authScreensTranslations = {
     error: "An error occurred, please try again",
     passwordMismatch: "Passwords do not match",
   },
+  forgotPassword: {
+    title: "Password Reset",
+    subtitle: "Enter your email to receive a reset link",
+    noAccount: "Don't have an account? Sign up!",
+    submit: "Send link",
+    success: "If an account exists with this email, a reset link has been sent.",
+    error: "An error occurred while sending the link, please try again",
+    returnToLogin: "Return to login",
+  },
   profile: {
     title: "Profile",
     subtitle: "Your account information",
@@ -59,5 +68,7 @@ export const authScreensTranslations = {
   errors: {
     generic: "An error occurred, please try again",
     missingField: "Please fill in all fields",
+    missingEmail: "Please provide your email",
+    passwordMismatch: "Passwords do not match",
   }
 }

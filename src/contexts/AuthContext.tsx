@@ -4,6 +4,7 @@ import axios from "axios"
 import { showToast } from "../helpers/scripts/showToast"
 import { getData, removeData, storeData, storeObject } from "../helpers/storage"
 import { storageKeys } from "../helpers/constants"
+import { useTranslation } from '../hooks/useTranslation'
 
 const AuthContext = createContext<any>({})
 
@@ -14,6 +15,9 @@ interface AuthContextProviderProps {
 }
 
 export function AuthContextProvider({ children }: AuthContextProviderProps) {
+
+  const { currentLocale } = useTranslation()
+
   const [currentUser, setCurrentUser] = useState<User | null | undefined>(null)
   const [authLoading, setAuthLoading] = useState<boolean>(false)
 
@@ -200,11 +204,55 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
     }
   }
 
+  const resetPassword = async (email: string) => {
+    console.log('[Auth] Resetting password for user');
+  
+    if (!email) {
+      showToast({ message: "Veuillez renseigner votre email", type: "error" });
+      return null;
+    }
+  
+    try {
+      setAuthLoading(true);
+  
+      await axios.post(
+        `${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/auth/forgot-password`,
+        { email, locale: currentLocale },
+        {
+          headers: {
+            Authorization: process.env.EXPO_PUBLIC_ADMIN_KEY,
+          },
+          timeout: 8000,
+        }
+      );
+  
+      showToast({
+        message: "Si un compte existe avec cet email, un lien de réinitialisation a été envoyé.",
+        type: "success",
+      });
+
+      console.log("[Auth] Password reset link sent successfully with locale :", currentLocale);
+      
+  
+      setAuthLoading(false);
+      return "success";
+    } catch (e: any) {
+      console.log('[Auth] Error resetting password:', e?.response?.data || e);
+      showToast({
+        message: e.response?.data?.error || "Erreur lors de l’envoi du lien",
+        type: "error",
+      });
+      setAuthLoading(false);
+      return null;
+    }
+  };
+
   const values = {
     registerUser,
     loginUser,
     logoutUser,
     updateCurrentUser,
+    resetPassword,
     currentUser
   }
 

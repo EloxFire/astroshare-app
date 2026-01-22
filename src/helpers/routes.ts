@@ -57,8 +57,7 @@ export const routes = {
     login: { path: 'Login', requirements: [] },
     register: { path: 'Register', requirements: [] },
     profile: { path: 'Profile', requirements: [] },
-    passwordRecovery: { path: 'PasswordRecovery', requirements: [] },
-    passwordReset: { path: 'PasswordReset', requirements: [] },
+    forgotPassword: { path: 'ForgotPassword', requirements: [] },
   },
   pro: {
     paywallScreen:{

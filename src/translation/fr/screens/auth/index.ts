@@ -15,6 +15,15 @@ export const authScreensTranslations = {
     error: "Une erreur est survenue, veuillez réessayer",
     passwordMismatch: "Les mots de passe ne correspondent pas",
   },
+  forgotPassword: {
+    title: "Mot de passe oublié",
+    subtitle: "Recevez un lien de réinitialisation",
+    noAccount: "Pas encore de compte ? Inscrivez-vous !",
+    submit: "Envoyer le lien",
+    success: "Si un compte existe avec cet email, un lien de réinitialisation a été envoyé.",
+    error: "Une erreur est survenue lors de l’envoi du lien, veuillez réessayer",
+    returnToLogin: "Retour à la connexion",
+  },
   profile: {
     title: "Profil",
     subtitle: "Les informations liées à votre compte",
@@ -59,5 +68,7 @@ export const authScreensTranslations = {
   errors: {
     generic: "Une erreur est survenue, veuillez réessayer",
     missingField: "Veuillez remplir tous les champs",
+    passwordMismatch: "Les mots de passe ne correspondent pas",
+    missingEmail: "Veuillez renseigner votre email",
   }
 }
