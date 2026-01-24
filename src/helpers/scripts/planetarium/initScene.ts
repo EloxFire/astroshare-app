@@ -41,7 +41,7 @@ export const initScene = async (
   currentLocale: string,
   observer: GeographicCoordinate,
   referenceDate: Dayjs
-): {
+): Promise<{
   scene: THREE.Scene,
   camera: THREE.PerspectiveCamera,
   renderer: ExpoTHREE.Renderer,
