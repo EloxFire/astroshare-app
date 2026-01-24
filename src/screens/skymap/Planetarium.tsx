@@ -784,7 +784,7 @@ export default function Planetarium({ route, navigation }: any) {
     const initialZenithVec = convertSphericalToCartesian(1, zenithEq.ra, zenithEq.dec).normalize();
     zenithDirectionRef.current = initialZenithVec;
 
-    const {scene, camera, renderer, ground, selectionCircle, atmosphere, grids, compassLabels, quaternions} = initScene(
+    const {scene, camera, renderer, ground, selectionCircle, atmosphere, grids, compassLabels, quaternions} = await initScene(
       gl,
       currentUserLocation,
       starsCatalog.filter((star: Star) => star.V < 6),

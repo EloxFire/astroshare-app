@@ -73,16 +73,15 @@ export function updateCompassLabels(
   });
 }
 
-export function createCompassLabels(
+export async function createCompassLabels(
   radius: number = 0.98,
   location: LocationObject,
   date: Date = new Date()
-): THREE.Group {
+): Promise<THREE.Group> {
   const group = new THREE.Group();
-  const loader = new ExpoTHREE.TextureLoader();
 
-  CARDINAL_LABELS.forEach(({ letter, file }) => {
-    const texture = loader.load(file);
+  for (const { letter, file } of CARDINAL_LABELS) {
+    const texture = await ExpoTHREE.loadAsync(file);
     const material = new THREE.SpriteMaterial({
       map: texture,
       transparent: true,
@@ -94,7 +93,7 @@ export function createCompassLabels(
     sprite.renderOrder = planetariumRenderOrders.labels;
     sprite.scale.set(0.05, 0.05, 0.05);
     group.add(sprite);
-  });
+  }
 
   updateCompassLabels(group, location, date, radius);
 

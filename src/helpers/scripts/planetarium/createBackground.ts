@@ -2,10 +2,10 @@ import * as THREE from 'three';
 import * as ExpoTHREE from "expo-three";
 import {meshGroupsNames, planetariumRenderOrders} from "./utils/planetariumSettings";
 
-export const createBackground = () => {
+export const createBackground = async (): Promise<THREE.Mesh> => {
   console.log("[GLView] Creating MilkyWay background...");
 
-  const texture = new ExpoTHREE.TextureLoader().load(require('../../../../assets/images/textures/milkyway.png'));
+  const texture = await ExpoTHREE.loadAsync(require('../../../../assets/images/textures/milkyway.png'));
   texture.flipY = false;
   texture.generateMipmaps = false;
   texture.minFilter = THREE.LinearFilter;

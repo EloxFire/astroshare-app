@@ -29,7 +29,7 @@ import {convertHorizontalToEquatorial} from "@observerly/astrometry";
 import {createCompassLabels} from "./createCompassLabels";
 import {createConstellationLabels} from "./createConstellationLabels";
 
-export const initScene = (
+export const initScene = async (
   gl: ExpoWebGLRenderingContext,
   currentUserLocation: LocationObject,
   starsCatalog: Star[],
@@ -56,7 +56,7 @@ export const initScene = (
   quaternions: {
     groundTotalQuaternion: Quaternion,
   }
-} => {
+}> => {
   console.log("[GLView] Initializing scene...")
 
   const scene = new THREE.Scene();
@@ -70,14 +70,14 @@ export const initScene = (
   const axesHelper = new THREE.AxesHelper( 3 );
   scene.add( axesHelper );
 
-  const background = createBackground()
+  const background = await createBackground()
   const ground = createGround(currentUserLocation, referenceDate.toDate())
   const sunDirection = convertSphericalToCartesian(1, sunData.base.ra, sunData.base.dec);
   const atmosphere = createAtmosphere(sunDirection, sunData.base.alt);
   const constellations = drawConstellations()
-  const constellationLabels = createConstellationLabels(9.65, camera.fov);
+  const constellationLabels = await createConstellationLabels(9.65, camera.fov);
   const selectionCircle = createSelectionCircle()
-  const compassLabels = createCompassLabels(0.98, currentUserLocation, referenceDate.toDate());
+  const compassLabels = await createCompassLabels(0.98, currentUserLocation, referenceDate.toDate());
 
   // Camera position locked to the ground
   const q1: Quaternion = new THREE.Quaternion;

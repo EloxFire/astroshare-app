@@ -8,24 +8,23 @@ import { meshGroupsNames, planetariumRenderOrders } from './utils/planetariumSet
 const DEFAULT_BASE_FOV = 75;
 const DEFAULT_LABEL_HEIGHT = 0.10;
 
-export const createConstellationLabels = (radius: number = 9.65, baseFov: number = DEFAULT_BASE_FOV) => {
+export const createConstellationLabels = async (
+  radius: number = 9.65,
+  baseFov: number = DEFAULT_BASE_FOV
+): Promise<THREE.Group> => {
   const group = new THREE.Group();
   group.userData.baseFov = baseFov;
-  const loader = new ExpoTHREE.TextureLoader();
 
-  constellationsAsterisms.forEach((constellation: any, index: number) => {
-    if (!constellation || !constellation.feature?.features?.[0]) return;
+  for (const constellation of constellationsAsterisms) {
+    if (!constellation || !constellation.feature?.features?.[0]) continue;
 
     const centrum = constellation.feature.features[0].properties?.centrum;
-    if (!centrum || typeof centrum.ra !== 'number' || typeof centrum.dec !== 'number') return;
+    if (!centrum || typeof centrum.ra !== 'number' || typeof centrum.dec !== 'number') continue;
 
     const abbreviation = `${constellation.abbreviation ?? ''}`.trim();
     const textureSource = constellationsLabelImages[abbreviation] ?? constellationsImages.OTHER;
 
-    console.log(abbreviation, textureSource);
-    
-
-    const texture = loader.load(textureSource);
+    const texture = await ExpoTHREE.loadAsync(textureSource);
     texture.minFilter = THREE.LinearFilter;
     texture.magFilter = THREE.LinearFilter;
 
@@ -50,7 +49,7 @@ export const createConstellationLabels = (radius: number = 9.65, baseFov: number
     sprite.renderOrder = planetariumRenderOrders.labels;
 
     group.add(sprite);
-  });
+  }
 
   group.name = meshGroupsNames.constellationLabels;
   group.visible = false;
