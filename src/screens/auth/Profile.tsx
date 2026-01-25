@@ -112,7 +112,7 @@ export default function ProfileScreen({ navigation }: any) {
             <DSOValues title={i18n.t('auth.profile.updatedAt')} value={dayjs.unix(currentUser.updatedAt.seconds).format("DD MMM YYYY à HH:mm").replace(':', 'h')}/>
             <DSOValues title={i18n.t('auth.profile.accountRole')} chipValue chipColor={humanizeAccountRole(currentUser.role).color} value={humanizeAccountRole(currentUser.role).role}/>
             {
-              isProUser(currentUser) &&
+              isProUser(currentUser) && !currentUser.isAdmin &&
                 <>
                   <View style={{backgroundColor: app_colors.white_twenty, height: 1, width: Dimensions.get("window").width - 20, marginVertical: 10}}/>
                   <DSOValues title={i18n.t('auth.profile.subscriptionName')} value={`Astroshare Pro - ${i18n.t(`auth.profile.subscriptionTypes.${currentUser.subscriptionCategory}`)}`}/>

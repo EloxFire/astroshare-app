@@ -1,15 +1,11 @@
 export const routes = {
   onboarding: { path: 'Onboarding', requirements: [] },
-  tutorial: { path: 'Tutorial', requirements: [] },
   home: { path: 'Home', requirements: [] },
-  settings: { path: 'Settings', requirements: [] },
-  language: { path: 'LanguageSelection', requirements: [] },
-  about: { path: 'About', requirements: [] },
+  
   scopeAlignment: { path: 'ScopeAlignmentScreen ', requirements: [] },
   weather: { path: 'WeatherScreen', requirements: [] },
   moonPhases: { path: 'MoonPhasesScreen', requirements: [] },
   solarWeather: { path: 'SolarWeatherScreen', requirements: [] },
-  favoritesViewPoints: { path: 'FavoritesViewPoints', requirements: [] },
   apod: { path: 'ApodScreen', requirements: [] },
   satelliteTracker: { path: 'SatelliteTrackerScreen', requirements: [] },
   issTracker: { path: 'IssTrackerScreen', requirements: [] },
@@ -17,14 +13,26 @@ export const routes = {
   spaceXDataScreen: { path: 'SpaceXDataScreen', requirements: [] },
   favorites: { path: 'FavoritesScreen', requirements: [] },
   sellScreen: { path: 'SellScreen', requirements: [] },
-  astroDataInfos: { path: 'AstroDataInfos', requirements: [] },
-  widgetsManager: {path: 'WidgetsManager', requirements: []},
-  changelogScreen: {path: 'ChangelogScreen', requirements: []},
   launchesScreen: {path: 'LaunchesScreen', requirements: []},
   launchDetails: {path: 'LaunchDetails', requirements: []},
   observationPlanner: {path: 'ObservationPlannerScreen', requirements: []},
-
-
+  
+  settings: { 
+    home: { path: 'Settings', requirements: [] },
+    tutorial: { path: 'Tutorial', requirements: [] },
+    language: { path: 'LanguageSelection', requirements: [] },
+    about: { path: 'About', requirements: [] },
+    widgetsManager: {path: 'WidgetsManager', requirements: []},
+    astroDataInfos: { path: 'AstroDataInfos', requirements: [] },
+    changelogScreen: {path: 'ChangelogScreen', requirements: []},
+    favoritesViewPoints: { path: 'FavoritesViewPoints', requirements: [] },
+    newsManager: {
+      home: {
+        path: "NewsManager",
+        requirements: []
+      }
+    },
+  },
   dashboard: {
     home: { path: 'DashboardScreen', requirements: [] },
     achievements: { path: 'DashboardAchievementsScreen', requirements: [] },
@@ -87,6 +95,10 @@ export const routes = {
     constellations: {
       path: "ConstellationsScreen",
       requirements: []
+    },
+    moon: {
+      path: "DetailedMoonMapScreen",
+      requirements: []
     }
   },
   transits: {
@@ -115,12 +127,6 @@ export const routes = {
         path: 'LunarEclipseDetails',
         requirements: []
       }
-    }
-  },
-  newsManager: {
-    home: {
-      path: "NewsManager",
-      requirements: []
     }
   },
   resources: {

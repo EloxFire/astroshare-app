@@ -89,6 +89,7 @@ import { DashboardAllStatsScreen } from './src/screens/dashboard/DashboardAllSta
 import { DashboardAchievementsWatcher } from './src/components/watchers/DashboardAchievementsWatcher';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ForgotPasswordScreen } from './src/screens/auth/ForgotPasswordScreen';
+import { DetailedMoonMapScreen } from './src/screens/skymap/DetailedMoonMapScreen';
 
 dayjs.locale('fr');
 dayjs.extend(LocalizedFormat)
@@ -171,7 +172,7 @@ export default function App() {
                               <Stack.Navigator screenOptions={{ headerShown: false }}>
                                 {/*ONBOARDING*/}
                                 <Stack.Screen name={routes.onboarding.path} component={Onboarding} />
-                                <Stack.Screen name={routes.tutorial.path} component={TutorialScreen} />
+                                <Stack.Screen name={routes.settings.tutorial.path} component={TutorialScreen} />
 
                                 {/*APP SCREENS*/}
                                 <Stack.Screen name={routes.home.path} component={Home} />
@@ -199,14 +200,14 @@ export default function App() {
                                 <Stack.Screen name={routes.transits.eclipses.lunarDetails.path} component={LunarEclipseDetails} />
 
                                 {/*SETTINGS SCREENS*/}
-                                <Stack.Screen name={routes.settings.path} component={Settings} />
-                                <Stack.Screen name={routes.language.path} component={LanguageSelection} />
-                                <Stack.Screen name={routes.changelogScreen.path} component={ChangelogScreen} />
-                                <Stack.Screen name={routes.astroDataInfos.path} component={AstroDataInfos} />
-                                <Stack.Screen name={routes.widgetsManager.path} component={WidgetManager} />
-                                <Stack.Screen name={routes.newsManager.home.path} component={NewsBannerManager} />
-                                <Stack.Screen name={routes.favoritesViewPoints.path} component={ViewPointsManager} />
-                                <Stack.Screen name={routes.about.path} component={About} />
+                                <Stack.Screen name={routes.settings.home.path} component={Settings} />
+                                <Stack.Screen name={routes.settings.language.path} component={LanguageSelection} />
+                                <Stack.Screen name={routes.settings.changelogScreen.path} component={ChangelogScreen} />
+                                <Stack.Screen name={routes.settings.astroDataInfos.path} component={AstroDataInfos} />
+                                <Stack.Screen name={routes.settings.widgetsManager.path} component={WidgetManager} />
+                                <Stack.Screen name={routes.settings.newsManager.home.path} component={NewsBannerManager} />
+                                <Stack.Screen name={routes.settings.favoritesViewPoints.path} component={ViewPointsManager} />
+                                <Stack.Screen name={routes.settings.about.path} component={About} />
 
                                 {/*MARKETING SCREENS*/}
                                 <Stack.Screen name={routes.sellScreen.path} component={SellScreen} />
@@ -223,6 +224,7 @@ export default function App() {
                                 <Stack.Screen name={routes.skymaps.planetarium.path} component={Planetarium} />
                                 <Stack.Screen name={routes.skymaps.flatmap.path} component={SkyMapGenerator} />
                                 <Stack.Screen name={routes.skymaps.constellations.path} component={ConstellationMaps} />
+                                <Stack.Screen name={routes.skymaps.moon.path} component={DetailedMoonMapScreen} />
 
                                 {/*PLANIFICATEUR*/}
                                 <Stack.Screen name={routes.observationPlanner.path} component={ObservationPlannerScreen} />

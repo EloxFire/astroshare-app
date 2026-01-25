@@ -91,12 +91,12 @@ export default function AppHeader({ navigation }: any) {
 
   const handleSettingsPress = () => {
     sendAnalyticsEvent(currentUser, currentUserLocation, 'Settings button pressed', eventTypes.BUTTON_CLICK, {}, currentLocale)
-    navigation.push(routes.settings.path)
+    navigation.push(routes.settings.home.path)
   }
 
   const handleTutorialPress = () => {
     sendAnalyticsEvent(currentUser, currentUserLocation, 'Tutorial button pressed', eventTypes.BUTTON_CLICK, {}, currentLocale)
-    navigation.push(routes.tutorial.path)
+    navigation.push(routes.settings.tutorial.path)
   }
 
   const handleSellscreenPress = () => {
