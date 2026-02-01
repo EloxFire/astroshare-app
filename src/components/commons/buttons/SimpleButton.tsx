@@ -20,10 +20,10 @@ interface BigButtonProps {
   width?: DimensionValue
   loading?: boolean
   needConfirmation?: boolean
+  withArrow?: boolean
 }
 
-export default function SimpleButton({ text, icon, onPress, disabled, small, iconColor, textColor, active, fullWidth, backgroundColor, activeBorderColor, align, textAdditionalStyles, width, loading, needConfirmation }: BigButtonProps) {
-
+export default function SimpleButton({ text, icon, onPress, disabled, small, iconColor, textColor, active, fullWidth, backgroundColor, activeBorderColor, align, textAdditionalStyles, width, loading, needConfirmation, withArrow }: BigButtonProps) {
 
   const handleButtonPress = () => {
     if (disabled) return;
@@ -58,6 +58,16 @@ export default function SimpleButton({ text, icon, onPress, disabled, small, ico
     <TouchableOpacity activeOpacity={.5} style={[simpleButtonStyles.button, buttonAdditionalStyles]} onPress={() => handleButtonPress()}>
       {icon && !loading && <Image source={icon} style={{ width: small ? 12 : 18, height: small ? 12 : 18, marginRight: text ? 10 : 0, tintColor: iconColor ? iconColor : app_colors.white }} />}
       {text && !loading && <Text style={[simpleButtonStyles.button.text, textCustomStyles]}>{text}</Text>}
+      {
+        withArrow && !loading && (
+          <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', flex: 1}}>
+            <Image
+              source={require('../../../../assets/icons/FiChevronRight.png')}
+              style={{ width: small ? 12 : 18, height: small ? 12 : 18, marginLeft: 10, tintColor: iconColor ? iconColor : app_colors.white }}
+            />
+          </View>
+        )
+      }
       {loading && <ActivityIndicator size="small" color={iconColor ? iconColor : app_colors.white} />}
     </TouchableOpacity>
   )

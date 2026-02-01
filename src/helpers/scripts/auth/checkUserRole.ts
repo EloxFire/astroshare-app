@@ -3,5 +3,6 @@ import {UserRoles} from "../../types/auth/UserRoles";
 
 export const isProUser: (user: User) => boolean = (user: User): boolean => {
   if(!user) return false;
-  return user.role === UserRoles.ADMIN || user.role === UserRoles.SUBSCRIBER
+  if(user.isAdmin) return true;
+  return user.role === UserRoles.SUBSCRIBER
 };

@@ -18,10 +18,11 @@ interface BigButtonProps {
   isPremium?: boolean
   isChecked?: boolean
   disabled?: boolean
+  withArrow?: boolean
   onPress?: () => void
 }
 
-export default function ToolButton({ text, image, icon, navigation, targetScreen, subtitle, routeParams,hasCheckbox, isChecked, onPress, disabled, isPremium }: BigButtonProps) {
+export default function ToolButton({ text, image, icon, navigation, targetScreen, subtitle, routeParams,hasCheckbox, isChecked, onPress, disabled, isPremium, withArrow }: BigButtonProps) {
 
   const handleNavigation = () => {
     if (!navigation || !targetScreen) return;
@@ -61,6 +62,14 @@ export default function ToolButton({ text, image, icon, navigation, targetScreen
               hasCheckbox && (
                 <Image
                   source={isChecked ? require('../../../../assets/icons/FiToggleFilled.png') : require('../../../../assets/icons/FiToggleEmpty.png')}
+                  style={toolButtonStyles.button.icon}
+                />
+              )
+            }
+            {
+              withArrow && !isPremium && (
+                <Image
+                  source={require('../../../../assets/icons/FiChevronRight.png')}
                   style={toolButtonStyles.button.icon}
                 />
               )

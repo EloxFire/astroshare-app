@@ -247,7 +247,7 @@ export default function App() {
                                 {/*AUTH SCREENS*/}
                                 <Stack.Screen name={routes.auth.login.path} component={LoginScreen} />
                                 <Stack.Screen name={routes.auth.register.path} component={RegisterScreen} />
-                                <Stack.Screen name={routes.auth.profile.path} component={ProfileScreen} />
+                                <Stack.Screen name={routes.auth.profile.home.path} component={ProfileScreen} />
                                 <Stack.Screen name={routes.auth.forgotPassword.path} component={ForgotPasswordScreen} />
                               </Stack.Navigator>
                           </LaunchDataContextProvider>

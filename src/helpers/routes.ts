@@ -64,7 +64,11 @@ export const routes = {
   auth: {
     login: { path: 'Login', requirements: [] },
     register: { path: 'Register', requirements: [] },
-    profile: { path: 'Profile', requirements: [] },
+    profile: {
+      home: { path: 'Profile', requirements: [] },
+      dataSync: { path: 'DataSyncScreen', requirements: [] },
+      subscriptionManagement: { path: 'SubscriptionManagementScreen', requirements: [] },
+    },
     forgotPassword: { path: 'ForgotPassword', requirements: [] },
   },
   pro: {

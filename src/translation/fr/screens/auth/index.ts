@@ -58,6 +58,54 @@ export const authScreensTranslations = {
         auto: "Automatique",
         canceled: "Désactivé",
       }
+    },
+    dataAndSubscription: {
+      title: "Données et abonnement",
+      dataSync: {
+        title: "Synchronisation des données",
+        subtitle: "Ne perdez jamais vos paramètres !",
+        send: {
+          title: "Envoyer",
+          warning: "Cela remplacera les données actuelles de votre compte Astroshare par celles de cet appareil. Êtes-vous sûr de vouloir continuer ?",
+          success: "Vos données ont été envoyées avec succès sur votre compte Astroshare.",
+          error: "Une erreur est survenue lors de l'envoi des données, veuillez réessayer.",
+        },
+        fetch: {
+          title: "Récupérer",
+          warning: "Cela remplacera les données actuelles de cet appareil par celles de votre compte Astroshare. Êtes-vous sûr de vouloir continuer ?",
+          success: "Vos données ont été récupérées avec succès depuis votre compte Astroshare.",
+          error: "Une erreur est survenue lors de la récupération des données, veuillez réessayer.",
+        },
+        lastUpdate: "Dernière synchronisation : ",
+      },
+
+      subscriptionManagement: {
+        title: "Gestion de l'abonnement",
+        subtitle: "Moyens de paiement, factures, etc.",
+        cancel: {
+          warning: "Êtes-vous sûr de vouloir annuler votre abonnement ? Vous conserverez l'accès à Astroshare Pro jusqu'à la fin de votre période de facturation actuelle.",
+          success: "Votre abonnement a été annulé avec succès. Vous conserverez l'accès à Astroshare Pro jusqu'à la fin de votre période de facturation actuelle.",
+          error: "Une erreur est survenue lors de l'annulation de l'abonnement, veuillez réessayer.",
+        },
+        restore: {
+          success: "Votre abonnement a été restauré avec succès.",
+          error: "Une erreur est survenue lors de la restauration de l'abonnement, veuillez réessayer.",
+        }
+      }
+    },
+    personnalInfos: {
+      title: "Informations personnelles",
+      language: "Langue de l'application",
+      email: "Changer mon email",
+      infos: {
+        title: "Mes informations",
+      },
+      addresses: {
+        title: "Gestion de mes adresses d'observation",
+      },
+      gear: {
+        title: "Mon matériel astro"
+      }
     }
   },
   placeholders: {
