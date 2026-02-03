@@ -21,9 +21,10 @@ interface BigButtonProps {
   loading?: boolean
   needConfirmation?: boolean
   withArrow?: boolean
+  additionalStyles?: any
 }
 
-export default function SimpleButton({ text, icon, onPress, disabled, small, iconColor, textColor, active, fullWidth, backgroundColor, activeBorderColor, align, textAdditionalStyles, width, loading, needConfirmation, withArrow }: BigButtonProps) {
+export default function SimpleButton({ text, icon, onPress, disabled, small, iconColor, textColor, active, fullWidth, backgroundColor, activeBorderColor, align, textAdditionalStyles, width, loading, needConfirmation, withArrow, additionalStyles }: BigButtonProps) {
 
   const handleButtonPress = () => {
     if (disabled) return;
@@ -55,7 +56,7 @@ export default function SimpleButton({ text, icon, onPress, disabled, small, ico
   }
 
   return (
-    <TouchableOpacity activeOpacity={.5} style={[simpleButtonStyles.button, buttonAdditionalStyles]} onPress={() => handleButtonPress()}>
+    <TouchableOpacity activeOpacity={.5} style={[simpleButtonStyles.button, buttonAdditionalStyles, additionalStyles]} onPress={() => handleButtonPress()}>
       {icon && !loading && <Image source={icon} style={{ width: small ? 12 : 18, height: small ? 12 : 18, marginRight: text ? 10 : 0, tintColor: iconColor ? iconColor : app_colors.white }} />}
       {text && !loading && <Text style={[simpleButtonStyles.button.text, textCustomStyles]}>{text}</Text>}
       {

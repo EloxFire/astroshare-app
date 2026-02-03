@@ -90,6 +90,7 @@ import { DashboardAchievementsWatcher } from './src/components/watchers/Dashboar
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ForgotPasswordScreen } from './src/screens/auth/ForgotPasswordScreen';
 import { DetailedMoonMapScreen } from './src/screens/skymap/DetailedMoonMapScreen';
+import { PersonnalInfosScreen } from './src/screens/auth/PersonnalInfosScreen';
 
 dayjs.locale('fr');
 dayjs.extend(LocalizedFormat)
@@ -249,6 +250,7 @@ export default function App() {
                                 <Stack.Screen name={routes.auth.register.path} component={RegisterScreen} />
                                 <Stack.Screen name={routes.auth.profile.home.path} component={ProfileScreen} />
                                 <Stack.Screen name={routes.auth.forgotPassword.path} component={ForgotPasswordScreen} />
+                                <Stack.Screen name={routes.auth.profile.personnalInfosForm.path} component={PersonnalInfosScreen} />
                               </Stack.Navigator>
                           </LaunchDataContextProvider>
                         </SpaceXContextProvider>

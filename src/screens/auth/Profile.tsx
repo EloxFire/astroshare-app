@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {Dimensions, Image, ScrollView, Text, View} from "react-native";
 import {globalStyles} from "../../styles/global";
 import {useAuth} from "../../contexts/AuthContext";
@@ -24,17 +24,6 @@ export default function ProfileScreen({ navigation }: any) {
   const handleLogout = async () => {
     await logoutUser()
     navigation.push(routes.home.path)
-  }
-
-  const humanizeAccountRole = (role: string) => {
-    switch (role) {
-      case 'member':
-        return {role: i18n.t('auth.profile.roles.member'), color: app_colors.green_forty}
-      case 'subscriber':
-        return {role: i18n.t('auth.profile.roles.subscriber'), color: app_colors.gold}
-      default:
-        return {role: i18n.t('auth.profile.roles.unknown'), color: app_colors.white_twenty}
-    }
   }
 
   const handleCancelSubscription = async () => {
@@ -101,7 +90,7 @@ export default function ProfileScreen({ navigation }: any) {
         <View style={profileScreenStyles.content}>
           <AccountInfosCard navigation={navigation} />
           {
-            isProUser(currentUser) &&
+            !isProUser(currentUser) &&
               <ProLocker id={routes.sellScreen.path} navigation={navigation} image={require('../../../assets/images/tools/apod.png')} darker small />
           }
           <PersonnalInfosCard navigation={navigation} />

@@ -46,7 +46,7 @@ export default function LoginScreen({ navigation }: any) {
     }
 
     sendAnalyticsEvent(currentUser, currentUserLocation, 'login_success', eventTypes.USER_LOGIN, {}, currentLocale)
-    navigation.push(routes.auth.profile.path)
+    navigation.push(routes.auth.profile.home.path)
     setLoading(false)
   }
 

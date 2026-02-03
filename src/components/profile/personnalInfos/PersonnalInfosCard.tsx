@@ -28,18 +28,7 @@ export const PersonnalInfosCard = ({navigation}: any) => {
         align="flex-start"
         icon={require('../../../../assets/icons/FiInfo.png')}
         text={i18n.t('auth.profile.personnalInfos.infos.title')}
-        onPress={() => {}}
-        iconColor={app_colors.white}
-        textColor={app_colors.white}
-        backgroundColor={app_colors.white_no_opacity}
-      />
-      <SimpleButton
-        fullWidth
-        withArrow
-        align="flex-start"
-        icon={require('../../../../assets/icons/FiMail.png')}
-        text={i18n.t('auth.profile.personnalInfos.email')}
-        onPress={() => {}}
+        onPress={() => {navigation.navigate(routes.auth.profile.personnalInfosForm.path)}}
         iconColor={app_colors.white}
         textColor={app_colors.white}
         backgroundColor={app_colors.white_no_opacity}

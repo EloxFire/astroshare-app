@@ -68,6 +68,7 @@ export const routes = {
       home: { path: 'Profile', requirements: [] },
       dataSync: { path: 'DataSyncScreen', requirements: [] },
       subscriptionManagement: { path: 'SubscriptionManagementScreen', requirements: [] },
+      personnalInfosForm: { path: 'PersonnalInfosScreen', requirements: []},
     },
     forgotPassword: { path: 'ForgotPassword', requirements: [] },
   },
