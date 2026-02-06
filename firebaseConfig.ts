@@ -23,11 +23,13 @@ const app: FirebaseApp = getApps().length ? getApp() : initializeApp(firebaseCon
 let auth: Auth;
 
 try {
+  console.log("[Firebase] INIT NEW AUTH INSTANCE");
+  
   auth = initializeAuth(app, {
     persistence: getReactNativePersistence(AsyncStorage),
   });
-} catch (e: any) {
-  // initializeAuth throw si déjà initialisé (cas Fast Refresh / HMR)
+} catch {
+  console.log("[Firebase] REUSE AUTH INSTANCE");
   auth = getAuth(app);
 }
 

@@ -1,10 +1,12 @@
-import { ImageBackground, Text, TouchableOpacity, View } from "react-native"
+import { Image, ImageBackground, Text, TouchableOpacity, View } from "react-native"
 import { app_colors } from "../../helpers/constants"
 import { i18n } from "../../helpers/scripts/i18n"
 import { profileScreenStyles } from "../../styles/screens/auth/profile"
 import SimpleButton from "../commons/buttons/SimpleButton"
 import { useAuth } from "../../contexts/AuthContext"
 import SimpleBadge from "../badges/SimpleBadge"
+import { availableUserProfilePictures } from "../../helpers/scripts/auth/availableUserProfilePicture"
+import { personnalInfosScreenStyles } from "../../styles/screens/auth/personnalInfosScreen"
 
 export const AccountInfosCard = ({navigation}: any) => {
 
@@ -24,7 +26,15 @@ export const AccountInfosCard = ({navigation}: any) => {
   return (
     <View style={profileScreenStyles.content.section}>
       <View style={profileScreenStyles.content.accountCard}>
-        <ImageBackground source={require('../../../assets/images/tools/apod.png')} style={profileScreenStyles.content.accountCard.pictureContainer} resizeMode="cover" imageStyle={profileScreenStyles.content.accountCard.pictureContainer.picture}/>
+        {
+          (currentUser.profile && currentUser.profile.profilePicture) ?
+            <ImageBackground source={availableUserProfilePictures.find(picture => picture.id === currentUser.profile.profilePicture)?.source} style={profileScreenStyles.content.accountCard.pictureContainer} resizeMode="cover" imageStyle={profileScreenStyles.content.accountCard.pictureContainer.picture}/>
+            :
+            <View style={[personnalInfosScreenStyles.profilePicturesContainer.profilePicture, {borderColor: app_colors.white_sixty}]}>
+              <Image style={personnalInfosScreenStyles.profilePicturesContainer.defaultIcon} source={require('../../../assets/icons/FiUser.png')} />
+            </View>
+
+        }
         <View style={profileScreenStyles.content.accountCard.userInfos}>
           <View>
             {

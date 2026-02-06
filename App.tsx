@@ -65,8 +65,6 @@ import {SolarEclipsesScreen} from "./src/screens/transits/SolarEclipsesScreen";
 import SolarEclipseDetails from "./src/screens/transits/SolarEclipseDetails";
 import LunarEclipsesScreen from "./src/screens/transits/LunarEclipsesScreen";
 import LunarEclipseDetails from "./src/screens/transits/LunarEclipseDetails";
-import './firebaseConfig';
-
 import { LogBox } from 'react-native';
 import {setupAnalytics} from "./src/helpers/scripts/analytics";
 import NewsBannerManager from './src/screens/settings/NewsBannerManager';
@@ -91,6 +89,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ForgotPasswordScreen } from './src/screens/auth/ForgotPasswordScreen';
 import { DetailedMoonMapScreen } from './src/screens/skymap/DetailedMoonMapScreen';
 import { PersonnalInfosScreen } from './src/screens/auth/PersonnalInfosScreen';
+import './firebaseConfig';
 
 dayjs.locale('fr');
 dayjs.extend(LocalizedFormat)

@@ -2,7 +2,7 @@ import React, { ReactNode, createContext, useContext, useEffect, useState } from
 import { User } from "../helpers/types/auth/User"
 import axios from "axios"
 import { showToast } from "../helpers/scripts/showToast"
-import { removeData, storeData, storeObject } from "../helpers/storage"
+import { getData, removeData, storeData, storeObject } from "../helpers/storage"
 import { storageKeys } from "../helpers/constants"
 import { useTranslation } from '../hooks/useTranslation'
 import { signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
@@ -156,18 +156,20 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
     }
 
     try {
-      const response = await fetch(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/auth/get?userId=${currentUser.uid}`, {
-        method: 'GET',
+      const accessToken = await getData(storageKeys.auth.accessToken)
+
+      const resp = await axios.get(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/auth/me`, {
         headers: {
-          'Authorization': process.env.EXPO_PUBLIC_ADMIN_KEY,
-          'Content-Type': 'application/json'
-        }
-      })
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
 
-      if (!response.ok) throw new Error('Failed to fetch user data')
+      const updatedUser = resp.data;
 
-      const data = await response.json()
-      setCurrentUser(data)
+      console.log("[Auth] Updated user:", updatedUser);
+      
+
+      setCurrentUser(updatedUser);
     } catch (e: any) {
       console.log('[Auth] Error updating user:', e)
       showToast({ message: e.response?.data?.error || "Erreur de récupération de l'utilisateur", type: 'error' })
