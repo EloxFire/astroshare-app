@@ -50,7 +50,7 @@ export const PersonnalInfosCard = ({navigation}: any) => {
         align="flex-start"
         icon={require('../../../../assets/icons/FiTelescope.png')}
         text={i18n.t('auth.profile.personnalInfos.gear.title')}
-        onPress={() => {}}
+        onPress={() => {navigation.navigate(routes.auth.profile.astroGearManagement.home.path)}}
         iconColor={app_colors.white}
         textColor={app_colors.white}
         backgroundColor={app_colors.white_no_opacity}

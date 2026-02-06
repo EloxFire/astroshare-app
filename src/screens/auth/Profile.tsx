@@ -1,77 +1,84 @@
 import React, { useEffect } from "react";
-import {Dimensions, Image, ScrollView, Text, View} from "react-native";
+import {ScrollView, View} from "react-native";
 import {globalStyles} from "../../styles/global";
 import {useAuth} from "../../contexts/AuthContext";
 import {profileScreenStyles} from "../../styles/screens/auth/profile";
 import {i18n} from "../../helpers/scripts/i18n";
 import PageTitle from "../../components/commons/PageTitle";
-import DSOValues from "../../components/commons/DSOValues";
-import dayjs from "dayjs";
 import {routes} from "../../helpers/routes";
 import {app_colors} from "../../helpers/constants";
 import ProLocker from "../../components/cards/ProLocker";
 import {isProUser} from "../../helpers/scripts/auth/checkUserRole";
 import SimpleButton from "../../components/commons/buttons/SimpleButton";
-import {showToast} from "../../helpers/scripts/showToast";
 import { DataAndSubscriptionCard } from "../../components/profile/dataAndSubscription/DataAndSubscriptionCard";
 import { PersonnalInfosCard } from "../../components/profile/personnalInfos/PersonnalInfosCard";
 import { AccountInfosCard } from "../../components/profile/AccountInfosCard";
+import { useSettings } from "../../contexts/AppSettingsContext";
+import { useTranslation } from "../../hooks/useTranslation";
+import { eventTypes } from "../../helpers/constants/analytics";
+import { sendAnalyticsEvent } from "../../helpers/scripts/analytics";
 
 export default function ProfileScreen({ navigation }: any) {
 
   const {currentUser, logoutUser, updateCurrentUser} = useAuth()
+  const { currentUserLocation } = useSettings();
+  const { currentLocale } = useTranslation()
+
+  useEffect(() => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'profile_screen_view', eventTypes.SCREEN_VIEW, {}, currentLocale)
+  }, [])
 
   const handleLogout = async () => {
     await logoutUser()
     navigation.push(routes.home.path)
   }
 
-  const handleCancelSubscription = async () => {
-    try {
-      await fetch(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/stripe/cancel-subscription-at-period-end`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': process.env.EXPO_PUBLIC_ADMIN_KEY,
-        },
-        body: JSON.stringify({
-          userId: currentUser.uid,
-          subscriptionId: currentUser.subscriptionId
-        })
-      });
+  // const handleCancelSubscription = async () => {
+  //   try {
+  //     await fetch(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/stripe/cancel-subscription-at-period-end`, {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //         'Authorization': process.env.EXPO_PUBLIC_ADMIN_KEY,
+  //       },
+  //       body: JSON.stringify({
+  //         userId: currentUser.uid,
+  //         subscriptionId: currentUser.subscriptionId
+  //       })
+  //     });
 
-      await updateCurrentUser()
+  //     await updateCurrentUser()
 
-      showToast({ message: "Annulation de l'abonnement réussie", type: 'success', duration: 3000 })
-    } catch (e) {
-      console.log('[Auth] Error cancelling subscription:', e)
-      showToast({ message: "Erreur d'annulation de l'abonnement, veuillez contacter le support", type: 'error', duration: 5000 })
-      return;
-    }
-  }
+  //     showToast({ message: "Annulation de l'abonnement réussie", type: 'success', duration: 3000 })
+  //   } catch (e) {
+  //     console.log('[Auth] Error cancelling subscription:', e)
+  //     showToast({ message: "Erreur d'annulation de l'abonnement, veuillez contacter le support", type: 'error', duration: 5000 })
+  //     return;
+  //   }
+  // }
 
-  const handleRestoreSubscription = async () => {
-    try {
-      await fetch(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/stripe/restore-subscription`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': process.env.EXPO_PUBLIC_ADMIN_KEY,
-        },
-        body: JSON.stringify({
-          userId: currentUser.uid
-        })
-      });
+  // const handleRestoreSubscription = async () => {
+  //   try {
+  //     await fetch(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/stripe/restore-subscription`, {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //         'Authorization': process.env.EXPO_PUBLIC_ADMIN_KEY,
+  //       },
+  //       body: JSON.stringify({
+  //         userId: currentUser.uid
+  //       })
+  //     });
 
-      await updateCurrentUser()
+  //     await updateCurrentUser()
 
-      showToast({ message: "Renouvellement automatique de l'abonnement réactivé", type: 'success', duration: 3000 })
-    } catch (e) {
-      console.log('[Auth] Error restoring subscription:', e)
-      showToast({ message: "Erreur de restauration de l'abonnement, veuillez contacter le support", type: 'error', duration: 5000 })
-      return;
-    }
-  }
+  //     showToast({ message: "Renouvellement automatique de l'abonnement réactivé", type: 'success', duration: 3000 })
+  //   } catch (e) {
+  //     console.log('[Auth] Error restoring subscription:', e)
+  //     showToast({ message: "Erreur de restauration de l'abonnement, veuillez contacter le support", type: 'error', duration: 5000 })
+  //     return;
+  //   }
+  // }
 
 
 

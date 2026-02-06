@@ -69,6 +69,13 @@ export const routes = {
       dataSync: { path: 'DataSyncScreen', requirements: [] },
       subscriptionManagement: { path: 'SubscriptionManagementScreen', requirements: [] },
       personnalInfosForm: { path: 'PersonnalInfosScreen', requirements: []},
+      astroGearManagement: {
+        home: { path: 'AstroGearManagementScreen', requirements: []},
+        addTelescope: { path: 'AddTelescopeScreen', requirements: []},
+        addEyepiece: { path: 'AddEyepieceScreen', requirements: []},
+        addMount: { path: 'AddMountScreen', requirements: []},
+        addAccessory: { path: 'AddAccessoryScreen', requirements: []},
+      },
     },
     forgotPassword: { path: 'ForgotPassword', requirements: [] },
   },

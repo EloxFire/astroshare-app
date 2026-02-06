@@ -1,26 +1,20 @@
-import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native"
-import ProLocker from "../../components/cards/ProLocker"
-import SimpleButton from "../../components/commons/buttons/SimpleButton"
-import PageTitle from "../../components/commons/PageTitle"
-import { AccountInfosCard } from "../../components/profile/AccountInfosCard"
-import { DataAndSubscriptionCard } from "../../components/profile/dataAndSubscription/DataAndSubscriptionCard"
-import { PersonnalInfosCard } from "../../components/profile/personnalInfos/PersonnalInfosCard"
-import { app_colors, storageKeys } from "../../helpers/constants"
-import { routes } from "../../helpers/routes"
-import { isProUser } from "../../helpers/scripts/auth/checkUserRole"
-import { i18n } from "../../helpers/scripts/i18n"
-import { globalStyles } from "../../styles/global"
-import { profileScreenStyles } from "../../styles/screens/auth/profile"
-import { availableUserProfilePictures } from "../../helpers/scripts/auth/availableUserProfilePicture"
-import { personnalInfosScreenStyles } from "../../styles/screens/auth/personnalInfosScreen"
-import { useAuth } from "../../contexts/AuthContext"
-import { useEffect, useState } from "react"
-import InputWithIcon from "../../components/forms/InputWithIcon"
-import DateTimePicker from '@react-native-community/datetimepicker';
 import dayjs from "dayjs"
-import { capitalize } from "../../helpers/scripts/utils/formatters/capitalize"
-import { getData } from "../../helpers/storage"
-import { showToast } from "../../helpers/scripts/showToast"
+import React, { useState, useEffect } from "react"
+import { View, ScrollView, TouchableOpacity, Text, Image } from "react-native"
+import SimpleButton from "../../../components/commons/buttons/SimpleButton"
+import PageTitle from "../../../components/commons/PageTitle"
+import InputWithIcon from "../../../components/forms/InputWithIcon"
+import { useAuth } from "../../../contexts/AuthContext"
+import { storageKeys, app_colors } from "../../../helpers/constants"
+import { availableUserProfilePictures } from "../../../helpers/scripts/auth/availableUserProfilePicture"
+import { i18n } from "../../../helpers/scripts/i18n"
+import { showToast } from "../../../helpers/scripts/showToast"
+import { capitalize } from "../../../helpers/scripts/utils/formatters/capitalize"
+import { getData } from "../../../helpers/storage"
+import { globalStyles } from "../../../styles/global"
+import { personnalInfosScreenStyles } from "../../../styles/screens/auth/personnalInfosScreen"
+import { profileScreenStyles } from "../../../styles/screens/auth/profile"
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 export const PersonnalInfosScreen = ({navigation}: any) => {
 
@@ -94,7 +88,7 @@ export const PersonnalInfosScreen = ({navigation}: any) => {
             <View style={personnalInfosScreenStyles.profilePicturesContainer}>
               <View style={{marginBottom: 20}}>
                 <TouchableOpacity onPress={() => setActiveProfilePictureId(null)} style={[personnalInfosScreenStyles.profilePicturesContainer.profilePicture, {borderColor: !activeProfilePictureId ? app_colors.yellow : app_colors.white_sixty}]}>
-                  <Image style={personnalInfosScreenStyles.profilePicturesContainer.defaultIcon} source={require('../../../assets/icons/FiUser.png')} />
+                  <Image style={personnalInfosScreenStyles.profilePicturesContainer.defaultIcon} source={require('../../../../assets/icons/FiUser.png')} />
                 </TouchableOpacity>
                 <Text style={{color: app_colors.white, textAlign: 'center', fontSize: 10}}>Aucun</Text>
               </View>
@@ -124,7 +118,7 @@ export const PersonnalInfosScreen = ({navigation}: any) => {
                 value={firstname}
                 changeEvent={setFirstname}
                 additionalStyles={{marginVertical: 5}}
-                icon={require('../../../assets/icons/FiUser.png')}
+                icon={require('../../../../assets/icons/FiUser.png')}
               />
 
               <InputWithIcon
@@ -133,11 +127,11 @@ export const PersonnalInfosScreen = ({navigation}: any) => {
                 value={lastname}
                 changeEvent={setLastname}
                 additionalStyles={{marginVertical: 5}}
-                icon={require('../../../assets/icons/FiUser.png')}
+                icon={require('../../../../assets/icons/FiUser.png')}
               />
 
               <SimpleButton
-                icon={require('../../../assets/icons/FiCalendar.png')}
+                icon={require('../../../../assets/icons/FiCalendar.png')}
                 text={capitalize(birthday) ? dayjs(birthday).format('LL') : "Date de naissance"}
                 textColor={app_colors.white}
                 align='flex-start'
@@ -177,6 +171,7 @@ export const PersonnalInfosScreen = ({navigation}: any) => {
                 value={pseudonym}
                 changeEvent={setPseudonym}
                 additionalStyles={{marginVertical: 5}}
+                icon={require('../../../../assets/icons/FiUser.png')}
               />
 
               <InputWithIcon

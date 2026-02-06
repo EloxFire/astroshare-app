@@ -88,8 +88,10 @@ import { DashboardAchievementsWatcher } from './src/components/watchers/Dashboar
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ForgotPasswordScreen } from './src/screens/auth/ForgotPasswordScreen';
 import { DetailedMoonMapScreen } from './src/screens/skymap/DetailedMoonMapScreen';
-import { PersonnalInfosScreen } from './src/screens/auth/PersonnalInfosScreen';
 import './firebaseConfig';
+import { AstroGearManagementScreen } from './src/screens/auth/profile/AstroGearManagementScreen';
+import { PersonnalInfosScreen } from './src/screens/auth/profile/PersonnalInfosScreen';
+import { AddTelescopeScreen } from './src/screens/auth/profile/gear/AddTelescopeScreen';
 
 dayjs.locale('fr');
 dayjs.extend(LocalizedFormat)
@@ -250,6 +252,8 @@ export default function App() {
                                 <Stack.Screen name={routes.auth.profile.home.path} component={ProfileScreen} />
                                 <Stack.Screen name={routes.auth.forgotPassword.path} component={ForgotPasswordScreen} />
                                 <Stack.Screen name={routes.auth.profile.personnalInfosForm.path} component={PersonnalInfosScreen} />
+                                <Stack.Screen name={routes.auth.profile.astroGearManagement.home.path} component={AstroGearManagementScreen} />
+                                <Stack.Screen name={routes.auth.profile.astroGearManagement.addTelescope.path} component={AddTelescopeScreen} />
                               </Stack.Navigator>
                           </LaunchDataContextProvider>
                         </SpaceXContextProvider>

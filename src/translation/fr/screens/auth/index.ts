@@ -1,3 +1,5 @@
+import { addTelescopeScreenTranslation } from "../profile/gear/telescopes/addTelescopeScreen";
+
 export const authScreensTranslations = {
   login: {
     title: "Connexion",
@@ -104,7 +106,12 @@ export const authScreensTranslations = {
         title: "Gestion de mes adresses d'observation",
       },
       gear: {
-        title: "Mon matériel astro"
+        title: "Mon matériel astro",
+        subtitle: "Gérez votre matériel astro pour une expérience personnalisée",
+
+        telescopes: {
+          title: "Mes télescopes",
+        }
       }
     }
   },

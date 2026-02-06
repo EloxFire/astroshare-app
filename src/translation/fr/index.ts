@@ -42,6 +42,7 @@ import { resourcesScreensTranslations } from "./screens/resources";
 import { clockTranslations } from "./screens/clock";
 import { checklistManagerTranslations } from "./screens/checklists";
 import { dashboardTranslations } from "./screens/dashboard";
+import { profileTranslations } from "./screens/profile";
 
 export const frTranslations = {
   onboarding: onboardingTranslations,
@@ -90,4 +91,5 @@ export const frTranslations = {
   clock: clockTranslations,
   checklistManager: checklistManagerTranslations,
   dashboard: dashboardTranslations,
+  profile: profileTranslations,
 }

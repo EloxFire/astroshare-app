@@ -18,6 +18,12 @@ export const globalStyles = {
     marginVertical: 10,
     color: app_colors.white,
   },
+  content: {
+    display: "flex" as "flex",
+    flexDirection: "column" as "column",
+    gap: 10,
+    paddingBottom: 50,
+  },
   sections: {
     marginVertical: 10,
 
