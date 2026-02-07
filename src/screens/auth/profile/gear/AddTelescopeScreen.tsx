@@ -8,15 +8,25 @@ import { useState } from "react"
 import { gearFormsStyles } from "../../../../styles/screens/profile/gear/gearForms"
 import DisclaimerBar from "../../../../components/banners/DisclaimerBar"
 import { Telescope } from "../../../../helpers/types/gear/Telescope"
+import CustomDropdown from "../../../../components/forms/CustomDropdown"
+import { app_colors, telescopeConstructions, telescopeTypes, telescopeUsages } from "../../../../helpers/constants"
+import SimpleButton from "../../../../components/commons/buttons/SimpleButton"
+import { addTelescope } from "../../../../helpers/scripts/gear/telescopes"
+import { useAuth } from "../../../../contexts/AuthContext"
+import { showToast } from "../../../../helpers/scripts/showToast"
 
 export const AddTelescopeScreen = ({navigation}: any) => {
+
+  const { currentUser } = useAuth()
 
   
   const [telescope, setTelescope] = useState<Telescope>({
     name: "",
+    diameter: 0,
     aperture: 0,
     focalLength: 0,
     type: "",
+    construction: "",
     brand: "",
     model: "",
     description: "",
@@ -26,13 +36,22 @@ export const AddTelescopeScreen = ({navigation}: any) => {
     updatedAt: new Date(),
   })
 
+  const saveTelescope = async () => {
+    if (!currentUser) {
+      showToast({ message: "Utilisateur non authentifié.", type: "error" });
+      return;
+    }
+
+    await addTelescope(currentUser.uid, telescope);
+    navigation.goBack();
+  }
+
   return (
     <View style={globalStyles.body}>
       <PageTitle
         navigation={navigation}
         title={i18n.t('profile.gear.telescopes.addForm.title')}
         subtitle={i18n.t('profile.gear.telescopes.addForm.subtitle')}
-        backRoute={routes.home.path}
       />
       <View style={globalStyles.screens.separator} />
       <ScrollView>
@@ -46,7 +65,7 @@ export const AddTelescopeScreen = ({navigation}: any) => {
             <Text style={gearFormsStyles.formSection.title}>Votre télescope</Text>
 
             <View>
-              <Text style={gearFormsStyles.label}>Nom du télescope</Text>
+              <Text style={gearFormsStyles.label}>Nom du télescope <Text style={{color: app_colors.red}}>*</Text></Text>
               <InputWithIcon
                 keyboardType="default"
                 placeholder="Mon super télescope"
@@ -82,6 +101,29 @@ export const AddTelescopeScreen = ({navigation}: any) => {
               </View>
             </View>
 
+            <View style={gearFormsStyles.formSection.formRow}>
+              <View style={{flex: 1, marginRight: 5}}>
+                <Text style={gearFormsStyles.label}>Type de télescope</Text>
+                <CustomDropdown
+                  data={telescopeTypes}
+                  value={telescope.type}
+                  placeholder="Sélectionnez"
+                  onChange={(value) => setTelescope({...telescope, type: value as Telescope['type']})}
+                  additionalStyles={{marginVertical: 5}}
+                />
+              </View>
+              <View style={{flex: 1, marginLeft: 5}}>
+                <Text style={gearFormsStyles.label}>Construction</Text>
+                <CustomDropdown
+                  data={telescopeConstructions}
+                  value={telescope.construction}
+                  placeholder="Sélectionnez"
+                  onChange={(value) => setTelescope({...telescope, construction: value as Telescope['construction']})}
+                  additionalStyles={{marginVertical: 5}}
+                />
+              </View>
+            </View>
+
             <View>
               <Text style={gearFormsStyles.label}>Description</Text>
               <InputWithIcon
@@ -97,54 +139,54 @@ export const AddTelescopeScreen = ({navigation}: any) => {
 
           <View style={gearFormsStyles.formSection}>
             <Text style={gearFormsStyles.formSection.title}>Caractéristiques techniques</Text>
-          </View>
-          {/* <View>
-            <Text style={gearFormsStyles.label}>Nom du télescope</Text>
-            <InputWithIcon
-              keyboardType="default"
-              placeholder="Mon super télescope"
-              type="text"
-              changeEvent={setTelescopeName}
-              value={telescopeName}
-              additionalStyles={{marginVertical: 5}}
-            />
+
+            <View style={gearFormsStyles.formSection.formRow}>
+              <View style={{flex: 1, marginRight: 5}}>
+                <Text style={gearFormsStyles.label}>Diamètre (en mm) <Text style={{color: app_colors.red}}>*</Text></Text>
+                <InputWithIcon
+                  keyboardType="numeric"
+                  placeholder="150"
+                  type="number"
+                  changeEvent={(value) => setTelescope({...telescope, diameter: Number(value)})}
+                  value={telescope.diameter ? telescope.diameter.toString() : ""}
+                  additionalStyles={{marginVertical: 5}}
+                />
+              </View>
+              <View style={{flex: 1, marginLeft: 5}}>
+                <Text style={gearFormsStyles.label}>Focale (en mm) <Text style={{color: app_colors.red}}>*</Text></Text>
+                <InputWithIcon
+                  keyboardType="numeric"
+                  placeholder="750"
+                  type="number"
+                  changeEvent={(value) => setTelescope({...telescope, focalLength: Number(value)})}
+                  value={telescope.focalLength ? telescope.focalLength.toString() : ""}
+                  additionalStyles={{marginVertical: 5}}
+                />
+              </View>
+            </View>
+
+            <View>
+              <Text style={gearFormsStyles.label}>Domaine(s) d'utilisation</Text>
+              <CustomDropdown
+                data={telescopeUsages}
+                value={telescope.usage}
+                placeholder="Usages"
+                multiselect
+                onChange={(value) => setTelescope({...telescope, usage: value as Telescope['usage']})}
+                additionalStyles={{marginVertical: 5}}
+              />
+            </View>
           </View>
 
-          <View>
-            <Text style={gearFormsStyles.label}>Ouverture du télescope (en mm)</Text>
-            <InputWithIcon
-              keyboardType="numeric"
-              placeholder="150"
-              type="number"
-              changeEvent={(value) => setTelescopeAperture(Number(value))}
-              value={telescopeAperture ? telescopeAperture.toString() : ""}
-              additionalStyles={{marginVertical: 5}}
-            />
-          </View>
-
-          <View>
-            <Text style={gearFormsStyles.label}>Longueur focale du télescope (en mm)</Text>
-            <InputWithIcon
-              keyboardType="numeric"
-              placeholder="750"
-              type="number"
-              changeEvent={(value) => setTelescopeFocalLength(Number(value))}
-              value={telescopeFocalLength ? telescopeFocalLength.toString() : ""}
-              additionalStyles={{marginVertical: 5}}
-            />
-          </View>
-
-          <View>
-            <Text style={gearFormsStyles.label}>Nom du télescope</Text>
-            <InputWithIcon
-              keyboardType="default"
-              placeholder="Mon super télescope"
-              type="text"
-              changeEvent={setTelescopeName}
-              value={telescopeName}
-              additionalStyles={{marginVertical: 5}}
-            />
-          </View> */}
+          <SimpleButton
+            fullWidth
+            text="Ajouter ce télescope"
+            onPress={() => saveTelescope()}
+            textColor={app_colors.black}
+            backgroundColor={app_colors.white}
+            align="center"
+            textAdditionalStyles={{fontFamily: 'GilroyBlack'}}
+          />
         </View>
       </ScrollView>
     </View>

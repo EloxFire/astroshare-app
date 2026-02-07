@@ -16,6 +16,7 @@ import SimpleButton from "../../../components/commons/buttons/SimpleButton"
 import { app_colors } from "../../../helpers/constants"
 import { getTelescopes } from "../../../helpers/scripts/gear/telescopes"
 import { Telescope } from "../../../helpers/types/gear/Telescope"
+import { TelescopeCard } from "../../../components/cards/gear/TelescopeCard"
 
 export const AstroGearManagementScreen = ({navigation}: any) => {
 
@@ -31,7 +32,10 @@ export const AstroGearManagementScreen = ({navigation}: any) => {
 
   useEffect(() => {
     (async () => {
-      const telescopes = await getTelescopes(currentUser.id)
+      const telescopes = await getTelescopes(currentUser.uid)
+      console.log(`[AstroGearManagementScreen] Telescopes fetched:`, telescopes);
+      
+      setTelescopes(telescopes)
     })()
   }, [])
 
@@ -48,9 +52,18 @@ export const AstroGearManagementScreen = ({navigation}: any) => {
         <View style={astroGearManagementScreenStyles.content}>
 
           <View style={profileScreenStyles.content.section}>
-            <Text style={profileScreenStyles.content.section.title}>{i18n.t('auth.profile.personnalInfos.gear.telescopes.title')}</Text>
+            <Text style={[profileScreenStyles.content.section.title, {marginBottom: 0}]}>{i18n.t('auth.profile.personnalInfos.gear.telescopes.title')}</Text>
 
-            {telescopes.length === 0 && <Text style={profileScreenStyles.content.section.subtitle}>Vous n'avez encore aucun télescope enregistré.</Text>}
+            <View style={{display: 'flex', gap: 10, marginVertical: 10}}>
+              {telescopes.length === 0 && <Text style={profileScreenStyles.content.section.subtitle}>Vous n'avez encore aucun télescope enregistré.</Text>}
+              {
+                telescopes.length > 0 && telescopes.map((telescope, index) => {
+                  return (
+                    <TelescopeCard key={index} telescope={telescope} isActive={false} />
+                  )
+                })
+              }
+            </View>
 
             <SimpleButton
               withArrow
@@ -63,16 +76,16 @@ export const AstroGearManagementScreen = ({navigation}: any) => {
           </View>
 
           <View style={profileScreenStyles.content.section}>
-            <Text style={profileScreenStyles.content.section.title}>Mes oculaires</Text>
+            <Text style={[profileScreenStyles.content.section.title, {marginBottom: 0}]}>Mes oculaires</Text>
             
           </View>
 
           <View style={profileScreenStyles.content.section}>
-            <Text style={profileScreenStyles.content.section.title}>Mes caméras</Text>
+            <Text style={[profileScreenStyles.content.section.title, {marginBottom: 0}]}>Mes caméras</Text>
           </View>
 
           <View style={profileScreenStyles.content.section}>
-            <Text style={profileScreenStyles.content.section.title}>Mes montures</Text>
+            <Text style={[profileScreenStyles.content.section.title, {marginBottom: 0}]}>Mes montures</Text>
           </View>
 
         </View>

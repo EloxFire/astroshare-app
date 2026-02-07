@@ -283,3 +283,47 @@ export const solarEclipseVisibilityLinesColors: any = {
   'maximumSunRise': app_colors.orange,
   'maximumSunSet': app_colors.orange,
 }
+
+export const telescopeTypes = [
+  { label: 'Réfracteur', value: 'refractor' },
+  { label: 'Réflecteur', value: 'reflector' },
+  { label: 'Catadioptrique', value: 'catadioptric' },
+  { label: 'Autre', value: 'other' },
+]
+
+export const telescopeConstructions = [
+  { label: 'Newtonien', value: 'newtonian' },
+  { label: 'Dobsonien', value: 'dobsonian' },
+  { label: 'Schmidt-Cassegrain', value: 'schmidt-cassegrain' },
+  { label: 'Maksutov', value: 'maksutov' },
+  { label: 'Autre', value: 'other' },
+]
+
+export const telescopeUsages = [
+  { label: 'Observation planétaire', value: 'planetary' },
+  { label: 'Observation du ciel profond', value: 'deep_sky' },
+  { label: 'Astrophotographie', value: 'astrophotography' },
+  { label: 'Observation solaire', value: 'solar' },
+  { label: 'Observation lunaire', value: 'lunar' },
+  { label: 'Autre', value: 'other' },
+]
+
+export const eyepieceTypes = [
+  { label: 'Plössl', value: 'plossl' },
+  { label: 'Orthoscopique', value: 'orthoscopic' },
+  { label: 'Kellner', value: 'kellner' },
+  { label: 'Super Plössl', value: 'super_plossl' },
+  { label: 'Nagler', value: 'nagler' },
+  { label: 'Panoptic', value: 'panoptic' },
+  { label: 'Autre', value: 'other' },
+]
+
+export const mountTypes = [
+  { label: 'Azimutal', value: 'azimuthal' },
+  { label: 'Équatorial allemand', value: 'equatorial_german' },
+  { label: 'Équatorial à fourche', value: 'equatorial_fork' },
+  { label: 'Équatorial à monture en anneau', value: 'equatorial_ring' },
+  { label: 'Équatorial à monture à berceau', value: 'equatorial_cradle' },
+  { label: 'Équatorial à monture à fourche inversée', value: 'equatorial_inverted_fork' },
+  { label: 'Autre', value: 'other' },
+]

@@ -11,7 +11,9 @@ export default function HomeWidgetDisplay() {
 
   const { selectedHomeWidget } = useSettings()
 
-  console.log('[HomeWidgetDisplay] Selected home widget:', selectedHomeWidget);
+  useEffect(() => {
+    console.log('[HomeWidgetDisplay] Selected home widget:', selectedHomeWidget);
+  }, [selectedHomeWidget])
   
 
   return (
