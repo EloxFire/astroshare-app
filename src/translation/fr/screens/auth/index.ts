@@ -1,5 +1,3 @@
-import { addTelescopeScreenTranslation } from "../profile/gear/telescopes/addTelescopeScreen";
-
 export const authScreensTranslations = {
   login: {
     title: "Connexion",

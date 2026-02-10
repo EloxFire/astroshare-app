@@ -71,10 +71,21 @@ export const routes = {
       personnalInfosForm: { path: 'PersonnalInfosScreen', requirements: []},
       astroGearManagement: {
         home: { path: 'AstroGearManagementScreen', requirements: []},
-        addTelescope: { path: 'AddTelescopeScreen', requirements: []},
-        addEyepiece: { path: 'AddEyepieceScreen', requirements: []},
-        addMount: { path: 'AddMountScreen', requirements: []},
-        addAccessory: { path: 'AddAccessoryScreen', requirements: []},
+        telescopes: {
+          crud: { path: 'TelescopesCrud', requirements: []},
+        },
+        eyepieces: {
+          crud: { path: 'EyepiecesCrud', requirements: []},
+        },
+        mounts: {
+          crud: { path: 'MountsCrud', requirements: []},
+        },
+        cameras: {
+          crud: { path: 'CamerasCrud', requirements: []},
+        },
+        accessories: {
+          crud: { path: 'AccessoriesCrud', requirements: []},
+        }
       },
     },
     forgotPassword: { path: 'ForgotPassword', requirements: [] },

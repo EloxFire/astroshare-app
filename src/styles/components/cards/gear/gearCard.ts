@@ -1,6 +1,6 @@
 import { app_colors } from "../../../../helpers/constants";
 
-export const telescopeCardStyles = {
+export const gearCardStyles = {
   card: {
     position: 'relative' as 'relative',
     backgroundColor: app_colors.white_no_opacity,
@@ -28,10 +28,14 @@ export const telescopeCardStyles = {
       },
 
 
-      icon: {
-        width: 20,
-        height: 20,
-        marginRight: 10,
+      iconContainer: {
+        padding: 5,
+        borderRadius: 5,
+        
+        icon: {
+          width: 20,
+          height: 20,
+        },
       },
 
       body: {

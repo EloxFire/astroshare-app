@@ -46,3 +46,38 @@ export const getTelescopes = async (userId: string): Promise<Telescope[]> => {
   }
   return [];
 }
+
+export const deleteTelescope = async (userId: string, telescopeId: string): Promise<void> => {
+  if(!userId){
+    console.log(`[Gear Management] Cannot delete telescope: userId is null or undefined.`);
+    return;
+  }
+
+  const existingTelescopes = await getObject(`${storageKeys.userGear.telescopes}${userId}`) || [];
+  const updatedTelescopes = existingTelescopes.filter((telescope: Telescope) => telescope.id !== telescopeId);
+
+  console.log(`[Gear Management] Deleting telescope for user ${userId}:`, telescopeId);
+  await storeObject(`${storageKeys.userGear.telescopes}${userId}`, updatedTelescopes);
+  console.log(`[Gear Management] Telescope deleted successfully for user ${userId}.`);
+  showToast({message: "Télescope supprimé avec succès !", type: "success"});
+}
+
+export const updateTelescope = async (userId: string, updatedTelescope: Telescope): Promise<void> => {
+  if(!userId){
+    console.log(`[Gear Management] Cannot update telescope: userId is null or undefined.`);
+    return;
+  }
+
+  const existingTelescopes = await getObject(`${storageKeys.userGear.telescopes}${userId}`) || [];
+  const updatedTelescopes = existingTelescopes.map((telescope: Telescope) => {
+    if(telescope.id === updatedTelescope.id){
+      return updatedTelescope;
+    }
+    return telescope;
+  });
+
+  console.log(`[Gear Management] Updating telescope for user ${userId}:`, updatedTelescope);
+  await storeObject(`${storageKeys.userGear.telescopes}${userId}`, updatedTelescopes);
+  console.log(`[Gear Management] Telescope updated successfully for user ${userId}.`);
+  showToast({message: "Télescope mis à jour avec succès !", type: "success"});
+}

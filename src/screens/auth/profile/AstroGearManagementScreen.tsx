@@ -16,28 +16,43 @@ import SimpleButton from "../../../components/commons/buttons/SimpleButton"
 import { app_colors } from "../../../helpers/constants"
 import { getTelescopes } from "../../../helpers/scripts/gear/telescopes"
 import { Telescope } from "../../../helpers/types/gear/Telescope"
-import { TelescopeCard } from "../../../components/cards/gear/TelescopeCard"
+import { GearCard } from "../../../components/cards/gear/GearCard"
+import { useIsFocused } from "@react-navigation/native"
+import { useAstroGear } from "../../../contexts/GearContext"
+import { getEyepieces } from "../../../helpers/scripts/gear/eyepieces"
+import { Eyepiece } from "../../../helpers/types/gear/Eyepiece"
 
 export const AstroGearManagementScreen = ({navigation}: any) => {
 
   const { currentUserLocation } = useSettings();
   const { currentUser } = useAuth()
   const { currentLocale } = useTranslation()
+  const isFocused = useIsFocused()
+  const { currentGear } = useAstroGear()
 
   useEffect(() => {
     sendAnalyticsEvent(currentUser, currentUserLocation, 'astro_gear_management_screen_view', eventTypes.SCREEN_VIEW, {}, currentLocale)
   }, [])
 
   const [telescopes, setTelescopes] = useState<Telescope[]>([])
+  const [eyepieces, setEyepieces] = useState<Eyepiece[]>([])
 
   useEffect(() => {
+    if (!isFocused || !currentUser?.uid) {
+      return
+    }
+
     (async () => {
       const telescopes = await getTelescopes(currentUser.uid)
+      const eyepieces = await getEyepieces(currentUser.uid)
       console.log(`[AstroGearManagementScreen] Telescopes fetched:`, telescopes);
+      console.log(`[AstroGearManagementScreen] Eyepieces fetched:`, eyepieces);
+      
       
       setTelescopes(telescopes)
+      setEyepieces(eyepieces)
     })()
-  }, [])
+  }, [isFocused, currentUser?.uid])
 
 
   return (
@@ -59,7 +74,7 @@ export const AstroGearManagementScreen = ({navigation}: any) => {
               {
                 telescopes.length > 0 && telescopes.map((telescope, index) => {
                   return (
-                    <TelescopeCard key={index} telescope={telescope} isActive={false} />
+                    <GearCard key={index} gear={telescope} isActive={currentGear?.telescope === telescope.id} navigation={navigation} />
                   )
                 })
               }
@@ -69,15 +84,37 @@ export const AstroGearManagementScreen = ({navigation}: any) => {
               withArrow
               fullWidth
               text="Ajouter un télescope"
-              onPress={() => {navigation.navigate(routes.auth.profile.astroGearManagement.addTelescope.path)}}
-              textColor={app_colors.white}
-              backgroundColor={app_colors.white_no_opacity}
+              onPress={() => {navigation.navigate(routes.auth.profile.astroGearManagement.telescopes.crud.path)}}
+              textColor={app_colors.black}
+              backgroundColor={app_colors.white}
+              iconColor={app_colors.black}
+              small
             />
           </View>
 
           <View style={profileScreenStyles.content.section}>
             <Text style={[profileScreenStyles.content.section.title, {marginBottom: 0}]}>Mes oculaires</Text>
-            
+            {eyepieces.length === 0 && <Text style={profileScreenStyles.content.section.subtitle}>Vous n'avez encore aucun oculaire enregistré.</Text>}
+
+            <View style={{display: 'flex', gap: 10, marginVertical: 10}}>
+              {
+                eyepieces.length > 0 && eyepieces.map((eyepiece, index) => {
+                  return (
+                    <GearCard key={index} gear={eyepiece} isActive={currentGear?.eyepiece === eyepiece.id} navigation={navigation} />
+                  )
+                })
+              }
+            </View>
+            <SimpleButton
+              withArrow
+              fullWidth
+              text="Ajouter un oculaire"
+              onPress={() => {navigation.navigate(routes.auth.profile.astroGearManagement.eyepieces.crud.path)}}
+              textColor={app_colors.black}
+              backgroundColor={app_colors.white}
+              iconColor={app_colors.black}
+              small
+            />
           </View>
 
           <View style={profileScreenStyles.content.section}>
@@ -87,8 +124,12 @@ export const AstroGearManagementScreen = ({navigation}: any) => {
           <View style={profileScreenStyles.content.section}>
             <Text style={[profileScreenStyles.content.section.title, {marginBottom: 0}]}>Mes montures</Text>
           </View>
-
         </View>
+
+        {/* <Text style={profileScreenStyles.content.section.subtitle}>{JSON.stringify(telescopes, null, 2)}</Text> */}
+        {/* <Text style={profileScreenStyles.content.section.subtitle}>{JSON.stringify(eyepieces, null, 2)}</Text> */}
+        {/* <Text style={profileScreenStyles.content.section.subtitle}>{JSON.stringify(currentGear, null, 2)}</Text> */}
+
         <ScreenInfo
           image={require('../../../../assets/icons/FiTelescope.png')}
           text="Ajouter et gérez votre matériel d'astronomie pour une expérience encore plus personnalisée !"

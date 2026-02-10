@@ -109,9 +109,13 @@ export const storageKeys = {
   },
   userGear: {
     telescopes: 'userGear_telescopes_',
+    currentTelescope: 'userGear_currentTelescope_',
     eyepieces: 'userGear_eyepieces_',
+    currentEyepiece: 'userGear_currentEyepiece_',
     cameras: 'userGear_cameras_',
+    currentCamera: 'userGear_currentCamera_',
     mounts: 'userGear_mounts_',
+    currentMount: 'userGear_currentMount_',
   },
   dashboardAchievementsUnlocked: 'dashboardAchievementsUnlocked',
   dashboardPlannerSearches: 'dashboardPlannerSearches',

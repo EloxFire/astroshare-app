@@ -1,4 +1,5 @@
 export type Telescope = {
+  id: string;
   name: string;
   type: '' | 'refractor' | 'reflector' | 'catadioptric' | 'other';
   construction: '' | 'newtonian' | 'dobsonian' | 'schmidt-cassegrain' | 'maksutov' | 'other';
@@ -6,6 +7,7 @@ export type Telescope = {
   diameter: number;
   focalLength: number;
   usage: string[];
+  gearType: 'telescope';
   brand?: string;
   model?: string;
   description?: string;

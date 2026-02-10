@@ -1,9 +1,13 @@
-import { addTelescopeScreenTranslation } from "./gear/telescopes/addTelescopeScreen";
+import { eyepiecesCrudTranslations } from "./gear/eyepieces/eyepiecesCrud";
+import { telescopesCrudTranslations } from "./gear/telescopes/telescopesCrud";
 
 export const profileTranslations = {
   gear: {
     telescopes: {
-      addForm: addTelescopeScreenTranslation
+      crud: telescopesCrudTranslations,
+    },
+    eyepieces: {
+      crud: eyepiecesCrudTranslations,
     }
   }
 }
