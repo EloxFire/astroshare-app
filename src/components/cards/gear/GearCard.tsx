@@ -68,6 +68,7 @@ export const GearCard = ({gear, isActive, navigation}: GearCardProps) => {
       <View style={gearCardStyles.card.content}>
         {gear.gearType === 'telescope' && <Image source={require('../../../../assets/icons/FiTelescope.png')} style={gearCardStyles.card.content.image} />}
         {gear.gearType === 'eyepiece' && <Image source={require('../../../../assets/icons/FiEye.png')} style={gearCardStyles.card.content.image} />}
+        {gear.gearType === 'camera' && <Image source={require('../../../../assets/icons/FiCamera.png')} style={gearCardStyles.card.content.image} />}
         <View style={gearCardStyles.card.content.body}>
           <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 5}}>
             <Text style={gearCardStyles.card.content.body.title}>{gear.name}</Text>

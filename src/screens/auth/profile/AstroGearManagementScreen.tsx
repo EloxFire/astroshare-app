@@ -21,6 +21,8 @@ import { useIsFocused } from "@react-navigation/native"
 import { useAstroGear } from "../../../contexts/GearContext"
 import { getEyepieces } from "../../../helpers/scripts/gear/eyepieces"
 import { Eyepiece } from "../../../helpers/types/gear/Eyepiece"
+import { Camera } from "../../../helpers/types/gear/Camera"
+import { getCameras } from "../../../helpers/scripts/gear/cameras"
 
 export const AstroGearManagementScreen = ({navigation}: any) => {
 
@@ -36,6 +38,7 @@ export const AstroGearManagementScreen = ({navigation}: any) => {
 
   const [telescopes, setTelescopes] = useState<Telescope[]>([])
   const [eyepieces, setEyepieces] = useState<Eyepiece[]>([])
+  const [cameras, setCameras] = useState<Camera[]>([])
 
   useEffect(() => {
     if (!isFocused || !currentUser?.uid) {
@@ -45,12 +48,16 @@ export const AstroGearManagementScreen = ({navigation}: any) => {
     (async () => {
       const telescopes = await getTelescopes(currentUser.uid)
       const eyepieces = await getEyepieces(currentUser.uid)
+      const cameras = await getCameras(currentUser.uid)
       console.log(`[AstroGearManagementScreen] Telescopes fetched:`, telescopes);
       console.log(`[AstroGearManagementScreen] Eyepieces fetched:`, eyepieces);
+      console.log(`[AstroGearManagementScreen] Cameras fetched:`, cameras);
+      
       
       
       setTelescopes(telescopes)
       setEyepieces(eyepieces)
+      setCameras(cameras)
     })()
   }, [isFocused, currentUser?.uid])
 
@@ -85,9 +92,9 @@ export const AstroGearManagementScreen = ({navigation}: any) => {
               fullWidth
               text="Ajouter un télescope"
               onPress={() => {navigation.navigate(routes.auth.profile.astroGearManagement.telescopes.crud.path)}}
-              textColor={app_colors.black}
-              backgroundColor={app_colors.white}
-              iconColor={app_colors.black}
+              textColor={app_colors.white}
+              backgroundColor={app_colors.white_no_opacity}
+              iconColor={app_colors.white}
               small
             />
           </View>
@@ -110,15 +117,37 @@ export const AstroGearManagementScreen = ({navigation}: any) => {
               fullWidth
               text="Ajouter un oculaire"
               onPress={() => {navigation.navigate(routes.auth.profile.astroGearManagement.eyepieces.crud.path)}}
-              textColor={app_colors.black}
-              backgroundColor={app_colors.white}
-              iconColor={app_colors.black}
+              textColor={app_colors.white}
+              backgroundColor={app_colors.white_no_opacity}
+              iconColor={app_colors.white}
               small
             />
           </View>
 
           <View style={profileScreenStyles.content.section}>
             <Text style={[profileScreenStyles.content.section.title, {marginBottom: 0}]}>Mes caméras</Text>
+            {cameras.length === 0 && <Text style={profileScreenStyles.content.section.subtitle}>Vous n'avez encore aucune caméra enregistrée.</Text>}
+
+            <View style={{display: 'flex', gap: 10, marginVertical: 10}}>
+              {
+                cameras.length > 0 && cameras.map((camera, index) => {
+                  return (
+                    <GearCard key={index} gear={camera} isActive={currentGear?.camera === camera.id} navigation={navigation} />
+                  )
+                })
+              }
+            </View>
+
+            <SimpleButton
+              withArrow
+              fullWidth
+              text="Ajouter une caméra"
+              onPress={() => {navigation.navigate(routes.auth.profile.astroGearManagement.cameras.crud.path)}}
+              textColor={app_colors.white}
+              backgroundColor={app_colors.white_no_opacity}
+              iconColor={app_colors.white}
+              small
+            />
           </View>
 
           <View style={profileScreenStyles.content.section}>

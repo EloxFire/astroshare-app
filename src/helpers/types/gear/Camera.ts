@@ -1,7 +1,7 @@
 export type Camera = {
   id: string;
   name: string;
-  type: 'DSLR' | 'DEDICATED' | 'MOBILE';
+  type: '' | 'DSLR' | 'DEDICATED' | 'MOBILE';
   sensorSize: {
     width: number;
     height: number;

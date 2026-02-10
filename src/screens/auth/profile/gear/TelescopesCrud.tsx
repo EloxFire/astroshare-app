@@ -11,7 +11,7 @@ import { Telescope } from "../../../../helpers/types/gear/Telescope"
 import CustomDropdown from "../../../../components/forms/CustomDropdown"
 import { app_colors, telescopeConstructions, telescopeTypes, telescopeUsages } from "../../../../helpers/constants"
 import SimpleButton from "../../../../components/commons/buttons/SimpleButton"
-import { addTelescope, deleteTelescope } from "../../../../helpers/scripts/gear/telescopes"
+import { addTelescope, deleteTelescope, updateTelescope } from "../../../../helpers/scripts/gear/telescopes"
 import { useAuth } from "../../../../contexts/AuthContext"
 import { showToast } from "../../../../helpers/scripts/showToast"
 import { v4 as uuidv4 } from 'uuid';
@@ -77,6 +77,16 @@ export const TelescopesCrud = ({navigation, route}: any) => {
 
     await deleteTelescope(currentUser.uid, telescope.id);
     updateCurrentTelescope(null)
+    navigation.goBack();
+  }
+
+  const saveChanges = async () => {
+    if (!currentUser) {
+      showToast({ message: "Utilisateur non authentifié.", type: "error" });
+      return;
+    }
+
+    await updateTelescope(currentUser.uid, telescope);
     navigation.goBack();
   }
 
@@ -215,7 +225,7 @@ export const TelescopesCrud = ({navigation, route}: any) => {
           <SimpleButton
             fullWidth
             text={i18n.t(`profile.gear.telescopes.crud.${mode}.saveButton`)}
-            onPress={() => saveTelescope()}
+            onPress={() => mode === 'add' ? saveTelescope() : saveChanges()}
             textColor={app_colors.black}
             backgroundColor={app_colors.white}
             align="center"

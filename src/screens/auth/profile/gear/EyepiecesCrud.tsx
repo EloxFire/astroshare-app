@@ -8,7 +8,7 @@ import InputWithIcon from "../../../../components/forms/InputWithIcon"
 import { useAuth } from "../../../../contexts/AuthContext"
 import { useAstroGear } from "../../../../contexts/GearContext"
 import { app_colors } from "../../../../helpers/constants"
-import { addEyepiece, deleteEyepiece } from "../../../../helpers/scripts/gear/eyepieces"
+import { addEyepiece, deleteEyepiece, updateEyepiece } from "../../../../helpers/scripts/gear/eyepieces"
 import { i18n } from "../../../../helpers/scripts/i18n"
 import { showToast } from "../../../../helpers/scripts/showToast"
 import { Eyepiece } from "../../../../helpers/types/gear/Eyepiece"
@@ -69,6 +69,16 @@ export const EyepiecesCrud = ({navigation, route}: any) => {
 
     await deleteEyepiece(currentUser.uid, eyepiece.id);
     updateCurrentEyepiece(null)
+    navigation.goBack();
+  }
+
+  const saveChanges = async () => {
+    if (!currentUser) {
+      showToast({ message: "Utilisateur non authentifié.", type: "error" });
+      return;
+    }
+
+    await updateEyepiece(currentUser.uid, eyepiece);
     navigation.goBack();
   }
 
@@ -172,7 +182,7 @@ export const EyepiecesCrud = ({navigation, route}: any) => {
           <SimpleButton
             fullWidth
             text={i18n.t(`profile.gear.eyepieces.crud.${mode}.saveButton`)}
-            onPress={() => saveEyepiece()}
+            onPress={() => mode === 'add' ? saveEyepiece() : saveChanges()}
             textColor={app_colors.black}
             backgroundColor={app_colors.white}
             align="center"

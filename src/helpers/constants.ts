@@ -331,3 +331,9 @@ export const mountTypes = [
   { label: 'Équatorial à monture à fourche inversée', value: 'equatorial_inverted_fork' },
   { label: 'Autre', value: 'other' },
 ]
+
+export const cameraTypes = [
+  { label: 'Reflex numérique (DSLR)', value: 'DSLR' },
+  { label: 'Caméra dédiée pour l’astrophotographie', value: 'DEDICATED' },
+  { label: 'Caméra de smartphone', value: 'MOBILE' },
+]

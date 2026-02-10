@@ -5,8 +5,6 @@ export const gearCardStyles = {
     position: 'relative' as 'relative',
     backgroundColor: app_colors.white_no_opacity,
     borderRadius: 10,
-    borderWidth: 1,
-    borderColor: app_colors.white_twenty,
     height: 55,
 
     badgeContainer: {
@@ -22,8 +20,8 @@ export const gearCardStyles = {
       flex: 1,
 
       image: {
-        width: 30,
-        height: 30,
+        width: 20,
+        height: 20,
         marginLeft: 10,
       },
 
