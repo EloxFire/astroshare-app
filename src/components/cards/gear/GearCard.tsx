@@ -15,6 +15,7 @@ import { Eyepiece } from "../../../helpers/types/gear/Eyepiece"
 import { Mount } from "../../../helpers/types/gear/Mount"
 import { Camera } from "../../../helpers/types/gear/Camera"
 import { gearCardStyles } from "../../../styles/components/cards/gear/gearCard"
+import { getGearShortCharacteristicsString } from "../../../helpers/scripts/gear/gearUtils"
 
 interface GearCardProps {
   gear: Telescope | Eyepiece | Mount | Camera,
@@ -74,9 +75,10 @@ export const GearCard = ({gear, isActive, navigation}: GearCardProps) => {
             <Text style={gearCardStyles.card.content.body.title}>{gear.name}</Text>
             {isActive && <SimpleBadge text="Séléctionné" small backgroundColor={app_colors.white} foregroundColor={app_colors.black} />}
           </View>
-          {gear.gearType === 'telescope' && <Text style={gearCardStyles.card.content.body.subtitle}>{gear.diameter}/{gear.focalLength} - {gear.construction}</Text>}
+          <Text style={gearCardStyles.card.content.body.subtitle}>{getGearShortCharacteristicsString(gear)}</Text>
+          {/* {gear.gearType === 'telescope' && <Text style={gearCardStyles.card.content.body.subtitle}>{gear.diameter}/{gear.focalLength} - {gear.construction}</Text>}
           {gear.gearType === 'eyepiece' && <Text style={gearCardStyles.card.content.body.subtitle}>{gear.focalLength}mm - {gear.apparentFieldOfView}° - {gear.brand}</Text>}
-          {gear.gearType === 'camera' && <Text style={gearCardStyles.card.content.body.subtitle}>{gear.type} - {gear.resolution.width}x{gear.resolution.height}</Text>}
+          {gear.gearType === 'camera' && <Text style={gearCardStyles.card.content.body.subtitle}>{gear.type} - {gear.resolution.width}x{gear.resolution.height}</Text>} */}
         </View>
 
         <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 10, paddingRight: 10}}>

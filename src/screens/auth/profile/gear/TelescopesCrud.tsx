@@ -44,7 +44,6 @@ export const TelescopesCrud = ({navigation, route}: any) => {
     id: uuidv4(),
     name: "",
     diameter: 0,
-    aperture: 0,
     focalLength: 0,
     type: "",
     construction: "",

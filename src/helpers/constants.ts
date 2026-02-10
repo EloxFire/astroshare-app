@@ -298,7 +298,7 @@ export const telescopeTypes = [
 export const telescopeConstructions = [
   { label: 'Newtonien', value: 'newtonian' },
   { label: 'Dobsonien', value: 'dobsonian' },
-  { label: 'Schmidt-Cassegrain', value: 'schmidt-cassegrain' },
+  { label: 'Schmidt-Cassegrain', value: 'schmidt_cassegrain' },
   { label: 'Maksutov', value: 'maksutov' },
   { label: 'Autre', value: 'other' },
 ]
@@ -338,7 +338,7 @@ export const mountTypes = [
 ]
 
 export const cameraTypes = [
-  { label: 'Reflex numérique (DSLR)', value: 'DSLR' },
-  { label: 'Caméra dédiée pour l’astrophotographie', value: 'DEDICATED' },
-  { label: 'Caméra de smartphone', value: 'MOBILE' },
+  { label: 'Reflex numérique (DSLR)', value: 'dslr' },
+  { label: 'Caméra dédiée pour l’astrophotographie', value: 'dedicated' },
+  { label: 'Caméra de smartphone', value: 'mobile' },
 ]

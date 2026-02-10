@@ -184,7 +184,7 @@ export const CamerasCrud = ({navigation, route}: any) => {
             <Text style={gearFormsStyles.formSection.title}>Caractéristiques techniques</Text>
 
             <View>
-              <Text style={gearFormsStyles.label}>Type de caméra</Text>
+              <Text style={gearFormsStyles.label}>Type de caméra <Text style={{color: app_colors.red}}>*</Text></Text>
               <CustomDropdown
                 data={cameraTypes}
                 value={camera.type}
