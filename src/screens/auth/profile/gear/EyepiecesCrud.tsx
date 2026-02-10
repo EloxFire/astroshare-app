@@ -7,7 +7,7 @@ import PageTitle from "../../../../components/commons/PageTitle"
 import InputWithIcon from "../../../../components/forms/InputWithIcon"
 import { useAuth } from "../../../../contexts/AuthContext"
 import { useAstroGear } from "../../../../contexts/GearContext"
-import { app_colors } from "../../../../helpers/constants"
+import { app_colors, eyepieceBarrelSizes, eyepieceTypes } from "../../../../helpers/constants"
 import { addEyepiece, deleteEyepiece, updateEyepiece } from "../../../../helpers/scripts/gear/eyepieces"
 import { i18n } from "../../../../helpers/scripts/i18n"
 import { showToast } from "../../../../helpers/scripts/showToast"
@@ -18,6 +18,7 @@ import { useSettings } from "../../../../contexts/AppSettingsContext"
 import { useTranslation } from "../../../../hooks/useTranslation"
 import { eventTypes } from "../../../../helpers/constants/analytics"
 import { sendAnalyticsEvent } from "../../../../helpers/scripts/analytics"
+import CustomDropdown from "../../../../components/forms/CustomDropdown"
 
 export const EyepiecesCrud = ({navigation, route}: any) => {
 
@@ -44,6 +45,9 @@ export const EyepiecesCrud = ({navigation, route}: any) => {
     brand: "",
     model: "",
     focalLength: 0,
+    barrelSize: 0,
+    type: "",
+    description: "",
     apparentFieldOfView: 0,
     createdAt: new Date(),
     updatedAt: new Date(),
@@ -152,6 +156,29 @@ export const EyepiecesCrud = ({navigation, route}: any) => {
 
           <View style={gearFormsStyles.formSection}>
             <Text style={gearFormsStyles.formSection.title}>Caractéristiques techniques</Text>
+
+            <View style={gearFormsStyles.formSection.formRow}>
+              <View style={{flex: 1, marginRight: 5}}>
+                <Text style={gearFormsStyles.label}>Construction</Text>
+                <CustomDropdown
+                  data={eyepieceTypes}
+                  value={eyepiece.type}
+                  placeholder="Types d'oculaire"
+                  onChange={(value) => setEyepiece({...eyepiece, type: value as Eyepiece['type']})}
+                  additionalStyles={{marginVertical: 5}}
+                />
+              </View>
+              <View style={{flex: 1, marginLeft: 5}}>
+                <Text style={gearFormsStyles.label}>Coulant <Text style={{color: app_colors.red}}>*</Text></Text>
+                <CustomDropdown
+                  data={eyepieceBarrelSizes}
+                  value={eyepiece.barrelSize.toString()}
+                  placeholder="Types d'oculaire"
+                  onChange={(value) => setEyepiece({...eyepiece, barrelSize: Number(value)})}
+                  additionalStyles={{marginVertical: 5}}
+                />
+              </View>
+            </View>
 
             <View style={gearFormsStyles.formSection.formRow}>
               <View style={{flex: 1, marginRight: 5}}>

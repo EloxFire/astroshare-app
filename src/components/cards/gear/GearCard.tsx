@@ -75,7 +75,8 @@ export const GearCard = ({gear, isActive, navigation}: GearCardProps) => {
             {isActive && <SimpleBadge text="Séléctionné" small backgroundColor={app_colors.white} foregroundColor={app_colors.black} />}
           </View>
           {gear.gearType === 'telescope' && <Text style={gearCardStyles.card.content.body.subtitle}>{gear.diameter}/{gear.focalLength} - {gear.construction}</Text>}
-          {gear.gearType === 'eyepiece' && <Text style={gearCardStyles.card.content.body.subtitle}>{gear.focalLength}mm - {gear.apparentFieldOfView}°</Text>}
+          {gear.gearType === 'eyepiece' && <Text style={gearCardStyles.card.content.body.subtitle}>{gear.focalLength}mm - {gear.apparentFieldOfView}° - {gear.brand}</Text>}
+          {gear.gearType === 'camera' && <Text style={gearCardStyles.card.content.body.subtitle}>{gear.type} - {gear.resolution.width}x{gear.resolution.height}</Text>}
         </View>
 
         <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 10, paddingRight: 10}}>

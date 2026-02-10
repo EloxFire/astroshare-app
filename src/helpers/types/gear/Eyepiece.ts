@@ -4,6 +4,8 @@ export type Eyepiece = {
   focalLength: number;
   apparentFieldOfView: number;
   gearType: 'eyepiece';
+  type: string;
+  barrelSize: number;
   brand?: string;
   model?: string;
   description?: string;

@@ -322,6 +322,11 @@ export const eyepieceTypes = [
   { label: 'Autre', value: 'other' },
 ]
 
+export const eyepieceBarrelSizes = [
+  { label: '1.25"', value: '1.25' },
+  { label: '2"', value: '2' },
+]
+
 export const mountTypes = [
   { label: 'Azimutal', value: 'azimuthal' },
   { label: 'Équatorial allemand', value: 'equatorial_german' },
