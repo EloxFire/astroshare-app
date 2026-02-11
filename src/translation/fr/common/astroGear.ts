@@ -31,5 +31,13 @@ export const astroGearTranslations = {
       mobile: "Caméra de smartphone",
       other: "Autre",
     }
+  },
+  mounts: {
+    types: {
+      equatorial: "Équatoriale",
+      azimuthal: "Azimutale",
+      altazimuthal: "Altazimutale",
+      other: "Autre",
+    }
   }
 }

@@ -38,6 +38,14 @@ export const getGearShortCharacteristicsString = (gear: Telescope | Eyepiece | M
     if(camera.resolution){
       characteristicsString = characteristicsString + ` - ${camera.resolution.width}x${camera.resolution.height}`
     }
+  }else if(gear.gearType === 'mount'){
+    const mount = gear as Mount;
+
+    characteristicsString = characteristicsString + `${i18n.t(`gear.mounts.types.${mount.type}`)}`
+
+    if(mount.payloadCapacity){
+      characteristicsString = characteristicsString + ` - ${mount.payloadCapacity}kg`
+    }
   }
 
   return characteristicsString;

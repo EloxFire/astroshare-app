@@ -70,15 +70,13 @@ export const GearCard = ({gear, isActive, navigation}: GearCardProps) => {
         {gear.gearType === 'telescope' && <Image source={require('../../../../assets/icons/FiTelescope.png')} style={gearCardStyles.card.content.image} />}
         {gear.gearType === 'eyepiece' && <Image source={require('../../../../assets/icons/FiEye.png')} style={gearCardStyles.card.content.image} />}
         {gear.gearType === 'camera' && <Image source={require('../../../../assets/icons/FiCamera.png')} style={gearCardStyles.card.content.image} />}
+        {gear.gearType === 'mount' && <Image source={require('../../../../assets/icons/FiTelescopeMount.png')} style={gearCardStyles.card.content.image} />}
         <View style={gearCardStyles.card.content.body}>
           <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 5}}>
             <Text style={gearCardStyles.card.content.body.title}>{gear.name}</Text>
             {isActive && <SimpleBadge text="Séléctionné" small backgroundColor={app_colors.white} foregroundColor={app_colors.black} />}
           </View>
           <Text style={gearCardStyles.card.content.body.subtitle}>{getGearShortCharacteristicsString(gear)}</Text>
-          {/* {gear.gearType === 'telescope' && <Text style={gearCardStyles.card.content.body.subtitle}>{gear.diameter}/{gear.focalLength} - {gear.construction}</Text>}
-          {gear.gearType === 'eyepiece' && <Text style={gearCardStyles.card.content.body.subtitle}>{gear.focalLength}mm - {gear.apparentFieldOfView}° - {gear.brand}</Text>}
-          {gear.gearType === 'camera' && <Text style={gearCardStyles.card.content.body.subtitle}>{gear.type} - {gear.resolution.width}x{gear.resolution.height}</Text>} */}
         </View>
 
         <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 10, paddingRight: 10}}>

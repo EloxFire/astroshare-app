@@ -94,6 +94,7 @@ import { SolarEclipsesScreen } from "./src/screens/transits/SolarEclipsesScreen"
 import TransitsScreen from "./src/screens/transits/TransitsScreen";
 import { loadingSplashStyles } from "./src/styles/screens/loadingSplash";
 import { CamerasCrud } from './src/screens/auth/profile/gear/CamerasCrud';
+import { MountsCrud } from './src/screens/auth/profile/gear/MountsCrud';
 
 dayjs.locale('fr');
 dayjs.extend(LocalizedFormat)
@@ -260,6 +261,7 @@ export default function App() {
                                 <Stack.Screen name={routes.auth.profile.astroGearManagement.telescopes.crud.path} component={TelescopesCrud} />
                                 <Stack.Screen name={routes.auth.profile.astroGearManagement.eyepieces.crud.path} component={EyepiecesCrud} />
                                 <Stack.Screen name={routes.auth.profile.astroGearManagement.cameras.crud.path} component={CamerasCrud} />
+                                <Stack.Screen name={routes.auth.profile.astroGearManagement.mounts.crud.path} component={MountsCrud} />
                               </Stack.Navigator>
                           </LaunchDataContextProvider>
                         </SpaceXContextProvider>

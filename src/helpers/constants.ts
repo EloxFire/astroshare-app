@@ -328,12 +328,9 @@ export const eyepieceBarrelSizes = [
 ]
 
 export const mountTypes = [
-  { label: 'Azimutal', value: 'azimuthal' },
-  { label: 'Équatorial allemand', value: 'equatorial_german' },
-  { label: 'Équatorial à fourche', value: 'equatorial_fork' },
-  { label: 'Équatorial à monture en anneau', value: 'equatorial_ring' },
-  { label: 'Équatorial à monture à berceau', value: 'equatorial_cradle' },
-  { label: 'Équatorial à monture à fourche inversée', value: 'equatorial_inverted_fork' },
+  { label: 'Azimutalle', value: 'azimuthal' },
+  { label: 'Équatorialle', value: 'equatorial' },
+  { label: 'Alt-Az', value: 'altazimuthal' },
   { label: 'Autre', value: 'other' },
 ]
 

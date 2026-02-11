@@ -1,5 +1,6 @@
 import { camerasCrudTranslations } from "./gear/cameras/camerasCrud";
 import { eyepiecesCrudTranslations } from "./gear/eyepieces/eyepiecesCrud";
+import { mountsCrudTranslations } from "./gear/mounts/mountsCrud";
 import { telescopesCrudTranslations } from "./gear/telescopes/telescopesCrud";
 
 export const profileTranslations = {
@@ -12,6 +13,9 @@ export const profileTranslations = {
     },
     cameras: {
       crud: camerasCrudTranslations,
+    },
+    mounts: {
+      crud: mountsCrudTranslations
     }
   }
 }
