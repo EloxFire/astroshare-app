@@ -1,3 +1,4 @@
+import { detailedMoonMapScreenTranslations } from "./detailedMoonMapScreen";
 import { planetariumTranslations } from "./planetarium";
 import { skymapGeneratorTranslations } from "./skymapGenerator";
 
@@ -16,9 +17,14 @@ export const skymapTranslations = {
     constellations: {
       title: "Constellation maps",
       subtitle: "// Coming soon !"
+    },
+    moon: {
+      title: "Detailed Moon map",
+      subtitle: "// Interactive 3D and 2D map"
     }
   },
   info: "Use our skymaps to locate yourself and explore the night sky.",
   flatmap: skymapGeneratorTranslations,
-  planetarium: planetariumTranslations
+  planetarium: planetariumTranslations,
+  moon: detailedMoonMapScreenTranslations
 }

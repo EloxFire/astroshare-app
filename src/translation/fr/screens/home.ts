@@ -7,6 +7,10 @@ export const homeTranslations = {
     title: "Observer",
     subtitle: "Des repères précis pour observer en toute confiance"
   },
+  tools: {
+    title: "Vos outils",
+    subtitle: "Votre boîte à outils personnalisée"
+  },
   pro_section: {
     title: "Explorez encore plus loin",
     subtitle: "Débloquez tout le potentiel d'Astroshare"

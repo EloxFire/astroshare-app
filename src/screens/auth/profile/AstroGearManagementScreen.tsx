@@ -75,9 +75,9 @@ export const AstroGearManagementScreen = ({navigation}: any) => {
 
           <View style={profileScreenStyles.content.section}>
             <Text style={[profileScreenStyles.content.section.title, {marginBottom: 0}]}>{i18n.t('auth.profile.personnalInfos.gear.telescopes.title')}</Text>
+            {telescopes.length === 0 && <Text style={profileScreenStyles.content.section.subtitle}>Vous n'avez encore aucun télescope enregistré.</Text>}
 
             <View style={{display: 'flex', gap: 10, marginVertical: 10}}>
-              {telescopes.length === 0 && <Text style={profileScreenStyles.content.section.subtitle}>Vous n'avez encore aucun télescope enregistré.</Text>}
               {
                 telescopes.length > 0 && telescopes.map((telescope, index) => {
                   return (
