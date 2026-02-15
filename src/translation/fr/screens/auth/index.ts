@@ -90,6 +90,10 @@ export const authScreensTranslations = {
         restore: {
           success: "Votre abonnement a été restauré avec succès.",
           error: "Une erreur est survenue lors de la restauration de l'abonnement, veuillez réessayer.",
+        },
+        subscriptionDetails: {
+          title: "Détails de l'abonnement",
+          subtitle: "Informations détaillées sur votre abonnement",
         }
       }
     },

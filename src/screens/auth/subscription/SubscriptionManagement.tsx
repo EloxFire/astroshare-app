@@ -52,10 +52,6 @@ export const SubscriptionManagement = ({ navigation } : any) => {
     setLoading(false)
   }
 
-  const downloadInvoice = (invoiceUrl: string) => {
-
-  }
-
   return (
     <View style={globalStyles.body}>
       <PageTitle
@@ -82,7 +78,7 @@ export const SubscriptionManagement = ({ navigation } : any) => {
             {
               !loading && subscriptions.length > 0 && subscriptions.map((subscription: any, index: number) => {
                 return (
-                  <SubscriptionCard key={index} type={subscription.object} payment={subscription} />
+                  <SubscriptionCard key={index} type={subscription.object} payment={subscription} navigation={navigation} />
                 )
               })
             }
@@ -105,7 +101,7 @@ export const SubscriptionManagement = ({ navigation } : any) => {
             {
               !loading && payments.length > 0 && payments.map((payment: any, index: number) => {
                 return (
-                  <SubscriptionCard key={index} type={payment.object} payment={payment} />
+                  <SubscriptionCard key={index} type={payment.object} payment={payment} navigation={navigation} />
                 )
               })
             }
@@ -114,11 +110,11 @@ export const SubscriptionManagement = ({ navigation } : any) => {
 
           {
             !loading && subscriptions.length === 0 && payments.length === 0 && (
-              <ProLocker id={routes.auth.profile.subscriptionManagement.path} navigation={navigation} image={require('../../../../assets/images/tools/apod.png')} darker small />
+              <ProLocker id={routes.auth.profile.subscriptionManagement.home.path} navigation={navigation} image={require('../../../../assets/images/tools/apod.png')} darker small />
             )
           }
 
-          {/* <Text style={subscriptionManagementStyles.section.text}>{JSON.stringify(subscriptions[0], null, 2)}</Text> */}
+          {/* <Text style={subscriptionManagementStyles.section.text}>{JSON.stringify(payments[0], null, 2)}</Text> */}
 
           <ScreenInfo
             image={require('../../../../assets/icons/FiFileText.png')}

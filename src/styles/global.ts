@@ -78,7 +78,7 @@ export const globalStyles = {
     padding: 10,
     borderRadius: 10,
     borderWidth: 1,
-    marginBottom: 20,
+    marginBottom: 10,
   },
 
   proBadge:{
@@ -116,5 +116,10 @@ export const globalStyles = {
       width: 5,
       height: 5,
     }
+  },
+  row: {
+    display: "flex" as "flex",
+    flexDirection: "row" as "row",
+    alignItems: "center" as "center",
   }
 };

@@ -94,6 +94,7 @@ import { SolarEclipsesScreen } from "./src/screens/transits/SolarEclipsesScreen"
 import TransitsScreen from "./src/screens/transits/TransitsScreen";
 import { loadingSplashStyles } from "./src/styles/screens/loadingSplash";
 import { SubscriptionManagement } from "./src/screens/auth/subscription/SubscriptionManagement";
+import { SubscriptionDetails } from "./src/screens/auth/subscription/SubscriptionDetails";
 
 dayjs.locale('fr');
 dayjs.extend(LocalizedFormat)
@@ -257,7 +258,8 @@ export default function App() {
                                 <Stack.Screen name={routes.auth.forgotPassword.path} component={ForgotPasswordScreen} />
 
                                 {/* SUBSCRIPTION MANAGEMENT SCREENS */}
-                                <Stack.Screen name={routes.auth.profile.subscriptionManagement.path} component={SubscriptionManagement} />
+                                <Stack.Screen name={routes.auth.profile.subscriptionManagement.home.path} component={SubscriptionManagement} />
+                                <Stack.Screen name={routes.auth.profile.subscriptionManagement.subscriptionDetails.path} component={SubscriptionDetails} />
 
                                 {/* PROFILE RELATED SCREENS */}
                                 <Stack.Screen name={routes.auth.profile.personnalInfosForm.path} component={PersonnalInfosScreen} />

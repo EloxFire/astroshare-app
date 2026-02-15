@@ -33,7 +33,7 @@ export const DataAndSubscriptionCard = ({navigation}: any) => {
         align="flex-start"
         icon={require('../../../../assets/icons/FiCreditCard.png')}
         text={i18n.t('auth.profile.dataAndSubscription.subscriptionManagement.title')}
-        onPress={() => navigation.navigate(routes.auth.profile.subscriptionManagement.path)}
+        onPress={() => navigation.navigate(routes.auth.profile.subscriptionManagement.home.path)}
         iconColor={app_colors.white}
         textColor={app_colors.white}
         backgroundColor={app_colors.white_no_opacity}

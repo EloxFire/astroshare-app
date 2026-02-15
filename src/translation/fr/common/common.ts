@@ -158,5 +158,7 @@ export const commonTranslations = {
   subscriptionPeriod: {
     year: "Annuel",
     month: "Mensuel",
+    astroshare_pro_yearly: "Astroshare Pro Annuel",
+    astroshare_pro_monthly: "Astroshare Pro Mensuel",
   }
 }

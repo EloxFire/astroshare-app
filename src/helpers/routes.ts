@@ -67,7 +67,10 @@ export const routes = {
     profile: {
       home: { path: 'Profile', requirements: [] },
       dataSync: { path: 'DataSyncScreen', requirements: [] },
-      subscriptionManagement: { path: 'SubscriptionManagementScreen', requirements: [] },
+      subscriptionManagement: { 
+        home: { path: 'SubscriptionManagementScreen', requirements: [] },
+        subscriptionDetails: { path: 'SubscriptionDetailsScreen', requirements: [] },
+      },
       personnalInfosForm: { path: 'PersonnalInfosScreen', requirements: []},
       astroGearManagement: {
         home: { path: 'AstroGearManagementScreen', requirements: []},
