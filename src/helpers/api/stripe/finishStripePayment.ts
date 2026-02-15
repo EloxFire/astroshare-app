@@ -1,4 +1,4 @@
-export const finishStripePayment = async (userId: string, subscription: string, subscriptionName: string, subscriptionType: string) => {
+export const finishStripePayment = async (userId: string, type: 'one-time' | 'subscription') => {
   try {
     const response = await fetch(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/stripe/finish-payment`, {
       method: 'POST',
@@ -8,9 +8,7 @@ export const finishStripePayment = async (userId: string, subscription: string, 
       },
       body: JSON.stringify({
         userId: userId,
-        subscription: subscription,
-        subscriptionName: subscriptionName,
-        subscriptionType: subscriptionType
+        type: type
       })
     });
 

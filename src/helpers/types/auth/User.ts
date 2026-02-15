@@ -24,6 +24,6 @@ export type User = {
     birthday?: Date;
     bio?: string;
     profilePicture?: string;
-    pseudonym?: string;
+    username?: string;
   }
 }

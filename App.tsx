@@ -1,4 +1,3 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import dayjs from "dayjs";
@@ -12,8 +11,8 @@ import tz from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
 import { StatusBar } from "expo-status-bar";
 import * as SystemUI from 'expo-system-ui';
-import { useEffect, useRef, useState } from "react";
-import { LogBox, Text, TextInput, View } from "react-native";
+import { useEffect, useState } from "react";
+import { LogBox, Text, View } from "react-native";
 import 'react-native-get-random-values';
 import { RootSiblingParent } from 'react-native-root-siblings';
 import './firebaseConfig';
@@ -32,7 +31,6 @@ import { routes } from "./src/helpers/routes";
 import { setupAnalytics } from "./src/helpers/scripts/analytics";
 import './src/helpers/scripts/i18n/index';
 import useFonts from "./src/hooks/useFonts";
-import { usePushNotifications } from "./src/hooks/usePushNotifications";
 import { TranslationProvider } from "./src/hooks/useTranslation";
 import About from "./src/screens/About";
 import Apod from "./src/screens/Apod";
@@ -55,7 +53,9 @@ import ProfileScreen from "./src/screens/auth/Profile";
 import RegisterScreen from "./src/screens/auth/RegisterScreen";
 import { AstroGearManagementScreen } from './src/screens/auth/profile/AstroGearManagementScreen';
 import { PersonnalInfosScreen } from './src/screens/auth/profile/PersonnalInfosScreen';
+import { CamerasCrud } from './src/screens/auth/profile/gear/CamerasCrud';
 import { EyepiecesCrud } from './src/screens/auth/profile/gear/EyepiecesCrud';
+import { MountsCrud } from './src/screens/auth/profile/gear/MountsCrud';
 import { TelescopesCrud } from './src/screens/auth/profile/gear/TelescopesCrud';
 import CalculationHome from "./src/screens/calculations/CalculationHome";
 import CelestialBodyOverview from "./src/screens/celestialBodies/CelestialBodyOverview";
@@ -93,8 +93,7 @@ import SolarEclipseDetails from "./src/screens/transits/SolarEclipseDetails";
 import { SolarEclipsesScreen } from "./src/screens/transits/SolarEclipsesScreen";
 import TransitsScreen from "./src/screens/transits/TransitsScreen";
 import { loadingSplashStyles } from "./src/styles/screens/loadingSplash";
-import { CamerasCrud } from './src/screens/auth/profile/gear/CamerasCrud';
-import { MountsCrud } from './src/screens/auth/profile/gear/MountsCrud';
+import { SubscriptionManagement } from "./src/screens/auth/subscription/SubscriptionManagement";
 
 dayjs.locale('fr');
 dayjs.extend(LocalizedFormat)
@@ -256,6 +255,11 @@ export default function App() {
                                 <Stack.Screen name={routes.auth.register.path} component={RegisterScreen} />
                                 <Stack.Screen name={routes.auth.profile.home.path} component={ProfileScreen} />
                                 <Stack.Screen name={routes.auth.forgotPassword.path} component={ForgotPasswordScreen} />
+
+                                {/* SUBSCRIPTION MANAGEMENT SCREENS */}
+                                <Stack.Screen name={routes.auth.profile.subscriptionManagement.path} component={SubscriptionManagement} />
+
+                                {/* PROFILE RELATED SCREENS */}
                                 <Stack.Screen name={routes.auth.profile.personnalInfosForm.path} component={PersonnalInfosScreen} />
                                 <Stack.Screen name={routes.auth.profile.astroGearManagement.home.path} component={AstroGearManagementScreen} />
                                 <Stack.Screen name={routes.auth.profile.astroGearManagement.telescopes.crud.path} component={TelescopesCrud} />

@@ -13,14 +13,6 @@ export const DataAndSubscriptionCard = ({navigation}: any) => {
 
   const {currentUser} = useAuth()
 
-  const handleSubscriptionManagementButton = () => {
-    if(isProUser(currentUser)) {
-      navigation.navigate(routes.auth.profile.subscriptionManagement.path)
-    }else{
-      navigation.navigate(routes.sellScreen.path)
-    }
-  }
-
   return (
     <View style={profileScreenStyles.content.section}>
       <Text style={profileScreenStyles.content.section.title}>{i18n.t('auth.profile.dataAndSubscription.title')}</Text>
@@ -41,7 +33,7 @@ export const DataAndSubscriptionCard = ({navigation}: any) => {
         align="flex-start"
         icon={require('../../../../assets/icons/FiCreditCard.png')}
         text={i18n.t('auth.profile.dataAndSubscription.subscriptionManagement.title')}
-        onPress={handleSubscriptionManagementButton}
+        onPress={() => navigation.navigate(routes.auth.profile.subscriptionManagement.path)}
         iconColor={app_colors.white}
         textColor={app_colors.white}
         backgroundColor={app_colors.white_no_opacity}
