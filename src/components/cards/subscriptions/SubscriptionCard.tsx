@@ -25,18 +25,32 @@ export const SubscriptionCard = ({ type, payment, navigation }: SubscriptionCard
       const url = await downloadReceipt(payment.latest_charge)
       Linking.openURL(url)
     } else {
-      navigation.navigate(routes.auth.profile.subscriptionManagement.subscriptionDetails.path, { subscription: payment })
+      navigation.navigate(routes.auth.profile.subscriptionManagement.subscriptionDetails.path, { object: payment })
     }
   }
 
   return (
     <View style={subscriptionCardStyles.card}>
-      <SimpleBadge
-        text={i18n.t('common.paymentStatus.' + payment.status)}
-        backgroundColor={getStatusBackgroundColor(payment.status).background}
-        foregroundColor={getStatusBackgroundColor(payment.status).foreground}
-        small
-      />
+      {
+        !payment.cancel_at_period_end && (
+          <SimpleBadge
+            text={i18n.t('common.paymentStatus.' + payment.status)}
+            backgroundColor={getStatusBackgroundColor(payment.status).background}
+            foregroundColor={getStatusBackgroundColor(payment.status).foreground}
+            small
+          />
+        )
+      }
+      {
+        payment.cancel_at_period_end && (
+          <SimpleBadge
+            text={i18n.t('common.paymentStatus.cancellation_requested').replace(' ', '\n')}
+            backgroundColor={app_colors.orange_eighty}
+            foregroundColor={app_colors.white}
+            small
+          />
+        )
+      }
       {
         type === 'payment_intent' ? (
           <>

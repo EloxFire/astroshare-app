@@ -154,6 +154,7 @@ export const commonTranslations = {
     past_due: "En retard",
     requires_payment_method: "Incomplet",
     other: "Autre",
+    cancellation_requested: "Annulation demandée",
   },
   subscriptionPeriod: {
     year: "Annuel",

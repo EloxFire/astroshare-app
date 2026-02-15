@@ -1,21 +1,29 @@
-import { View, ScrollView, Text, Linking } from "react-native"
-import PageTitle from "../../../components/commons/PageTitle"
+import dayjs from "dayjs"
+import { useEffect, useState } from "react"
+import { ActivityIndicator, Linking, ScrollView, Text, View } from "react-native"
+import { PaymentIcon } from "react-native-payment-card-icons"
+import { getStatusBackgroundColor } from "../../../helpers/api/stripe/getStripeStatusColors"
+import { updatePaymentMethod } from "../../../helpers/api/stripe/updatePaymentMethod"
+import { app_colors } from "../../../helpers/constants"
 import { i18n } from "../../../helpers/scripts/i18n"
 import { globalStyles } from "../../../styles/global"
 import { subscriptionDetailsStyles } from "../../../styles/screens/profile/subscription/subscriptionDetails"
-import SimpleBadge from "../../../components/badges/SimpleBadge"
 import { subscriptionManagementStyles } from "../../../styles/screens/profile/subscription/subscriptionManagement"
-import { getStatusBackgroundColor } from "../../../helpers/api/stripe/getStripeStatusColors"
-import DSOValues from "../../../components/commons/DSOValues"
-import dayjs from "dayjs"
-import { PaymentIcon } from "react-native-payment-card-icons"
-import { app_colors } from "../../../helpers/constants"
+import SimpleBadge from "../../../components/badges/SimpleBadge"
 import SimpleButton from "../../../components/commons/buttons/SimpleButton"
-import { updatePaymentMethod } from "../../../helpers/api/stripe/updatePaymentMethod"
+import DSOValues from "../../../components/commons/DSOValues"
+import PageTitle from "../../../components/commons/PageTitle"
+import { updateSubscriptionAutoRenew } from "../../../helpers/api/stripe/updateSubscriptionAutoRenew"
 
 export const SubscriptionDetails = ({ navigation, route }: any) => {
 
-  const { subscription } = route.params
+  const { object } = route.params
+
+  const [subscription, setSubscription] = useState<any>(null)
+
+  useEffect(() => {
+    setSubscription(object)
+  }, [object])
 
   const updateCard = async () => {
     const portalUrl = await updatePaymentMethod()
@@ -24,6 +32,26 @@ export const SubscriptionDetails = ({ navigation, route }: any) => {
     } else {
       console.error('Failed to retrieve the customer portal URL');
     }
+  }
+
+  const updateRenewal = async () => {
+    const updatedSub = await updateSubscriptionAutoRenew()
+    setSubscription(null)
+    setSubscription(updatedSub)
+  }
+
+  if (!subscription) {
+    return (
+      <View style={globalStyles.body}>
+        <PageTitle
+          navigation={navigation}
+          title={i18n.t('auth.profile.dataAndSubscription.subscriptionManagement.subscriptionDetails.title')}
+          subtitle={i18n.t('auth.profile.dataAndSubscription.subscriptionManagement.subscriptionDetails.subtitle')}
+        />
+        <View style={globalStyles.screens.separator} />
+        <ActivityIndicator size="large" color={app_colors.white} style={{ marginTop: 50 }} />
+      </View>
+    )
   }
 
   return (
@@ -37,7 +65,7 @@ export const SubscriptionDetails = ({ navigation, route }: any) => {
       <ScrollView>
         <View style={[globalStyles.content, {gap: 0}]}>
           <View style={globalStyles.globalContainer}>
-            <View style={[globalStyles.row, {justifyContent: 'space-between', marginBottom: 20}]}>
+            <View style={[globalStyles.row, {justifyContent: 'space-between', marginBottom: subscription.cancel_at_period_end ? 5 : 20}]}>
               <Text style={subscriptionDetailsStyles.title}>{i18n.t(`common.subscriptionPeriod.${subscription.items.data[0].plan.nickname}`)}</Text>
               <SimpleBadge
                 text={i18n.t('common.paymentStatus.' + subscription.status)}
@@ -45,6 +73,17 @@ export const SubscriptionDetails = ({ navigation, route }: any) => {
                 foregroundColor={getStatusBackgroundColor(subscription.status).foreground}
               />
             </View>
+            {
+              subscription.cancel_at_period_end && (
+                <View style={[globalStyles.row, {justifyContent: 'space-between', marginBottom: 10}]}>
+                  <SimpleBadge
+                    text={i18n.t('common.paymentStatus.' + subscription.cancellation_details.reason)}
+                    backgroundColor={app_colors.orange_eighty}
+                    foregroundColor={app_colors.white}
+                  />
+                </View>
+              )
+            }
 
             <DSOValues
               title="Débuté le"
@@ -111,19 +150,33 @@ export const SubscriptionDetails = ({ navigation, route }: any) => {
                   fullWidth
                   align="flex-start"
                   disabled={subscription.canceled_at}
+                  onPress={() => updateRenewal()}
                 />
               )
             }
 
-            <SimpleButton
-              text="Télécharger la dernière facture"
-              icon={require('../../../../assets/icons/FiDownload.png')}
-              backgroundColor={app_colors.white}
-              textColor={app_colors.black}
-              iconColor={app_colors.black}
-              fullWidth
-              align="flex-start"
-            />
+            {
+              subscription.canceled_at && new Date(subscription.current_period_end * 1000) > new Date() && subscription.status !== 'canceled' && (
+                <SimpleButton
+                  text="Réactiver l'abonnement"
+                  icon={require('../../../../assets/icons/FiZap.png')}
+                  backgroundColor={app_colors.green_eighty}
+                  textColor={app_colors.white}
+                  iconColor={app_colors.white}
+                  fullWidth
+                  align="flex-start"
+                  disabled={!subscription.canceled_at}
+                  onPress={() => updateRenewal()}
+                />
+              )
+            }
+
+            {(subscription.canceled_at && new Date(subscription.current_period_end * 1000) <= new Date()) || subscription.status === 'canceled' && (
+              <>
+                <Text style={{ color: app_colors.white, fontSize: 14, fontFamily: 'DMMonoRegular' as 'DMMonoRegular' }}>Aucune action possible (abonnement résilié). Pour plus d'aide contactez le support Astroshare.</Text>
+                <Text style={{ color: app_colors.white, fontSize: 14, fontFamily: 'DMMonoRegular' as 'DMMonoRegular', textAlign: 'center' }}>contact@astroshare.fr</Text>
+              </>
+            )}
           </View>
 
 

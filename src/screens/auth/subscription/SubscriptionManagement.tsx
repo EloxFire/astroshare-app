@@ -15,12 +15,14 @@ import { SubscriptionCard } from "../../../components/cards/subscriptions/Subscr
 import ScreenInfo from "../../../components/ScreenInfo";
 import ProLocker from "../../../components/cards/ProLocker";
 import { routes } from "../../../helpers/routes";
+import { useIsFocused } from "@react-navigation/native";
 
 export const SubscriptionManagement = ({ navigation } : any) => {
 
   const { currentUserLocation } = useSettings();
   const { currentUser } = useAuth()
   const { currentLocale } = useTranslation()
+  const isFocused = useIsFocused()
 
   const [subscriptions, setSubscriptions] = useState<any[]>([])
   const [payments, setPayments] = useState<any[]>([])
@@ -31,8 +33,12 @@ export const SubscriptionManagement = ({ navigation } : any) => {
   }, [])
 
   useEffect(() => {
+    if (!isFocused) {
+      return
+    }
+
     retrieveCurrentSubscription()
-  }, [])
+  }, [isFocused])
 
   const retrieveCurrentSubscription = async () => {
     const accessToken = await getData(storageKeys.auth.accessToken)
@@ -114,7 +120,7 @@ export const SubscriptionManagement = ({ navigation } : any) => {
             )
           }
 
-          {/* <Text style={subscriptionManagementStyles.section.text}>{JSON.stringify(payments[0], null, 2)}</Text> */}
+          {/* <Text style={subscriptionManagementStyles.section.text}>{JSON.stringify(subscriptions[0], null, 8)}</Text> */}
 
           <ScreenInfo
             image={require('../../../../assets/icons/FiFileText.png')}
