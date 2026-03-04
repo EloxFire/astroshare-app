@@ -1,5 +1,6 @@
 import {app_colors} from "../../../helpers/constants";
 import {Dimensions, StatusBar} from "react-native";
+import Constants from "expo-constants";
 
 
 const DEFAULT_UI_BUTTON_SIZE = 50;
@@ -21,7 +22,7 @@ export const planetariumUIStyles = {
       backgroundColor: app_colors.black_modal,
       padding: 10,
       position: 'absolute' as 'absolute',
-      top: StatusBar.currentHeight!,
+      top: Constants.statusBarHeight ? Constants.statusBarHeight + 20 : 20,
       right: 65,
       zIndex: 10,
       width: 230,
@@ -60,7 +61,7 @@ export const planetariumUIStyles = {
 
     uiButton: {
       position: 'absolute' as 'absolute',
-      top: StatusBar.currentHeight!,
+      top: Constants.statusBarHeight ? Constants.statusBarHeight + 20 : 20,
       right: 10,
       display: 'flex' as 'flex',
       flexDirection: 'row' as 'row',
@@ -92,22 +93,21 @@ export const planetariumUIStyles = {
       },
 
       search: {
-        top: StatusBar.currentHeight! + DEFAULT_UI_BUTTON_SIZE + DEFAULT_UI_BUTTON_GAP,
+        top: Constants.statusBarHeight ? Constants.statusBarHeight + DEFAULT_UI_BUTTON_SIZE + DEFAULT_UI_BUTTON_GAP : DEFAULT_UI_BUTTON_SIZE + DEFAULT_UI_BUTTON_GAP,
       },
 
       timeline: {
-        top: StatusBar.currentHeight! + (DEFAULT_UI_BUTTON_SIZE + DEFAULT_UI_BUTTON_GAP) * 2,
+        top: Constants.statusBarHeight ? Constants.statusBarHeight + (DEFAULT_UI_BUTTON_SIZE + DEFAULT_UI_BUTTON_GAP) * 2 : (DEFAULT_UI_BUTTON_SIZE + DEFAULT_UI_BUTTON_GAP) * 2,
       },
 
       followObject: {
-        top: StatusBar.currentHeight! + (DEFAULT_UI_BUTTON_SIZE + DEFAULT_UI_BUTTON_GAP) * 3,
+        top: Constants.statusBarHeight ? Constants.statusBarHeight + (DEFAULT_UI_BUTTON_SIZE + DEFAULT_UI_BUTTON_GAP) * 3 : (DEFAULT_UI_BUTTON_SIZE + DEFAULT_UI_BUTTON_GAP) * 3,
       }
     },
 
     searchContainer: {
       position: 'absolute' as 'absolute',
-      // top: StatusBar.currentHeight! + DEFAULT_UI_BUTTON_SIZE * 2 + DEFAULT_UI_BUTTON_PADDING * 2 + DEFAULT_UI_BUTTON_GAP,
-      top: StatusBar.currentHeight! + DEFAULT_UI_BUTTON_SIZE + DEFAULT_UI_BUTTON_PADDING + DEFAULT_UI_BUTTON_GAP,
+      top: Constants.statusBarHeight ? Constants.statusBarHeight + DEFAULT_UI_BUTTON_SIZE + DEFAULT_UI_BUTTON_PADDING + DEFAULT_UI_BUTTON_GAP : DEFAULT_UI_BUTTON_SIZE + DEFAULT_UI_BUTTON_PADDING + DEFAULT_UI_BUTTON_GAP,
       right: Dimensions.get('window').width / 2 - ((Dimensions.get('window').width - 20) / 2),
       zIndex: 9,
       width: Dimensions.get('window').width - 20,

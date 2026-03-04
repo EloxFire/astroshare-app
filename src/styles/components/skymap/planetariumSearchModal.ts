@@ -1,5 +1,6 @@
 import {app_colors} from "../../../helpers/constants";
 import {StatusBar} from "react-native";
+import Constants from "expo-constants";
 
 export const planetariumSearchModalStyles = {
   modal: {
@@ -14,7 +15,7 @@ export const planetariumSearchModalStyles = {
     display: "flex" as "flex",
     flexDirection: "column" as "column",
 
-    paddingTop: StatusBar.currentHeight!,
+    paddingTop: Constants.statusBarHeight ? Constants.statusBarHeight + 20 : 20,
 
     header: {
       display: "flex" as "flex",

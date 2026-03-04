@@ -1,12 +1,13 @@
 import { StatusBar } from "react-native";
 import { app_colors } from "../helpers/constants";
+import Constants from "expo-constants";
 
 export const globalStyles = {
   body: {
     backgroundColor: app_colors.black,
     color: app_colors.white,
     paddingHorizontal: 10,
-    paddingTop: StatusBar.currentHeight ? StatusBar.currentHeight + 20 : 20,
+    paddingTop: Constants.statusBarHeight ? Constants.statusBarHeight + 20 : 20,
     height: "100%" as "100%",
   },
   input: {

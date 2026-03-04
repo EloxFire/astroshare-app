@@ -3,7 +3,7 @@ import { app_colors } from "../../../helpers/constants";
 export const resourceDetailsStyles = {
   page: {
     paddingHorizontal: 0,
-    // paddingTop: StatusBar.currentHeight ? StatusBar.currentHeight + 20 : 20,
+    // paddingTop: StatusBar.currentHeight ? StatusBar.currentHeight + 20 : 20, --- IGNORE : WANTED EFFECT ---
     paddingTop: 0
   },
 

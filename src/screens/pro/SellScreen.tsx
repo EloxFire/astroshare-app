@@ -26,6 +26,7 @@ import {useSettings} from "../../contexts/AppSettingsContext";
 import {sendAnalyticsEvent} from "../../helpers/scripts/analytics";
 import {eventTypes} from "../../helpers/constants/analytics";
 import { createStripeOneTimePayment } from '../../helpers/api/stripe/createStripeOneTimePayment';
+import Constants from 'expo-constants';
 
 export default function SellScreen({ navigation }: any) {
 
@@ -159,7 +160,7 @@ export default function SellScreen({ navigation }: any) {
       urlScheme={"astroshare://"}
     >
       <View style={[globalStyles.body, {paddingTop: 0, paddingHorizontal: 0}]}>
-        <ScrollView contentContainerStyle={{paddingHorizontal: 10, paddingTop: StatusBar.currentHeight ? StatusBar.currentHeight + 20 : 20}}>
+        <ScrollView contentContainerStyle={{paddingHorizontal: 10, paddingTop: Constants.statusBarHeight ? Constants.statusBarHeight + 20 : 20}}>
           <Image style={sellScreenStyles.backgroundImage} source={require('../../../assets/images/tools/resources.png')}/>
           <LinearGradient
             // Background Linear Gradient
