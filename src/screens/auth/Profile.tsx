@@ -33,55 +33,6 @@ export default function ProfileScreen({ navigation }: any) {
     navigation.push(routes.home.path)
   }
 
-  // const handleCancelSubscription = async () => {
-  //   try {
-  //     await fetch(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/stripe/cancel-subscription-at-period-end`, {
-  //       method: 'POST',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //         'Authorization': process.env.EXPO_PUBLIC_ADMIN_KEY,
-  //       },
-  //       body: JSON.stringify({
-  //         userId: currentUser.uid,
-  //         subscriptionId: currentUser.subscriptionId
-  //       })
-  //     });
-
-  //     await updateCurrentUser()
-
-  //     showToast({ message: "Annulation de l'abonnement réussie", type: 'success', duration: 3000 })
-  //   } catch (e) {
-  //     console.log('[Auth] Error cancelling subscription:', e)
-  //     showToast({ message: "Erreur d'annulation de l'abonnement, veuillez contacter le support", type: 'error', duration: 5000 })
-  //     return;
-  //   }
-  // }
-
-  // const handleRestoreSubscription = async () => {
-  //   try {
-  //     await fetch(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/stripe/restore-subscription`, {
-  //       method: 'POST',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //         'Authorization': process.env.EXPO_PUBLIC_ADMIN_KEY,
-  //       },
-  //       body: JSON.stringify({
-  //         userId: currentUser.uid
-  //       })
-  //     });
-
-  //     await updateCurrentUser()
-
-  //     showToast({ message: "Renouvellement automatique de l'abonnement réactivé", type: 'success', duration: 3000 })
-  //   } catch (e) {
-  //     console.log('[Auth] Error restoring subscription:', e)
-  //     showToast({ message: "Erreur de restauration de l'abonnement, veuillez contacter le support", type: 'error', duration: 5000 })
-  //     return;
-  //   }
-  // }
-
-
-
   if(!currentUser) return (<></>)
 
   return (

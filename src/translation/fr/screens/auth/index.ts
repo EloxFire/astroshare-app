@@ -105,7 +105,7 @@ export const authScreensTranslations = {
         title: "Mes informations",
       },
       addresses: {
-        title: "Gestion de mes adresses d'observation",
+        title: "Mes adresses d'observation",
       },
       gear: {
         title: "Mon matériel astro",

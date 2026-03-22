@@ -77,6 +77,10 @@ export const storageKeys = {
   favouriteStars: 'favouriteStars',
   homeWidgets: 'selectedHomeWidget',
   checklists: 'checklists',
+  observatories: {
+    list: 'observatoriesList',
+    selected: 'selectedObservatory',
+  },
   launches: {
     lastUpdate: 'launchesLastUpdate',
     data: 'launchesData',

@@ -3,6 +3,8 @@ export const apodTranslations = {
   copyrights: "Credits",
   explanation: "Description",
   errors: {
+    invalidVideoUrl: "Unsupported video URL",
+    redirectUrl: "Open the original video",
     unsupportedMediaType: "This type of media is not supported.",
     timeout: "NASA's service is currently unavailable, please try again later.",
     disclaimer: "The APOD service is currently unavailable due to the U.S. government shutdown.",
