@@ -20,7 +20,7 @@ export const skymapTranslations = {
     },
     moon: {
       title: "Carte détaillée de la Lune",
-      subtitle: "// Carte 3D interactive et 2D"
+      subtitle: "// Bientôt disponible !"
     }
   },
   info: "Utilisez nos cartes du ciel pour vous repérer et explorer la voûte céleste.",

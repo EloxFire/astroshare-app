@@ -20,7 +20,7 @@ export const skymapTranslations = {
     },
     moon: {
       title: "Detailed Moon map",
-      subtitle: "// Interactive 3D and 2D map"
+      subtitle: "// Coming soon !"
     }
   },
   info: "Use our skymaps to locate yourself and explore the night sky.",
