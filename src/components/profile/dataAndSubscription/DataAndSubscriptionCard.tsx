@@ -16,7 +16,7 @@ export const DataAndSubscriptionCard = ({navigation}: any) => {
   return (
     <View style={profileScreenStyles.content.section}>
       <Text style={profileScreenStyles.content.section.title}>{i18n.t('auth.profile.dataAndSubscription.title')}</Text>
-      <SimpleButton
+      {/* <SimpleButton
         fullWidth
         withArrow
         align="flex-start"
@@ -26,7 +26,7 @@ export const DataAndSubscriptionCard = ({navigation}: any) => {
         iconColor={app_colors.white}
         textColor={app_colors.white}
         backgroundColor={app_colors.white_no_opacity}
-      />
+      /> */}
       <SimpleButton
         fullWidth
         withArrow
