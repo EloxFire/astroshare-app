@@ -17,8 +17,7 @@ import { eventTypes } from "../../helpers/constants/analytics";
 
 export default function LoginScreen({ navigation }: any) {
 
-  const {loginUser} = useAuth()
-  const {currentUser} = useAuth()
+  const { loginUser, currentUser } = useAuth()
   const { currentLocale } = useTranslation()
   const { currentUserLocation } = useSettings()
 

@@ -61,7 +61,7 @@ export const planetariumUIStyles = {
 
     uiButton: {
       position: 'absolute' as 'absolute',
-      top: Constants.statusBarHeight ? Constants.statusBarHeight + 20 : 20,
+      top: Constants.statusBarHeight ? Constants.statusBarHeight + DEFAULT_UI_BUTTON_GAP : DEFAULT_UI_BUTTON_SIZE + DEFAULT_UI_BUTTON_GAP,
       right: 10,
       display: 'flex' as 'flex',
       flexDirection: 'row' as 'row',
@@ -97,11 +97,11 @@ export const planetariumUIStyles = {
       },
 
       timeline: {
-        top: Constants.statusBarHeight ? Constants.statusBarHeight + (DEFAULT_UI_BUTTON_SIZE + DEFAULT_UI_BUTTON_GAP) * 2 : (DEFAULT_UI_BUTTON_SIZE + DEFAULT_UI_BUTTON_GAP) * 2,
+        top: Constants.statusBarHeight ? Constants.statusBarHeight + DEFAULT_UI_BUTTON_SIZE * 2 + DEFAULT_UI_BUTTON_GAP : DEFAULT_UI_BUTTON_SIZE * 2 + DEFAULT_UI_BUTTON_GAP,
       },
 
       followObject: {
-        top: Constants.statusBarHeight ? Constants.statusBarHeight + (DEFAULT_UI_BUTTON_SIZE + DEFAULT_UI_BUTTON_GAP) * 3 : (DEFAULT_UI_BUTTON_SIZE + DEFAULT_UI_BUTTON_GAP) * 3,
+        top: Constants.statusBarHeight ? Constants.statusBarHeight + DEFAULT_UI_BUTTON_SIZE * 3 + DEFAULT_UI_BUTTON_GAP : DEFAULT_UI_BUTTON_SIZE * 3 + DEFAULT_UI_BUTTON_GAP,
       }
     },
 
