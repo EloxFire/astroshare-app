@@ -1,7 +1,7 @@
 import * as THREE from 'three';
-import * as ExpoTHREE from "expo-three";
 import {meshGroupsNames, planetariumRenderOrders} from "./utils/planetariumSettings";
 import {PlanetariumLoadingReporter} from "./utils/loadingReporter";
+import {loadBundledTextureAsync} from "./utils/loadBundledTextureAsync";
 
 export const createBackground = async (reportLoading?: PlanetariumLoadingReporter): Promise<THREE.Mesh> => {
   console.log("[GLView] Creating MilkyWay background...");
@@ -12,7 +12,7 @@ export const createBackground = async (reportLoading?: PlanetariumLoadingReporte
     status: 'active',
   });
 
-  const texture = await ExpoTHREE.loadAsync(require('../../../../assets/images/textures/milkyway.png'));
+  const texture = await loadBundledTextureAsync(require('../../../../assets/images/textures/milkyway.png'));
   reportLoading?.({
     stepId: 'background',
     title: 'Background dome',

@@ -1123,6 +1123,7 @@ export default function Planetarium({ route, navigation }: any) {
               <ScrollView
                 style={planetariumStyles.loadingContent}
                 contentContainerStyle={planetariumStyles.loadingContentInner}
+                showsVerticalScrollIndicator={true}
               >
                 <View>
                   {loadingSteps.map((step, index) => {

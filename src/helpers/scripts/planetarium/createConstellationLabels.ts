@@ -1,10 +1,10 @@
 import * as THREE from 'three';
-import * as ExpoTHREE from 'expo-three';
 import { constellationsAsterisms } from '../astro/constellationsAsterisms';
 import { convertSphericalToCartesian } from './utils/convertSphericalToCartesian';
 import { constellationsImages, constellationsLabelImages } from '../loadImages';
 import { meshGroupsNames, planetariumRenderOrders } from './utils/planetariumSettings';
 import {PlanetariumLoadingReporter} from './utils/loadingReporter';
+import {loadBundledTextureAsync} from './utils/loadBundledTextureAsync';
 
 const DEFAULT_BASE_FOV = 75;
 const DEFAULT_LABEL_HEIGHT = 0.10;
@@ -43,7 +43,7 @@ export const createConstellationLabels = async (
     }
     const textureSource = constellationsLabelImages[abbreviation] ?? constellationsImages.OTHER;
 
-    const texture = await ExpoTHREE.loadAsync(textureSource);
+    const texture = await loadBundledTextureAsync(textureSource);
     texture.minFilter = THREE.LinearFilter;
     texture.magFilter = THREE.LinearFilter;
 

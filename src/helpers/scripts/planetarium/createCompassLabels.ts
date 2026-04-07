@@ -1,11 +1,11 @@
 import * as THREE from 'three';
-import * as ExpoTHREE from 'expo-three';
 import {convertEquatorialToHorizontal, convertHorizontalToEquatorial} from '@observerly/astrometry';
 import {LocationObject} from '../../types/LocationObject';
 import {convertSphericalToCartesian} from './utils/convertSphericalToCartesian';
 import {meshGroupsNames, planetariumRenderOrders} from './utils/planetariumSettings';
 import {Polaris} from '../../constants';
 import {PlanetariumLoadingReporter} from './utils/loadingReporter';
+import {loadBundledTextureAsync} from './utils/loadBundledTextureAsync';
 
 type CardinalLetter = 'N' | 'E' | 'S' | 'W';
 
@@ -95,7 +95,7 @@ export async function createCompassLabels(
       detail: `Loading ${letter} compass marker`,
       status: 'active',
     });
-    const texture = await ExpoTHREE.loadAsync(file);
+    const texture = await loadBundledTextureAsync(file);
     const material = new THREE.SpriteMaterial({
       map: texture,
       transparent: true,

@@ -5,6 +5,8 @@ node_modules/
 
 docs/
 
+.codex
+
 # production
 android/
 ios/
