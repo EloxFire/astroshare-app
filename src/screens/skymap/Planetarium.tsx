@@ -1,5 +1,5 @@
 import React, {useState, useRef, useEffect, useCallback} from 'react';
-import {ActivityIndicator, StatusBar, Text, View} from 'react-native';
+import {ActivityIndicator, Dimensions, ScrollView, StatusBar, Text, View} from 'react-native';
 import { planetariumStyles } from '../../styles/screens/skymap/planetarium';
 import {ComposedGesture, ExclusiveGesture, Gesture, GestureDetector, GestureHandlerRootView, GestureStateChangeEvent, GestureTouchEvent, GestureUpdateEvent, PanGestureChangeEventPayload, PanGestureHandlerEventPayload, SimultaneousGesture, TapGestureHandlerEventPayload} from 'react-native-gesture-handler';
 import { ExpoWebGLRenderingContext, GLView } from 'expo-gl';
@@ -59,6 +59,10 @@ import {
 } from "@observerly/astrometry";
 import {moonIcons} from "../../helpers/scripts/loadImages";
 import {convertHorizontalToEquatorial} from "@observerly/astrometry";
+import {
+  PlanetariumLoadingEvent,
+  PlanetariumLoadingStatus
+} from "../../helpers/scripts/planetarium/utils/loadingReporter";
 
 type PlanetariumSelectableObject = Star | GlobalPlanet | DSO | {
   family: 'Sun' | 'Moon';
@@ -71,6 +75,65 @@ type PlanetariumSelectableObject = Star | GlobalPlanet | DSO | {
 };
 
 type MoonDetails = EquatorialCoordinate & HorizontalCoordinate & { phase: string; currentIconUrl?: string };
+type PlanetariumLoadingStepState = {
+  title: string;
+  detail: string;
+  status: PlanetariumLoadingStatus;
+};
+
+const PLANETARIUM_LOADING_STEP_DEFINITIONS = [
+  { id: 'scene', title: 'Scene bootstrap', pendingDetail: 'Waiting for the GL context' },
+  { id: 'background', title: 'Background dome', pendingDetail: 'Milky Way texture not started yet' },
+  { id: 'ground', title: 'Horizon mask', pendingDetail: 'Ground dome not started yet' },
+  { id: 'atmosphere', title: 'Atmosphere shader', pendingDetail: 'Atmosphere setup not started yet' },
+  { id: 'constellations', title: 'Constellation overlays', pendingDetail: 'Constellation overlays not started yet' },
+  { id: 'compass', title: 'Compass labels', pendingDetail: 'Compass labels not started yet' },
+  { id: 'stars', title: 'Star field', pendingDetail: 'Star catalog not started yet' },
+  { id: 'planets', title: 'Planets', pendingDetail: 'Planet meshes not started yet' },
+  { id: 'moon', title: 'Moon', pendingDetail: 'Moon mesh not started yet' },
+  { id: 'sun', title: 'Sun', pendingDetail: 'Sun mesh not started yet' },
+  { id: 'dso', title: 'Deep-sky objects', pendingDetail: 'DSO meshes not started yet' },
+  { id: 'grids', title: 'Coordinate grids', pendingDetail: 'Sky grids not started yet' },
+  { id: 'finalize', title: 'Final assembly', pendingDetail: 'Scene graph not assembled yet' },
+] as const;
+
+const createInitialLoadingStepsState = (): Record<string, PlanetariumLoadingStepState> =>
+  PLANETARIUM_LOADING_STEP_DEFINITIONS.reduce((acc, step) => {
+    acc[step.id] = {
+      title: step.title,
+      detail: step.pendingDetail,
+      status: 'pending',
+    };
+    return acc;
+  }, {} as Record<string, PlanetariumLoadingStepState>);
+
+const getLoadingBadgeLabel = (status: PlanetariumLoadingStatus) => {
+  switch (status) {
+    case 'done':
+      return 'DONE';
+    case 'active':
+      return 'LIVE';
+    case 'error':
+      return 'ERROR';
+    default:
+      return 'WAIT';
+  }
+};
+
+const getTranslatedLoadingStepText = (
+  stepId: string,
+  status: PlanetariumLoadingStatus,
+  field: 'title' | 'detail',
+  fallbackValue: string
+) => {
+  const statusKey = getLoadingBadgeLabel(status);
+  return i18n.t(`skymap.planetarium.loading.steps.${stepId}.${statusKey}.${field}`, {
+    defaultValue: fallbackValue,
+  });
+};
+
+const PLANETARIUM_MIN_LOADING_MS = 1400;
+const PLANETARIUM_SUCCESS_HOLD_MS = 700;
 
 const buildComputedObjectInfosFromSun = (sunData: ComputedSunInfos): ComputedObjectInfos => {
   const visibilityBadge = {
@@ -150,6 +213,12 @@ export default function Planetarium({ route, navigation }: any) {
   const groundTotalQuaternionRef = useRef<THREE.Quaternion | null>(null);
 
   const [planetariumLoading, setPlanetariumLoading] = useState<boolean>(true);
+  const [planetariumLoadingError, setPlanetariumLoadingError] = useState<string | null>(null);
+  const activeLoadingStepRef = useRef<string>(PLANETARIUM_LOADING_STEP_DEFINITIONS[0].id);
+  const [loadingStepsState, setLoadingStepsState] = useState<Record<string, PlanetariumLoadingStepState>>(
+    createInitialLoadingStepsState
+  );
+  const [loadingActivity, setLoadingActivity] = useState<PlanetariumLoadingEvent[]>([]);
   const [glViewParams, setGlViewParams] = useState<any>({width: 0, height: 0});
   const [objectInfos, setObjectInfos] = useState<PlanetariumSelectableObject | null>(null);
   const [computedObjectInfos, setComputedObjectInfos] = useState<ComputedObjectInfos | null>(null);
@@ -166,6 +235,40 @@ export default function Planetarium({ route, navigation }: any) {
 
   const normalizeKey = useCallback((value: string | number | undefined | null) => `${value ?? ''}`.toLowerCase().replace(/[^a-z0-9]/g, ''), []);
   const toggleFollow = useCallback(() => setFollowSelection((prev) => !prev), []);
+  const resetLoadingState = useCallback(() => {
+    activeLoadingStepRef.current = PLANETARIUM_LOADING_STEP_DEFINITIONS[0].id;
+    setPlanetariumLoadingError(null);
+    setLoadingStepsState(createInitialLoadingStepsState());
+    setLoadingActivity([]);
+  }, []);
+  const handleLoadingEvent = useCallback((event: PlanetariumLoadingEvent) => {
+    if (event.status === 'active' || event.status === 'error') {
+      activeLoadingStepRef.current = event.stepId;
+    }
+
+    setLoadingStepsState((prev) => ({
+      ...prev,
+      [event.stepId]: {
+        title: event.title,
+        detail: event.detail,
+        status: event.status,
+      },
+    }));
+
+    setLoadingActivity((prev) => {
+      const last = prev[prev.length - 1];
+      if (
+        last &&
+        last.stepId === event.stepId &&
+        last.status === event.status &&
+        last.detail === event.detail
+      ) {
+        return prev;
+      }
+
+      return [...prev, event].slice(-6);
+    });
+  }, []);
 
   const buildDsoMeshKey = useCallback((dso: DSO) => {
     const digits = (input: string | number | undefined | null) => `${input ?? ''}`.replace(/\D/g, '');
@@ -778,69 +881,103 @@ export default function Planetarium({ route, navigation }: any) {
   }, [resolveSelectableObject, route?.params?.defaultObject, starsCatalog]);
 
   const _onContextCreate = async (gl: ExpoWebGLRenderingContext) => {
+    const loadingStartedAt = Date.now();
+    setPlanetariumLoading(true);
+    resetLoadingState();
     const observer = {latitude: currentUserLocation.lat, longitude: currentUserLocation.lon};
     const sunData = sunDataAtDate ?? getSunData(referenceDate, observer);
     const zenithEq = convertHorizontalToEquatorial(referenceDate.toDate(), observer, { alt: 90, az: 0 });
     const initialZenithVec = convertSphericalToCartesian(1, zenithEq.ra, zenithEq.dec).normalize();
     zenithDirectionRef.current = initialZenithVec;
+    const visibleStars = starsCatalog.filter((star: Star) => star.V < 6);
 
-    const {scene, camera, renderer, ground, selectionCircle, atmosphere, grids, compassLabels, quaternions} = await initScene(
-      gl,
-      currentUserLocation,
-      starsCatalog.filter((star: Star) => star.V < 6),
-      planetsAtDate,
-      moonAtDate,
-      () => dsoCatalogRef.current,
-      sunData,
-      setObjectInfos,
-      currentLocale,
-      observer,
-      referenceDate
-    );
-    sceneRef.current = scene;
-    cameraRef.current = camera;
-    rendererRef.current = renderer;
-    groundRef.current = ground;
-    atmosphereRef.current = atmosphere;
-    selectionCircleRef.current = selectionCircle;
-    azGridRef.current = grids.azGrid;
-    eqGridRef.current = grids.eqGrid;
-    compassLabelsRef.current = compassLabels;
-    constellationLabelsRef.current = scene.getObjectByName(meshGroupsNames.constellationLabels) as THREE.Group | null;
-    groundTotalQuaternionRef.current = quaternions.groundTotalQuaternion;
+    try {
+      const {scene, camera, renderer, ground, selectionCircle, atmosphere, grids, compassLabels, quaternions} = await initScene(
+        gl,
+        currentUserLocation,
+        visibleStars,
+        planetsAtDate,
+        moonAtDate,
+        () => dsoCatalogRef.current,
+        sunData,
+        setObjectInfos,
+        currentLocale,
+        observer,
+        referenceDate,
+        handleLoadingEvent
+      );
+      sceneRef.current = scene;
+      cameraRef.current = camera;
+      rendererRef.current = renderer;
+      groundRef.current = ground;
+      atmosphereRef.current = atmosphere;
+      selectionCircleRef.current = selectionCircle;
+      azGridRef.current = grids.azGrid;
+      eqGridRef.current = grids.eqGrid;
+      compassLabelsRef.current = compassLabels;
+      constellationLabelsRef.current = scene.getObjectByName(meshGroupsNames.constellationLabels) as THREE.Group | null;
+      groundTotalQuaternionRef.current = quaternions.groundTotalQuaternion;
 
-    updateAtmosphereAndVisibility(sunData);
-    setGlViewParams({width: gl.drawingBufferWidth, height: gl.drawingBufferHeight});
-    setPlanetariumLoading(false);
+      updateAtmosphereAndVisibility(sunData);
+      setGlViewParams({width: gl.drawingBufferWidth, height: gl.drawingBufferHeight});
+      handleLoadingEvent({
+        stepId: 'finalize',
+        title: 'Final assembly',
+        detail: 'Renderer ready, entering interactive mode',
+        status: 'done',
+      });
 
-    const animate = () => {
+      const elapsedLoadingMs = Date.now() - loadingStartedAt;
+      const remainingMinimumMs = Math.max(0, PLANETARIUM_MIN_LOADING_MS - elapsedLoadingMs);
+      const successHoldMs = remainingMinimumMs + PLANETARIUM_SUCCESS_HOLD_MS;
 
-      requestAnimationFrame(animate);
-
-      if (inertiaEnabled) {
-        applyInertia(cameraRef, groundRef, gl.drawingBufferWidth);
+      if (successHoldMs > 0) {
+        await new Promise((resolve) => setTimeout(resolve, successHoldMs));
       }
 
-      if (selectionCircleRef.current?.visible && selectionCircleRef.current.userData?.baseScale) {
-        const pulse = 1 + 0.06 * Math.sin(performance.now() * 0.006);
-        const { x, y, z } = selectionCircleRef.current.userData.baseScale;
-        selectionCircleRef.current.scale.set(x * pulse, y * pulse, z * pulse);
-      }
+      setPlanetariumLoading(false);
 
-      if (constellationLabelsRef.current && cameraRef.current) {
-        updateConstellationLabelSizes(constellationLabelsRef.current, cameraRef.current, {
-          zenithDirection: zenithDirectionRef.current,
-          groundVisible: groundRef.current?.visible,
-        });
-      }
+      const animate = () => {
 
-      if (rendererRef.current && sceneRef.current && cameraRef.current) {
-        rendererRef.current.render(sceneRef.current, cameraRef.current);
-        gl.endFrameEXP(); // Required for Expo's GL context
-      }
-    };
+        requestAnimationFrame(animate);
 
-    animate();
+        if (inertiaEnabled) {
+          applyInertia(cameraRef, groundRef, gl.drawingBufferWidth);
+        }
+
+        if (selectionCircleRef.current?.visible && selectionCircleRef.current.userData?.baseScale) {
+          const pulse = 1 + 0.06 * Math.sin(performance.now() * 0.006);
+          const { x, y, z } = selectionCircleRef.current.userData.baseScale;
+          selectionCircleRef.current.scale.set(x * pulse, y * pulse, z * pulse);
+        }
+
+        if (constellationLabelsRef.current && cameraRef.current) {
+          updateConstellationLabelSizes(constellationLabelsRef.current, cameraRef.current, {
+            zenithDirection: zenithDirectionRef.current,
+            groundVisible: groundRef.current?.visible,
+          });
+        }
+
+        if (rendererRef.current && sceneRef.current && cameraRef.current) {
+          rendererRef.current.render(sceneRef.current, cameraRef.current);
+          gl.endFrameEXP(); // Required for Expo's GL context
+        }
+      };
+
+      animate();
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown initialization error';
+      const failedStepId = activeLoadingStepRef.current || PLANETARIUM_LOADING_STEP_DEFINITIONS[0].id;
+      const failedStep = PLANETARIUM_LOADING_STEP_DEFINITIONS.find((step) => step.id === failedStepId);
+      handleLoadingEvent({
+        stepId: failedStepId,
+        title: failedStep?.title ?? 'Planetarium loading',
+        detail: errorMessage,
+        status: 'error',
+      });
+      setPlanetariumLoadingError(errorMessage);
+      console.error('[Planetarium] Failed to initialize scene', error);
+    }
   };
 
   useEffect(() => {
@@ -884,6 +1021,16 @@ export default function Planetarium({ route, navigation }: any) {
   const movementGestures: SimultaneousGesture = Gesture.Simultaneous(panGesture, pinchGesture);
   const actionGestures: ExclusiveGesture = Gesture.Exclusive(tapGesture);
   const composedGestures: ComposedGesture = Gesture.Race(movementGestures, actionGestures)
+  const loadingSteps = PLANETARIUM_LOADING_STEP_DEFINITIONS.map((step) => ({
+    id: step.id,
+    ...loadingStepsState[step.id],
+  }));
+  const completedLoadingSteps = loadingSteps.filter((step) => step.status === 'done').length;
+  const loadingProgress = loadingSteps.length === 0 ? 0 : completedLoadingSteps / loadingSteps.length;
+  const loadingHeadline = planetariumLoadingError
+    ? planetariumLoadingError
+    : i18n.t('skymap.planetarium.loading.subtitle');
+  const recentLoadingActivity = [...loadingActivity].reverse();
 
   return (
     <GestureHandlerRootView>
@@ -936,17 +1083,115 @@ export default function Planetarium({ route, navigation }: any) {
               }}
           />
       }
-      <GestureDetector gesture={composedGestures}>
-        <View style={planetariumStyles.container}>
-          <GLView style={{ flex: 1 }} onContextCreate={_onContextCreate} />
-          {planetariumLoading && (
-            <View style={planetariumStyles.loadingScreen}>
+      <View style={planetariumStyles.container}>
+        <GestureDetector gesture={composedGestures}>
+          <View style={{ flex: 1 }}>
+            <GLView style={{ flex: 1 }} onContextCreate={_onContextCreate} />
+          </View>
+        </GestureDetector>
+        {planetariumLoading && (
+          <View style={planetariumStyles.loadingScreen}>
+            <View style={planetariumStyles.loadingPanel}>
               <ActivityIndicator size="large" color={app_colors.white} />
-              <Text style={{ color: app_colors.white }}>Loading...</Text>
+              <Text style={planetariumStyles.loadingTitle}>{i18n.t('skymap.planetarium.loading.title')}</Text>
+              <Text
+                style={[
+                  planetariumStyles.loadingSubtitle,
+                  planetariumLoadingError ? planetariumStyles.loadingErrorText : null,
+                ]}
+              >
+                {planetariumLoadingError ? i18n.t('skymap.planetarium.loading.failedTitle') : loadingHeadline}
+              </Text>
+              <Text style={[planetariumStyles.loadingProgressMeta, {marginTop: 10}]}>
+                {i18n.t('skymap.planetarium.loading.progressMeta', { progress: Math.round(loadingProgress * 100) })}
+              </Text>
+              <Text style={[planetariumStyles.loadingProgressMeta, {marginBottom: 10}]}>
+                {i18n.t('skymap.planetarium.loading.completedSteps', { completed: completedLoadingSteps, total: loadingSteps.length })}
+              </Text>
+              <View style={planetariumStyles.loadingProgressTrack}>
+              <View
+                style={[
+                  planetariumStyles.loadingProgressFill,
+                    {
+                      width: `${Math.max(8, Math.round(loadingProgress * 100))}%`,
+                      backgroundColor: planetariumLoadingError ? app_colors.red : app_colors.green_eighty,
+                    },
+                  ]}
+                />
+              </View>
+              <Text style={planetariumStyles.loadingSectionTitle}>{i18n.t('skymap.planetarium.loading.detailedSteps')}</Text>
+              <ScrollView
+                style={planetariumStyles.loadingContent}
+                contentContainerStyle={planetariumStyles.loadingContentInner}
+              >
+                <View>
+                  {loadingSteps.map((step, index) => {
+                    const rowStyles = [
+                      planetariumStyles.loadingStepRow,
+                      index === 0 ? planetariumStyles.loadingStepRowFirst : null,
+                      step.status === 'active' ? planetariumStyles.loadingStepRowActive : null,
+                      step.status === 'done' ? planetariumStyles.loadingStepRowDone : null,
+                      step.status === 'error' ? planetariumStyles.loadingStepRowError : null,
+                    ];
+                    const badgeStyles = [
+                      planetariumStyles.loadingBadge,
+                      step.status === 'active' ? planetariumStyles.loadingBadgeActive : null,
+                      step.status === 'done' ? planetariumStyles.loadingBadgeDone : null,
+                      step.status === 'error' ? planetariumStyles.loadingBadgeError : null,
+                    ];
+
+                    return (
+                      <View key={step.id} style={rowStyles}>
+                        <View style={planetariumStyles.loadingStepHeader}>
+                          <Text style={planetariumStyles.loadingStepTitle}>
+                            {getTranslatedLoadingStepText(step.id, step.status, 'title', step.title)}
+                          </Text>
+                          <View style={badgeStyles}>
+                            <Text style={planetariumStyles.loadingBadgeText}>
+                              {i18n.t(`skymap.planetarium.loading.badges.${getLoadingBadgeLabel(step.status)}`, {
+                                defaultValue: getLoadingBadgeLabel(step.status),
+                              })}
+                            </Text>
+                          </View>
+                        </View>
+                        <Text
+                          style={[
+                            planetariumStyles.loadingStepDetail,
+                            step.status === 'error' ? planetariumStyles.loadingErrorText : null,
+                          ]}
+                        >
+                          {step.status === 'error' && planetariumLoadingError
+                            ? planetariumLoadingError
+                            : getTranslatedLoadingStepText(step.id, step.status, 'detail', step.detail)}
+                        </Text>
+                      </View>
+                    );
+                  })}
+                </View>
+
+                {/* <View style={planetariumStyles.loadingSection}>
+                  <Text style={planetariumStyles.loadingSectionTitle}>{i18n.t('skymap.planetarium.loading.liveActivity')}</Text>
+                  {recentLoadingActivity.map((event, index) => (
+                    <Text
+                      key={`${event.stepId}-${event.status}-${event.detail}-${index}`}
+                      style={[
+                        planetariumStyles.loadingActivityRow,
+                        index === 0 ? planetariumStyles.loadingActivityRowFirst : null,
+                        event.status === 'error' ? planetariumStyles.loadingErrorText : null,
+                      ]}
+                    >
+                      {getTranslatedLoadingStepText(event.stepId, event.status, 'title', event.title)}: {' '}
+                      {event.status === 'error' && planetariumLoadingError
+                        ? planetariumLoadingError
+                        : getTranslatedLoadingStepText(event.stepId, event.status, 'detail', event.detail)}
+                    </Text>
+                  ))}
+                </View> */}
+              </ScrollView>
             </View>
-          )}
-        </View>
-      </GestureDetector>
+          </View>
+        )}
+      </View>
     </GestureHandlerRootView>
   );
 }

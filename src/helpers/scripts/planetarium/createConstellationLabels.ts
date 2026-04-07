@@ -4,24 +4,43 @@ import { constellationsAsterisms } from '../astro/constellationsAsterisms';
 import { convertSphericalToCartesian } from './utils/convertSphericalToCartesian';
 import { constellationsImages, constellationsLabelImages } from '../loadImages';
 import { meshGroupsNames, planetariumRenderOrders } from './utils/planetariumSettings';
+import {PlanetariumLoadingReporter} from './utils/loadingReporter';
 
 const DEFAULT_BASE_FOV = 75;
 const DEFAULT_LABEL_HEIGHT = 0.10;
 
 export const createConstellationLabels = async (
   radius: number = 9.65,
-  baseFov: number = DEFAULT_BASE_FOV
+  baseFov: number = DEFAULT_BASE_FOV,
+  reportLoading?: PlanetariumLoadingReporter
 ): Promise<THREE.Group> => {
   const group = new THREE.Group();
   group.userData.baseFov = baseFov;
+  const totalConstellations = constellationsAsterisms.length;
 
-  for (const constellation of constellationsAsterisms) {
+  reportLoading?.({
+    stepId: 'constellations',
+    title: 'Constellation overlays',
+    detail: `Loading ${totalConstellations} constellation label textures`,
+    status: 'active',
+  });
+
+  for (let index = 0; index < constellationsAsterisms.length; index++) {
+    const constellation = constellationsAsterisms[index];
     if (!constellation || !constellation.feature?.features?.[0]) continue;
 
     const centrum = constellation.feature.features[0].properties?.centrum;
     if (!centrum || typeof centrum.ra !== 'number' || typeof centrum.dec !== 'number') continue;
 
     const abbreviation = `${constellation.abbreviation ?? ''}`.trim();
+    if (index === 0 || index === totalConstellations - 1 || (index + 1) % 12 === 0) {
+      reportLoading?.({
+        stepId: 'constellations',
+        title: 'Constellation overlays',
+        detail: `Loading label ${index + 1}/${totalConstellations} (${abbreviation || 'other'})`,
+        status: 'active',
+      });
+    }
     const textureSource = constellationsLabelImages[abbreviation] ?? constellationsImages.OTHER;
 
     const texture = await ExpoTHREE.loadAsync(textureSource);
@@ -53,6 +72,12 @@ export const createConstellationLabels = async (
 
   group.name = meshGroupsNames.constellationLabels;
   group.visible = false;
+  reportLoading?.({
+    stepId: 'constellations',
+    title: 'Constellation overlays',
+    detail: `Constellation lines and labels ready (${group.children.length} labels)`,
+    status: 'done',
+  });
   return group;
 };
 

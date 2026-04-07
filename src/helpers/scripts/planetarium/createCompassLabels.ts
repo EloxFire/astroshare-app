@@ -5,6 +5,7 @@ import {LocationObject} from '../../types/LocationObject';
 import {convertSphericalToCartesian} from './utils/convertSphericalToCartesian';
 import {meshGroupsNames, planetariumRenderOrders} from './utils/planetariumSettings';
 import {Polaris} from '../../constants';
+import {PlanetariumLoadingReporter} from './utils/loadingReporter';
 
 type CardinalLetter = 'N' | 'E' | 'S' | 'W';
 
@@ -76,11 +77,24 @@ export function updateCompassLabels(
 export async function createCompassLabels(
   radius: number = 0.98,
   location: LocationObject,
-  date: Date = new Date()
+  date: Date = new Date(),
+  reportLoading?: PlanetariumLoadingReporter
 ): Promise<THREE.Group> {
   const group = new THREE.Group();
+  reportLoading?.({
+    stepId: 'compass',
+    title: 'Compass labels',
+    detail: 'Loading cardinal direction sprites',
+    status: 'active',
+  });
 
   for (const { letter, file } of CARDINAL_LABELS) {
+    reportLoading?.({
+      stepId: 'compass',
+      title: 'Compass labels',
+      detail: `Loading ${letter} compass marker`,
+      status: 'active',
+    });
     const texture = await ExpoTHREE.loadAsync(file);
     const material = new THREE.SpriteMaterial({
       map: texture,
@@ -98,5 +112,11 @@ export async function createCompassLabels(
   updateCompassLabels(group, location, date, radius);
 
   group.name = meshGroupsNames.compassLabels;
+  reportLoading?.({
+    stepId: 'compass',
+    title: 'Compass labels',
+    detail: 'Compass labels positioned on the horizon',
+    status: 'done',
+  });
   return group;
 }

@@ -5,6 +5,7 @@ import {getBrightStarName} from "../astro/objects/getBrightStarName";
 import {meshGroupsNames, planetariumRenderOrders} from "./utils/planetariumSettings";
 import {computeObject} from "../astro/objects/computeObject";
 import {GeographicCoordinate} from "@observerly/astrometry";
+import {PlanetariumLoadingReporter} from "./utils/loadingReporter";
 
 interface createStarsProps {
   starsCatalog: Star[];
@@ -12,9 +13,18 @@ interface createStarsProps {
   observer: GeographicCoordinate;
 }
 
-export function createStars(starsCatalog: Star[], setUiInfos: React.Dispatch<any>) {
+export function createStars(
+  starsCatalog: Star[],
+  setUiInfos: React.Dispatch<any>,
+  reportLoading?: PlanetariumLoadingReporter
+) {
   console.log("[GLView] Creating stars...");
-
+  reportLoading?.({
+    stepId: 'stars',
+    title: 'Star field',
+    detail: `Projecting ${starsCatalog.length} stars onto the sky dome`,
+    status: 'active',
+  });
 
   const starCount = starsCatalog.length;
   const positions = new Float32Array(starCount * 3);
@@ -42,12 +52,24 @@ export function createStars(starsCatalog: Star[], setUiInfos: React.Dispatch<any
     visibilities[i] = THREE.MathUtils.clamp((6 - mag) / 6, 0, 1);
   }
 
+  reportLoading?.({
+    stepId: 'stars',
+    title: 'Star field',
+    detail: 'Uploading star positions, sizes, and colors to GPU buffers',
+    status: 'active',
+  });
   const geometry = new THREE.BufferGeometry();
   geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
   geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
   geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
   geometry.setAttribute('visibility', new THREE.BufferAttribute(visibilities, 1));
 
+  reportLoading?.({
+    stepId: 'stars',
+    title: 'Star field',
+    detail: 'Creating star shader material',
+    status: 'active',
+  });
   const material = new THREE.ShaderMaterial({
     uniforms: {
       uNightFactor: { value: 1.0 },
@@ -115,6 +137,12 @@ export function createStars(starsCatalog: Star[], setUiInfos: React.Dispatch<any
   starsCloud.name = meshGroupsNames.stars;
 
   console.log("[GLView] Stars created");
+  reportLoading?.({
+    stepId: 'stars',
+    title: 'Star field',
+    detail: `Star cloud ready (${starCount} stars)`,
+    status: 'done',
+  });
   return starsCloud;
 }
 
