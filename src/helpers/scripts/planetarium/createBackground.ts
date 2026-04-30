@@ -24,13 +24,18 @@ export const createBackground = async (reportLoading?: PlanetariumLoadingReporte
   texture.minFilter = THREE.LinearFilter;
   texture.magFilter = THREE.LinearFilter;
   texture.anisotropy = 4; // ou maxAnisotropy si dispo
+  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.needsUpdate = true;
 
   const material = new THREE.MeshBasicMaterial({
     map: texture,
+    color: 0xffffff,
     side: THREE.BackSide,
     transparent: true,
     opacity: 1,
+    depthWrite: false,
   });
+  material.needsUpdate = true;
 
   const geometry = new THREE.SphereGeometry(100, 64, 64);
   const milkyWay = new THREE.Mesh(geometry, material);

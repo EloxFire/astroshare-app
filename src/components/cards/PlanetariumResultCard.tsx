@@ -24,14 +24,16 @@ import { searchResultCardStyles } from '../../styles/components/searchResultCard
 import DSOValues from '../commons/DSOValues';
 import { objectCardLiteStyles } from '../../styles/components/cards/objectCardLite';
 import { getWindDir } from '../../helpers/scripts/getWindDir';
+import {Dayjs} from "dayjs";
 
 interface PlanetariumResultCardProps {
   object: Star | DSO | GlobalPlanet
   onPress: () => void
   navigation: any
+  date?: Dayjs
 }
 
-export default function PlanetariumResultCard({ object, onPress, navigation }: PlanetariumResultCardProps) {
+export default function PlanetariumResultCard({ object, onPress, navigation, date }: PlanetariumResultCardProps) {
 
   const {currentUser} = useAuth()
   const { currentLocale } = useTranslation()
@@ -40,9 +42,20 @@ export default function PlanetariumResultCard({ object, onPress, navigation }: P
   const [objectInfos, setObjectInfos] = useState<ComputedObjectInfos | null>(null)
 
   useEffect(() => {
-    const observer = { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }
-    setObjectInfos(computeObject({ object, observer, lang: currentLocale, altitude: 341 }));
-  }, [])
+    if (!currentUserLocation) return;
+
+    const recomputeObjectInfos = () => {
+      const observer = { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }
+      setObjectInfos(computeObject({ object, observer, lang: currentLocale, altitude: 341, date }));
+    };
+
+    recomputeObjectInfos();
+    if (date) return;
+
+    const interval = setInterval(recomputeObjectInfos, 60000);
+
+    return () => clearInterval(interval);
+  }, [object, currentLocale, currentUserLocation, date])
 
 
   const handleClickCard = () => {

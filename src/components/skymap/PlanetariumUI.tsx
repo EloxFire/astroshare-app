@@ -463,6 +463,7 @@ export default function PlanetariumUI({ navigation, infos, onShowGround, onShowC
             onClose={() => setShowSearchBar(false)}
             onSelect={(obj) => onSelectObject(obj)}
             navigation={navigation}
+            timelineDate={timelineDate}
           />
         )
       }

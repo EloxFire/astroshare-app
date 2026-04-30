@@ -60,11 +60,21 @@ const isSpecialSkyObject = (object: any): object is SpecialSkyObject => {
   return object?.family === 'Sun' || object?.family === 'Moon';
 };
 
+const normalizeAmbiguousRightAscension = (ra: number, dec: number, constellationHint?: string): number => {
+  if (ra < 0 || ra > 24 || !constellationHint) return ra;
+
+  const asHours = ra * 15;
+  const rawConstellation = getConstellation({ra, dec})?.abbreviation;
+  const hoursConstellation = getConstellation({ra: asHours, dec})?.abbreviation;
+
+  return rawConstellation !== constellationHint && hoursConstellation === constellationHint ? asHours : ra;
+};
+
 export const computeObject = (props: ComputeObjectProps): ComputedObjectInfos | null => {
   const referenceNow = props.date && props.date.isValid() ? props.date : dayjs();
   const referenceDate = referenceNow.toDate();
   const localOffsetMinutes = referenceNow.utcOffset();
-  const alt: number = props.altitude ? props.altitude : 341;
+  const alt: number = props.altitude ?? 341;
   const horizonAngle: number = calculateHorizonAngle(alt);
 
   if(!props.object){
@@ -189,14 +199,20 @@ export const computeObject = (props: ComputeObjectProps): ComputedObjectInfos | 
       const objectAltitudes: number[] = [];
       const altitudesHours: string[] = [];
       const H: number = 6;
+      let graphCurrentHorizontal: HorizontalCoordinate | null = null;
       for (let i = -H; i <= H; i++) {
         const date: Dayjs = referenceNow.add(i, 'hour');
         const horizontalCoords: HorizontalCoordinate = convertEquatorialToHorizontal(date.toDate(), props.observer, target);
+        if (i === 0) {
+          graphCurrentHorizontal = horizontalCoords;
+        }
         objectAltitudes.push(horizontalCoords.alt);
         altitudesHours.push(date.format('HH:mm'));
       }
+      const displayedCurrentAltitude = graphCurrentHorizontal?.alt ?? objectCurrentAltitude;
+      const displayedCurrentAzimuth = graphCurrentHorizontal?.az ?? objectCurrentAzimuth;
 
-      const magnitude = props.object.v_mag ?? (props.object.family === 'Sun' ? -26 : -12);
+      const magnitude = props.object.v_mag ?? -12;
 
       const visibilityLabel = isCurrentlyVisible ? i18n.t('common.visibility.visible') : i18n.t('common.visibility.notVisible');
       const visibilityBackgroundColor = isCurrentlyVisible ? app_colors.green_eighty : app_colors.red_eighty;
@@ -229,8 +245,8 @@ export const computeObject = (props: ComputeObjectProps): ComputedObjectInfos | 
           j_mag: undefined,
           k_mag: undefined,
           h_mag: undefined,
-          alt: objectCurrentAltitude.toFixed(2) + '°',
-          az: Math.round(objectCurrentAzimuth) + '°',
+          alt: displayedCurrentAltitude.toFixed(2) + '°',
+          az: Math.round(displayedCurrentAzimuth) + '°',
         },
         visibilityInfos: {
           isCurrentlyVisible: isCurrentlyVisible,
@@ -264,8 +280,14 @@ export const computeObject = (props: ComputeObjectProps): ComputedObjectInfos | 
     const objectFamily: "DSO" | "Star" | "Planet" | "Other" = getObjectFamily(props.object);
 
 
-    let degRa: number = objectFamily === 'DSO' ? convertHMSToDegreeFromString(props.object.ra as string) : props.object.ra as number
     let degDec: number = objectFamily === 'DSO' ? convertDMSToDegreeFromString(props.object.dec as string) : props.object.dec as number
+    let degRa: number = objectFamily === 'DSO'
+      ? normalizeAmbiguousRightAscension(
+        convertHMSToDegreeFromString(props.object.ra as string),
+        degDec,
+        (props.object as DSO).const
+      )
+      : props.object.ra as number
 
     if(!Number.isFinite(degRa) || !Number.isFinite(degDec)) {
       console.log('[computeObject] Error: could not convert ra and dec to degrees')
@@ -428,12 +450,18 @@ export const computeObject = (props: ComputeObjectProps): ComputedObjectInfos | 
     const altitudesHours: string[] = [];
     const now: Dayjs = referenceNow;
     const H: number = 6; // Number of hours to compute visibility graph
+    let graphCurrentHorizontal: HorizontalCoordinate | null = null;
     for (let i = -H; i <= H; i++) {
       const date: Dayjs = now.add(i, 'hour');
       const horizontalCoords: HorizontalCoordinate = convertEquatorialToHorizontal(date.toDate(), props.observer, target);
+      if (i === 0) {
+        graphCurrentHorizontal = horizontalCoords;
+      }
       objectAltitudes.push(horizontalCoords.alt);
       altitudesHours.push(date.format('HH:mm'));
     }
+    const displayedCurrentAltitude = graphCurrentHorizontal?.alt ?? objectCurrentAltitude;
+    const displayedCurrentAzimuth = graphCurrentHorizontal?.az ?? objectCurrentAzimuth;
 
 
     // GESTION DES INFORMATIONS SUPLÉMENTAIRES (si dispo)
@@ -486,8 +514,8 @@ export const computeObject = (props: ComputeObjectProps): ComputedObjectInfos | 
         j_mag: objectMagnitude.j,
         k_mag: objectMagnitude.k,
         h_mag: objectMagnitude.h,
-        alt: objectCurrentAltitude.toFixed(2) + '°',
-        az: Math.round(objectCurrentAzimuth) + '°',
+        alt: displayedCurrentAltitude.toFixed(2) + '°',
+        az: Math.round(displayedCurrentAzimuth) + '°',
       },
       visibilityInfos: {
         isCurrentlyVisible: isCurrentlyVisible,

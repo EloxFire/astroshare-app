@@ -30,9 +30,18 @@ export default function CelestialBodyCardLite({ object, navigation }: CelestialB
   const [objectInfos, setObjectInfos] = useState<ComputedObjectInfos | null>(null)
 
   useEffect(() => {
-    const observer = { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }
-    setObjectInfos(computeObject({ object, observer, lang: currentLocale, altitude: 341 }));
-  }, [])
+    if (!currentUserLocation) return;
+
+    const recomputeObjectInfos = () => {
+      const observer = { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }
+      setObjectInfos(computeObject({ object, observer, lang: currentLocale, altitude: 341 }));
+    };
+
+    recomputeObjectInfos();
+    const interval = setInterval(recomputeObjectInfos, 60000);
+
+    return () => clearInterval(interval);
+  }, [object, currentLocale, currentUserLocation])
 
   return (
     <TouchableOpacity onPress={() => navigation.push(routes.celestialBodies.details.path, { object: object })} style={objectCardLiteStyles.card}>
