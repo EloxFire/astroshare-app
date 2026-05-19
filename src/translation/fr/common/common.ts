@@ -142,5 +142,24 @@ export const commonTranslations = {
     Saturn: "Saturne",
     Uranus: "Uranus",
     Neptune: "Neptune"
+  },
+  paymentStatus: {
+    active: "Actif",
+    inactive: "Inactif",
+    succeeded: "Réussi",
+    failed: "Échoué",
+    pending: "En attente",
+    canceled: "Annulé",
+    unpaid: "Non payé",
+    past_due: "En retard",
+    requires_payment_method: "Incomplet",
+    other: "Autre",
+    cancellation_requested: "Annulation demandée",
+  },
+  subscriptionPeriod: {
+    year: "Annuel",
+    month: "Mensuel",
+    astroshare_pro_yearly: "Astroshare Pro Annuel",
+    astroshare_pro_monthly: "Astroshare Pro Mensuel",
   }
 }

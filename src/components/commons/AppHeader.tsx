@@ -77,7 +77,7 @@ export default function AppHeader({ navigation }: any) {
   const handleProfilePress = () => {
     if(currentUser){
       sendAnalyticsEvent(currentUser, currentUserLocation, 'Profile button pressed', eventTypes.BUTTON_CLICK, {target: "profile screen"}, currentLocale)
-      navigation.push(routes.auth.profile.path)
+      navigation.push(routes.auth.profile.home.path)
     }else{
       sendAnalyticsEvent(currentUser, currentUserLocation, 'Login button pressed', eventTypes.BUTTON_CLICK, {target: "login screen"}, currentLocale)
       navigation.push(routes.auth.login.path)

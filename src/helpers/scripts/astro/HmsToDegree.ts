@@ -1,8 +1,17 @@
 import { showToast } from "../showToast";
 
-export const convertHMSToDegreeFromString = (decString: string): number => {
+export const convertHMSToDegreeFromString = (decString: string | number): number => {
+  if (typeof decString === 'number') {
+    return decString;
+  }
+
+  const numericValue = Number(decString);
+  if (Number.isFinite(numericValue)) {
+    return numericValue;
+  }
+
   // Expression régulière pour extraire les parties de la chaîne
-  const regex = /(\d+):(\d+):([\d.]+)/;
+  const regex = /(\d+)[h:\s]+(\d+)[m:\s]+([\d.]+)s?/i;
   const match = decString.match(regex);
 
   if (!match) {

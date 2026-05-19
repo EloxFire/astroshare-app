@@ -8,6 +8,13 @@ export const apodStyles = {
     alignItems: 'center' as 'center',
     paddingBottom: 80,
 
+    errorContainer: {
+      display: 'flex' as 'flex',
+      flexDirection: 'column' as 'column',
+      alignItems: 'center' as 'center',
+      gap: 10,
+    },
+
     image: {
       borderRadius: 10,
       borderWidth: 1,
@@ -52,7 +59,7 @@ export const apodStyles = {
     },
 
     errorBox: {
-      width: Dimensions.get('window').width - 40,
+      width: Dimensions.get('window').width - 20,
       backgroundColor: app_colors.red_twenty,
       borderRadius: 10,
       borderWidth: 1,

@@ -1,10 +1,27 @@
 import * as THREE from "three";
 import {meshGroupsNames, planetariumRenderOrders} from "./utils/planetariumSettings";
+import {PlanetariumLoadingReporter} from "./utils/loadingReporter";
 
-export const createAtmosphere = (sunDirection?: THREE.Vector3, sunAltitude?: number) => {
+export const createAtmosphere = (
+  sunDirection?: THREE.Vector3,
+  sunAltitude?: number,
+  reportLoading?: PlanetariumLoadingReporter
+) => {
+  reportLoading?.({
+    stepId: 'atmosphere',
+    title: 'Atmosphere shader',
+    detail: 'Computing sun-driven sky uniforms',
+    status: 'active',
+  });
   const initialAltitude = typeof sunAltitude === 'number' ? sunAltitude : -90;
   const initialDayMix = THREE.MathUtils.clamp((initialAltitude + 6) / 12, 0, 1);
 
+  reportLoading?.({
+    stepId: 'atmosphere',
+    title: 'Atmosphere shader',
+    detail: 'Creating atmospheric shader material',
+    status: 'active',
+  });
   const atmosphereMaterial = new THREE.ShaderMaterial({
     uniforms: {
       uColorNight: { value: new THREE.Color(0x060c18) },
@@ -58,10 +75,22 @@ export const createAtmosphere = (sunDirection?: THREE.Vector3, sunAltitude?: num
     depthWrite: false,
   });
 
+  reportLoading?.({
+    stepId: 'atmosphere',
+    title: 'Atmosphere shader',
+    detail: 'Building atmosphere dome geometry',
+    status: 'active',
+  });
   const geometry = new THREE.SphereGeometry(70, 128, 128);
   const atmosphere = new THREE.Mesh(geometry, atmosphereMaterial);
   atmosphere.renderOrder = planetariumRenderOrders.atmosphere;
   atmosphere.name = meshGroupsNames.atmosphere;
 
+  reportLoading?.({
+    stepId: 'atmosphere',
+    title: 'Atmosphere shader',
+    detail: 'Atmosphere dome ready',
+    status: 'done',
+  });
   return atmosphere;
 };

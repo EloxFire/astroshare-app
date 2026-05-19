@@ -23,11 +23,14 @@ export default function InputWithIcon({ placeholder, changeEvent, icon, search, 
         secureTextEntry={type === 'password'}
         style={inputWithIconStyles.inputContainer.input}
         placeholder={placeholder}
-        onChangeText={(searchString) => { changeEvent(searchString) }}
+        onChangeText={(searchString) => {
+          const normalizedValue = type === 'number' ? searchString.replace(/,/g, '.') : searchString
+          changeEvent(normalizedValue)
+        }}
         underlineColorAndroid="transparent"
         placeholderTextColor={app_colors.white_sixty}
         value={value}
-        keyboardType={keyboardType || 'default'}
+        keyboardType={keyboardType || (type === 'number' ? 'decimal-pad' : 'default')}
         onSubmitEditing={() => {
           if (alternateSubmitEvent) {
             alternateSubmitEvent()

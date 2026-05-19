@@ -77,6 +77,10 @@ export const storageKeys = {
   favouriteStars: 'favouriteStars',
   homeWidgets: 'selectedHomeWidget',
   checklists: 'checklists',
+  observatories: {
+    list: 'observatoriesList',
+    selected: 'selectedObservatory',
+  },
   launches: {
     lastUpdate: 'launchesLastUpdate',
     data: 'launchesData',
@@ -106,6 +110,16 @@ export const storageKeys = {
     upgradeAvailable: 'upgradeAvailable',
     userSkippedVersion: 'userSkippedVersion',
     lastAvailableVersion: 'lastAvailableVersion',
+  },
+  userGear: {
+    telescopes: 'userGear_telescopes_',
+    currentTelescope: 'userGear_currentTelescope_',
+    eyepieces: 'userGear_eyepieces_',
+    currentEyepiece: 'userGear_currentEyepiece_',
+    cameras: 'userGear_cameras_',
+    currentCamera: 'userGear_currentCamera_',
+    mounts: 'userGear_mounts_',
+    currentMount: 'userGear_currentMount_',
   },
   dashboardAchievementsUnlocked: 'dashboardAchievementsUnlocked',
   dashboardPlannerSearches: 'dashboardPlannerSearches',
@@ -277,3 +291,55 @@ export const solarEclipseVisibilityLinesColors: any = {
   'maximumSunRise': app_colors.orange,
   'maximumSunSet': app_colors.orange,
 }
+
+export const telescopeTypes = [
+  { label: 'Réfracteur', value: 'refractor' },
+  { label: 'Réflecteur', value: 'reflector' },
+  { label: 'Catadioptrique', value: 'catadioptric' },
+  { label: 'Autre', value: 'other' },
+]
+
+export const telescopeConstructions = [
+  { label: 'Newtonien', value: 'newtonian' },
+  { label: 'Dobsonien', value: 'dobsonian' },
+  { label: 'Schmidt-Cassegrain', value: 'schmidt_cassegrain' },
+  { label: 'Maksutov', value: 'maksutov' },
+  { label: 'Autre', value: 'other' },
+]
+
+export const telescopeUsages = [
+  { label: 'Observation planétaire', value: 'planetary' },
+  { label: 'Observation du ciel profond', value: 'deep_sky' },
+  { label: 'Astrophotographie', value: 'astrophotography' },
+  { label: 'Observation solaire', value: 'solar' },
+  { label: 'Observation lunaire', value: 'lunar' },
+  { label: 'Autre', value: 'other' },
+]
+
+export const eyepieceTypes = [
+  { label: 'Plössl', value: 'plossl' },
+  { label: 'Orthoscopique', value: 'orthoscopic' },
+  { label: 'Kellner', value: 'kellner' },
+  { label: 'Super Plössl', value: 'super_plossl' },
+  { label: 'Nagler', value: 'nagler' },
+  { label: 'Panoptic', value: 'panoptic' },
+  { label: 'Autre', value: 'other' },
+]
+
+export const eyepieceBarrelSizes = [
+  { label: '1.25"', value: '1.25' },
+  { label: '2"', value: '2' },
+]
+
+export const mountTypes = [
+  { label: 'Azimutalle', value: 'azimuthal' },
+  { label: 'Équatorialle', value: 'equatorial' },
+  { label: 'Alt-Az', value: 'altazimuthal' },
+  { label: 'Autre', value: 'other' },
+]
+
+export const cameraTypes = [
+  { label: 'Reflex numérique (DSLR)', value: 'dslr' },
+  { label: 'Caméra dédiée pour l’astrophotographie', value: 'dedicated' },
+  { label: 'Caméra de smartphone', value: 'mobile' },
+]

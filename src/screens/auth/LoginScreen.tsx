@@ -17,8 +17,7 @@ import { eventTypes } from "../../helpers/constants/analytics";
 
 export default function LoginScreen({ navigation }: any) {
 
-  const {loginUser} = useAuth()
-  const {currentUser} = useAuth()
+  const { loginUser, currentUser } = useAuth()
   const { currentLocale } = useTranslation()
   const { currentUserLocation } = useSettings()
 
@@ -46,7 +45,7 @@ export default function LoginScreen({ navigation }: any) {
     }
 
     sendAnalyticsEvent(currentUser, currentUserLocation, 'login_success', eventTypes.USER_LOGIN, {}, currentLocale)
-    navigation.push(routes.auth.profile.path)
+    navigation.push(routes.auth.profile.home.path)
     setLoading(false)
   }
 

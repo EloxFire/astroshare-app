@@ -12,4 +12,5 @@ export type BannerNews = {
   createdAt: Date
   externalLink?: string
   internalRoute?: string
+  hidePro?: boolean
 }

@@ -4,6 +4,8 @@ import NewsBar from "./NewsBar";
 import {app_colors, storageKeys} from "../../helpers/constants";
 import {BannerNews} from "../../helpers/types/utils/BannerNews";
 import axios from "axios";
+import { useAuth } from '../../contexts/AuthContext';
+import { isProUser } from '../../helpers/scripts/auth/checkUserRole';
 
 interface Props {
   navigation: any
@@ -12,6 +14,8 @@ interface Props {
 export default function NewsBannerHandler({ navigation }: Props) {
 
   const flatListRef = useRef<FlatList>(null)
+
+  const { currentUser } = useAuth()
 
   const [banners, setBanners] = useState<BannerNews[]>([])
   const [currentScrollPosition, setCurrentScrollPosition] = useState(0)
@@ -32,7 +36,15 @@ export default function NewsBannerHandler({ navigation }: Props) {
       const sortedBannerByOrder = filteredBanners.sort((a: BannerNews, b: BannerNews) => {
         return a.order - b.order
       })
-      setBanners(sortedBannerByOrder)
+
+      const premiumUser = await currentUser ? isProUser(currentUser) : false;
+
+      let finalBanners = sortedBannerByOrder;
+
+      if (premiumUser) {
+        finalBanners = sortedBannerByOrder.filter((banner: BannerNews) => banner.hidePro !== true)
+      }
+      setBanners(finalBanners)
     })()
   }, [])
 

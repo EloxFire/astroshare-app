@@ -25,6 +25,8 @@ import {finishStripePayment} from "../../helpers/api/stripe/finishStripePayment"
 import {useSettings} from "../../contexts/AppSettingsContext";
 import {sendAnalyticsEvent} from "../../helpers/scripts/analytics";
 import {eventTypes} from "../../helpers/constants/analytics";
+import { createStripeOneTimePayment } from '../../helpers/api/stripe/createStripeOneTimePayment';
+import Constants from 'expo-constants';
 
 export default function SellScreen({ navigation }: any) {
 
@@ -76,9 +78,18 @@ export default function SellScreen({ navigation }: any) {
     sendAnalyticsEvent(currentUser, currentUserLocation, 'start_payment_process', eventTypes.BUTTON_CLICK, { selectedProduct }, currentLocale);
 
     try {
-      // 1. Crée la souscription
-      const response = await createStripeSubscription(currentUser.uid, selectedProduct);
-      const { subscriptionId, clientSecret, ephemeralKey, customerId, publishableKey } = await response.json();
+
+      const wantedProduct = stripeProducts.find((product: any) => product.prices[0].id === selectedProduct);
+      if (!wantedProduct) {
+        showToast({ message: "Produit non trouvé", type: "error" });
+        setStripeLoading(false);
+        return;
+      }
+
+      const response = wantedProduct.prices[0].metadata.type === 'one-time' ? await createStripeOneTimePayment(currentUser.uid, selectedProduct) : await createStripeSubscription(currentUser.uid, selectedProduct);
+      const { clientSecret, ephemeralKey, customerId } = await response.json();
+
+      const customerName = currentUser.profile?.username || `${currentUser.profile?.firstname} ${currentUser.profile?.lastname}` || "";
 
       // 2. Initialise Stripe payment sheet
       const { error: initError } = await initPaymentSheet({
@@ -88,7 +99,7 @@ export default function SellScreen({ navigation }: any) {
         paymentIntentClientSecret: clientSecret,
         allowsDelayedPaymentMethods: false,
         defaultBillingDetails: {
-          name: currentUser.username,
+          name: customerName,
           email: currentUser.email
         },
         style: 'alwaysDark',
@@ -112,18 +123,19 @@ export default function SellScreen({ navigation }: any) {
         return;
       }
 
-      // 4. Finalise côté Firestore
-      const selectedStripeProduct = stripeProducts.find((p: any) =>
-        p.prices.some((price: any) => price.id === selectedProduct)
-      );
+      let productType = '';
+      if(wantedProduct.prices[0].metadata.type === 'one-time') {
+        productType = 'one-time' as 'one-time';
+      }else{
+        productType = 'subscription' as 'subscription';
+      }
 
-      const subscriptionType = selectedStripeProduct.prices[0].metadata.type;
+      console.log("Finishing payment on backend... Product type:", productType);
+      
 
       await finishStripePayment(
         currentUser.uid,
-        selectedProduct,
-        selectedStripeProduct.name,
-        subscriptionType
+        productType as 'one-time' | 'subscription',
       );
 
       await updateCurrentUser();
@@ -148,7 +160,7 @@ export default function SellScreen({ navigation }: any) {
       urlScheme={"astroshare://"}
     >
       <View style={[globalStyles.body, {paddingTop: 0, paddingHorizontal: 0}]}>
-        <ScrollView contentContainerStyle={{paddingHorizontal: 10, paddingTop: StatusBar.currentHeight ? StatusBar.currentHeight + 20 : 20}}>
+        <ScrollView contentContainerStyle={{paddingHorizontal: 10, paddingTop: Constants.statusBarHeight ? Constants.statusBarHeight + 20 : 20}}>
           <Image style={sellScreenStyles.backgroundImage} source={require('../../../assets/images/tools/resources.png')}/>
           <LinearGradient
             // Background Linear Gradient

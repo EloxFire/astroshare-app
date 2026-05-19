@@ -6,6 +6,9 @@ import {extractYouTubeId} from "./extractYoutubeId";
 import YoutubePlayer from "react-native-youtube-iframe";
 import {i18n} from "../i18n";
 import { ReactNode } from "react";
+import SimpleButton from "../../../components/commons/buttons/SimpleButton";
+import * as Linking from 'expo-linking';
+import { app_colors } from "../../constants";
 
 export const renderApodMedia = async (apod: APODPicture, currentLocale: string) => {
 
@@ -27,7 +30,27 @@ export const renderApodMedia = async (apod: APODPicture, currentLocale: string) 
     case "video": {
       const videoId = extractYouTubeId(apod.url);
       if (!videoId) {
-        throw new Error("Invalid YouTube URL");
+        console.log("Invalid Youtube ID");
+        
+        return (
+          <View style={apodStyles.content.errorContainer}>
+            <View style={apodStyles.content.errorBox}>
+              <Text style={apodStyles.content.loadingText}>
+                {i18n.t('apod.errors.invalidVideoUrl', { url: apod.url })}
+              </Text>
+            </View>
+
+            <SimpleButton
+              text={i18n.t('apod.errors.redirectUrl', { url: apod.url })}
+              onPress={() => {
+                Linking.openURL(apod.url);
+              }}
+              backgroundColor={app_colors.white_twenty}
+              textColor={app_colors.white}
+              icon={require('../../../../assets/icons/FiPlay.png')}
+            />
+          </View>
+        )
       }
       return (
         <YoutubePlayer

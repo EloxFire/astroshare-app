@@ -3,6 +3,10 @@
 # dependencies
 node_modules/
 
+docs/
+
+.codex
+
 # production
 android/
 ios/
@@ -44,3 +48,5 @@ yarn-error.*
 
 # typescript
 *.tsbuildinfo
+
+.android.view.Choreographer.swp

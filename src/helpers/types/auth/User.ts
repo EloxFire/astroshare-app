@@ -6,6 +6,7 @@ export type User = {
   downloadsCount: number;
   downloadsHistory: string[];
   uid: string;
+  isAdmin: boolean;
   subscriptionDate?: Date;
   subscription?: string;
   subscriptionName?: string;
@@ -14,11 +15,15 @@ export type User = {
   hasCancelledSubscription?: boolean;
   subscriptionCancelledAt?: Date;
   subscriptionId?: string;
-  firstName?: string;
-  lastName?: string;
-  username?: string;
-  birthdate?: Date;
   ref?: string;
   createdAt?: Date;
   updatedAt?: Date;
+  profile?: {
+    firstname?: string;
+    lastname?: string;
+    birthday?: Date;
+    bio?: string;
+    profilePicture?: string;
+    username?: string;
+  }
 }

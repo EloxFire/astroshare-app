@@ -64,9 +64,9 @@ export default function VisibilityGraph({ visibilityGraph }: VisibilityGraphProp
 
         {/* Ligne en pointillés à l'heure actuelle */}
         <Line
-          x1={xScale(hours.length / 2)}
+          x1={xScale((hours.length - 1) / 2)}
           y1={0}
-          x2={xScale(hours.length / 2)}
+          x2={xScale((hours.length - 1) / 2)}
           y2={GRAPH_HEIGHT}
           stroke="gray"
           strokeWidth={1}

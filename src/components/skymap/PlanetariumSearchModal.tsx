@@ -23,14 +23,16 @@ import { eventTypes } from "../../helpers/constants/analytics";
 import { getRealSearch } from "../../helpers/scripts/astro/planets/getRealSearch";
 import SearchResultCard from "../cards/SearchResultCard";
 import PlanetariumResultCard from "../cards/PlanetariumResultCard";
+import {Dayjs} from "dayjs";
 
 interface PlanetariumSearchModalProps {
   onClose: () => void;
   navigation: any;
   onSelect: (obj: DSO | GlobalPlanet | Star) => void;
+  timelineDate: Dayjs;
 }
 
-export default function PlanetariumSearchModal({ onClose, navigation, onSelect }: PlanetariumSearchModalProps) {
+export default function PlanetariumSearchModal({ onClose, navigation, onSelect, timelineDate }: PlanetariumSearchModalProps) {
 
   const { hasInternetConnection, currentUserLocation } = useSettings()
   const { planets } = useSolarSystem()
@@ -131,6 +133,7 @@ export default function PlanetariumSearchModal({ onClose, navigation, onSelect }
                   onClose();
                 }}
                 navigation={navigation}
+                date={timelineDate}
               />
             )}
             keyExtractor={item => `${item.dec}-${item.ra}`}

@@ -18,6 +18,7 @@ import {astroImages, moonIcons} from "../../helpers/scripts/loadImages";
 import DSOValues from "../../components/commons/DSOValues";
 import ToggleButton from "../../components/commons/buttons/ToggleButton";
 import {useStarCatalog} from "../../contexts/StarsContext";
+import { getConstellationJSONFormatted } from './getConstellationJSONFormatted'
 
 
 export default function SkyMapGenerator({ navigation }: any) {
@@ -38,6 +39,11 @@ export default function SkyMapGenerator({ navigation }: any) {
 
   const [starsToDisplay, setStarsToDisplay] = useState<Star[]>([])
 
+  useEffect(() => {
+    console.log("CONSTELLATION JSON PROCESSING");
+    
+    getConstellationJSONFormatted()
+  }, [])
 
   useEffect(() => {
     const interval = setInterval(() => {

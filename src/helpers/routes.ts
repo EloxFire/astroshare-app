@@ -64,7 +64,33 @@ export const routes = {
   auth: {
     login: { path: 'Login', requirements: [] },
     register: { path: 'Register', requirements: [] },
-    profile: { path: 'Profile', requirements: [] },
+    profile: {
+      home: { path: 'Profile', requirements: [] },
+      dataSync: { path: 'DataSyncScreen', requirements: [] },
+      subscriptionManagement: { 
+        home: { path: 'SubscriptionManagementScreen', requirements: [] },
+        subscriptionDetails: { path: 'SubscriptionDetailsScreen', requirements: [] },
+      },
+      personnalInfosForm: { path: 'PersonnalInfosScreen', requirements: []},
+      astroGearManagement: {
+        home: { path: 'AstroGearManagementScreen', requirements: []},
+        telescopes: {
+          crud: { path: 'TelescopesCrud', requirements: []},
+        },
+        eyepieces: {
+          crud: { path: 'EyepiecesCrud', requirements: []},
+        },
+        mounts: {
+          crud: { path: 'MountsCrud', requirements: []},
+        },
+        cameras: {
+          crud: { path: 'CamerasCrud', requirements: []},
+        },
+        accessories: {
+          crud: { path: 'AccessoriesCrud', requirements: []},
+        }
+      },
+    },
     forgotPassword: { path: 'ForgotPassword', requirements: [] },
   },
   pro: {

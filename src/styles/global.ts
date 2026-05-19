@@ -1,12 +1,13 @@
 import { StatusBar } from "react-native";
 import { app_colors } from "../helpers/constants";
+import Constants from "expo-constants";
 
 export const globalStyles = {
   body: {
     backgroundColor: app_colors.black,
     color: app_colors.white,
     paddingHorizontal: 10,
-    paddingTop: StatusBar.currentHeight ? StatusBar.currentHeight + 20 : 20,
+    paddingTop: Constants.statusBarHeight ? Constants.statusBarHeight + 20 : 20,
     height: "100%" as "100%",
   },
   input: {
@@ -17,6 +18,12 @@ export const globalStyles = {
     padding: 10,
     marginVertical: 10,
     color: app_colors.white,
+  },
+  content: {
+    display: "flex" as "flex",
+    flexDirection: "column" as "column",
+    gap: 10,
+    paddingBottom: 50,
   },
   sections: {
     marginVertical: 10,
@@ -72,7 +79,7 @@ export const globalStyles = {
     padding: 10,
     borderRadius: 10,
     borderWidth: 1,
-    marginBottom: 20,
+    marginBottom: 10,
   },
 
   proBadge:{
@@ -110,5 +117,10 @@ export const globalStyles = {
       width: 5,
       height: 5,
     }
+  },
+  row: {
+    display: "flex" as "flex",
+    flexDirection: "row" as "row",
+    alignItems: "center" as "center",
   }
 };

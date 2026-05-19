@@ -50,7 +50,7 @@ export default function RegisterScreen({ navigation }: any) {
         return;
       }
       sendAnalyticsEvent(currentUser, currentUserLocation, 'login_success_after_register', eventTypes.USER_LOGIN, {}, currentLocale)
-      navigation.push(routes.auth.profile.path);
+      navigation.push(routes.auth.profile.home.path);
       setLoading(false);
     }
   }

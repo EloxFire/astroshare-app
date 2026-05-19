@@ -4,15 +4,37 @@ import planetariumImages from '../../planetarium_images.json';
 import { convertSphericalToCartesian } from "./utils/convertSphericalToCartesian";
 import {meshGroupsNames, planetariumRenderOrders} from "./utils/planetariumSettings";
 import {DSO} from "../../types/DSO";
+import {PlanetariumLoadingReporter} from "./utils/loadingReporter";
 
 const normalizeKey = (value: string) => value.toLowerCase().replace(/\s+/g, '');
 
-export const createDSO = (getDsoCatalog: () => DSO[], setUiInfos: React.Dispatch<any>) => {
+export const createDSO = (
+  getDsoCatalog: () => DSO[],
+  setUiInfos: React.Dispatch<any>,
+  reportLoading?: PlanetariumLoadingReporter
+) => {
   console.log("[GLView] Creating Deep Sky Objects...");
+  const totalImages = planetariumImages.images.length;
+  reportLoading?.({
+    stepId: 'dso',
+    title: 'Deep-sky objects',
+    detail: `Building ${totalImages} DSO billboards and queueing remote textures`,
+    status: 'active',
+  });
 
   const dsoMeshes: THREE.Group = new THREE.Group();
 
-  planetariumImages.images.forEach((image) => {
+  planetariumImages.images.forEach((image, index) => {
+    if (index === 0 || index === totalImages - 1 || (index + 1) % 25 === 0) {
+      const textureKey = image.imageUrl.split('/').pop()!.split('.')[0];
+      reportLoading?.({
+        stepId: 'dso',
+        title: 'Deep-sky objects',
+        detail: `Queueing DSO texture ${index + 1}/${totalImages} (${textureKey})`,
+        status: 'active',
+      });
+    }
+
     const verticesBuffer: number[] = [];
     const uvBuffer: number[] = [];
     const geometry = new THREE.BufferGeometry();
@@ -145,5 +167,11 @@ export const createDSO = (getDsoCatalog: () => DSO[], setUiInfos: React.Dispatch
   dsoMeshes.name = meshGroupsNames.dso;
 
   console.log("[GLView] Deep Sky Objects created");
+  reportLoading?.({
+    stepId: 'dso',
+    title: 'Deep-sky objects',
+    detail: `DSO mesh group ready (${totalImages} textured objects)`,
+    status: 'done',
+  });
   return dsoMeshes;
 }

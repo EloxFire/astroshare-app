@@ -1,11 +1,8 @@
 import React, { ReactNode, createContext, useContext, useEffect, useState } from 'react';
-import { frTranslations } from '../translation/fr';
-import { getLocales } from 'expo-localization';
-import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
-import { I18n } from 'i18n-js';
-import { getData } from '../helpers/storage';
+import { getData, storeData } from '../helpers/storage';
 import { languagesList } from '../helpers/scripts/i18n/languagesList';
 import dayjs from 'dayjs';
+import { i18n } from '../helpers/scripts/i18n';
 
 const TranslationContext = createContext<any>({})
 
@@ -18,25 +15,36 @@ interface TranslationProviderProps {
 }
 
 export function TranslationProvider({ children }: TranslationProviderProps) {
+  const normalizeLocale = (locale: string) => {
+    const normalizedLocale = locale === "gb" ? "en" : locale;
+    return languagesList.some(lang => lang.twoLettersCode === normalizedLocale) ? normalizedLocale : "fr";
+  };
 
   useEffect(() => {
     (async () => {
       const locale = await getData('locale');
       if (locale) {
-        setCurrentLocale(locale);
-        dayjs.locale(locale === "gb" ? "en" : locale);
-        const lcid = languagesList.find(lang => lang.twoLettersCode === locale)?.lcidString
+        const normalizedLocale = normalizeLocale(locale);
+        setCurrentLocale(normalizedLocale);
+        i18n.locale = normalizedLocale;
+        dayjs.locale(normalizedLocale);
+        const lcid = languagesList.find(lang => lang.twoLettersCode === normalizedLocale)?.lcidString
         if (lcid) {
           setCurrentLCID(lcid)
         }
+      } else {
+        i18n.locale = 'fr';
       }
     })()
   }, [])
 
   const updateLocale = async (code: string) => {
-    setCurrentLocale(code);
-    dayjs.locale(code === "gb" ? "en" : code);
-    const lcid = languagesList.find(lang => lang.twoLettersCode === code)?.lcidString
+    const normalizedLocale = normalizeLocale(code);
+    setCurrentLocale(normalizedLocale);
+    i18n.locale = normalizedLocale;
+    await storeData('locale', normalizedLocale);
+    dayjs.locale(normalizedLocale);
+    const lcid = languagesList.find(lang => lang.twoLettersCode === normalizedLocale)?.lcidString
     if (lcid) {
       setCurrentLCID(lcid)
     }
