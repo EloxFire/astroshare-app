@@ -103,12 +103,19 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
   }, [object, objectInfos]);
 
   useEffect(() => {
-    const observer = { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }
-    const computedObject = computeObject({ object, observer, lang: currentLocale, altitude: 341 });
-    console.log(JSON.stringify(computedObject?.visibilityInfos));
-    
-    setObjectInfos(computedObject);
-  }, [])
+    if (!currentUserLocation) return;
+
+    const recomputeObjectInfos = () => {
+      const observer = { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }
+      const computedObject = computeObject({ object, observer, lang: currentLocale, altitude: 341 });
+      setObjectInfos(computedObject);
+    };
+
+    recomputeObjectInfos();
+    const interval = setInterval(recomputeObjectInfos, 60000);
+
+    return () => clearInterval(interval);
+  }, [object, currentLocale, currentUserLocation])
 
   useEffect(() => {
     if (!objectInfos) return;

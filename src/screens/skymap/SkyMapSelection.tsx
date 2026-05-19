@@ -66,6 +66,13 @@ export default function SkyMapSelection({ navigation }: any) {
           />
           <ToolButton
             disabled
+            text={i18n.t('skymap.buttons.moon.title')}
+            subtitle={i18n.t('skymap.buttons.moon.subtitle')}
+            image={require('../../../assets/images/tools/skymap.png')}
+            onPress={() => navigation.navigate(routes.skymaps.moon.path)}
+          />
+          <ToolButton
+            disabled
             isPremium
             text={i18n.t('skymap.buttons.constellations.title')}
             subtitle={i18n.t('skymap.buttons.constellations.subtitle')}

@@ -87,12 +87,18 @@ export const getSunData = (date: Dayjs, observer: GeographicCoordinate): Compute
   const objectAltitudes: number[] = [];
   const altitudesHours: string[] = [];
   const H: number = 6;
+  let graphCurrentHorizontal: HorizontalCoordinate | null = null;
   for (let i = -H; i <= H; i++) {
     const graphDate: Dayjs = referenceNow.add(i, 'hour');
     const horizontalCoords: HorizontalCoordinate = convertEquatorialToHorizontal(graphDate.toDate(), observer, target);
+    if (i === 0) {
+      graphCurrentHorizontal = horizontalCoords;
+    }
     objectAltitudes.push(horizontalCoords.alt);
     altitudesHours.push(graphDate.format('HH:mm'));
   }
+  const displayedCurrentAltitude = graphCurrentHorizontal?.alt ?? objectCurrentAltitude;
+  const displayedCurrentAzimuth = graphCurrentHorizontal?.az ?? objectCurrentAzimuth;
 
   const isVisibleToday: boolean = isCurrentlyVisible || Boolean(sunRiseTime) || Boolean(sunSetTime)
 
@@ -102,8 +108,8 @@ export const getSunData = (date: Dayjs, observer: GeographicCoordinate): Compute
       name: i18n.t('common.planets.Sun'),
       ra: target.ra,
       dec: target.dec,
-      alt: objectCurrentAltitude,
-      az: objectCurrentAzimuth,
+      alt: displayedCurrentAltitude,
+      az: displayedCurrentAzimuth,
       angularDiameter: angularSize,
       distance: distance,
       constellation: localizedConstellationName,

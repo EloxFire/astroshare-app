@@ -17,8 +17,7 @@ import { eventTypes } from "../../helpers/constants/analytics";
 
 export default function LoginScreen({ navigation }: any) {
 
-  const {loginUser} = useAuth()
-  const {currentUser} = useAuth()
+  const { loginUser, currentUser } = useAuth()
   const { currentLocale } = useTranslation()
   const { currentUserLocation } = useSettings()
 
@@ -46,13 +45,18 @@ export default function LoginScreen({ navigation }: any) {
     }
 
     sendAnalyticsEvent(currentUser, currentUserLocation, 'login_success', eventTypes.USER_LOGIN, {}, currentLocale)
-    navigation.push(routes.auth.profile.path)
+    navigation.push(routes.auth.profile.home.path)
     setLoading(false)
   }
 
   const handleRegisterNavigation = () => {
     sendAnalyticsEvent(currentUser, currentUserLocation, 'navigate_to_register', eventTypes.BUTTON_CLICK, {from: "login screen"}, currentLocale)
     navigation.push(routes.auth.register.path)
+  }
+
+  const handleForgotPassword = () => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'navigate_to_forgot_password', eventTypes.BUTTON_CLICK, {from: "login screen"}, currentLocale)
+    navigation.push(routes.auth.forgotPassword.path)
   }
 
   return (
@@ -93,9 +97,10 @@ export default function LoginScreen({ navigation }: any) {
             <TouchableOpacity onPress={() => handleRegisterNavigation()}>
               <Text style={authStyles.content.forgotPassword}>{i18n.t('auth.login.noAccount')}</Text>
             </TouchableOpacity>
-            {/*<TouchableOpacity onPress={() => navigation.navigate('ForgotPasswordScreen')}>*/}
-            {/*  <Text style={authStyles.content.forgotPassword}>{i18n.t('auth.login.forgotPassword')}</Text>*/}
-            {/*</TouchableOpacity>*/}
+
+            <TouchableOpacity onPress={() => handleForgotPassword()}>
+             <Text style={authStyles.content.forgotPassword}>{i18n.t('auth.login.forgotPassword')}</Text>
+            </TouchableOpacity>
 
             <TouchableOpacity style={authStyles.content.form.button} onPress={() => handleFormSubmit()}>
               <Text style={authStyles.content.form.button.text}>{i18n.t('auth.login.submit')}</Text>

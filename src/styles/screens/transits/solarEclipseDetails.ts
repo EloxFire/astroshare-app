@@ -1,5 +1,6 @@
 import {app_colors} from "../../../helpers/constants";
 import {Dimensions, StatusBar} from "react-native";
+import Constants from "expo-constants";
 
 export const solarEclipseDetailsStyles = {
   content: {
@@ -9,7 +10,7 @@ export const solarEclipseDetailsStyles = {
 
     svgMapOverlay:{
       position: 'absolute' as 'absolute',
-      top: StatusBar.currentHeight! + 10,
+      top: Constants.statusBarHeight + 10,
       right: 10,
       width: 200,
       height: 150,
@@ -18,7 +19,7 @@ export const solarEclipseDetailsStyles = {
 
     svgSettings: {
       position: 'absolute' as 'absolute',
-      top: StatusBar.currentHeight! + 10,
+      top: Constants.statusBarHeight + 10,
       right: 10,
       zIndex: 2,
       width: 200,
@@ -75,7 +76,7 @@ export const solarEclipseDetailsStyles = {
 
       backButton: {
         position: 'absolute' as 'absolute',
-        top: StatusBar.currentHeight! + 10,
+        top: Constants.statusBarHeight + 10,
         left: 10,
       },
 

@@ -449,13 +449,13 @@ export default function PlanetariumUI({ navigation, infos, onShowGround, onShowC
       <TouchableOpacity style={[planetariumUIStyles.container.uiButton, planetariumUIStyles.container.buttons.timeline]} onPress={() => handleShowTimeline()}>
         <Image style={planetariumUIStyles.container.uiButton.icon} source={require('../../../assets/icons/FiClock.png')} />
       </TouchableOpacity>
-      {/* {
+      {
         objectInfos && (
           <TouchableOpacity style={[planetariumUIStyles.container.uiButton, planetariumUIStyles.container.buttons.followObject]} onPress={() => onToggleFollow()}>
             <Image style={planetariumUIStyles.container.uiButton.icon} source={require('../../../assets/icons/FiCrosshair.png')} />
           </TouchableOpacity>
         )
-      } */}
+      }
 
       {
         showSearchBar && (
@@ -463,6 +463,7 @@ export default function PlanetariumUI({ navigation, infos, onShowGround, onShowC
             onClose={() => setShowSearchBar(false)}
             onSelect={(obj) => onSelectObject(obj)}
             navigation={navigation}
+            timelineDate={timelineDate}
           />
         )
       }

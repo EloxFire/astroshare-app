@@ -15,6 +15,15 @@ export const authScreensTranslations = {
     error: "An error occurred, please try again",
     passwordMismatch: "Passwords do not match",
   },
+  forgotPassword: {
+    title: "Password Reset",
+    subtitle: "Enter your email to receive a reset link",
+    noAccount: "Don't have an account? Sign up!",
+    submit: "Send link",
+    success: "If an account exists with this email, a reset link has been sent.",
+    error: "An error occurred while sending the link, please try again",
+    returnToLogin: "Return to login",
+  },
   profile: {
     title: "Profile",
     subtitle: "Your account information",
@@ -49,6 +58,57 @@ export const authScreensTranslations = {
         auto: "Automatic",
         canceled: "Disabled",
       }
+    },
+    dataAndSubscription: {
+      title: "Data & subscription",
+      dataSync: {
+        title: "Data synchronization",
+        subtitle: "Never lose your settings!",
+        send: {
+          title: "Send",
+          warning: "This will replace the current data on your Astroshare account with the data from this device. Are you sure you want to continue?",
+          success: "Your data has been successfully sent to your Astroshare account.",
+          error: "An error occurred while sending your data, please try again.",
+        },
+        fetch: {
+          title: "Fetch",
+          warning: "This will replace the current data on this device with the data from your Astroshare account. Are you sure you want to continue?",
+          success: "Your data has been successfully fetched from your Astroshare account.",
+          error: "An error occurred while fetching your data, please try again.",
+        },
+        lastUpdate: "Last sync: ",
+      },
+      subscriptionManagement: {
+        title: "Subscription management",
+        subtitle: "Payment methods, invoices, etc.",
+        cancel: {
+          warning: "Are you sure you want to cancel your subscription? You will keep access to Astroshare Pro until the end of your current billing period.",
+          success: "Your subscription has been canceled successfully. You will keep access to Astroshare Pro until the end of your current billing period.",
+          error: "An error occurred while canceling your subscription, please try again.",
+        },
+        restore: {
+          success: "Your subscription has been restored successfully.",
+          error: "An error occurred while restoring your subscription, please try again.",
+        }
+      }
+    },
+    personnalInfos: {
+      title: "Personal information",
+      language: "App language",
+      email: "Change my email",
+      infos: {
+        title: "My information",
+      },
+      addresses: {
+        title: "Manage my observation addresses",
+      },
+      gear: {
+        title: "My astro gear",
+        subtitle: "Manage your astro gear for a personalized experience",
+        telescopes: {
+          title: "My telescopes",
+        }
+      }
     }
   },
   placeholders: {
@@ -59,5 +119,7 @@ export const authScreensTranslations = {
   errors: {
     generic: "An error occurred, please try again",
     missingField: "Please fill in all fields",
+    missingEmail: "Please provide your email",
+    passwordMismatch: "Passwords do not match",
   }
 }

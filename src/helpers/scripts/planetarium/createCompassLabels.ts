@@ -1,10 +1,11 @@
 import * as THREE from 'three';
-import * as ExpoTHREE from 'expo-three';
 import {convertEquatorialToHorizontal, convertHorizontalToEquatorial} from '@observerly/astrometry';
 import {LocationObject} from '../../types/LocationObject';
 import {convertSphericalToCartesian} from './utils/convertSphericalToCartesian';
 import {meshGroupsNames, planetariumRenderOrders} from './utils/planetariumSettings';
 import {Polaris} from '../../constants';
+import {PlanetariumLoadingReporter} from './utils/loadingReporter';
+import {loadBundledTextureAsync} from './utils/loadBundledTextureAsync';
 
 type CardinalLetter = 'N' | 'E' | 'S' | 'W';
 
@@ -73,16 +74,28 @@ export function updateCompassLabels(
   });
 }
 
-export function createCompassLabels(
+export async function createCompassLabels(
   radius: number = 0.98,
   location: LocationObject,
-  date: Date = new Date()
-): THREE.Group {
+  date: Date = new Date(),
+  reportLoading?: PlanetariumLoadingReporter
+): Promise<THREE.Group> {
   const group = new THREE.Group();
-  const loader = new ExpoTHREE.TextureLoader();
+  reportLoading?.({
+    stepId: 'compass',
+    title: 'Compass labels',
+    detail: 'Loading cardinal direction sprites',
+    status: 'active',
+  });
 
-  CARDINAL_LABELS.forEach(({ letter, file }) => {
-    const texture = loader.load(file);
+  for (const { letter, file } of CARDINAL_LABELS) {
+    reportLoading?.({
+      stepId: 'compass',
+      title: 'Compass labels',
+      detail: `Loading ${letter} compass marker`,
+      status: 'active',
+    });
+    const texture = await loadBundledTextureAsync(file);
     const material = new THREE.SpriteMaterial({
       map: texture,
       transparent: true,
@@ -94,10 +107,16 @@ export function createCompassLabels(
     sprite.renderOrder = planetariumRenderOrders.labels;
     sprite.scale.set(0.05, 0.05, 0.05);
     group.add(sprite);
-  });
+  }
 
   updateCompassLabels(group, location, date, radius);
 
   group.name = meshGroupsNames.compassLabels;
+  reportLoading?.({
+    stepId: 'compass',
+    title: 'Compass labels',
+    detail: 'Compass labels positioned on the horizon',
+    status: 'done',
+  });
   return group;
 }

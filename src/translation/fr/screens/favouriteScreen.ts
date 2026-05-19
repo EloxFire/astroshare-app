@@ -10,8 +10,10 @@ export const favouriteScreenTranslations = {
   },
   planet: {
     title: 'Planètes',
+    noFavs: 'Vous n\'avez pas encore ajouté de planète en favori !',
   },
   star: {
     title: 'Étoiles',
+    noFavs: 'Vous n\'avez pas encore ajouté d\'étoile en favori !',
   }
 };

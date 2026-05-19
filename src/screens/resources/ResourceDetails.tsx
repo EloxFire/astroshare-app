@@ -10,7 +10,7 @@ import { StatusBar } from "expo-status-bar";
 import { generateResourceLevelText } from "../../helpers/scripts/resources/generateResourceLevelText";
 import { readingTime } from "reading-time-estimator";
 import { useTranslation } from "../../hooks/useTranslation";
-import { fr } from 'reading-time-estimator/i18n/fr'
+// import { fr } from 'reading-time-estimator/i18n/fr'
 import { pageTitleStyles } from "../../styles/components/commons/pageTitle";
 import { sendAnalyticsEvent } from "../../helpers/scripts/analytics";
 import { useAuth } from "../../contexts/AuthContext";
@@ -22,6 +22,8 @@ import Markdown from 'react-native-markdown-display';
 import Constants from "expo-constants";
 import DSOValues from "../../components/commons/DSOValues";
 import SimpleButton from "../../components/commons/buttons/SimpleButton";
+import { i18n } from "../../helpers/scripts/i18n";
+import { I18n } from "i18n-js";
 
 const markdownRules = {
   image: (node: any, children: any, parent: any, styles: any) => {
@@ -62,7 +64,7 @@ export default function ResourceDetails({ navigation, route }: any) {
 
   useEffect(() => {
     if (currentLocale === "fr") {
-      const frenchResult = readingTime(resource.content || "", {language: 'fr', translations: {fr}}).text;
+      const frenchResult = readingTime(resource.content || "", {language: 'fr'}).text;
       setReadTime(frenchResult);
     } else {
       const result = readingTime(resource.content || "").text;

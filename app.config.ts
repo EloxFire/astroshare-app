@@ -4,7 +4,7 @@ dotenv.config();
 module.exports = {
   name: "Astroshare",
   slug: "astroshare-app",
-  version: "v2.5.0",
+  version: "v2.6.0",
   orientation: "portrait",
   icon: "./assets/icon.png",
   userInterfaceStyle: "light",
@@ -18,6 +18,13 @@ module.exports = {
   ios: {
     supportsTablet: true,
     bundleIdentifier: "fr.eavagliano.astroshare",
+    infoPlist: {
+      "ITSAppUsesNonExemptEncryption": false,
+      "NSLocationWhenInUseUsageDescription": "Autoriser ${PRODUCT_NAME} à utiliser votre position.",
+      "NSMotionUsageDescription": "Autoriser ${PRODUCT_NAME} à utiliser les capteurs de mouvement pour afficher les objets célestes dans la bonne orientation.",
+      "UIBackgroundModes": ["location", "fetch", "processing"],
+      "LSApplicationQueriesSchemes": ["comgooglemaps", "googlemaps", "waze", "citymapper"]
+    }
   },
   android: {
     versionCode: 46,

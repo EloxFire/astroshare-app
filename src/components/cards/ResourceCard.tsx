@@ -7,7 +7,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { generateResourceLevelText } from "../../helpers/scripts/resources/generateResourceLevelText";
 import { readingTime } from 'reading-time-estimator'
 import { useTranslation } from "../../hooks/useTranslation";
-import { fr } from 'reading-time-estimator/i18n/fr'
+// import { fr } from 'reading-time-estimator/i18n/fr'
 import { useEffect, useState } from "react";
 import { routes } from "../../helpers/routes";
 
@@ -23,7 +23,7 @@ export const ResourceCard = ({ resource, navigation }: ResourceCardProps) => {
 
   useEffect(() => {
     if (currentLocale === "fr") {
-      const frenchResult = readingTime(resource.content || "", {language: 'fr', translations: {fr}}).text;
+      const frenchResult = readingTime(resource.content || "", {language: 'fr'}).text;
       setReadTime(frenchResult);
     } else {
       const result = readingTime(resource.content || "").text;

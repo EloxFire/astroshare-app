@@ -31,9 +31,18 @@ export default function SearchResultCard({ object, navigation }: SearchResultCar
   const [objectInfos, setObjectInfos] = useState<ComputedObjectInfos | null>(null)
 
   useEffect(() => {
-    const observer = { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }
-    setObjectInfos(computeObject({ object, observer, lang: currentLocale, altitude: 341 }));
-  }, [])
+    if (!currentUserLocation) return;
+
+    const recomputeObjectInfos = () => {
+      const observer = { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }
+      setObjectInfos(computeObject({ object, observer, lang: currentLocale, altitude: 341 }));
+    };
+
+    recomputeObjectInfos();
+    const interval = setInterval(recomputeObjectInfos, 60000);
+
+    return () => clearInterval(interval);
+  }, [object, currentLocale, currentUserLocation])
 
 
   const handleClickCard = () => {
