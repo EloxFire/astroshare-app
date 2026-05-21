@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
-import {ActivityIndicator, ScrollView, Text, View} from 'react-native'
+import {ActivityIndicator, Platform, ScrollView, Text, View} from 'react-native'
 import { getCountryByCode } from '../../helpers/scripts/utils/getCountryByCode'
 import { i18n } from '../../helpers/scripts/i18n'
 import { useTranslation } from '../../hooks/useTranslation'
@@ -247,7 +247,7 @@ export default function SatelliteTrackerDetails({ route, navigation }: any) {
               </View>
               <MapView
                 ref={mapRef}
-                provider={PROVIDER_GOOGLE}
+                provider={Platform.OS === 'android' ? PROVIDER_GOOGLE : undefined}
                 style={satelliteTrackerStyles.content.mapContainer.map}
                 customMapStyle={mapStyle}
                 initialRegion={{

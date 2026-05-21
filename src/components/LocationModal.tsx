@@ -1,5 +1,5 @@
 import React from 'react'
-import { Image, Modal, Text, TouchableOpacity, View } from 'react-native'
+import { Image, Modal, Platform, Text, TouchableOpacity, View } from 'react-native'
 import { locationHeaderStyles } from '../styles/components/locationHeader'
 import { LocationObject } from '../helpers/types/LocationObject'
 import { useSpot } from '../contexts/ObservationSpotContext'
@@ -32,7 +32,7 @@ export default function LocationModal({ visible, onClose }: LocationModalProps) 
         </View>
         <View style={{ marginBottom: 20 }}>
           <MapView
-            provider={PROVIDER_GOOGLE}
+            provider={Platform.OS === 'android' ? PROVIDER_GOOGLE : undefined}
             customMapStyle={mapStyle}
             style={locationHeaderStyles.modal.mapContainer}
             zoomEnabled={true}

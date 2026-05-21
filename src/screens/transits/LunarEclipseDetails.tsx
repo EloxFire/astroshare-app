@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from "react";
-import {ActivityIndicator, Dimensions, Image, ScrollView, Text, TouchableOpacity, View} from "react-native";
+import {ActivityIndicator, Dimensions, Image, Platform, ScrollView, Text, TouchableOpacity, View} from "react-native";
 import { globalStyles } from "../../styles/global";
 import { SolarEclipse } from "../../helpers/types/eclipses/SolarEclipse";
 import { solarEclipseDetailsStyles } from "../../styles/screens/transits/solarEclipseDetails";
@@ -98,7 +98,7 @@ export default function LunarEclipseDetails({ navigation, route }: any) {
       <MapView
         ref={mapRef}
         onPress={(e) => handleMapPress(e)}
-        provider={PROVIDER_GOOGLE}
+        provider={Platform.OS === 'android' ? PROVIDER_GOOGLE : undefined}
         style={solarEclipseDetailsStyles.map}
         customMapStyle={mapStyle}
         initialRegion={{

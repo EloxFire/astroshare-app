@@ -1,7 +1,7 @@
 // LightPollutionMap.tsx
 import { StatusBar } from 'expo-status-bar';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, Image, Dimensions } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, Image, Dimensions, Platform } from 'react-native';
 import MapView, { MapViewProps, Marker, PROVIDER_GOOGLE, Region, UrlTile } from 'react-native-maps';
 import { app_colors } from '../../helpers/constants';
 import { lightPollutionMapStyles } from '../../styles/screens/lightpollution/map';
@@ -187,7 +187,7 @@ const LightPollutionMap: React.FC = ({navigation}: any) => {
         ref={mapRef}
         style={lightPollutionMapStyles.map}
         customMapStyle={mapStyle}
-        provider={PROVIDER_GOOGLE}
+        provider={Platform.OS === 'android' ? PROVIDER_GOOGLE : undefined}
         initialRegion={INITIAL_REGION}
         region={region}
         showsUserLocation
