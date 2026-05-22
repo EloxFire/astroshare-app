@@ -48,8 +48,8 @@ export default function SolarWeather({ navigation }: any) {
   // SUN
   const [loadingImage, setLoadingImage] = useState<boolean>(false)
   const [isImageMode, setIsImageMode] = useState<boolean>(true)
-  const [currentImageFilter, setCurrentImageFilter] = useState<ESunFilterBackup>('HMI_CONTINUUM' as ESunFilterBackup)
-  // const [currentImageFilter, setCurrentImageFilter] = useState<ESunFilter>('HMI_IC' as ESunFilter)
+  //const [currentImageFilter, setCurrentImageFilter] = useState<ESunFilterBackup>('HMI_CONTINUUM' as ESunFilterBackup)
+  const [currentImageFilter, setCurrentImageFilter] = useState<ESunFilter>('HMI_IC' as ESunFilter)
   const [currentImageUrl, setCurrentImageUrl] = useState<string | undefined>("")
 
   // CME
@@ -86,14 +86,14 @@ export default function SolarWeather({ navigation }: any) {
     return () => clearInterval(periodicUpdate);
   }, [])
 
-  const handleChangeSunImage = (filter: ESunFilterBackup, type: 'img' | 'video') => {
+  const handleChangeSunImage = (filter: ESunFilter, type: 'img' | 'video') => {
     setCurrentImageUrl(undefined)
     setLoadingImage(true)
 
     setTimeout(() => {
       setCurrentImageFilter(filter)
-      setCurrentImageUrl(sunImagesSrcWavelengthsBackup[filter] + '?' + new Date())
-      // setCurrentImageUrl(type === 'img' ? sunImagesSrcWavelengths[filter] + '?' + new Date() : sunVideoSrcWavelengths[filter] + '?' + new Date())
+      //setCurrentImageUrl(sunImagesSrcWavelengthsBackup[filter] + '?' + new Date())
+      setCurrentImageUrl(type === 'img' ? sunImagesSrcWavelengths[filter] + '?' + new Date() : sunVideoSrcWavelengths[filter] + '?' + new Date())
       setLoadingImage(false)
     }, 300)
   }
@@ -162,8 +162,8 @@ export default function SolarWeather({ navigation }: any) {
               <TouchableOpacity onPress={() => setIsImageMode(true)} style={{ height: 35, flex: 1, borderBottomWidth: isImageMode ? 1 : 0, borderColor: app_colors.white, marginBottom: 10, padding: 5 }}>
                 <Text style={{ fontFamily: 'GilroyBlack', color: app_colors.white, textTransform: 'uppercase', textAlign: "center", fontSize: 18 }}>{i18n.t('solarWeather.containers.switches.image')}</Text>
               </TouchableOpacity>
-              <TouchableOpacity disabled onPress={() => setIsImageMode(false)} style={{ height: 35, flex: 1, borderBottomWidth: isImageMode ? 0 : 1, borderColor: app_colors.white, marginBottom: 10, padding: 5 }}>
-                <Text style={{ fontFamily: 'GilroyBlack', color: app_colors.white_forty, textTransform: 'uppercase', textAlign: "center", fontSize: 18 }}>{i18n.t('solarWeather.containers.switches.video')}</Text>
+              <TouchableOpacity onPress={() => setIsImageMode(false)} style={{ height: 35, flex: 1, borderBottomWidth: isImageMode ? 0 : 1, borderColor: app_colors.white, marginBottom: 10, padding: 5 }}>
+                <Text style={{ fontFamily: 'GilroyBlack', color: app_colors.white, textTransform: 'uppercase', textAlign: "center", fontSize: 18 }}>{i18n.t('solarWeather.containers.switches.video')}</Text>
               </TouchableOpacity>
             </View>
             <Text style={solarWeatherStyles.container.title}>{i18n.t('solarWeather.containers.instrument', { currentImageFilter: currentImageFilter })}</Text>
@@ -177,7 +177,7 @@ export default function SolarWeather({ navigation }: any) {
                 <>
                   <Video
                     ref={videoRef}
-                    source={{ uri: sunVideoSrcWavelengthsBackup[currentImageFilter] + '?' + new Date() }}
+                    source={{ uri: sunVideoSrcWavelengths[currentImageFilter] + '?' + new Date() }}
                     isMuted={true}
                     shouldPlay={true}
                     rate={2.0}
@@ -191,9 +191,9 @@ export default function SolarWeather({ navigation }: any) {
             }
             <View style={solarWeatherStyles.container.buttons}>
               {
-                Object.keys(ESunFilterBackup).map((key: string) => {
+                Object.keys(ESunFilter).map((key: string) => {
                   return (
-                    <SimpleButton textColor={app_colors.white} small key={key} text={key} onPress={() => handleChangeSunImage(ESunFilterBackup[key as keyof typeof ESunFilterBackup], isImageMode ? 'img' : 'video')} active={key === currentImageFilter} />
+                    <SimpleButton textColor={app_colors.white} small key={key} text={key} onPress={() => handleChangeSunImage(ESunFilter[key as keyof typeof ESunFilter], isImageMode ? 'img' : 'video')} active={key === currentImageFilter} />
                   )
                 })
               }
