@@ -42,6 +42,7 @@ export function AppSettingsProvider({ children }: AppSettingsProviderProps) {
   const [isCellularDataEnabled, setIsCellularDataEnabled] = useState<boolean>(true)
   const [hasInternetConnection, setHasInternetConnection] = useState<boolean>(false)
   const [selectedHomeWidget, setSelectedHomeWidget] = useState<HomeWidget>('None' as HomeWidget)
+  const [selectedObservatory, setSelectedObservatory] = useState<string | null>(null)
   const [homeNewsBannerVisible, setHomeNewsBannerVisible] = useState<boolean>(true)
   const [apiNotReachable, setApiNotReachable] = useState<boolean>(false)
 

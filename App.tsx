@@ -44,7 +44,6 @@ import ScopeAlignment from "./src/screens/ScopeAlignment";
 import Settings from "./src/screens/Settings";
 import SolarWeather from "./src/screens/SolarWeather";
 import TutorialScreen from "./src/screens/TutorialScreen";
-import ViewPointsManager from "./src/screens/ViewPointsManager";
 import Weather from "./src/screens/Weather";
 import WidgetManager from "./src/screens/WidgetManager";
 import { ForgotPasswordScreen } from './src/screens/auth/ForgotPasswordScreen';
@@ -213,7 +212,6 @@ export default function App() {
                                 <Stack.Screen name={routes.settings.astroDataInfos.path} component={AstroDataInfos} />
                                 <Stack.Screen name={routes.settings.widgetsManager.path} component={WidgetManager} />
                                 <Stack.Screen name={routes.settings.newsManager.home.path} component={NewsBannerManager} />
-                                <Stack.Screen name={routes.settings.favoritesViewPoints.path} component={ViewPointsManager} />
                                 <Stack.Screen name={routes.settings.about.path} component={About} />
 
                                 {/*MARKETING SCREENS*/}

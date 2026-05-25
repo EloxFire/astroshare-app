@@ -33,17 +33,17 @@ export const PersonnalInfosCard = ({navigation}: any) => {
         textColor={app_colors.white}
         backgroundColor={app_colors.white_no_opacity}
       />
-      {/* <SimpleButton
+      <SimpleButton
         fullWidth
         withArrow
         align="flex-start"
-        icon={require('../../../../assets/icons/FiPinMap.png')}
+        icon={require('../../../../assets/icons/FiObservatory.png')}
         text={i18n.t('auth.profile.personnalInfos.addresses.title')}
-        onPress={() => {}}
+        onPress={() => {navigation.navigate(routes.auth.profile.observatories.home.path)}}
         iconColor={app_colors.white}
         textColor={app_colors.white}
         backgroundColor={app_colors.white_no_opacity}
-      /> */}
+      />
       <SimpleButton
         fullWidth
         withArrow

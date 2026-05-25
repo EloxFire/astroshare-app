@@ -1,6 +1,5 @@
 import React, { ReactNode, createContext, useContext, useEffect, useState } from 'react'
 import { getObject, storeData, storeObject } from '../helpers/storage'
-import { TViewPoint } from '../helpers/types/ViewPoint'
 import { storageKeys } from '../helpers/constants'
 import { Barometer } from 'expo-sensors'
 const ObservationSpotContext = createContext<any>({})
@@ -15,20 +14,9 @@ interface ObservationSpotProviderProps {
 
 export function ObservationSpotProvider({ children }: ObservationSpotProviderProps) {
 
-  const [viewPoints, setViewPoints] = useState<TViewPoint[]>([])
-  const [selectedSpot, setSelectedSpot] = useState<TViewPoint | null>(null)
   const [defaultAltitude, setDefaultAltitude] = useState<string>('+341m')
 
   const [barometerSubscription, setBarometerSubscription] = useState<any>(null);
-
-  useEffect(() => {
-    (async () => {
-      const spots = await getObject(storageKeys.viewPoints)
-      const spot = await getObject(storageKeys.selectedSpot)
-      if (spots) setViewPoints(spots)
-      if (spot) setSelectedSpot(spot)
-    })()
-  }, [])
 
   useEffect(() => {
     _subscribe();
@@ -64,51 +52,10 @@ export function ObservationSpotProvider({ children }: ObservationSpotProviderPro
     storeData(storageKeys.hasChangedCurrentSpotElevation, 'true')
   }
 
-  const addNewSpot = async (newSpot: TViewPoint) => {
-    const temp = await getObject(storageKeys.viewPoints)
-    console.log('[Observation Spot] Current view points:', temp);
 
-    if (temp) {
-      temp.push(newSpot)
-      storeObject(storageKeys.viewPoints, temp)
-    } else {
-      storeObject(storageKeys.viewPoints, [newSpot])
-    }
-
-    storeData(storageKeys.hasAddedSpot, 'true')
-    refreshViewPoints()
-  }
-
-  const refreshViewPoints = async () => {
-    const temp = await getObject(storageKeys.viewPoints)
-    if (temp) {
-      setViewPoints(temp)
-    }
-  }
-
-  const deleteSpot = async (spotTitle: string) => {
-    const temp = await getObject(storageKeys.viewPoints)
-    if (temp) {
-      const newSpots = temp.filter((spot: TViewPoint) => spot.title !== spotTitle)
-      storeObject(storageKeys.viewPoints, newSpots)
-    }
-
-    refreshViewPoints()
-  }
-
-  const changeSelectedSpot = (spot: TViewPoint) => {
-    setSelectedSpot(spot)
-    storeObject(storageKeys.selectedSpot, spot)
-  }
 
   const values = {
     handleCurrentSpotElevation,
-    addNewSpot,
-    deleteSpot,
-    viewPoints,
-    refreshViewPoints,
-    changeSelectedSpot,
-    selectedSpot,
     defaultAltitude,
   }
 

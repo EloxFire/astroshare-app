@@ -1,8 +1,6 @@
 import React from 'react'
 import { Image, ImageSourcePropType, Text, View } from 'react-native'
 import { app_colors } from '../helpers/constants'
-import { viewPointsManagerStyles } from '../styles/screens/viewPointsManager'
-
 interface ScreenInfoProps {
   image: ImageSourcePropType
   text: string

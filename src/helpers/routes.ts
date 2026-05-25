@@ -25,7 +25,6 @@ export const routes = {
     widgetsManager: {path: 'WidgetsManager', requirements: []},
     astroDataInfos: { path: 'AstroDataInfos', requirements: [] },
     changelogScreen: {path: 'ChangelogScreen', requirements: []},
-    favoritesViewPoints: { path: 'FavoritesViewPoints', requirements: [] },
     newsManager: {
       home: {
         path: "NewsManager",
@@ -90,6 +89,9 @@ export const routes = {
           crud: { path: 'AccessoriesCrud', requirements: []},
         }
       },
+      observatories: {
+        home: { path: 'ObservatoriesScreen', requirements: []},
+      }
     },
     forgotPassword: { path: 'ForgotPassword', requirements: [] },
   },
