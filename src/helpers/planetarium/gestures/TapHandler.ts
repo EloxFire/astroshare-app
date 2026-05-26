@@ -13,8 +13,9 @@ export function onTap(
   zenithVec: THREE.Vector3 | null,
   groundVisible: boolean,
   setSelectedObject: (obj: any) => void,
+  fov?: number,
 ): void {
-  const result = pickObject(event, glViewWidth, glViewHeight, scene, camera, zenithVec, groundVisible);
+  const result = pickObject(event, glViewWidth, glViewHeight, scene, camera, zenithVec, groundVisible, fov);
 
   if (!result) {
     selectionCircle.visible = false;

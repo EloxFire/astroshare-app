@@ -516,7 +516,7 @@ export default function PlanetariumUI({ navigation, infos, onShowGround, onShowC
       {
         showTimelineModal && (
           <View pointerEvents="box-none" style={planetariumUIStyles.container.timelineModal}>
-            <View pointerEvents="box-only" style={planetariumUIStyles.container.timelineModal.compactCard}>
+            <View style={planetariumUIStyles.container.timelineModal.compactCard}>
               <View style={planetariumUIStyles.container.timelineModal.row}>
                 <View style={planetariumUIStyles.container.timelineModal.column}>
                   <View style={planetariumUIStyles.container.timelineModal.arrowRow}>

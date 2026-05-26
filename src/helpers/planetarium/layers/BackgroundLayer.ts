@@ -11,24 +11,24 @@ export async function createBackgroundLayer(
   const texture = await loadBundledTextureAsync(
     require('../../../../assets/images/textures/milkyway.png'),
   );
-  texture.flipY = false;
   texture.generateMipmaps = false;
   texture.minFilter = THREE.LinearFilter;
   texture.magFilter = THREE.LinearFilter;
-  texture.colorSpace = THREE.SRGBColorSpace;
   texture.needsUpdate = true;
 
   const material = new THREE.MeshBasicMaterial({
     map: texture,
     side: THREE.BackSide,
-    transparent: true,
-    opacity: 1,
+    transparent: false,
     depthWrite: false,
+    // Multiply texture RGB by this color — effective brightness/opacity without
+    // using the transparent queue (which would render after opaque stars and fail depth test).
+    color: new THREE.Color(0.5, 0.5, 0.5),
   });
 
-  const mesh = new THREE.Mesh(new THREE.SphereGeometry(100, 64, 64), material);
-  // Rotate so that the galactic plane aligns with the equatorial sphere
-  mesh.quaternion.setFromAxisAngle(new THREE.Vector3(1, 0, 0), -Math.PI / 2);
+  const mesh = new THREE.Mesh(new THREE.SphereGeometry(99, 64, 32), material);
+  // +PI/2 around X maps Three.js +Y (sphere top) → +Z (NCP in our equatorial system)
+  mesh.quaternion.setFromAxisAngle(new THREE.Vector3(1, 0, 0), Math.PI / 2);
   mesh.renderOrder = RENDER_ORDER.background;
   mesh.name = LAYER_NAMES.background;
 

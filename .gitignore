@@ -49,4 +49,7 @@ yarn-error.*
 # typescript
 *.tsbuildinfo
 
+#Alternate script
+*.py
+
 .android.view.Choreographer.swp

@@ -245,6 +245,9 @@ export default function Planetarium({ route, navigation }: any) {
   }, []);
 
   // ─── Computed object infos ────────────────────────────────────────────────────
+  // computeObject is expensive (864 horizon-crossing calculations). Run it only
+  // when the selected object changes, not on every timeline tick (every second).
+  // The timeline date is read from the ref so it doesn't re-trigger the effect.
 
   useEffect(() => {
     if (!selectedObject || !currentUserLocation) {
@@ -252,7 +255,7 @@ export default function Planetarium({ route, navigation }: any) {
       return;
     }
     const observer = { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon };
-    const safeDate = referenceDate.isValid() ? referenceDate : dayjs();
+    const safeDate = referenceDateRef.current.isValid() ? referenceDateRef.current : dayjs();
 
     if ('family' in selectedObject && (selectedObject as any).family === 'Sun') {
       setComputedInfos(buildSunComputedInfos(getSunData(safeDate, observer)));
@@ -265,7 +268,7 @@ export default function Planetarium({ route, navigation }: any) {
       lang: currentLocale,
       date: safeDate,
     }));
-  }, [selectedObject, currentLocale, currentUserLocation, referenceDate]);
+  }, [selectedObject, currentLocale, currentUserLocation]);
 
   // ─── Initial selection (Polaris or route param) ───────────────────────────────
 
@@ -536,6 +539,7 @@ export default function Planetarium({ route, navigation }: any) {
         zenithVecRef.current,
         groundVisibleRef.current,
         setSelectedObject as any,
+        controllerRef.current?.fov,
       );
     });
 

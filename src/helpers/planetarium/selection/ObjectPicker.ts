@@ -21,16 +21,21 @@ export function pickObject(
   camera: THREE.PerspectiveCamera,
   zenithVec: THREE.Vector3 | null,
   groundVisible: boolean,
+  fov = 75,
 ): PickResult | null {
   if (!glViewWidth || !glViewHeight) return null;
 
   const ndcX =  (event.x / glViewWidth)  * 2 - 1;
   const ndcY = -(event.y / glViewHeight) * 2 + 1;
 
+  // Scale the point-cloud hit threshold with FOV: wider view = smaller apparent
+  // star size = need a larger pick radius to compensate.
+  const threshold = Math.max(0.05, fov * 0.0025);
+
   const raycaster = new THREE.Raycaster();
   raycaster.near = 9;
   raycaster.far = 20;
-  raycaster.params.Points = { threshold: 0.08 };
+  raycaster.params.Points = { threshold };
   raycaster.setFromCamera(new THREE.Vector2(ndcX, ndcY), camera);
 
   let hits = raycaster.intersectObjects(scene.children, true);
