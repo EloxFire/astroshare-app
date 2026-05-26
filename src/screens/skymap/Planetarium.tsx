@@ -160,7 +160,8 @@ function buildSunComputedInfos(sunData: ComputedSunInfos): ComputedObjectInfos {
 
 const MIN_LOADING_MS   = 1400;
 const SUCCESS_HOLD_MS  = 700;
-const EPHEMERIS_THROTTLE_S = 5;
+const EPHEMERIS_THROTTLE_S = 5; // kept for EphemerisScheduler compat
+const EPHEMERIS_RAF_MS = 50;    // max 20fps for scene updates in RAF loop
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -238,6 +239,9 @@ export default function Planetarium({ route, navigation }: any) {
   const precomputeDoneRef = useRef<boolean>(false);
   const computedInfosRef = useRef<ComputedObjectInfos | null>(null);
   const zoomLockRef = useRef<{ ra: number; dec: number } | null>(null);
+  const currentUserLocationRef = useRef(currentUserLocation);
+  const moonCoordsRef = useRef(moonCoords);
+  const lastEphemerisRafMs = useRef(0);
 
   // ─── Loading state ───────────────────────────────────────────────────────────
   const [loading, setLoading]             = useState(true);
@@ -264,6 +268,8 @@ export default function Planetarium({ route, navigation }: any) {
 
   useEffect(() => { followSelectionRef.current = followSelection; }, [followSelection]);
   useEffect(() => { computedInfosRef.current = computedInfos; }, [computedInfos]);
+  useEffect(() => { currentUserLocationRef.current = currentUserLocation; }, [currentUserLocation]);
+  useEffect(() => { moonCoordsRef.current = moonCoords; }, [moonCoords]);
 
   // ─── Timeline ────────────────────────────────────────────────────────────────
   const [referenceDate, setReferenceDate]   = useState<Dayjs>(dayjs());
@@ -382,70 +388,24 @@ export default function Planetarium({ route, navigation }: any) {
 
 
   // ─── Follow mode ─────────────────────────────────────────────────────────────
+  // Handled every frame in the RAF loop via followSelectionRef + computedInfosRef.
+  // This effect only handles the non-time-driven case (follow toggled or object changed).
 
   useEffect(() => {
     if (!followSelection || !computedInfos || !controllerRef.current) return;
-
     const { degRa, degDec } = computedInfos.base;
     if (typeof degRa === 'number' && typeof degDec === 'number') {
       controllerRef.current.setLook(degRa, degDec);
     }
-  }, [referenceDate, followSelection, computedInfos]);
+  }, [followSelection, computedInfos]);
 
-  // ─── Scene ephemeris update (triggered by referenceDate changes) ──────────────
+  // ─── Scene ephemeris update ───────────────────────────────────────────────────
+  // All time-driven updates are handled in the RAF loop via lastEphemerisRafMs.
+  // This effect only forces an immediate re-update when location or loading changes.
 
   useEffect(() => {
-    const refs = sceneRefsRef.current;
-    if (!refs || loading || !currentUserLocation) return;
-
-    const date = referenceDateRef.current;
-    const scheduler = schedulerRef.current;
-    if (!scheduler.shouldUpdate('ephemeris', date, EPHEMERIS_THROTTLE_S)) return;
-
-    const observer = { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon };
-    const dateObj = date.toDate();
-
-    // Correct camera direction so alt/az stays constant across time changes
-    if (controllerRef.current && !followSelectionRef.current) {
-      const ctrl = controllerRef.current;
-      const horiz = convertEquatorialToHorizontal(lastEphemerisDateRef.current, observer, {
-        ra: ctrl.lookRa, dec: ctrl.lookDec,
-      });
-      const corrected = convertHorizontalToEquatorial(dateObj, observer, {
-        alt: horiz.alt, az: horiz.az,
-      });
-      if (isFinite(corrected.ra) && isFinite(corrected.dec)) {
-        ctrl.setLook(corrected.ra, corrected.dec);
-      }
-    }
-    lastEphemerisDateRef.current = dateObj;
-
-    // Update solar system positions
-    const snapshot = refs.solarSystemLayer.update(date, observer, (moonCoords as any)?.currentIconUrl);
-
-    // Update atmosphere
-    updateAtmosphere(
-      refs.atmosphere,
-      snapshot.sunData,
-      atmosphereOnRef.current,
-      refs.starsCloud,
-      refs.scene.getObjectByName(LAYER_NAMES.background) as THREE.Mesh | null,
-      refs.dsoGroup,
-    );
-
-    // Update azimuthal grid + ground + zenith
-    const zenithEq = convertHorizontalToEquatorial(dateObj, observer, { alt: 90, az: 0 });
-    zenithVecRef.current = raDecToVec3(zenithEq.ra, zenithEq.dec, 1).normalize();
-    refs.zenithVec.copy(zenithVecRef.current);
-
-    // Keep the camera controller's zenith in sync so the horizon stays visually flat
-    controllerRef.current?.setZenith(zenithVecRef.current);
-
-    // Ground uses a shader uniform — always update, visible or not
-    orientGroundToHorizon(refs.ground, currentUserLocation, dateObj);
-    orientAzGridToHorizon(refs.azGrid, currentUserLocation, dateObj);
-    updateCompassLabels(refs.compassLabels, currentUserLocation, dateObj, 0.98);
-  }, [referenceDate, loading, currentUserLocation, moonCoords]);
+    lastEphemerisRafMs.current = 0; // reset throttle → RAF will update on next frame
+  }, [loading, currentUserLocation]);
 
   // ─── Background precompute: warm cache for Messier DSOs after scene loads ─────
 
@@ -551,6 +511,54 @@ export default function Planetarium({ route, navigation }: any) {
 
         tickSelectionCirclePulse(refs.selectionCircle);
 
+        // ── Follow mode: lock camera on selected object every frame ─────────────
+        if (followSelectionRef.current && computedInfosRef.current) {
+          const { degRa, degDec } = computedInfosRef.current.base;
+          if (typeof degRa === 'number' && typeof degDec === 'number') {
+            ctrl.setLook(degRa, degDec);
+          }
+        }
+
+        // ── Ephemeris: update scene at max 20fps (50ms wall-clock throttle) ─────
+        // Reads referenceDateRef directly so slider seek needs zero React state.
+        const rafNow = performance.now();
+        const rafLoc = currentUserLocationRef.current;
+        if (rafLoc && rafNow - lastEphemerisRafMs.current >= EPHEMERIS_RAF_MS) {
+          lastEphemerisRafMs.current = rafNow;
+          const rafDate = referenceDateRef.current;
+          const rafObs  = { latitude: rafLoc.lat, longitude: rafLoc.lon };
+          const rafDateObj = rafDate.toDate();
+
+          if (!followSelectionRef.current) {
+            const horiz = convertEquatorialToHorizontal(lastEphemerisDateRef.current, rafObs, {
+              ra: ctrl.lookRa, dec: ctrl.lookDec,
+            });
+            const corrected = convertHorizontalToEquatorial(rafDateObj, rafObs, {
+              alt: horiz.alt, az: horiz.az,
+            });
+            if (isFinite(corrected.ra) && isFinite(corrected.dec)) {
+              ctrl.setLook(corrected.ra, corrected.dec);
+            }
+          }
+          lastEphemerisDateRef.current = rafDateObj;
+
+          const snapshot = refs.solarSystemLayer.update(rafDate, rafObs, (moonCoordsRef.current as any)?.currentIconUrl);
+          updateAtmosphere(
+            refs.atmosphere, snapshot.sunData, atmosphereOnRef.current,
+            refs.starsCloud, refs.scene.getObjectByName(LAYER_NAMES.background) as THREE.Mesh | null,
+            refs.dsoGroup,
+          );
+
+          const zenithEq = convertHorizontalToEquatorial(rafDateObj, rafObs, { alt: 90, az: 0 });
+          zenithVecRef.current = raDecToVec3(zenithEq.ra, zenithEq.dec, 1).normalize();
+          refs.zenithVec.copy(zenithVecRef.current);
+          ctrl.setZenith(zenithVecRef.current);
+
+          orientGroundToHorizon(refs.ground, rafLoc, rafDateObj);
+          orientAzGridToHorizon(refs.azGrid, rafLoc, rafDateObj);
+          updateCompassLabels(refs.compassLabels, rafLoc, rafDateObj, 0.98);
+        }
+
         updateConstellationLabelSizes(
           refs.constellationLabels,
           camera,
@@ -580,6 +588,12 @@ export default function Planetarium({ route, navigation }: any) {
       console.error('[Planetarium] Failed to build scene', err);
     }
   };
+
+  // ─── Seek callback (used by slider — updates ref only, no React state) ──────────
+
+  const onSeekTimeline = useCallback((date: Dayjs) => {
+    referenceDateRef.current = date;
+  }, []);
 
   // ─── Layer toggles ────────────────────────────────────────────────────────────
 
@@ -726,6 +740,7 @@ export default function Planetarium({ route, navigation }: any) {
           timelineDate={referenceDate}
           isTimelinePlaying={timelinePlaying}
           onToggleTimelinePlay={() => setTimelinePlaying((v) => !v)}
+          onSeekTimeline={onSeekTimeline}
           onChangeTimelineDate={setReferenceDate}
           onResetTimelineDate={() => {
             setTimelinePlaying(true);

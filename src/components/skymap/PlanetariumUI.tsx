@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
+import React, {useEffect, useMemo, useRef, useState} from "react";
 import {Image, LayoutChangeEvent, PanResponder, Text, TouchableOpacity, View} from "react-native";
 import {LinearGradient} from "expo-linear-gradient";
 import {planetariumUIStyles} from "../../styles/components/skymap/planetariumUI";
@@ -41,13 +41,14 @@ interface PlanetariumUIProps {
   isFollowing: boolean;
   onToggleFollow: () => void;
   timelineDate: Dayjs;
+  onSeekTimeline: (date: Dayjs) => void;
   onChangeTimelineDate: (next: Dayjs) => void;
   onResetTimelineDate: () => void;
   onToggleTimelinePlay: () => void;
   isTimelinePlaying: boolean;
 }
 
-export default function PlanetariumUI({ navigation, infos, onShowGround, onShowConstellations, onShowConstellationLabels, onShowAzGrid, onShowEqGrid, onShowDSO, onShowPlanets, onShowCompassLabels, onCenterObject, onSelectObject, onSelectFromSearch, onShowAtmosphere, isFollowing, onToggleFollow, timelineDate, onChangeTimelineDate, onResetTimelineDate, onToggleTimelinePlay, isTimelinePlaying }: PlanetariumUIProps) {
+export default function PlanetariumUI({ navigation, infos, onShowGround, onShowConstellations, onShowConstellationLabels, onShowAzGrid, onShowEqGrid, onShowDSO, onShowPlanets, onShowCompassLabels, onCenterObject, onSelectObject, onSelectFromSearch, onShowAtmosphere, isFollowing, onToggleFollow, timelineDate, onSeekTimeline, onChangeTimelineDate, onResetTimelineDate, onToggleTimelinePlay, isTimelinePlaying }: PlanetariumUIProps) {
 
   const {currentUserLocation} = useSettings();
   const {currentLocale} = useTranslation();
@@ -58,12 +59,13 @@ export default function PlanetariumUI({ navigation, infos, onShowGround, onShowC
   const clockRafRef = useRef<number | null>(null);
   const lastClockStringRef = useRef<string>(currentTime);
   const lastIsNightRef = useRef<boolean>(false);
-  const SLIDER_RANGE_HOURS = 12;
-  const sliderAnchorRef = useRef<Dayjs>(dayjs());
-  const [sliderOffsetHours, setSliderOffsetHours] = useState<number>(0);
   const [sliderWidth, setSliderWidth] = useState<number>(0);
-  const sliderFrameRef = useRef<number | null>(null);
-  const pendingSliderRatioRef = useRef<number | null>(null);
+  const sliderWidthRef = useRef<number>(0);
+  const sliderDayRef = useRef<Dayjs>(timelineDate.startOf('day'));
+  const [sliderRatio, setSliderRatio] = useState<number>(0);
+  const sliderRatioRef = useRef<number>(0);
+  const isDraggingRef = useRef<boolean>(false);
+  const dragStartRatioRef = useRef<number>(0);
 
   const [showLayerModal, setShowLayerModal] = useState<boolean>(false);
   const [showSearchBar, setShowSearchBar] = useState<boolean>(false);
@@ -122,23 +124,33 @@ export default function PlanetariumUI({ navigation, infos, onShowGround, onShowC
     };
   }, [currentUserLocation, isTimelinePlaying]);
 
+  // Keep sliderDayRef in sync with the calendar date (not the time).
   useEffect(() => {
-    const anchor = sliderAnchorRef.current;
-    const deltaMinutes = timelineDate.diff(anchor, 'minute');
-    const clampedMinutes = Math.min(Math.max(deltaMinutes, -SLIDER_RANGE_HOURS * 60), SLIDER_RANGE_HOURS * 60);
-    setSliderOffsetHours(clampedMinutes / 60);
-  }, [SLIDER_RANGE_HOURS, timelineDate]);
+    sliderDayRef.current = timelineDate.startOf('day');
+  }, [timelineDate]);
+
+  // Sync thumb position from parent when not dragging.
+  useEffect(() => {
+    if (isDraggingRef.current) return;
+    const mins = timelineDate.diff(timelineDate.startOf('day'), 'minute');
+    const r = Math.min(Math.max(mins / (24 * 60), 0), 1);
+    sliderRatioRef.current = r;
+    setSliderRatio(r);
+  }, [timelineDate]);
 
   const observer = useMemo(() => {
     if (!currentUserLocation) return null;
     return { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon };
   }, [currentUserLocation]);
 
+  // Recompute sun times once per day, not every second.
+  const dateDayStr = timelineDate.format('YYYY-MM-DD');
   const sunTimes = useMemo(() => {
     if (!observer) return { sunrise: null as Dayjs | null, sunset: null as Dayjs | null };
     const sunData = getSunData(timelineDate, observer);
     return { sunrise: sunData.visibility.sunrise, sunset: sunData.visibility.sunset };
-  }, [observer, timelineDate]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [observer, dateDayStr]);
 
   useEffect(() => {
     // console.log("[PlanetariumUI] Infos updated:", infos);
@@ -168,9 +180,6 @@ export default function PlanetariumUI({ navigation, infos, onShowGround, onShowC
   }
 
   const handleShowTimeline = () => {
-    if (!showTimelineModal) {
-      sliderAnchorRef.current = timelineDate;
-    }
     setShowTimelineModal(!showTimelineModal);
     setShowSearchBar(false);
     setShowLayerModal(false);
@@ -182,51 +191,53 @@ export default function PlanetariumUI({ navigation, infos, onShowGround, onShowC
 
   const handleResetTimeline = () => {
     onResetTimelineDate();
-    setShowTimelineModal(false);
   };
 
   const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
 
-  const sliderPercent = useMemo(() => {
-    return clamp((sliderOffsetHours + SLIDER_RANGE_HOURS) / (SLIDER_RANGE_HOURS * 2), 0, 1);
-  }, [SLIDER_RANGE_HOURS, sliderOffsetHours]);
-
   const handleSliderLayout = (event: LayoutChangeEvent) => {
-    setSliderWidth(event.nativeEvent.layout.width);
+    const w = event.nativeEvent.layout.width;
+    setSliderWidth(w);
+    sliderWidthRef.current = w;
   };
 
-  const setTimelineFromRatio = useCallback((ratio: number) => {
-    const clamped = clamp(ratio, 0, 1);
-    pendingSliderRatioRef.current = clamped;
-
-    if (sliderFrameRef.current !== null) return;
-
-    sliderFrameRef.current = requestAnimationFrame(() => {
-      const nextRatio = pendingSliderRatioRef.current;
-      pendingSliderRatioRef.current = null;
-      sliderFrameRef.current = null;
-      if (nextRatio === null) return;
-
-      const minutesFromAnchor = (nextRatio * SLIDER_RANGE_HOURS * 2 - SLIDER_RANGE_HOURS) * 60;
-      const nextDate = sliderAnchorRef.current.add(minutesFromAnchor, 'minute');
-      onChangeTimelineDate(nextDate);
-    });
-  }, [SLIDER_RANGE_HOURS, onChangeTimelineDate]);
-
+  // PanResponder: updates local thumb state + calls onSeekTimeline (ref write only,
+  // no parent state update). onChangeTimelineDate fires once on release.
   const sliderPanResponder = useMemo(() => PanResponder.create({
     onStartShouldSetPanResponder: () => true,
     onMoveShouldSetPanResponder: () => true,
     onPanResponderGrant: (evt) => {
-      if (!sliderWidth) return;
-      const ratio = clamp(evt.nativeEvent.locationX / sliderWidth, 0, 1);
-      setTimelineFromRatio(ratio);
+      const w = sliderWidthRef.current;
+      if (!w) return;
+      isDraggingRef.current = true;
+      const ratio = Math.min(Math.max(evt.nativeEvent.locationX / w, 0), 1);
+      dragStartRatioRef.current = ratio;
+      sliderRatioRef.current = ratio;
+      setSliderRatio(ratio);
+      const date = sliderDayRef.current.add(ratio * 24 * 60, 'minute');
+      displayAnchorRef.current = date;
+      wallClockAnchorRef.current = Date.now();
+      onSeekTimeline(date);
     },
-    onPanResponderMove: (evt) => {
-      if (!sliderWidth) return;
-      const ratio = clamp(evt.nativeEvent.locationX / sliderWidth, 0, 1);
-      setTimelineFromRatio(ratio);
+    onPanResponderMove: (_evt, gestureState) => {
+      const w = sliderWidthRef.current;
+      if (!w) return;
+      // gestureState.dx = cumulative displacement since grant — reliable regardless
+      // of which child element the finger is currently over.
+      const ratio = Math.min(Math.max(dragStartRatioRef.current + gestureState.dx / w, 0), 1);
+      sliderRatioRef.current = ratio;
+      setSliderRatio(ratio);
+      const date = sliderDayRef.current.add(ratio * 24 * 60, 'minute');
+      displayAnchorRef.current = date;
+      wallClockAnchorRef.current = Date.now();
+      onSeekTimeline(date);
     },
-  }), [setTimelineFromRatio, sliderWidth]);
+    onPanResponderRelease: () => {
+      isDraggingRef.current = false;
+      const date = sliderDayRef.current.add(sliderRatioRef.current * 24 * 60, 'minute');
+      onChangeTimelineDate(date);
+    },
+  }), [onSeekTimeline, onChangeTimelineDate]);
 
   const timelinePhaseLabel = useMemo(() => {
     const { sunrise, sunset } = sunTimes;
@@ -238,59 +249,37 @@ export default function PlanetariumUI({ navigation, infos, onShowGround, onShowC
     return 'Night';
   }, [sunTimes, timelineDate]);
 
+  // Gradient only recomputes when the day changes (sunTimes changes once per day).
   const timelineGradient = useMemo(() => {
-    const nightColor = '#09192c';
-    const dayColor = '#09192c'; // remove bright daylight color from timeline
-    const twilightColor = '#1bb5ff';
-
-    const rangeStart = sliderAnchorRef.current.subtract(SLIDER_RANGE_HOURS, 'hour');
-    const rangeEnd = sliderAnchorRef.current.add(SLIDER_RANGE_HOURS, 'hour');
-    const totalMinutes = Math.max(rangeEnd.diff(rangeStart, 'minute'), 1);
+    const nightColor = '#070d1a';
+    const twilightColor = '#1e4080';
+    const dayColor = '#ffffff';
     const { sunrise, sunset } = sunTimes;
 
     if (!sunrise || !sunset) {
-      const isNightPhase = observer ? isNight(timelineDate.toDate(), observer) : true;
-      return {
-        colors: isNightPhase ? [nightColor, nightColor] : [dayColor, dayColor],
-        locations: [0, 1]
-      };
+      return { colors: [nightColor, nightColor] as string[], locations: [0, 1] as number[] };
     }
 
-    const sunrisePos = clamp(sunrise.diff(rangeStart, 'minute') / totalMinutes, 0, 1);
-    const sunsetPos = clamp(sunset.diff(rangeStart, 'minute') / totalMinutes, 0, 1);
-    const dawnStart = clamp(sunrisePos - 0.05, 0, 1);
-    const dawnEnd = clamp(sunrisePos + 0.05, 0, 1);
-    const duskStart = clamp(sunsetPos - 0.05, 0, 1);
-    const duskEnd = clamp(sunsetPos + 0.05, 0, 1);
+    const dayStart = sunrise.startOf('day');
+    const totalMinutes = 24 * 60;
+    const tw = 0.03;
+    const srPos = Math.min(Math.max(sunrise.diff(dayStart, 'minute') / totalMinutes, 0), 1);
+    const ssPos = Math.min(Math.max(sunset.diff(dayStart, 'minute') / totalMinutes, 0), 1);
 
     return {
-      colors: [
-        nightColor,
-        twilightColor,
-        dayColor,
-        dayColor,
-        twilightColor,
-        nightColor,
-      ],
+      colors: [nightColor, twilightColor, dayColor, dayColor, twilightColor, nightColor] as string[],
       locations: [
         0,
-        dawnStart,
-        dawnEnd,
-        duskStart,
-        duskEnd,
+        Math.min(Math.max(srPos - tw, 0), 1),
+        Math.min(Math.max(srPos + tw, 0), 1),
+        Math.min(Math.max(ssPos - tw, 0), 1),
+        Math.min(Math.max(ssPos + tw, 0), 1),
         1,
-      ]
+      ] as number[],
     };
-  }, [SLIDER_RANGE_HOURS, observer, sunTimes, timelineDate]);
+  }, [sunTimes]);
 
-  const sliderThumbLeft = sliderWidth ? sliderPercent * sliderWidth : sliderPercent * 240;
-  useEffect(() => {
-    return () => {
-      if (sliderFrameRef.current !== null) {
-        cancelAnimationFrame(sliderFrameRef.current);
-      }
-    };
-  }, []);
+  const sliderThumbLeft = sliderWidth ? sliderRatio * sliderWidth : 0;
 
   const objectInfoContent = useMemo(() => {
     if (!objectInfos) return null;
@@ -565,20 +554,63 @@ export default function PlanetariumUI({ navigation, infos, onShowGround, onShowC
                 </View>
               </View>
 
-              {/* <View style={planetariumUIStyles.container.timelineModal.sliderBlock}>
+              <View style={planetariumUIStyles.container.timelineModal.sliderBlock}>
                 <View style={planetariumUIStyles.container.timelineModal.sliderLabels}>
-                  <Text style={planetariumUIStyles.container.timelineModal.sliderLabel}>-12h</Text>
-                  <Text style={planetariumUIStyles.container.timelineModal.sliderLabel}>+12h</Text>
+                  <Text style={planetariumUIStyles.container.timelineModal.sliderLabel}>00:00</Text>
+                  <Text style={planetariumUIStyles.container.timelineModal.sliderLabel}>12:00</Text>
+                  <Text style={planetariumUIStyles.container.timelineModal.sliderLabel}>23:59</Text>
                 </View>
+                {/*
+                  Hit area: 36px tall for easy touch, NO overflow:hidden so the
+                  thumb is never clipped. Only the inner gradient strip clips.
+                */}
                 <View
-                  style={planetariumUIStyles.container.timelineModal.sliderTrack}
+                  style={{ width: '100%', height: 36, justifyContent: 'center' }}
                   onLayout={handleSliderLayout}
                   {...sliderPanResponder.panHandlers}
                 >
-                  <View style={[planetariumUIStyles.container.timelineModal.sliderThumb, { left: sliderThumbLeft - 10 }]} />
+                  {/* Gradient track — overflow:hidden only here for rounded corners */}
+                  <View style={{ height: 8, borderRadius: 10, overflow: 'hidden' }}>
+                    <LinearGradient
+                      style={{ position: 'absolute', left: 0, right: 0, top: 0, bottom: 0 }}
+                      colors={timelineGradient.colors as any}
+                      locations={timelineGradient.locations as any}
+                      start={{ x: 0, y: 0 }}
+                      end={{ x: 1, y: 0 }}
+                    />
+                    {sunTimes.sunrise && sliderWidth > 0 && (
+                      <View style={{
+                        position: 'absolute',
+                        left: clamp(sunTimes.sunrise.diff(timelineDate.startOf('day'), 'minute') / (24 * 60), 0, 1) * sliderWidth - 1,
+                        top: 0, bottom: 0, width: 2,
+                        backgroundColor: 'rgba(255, 190, 60, 0.9)',
+                      }} />
+                    )}
+                    {sunTimes.sunset && sliderWidth > 0 && (
+                      <View style={{
+                        position: 'absolute',
+                        left: clamp(sunTimes.sunset.diff(timelineDate.startOf('day'), 'minute') / (24 * 60), 0, 1) * sliderWidth - 1,
+                        top: 0, bottom: 0, width: 2,
+                        backgroundColor: 'rgba(255, 110, 30, 0.9)',
+                      }} />
+                    )}
+                  </View>
+                  {/* Thumb lives outside the clipped track so it's never cut off */}
+                  <View style={[
+                    planetariumUIStyles.container.timelineModal.sliderThumb,
+                    { left: sliderThumbLeft - 10, top: 8, borderWidth: 2, borderColor: app_colors.white },
+                  ]} />
                 </View>
-                <Text style={planetariumUIStyles.container.timelineModal.sliderStatus}>{timelinePhaseLabel}</Text>
-              </View> */}
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 2 }}>
+                  <Text style={planetariumUIStyles.container.timelineModal.sliderLabel}>
+                    {sunTimes.sunrise ? `↑ ${sunTimes.sunrise.format('HH:mm')}` : ''}
+                  </Text>
+                  <Text style={planetariumUIStyles.container.timelineModal.sliderStatus}>{timelinePhaseLabel}</Text>
+                  <Text style={planetariumUIStyles.container.timelineModal.sliderLabel}>
+                    {sunTimes.sunset ? `↓ ${sunTimes.sunset.format('HH:mm')}` : ''}
+                  </Text>
+                </View>
+              </View>
             </View>
           </View>
         )

@@ -71,8 +71,7 @@ function createMoonMesh(
   const pos = raDecToVec3(moon.ra, moon.dec, 9.8);
   const geometry = new THREE.SphereGeometry(0.12, 32, 32);
   const moonTexture = new ExpoTHREE.TextureLoader().load(planetTextures.MOON);
-  const moonNormal  = new ExpoTHREE.TextureLoader().load(planetTextures.MOON_NORMAL);
-  const material = new THREE.MeshStandardMaterial({ map: moonTexture, normalMap: moonNormal });
+  const material = new THREE.MeshBasicMaterial({ map: moonTexture });
   const mesh = new THREE.Mesh(geometry, material);
   mesh.position.copy(pos);
   mesh.renderOrder = RENDER_ORDER.moon;
