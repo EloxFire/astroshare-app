@@ -5,7 +5,7 @@ export class EphemerisScheduler {
 
   shouldUpdate(key: string, date: Dayjs, throttleSeconds: number): boolean {
     const last = this.lastUpdate.get(key);
-    if (!last || date.diff(last, 'second') >= throttleSeconds) {
+    if (!last || Math.abs(date.diff(last, 'second')) >= throttleSeconds) {
       this.lastUpdate.set(key, date);
       return true;
     }

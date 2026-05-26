@@ -36,6 +36,7 @@ interface PlanetariumUIProps {
   onShowCompassLabels: () => void;
   onCenterObject: () => void;
   onSelectObject: (obj: DSO | GlobalPlanet | Star) => void;
+  onSelectFromSearch: (obj: DSO | GlobalPlanet | Star) => void;
   onShowAtmosphere?: () => void;
   isFollowing: boolean;
   onToggleFollow: () => void;
@@ -46,7 +47,7 @@ interface PlanetariumUIProps {
   isTimelinePlaying: boolean;
 }
 
-export default function PlanetariumUI({ navigation, infos, onShowGround, onShowConstellations, onShowConstellationLabels, onShowAzGrid, onShowEqGrid, onShowDSO, onShowPlanets, onShowCompassLabels, onCenterObject, onSelectObject, onShowAtmosphere, isFollowing, onToggleFollow, timelineDate, onChangeTimelineDate, onResetTimelineDate, onToggleTimelinePlay, isTimelinePlaying }: PlanetariumUIProps) {
+export default function PlanetariumUI({ navigation, infos, onShowGround, onShowConstellations, onShowConstellationLabels, onShowAzGrid, onShowEqGrid, onShowDSO, onShowPlanets, onShowCompassLabels, onCenterObject, onSelectObject, onSelectFromSearch, onShowAtmosphere, isFollowing, onToggleFollow, timelineDate, onChangeTimelineDate, onResetTimelineDate, onToggleTimelinePlay, isTimelinePlaying }: PlanetariumUIProps) {
 
   const {currentUserLocation} = useSettings();
   const {currentLocale} = useTranslation();
@@ -461,7 +462,7 @@ export default function PlanetariumUI({ navigation, infos, onShowGround, onShowC
         showSearchBar && (
           <PlanetariumSearchModal
             onClose={() => setShowSearchBar(false)}
-            onSelect={(obj) => onSelectObject(obj)}
+            onSelect={(obj) => onSelectFromSearch(obj)}
             navigation={navigation}
             timelineDate={timelineDate}
           />

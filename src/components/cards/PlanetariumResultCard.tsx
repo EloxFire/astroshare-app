@@ -46,7 +46,7 @@ export default function PlanetariumResultCard({ object, onPress, navigation, dat
 
     const recomputeObjectInfos = () => {
       const observer = { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }
-      setObjectInfos(computeObject({ object, observer, lang: currentLocale, altitude: 341, date }));
+      setObjectInfos(computeObject({ object, observer, lang: currentLocale, altitude: 341, date, light: true }));
     };
 
     recomputeObjectInfos();

@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { RENDER_ORDER } from '../utils/renderOrders';
+import { raDecToVec3 } from '../utils/coordinates';
 
 export function createSelectionCircle(color = 0xff4444): THREE.Group {
   const mat = new THREE.LineBasicMaterial({
@@ -85,6 +86,46 @@ export function positionSelectionCircle(
   const base = Math.max(0.25, radius * padding);
   circle.position.copy(point);
   setScale(base, base, base);
+  circle.lookAt(camera.position);
+  circle.visible = true;
+}
+
+/**
+ * Position the selection circle directly from equatorial coordinates.
+ * Used when an object is selected without a tap (e.g. from search results).
+ * apparentSizeArcmin: DSO angular diameter in arcminutes (optional, for scaling).
+ */
+export function positionSelectionCircleAtRaDec(
+  circle: THREE.Group,
+  ra: number,
+  dec: number,
+  camera: THREE.PerspectiveCamera,
+  family: string,
+  apparentSizeArcmin?: number,
+): void {
+  const SPHERE_R = 9.5;
+  const pos = raDecToVec3(ra, dec, SPHERE_R);
+
+  let scale: number;
+  const fam = family.toLowerCase();
+  if (fam === 'star') {
+    scale = 0.22;
+  } else if (fam === 'planet' || fam === 'sun' || fam === 'moon') {
+    scale = 0.5;
+  } else if (fam === 'dso') {
+    if (apparentSizeArcmin && apparentSizeArcmin > 0) {
+      const angRad = (apparentSizeArcmin / 60) * (Math.PI / 180);
+      scale = Math.max(0.22, Math.min(3.0, SPHERE_R * angRad * 0.65));
+    } else {
+      scale = 0.35;
+    }
+  } else {
+    scale = 0.35;
+  }
+
+  circle.position.copy(pos);
+  circle.userData.baseScale = { x: scale, y: scale, z: scale };
+  circle.scale.set(scale, scale, scale);
   circle.lookAt(camera.position);
   circle.visible = true;
 }

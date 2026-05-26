@@ -27,7 +27,7 @@ import { useSolarSystem } from '../../contexts/SolarSystemContext';
 import { useDsoCatalog } from '../../contexts/DSOContext';
 import { useTranslation } from '../../hooks/useTranslation';
 
-import { app_colors, Polaris } from '../../helpers/constants';
+import { app_colors } from '../../helpers/constants';
 import { i18n } from '../../helpers/scripts/i18n';
 import { getSunData } from '../../helpers/scripts/astro/solar/sunData';
 import { computeObject } from '../../helpers/scripts/astro/objects/computeObject';
@@ -48,7 +48,7 @@ import { updateStarFovScale } from '../../helpers/planetarium/layers/StarsLayer'
 import { updateCompassLabels } from '../../helpers/planetarium/layers/CompassLayer';
 import { orientGroundToHorizon } from '../../helpers/planetarium/layers/GroundLayer';
 import { orientAzGridToHorizon } from '../../helpers/planetarium/layers/GridLayer';
-import { tickSelectionCirclePulse } from '../../helpers/planetarium/layers/SelectionCircle';
+import { tickSelectionCirclePulse, positionSelectionCircleAtRaDec, positionSelectionCircle } from '../../helpers/planetarium/layers/SelectionCircle';
 import { updateConstellationLabelSizes } from '../../helpers/planetarium/layers/ConstellationsLayer';
 import { raDecToVec3 } from '../../helpers/planetarium/utils/coordinates';
 import { LAYER_NAMES } from '../../helpers/planetarium/utils/renderOrders';
@@ -162,6 +162,56 @@ const MIN_LOADING_MS   = 1400;
 const SUCCESS_HOLD_MS  = 700;
 const EPHEMERIS_THROTTLE_S = 5;
 
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+
+// Returns the ideal camera vertical FOV (degrees) so the object fills ~60% of
+// screen width. Portrait aspect ≈ 9/16 → hFOV ≈ vFOV * 0.56, so:
+//   targetVFOV = (angularSizeDeg / 0.6) / 0.56 ≈ angularSizeDeg * 2.98
+// Point sources (stars, planets) clamp to a comfortable close-up FOV.
+// Find the Three.js mesh in dsoGroup whose userData.index matches the selected DSO.
+// Used to position the selection circle at the billboard's actual corners.
+function findDsoMeshInScene(dsoGroup: THREE.Group, obj: any): THREE.Mesh | null {
+  const digits = (v: any): string => String(v ?? '').replace(/\D/g, '');
+  const mNum   = digits((obj as DSO).m);
+  const ngcNum = digits((obj as DSO).ngc);
+  const icNum  = digits((obj as DSO).ic);
+  const name   = String((obj as DSO).name ?? '').toLowerCase().replace(/\s+/g, '');
+
+  for (const child of dsoGroup.children) {
+    const key = String(child.userData?.index ?? '').toLowerCase();
+    const parsed = key.match(/^(ic|m|n)(\d+)/);
+    const prefix = parsed?.[1];
+    const num    = parsed?.[2] ?? '';
+    if (prefix === 'm'  && mNum   && num === mNum)   return child as THREE.Mesh;
+    if (prefix === 'n'  && ngcNum && num === ngcNum)  return child as THREE.Mesh;
+    if (prefix === 'ic' && icNum  && num === icNum)   return child as THREE.Mesh;
+    if (key === name) return child as THREE.Mesh;
+  }
+  return null;
+}
+
+function getIdealFov(object: any): number {
+  if (!object) return 20;
+  if ('family' in object && (object.family === 'Sun' || object.family === 'Moon')) return 4;
+
+  const family = getObjectFamily(object);
+  if (family === 'Star')   return 15;
+  if (family === 'Planet') return 20;
+
+  if (family === 'DSO') {
+    const sizeStr: string = (object as DSO).apparent_size ?? '';
+    const match = sizeStr.match(/[\d.]+/);
+    if (match) {
+      const angDeg = parseFloat(match[0]) / 60; // arcmin → degrees
+      const targetFov = angDeg * 2.98;
+      return Math.max(0.5, Math.min(45, targetFov));
+    }
+    return 15;
+  }
+
+  return 20;
+}
+
 // ─── Component ───────────────────────────────────────────────────────────────
 
 export default function Planetarium({ route, navigation }: any) {
@@ -183,6 +233,11 @@ export default function Planetarium({ route, navigation }: any) {
   const glViewHeightRef  = useRef<number>(0);
   const zenithVecRef     = useRef<THREE.Vector3 | null>(null);
   const groundVisibleRef = useRef<boolean>(true);
+  const lastEphemerisDateRef = useRef<Date>(dayjs().toDate());
+  const followSelectionRef = useRef<boolean>(false);
+  const precomputeDoneRef = useRef<boolean>(false);
+  const computedInfosRef = useRef<ComputedObjectInfos | null>(null);
+  const zoomLockRef = useRef<{ ra: number; dec: number } | null>(null);
 
   // ─── Loading state ───────────────────────────────────────────────────────────
   const [loading, setLoading]             = useState(true);
@@ -203,9 +258,12 @@ export default function Planetarium({ route, navigation }: any) {
   // ─── Selection ───────────────────────────────────────────────────────────────
   const [selectedObject, setSelectedObject]     = useState<PlanetariumSelectableObject | null>(null);
   const [computedInfos, setComputedInfos]       = useState<ComputedObjectInfos | null>(null);
-  const [shouldFocus, setShouldFocus]           = useState(false);
   const [followSelection, setFollowSelection]   = useState(false);
   const initialSelectionDone                    = useRef(false);
+  const pendingFocusRef                         = useRef(false);
+
+  useEffect(() => { followSelectionRef.current = followSelection; }, [followSelection]);
+  useEffect(() => { computedInfosRef.current = computedInfos; }, [computedInfos]);
 
   // ─── Timeline ────────────────────────────────────────────────────────────────
   const [referenceDate, setReferenceDate]   = useState<Dayjs>(dayjs());
@@ -257,52 +315,71 @@ export default function Planetarium({ route, navigation }: any) {
     const observer = { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon };
     const safeDate = referenceDateRef.current.isValid() ? referenceDateRef.current : dayjs();
 
+    // Helper: animate camera + set FOV + position selection circle.
+    // Always called with fresh infos — no race condition.
+    const applyFocus = (infos: ComputedObjectInfos) => {
+      if (!controllerRef.current) return;
+      const { degRa, degDec, family } = infos.base;
+      if (typeof degRa !== 'number' || typeof degDec !== 'number') return;
+
+      controllerRef.current.animateTo(degRa, degDec, 60);
+      controllerRef.current.setFov(getIdealFov(selectedObject));
+
+      const refs = sceneRefsRef.current;
+      if (!refs) return;
+
+      // For DSOs with a billboard, use actual corner positions for an exact fit
+      if (family === 'DSO') {
+        const mesh = findDsoMeshInScene(refs.dsoGroup, selectedObject);
+        if (mesh) {
+          positionSelectionCircle(refs.selectionCircle, mesh, refs.camera, 'dso');
+          return;
+        }
+      }
+
+      // Fallback: position from RA/Dec with size approximation
+      let arcmin: number | undefined;
+      if (family === 'DSO') {
+        const m = String((selectedObject as any).apparent_size ?? '').match(/[\d.]+/);
+        if (m) arcmin = parseFloat(m[0]);
+      }
+      positionSelectionCircleAtRaDec(refs.selectionCircle, degRa, degDec, refs.camera, family, arcmin);
+    };
+
     if ('family' in selectedObject && (selectedObject as any).family === 'Sun') {
-      setComputedInfos(buildSunComputedInfos(getSunData(safeDate, observer)));
+      const sunInfos = buildSunComputedInfos(getSunData(safeDate, observer));
+      setComputedInfos(sunInfos);
+      if (pendingFocusRef.current) { pendingFocusRef.current = false; applyFocus(sunInfos); }
       return;
     }
 
-    setComputedInfos(computeObject({
-      object: selectedObject as any,
-      observer,
-      lang: currentLocale,
-      date: safeDate,
-    }));
+    // Phase 1: instant partial info (no horizon scan) — UI responds immediately
+    const light = computeObject({ object: selectedObject as any, observer, lang: currentLocale, date: safeDate, light: true });
+    setComputedInfos(light);
+
+    // Apply focus with fresh data — no race condition with computedInfos state
+    if (pendingFocusRef.current && light) { pendingFocusRef.current = false; applyFocus(light); }
+
+    // Phase 2: full info deferred; cache makes it instant on repeat selection
+    const timer = setTimeout(() => {
+      const full = computeObject({ object: selectedObject as any, observer, lang: currentLocale, date: safeDate });
+      setComputedInfos(full);
+    }, 0);
+
+    return () => clearTimeout(timer);
   }, [selectedObject, currentLocale, currentUserLocation]);
 
-  // ─── Initial selection (Polaris or route param) ───────────────────────────────
+  // ─── Initial selection (route param only) ────────────────────────────────────
 
   useEffect(() => {
     if (initialSelectionDone.current) return;
-    if (!starsCatalog || starsCatalog.length === 0) return;
+    if (!route?.params?.defaultObject) return;
 
-    if (route?.params?.defaultObject) {
-      setSelectedObject(route.params.defaultObject);
-      setShouldFocus(true);
-      initialSelectionDone.current = true;
-      return;
-    }
-
-    const polaris = starsCatalog.find((s: Star) =>
-      Math.abs(s.ra - Polaris.ra) < 0.2 && Math.abs(s.dec - Polaris.dec) < 0.2
-    ) ?? { ids: 'NAME Polaris', ra: Polaris.ra, dec: Polaris.dec, V: 1.98, sp_type: 'F7' };
-
-    setSelectedObject(polaris as Star);
-    setShouldFocus(true);
+    setSelectedObject(route.params.defaultObject);
+    pendingFocusRef.current = true;
     initialSelectionDone.current = true;
-  }, [starsCatalog, route?.params?.defaultObject]);
+  }, [route?.params?.defaultObject]);
 
-  // ─── Focus on selected object ─────────────────────────────────────────────────
-
-  useEffect(() => {
-    if (!shouldFocus || !computedInfos || !controllerRef.current) return;
-
-    const { degRa, degDec } = computedInfos.base;
-    if (typeof degRa === 'number' && typeof degDec === 'number') {
-      controllerRef.current.animateTo(degRa, degDec, 60);
-    }
-    setShouldFocus(false);
-  }, [shouldFocus, computedInfos]);
 
   // ─── Follow mode ─────────────────────────────────────────────────────────────
 
@@ -327,6 +404,21 @@ export default function Planetarium({ route, navigation }: any) {
 
     const observer = { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon };
     const dateObj = date.toDate();
+
+    // Correct camera direction so alt/az stays constant across time changes
+    if (controllerRef.current && !followSelectionRef.current) {
+      const ctrl = controllerRef.current;
+      const horiz = convertEquatorialToHorizontal(lastEphemerisDateRef.current, observer, {
+        ra: ctrl.lookRa, dec: ctrl.lookDec,
+      });
+      const corrected = convertHorizontalToEquatorial(dateObj, observer, {
+        alt: horiz.alt, az: horiz.az,
+      });
+      if (isFinite(corrected.ra) && isFinite(corrected.dec)) {
+        ctrl.setLook(corrected.ra, corrected.dec);
+      }
+    }
+    lastEphemerisDateRef.current = dateObj;
 
     // Update solar system positions
     const snapshot = refs.solarSystemLayer.update(date, observer, (moonCoords as any)?.currentIconUrl);
@@ -354,6 +446,32 @@ export default function Planetarium({ route, navigation }: any) {
     orientAzGridToHorizon(refs.azGrid, currentUserLocation, dateObj);
     updateCompassLabels(refs.compassLabels, currentUserLocation, dateObj, 0.98);
   }, [referenceDate, loading, currentUserLocation, moonCoords]);
+
+  // ─── Background precompute: warm cache for Messier DSOs after scene loads ─────
+
+  useEffect(() => {
+    if (loading || !currentUserLocation || precomputeDoneRef.current) return;
+    precomputeDoneRef.current = true;
+
+    const observer = { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon };
+    const date = referenceDateRef.current.isValid() ? referenceDateRef.current : dayjs();
+
+    const timer = setTimeout(() => {
+      const messier = dsoCatalogRef.current.filter((dso: DSO) => dso.m && dso.m !== '');
+      let batchStart = 0;
+      const processBatch = () => {
+        const end = Math.min(batchStart + 5, messier.length);
+        for (let i = batchStart; i < end; i++) {
+          computeObject({ object: messier[i], observer, lang: currentLocale, date });
+        }
+        batchStart += 5;
+        if (batchStart < messier.length) setTimeout(processBatch, 100);
+      };
+      processBatch();
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, [loading, currentUserLocation]);
 
   // ─── Cleanup ─────────────────────────────────────────────────────────────────
 
@@ -526,10 +644,25 @@ export default function Planetarium({ route, navigation }: any) {
   const pinchGesture = Gesture.Pinch()
     .onTouchesDown((e: GestureTouchEvent) => {
       setFollowSelection(false);
+      const infos = computedInfosRef.current;
+      if (followSelectionRef.current && infos) {
+        const { degRa, degDec } = infos.base;
+        if (typeof degRa === 'number' && typeof degDec === 'number') {
+          zoomLockRef.current = { ra: degRa, dec: degDec };
+        }
+      }
       if (controllerRef.current) onPinchDown(e, controllerRef.current);
     })
     .onTouchesMove((e: GestureTouchEvent) => {
-      if (controllerRef.current) onPinchMove(e, controllerRef.current);
+      if (controllerRef.current) {
+        onPinchMove(e, controllerRef.current);
+        if (zoomLockRef.current) {
+          controllerRef.current.setLook(zoomLockRef.current.ra, zoomLockRef.current.dec);
+        }
+      }
+    })
+    .onTouchesUp(() => {
+      zoomLockRef.current = null;
     });
 
   const tapGesture = Gesture.Tap()
@@ -572,7 +705,11 @@ export default function Planetarium({ route, navigation }: any) {
           infos={computedInfos}
           onSelectObject={(obj) => {
             setSelectedObject(obj as PlanetariumSelectableObject);
-            setShouldFocus(true);
+          }}
+          onSelectFromSearch={(obj) => {
+            setSelectedObject(obj as PlanetariumSelectableObject);
+            pendingFocusRef.current = true;
+            setFollowSelection(true);
           }}
           onShowEqGrid={()              => toggleLayer(LAYER_NAMES.eqGrid)}
           onShowConstellations={()      => toggleLayer(LAYER_NAMES.constellations)}
