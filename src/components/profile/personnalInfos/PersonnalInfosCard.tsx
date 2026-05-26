@@ -33,7 +33,7 @@ export const PersonnalInfosCard = ({navigation}: any) => {
         textColor={app_colors.white}
         backgroundColor={app_colors.white_no_opacity}
       />
-      <SimpleButton
+      {/* <SimpleButton
         fullWidth
         withArrow
         align="flex-start"
@@ -43,7 +43,7 @@ export const PersonnalInfosCard = ({navigation}: any) => {
         iconColor={app_colors.white}
         textColor={app_colors.white}
         backgroundColor={app_colors.white_no_opacity}
-      />
+      /> */}
       <SimpleButton
         fullWidth
         withArrow

@@ -1,4 +1,4 @@
-export const planetariumRenderOrders = {
+export const RENDER_ORDER = {
   background: -80,
   dso: -70,
   planets: -50,
@@ -8,12 +8,12 @@ export const planetariumRenderOrders = {
   azGrid: -10,
   eqGrid: -9,
   constellations: -5,
-  labels: 15,
   ground: 11,
   selectionCircle: 12,
-}
+  labels: 15,
+} as const;
 
-export const meshGroupsNames = {
+export const LAYER_NAMES = {
   background: 'background',
   stars: 'stars',
   planets: 'planets',
@@ -28,9 +28,4 @@ export const meshGroupsNames = {
   azGrid: 'azGrid',
   eqGrid: 'eqGrid',
   compassLabels: 'compassLabels',
-  labels: {
-    stars: 'starLabels',
-    planets: 'planetLabels',
-    dso: 'dsoLabels',
-  }
-}
+} as const;

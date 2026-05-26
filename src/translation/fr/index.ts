@@ -26,7 +26,6 @@ import { changelogScreenTranslations } from "./screens/settings/changelog";
 import { skymapGeneratorTranslations } from "./screens/skymapGenerator";
 import { solarWeatherTranslations } from "./screens/solarWeather";
 import { transitsTranslations } from "./screens/transits";
-import { viewpointsManagerTranslations } from "./screens/viewpointsManager";
 import { weatherTranslation } from "./screens/weather";
 import {launchesScreenTranslations} from "./screens/launches";
 import {notificationsTranslations} from "./common/notifications";
@@ -66,7 +65,6 @@ export const frTranslations = {
   satelliteTrackers: satelliteTrackerTranslations,
   // skymapGenerator: skymapGeneratorTranslations,
   skymap: skymapTranslations,
-  viewpointsManager: viewpointsManagerTranslations,
   resultCards: resultCardsTranslations,
   cards: cardsTranslations,
   favouriteScreen: favouriteScreenTranslations,
