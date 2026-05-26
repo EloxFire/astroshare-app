@@ -105,7 +105,7 @@ export async function buildScene(
   reporter?.({ stepId: 'atmosphere', title: 'Atmosphere shader', detail: 'Atmosphere dome ready', status: 'done' });
 
   const starsCloud = createStarsLayer(visibleStars, setSelectedObject, reporter);
-  const solarSystemLayer = new SolarSystemLayer(initialSnapshot, setSelectedObject, reporter);
+  const solarSystemLayer = new SolarSystemLayer(initialSnapshot, dateObj, setSelectedObject, reporter);
   const dsoGroup = createDSOLayer(getDsoCatalog, setSelectedObject, reporter);
   const constellationLines = createConstellationLines();
   const selectionCircle = createSelectionCircle();

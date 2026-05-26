@@ -169,8 +169,8 @@ export const planetTextures: any = {
   'SATURN': "https://i.postimg.cc/15HGwYZS/saturn.png",
   'URANUS': "https://i.postimg.cc/pdn5Gs3p/uranus.png",
   'NEPTUNE': "https://i.postimg.cc/zDTSXGtV/neptune.png",
-  'MOON_NORMAL': "https://i.postimg.cc/VNyk6mHk/moon-normals.png",
-  'MOON': "https://i.postimg.cc/mgp76zD6/lune.png"
+  'MOON_NORMAL': require('../../assets/images/textures/moon/2k_moon_normal.jpg'),
+  'MOON': require('../../assets/images/textures/moon/2k_moon.jpg')
 }
 
 export const sunImagesSrcWavelengths = {
