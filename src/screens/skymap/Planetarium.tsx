@@ -440,6 +440,14 @@ export default function Planetarium({ route, navigation }: any) {
           groundVisibleRef.current,
         );
 
+        // Focused-constellation mode: active when both lines and labels are hidden.
+        const inFocusMode =
+          !refs.constellationLines.visible && !refs.constellationLabels.visible;
+        refs.focusedConstellationLayer.group.visible = inFocusMode;
+        if (inFocusMode) {
+          refs.focusedConstellationLayer.tick(ctrl.lookRa, ctrl.lookDec, camera);
+        }
+
         refs.renderer.render(refs.scene, camera);
         gl.endFrameEXP();
       };

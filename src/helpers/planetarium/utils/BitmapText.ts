@@ -7,14 +7,15 @@ type CharMetrics = {
   width: number; height: number;
   advance: number;
 };
-type FontMetrics = {
+export type FontMetrics = {
   atlas: { width: number; height: number; fontSize: number };
   chars: Record<string, CharMetrics>;
 };
+export type BitmapFont = { texture: THREE.Texture; metrics: FontMetrics };
 
-let _atlasPromise: Promise<{ texture: THREE.Texture; metrics: FontMetrics }> | null = null;
+let _atlasPromise: Promise<BitmapFont> | null = null;
 
-export function loadBitmapFont(): Promise<{ texture: THREE.Texture; metrics: FontMetrics }> {
+export function loadBitmapFont(): Promise<BitmapFont> {
   if (_atlasPromise) return _atlasPromise;
   _atlasPromise = (async () => {
     const metricsModule = require('../../../../assets/data/font-metrics.json');

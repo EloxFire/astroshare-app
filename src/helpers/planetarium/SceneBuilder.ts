@@ -19,9 +19,11 @@ import { createStarsLayer } from './layers/StarsLayer';
 import { SolarSystemLayer, SolarSystemSnapshot, computeSolarSystemSnapshot } from './layers/SolarSystemLayer';
 import { createDSOLayer } from './layers/DSOLayer';
 import { createConstellationLines, createConstellationLabels } from './layers/ConstellationsLayer';
+import { FocusedConstellationLayer } from './layers/FocusedConstellationLayer';
 import { createGridLayer, GridLayerResult } from './layers/GridLayer';
 import { createCompassLayer } from './layers/CompassLayer';
 import { createSelectionCircle } from './layers/SelectionCircle';
+import { loadBitmapFont } from './utils/BitmapText';
 
 export type SceneRefs = {
   scene: THREE.Scene;
@@ -38,6 +40,7 @@ export type SceneRefs = {
   compassLabels: THREE.Group;
   constellationLines: THREE.Group;
   constellationLabels: THREE.Group;
+  focusedConstellationLayer: FocusedConstellationLayer;
   selectionCircle: THREE.Group;
   zenithVec: THREE.Vector3;
   glViewWidth: number;
@@ -79,12 +82,15 @@ export async function buildScene(
 
   const initialSnapshot = await computeSolarSystemSnapshot(referenceDate, observer);
 
-  // Load async layers in parallel: background, constellation labels, compass
-  const [background, constellationLabelsGroup, compassLabels] = await Promise.all([
+  // Load async layers in parallel: background, constellation labels, compass, font
+  const [background, constellationLabelsGroup, compassLabels, bitmapFont] = await Promise.all([
     createBackgroundLayer(reporter),
     createConstellationLabels(reporter),
     createCompassLayer(location, dateObj, 0.98, reporter),
+    loadBitmapFont(), // cached — resolves immediately after constellationLabels loads it
   ]);
+
+  const focusedConstellationLayer = new FocusedConstellationLayer(bitmapFont);
 
   reporter?.({ stepId: 'grids', title: 'Coordinate grids', detail: 'Building EQ and AZ grids', status: 'active' });
   const { eqGrid, azGrid } = createGridLayer(location, dateObj);
@@ -114,6 +120,7 @@ export async function buildScene(
   scene.add(dsoGroup);
   scene.add(constellationLines);
   scene.add(constellationLabelsGroup);
+  scene.add(focusedConstellationLayer.group);
   scene.add(eqGrid);
   scene.add(azGrid);
   scene.add(compassLabels);
@@ -139,6 +146,7 @@ export async function buildScene(
     compassLabels,
     constellationLines,
     constellationLabels: constellationLabelsGroup,
+    focusedConstellationLayer,
     selectionCircle,
     zenithVec,
     glViewWidth,

@@ -23,7 +23,7 @@ export async function createBackgroundLayer(
     depthWrite: false,
     // Multiply texture RGB by this color — effective brightness/opacity without
     // using the transparent queue (which would render after opaque stars and fail depth test).
-    color: new THREE.Color(0.5, 0.5, 0.5),
+    color: new THREE.Color(0.1, 0.1, 0.1),
   });
 
   const mesh = new THREE.Mesh(new THREE.SphereGeometry(99, 64, 32), material);

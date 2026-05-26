@@ -7,6 +7,7 @@ export const RENDER_ORDER = {
   stars: -20,
   azGrid: -10,
   eqGrid: -9,
+  focusedBoundary: -6,
   constellations: -5,
   ground: 11,
   selectionCircle: 12,
@@ -28,4 +29,5 @@ export const LAYER_NAMES = {
   azGrid: 'azGrid',
   eqGrid: 'eqGrid',
   compassLabels: 'compassLabels',
+  focusedConstellation: 'focusedConstellation',
 } as const;
