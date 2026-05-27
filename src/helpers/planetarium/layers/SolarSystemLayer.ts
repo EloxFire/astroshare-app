@@ -4,9 +4,15 @@ import {
   convertEquatorialToHorizontal,
   EquatorialCoordinate,
   GeographicCoordinate,
+  getLunarDistance,
   getLunarEquatorialCoordinate,
   getLunarPhase,
+  getPlanetaryHeliocentricDistance,
+  getPlanetaryHeliocentricEclipticLatitude,
+  getPlanetaryHeliocentricEclipticLongitude,
   getPlanetaryPositions,
+  getSolarAngularDiameter,
+  getSolarEclipticCoordinate,
   HorizontalCoordinate,
 } from '@observerly/astrometry';
 import { Dayjs } from 'dayjs';
@@ -23,6 +29,109 @@ import { BitmapFont, buildTextMesh } from '../utils/BitmapText';
 const SOLAR_LABEL_PIXEL_SCALE = 0.004;
 const SOLAR_LABEL_OFFSET      = 0.18; // world units above each object
 const SOLAR_LABEL_REF_FOV     = 75;   // design FOV for zoom-invariant scaling
+
+// ─── Apparent-size physics ────────────────────────────────────────────────────
+// Physical radii in metres (Sun angular diameter is provided directly by the library)
+const MOON_RADIUS_M  = 1_737_400;
+const AU_M           = 149_597_870_700; // 1 AU in metres
+
+// Equatorial radii of the planets in metres (IAU 2015)
+const PLANET_RADII_M: Record<string, number> = {
+  Mercury:  2_440_000,
+  Venus:    6_052_000,
+  Mars:     3_390_000,
+  Jupiter: 69_911_000,
+  Saturn:  58_232_000,
+  Uranus:  25_362_000,
+  Neptune: 24_622_000,
+};
+
+// Base geometry radii used in SphereGeometry — scaling is applied on top.
+const SUN_BASE_RADIUS    = 0.14;
+const MOON_BASE_RADIUS   = 0.12;
+const PLANET_BASE_RADIUS = 0.10;
+
+// Scale applied on top of true apparent sizes.
+// 1.0 = physically accurate.  Sun/Moon are large enough at 3.5×; planets need
+// a bigger boost (7×) so they remain clearly visible at the default 75° FOV.
+const APPARENT_SIZE_SCALE        = 3.5; // Sun & Moon
+const PLANET_APPARENT_SIZE_SCALE = 60.0; // planets only
+
+// Minimum touch-hitbox radius (world units).  Ensures objects remain tappable
+// even when their true visual disc is sub-pixel (all planets at normal FOV).
+const MIN_TAP_RADIUS = 0.06;
+
+// Local interface for the unicode-keyed solar ecliptic coordinate result.
+interface SolarEclipticResult { 'λ': number; 'β': number; R: number; }
+
+/**
+ * True geocentric distance to a planet (metres), computed from heliocentric
+ * ecliptic positions using the 3-D law of cosines.
+ * Falls back to heliocentric distance when result is non-finite.
+ */
+function geocentricDistance_m(
+  date: Date,
+  planet: GlobalPlanet,
+  sunEclip: SolarEclipticResult,
+): number {
+  const r_e      = sunEclip.R / AU_M;                                           // Earth dist, AU
+  const earthLon = THREE.MathUtils.degToRad(((sunEclip['λ'] + 180) % 360));     // Earth helio lon
+
+  const r_p   = getPlanetaryHeliocentricDistance(date, planet);
+  const lon_p = THREE.MathUtils.degToRad(getPlanetaryHeliocentricEclipticLongitude(date, planet));
+  const lat_p = THREE.MathUtils.degToRad(getPlanetaryHeliocentricEclipticLatitude(date, planet));
+
+  const xp = r_p * Math.cos(lat_p) * Math.cos(lon_p);
+  const yp = r_p * Math.cos(lat_p) * Math.sin(lon_p);
+  const zp = r_p * Math.sin(lat_p);
+  const xe = r_e * Math.cos(earthLon);
+  const ye = r_e * Math.sin(earthLon);
+
+  const delta_AU = Math.sqrt((xp - xe) ** 2 + (yp - ye) ** 2 + zp ** 2);
+  return isFinite(delta_AU) && delta_AU > 0 ? delta_AU * AU_M : r_p * AU_M;
+}
+
+/**
+ * Convert an angular diameter (degrees) and the object's scene radius (world units)
+ * into the sphere radius (world units) that subtends that angle from the origin.
+ */
+function angDiamToSphereRadius(angDiam_deg: number, sceneRadius: number): number {
+  return sceneRadius * Math.tan(THREE.MathUtils.degToRad(angDiam_deg * 0.5));
+}
+
+/**
+ * Replace a solar-system mesh's default raycast with a sphere test that uses
+ * the larger of the true visual radius and MIN_TAP_RADIUS.
+ * This keeps Sun/Moon/planets tappable regardless of how small they scale.
+ */
+function installMinimumTapSphere(mesh: THREE.Mesh, baseGeomRadius: number): void {
+  mesh.raycast = function(
+    this: THREE.Mesh,
+    raycaster: THREE.Raycaster,
+    intersects: THREE.Intersection[],
+  ) {
+    const worldPos = new THREE.Vector3();
+    this.getWorldPosition(worldPos);
+
+    // Effective visual radius in world space = scale × geometry-radius
+    const visualRadius = Math.abs(this.scale.x) * baseGeomRadius;
+    const hitRadius    = Math.max(visualRadius, MIN_TAP_RADIUS);
+
+    const hitPoint = new THREE.Vector3();
+    if (!raycaster.ray.intersectSphere(new THREE.Sphere(worldPos, hitRadius), hitPoint)) return;
+
+    const dist = raycaster.ray.origin.distanceTo(hitPoint);
+    if (dist < raycaster.near || dist > raycaster.far) return;
+
+    intersects.push({
+      distance:  dist,
+      point:     hitPoint,
+      object:    this,
+      face:      null as any,
+      faceIndex: undefined,
+    });
+  };
+}
 
 // IAU rotation elements: W0 = prime meridian at J2000, d = deg/day, obliquity = axial tilt deg
 const PLANET_ROTATION: Record<string, { w0: number; d: number; obliquity: number }> = {
@@ -101,16 +210,15 @@ function createPlanetMeshes(
     mesh.position.copy(pos);
     mesh.name = planet.name;
     applyPlanetRotation(mesh, date);
-    mesh.geometry.computeBoundingSphere();
-    if (mesh.geometry.boundingSphere) {
-      mesh.geometry.boundingSphere.radius *= 2; // increase tap tolerance
-    }
     mesh.userData = {
       type: 'planet',
       index: planet.name,
       onTap: () => setSelectedObject(planet),
     };
     mesh.renderOrder = RENDER_ORDER.planets;
+    // Custom raycast: sphere test with a minimum touch-target radius so planets
+    // remain tappable even when visually sub-pixel (true angular size at 75° FOV).
+    installMinimumTapSphere(mesh, PLANET_BASE_RADIUS);
     group.add(mesh);
   });
 
@@ -151,6 +259,7 @@ function createMoonMesh(
       phase: moon.phase,
     }),
   };
+  installMinimumTapSphere(mesh, MOON_BASE_RADIUS);
   return mesh;
 }
 
@@ -218,6 +327,7 @@ function createSunMesh(
       v_mag: -26,
     }),
   };
+  installMinimumTapSphere(sunMesh, SUN_BASE_RADIUS);
 
   return sunMesh;
 }
@@ -263,6 +373,9 @@ export class SolarSystemLayer {
     reporter?.({ stepId: 'sun', title: 'Sun', detail: 'Creating sun mesh', status: 'active' });
     this.sunMesh = createSunMesh(snapshot.sunData, setSelectedObject);
     reporter?.({ stepId: 'sun', title: 'Sun', detail: 'Sun mesh ready', status: 'done' });
+
+    // Apply true apparent sizes immediately so the first frame is already correct.
+    this.updateApparentSizes(date, snapshot.planets);
   }
 
   update(
@@ -321,7 +434,57 @@ export class SolarSystemLayer {
       v_mag: -26,
     });
 
+    // Update true apparent angular sizes (changes slowly, safe at 20fps throttle).
+    this.updateApparentSizes(dateObj, planets);
+
     return { planets, moon, sunData };
+  }
+
+  // ── Private ───────────────────────────────────────────────────────────────────
+
+  /**
+   * Scale every solar-system mesh so that its sphere subtends its true apparent
+   * angular diameter as seen from Earth.
+   *
+   * Angular sizes at typical distances (for reference):
+   *   Sun  ≈ 0.527°  |  Moon ≈ 0.527°  |  Jupiter ≈ 40–50 arcsec
+   *   Venus ≈ 10–66 arcsec  |  Mars ≈ 3–25 arcsec  |  others: sub-5 arcsec
+   *
+   * All values change continuously as Earth and the planets move in their orbits.
+   */
+  private updateApparentSizes(date: Date, planets: GlobalPlanet[]): void {
+    // Compute the Sun's ecliptic position once — reused for all planets.
+    const sunEclip = getSolarEclipticCoordinate(date) as unknown as SolarEclipticResult;
+
+    // ── Sun ──────────────────────────────────────────────────────────────────
+    const sunAngDiam = getSolarAngularDiameter(date); // degrees
+    if (isFinite(sunAngDiam) && sunAngDiam > 0) {
+      const r = angDiamToSphereRadius(sunAngDiam, 9.6) * APPARENT_SIZE_SCALE;
+      this.sunMesh.scale.setScalar(r / SUN_BASE_RADIUS);
+    }
+
+    // ── Moon ─────────────────────────────────────────────────────────────────
+    const moonDist_m = getLunarDistance(date); // metres
+    if (isFinite(moonDist_m) && moonDist_m > 0) {
+      const angDiam = 2 * Math.atan(MOON_RADIUS_M / moonDist_m) * (180 / Math.PI);
+      const r = angDiamToSphereRadius(angDiam, 9.8) * APPARENT_SIZE_SCALE;
+      this.moonMesh.scale.setScalar(r / MOON_BASE_RADIUS);
+    }
+
+    // ── Planets ───────────────────────────────────────────────────────────────
+    this.planetsGroup.children.forEach((child) => {
+      const pd = planets.find((p) => p.name === child.name);
+      if (!pd) return;
+      const rBody_m = PLANET_RADII_M[pd.name];
+      if (!rBody_m) return;
+
+      const dist_m = geocentricDistance_m(date, pd, sunEclip);
+      if (!isFinite(dist_m) || dist_m <= 0) return;
+
+      const angDiam = 2 * Math.atan(rBody_m / dist_m) * (180 / Math.PI);
+      const r = angDiamToSphereRadius(angDiam, 9.9) * PLANET_APPARENT_SIZE_SCALE;
+      child.scale.setScalar(r / PLANET_BASE_RADIUS);
+    });
   }
 
   /**
@@ -338,7 +501,7 @@ export class SolarSystemLayer {
   initLabels(font: BitmapFont): THREE.Group {
     const group = new THREE.Group();
     group.name = LAYER_NAMES.solarSystemLabels;
-    group.visible = false;
+    group.visible = true;
 
     const addLabel = (
       name: string,

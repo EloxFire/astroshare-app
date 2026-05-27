@@ -149,7 +149,7 @@ export function createStarLabels(
 ): THREE.Group {
   const group = new THREE.Group();
   group.name = LAYER_NAMES.starLabels;
-  group.visible = false;
+  group.visible = true;
 
   const namedBright = stars.filter((s) => s.V <= 1.45 && doesStarHaveName(s.ids));
 
