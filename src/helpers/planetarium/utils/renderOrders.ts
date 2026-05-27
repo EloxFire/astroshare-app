@@ -23,6 +23,8 @@ export const LAYER_NAMES = {
   dso: 'dso',
   constellations: 'constellations',
   constellationLabels: 'constellationLabels',
+  starLabels: 'starLabels',
+  solarSystemLabels: 'solarSystemLabels',
   ground: 'ground',
   atmosphere: 'atmosphere',
   selectionCircle: 'selectionCircle',

@@ -18,7 +18,7 @@ import { createAtmosphereLayer } from './layers/AtmosphereLayer';
 import { createStarsLayer } from './layers/StarsLayer';
 import { SolarSystemLayer, SolarSystemSnapshot, computeSolarSystemSnapshot } from './layers/SolarSystemLayer';
 import { createDSOLayer } from './layers/DSOLayer';
-import { createConstellationLines, createConstellationLabels } from './layers/ConstellationsLayer';
+import { createConstellationLines, createConstellationLabels, createStarLabels } from './layers/ConstellationsLayer';
 import { FocusedConstellationLayer } from './layers/FocusedConstellationLayer';
 import { createGridLayer, GridLayerResult } from './layers/GridLayer';
 import { createCompassLayer } from './layers/CompassLayer';
@@ -40,6 +40,7 @@ export type SceneRefs = {
   compassLabels: THREE.Group;
   constellationLines: THREE.Group;
   constellationLabels: THREE.Group;
+  starLabels: THREE.Group;
   focusedConstellationLayer: FocusedConstellationLayer;
   selectionCircle: THREE.Group;
   zenithVec: THREE.Vector3;
@@ -108,6 +109,9 @@ export async function buildScene(
   const solarSystemLayer = new SolarSystemLayer(initialSnapshot, dateObj, setSelectedObject, reporter);
   const dsoGroup = createDSOLayer(getDsoCatalog, setSelectedObject, reporter);
   const constellationLines = createConstellationLines();
+  constellationLines.visible = false; // off by default
+  const starLabels = createStarLabels(visibleStars, bitmapFont);
+  const solarSystemLabels = solarSystemLayer.initLabels(bitmapFont);
   const selectionCircle = createSelectionCircle();
   selectionCircle.name = LAYER_NAMES.selectionCircle;
 
@@ -120,6 +124,8 @@ export async function buildScene(
   scene.add(dsoGroup);
   scene.add(constellationLines);
   scene.add(constellationLabelsGroup);
+  scene.add(starLabels);
+  scene.add(solarSystemLabels);
   scene.add(focusedConstellationLayer.group);
   scene.add(eqGrid);
   scene.add(azGrid);
@@ -128,6 +134,11 @@ export async function buildScene(
   solarSystemLayer.addToScene(scene);
 
   controller.applyToCamera(camera);
+
+  // Pre-compile all shader programs now, during the loading phase, so the RAF loop
+  // never stalls on lazy shader compilation when a new object first enters the view.
+  reporter?.({ stepId: 'finalize', title: 'Final assembly', detail: 'Pre-compiling shaders…', status: 'active' });
+  renderer.compile(scene, camera);
 
   reporter?.({ stepId: 'finalize', title: 'Final assembly', detail: 'Scene ready for first render', status: 'done' });
 
@@ -146,6 +157,7 @@ export async function buildScene(
     compassLabels,
     constellationLines,
     constellationLabels: constellationLabelsGroup,
+    starLabels,
     focusedConstellationLayer,
     selectionCircle,
     zenithVec,

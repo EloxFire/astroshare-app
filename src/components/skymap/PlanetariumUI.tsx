@@ -38,6 +38,8 @@ interface PlanetariumUIProps {
   onSelectObject: (obj: DSO | GlobalPlanet | Star) => void;
   onSelectFromSearch: (obj: DSO | GlobalPlanet | Star) => void;
   onShowAtmosphere?: () => void;
+  onShowStarLabels?: () => void;
+  onShowSolarSystemLabels?: () => void;
   isFollowing: boolean;
   onToggleFollow: () => void;
   timelineDate: Dayjs;
@@ -48,7 +50,7 @@ interface PlanetariumUIProps {
   isTimelinePlaying: boolean;
 }
 
-export default function PlanetariumUI({ navigation, infos, onShowGround, onShowConstellations, onShowConstellationLabels, onShowAzGrid, onShowEqGrid, onShowDSO, onShowPlanets, onShowCompassLabels, onCenterObject, onSelectObject, onSelectFromSearch, onShowAtmosphere, isFollowing, onToggleFollow, timelineDate, onSeekTimeline, onChangeTimelineDate, onResetTimelineDate, onToggleTimelinePlay, isTimelinePlaying }: PlanetariumUIProps) {
+export default function PlanetariumUI({ navigation, infos, onShowGround, onShowConstellations, onShowConstellationLabels, onShowAzGrid, onShowEqGrid, onShowDSO, onShowPlanets, onShowCompassLabels, onCenterObject, onSelectObject, onSelectFromSearch, onShowAtmosphere, onShowStarLabels, onShowSolarSystemLabels, isFollowing, onToggleFollow, timelineDate, onSeekTimeline, onChangeTimelineDate, onResetTimelineDate, onToggleTimelinePlay, isTimelinePlaying }: PlanetariumUIProps) {
 
   const {currentUserLocation} = useSettings();
   const {currentLocale} = useTranslation();
@@ -497,6 +499,18 @@ export default function PlanetariumUI({ navigation, infos, onShowGround, onShowC
               <TouchableOpacity style={planetariumUIStyles.container.layersModal.button} onPress={() => onShowAtmosphere()}>
                 <Image style={planetariumUIStyles.container.layersModal.button.icon} source={require('../../../assets/icons/FiCloud.png')} />
                 <Text style={planetariumUIStyles.container.layersModal.button.text}>Atmosphère</Text>
+              </TouchableOpacity>
+            )}
+            {onShowStarLabels && (
+              <TouchableOpacity style={planetariumUIStyles.container.layersModal.button} onPress={() => onShowStarLabels()}>
+                <Image style={planetariumUIStyles.container.layersModal.button.icon} source={require('../../../assets/icons/FiStar.png')} />
+                <Text style={planetariumUIStyles.container.layersModal.button.text}>Noms étoiles</Text>
+              </TouchableOpacity>
+            )}
+            {onShowSolarSystemLabels && (
+              <TouchableOpacity style={planetariumUIStyles.container.layersModal.button} onPress={() => onShowSolarSystemLabels()}>
+                <Image style={planetariumUIStyles.container.layersModal.button.icon} source={require('../../../assets/icons/FiPlanet.png')} />
+                <Text style={planetariumUIStyles.container.layersModal.button.text}>Noms planètes</Text>
               </TouchableOpacity>
             )}
           </View>

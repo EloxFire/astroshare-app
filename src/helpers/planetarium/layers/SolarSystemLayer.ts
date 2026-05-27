@@ -18,6 +18,11 @@ import { planetTextures } from '../../constants';
 import { moonIcons } from '../../scripts/loadImages';
 import { LAYER_NAMES, RENDER_ORDER } from '../utils/renderOrders';
 import { PlanetariumLoadingReporter } from '../utils/loadingReporter';
+import { BitmapFont, buildTextMesh } from '../utils/BitmapText';
+
+const SOLAR_LABEL_PIXEL_SCALE = 0.004;
+const SOLAR_LABEL_OFFSET      = 0.18; // world units above each object
+const SOLAR_LABEL_REF_FOV     = 75;   // design FOV for zoom-invariant scaling
 
 // IAU rotation elements: W0 = prime meridian at J2000, d = deg/day, obliquity = axial tilt deg
 const PLANET_ROTATION: Record<string, { w0: number; d: number; obliquity: number }> = {
@@ -228,6 +233,8 @@ export class SolarSystemLayer {
   readonly sunLight: THREE.DirectionalLight;
   readonly ambientLight: THREE.AmbientLight;
 
+  labelsGroup: THREE.Group | null = null;
+
   private setSelectedObject: SetObjectFn;
 
   constructor(
@@ -315,6 +322,106 @@ export class SolarSystemLayer {
     });
 
     return { planets, moon, sunData };
+  }
+
+  /**
+   * Create billboard name labels for Sun, Moon, and all planets.
+   * Must be called after the meshes are built. Returns the group so the
+   * caller can add it to the scene independently (for layer toggling).
+   *
+   * Each label stores a `labelOffset` in userData so updateLabels() can
+   * position the text just above the visible edge of each object:
+   *   Sun  → 0.28  (radius 0.14 + glow halo clearance)
+   *   Moon → 0.22  (radius 0.12 + small margin)
+   *   Planets → 0.18  (radius 0.10 + small margin)
+   */
+  initLabels(font: BitmapFont): THREE.Group {
+    const group = new THREE.Group();
+    group.name = LAYER_NAMES.solarSystemLabels;
+    group.visible = false;
+
+    const addLabel = (
+      name: string,
+      objMesh: THREE.Object3D,
+      color: number = 0xffffff,
+      labelOffset: number = SOLAR_LABEL_OFFSET,
+    ) => {
+      const mesh = buildTextMesh(name, font.texture, font.metrics, {
+        color,
+        opacity: 0.9,
+        pixelScale: SOLAR_LABEL_PIXEL_SCALE,
+      });
+      mesh.renderOrder = RENDER_ORDER.labels;
+      mesh.userData.objRef       = objMesh;
+      mesh.userData.labelOffset  = labelOffset;
+      group.add(mesh);
+    };
+
+    // Sun — larger offset to clear the glow halo (sphere r=0.14, glow ~1.2×)
+    addLabel('Soleil', this.sunMesh, 0xffd27f, 0.28);
+
+    // Moon — sphere r=0.12
+    addLabel('Lune', this.moonMesh, 0xd0d0d0, 0.22);
+
+    // Planets — sphere r=0.10
+    this.planetsGroup.children.forEach((child) => {
+      addLabel(child.name, child, 0xaad4ff, 0.18);
+    });
+
+    this.labelsGroup = group;
+    return group;
+  }
+
+  /**
+   * Update label positions to follow their objects, billboard them toward
+   * the camera, and cull labels below the horizon.
+   */
+  updateLabels(
+    camera: THREE.PerspectiveCamera,
+    zenithVec: THREE.Vector3 | null,
+    groundVisible: boolean,
+  ): void {
+    const group = this.labelsGroup;
+    if (!group || !group.visible) return;
+
+    const shouldCull = groundVisible && zenithVec != null;
+    const zenith     = shouldCull ? zenithVec!.clone().normalize() : null;
+    const fovScale   =
+      Math.tan(THREE.MathUtils.degToRad(camera.fov * 0.5)) /
+      Math.tan(THREE.MathUtils.degToRad(SOLAR_LABEL_REF_FOV * 0.5));
+
+    const ncp = new THREE.Vector3(0, 0, 1);
+
+    group.children.forEach((child) => {
+      if (!(child instanceof THREE.Mesh)) return;
+      const objRef: THREE.Object3D | undefined = child.userData.objRef;
+      if (!objRef) return;
+
+      // Position label slightly above the object in the NCP direction
+      const worldPos = new THREE.Vector3();
+      objRef.getWorldPosition(worldPos);
+
+      // Guard: skip if world position is invalid (NaN / object not yet placed)
+      if (!isFinite(worldPos.x) || !isFinite(worldPos.y) || !isFinite(worldPos.z)) return;
+
+      const radial = worldPos.clone().normalize();
+      const offsetDir = ncp.clone().sub(radial.clone().multiplyScalar(ncp.dot(radial)));
+      if (offsetDir.lengthSq() > 1e-6) offsetDir.normalize(); else offsetDir.set(1, 0, 0);
+
+      const offset: number = child.userData.labelOffset ?? SOLAR_LABEL_OFFSET;
+      child.position.copy(worldPos).addScaledVector(offsetDir, offset);
+
+      // Billboard + zoom-invariant scale
+      child.quaternion.copy(camera.quaternion);
+      child.scale.setScalar(fovScale);
+
+      // Horizon cull
+      if (zenith) {
+        child.visible = worldPos.clone().normalize().dot(zenith) >= 0;
+      } else {
+        child.visible = true;
+      }
+    });
   }
 
   addToScene(scene: THREE.Scene): void {

@@ -7,8 +7,9 @@ import { LAYER_NAMES, RENDER_ORDER } from '../utils/renderOrders';
 const ASTERISM_RADIUS   = 9.70;
 const BOUNDARY_RADIUS   = 9.68;
 const LABEL_RADIUS      = 9.65;
-// Slightly larger than the abbreviation labels used on the constellation overlay
-const LABEL_PIXEL_SCALE = 0.012;
+// Base size at REF_FOV (75°). tick() applies tan(fov/2) scaling for zoom-invariance.
+const LABEL_PIXEL_SCALE = 0.006;
+const REF_FOV           = 75;
 
 type Entry = {
   abbr: string;
@@ -68,6 +69,11 @@ export class FocusedConstellationLayer {
   tick(lookRa: number, lookDec: number, camera: THREE.PerspectiveCamera): void {
     if (this.labelMesh) {
       this.labelMesh.quaternion.copy(camera.quaternion);
+      // Zoom-invariant scaling: shrink the label as the user zooms in
+      const fovScale =
+        Math.tan(THREE.MathUtils.degToRad(camera.fov * 0.5)) /
+        Math.tan(THREE.MathUtils.degToRad(REF_FOV * 0.5));
+      this.labelMesh.scale.setScalar(fovScale);
     }
 
     const closest = findFocusedConstellation(lookRa, lookDec);
@@ -115,23 +121,52 @@ export class FocusedConstellationLayer {
     });
     this.materials.push(lineMat);
 
-    const segments: [number, number][][] =
+    // The GeoJSON coordinate nesting can vary (LineString vs MultiLineString).
+    // We treat each element of `coordinates` as a segment with at least 2 points.
+    // Each point must be a [number, number] array — numbers at this level mean the
+    // format is LineString (single line), not MultiLineString (array of lines).
+    const rawCoords: unknown[] =
       c?.feature?.features?.[0]?.geometry?.coordinates ?? [];
-    segments.forEach((seg) => {
-      if (seg.length < 2) return;
-      const geom = new THREE.BufferGeometry().setFromPoints([
-        raDecToVec3(seg[0][0], seg[0][1], ASTERISM_RADIUS),
-        raDecToVec3(seg[1][0], seg[1][1], ASTERISM_RADIUS),
-      ]);
+
+    rawCoords.forEach((seg) => {
+      if (!Array.isArray(seg) || seg.length < 2) return;
+
+      const p0 = seg[0];
+      const p1 = seg[1];
+
+      // Each point must be an array with two finite numbers.
+      if (!Array.isArray(p0) || !Array.isArray(p1)) return;
+      const [ra0, dec0] = p0 as number[];
+      const [ra1, dec1] = p1 as number[];
+      if (!isFinite(ra0) || !isFinite(dec0) || !isFinite(ra1) || !isFinite(dec1)) return;
+
+      const v0 = raDecToVec3(ra0, dec0, ASTERISM_RADIUS);
+      const v1 = raDecToVec3(ra1, dec1, ASTERISM_RADIUS);
+      // Guard against raDecToVec3 producing NaN for edge-case coordinates.
+      if (!isFinite(v0.x) || !isFinite(v0.y) || !isFinite(v0.z)) return;
+      if (!isFinite(v1.x) || !isFinite(v1.y) || !isFinite(v1.z)) return;
+
+      const geom = new THREE.BufferGeometry().setFromPoints([v0, v1]);
+      // Pre-compute bounding sphere now (synchronous) so THREE.js never does it
+      // lazily at render time on an unvalidated buffer.
+      geom.computeBoundingSphere();
+
       const line = new THREE.Line(geom, lineMat);
       line.renderOrder = RENDER_ORDER.constellations;
       this.group.add(line);
     });
 
     // ── Boundary (dashed) ───────────────────────────────────────────────────
-    const ring: [number, number][] =
+    const rawRing: unknown[] =
       c?.feature?.features?.[1]?.geometry?.coordinates?.[0] ?? [];
-    if (ring.length > 1) {
+
+    // Filter to valid [ra, dec] pairs only — any malformed entry is dropped.
+    const pts = (rawRing as any[])
+      .filter((pt) => Array.isArray(pt) && isFinite(pt[0]) && isFinite(pt[1]))
+      .map(([ra, dec]: number[]) => raDecToVec3(ra, dec, BOUNDARY_RADIUS))
+      .filter((v) => isFinite(v.x) && isFinite(v.y) && isFinite(v.z));
+
+    if (pts.length > 1) {
       const dashedMat = new THREE.LineDashedMaterial({
         color:       0xffffff,
         transparent: true,
@@ -141,8 +176,10 @@ export class FocusedConstellationLayer {
       });
       this.materials.push(dashedMat);
 
-      const pts = ring.map(([ra, dec]) => raDecToVec3(ra, dec, BOUNDARY_RADIUS));
       const geom = new THREE.BufferGeometry().setFromPoints(pts);
+      // Pre-compute bounding sphere (same reason as above).
+      geom.computeBoundingSphere();
+
       const line = new THREE.Line(geom, dashedMat);
       line.computeLineDistances(); // required for LineDashedMaterial
       line.renderOrder = RENDER_ORDER.focusedBoundary;

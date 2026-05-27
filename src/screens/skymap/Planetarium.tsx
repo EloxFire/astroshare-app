@@ -49,7 +49,7 @@ import { updateCompassLabels } from '../../helpers/planetarium/layers/CompassLay
 import { orientGroundToHorizon } from '../../helpers/planetarium/layers/GroundLayer';
 import { orientAzGridToHorizon } from '../../helpers/planetarium/layers/GridLayer';
 import { tickSelectionCirclePulse, positionSelectionCircleAtRaDec, positionSelectionCircle } from '../../helpers/planetarium/layers/SelectionCircle';
-import { updateConstellationLabelSizes } from '../../helpers/planetarium/layers/ConstellationsLayer';
+import { updateConstellationLabelSizes, updateStarLabelSizes } from '../../helpers/planetarium/layers/ConstellationsLayer';
 import { raDecToVec3 } from '../../helpers/planetarium/utils/coordinates';
 import { LAYER_NAMES } from '../../helpers/planetarium/utils/renderOrders';
 import {
@@ -484,6 +484,11 @@ export default function Planetarium({ route, navigation }: any) {
       const sunData = getSunData(referenceDate, observer);
       updateAtmosphere(refs.atmosphere, sunData, true, refs.starsCloud, refs.scene.getObjectByName(LAYER_NAMES.background) as THREE.Mesh | null, refs.dsoGroup);
 
+      // Warm-up render pass: forces texture upload to the GPU while the loading
+      // screen is still visible, so the first user-visible frame is already smooth.
+      refs.renderer.render(refs.scene, refs.camera);
+      gl.endFrameEXP();
+
       // Minimum loading delay
       const elapsed = Date.now() - startedAt;
       const holdMs = Math.max(0, MIN_LOADING_MS - elapsed) + SUCCESS_HOLD_MS;
@@ -566,6 +571,19 @@ export default function Planetarium({ route, navigation }: any) {
           groundVisibleRef.current,
         );
 
+        updateStarLabelSizes(
+          refs.starLabels,
+          camera,
+          zenithVecRef.current,
+          groundVisibleRef.current,
+        );
+
+        refs.solarSystemLayer.updateLabels(
+          camera,
+          zenithVecRef.current,
+          groundVisibleRef.current,
+        );
+
         // Focused-constellation mode: active when both lines and labels are hidden.
         const inFocusMode =
           !refs.constellationLines.visible && !refs.constellationLabels.visible;
@@ -629,6 +647,9 @@ export default function Planetarium({ route, navigation }: any) {
       refs.dsoGroup,
     );
   }, [currentUserLocation]);
+
+  const toggleStarLabels = useCallback(() => toggleLayer(LAYER_NAMES.starLabels), [toggleLayer]);
+  const toggleSolarSystemLabels = useCallback(() => toggleLayer(LAYER_NAMES.solarSystemLabels), [toggleLayer]);
 
   const handleCenterObject = useCallback(() => {
     if (!computedInfos || !controllerRef.current) return;
@@ -734,6 +755,8 @@ export default function Planetarium({ route, navigation }: any) {
           onShowDSO={()                 => toggleLayer(LAYER_NAMES.dso)}
           onShowCompassLabels={()       => toggleLayer(LAYER_NAMES.compassLabels)}
           onShowAtmosphere={toggleAtmosphere}
+          onShowStarLabels={toggleStarLabels}
+          onShowSolarSystemLabels={toggleSolarSystemLabels}
           onCenterObject={handleCenterObject}
           isFollowing={followSelection}
           onToggleFollow={() => setFollowSelection((v) => !v)}
