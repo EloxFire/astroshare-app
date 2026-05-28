@@ -40,17 +40,20 @@ interface PlanetariumUIProps {
   onShowAtmosphere?: () => void;
   onShowStarLabels?: () => void;
   onShowSolarSystemLabels?: () => void;
+  onToggleFocusedConstellation?: () => void;
+  isFocusedConstellationOn?: boolean;
   isFollowing: boolean;
   onToggleFollow: () => void;
   timelineDate: Dayjs;
   onSeekTimeline: (date: Dayjs) => void;
+  onAdjustTimeline: (unit: 'second' | 'minute' | 'hour' | 'day' | 'month' | 'year', delta: number) => void;
   onChangeTimelineDate: (next: Dayjs) => void;
   onResetTimelineDate: () => void;
   onToggleTimelinePlay: () => void;
   isTimelinePlaying: boolean;
 }
 
-export default function PlanetariumUI({ navigation, infos, onShowGround, onShowConstellations, onShowConstellationLabels, onShowAzGrid, onShowEqGrid, onShowDSO, onShowPlanets, onShowCompassLabels, onCenterObject, onSelectObject, onSelectFromSearch, onShowAtmosphere, onShowStarLabels, onShowSolarSystemLabels, isFollowing, onToggleFollow, timelineDate, onSeekTimeline, onChangeTimelineDate, onResetTimelineDate, onToggleTimelinePlay, isTimelinePlaying }: PlanetariumUIProps) {
+export default function PlanetariumUI({ navigation, infos, onShowGround, onShowConstellations, onShowConstellationLabels, onShowAzGrid, onShowEqGrid, onShowDSO, onShowPlanets, onShowCompassLabels, onCenterObject, onSelectObject, onSelectFromSearch, onShowAtmosphere, onShowStarLabels, onShowSolarSystemLabels, onToggleFocusedConstellation, isFocusedConstellationOn = true, isFollowing, onToggleFollow, timelineDate, onSeekTimeline, onAdjustTimeline, onChangeTimelineDate, onResetTimelineDate, onToggleTimelinePlay, isTimelinePlaying }: PlanetariumUIProps) {
 
   const {currentUserLocation} = useSettings();
   const {currentLocale} = useTranslation();
@@ -188,7 +191,7 @@ export default function PlanetariumUI({ navigation, infos, onShowGround, onShowC
   }
 
   const adjustTimeline = (unit: 'second' | 'minute' | 'hour' | 'day' | 'month' | 'year', delta: number) => {
-    onChangeTimelineDate(timelineDate.add(delta, unit));
+    onAdjustTimeline(unit, delta);
   };
 
   const handleResetTimeline = () => {
@@ -511,6 +514,23 @@ export default function PlanetariumUI({ navigation, infos, onShowGround, onShowC
               <TouchableOpacity style={planetariumUIStyles.container.layersModal.button} onPress={() => onShowSolarSystemLabels()}>
                 <Image style={planetariumUIStyles.container.layersModal.button.icon} source={require('../../../assets/icons/FiPlanet.png')} />
                 <Text style={planetariumUIStyles.container.layersModal.button.text}>Noms planètes</Text>
+              </TouchableOpacity>
+            )}
+            {onToggleFocusedConstellation && (
+              <TouchableOpacity style={planetariumUIStyles.container.layersModal.button} onPress={() => onToggleFocusedConstellation()}>
+                <Image
+                  style={[
+                    planetariumUIStyles.container.layersModal.button.icon,
+                    { tintColor: isFocusedConstellationOn ? app_colors.white : app_colors.white_twenty },
+                  ]}
+                  source={require('../../../assets/icons/FiViewPoint.png')}
+                />
+                <Text style={[
+                  planetariumUIStyles.container.layersModal.button.text,
+                  { color: isFocusedConstellationOn ? app_colors.white_sixty : app_colors.white_twenty },
+                ]}>
+                  Visée auto
+                </Text>
               </TouchableOpacity>
             )}
           </View>

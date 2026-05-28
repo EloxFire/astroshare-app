@@ -242,6 +242,10 @@ export default function Planetarium({ route, navigation }: any) {
   const currentUserLocationRef = useRef(currentUserLocation);
   const moonCoordsRef = useRef(moonCoords);
   const lastEphemerisRafMs = useRef(0);
+  // Focused-constellation mode: auto-shows the pointed constellation name,
+  // asterism lines, and boundary when the regular constellation overlays are off.
+  const focusedConstellationOnRef = useRef<boolean>(true);
+  const [focusedConstellationOn, setFocusedConstellationOn] = useState(true);
 
   // ─── Loading state ───────────────────────────────────────────────────────────
   const [loading, setLoading]             = useState(true);
@@ -274,8 +278,11 @@ export default function Planetarium({ route, navigation }: any) {
   // ─── Timeline ────────────────────────────────────────────────────────────────
   const [referenceDate, setReferenceDate]   = useState<Dayjs>(dayjs());
   const [timelinePlaying, setTimelinePlaying] = useState(true);
-  const playIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const referenceDateRef = useRef<Dayjs>(referenceDate);
+  const playIntervalRef        = useRef<ReturnType<typeof setInterval> | null>(null);
+  const referenceDateRef       = useRef<Dayjs>(referenceDate);
+  // Used to debounce React-state writes from rapid chevron taps to at most
+  // one per animation frame, preventing "Maximum update depth exceeded".
+  const pendingDateUpdateRef   = useRef<number | null>(null);
 
   useEffect(() => {
     referenceDateRef.current = referenceDate;
@@ -294,7 +301,10 @@ export default function Planetarium({ route, navigation }: any) {
       return;
     }
     playIntervalRef.current = setInterval(() => {
-      setReferenceDate((prev) => prev.add(1, 'second'));
+      // Read the ref, not a functional prev: this keeps the interval in sync
+      // with whatever position the slider or chevrons have set, instead of
+      // continuing from a stale React-state snapshot.
+      setReferenceDate(referenceDateRef.current.add(1, 'second'));
     }, 1000);
     return () => {
       if (playIntervalRef.current) clearInterval(playIntervalRef.current);
@@ -482,7 +492,7 @@ export default function Planetarium({ route, navigation }: any) {
 
       // Initial atmosphere update
       const sunData = getSunData(referenceDate, observer);
-      updateAtmosphere(refs.atmosphere, sunData, true, refs.starsCloud, refs.scene.getObjectByName(LAYER_NAMES.background) as THREE.Mesh | null, refs.dsoGroup);
+      updateAtmosphere(refs.atmosphere, sunData, true, refs.starsCloud, refs.scene.getObjectByName(LAYER_NAMES.background) as THREE.Mesh | null, refs.dsoGroup, refs.zenithVec);
 
       // Warm-up render pass: forces texture upload to the GPU while the loading
       // screen is still visible, so the first user-visible frame is already smooth.
@@ -552,6 +562,7 @@ export default function Planetarium({ route, navigation }: any) {
             refs.atmosphere, snapshot.sunData, atmosphereOnRef.current,
             refs.starsCloud, refs.scene.getObjectByName(LAYER_NAMES.background) as THREE.Mesh | null,
             refs.dsoGroup,
+            zenithVecRef.current,
           );
 
           const zenithEq = convertHorizontalToEquatorial(rafDateObj, rafObs, { alt: 90, az: 0 });
@@ -584,8 +595,10 @@ export default function Planetarium({ route, navigation }: any) {
           groundVisibleRef.current,
         );
 
-        // Focused-constellation mode: active when both lines and labels are hidden.
+        // Focused-constellation mode: active only when the user has enabled it
+        // AND the regular constellation overlays (lines + labels) are both off.
         const inFocusMode =
+          focusedConstellationOnRef.current &&
           !refs.constellationLines.visible && !refs.constellationLabels.visible;
         refs.focusedConstellationLayer.group.visible = inFocusMode;
         if (inFocusMode) {
@@ -612,6 +625,30 @@ export default function Planetarium({ route, navigation }: any) {
   const onSeekTimeline = useCallback((date: Dayjs) => {
     referenceDateRef.current = date;
   }, []);
+
+  // ─── Chevron-button adjustment ────────────────────────────────────────────────
+  // Updating the ref immediately means the RAF loop sees the new time on the
+  // very next frame, avoiding the stale-closure issue that caused day-rollover
+  // to be skipped when tapping rapidly.
+  // The React-state write is debounced to at most one per animation frame so
+  // that fast tap bursts (e.g. holding the +minute button) never produce more
+  // than one state update per 16 ms — eliminating the "Maximum update depth
+  // exceeded" cascade caused by multiple setReferenceDate calls triggering
+  // cascading effects on every single tap.
+  const onAdjustTimeline = useCallback(
+    (unit: 'second' | 'minute' | 'hour' | 'day' | 'month' | 'year', delta: number) => {
+      referenceDateRef.current = referenceDateRef.current.add(delta, unit);
+
+      if (pendingDateUpdateRef.current !== null) {
+        cancelAnimationFrame(pendingDateUpdateRef.current);
+      }
+      pendingDateUpdateRef.current = requestAnimationFrame(() => {
+        setReferenceDate(referenceDateRef.current);
+        pendingDateUpdateRef.current = null;
+      });
+    },
+    [],
+  );
 
   // ─── Layer toggles ────────────────────────────────────────────────────────────
 
@@ -645,11 +682,27 @@ export default function Planetarium({ route, navigation }: any) {
       refs.starsCloud,
       refs.scene.getObjectByName(LAYER_NAMES.background) as THREE.Mesh | null,
       refs.dsoGroup,
+      zenithVecRef.current,
     );
   }, [currentUserLocation]);
 
   const toggleStarLabels = useCallback(() => toggleLayer(LAYER_NAMES.starLabels), [toggleLayer]);
   const toggleSolarSystemLabels = useCallback(() => toggleLayer(LAYER_NAMES.solarSystemLabels), [toggleLayer]);
+
+  const toggleFocusedConstellation = useCallback(() => {
+    const next = !focusedConstellationOnRef.current;
+    focusedConstellationOnRef.current = next;
+    setFocusedConstellationOn(next);
+    // When disabled, immediately hide the layer and reset its state so the
+    // last-displayed constellation doesn't linger until the next tick.
+    if (!next) {
+      const refs = sceneRefsRef.current;
+      if (refs) {
+        refs.focusedConstellationLayer.group.visible = false;
+        refs.focusedConstellationLayer.reset();
+      }
+    }
+  }, []);
 
   const handleCenterObject = useCallback(() => {
     if (!computedInfos || !controllerRef.current) return;
@@ -757,6 +810,8 @@ export default function Planetarium({ route, navigation }: any) {
           onShowAtmosphere={toggleAtmosphere}
           onShowStarLabels={toggleStarLabels}
           onShowSolarSystemLabels={toggleSolarSystemLabels}
+          onToggleFocusedConstellation={toggleFocusedConstellation}
+          isFocusedConstellationOn={focusedConstellationOn}
           onCenterObject={handleCenterObject}
           isFollowing={followSelection}
           onToggleFollow={() => setFollowSelection((v) => !v)}
@@ -764,6 +819,7 @@ export default function Planetarium({ route, navigation }: any) {
           isTimelinePlaying={timelinePlaying}
           onToggleTimelinePlay={() => setTimelinePlaying((v) => !v)}
           onSeekTimeline={onSeekTimeline}
+          onAdjustTimeline={onAdjustTimeline}
           onChangeTimelineDate={setReferenceDate}
           onResetTimelineDate={() => {
             setTimelinePlaying(true);

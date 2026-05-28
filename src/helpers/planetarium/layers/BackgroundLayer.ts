@@ -23,7 +23,9 @@ export async function createBackgroundLayer(
     depthWrite: false,
     // Multiply texture RGB by this color — effective brightness/opacity without
     // using the transparent queue (which would render after opaque stars and fail depth test).
-    color: new THREE.Color(0.1, 0.1, 0.1),
+    // Multiply texture RGB: lower = more subtle Milky Way.
+    // 0.05 = half the previous brightness, still visible without dominating.
+    color: new THREE.Color(0.05, 0.05, 0.05),
   });
 
   const mesh = new THREE.Mesh(new THREE.SphereGeometry(99, 64, 32), material);

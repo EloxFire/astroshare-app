@@ -55,18 +55,49 @@ export function createDSOLayer(
         uniform sampler2D map;
         uniform float uVisibility;
         varying vec2 vUv;
+
         void main() {
           vec4 color = texture2D(map, vUv);
-          float border = 0.08;
-          float d = min(min(vUv.x, 1.0 - vUv.x), min(vUv.y, 1.0 - vUv.y));
-          float alpha = smoothstep(0.0, border, d);
-          gl_FragColor = vec4(color.rgb * uVisibility, color.a * alpha * uVisibility);
+
+          // ── Content-aware alpha ─────────────────────────────────────────
+          // Derive transparency from the pixel's own luminance so that dark
+          // (space-background) pixels become transparent without any
+          // hand-drawn mask.  Faint outer halos stay semi-transparent;
+          // bright nebula cores become fully opaque.
+          float luma = dot(color.rgb, vec3(0.299, 0.587, 0.114));
+
+          // smoothstep range: [0.025 → 0.40] covers black background up to
+          // moderate nebula brightness.  pow(0.6) biases mid-tones toward
+          // opacity so faint halos still read clearly on the dark sky.
+          float lumaAlpha = pow(smoothstep(0.025, 0.40, luma), 0.6);
+
+          // ── UV-space vignette (safety net for edge artefacts) ───────────
+          // Wider zone (15 %) with a concave pow-curve: the interior stays
+          // fully opaque while only the last few percent near each edge fade.
+          float d        = min(min(vUv.x, 1.0 - vUv.x), min(vUv.y, 1.0 - vUv.y));
+          float edgeFade = pow(smoothstep(0.0, 0.15, d), 0.5);
+
+          // ── Highlight compression ───────────────────────────────────────
+          // Gently roll off the very brightest regions so the core of a
+          // nebula doesn't burn out when composited over a lit star field.
+          // Pixels at luma ≤ 0.65 are untouched; luma 1.0 is reduced ~18 %.
+          float squeeze    = 1.0 / (1.0 + max(0.0, luma - 0.65) * 0.6);
+          vec3  rgb        = color.rgb * squeeze;
+
+          // Combine: texture alpha (1 for opaque PNGs), luma mask, edge vignette.
+          float alpha = color.a * lumaAlpha * edgeFade * uVisibility;
+
+          if (alpha < 0.005) discard;
+          gl_FragColor = vec4(rgb, alpha);
         }
       `,
       transparent: true,
       depthWrite: false,
-      depthTest: true,
-      blending: THREE.AdditiveBlending,
+      depthTest:  true,
+      // NormalBlending (standard over-compositing) prevents additive
+      // accumulation: nebulae no longer blow out the star field, and two
+      // overlapping DSOs composite correctly instead of summing.
+      blending: THREE.NormalBlending,
     });
 
     const mesh = new THREE.Mesh(geometry, material);
