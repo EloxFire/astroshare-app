@@ -13,6 +13,7 @@ import {
   getBodyNextRise,
   getBodyNextSet,
   getConstellation,
+  getLunarEquatorialCoordinate,
   HorizontalCoordinate,
   isBodyAboveHorizon,
   isBodyCircumpolar,
@@ -37,16 +38,7 @@ import {getObjectType} from "./getObjectType";
 import {getObjectName} from "./getObjectName";
 import { getConstellationName } from "../../getConstellationName";
 import {getSunData} from "../solar/sunData";
-
-type SpecialSkyObject = {
-  family: 'Sun' | 'Moon';
-  name: string;
-  ra: number;
-  dec: number;
-  icon: ImageSourcePropType;
-  phase?: string;
-  v_mag?: number;
-};
+import {SpecialSkyObject} from "../../../types/SpecialSkyObject";
 
 // ─── Compute cache (DSO + Star only — static objects) ────────────────────────
 
@@ -157,7 +149,11 @@ export const computeObject = (props: ComputeObjectProps): ComputedObjectInfos | 
         };
       }
 
-      const target: EquatorialCoordinate = { ra: props.object.ra, dec: props.object.dec };
+      // For the Moon, always recompute ra/dec from the reference date so the
+      // displayed position is accurate regardless of when the search stub was built.
+      const target: EquatorialCoordinate = props.object.family === 'Moon'
+        ? getLunarEquatorialCoordinate(referenceDate)
+        : { ra: props.object.ra, dec: props.object.dec };
       const objectConstellation: Constellation | undefined = getConstellation(target);
       const localizedConstellationName: string = objectConstellation ? getConstellationName(objectConstellation.abbreviation) : 'N/A';
       const isCurrentlyVisible: boolean = isBodyAboveHorizon(referenceDate, props.observer, target, horizonAngle);
@@ -251,10 +247,12 @@ export const computeObject = (props: ComputeObjectProps): ComputedObjectInfos | 
           otherName: props.object.family === 'Moon' ? props.object.phase : undefined,
           constellation: localizedConstellationName,
           icon: props.object.icon,
-          ra: props.object.ra,
-          dec: props.object.dec,
-          degRa: props.object.ra,
-          degDec: props.object.dec,
+          // Use the resolved target coordinates (recomputed from date for Moon)
+          // rather than the zeroed-out stub values.
+          ra: target.ra,
+          dec: target.dec,
+          degRa: target.ra,
+          degDec: target.dec,
           v_mag: magnitude,
           b_mag: undefined,
           j_mag: undefined,

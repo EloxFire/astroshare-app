@@ -7,3 +7,6 @@ const frenchPlanetsRegex = /\bPlanètes\b/i
 
 export const planetNamesRegexes = /\b(?:Mercury|Mercure|Venus|Vénus|Earth|Terre|Mars|Jupiter|Saturn|Saturne|Uranus|Neptune)\b/i;
 export const solarSystemRegexes = [frenchPlanetsRegex, planetRegex,solarSystemRegex, systemRegex, solarRegex]
+
+/** Matches search queries specifically for the Sun or Moon (English + French). */
+export const solarBodyNamesRegex = /\b(?:Sun|Soleil|Moon|Lune)\b/i;

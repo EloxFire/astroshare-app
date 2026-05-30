@@ -49,8 +49,8 @@ export const homeTranslations = {
       subtitle: "// Calculez les phases de la Lune"
     },
     solar_weather: {
-      title: "Météo solaire",
-      subtitle: "// Situation de nôtre étoile en temps réel !"
+      title: "Météo de l'espace",
+      subtitle: "// Situation de notre étoile en temps réel !"
     },
     transits: {
       title: "Transits & Éclipses",
@@ -87,6 +87,10 @@ export const homeTranslations = {
     resources: {
       title: "Ressources",
       subtitle: "// Des ressources pour vous aider"
+    },
+    telescope_simulator: {
+      title: "Simulateur de télescope",
+      subtitle: "Simulez vos observations"
     }
   }
 }

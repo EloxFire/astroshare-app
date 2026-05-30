@@ -15,10 +15,13 @@ import { ComputedObjectInfos } from '../../helpers/types/objects/ComputedObjectI
 import { computeObject } from '../../helpers/scripts/astro/objects/computeObject'
 import { Star } from '../../helpers/types/Star'
 import { GlobalPlanet } from '../../helpers/types/GlobalPlanet'
+import { SpecialSkyObject } from '../../helpers/types/SpecialSkyObject'
+import { astroshareApi } from '../../helpers/api'
+import dayjs from 'dayjs'
 import DSOValues from '../commons/DSOValues'
 
 interface SearchResultCardProps {
-  object: DSO | GlobalPlanet | Star
+  object: DSO | GlobalPlanet | Star | SpecialSkyObject
   navigation: any
 }
 
@@ -29,6 +32,7 @@ export default function SearchResultCard({ object, navigation }: SearchResultCar
   const { currentUserLocation } = useSettings()
 
   const [objectInfos, setObjectInfos] = useState<ComputedObjectInfos | null>(null)
+  const [moonImageSource, setMoonImageSource] = useState<{ uri: string } | null>(null)
 
   useEffect(() => {
     if (!currentUserLocation) return;
@@ -43,6 +47,17 @@ export default function SearchResultCard({ object, navigation }: SearchResultCar
 
     return () => clearInterval(interval);
   }, [object, currentLocale, currentUserLocation])
+
+  // Fetch the rendered Moon illustration from the API when the object is the Moon.
+  useEffect(() => {
+    if ((object as SpecialSkyObject).family !== 'Moon') return;
+    let cancelled = false;
+    const dateStr = dayjs().format('YYYY-MM-DD');
+    astroshareApi.get('/moon/illustration?date=' + dateStr)
+      .then(res => { if (!cancelled) setMoonImageSource({ uri: res.data.url }); })
+      .catch(() => { /* keep default phase icon */ });
+    return () => { cancelled = true; };
+  }, [object])
 
 
   const handleClickCard = () => {
@@ -85,9 +100,18 @@ export default function SearchResultCard({ object, navigation }: SearchResultCar
               </View>
               {
                 objectInfos.base.family === 'Planet' && (
-                  <Image style={searchResultCardStyles.card.image} source={astroImages[objectInfos?.base.name.toUpperCase()]} />
-                ) 
-              } 
+                  // For Moon, prefer the rendered API illustration; fall back to phase icon.
+                  // For other planets, use the icon stored on the computed infos.
+                  <Image
+                    style={searchResultCardStyles.card.image}
+                    source={
+                      moonImageSource
+                        ?? objectInfos.base.icon
+                        ?? astroImages[objectInfos?.base.name.toUpperCase()]
+                    }
+                  />
+                )
+              }
               {
                 objectInfos.base.family === 'DSO' && (
                   <Image style={searchResultCardStyles.card.image} source={astroImages[objectInfos.base.rawType.toUpperCase()]} />
@@ -101,13 +125,17 @@ export default function SearchResultCard({ object, navigation }: SearchResultCar
             </View>
             <View style={searchResultCardStyles.card.body}>
               <DSOValues small title={i18n.t('detailsPages.dso.labels.magnitude')} value={objectInfos.base.v_mag} />
-              <DSOValues small title={i18n.t('detailsPages.dso.labels.constellation')} value={objectInfos.base.constellation} />
+              {objectInfos.base.constellation && objectInfos.base.constellation !== 'N/A' && (
+                <DSOValues small title={i18n.t('detailsPages.dso.labels.constellation')} value={objectInfos.base.constellation} />
+              )}
               {
-                objectInfos.base.family === 'Planet' ? (
-                  <DSOValues small title={i18n.t('detailsPages.planets.labels.distanceSun')} value={objectInfos.planetAdditionalInfos?.distanceToSun} />
-                ) : (
+                // Show "Distance to sun" only for real planets (not Sun/Moon stubs whose
+                // planetAdditionalInfos is undefined); otherwise fall back to object type.
+                objectInfos.base.family === 'Planet' && objectInfos.planetAdditionalInfos ? (
+                  <DSOValues small title={i18n.t('detailsPages.planets.labels.distanceSun')} value={objectInfos.planetAdditionalInfos.distanceToSun} />
+                ) : objectInfos.base.family !== 'Planet' ? (
                   <DSOValues small title={i18n.t('detailsPages.dso.labels.type')} value={objectInfos.base.type} />
-                )
+                ) : null
               }
               <DSOValues small title={i18n.t('common.visibility.title')} value={renderNeededEphemeris()} />
             </View>

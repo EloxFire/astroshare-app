@@ -2,9 +2,15 @@ import {DSO} from "../../../types/DSO";
 import {astroImages} from "../../loadImages";
 import {Star} from "../../../types/Star";
 import {GlobalPlanet} from "../../../types/GlobalPlanet";
+import {SpecialSkyObject} from "../../../types/SpecialSkyObject";
 import {getObjectFamily} from "./getObjectFamily";
 
-export const getObjectIcon = (object: DSO | Star | GlobalPlanet) => {
+export const getObjectIcon = (object: DSO | Star | GlobalPlanet | SpecialSkyObject) => {
+  // SpecialSkyObject (Sun / Moon) carries its icon directly on the stub.
+  if ((object as SpecialSkyObject).family === 'Sun' || (object as SpecialSkyObject).family === 'Moon') {
+    return (object as SpecialSkyObject).icon;
+  }
+
   const objectFamily = getObjectFamily(object)
 
   switch (objectFamily) {

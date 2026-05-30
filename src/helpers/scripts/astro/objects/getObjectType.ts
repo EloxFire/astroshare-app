@@ -3,9 +3,15 @@ import { DSOCatalog } from "../../../types/DSOCatalogs"
 import { i18n } from "../../i18n"
 import {Star} from "../../../types/Star";
 import {GlobalPlanet} from "../../../types/GlobalPlanet";
+import {SpecialSkyObject} from "../../../types/SpecialSkyObject";
 import {getObjectFamily} from "./getObjectFamily";
 
-export const getObjectType = (object: DSO | Star | GlobalPlanet) => {
+export const getObjectType = (object: DSO | Star | GlobalPlanet | SpecialSkyObject) => {
+  // SpecialSkyObject (Sun / Moon) has dedicated type labels.
+  const family = (object as SpecialSkyObject).family;
+  if (family === 'Sun')  return i18n.t('common.objects.types.star');  // "Étoile" / "Star" — best fit for the Sun
+  if (family === 'Moon') return i18n.t('common.objects.types.planet'); // "Planète" / "Planet" — natural satellite
+
   const objectFamily = getObjectFamily(object)
 
   switch (objectFamily) {

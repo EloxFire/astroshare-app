@@ -6,12 +6,13 @@ import { DSO } from '../helpers/types/DSO'
 import { app_colors } from '../helpers/constants'
 import { GlobalPlanet } from '../helpers/types/GlobalPlanet'
 import { Star } from '../helpers/types/Star'
+import { SpecialSkyObject } from '../helpers/types/SpecialSkyObject'
 import { i18n } from '../helpers/scripts/i18n'
 import SearchResultCard from './cards/SearchResultCard'
 
 interface HomeSearchResultsProps {
   results: DSO[]
-  planetResults: GlobalPlanet[]
+  planetResults: (GlobalPlanet | SpecialSkyObject)[]
   starsResults: Star[]
   onReset: () => void
   navigation: any
@@ -21,10 +22,10 @@ interface HomeSearchResultsProps {
 export default function HomeSearchResults({ results, planetResults, onReset, navigation, starsResults, loading }: HomeSearchResultsProps) {
 
   const resultsFlatListRef = useRef<FlatList>(null)
-  const [data, setData] = useState<(DSO | GlobalPlanet | Star)[]>([])
+  const [data, setData] = useState<(DSO | GlobalPlanet | Star | SpecialSkyObject)[]>([])
 
   useEffect(() => {
-    const mergedResults: (DSO | GlobalPlanet | Star)[] = [...planetResults, ...results, ...starsResults]
+    const mergedResults: (DSO | GlobalPlanet | Star | SpecialSkyObject)[] = [...planetResults, ...results, ...starsResults]
     setData(mergedResults)
   }, [results, planetResults, starsResults])
 
@@ -58,7 +59,7 @@ export default function HomeSearchResults({ results, planetResults, onReset, nav
           data={data}
           ListEmptyComponent={<View></View>}
           renderItem={({ item }) => <SearchResultCard object={item} navigation={navigation} />}
-          keyExtractor={item => `${item.dec}-${item.ra}`}
+          keyExtractor={item => `${(item as any).family ?? 'obj'}-${item.dec}-${item.ra}`}
         />
       </SafeAreaView>
     </View>

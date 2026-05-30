@@ -7,6 +7,7 @@ import {useSolarSystem} from "../../contexts/SolarSystemContext";
 import {DSO} from "../../helpers/types/DSO";
 import {GlobalPlanet} from "../../helpers/types/GlobalPlanet";
 import {Star} from "../../helpers/types/Star";
+import {SpecialSkyObject} from "../../helpers/types/SpecialSkyObject";
 import CelestialBodyCardLite from "../cards/CelestialBodyCardLite";
 import InputWithIcon from "../forms/InputWithIcon";
 import ScreenInfo from "../ScreenInfo";
@@ -28,7 +29,7 @@ import {Dayjs} from "dayjs";
 interface PlanetariumSearchModalProps {
   onClose: () => void;
   navigation: any;
-  onSelect: (obj: DSO | GlobalPlanet | Star) => void;
+  onSelect: (obj: DSO | GlobalPlanet | Star | SpecialSkyObject) => void;
   timelineDate: Dayjs;
 }
 
@@ -43,10 +44,10 @@ export default function PlanetariumSearchModal({ onClose, navigation, onSelect, 
 
   const [searchString, setSearchString] = useState('')
   const [searchResults, setSearchResults] = useState<DSO[]>([])
-  const [planetResults, setPlanetResults] = useState<GlobalPlanet[]>([])
+  const [planetResults, setPlanetResults] = useState<(GlobalPlanet | SpecialSkyObject)[]>([])
   const [starsResults, setStarsResults] = useState<Star[]>([])
   const [searchResultsLoading, setSearchResultsLoading] = useState(false)
-  const [data, setData] = useState<(DSO | GlobalPlanet | Star)[]>([])
+  const [data, setData] = useState<(DSO | GlobalPlanet | Star | SpecialSkyObject)[]>([])
   const [suggestions, setSuggestions] = useState<string[]>([])
 
   const resultsFlatListRef = useRef<FlatList>(null)
@@ -58,6 +59,17 @@ export default function PlanetariumSearchModal({ onClose, navigation, onSelect, 
       if (query.length < 2) { setSuggestions([]); return; }
 
       const results: string[] = [];
+
+      // Sun / Moon always appear first if query is a prefix of their name
+      const solarBodies = [
+        { en: 'Sun',  fr: i18n.t('common.planets.Sun')  },
+        { en: 'Moon', fr: i18n.t('common.planets.Moon') },
+      ];
+      solarBodies.forEach(({ en, fr }) => {
+        if (en.toLowerCase().startsWith(query) || fr.toLowerCase().startsWith(query)) {
+          results.push(fr);
+        }
+      });
 
       planets
         .filter(p => p.name.toLowerCase().startsWith(query))
@@ -110,7 +122,7 @@ export default function PlanetariumSearchModal({ onClose, navigation, onSelect, 
     setSearchResults(searchedDSOs);
     setPlanetResults(searchedPlanets);
     setStarsResults(searchedStars);
-    const mergedResults: (DSO | GlobalPlanet | Star)[] = [...searchedPlanets, ...searchedDSOs, ...searchedStars]
+    const mergedResults: (DSO | GlobalPlanet | Star | SpecialSkyObject)[] = [...searchedPlanets, ...searchedDSOs, ...searchedStars]
     setData(mergedResults);
     setSearchResultsLoading(false)
   }
@@ -197,7 +209,7 @@ export default function PlanetariumSearchModal({ onClose, navigation, onSelect, 
                 date={timelineDate}
               />
             )}
-            keyExtractor={item => `${item.dec}-${item.ra}`}
+            keyExtractor={item => `${(item as any).family ?? 'obj'}-${item.dec}-${item.ra}`}
           />
       }
     </View>

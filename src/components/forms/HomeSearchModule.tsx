@@ -6,6 +6,7 @@ import { useSettings } from '../../contexts/AppSettingsContext'
 import { useSolarSystem } from '../../contexts/SolarSystemContext'
 import { GlobalPlanet } from '../../helpers/types/GlobalPlanet'
 import { Star } from '../../helpers/types/Star'
+import { SpecialSkyObject } from '../../helpers/types/SpecialSkyObject'
 import { i18n } from '../../helpers/scripts/i18n'
 import InputWithIcon from './InputWithIcon'
 import HomeSearchResults from '../HomeSearchResults'
@@ -29,7 +30,7 @@ export default function HomeSearchModule({ navigation }: HomeSearchModuleProps) 
 
   const [searchString, setSearchString] = useState('')
   const [searchResults, setSearchResults] = useState<DSO[]>([])
-  const [planetResults, setPlanetResults] = useState<GlobalPlanet[]>([])
+  const [planetResults, setPlanetResults] = useState<(GlobalPlanet | SpecialSkyObject)[]>([])
   const [starsResults, setStarsResults] = useState<Star[]>([])
   const [searchResultsLoading, setSearchResultsLoading] = useState(false)
 

@@ -43,6 +43,7 @@ import { checklistManagerTranslations } from "./screens/checklists";
 import { dashboardTranslations } from "./screens/dashboard";
 import { profileTranslations } from "./screens/profile";
 import { astroGearTranslations } from "./common/astroGear";
+import { telescopeSimulatorHomeTranslations } from "./screens/simulator/telescopeSimulatorHome";
 
 export const frTranslations = {
   onboarding: onboardingTranslations,
@@ -92,4 +93,7 @@ export const frTranslations = {
   dashboard: dashboardTranslations,
   profile: profileTranslations,
   gear: astroGearTranslations,
+  telescopeSimulator: {
+    home: telescopeSimulatorHomeTranslations,
+  }
 }

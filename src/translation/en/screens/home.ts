@@ -49,7 +49,7 @@ export const homeTranslations = {
       subtitle: "// Calculate the moon phases"
     },
     solar_weather: {
-      title: "Solar weather",
+      title: "Space weather",
       subtitle: "// Situation of our star in real-time !"
     },
     transits: {

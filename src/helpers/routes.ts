@@ -60,6 +60,9 @@ export const routes = {
     satellitePasses: { path: "SatellitePasses", requirements: []},
     addCustomSatellite: { path: "AddCustomSatelliteTrackerScreen", requirements: []}
   },
+  telescopeSimulator: {
+    home: { path: 'TelescopeSimulatorHome', requirements: [] },
+  },
   auth: {
     login: { path: 'Login', requirements: [] },
     register: { path: 'Register', requirements: [] },

@@ -94,6 +94,7 @@ import TransitsScreen from "./src/screens/transits/TransitsScreen";
 import { loadingSplashStyles } from "./src/styles/screens/loadingSplash";
 import { SubscriptionManagement } from "./src/screens/auth/subscription/SubscriptionManagement";
 import { SubscriptionDetails } from "./src/screens/auth/subscription/SubscriptionDetails";
+import { TelescopeSimulator } from "./src/screens/simulator/TelescopeSimulator";
 
 dayjs.locale('fr');
 dayjs.extend(LocalizedFormat)
@@ -239,6 +240,9 @@ export default function App() {
 
                                 {/* CLOCK SCREENS */}
                                 <Stack.Screen name={routes.clock.home.path} component={ClockHome} />
+
+                                {/* TELESCOPE SIMULATOR SCREENS */}
+                                <Stack.Screen name={routes.telescopeSimulator.home.path} component={TelescopeSimulator} />
 
                                 {/*ROCKET LAUNCHES SCREENS*/}
                                 <Stack.Screen name={routes.launchesScreen.path} component={LaunchesScreen} />

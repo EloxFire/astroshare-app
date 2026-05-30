@@ -1,12 +1,18 @@
 import { DSO } from "../../../types/DSO"
 import { DSOCatalog } from "../../../types/DSOCatalogs"
 import {GlobalPlanet} from "../../../types/GlobalPlanet";
+import {SpecialSkyObject} from "../../../types/SpecialSkyObject";
 import {Star} from "../../../types/Star";
 import {getObjectFamily} from "./getObjectFamily";
 import {getBrightStarName} from "./getBrightStarName";
 import {i18n} from "../../i18n";
 
-export const getObjectName = (object: DSO | Star | GlobalPlanet, currentCatalog: DSOCatalog, full?: boolean): string => {
+export const getObjectName = (object: DSO | Star | GlobalPlanet | SpecialSkyObject, currentCatalog: DSOCatalog, full?: boolean): string => {
+  // SpecialSkyObject (Sun / Moon) stores its already-localised name directly.
+  if ((object as SpecialSkyObject).family === 'Sun' || (object as SpecialSkyObject).family === 'Moon') {
+    return (object as SpecialSkyObject).name;
+  }
+
   const objectFamily = getObjectFamily(object)
 
   switch (objectFamily) {

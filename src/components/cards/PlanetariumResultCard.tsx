@@ -8,6 +8,8 @@ import {computeObject} from "../../helpers/scripts/astro/objects/computeObject";
 import {useTranslation} from "../../hooks/useTranslation";
 import {GlobalPlanet} from "../../helpers/types/GlobalPlanet";
 import {DSO} from "../../helpers/types/DSO";
+import {SpecialSkyObject} from "../../helpers/types/SpecialSkyObject";
+import {astroshareApi} from "../../helpers/api";
 import {Image} from "expo-image";
 import {getObjectIcon} from "../../helpers/scripts/astro/objects/getObjectIcon";
 import {getObjectName} from "../../helpers/scripts/astro/objects/getObjectName";
@@ -24,10 +26,10 @@ import { searchResultCardStyles } from '../../styles/components/searchResultCard
 import DSOValues from '../commons/DSOValues';
 import { objectCardLiteStyles } from '../../styles/components/cards/objectCardLite';
 import { getWindDir } from '../../helpers/scripts/getWindDir';
-import {Dayjs} from "dayjs";
+import dayjs, {Dayjs} from "dayjs";
 
 interface PlanetariumResultCardProps {
-  object: Star | DSO | GlobalPlanet
+  object: Star | DSO | GlobalPlanet | SpecialSkyObject
   onPress: () => void
   navigation: any
   date?: Dayjs
@@ -40,6 +42,7 @@ export default function PlanetariumResultCard({ object, onPress, navigation, dat
   const { currentUserLocation } = useSettings()
 
   const [objectInfos, setObjectInfos] = useState<ComputedObjectInfos | null>(null)
+  const [moonImageSource, setMoonImageSource] = useState<{ uri: string } | null>(null)
 
   useEffect(() => {
     if (!currentUserLocation) return;
@@ -57,6 +60,17 @@ export default function PlanetariumResultCard({ object, onPress, navigation, dat
     return () => clearInterval(interval);
   }, [object, currentLocale, currentUserLocation, date])
 
+  // Fetch the rendered Moon illustration from the API.
+  // Use the timeline date when provided (planetarium context) for accuracy.
+  useEffect(() => {
+    if ((object as SpecialSkyObject).family !== 'Moon') return;
+    let cancelled = false;
+    const dateStr = (date ?? dayjs()).format('YYYY-MM-DD');
+    astroshareApi.get('/moon/illustration?date=' + dateStr)
+      .then(res => { if (!cancelled) setMoonImageSource({ uri: res.data.url }); })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, [object, date])
 
   const handleClickCard = () => {
     sendAnalyticsEvent(currentUser, currentUserLocation, 'select_planetarium_search_result', eventTypes.BUTTON_CLICK, { object_name: objectInfos?.base.name, type: objectInfos?.base.rawType }, currentLocale)
@@ -70,7 +84,7 @@ export default function PlanetariumResultCard({ object, onPress, navigation, dat
       {
         objectInfos ? (
           <>
-            <Image source={getObjectIcon(object)} style={objectCardLiteStyles.card.icon} />
+            <Image source={moonImageSource ?? getObjectIcon(object)} style={objectCardLiteStyles.card.icon} />
             <View style={objectCardLiteStyles.card.data}>
               {
                 objectInfos?.base.otherName ? (

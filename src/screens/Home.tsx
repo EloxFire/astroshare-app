@@ -104,6 +104,7 @@ export default function Home({ navigation }: any) {
             <ToolButton disabled={!hasInternetConnection} navigation={navigation} targetScreen={routes.solarWeather.path} text={i18n.t('home.buttons.solar_weather.title')} subtitle={i18n.t('home.buttons.solar_weather.subtitle')} icon={require('../../assets/icons/SolarWind.png')} image={require('../../assets/images/tools/solarweather.jpg')} />
             <ToolButton disabled={!hasInternetConnection || !currentUserLocation} navigation={navigation} targetScreen={routes.skymaps.home.path} text={i18n.t('home.buttons.skymap_generator.title')} subtitle={i18n.t('home.buttons.skymap_generator.subtitle')} image={require('../../assets/images/tools/skymap.png')} icon={require('../../assets/icons/FiMap.png')} />
             <ToolButton navigation={navigation} targetScreen={routes.calculations.home.path} text={i18n.t('home.buttons.calculations.title')} subtitle={i18n.t('home.buttons.calculations.subtitle')} icon={require('../../assets/icons/FiCpu.png')} image={require('../../assets/images/tools/calculator.png')} />
+            <ToolButton navigation={navigation} targetScreen={routes.telescopeSimulator.home.path} text={i18n.t('home.buttons.telescope_simulator.title')} subtitle={i18n.t('home.buttons.telescope_simulator.subtitle')} icon={require('../../assets/icons/FiTelescope.png')} image={require('../../assets/images/tools/skymap.png')} />
           </View>
         </View>
         {

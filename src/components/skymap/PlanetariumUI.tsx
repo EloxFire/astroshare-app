@@ -9,6 +9,7 @@ import {ComputedObjectInfos} from "../../helpers/types/objects/ComputedObjectInf
 import {DSO} from "../../helpers/types/DSO";
 import {Star} from "../../helpers/types/Star";
 import {GlobalPlanet} from "../../helpers/types/GlobalPlanet";
+import {SpecialSkyObject} from "../../helpers/types/SpecialSkyObject";
 import VisibilityGraph from "../graphs/VisibilityGraph";
 import SimpleButton from "../commons/buttons/SimpleButton";
 import SimpleBadge from "../badges/SimpleBadge";
@@ -35,8 +36,8 @@ interface PlanetariumUIProps {
   onShowDSO: () => void;
   onShowCompassLabels: () => void;
   onCenterObject: () => void;
-  onSelectObject: (obj: DSO | GlobalPlanet | Star) => void;
-  onSelectFromSearch: (obj: DSO | GlobalPlanet | Star) => void;
+  onSelectObject: (obj: DSO | GlobalPlanet | Star | SpecialSkyObject) => void;
+  onSelectFromSearch: (obj: DSO | GlobalPlanet | Star | SpecialSkyObject) => void;
   onShowAtmosphere?: () => void;
   onShowStarLabels?: () => void;
   onShowSolarSystemLabels?: () => void;
