@@ -282,13 +282,28 @@ export default function Planetarium({ route, navigation }: any) {
   // Stable ref so the RAF loop can call the latest setState without stale closure
   const fovNotifyRef = useRef<(f: number) => void>(() => {});
   fovNotifyRef.current = setPlanetariumFov;
-  const lastFovUpdateMs = useRef(0);
-  const playIntervalRef        = useRef<ReturnType<typeof setInterval> | null>(null);
+  const lastNotifiedFovRef = useRef(75);
   const referenceDateRef       = useRef<Dayjs>(referenceDate);
   // Used to debounce React-state writes from rapid chevron taps to at most
   // one per animation frame, preventing "Maximum update depth exceeded".
   const pendingDateUpdateRef   = useRef<number | null>(null);
 
+  // ── Real-time anchor ─────────────────────────────────────────────────────────
+  // Instead of a setInterval that advances time 1s/s, the RAF loop computes
+  // rafDate = anchor.simDate + (performance.now() - anchor.wallMs) every frame.
+  // This gives sub-millisecond time accuracy at 60fps with zero stutter.
+  // The anchor is reset whenever the user seeks, adjusts, or resumes playback.
+  const playAnchorRef = useRef<{ wallMs: number; simDate: Dayjs }>({
+    wallMs: performance.now(),
+    simDate: dayjs(),
+  });
+  const timelinePlayingRef = useRef<boolean>(true);
+  // Throttle for the React-state UI clock update (1fps is plenty for display)
+  const lastUiDateUpdateMs = useRef<number>(0);
+
+  // Keep referenceDateRef in sync with explicit React state writes
+  // (seek, adjust, reset). In play mode the RAF loop overwrites it every frame
+  // via the anchor, so the effect runs at most once (on mount / explicit sets).
   useEffect(() => {
     referenceDateRef.current = referenceDate;
   }, [referenceDate]);
@@ -297,23 +312,17 @@ export default function Planetarium({ route, navigation }: any) {
     dsoCatalogRef.current = dsoCatalog;
   }, [dsoCatalog]);
 
-  // ─── Timeline player ─────────────────────────────────────────────────────────
+  // ─── Timeline play/pause ─────────────────────────────────────────────────────
+  // No more setInterval: the RAF loop advances the clock via the wall-clock
+  // anchor at 60fps. This effect only syncs the ref and re-anchors on resume.
 
   useEffect(() => {
-    if (!timelinePlaying) {
-      if (playIntervalRef.current) clearInterval(playIntervalRef.current);
-      playIntervalRef.current = null;
-      return;
+    timelinePlayingRef.current = timelinePlaying;
+    if (timelinePlaying) {
+      // Re-anchor to current reference date so the RAF picks up from where we
+      // left off (paused position) without any jump.
+      playAnchorRef.current = { wallMs: performance.now(), simDate: referenceDateRef.current };
     }
-    playIntervalRef.current = setInterval(() => {
-      // Read the ref, not a functional prev: this keeps the interval in sync
-      // with whatever position the slider or chevrons have set, instead of
-      // continuing from a stale React-state snapshot.
-      setReferenceDate(referenceDateRef.current.add(1, 'second'));
-    }, 1000);
-    return () => {
-      if (playIntervalRef.current) clearInterval(playIntervalRef.current);
-    };
   }, [timelinePlaying]);
 
   // ─── Status bar ──────────────────────────────────────────────────────────────
@@ -526,11 +535,11 @@ export default function Planetarium({ route, navigation }: any) {
         if (!wasAnimating) ctrl.tickInertia(w);
         ctrl.tickFov();
 
-        // Notify React of FOV changes at ~10fps — enough for smooth overlay resize
-        // without triggering excessive re-renders.
-        const fovNow = performance.now();
-        if (fovNow - lastFovUpdateMs.current > 100) {
-          lastFovUpdateMs.current = fovNow;
+        // Notify React of FOV changes every frame the value actually changes.
+        // No time-throttle: the overlay must follow the pinch gesture at 60fps.
+        // When FOV is stable (no pinch), this branch is never taken → zero cost.
+        if (ctrl.fov !== lastNotifiedFovRef.current) {
+          lastNotifiedFovRef.current = ctrl.fov;
           fovNotifyRef.current(ctrl.fov);
         }
 
@@ -547,28 +556,48 @@ export default function Planetarium({ route, navigation }: any) {
           }
         }
 
-        // ── Ephemeris: update scene at max 20fps (50ms wall-clock throttle) ─────
-        // Reads referenceDateRef directly so slider seek needs zero React state.
+        // ── Real-time sim clock: computed every frame from wall-clock anchor ─────
+        // In play mode: rafDate advances continuously at 1:1 real time (no stutter).
+        // In pause mode: rafDate is frozen at referenceDateRef (last explicit set).
         const rafNow = performance.now();
-        const rafLoc = currentUserLocationRef.current;
-        if (rafLoc && rafNow - lastEphemerisRafMs.current >= EPHEMERIS_RAF_MS) {
-          lastEphemerisRafMs.current = rafNow;
-          const rafDate = referenceDateRef.current;
-          const rafObs  = { latitude: rafLoc.lat, longitude: rafLoc.lon };
-          const rafDateObj = rafDate.toDate();
+        const rafDate = timelinePlayingRef.current
+          ? playAnchorRef.current.simDate.add(rafNow - playAnchorRef.current.wallMs, 'millisecond')
+          : referenceDateRef.current;
+        const rafDateObj = rafDate.toDate();
 
-          if (!followSelectionRef.current) {
-            const horiz = convertEquatorialToHorizontal(lastEphemerisDateRef.current, rafObs, {
-              ra: ctrl.lookRa, dec: ctrl.lookDec,
-            });
-            const corrected = convertHorizontalToEquatorial(rafDateObj, rafObs, {
-              alt: horiz.alt, az: horiz.az,
-            });
-            if (isFinite(corrected.ra) && isFinite(corrected.dec)) {
-              ctrl.setLook(corrected.ra, corrected.dec);
-            }
+        // Keep ref in sync every frame so seek/adjust always see the current time.
+        referenceDateRef.current = rafDate;
+
+        // Update React state clock display at ~1fps — plenty for the UI ticker.
+        if (rafNow - lastUiDateUpdateMs.current > 1000) {
+          lastUiDateUpdateMs.current = rafNow;
+          setReferenceDate(rafDate);
+        }
+
+        const rafLoc = currentUserLocationRef.current;
+        const rafObs = rafLoc ? { latitude: rafLoc.lat, longitude: rafLoc.lon } : null;
+
+        // ── Sidereal drift compensation: every frame (two cheap trig calls) ──────
+        // Converts the current look direction to alt/az at the previous frame's
+        // time, then back to RA/Dec at the current time — keeping the camera
+        // locked to the same sky patch as Earth rotates. Running this at 60fps
+        // (vs the old 20fps) eliminates the 0.75" per-step jitter.
+        if (rafObs && !followSelectionRef.current) {
+          const horiz = convertEquatorialToHorizontal(lastEphemerisDateRef.current, rafObs, {
+            ra: ctrl.lookRa, dec: ctrl.lookDec,
+          });
+          const corrected = convertHorizontalToEquatorial(rafDateObj, rafObs, {
+            alt: horiz.alt, az: horiz.az,
+          });
+          if (isFinite(corrected.ra) && isFinite(corrected.dec)) {
+            ctrl.setLook(corrected.ra, corrected.dec);
           }
-          lastEphemerisDateRef.current = rafDateObj;
+        }
+        lastEphemerisDateRef.current = rafDateObj;
+
+        // ── Heavy ephemeris: planet positions, atmosphere, grids — capped at 20fps
+        if (rafObs && rafNow - lastEphemerisRafMs.current >= EPHEMERIS_RAF_MS) {
+          lastEphemerisRafMs.current = rafNow;
 
           const snapshot = refs.solarSystemLayer.update(rafDate, rafObs, (moonCoordsRef.current as any)?.currentIconUrl);
           updateAtmosphere(
@@ -583,9 +612,9 @@ export default function Planetarium({ route, navigation }: any) {
           refs.zenithVec.copy(zenithVecRef.current);
           ctrl.setZenith(zenithVecRef.current);
 
-          orientGroundToHorizon(refs.ground, rafLoc, rafDateObj);
-          orientAzGridToHorizon(refs.azGrid, rafLoc, rafDateObj);
-          updateCompassLabels(refs.compassLabels, rafLoc, rafDateObj, 0.98);
+          orientGroundToHorizon(refs.ground, rafLoc!, rafDateObj);
+          orientAzGridToHorizon(refs.azGrid, rafLoc!, rafDateObj);
+          updateCompassLabels(refs.compassLabels, rafLoc!, rafDateObj, 0.98);
         }
 
         updateConstellationLabelSizes(
@@ -633,30 +662,32 @@ export default function Planetarium({ route, navigation }: any) {
     }
   };
 
-  // ─── Seek callback (used by slider — updates ref only, no React state) ──────────
+  // ─── Seek callback (used by slider) ──────────────────────────────────────────
+  // Re-anchors the wall-clock so the RAF loop resumes from the seeked position.
 
   const onSeekTimeline = useCallback((date: Dayjs) => {
     referenceDateRef.current = date;
+    playAnchorRef.current = { wallMs: performance.now(), simDate: date };
   }, []);
 
   // ─── Chevron-button adjustment ────────────────────────────────────────────────
-  // Updating the ref immediately means the RAF loop sees the new time on the
-  // very next frame, avoiding the stale-closure issue that caused day-rollover
-  // to be skipped when tapping rapidly.
-  // The React-state write is debounced to at most one per animation frame so
-  // that fast tap bursts (e.g. holding the +minute button) never produce more
-  // than one state update per 16 ms — eliminating the "Maximum update depth
-  // exceeded" cascade caused by multiple setReferenceDate calls triggering
-  // cascading effects on every single tap.
+  // Reads the current sim time from the anchor (not the 1fps-stale ref) so the
+  // adjustment is applied to the precise current moment, then re-anchors.
+
   const onAdjustTimeline = useCallback(
     (unit: 'second' | 'minute' | 'hour' | 'day' | 'month' | 'year', delta: number) => {
-      referenceDateRef.current = referenceDateRef.current.add(delta, unit);
+      const currentSim = timelinePlayingRef.current
+        ? playAnchorRef.current.simDate.add(performance.now() - playAnchorRef.current.wallMs, 'millisecond')
+        : referenceDateRef.current;
+      const newDate = currentSim.add(delta, unit);
+      referenceDateRef.current = newDate;
+      playAnchorRef.current = { wallMs: performance.now(), simDate: newDate };
 
       if (pendingDateUpdateRef.current !== null) {
         cancelAnimationFrame(pendingDateUpdateRef.current);
       }
       pendingDateUpdateRef.current = requestAnimationFrame(() => {
-        setReferenceDate(referenceDateRef.current);
+        setReferenceDate(newDate);
         pendingDateUpdateRef.current = null;
       });
     },
@@ -831,13 +862,31 @@ export default function Planetarium({ route, navigation }: any) {
           onToggleFollow={() => setFollowSelection((v) => !v)}
           timelineDate={referenceDate}
           isTimelinePlaying={timelinePlaying}
-          onToggleTimelinePlay={() => setTimelinePlaying((v) => !v)}
+          onToggleTimelinePlay={() => {
+            setTimelinePlaying((v) => {
+              const next = !v;
+              timelinePlayingRef.current = next;
+              if (next) {
+                // Resuming: anchor from the current frozen position
+                playAnchorRef.current = { wallMs: performance.now(), simDate: referenceDateRef.current };
+              }
+              return next;
+            });
+          }}
           onSeekTimeline={onSeekTimeline}
           onAdjustTimeline={onAdjustTimeline}
-          onChangeTimelineDate={setReferenceDate}
+          onChangeTimelineDate={(date: Dayjs) => {
+            referenceDateRef.current = date;
+            playAnchorRef.current = { wallMs: performance.now(), simDate: date };
+            setReferenceDate(date);
+          }}
           onResetTimelineDate={() => {
+            const now = dayjs();
+            referenceDateRef.current = now;
+            playAnchorRef.current = { wallMs: performance.now(), simDate: now };
+            timelinePlayingRef.current = true;
             setTimelinePlaying(true);
-            setReferenceDate(dayjs());
+            setReferenceDate(now);
           }}
         />
       )}

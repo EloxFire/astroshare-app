@@ -1,9 +1,11 @@
 import { ImageSourcePropType } from 'react-native'
 import {
-  earth,
-  getLunarAngularDiameter,
+  getLunarDistance,
   getLunarPhase,
   getPlanetaryHeliocentricDistance,
+  getPlanetaryHeliocentricEclipticLatitude,
+  getPlanetaryHeliocentricEclipticLongitude,
+  getSolarEclipticCoordinate,
   jupiter,
   mars,
   mercury,
@@ -19,7 +21,8 @@ import { SpecialSkyObject } from '../../types/SpecialSkyObject'
 import { moonIcons } from '../loadImages'
 import { getPlanetariumImageEntry } from './getPlanetariumImageEntry'
 
-const AU_IN_METERS = 149_597_870_700
+const AU_IN_METERS   = 149_597_870_700
+const MOON_RADIUS_M  = 1_737_400
 
 const PLANET_PARAMS: Record<string, any> = {
   Mercury: mercury,
@@ -79,10 +82,8 @@ export const getMoonTarget = (
   location: LocationObject | null,
   moonIllustrationUrl?: string | null,
 ): SimulatorTarget => {
-  const observer = location
-    ? { latitude: location.lat, longitude: location.lon, elevation: 0 }
-    : undefined
-  const angularDiam = getLunarAngularDiameter(new Date(), observer)
+  const moonDist_m = getLunarDistance(new Date())
+  const angularDiam = 2 * Math.atan(MOON_RADIUS_M / moonDist_m) * (180 / Math.PI)
   const phase = getLunarPhase(new Date())
 
   return {
@@ -97,21 +98,36 @@ export const getMoonTarget = (
 
 // ── Planets ───────────────────────────────────────────────────────────────────────
 
+// True geocentric distance using 3-D heliocentric ecliptic positions.
+// |rPlanet − rEarth| (scalar) is only accurate at opposition/conjunction;
+// this version handles all orbital configurations correctly.
 const computePlanetAngularDiamDeg = (planetName: string, withCurrentDate: boolean): number => {
   const params = PLANET_PARAMS[planetName]
   if (!params) return 0
 
-  let distanceAU: number
+  let distanceM: number
   if (withCurrentDate) {
-    // Approximate geocentric distance as difference of heliocentric distances
-    const rPlanet = getPlanetaryHeliocentricDistance(new Date(), params)
-    const rEarth = getPlanetaryHeliocentricDistance(new Date(), earth)
-    distanceAU = Math.abs(rPlanet - rEarth)
+    const date = new Date()
+    const sunEclip = getSolarEclipticCoordinate(date) as any
+    const r_e = sunEclip.R / AU_IN_METERS
+    const earthLon = ((sunEclip['λ'] + 180) % 360) * (Math.PI / 180)
+
+    const r_p   = getPlanetaryHeliocentricDistance(date, params)
+    const lon_p = getPlanetaryHeliocentricEclipticLongitude(date, params) * (Math.PI / 180)
+    const lat_p = getPlanetaryHeliocentricEclipticLatitude(date, params) * (Math.PI / 180)
+
+    const xp = r_p * Math.cos(lat_p) * Math.cos(lon_p)
+    const yp = r_p * Math.cos(lat_p) * Math.sin(lon_p)
+    const zp = r_p * Math.sin(lat_p)
+    const xe = r_e * Math.cos(earthLon)
+    const ye = r_e * Math.sin(earthLon)
+
+    const delta_AU = Math.sqrt((xp - xe) ** 2 + (yp - ye) ** 2 + zp ** 2)
+    distanceM = (isFinite(delta_AU) && delta_AU > 0 ? delta_AU : params.a) * AU_IN_METERS
   } else {
-    distanceAU = params.a // fallback to mean semi-major axis
+    distanceM = Math.max(params.a, 0.01) * AU_IN_METERS
   }
 
-  const distanceM = Math.max(distanceAU, 0.01) * AU_IN_METERS
   return 2 * Math.atan(params.r / distanceM) * (180 / Math.PI)
 }
 

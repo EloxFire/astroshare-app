@@ -52,9 +52,10 @@ const MOON_BASE_RADIUS   = 0.12;
 const PLANET_BASE_RADIUS = 0.10;
 
 // Scale applied on top of true apparent sizes.
-// 1.0 = physically accurate.  Sun/Moon are large enough at 3.5×; planets need
-// a bigger boost (7×) so they remain clearly visible at the default 75° FOV.
-const APPARENT_SIZE_SCALE        = 3.5; // Sun & Moon
+// Sun and Moon use 1.0 (true angular size) so the FOV overlay comparison is
+// geometrically correct. Planets need a large boost (60×) to remain visible
+// at the default 75° FOV since their true discs are sub-arcsecond to a few arcmin.
+const APPARENT_SIZE_SCALE        = 1.0;  // Sun & Moon — true angular size
 const PLANET_APPARENT_SIZE_SCALE = 60.0; // planets only
 
 // Minimum touch-hitbox radius (world units).  Ensures objects remain tappable

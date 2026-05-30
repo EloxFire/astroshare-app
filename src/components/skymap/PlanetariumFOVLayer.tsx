@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { memo, useEffect, useMemo, useState } from 'react'
 import { Modal, ScrollView, Text, TouchableOpacity, useWindowDimensions, View } from 'react-native'
 import Constants from 'expo-constants'
 import { useAuth } from '../../contexts/AuthContext'
@@ -164,7 +164,7 @@ interface PlanetariumFOVLayerProps {
   navigation: any
 }
 
-export const PlanetariumFOVLayer = ({ cameraFovDeg, navigation }: PlanetariumFOVLayerProps) => {
+export const PlanetariumFOVLayer = memo(({ cameraFovDeg, navigation }: PlanetariumFOVLayerProps) => {
   const { width: W, height: H } = useWindowDimensions()
   const { currentUser } = useAuth()
   const { currentGear } = useAstroGear()
@@ -333,7 +333,7 @@ export const PlanetariumFOVLayer = ({ cameraFovDeg, navigation }: PlanetariumFOV
       />
     </View>
   )
-}
+})
 
 // ── Styles ────────────────────────────────────────────────────────────────────────
 
