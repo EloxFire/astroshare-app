@@ -27,6 +27,31 @@ export const computeGMin = (diameterMm: number): number => diameterMm / 7
 
 export const computeGMax = (diameterMm: number): number => diameterMm * 2
 
+export type CameraValues = {
+  fovWidthDeg: number
+  fovHeightDeg: number
+  pixelScaleArcSec: number
+  effectiveFocalLengthMm: number
+}
+
+// Camera FOV uses the exact arctan formula — sensorSize is a physical measurement,
+// not an empirically-defined apparent angle like eyepiece AFOV.
+export const computeCameraValues = (
+  fScopeMm: number,
+  sensorWidthMm: number,
+  sensorHeightMm: number,
+  pixelSizeUm: number,
+  barlowFactor: number,
+): CameraValues => {
+  const fl = fScopeMm * barlowFactor
+  return {
+    fovWidthDeg: 2 * Math.atan(sensorWidthMm / (2 * fl)) * (180 / Math.PI),
+    fovHeightDeg: 2 * Math.atan(sensorHeightMm / (2 * fl)) * (180 / Math.PI),
+    pixelScaleArcSec: (pixelSizeUm / fl) * 206.265,
+    effectiveFocalLengthMm: fl,
+  }
+}
+
 export const computeSimulatorValues = (
   fScopeMm: number,
   diameterMm: number,

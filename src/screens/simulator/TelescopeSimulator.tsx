@@ -13,19 +13,24 @@ import { routes } from '../../helpers/routes'
 import { app_colors } from '../../helpers/constants'
 import { getTelescopes } from '../../helpers/scripts/gear/telescopes'
 import { getEyepieces } from '../../helpers/scripts/gear/eyepieces'
+import { getCameras } from '../../helpers/scripts/gear/cameras'
 import { Telescope } from '../../helpers/types/gear/Telescope'
 import { Eyepiece } from '../../helpers/types/gear/Eyepiece'
+import { Camera } from '../../helpers/types/gear/Camera'
 import { DSO } from '../../helpers/types/DSO'
 import { GlobalPlanet } from '../../helpers/types/GlobalPlanet'
 import { SpecialSkyObject } from '../../helpers/types/SpecialSkyObject'
-import { computeSimulatorValues } from '../../helpers/scripts/simulator/computeSimulatorValues'
+import {
+  computeSimulatorValues,
+  computeCameraValues,
+} from '../../helpers/scripts/simulator/computeSimulatorValues'
 import {
   getDSOTarget,
   getPlanetTarget,
   getSpecialObjectTarget,
   SimulatorTarget,
 } from '../../helpers/scripts/simulator/getObjectForSimulator'
-import { GearSelector, BarlowFactor } from '../../components/simulator/GearSelector'
+import { GearSelector, BarlowFactor, InstrumentMode } from '../../components/simulator/GearSelector'
 import { ObjectPickerModal } from '../../components/simulator/ObjectPickerModal'
 import { SimulatorResultCards } from '../../components/simulator/SimulatorResultCards'
 import { FieldRenderer } from '../../components/simulator/FieldRenderer'
@@ -44,11 +49,14 @@ export const TelescopeSimulator = ({ navigation }: any) => {
   // Gear lists
   const [telescopes, setTelescopes] = useState<Telescope[]>([])
   const [eyepieces, setEyepieces] = useState<Eyepiece[]>([])
+  const [cameras, setCameras] = useState<Camera[]>([])
 
-  // Current selection
+  // Selection
   const [selectedTelescope, setSelectedTelescope] = useState<Telescope | null>(null)
   const [selectedEyepiece, setSelectedEyepiece] = useState<Eyepiece | null>(null)
+  const [selectedCamera, setSelectedCamera] = useState<Camera | null>(null)
   const [barlowFactor, setBarlowFactor] = useState<BarlowFactor>(1)
+  const [instrumentMode, setInstrumentMode] = useState<InstrumentMode>('eyepiece')
 
   // Target object
   const [target, setTarget] = useState<SimulatorTarget | null>(null)
@@ -58,31 +66,39 @@ export const TelescopeSimulator = ({ navigation }: any) => {
   useEffect(() => {
     if (!isFocused || !currentUser?.uid) return
     ;(async () => {
-      const loadedScopes = await getTelescopes(currentUser.uid)
-      const loadedEyepieces = await getEyepieces(currentUser.uid)
+      const [loadedScopes, loadedEyepieces, loadedCameras] = await Promise.all([
+        getTelescopes(currentUser.uid),
+        getEyepieces(currentUser.uid),
+        getCameras(currentUser.uid),
+      ])
       setTelescopes(loadedScopes)
       setEyepieces(loadedEyepieces)
+      setCameras(loadedCameras)
 
-      // Pre-select active gear from context
-      if (currentGear?.telescope) {
-        const active = loadedScopes.find((s) => s.id === currentGear.telescope)
-        if (active) setSelectedTelescope(active)
-      } else if (loadedScopes.length > 0) {
-        setSelectedTelescope(loadedScopes[0])
-      }
+      // Pre-select active telescope
+      const activeTelescope = currentGear?.telescope
+        ? loadedScopes.find((s) => s.id === currentGear.telescope)
+        : loadedScopes[0] ?? null
+      if (activeTelescope) setSelectedTelescope(activeTelescope)
 
-      if (currentGear?.eyepiece) {
-        const active = loadedEyepieces.find((e) => e.id === currentGear.eyepiece)
-        if (active) setSelectedEyepiece(active)
-      } else if (loadedEyepieces.length > 0) {
-        setSelectedEyepiece(loadedEyepieces[0])
-      }
+      // Pre-select active eyepiece
+      const activeEyepiece = currentGear?.eyepiece
+        ? loadedEyepieces.find((e) => e.id === currentGear.eyepiece)
+        : loadedEyepieces[0] ?? null
+      if (activeEyepiece) setSelectedEyepiece(activeEyepiece)
+
+      // Pre-select active camera
+      const activeCamera = currentGear?.camera
+        ? loadedCameras.find((c) => c.id === currentGear.camera)
+        : loadedCameras[0] ?? null
+      if (activeCamera) setSelectedCamera(activeCamera)
     })()
   }, [isFocused, currentUser?.uid])
 
-  // Computed values (only when both telescope and eyepiece are selected)
-  const simulatorValues =
-    selectedTelescope && selectedEyepiece
+  // ── Computed values ──────────────────────────────────────────────────────────────
+
+  const eyepieceValues =
+    instrumentMode === 'eyepiece' && selectedTelescope && selectedEyepiece
       ? computeSimulatorValues(
           selectedTelescope.focalLength,
           selectedTelescope.diameter,
@@ -92,66 +108,71 @@ export const TelescopeSimulator = ({ navigation }: any) => {
         )
       : null
 
-  // Build SimulatorTarget when user picks from modal
+  const cameraValues =
+    instrumentMode === 'camera' && selectedTelescope && selectedCamera
+      ? computeCameraValues(
+          selectedTelescope.focalLength,
+          selectedCamera.sensorSize.width,
+          selectedCamera.sensorSize.height,
+          selectedCamera.pixelSize,
+          barlowFactor,
+        )
+      : null
+
+  const hasValidSetup =
+    selectedTelescope !== null &&
+    (instrumentMode === 'eyepiece' ? selectedEyepiece !== null : selectedCamera !== null)
+
+  // ── Target selection ──────────────────────────────────────────────────────────────
+
   const handleSelectDSO = (dso: DSO) => setTarget(getDSOTarget(dso))
 
   const handleSelectPlanet = (planet: GlobalPlanet | SpecialSkyObject) => {
     if ('family' in planet) {
-      setTarget(
-        getSpecialObjectTarget(planet, currentUserLocation, moonCoords?.currentIconUrl),
-      )
+      setTarget(getSpecialObjectTarget(planet, currentUserLocation, moonCoords?.currentIconUrl))
     } else {
       setTarget(getPlanetTarget(planet as GlobalPlanet, currentUserLocation))
     }
   }
 
-  const hasGear = selectedTelescope !== null && selectedEyepiece !== null
+  // ── Render ────────────────────────────────────────────────────────────────────────
 
   return (
     <View style={globalStyles.body}>
-      <PageTitle
-        navigation={navigation}
-        title={t('title')}
-        subtitle={t('subtitle')}
-      />
+      <PageTitle navigation={navigation} title={t('title')} subtitle={t('subtitle')} />
       <View style={globalStyles.screens.separator} />
 
-      <ScrollView
-        contentContainerStyle={{ gap: 20, paddingBottom: 100 }}
-        showsVerticalScrollIndicator={false}
-      >
-        {/* ── Gear section ─────────────────────────────────────────────────────── */}
+      <ScrollView contentContainerStyle={{ gap: 20, paddingBottom: 100 }} showsVerticalScrollIndicator={false}>
+
+        {/* ── Gear ─────────────────────────────────────────────────────────────── */}
         <View style={sectionCard}>
           <Text style={sectionTitle}>{t('sections.gear.title')}</Text>
           <GearSelector
             telescopes={telescopes}
             eyepieces={eyepieces}
+            cameras={cameras}
             selectedTelescope={selectedTelescope}
             selectedEyepiece={selectedEyepiece}
+            selectedCamera={selectedCamera}
+            instrumentMode={instrumentMode}
             barlowFactor={barlowFactor}
             onSelectTelescope={setSelectedTelescope}
             onSelectEyepiece={setSelectedEyepiece}
+            onSelectCamera={setSelectedCamera}
             onSelectBarlow={setBarlowFactor}
-            onGoToGear={() =>
-              navigation.navigate(routes.auth.profile.astroGearManagement.home.path)
-            }
+            onInstrumentModeChange={setInstrumentMode}
+            onGoToGear={() => navigation.navigate(routes.auth.profile.astroGearManagement.home.path)}
           />
         </View>
 
-        {/* ── Object target section ─────────────────────────────────────────────── */}
+        {/* ── Target ───────────────────────────────────────────────────────────── */}
         <View style={sectionCard}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
             <Text style={sectionTitle}>{t('sections.target.title')}</Text>
-            <TouchableOpacity
-              style={changeButton}
-              onPress={() => setPickerVisible(true)}
-            >
-              <Text style={changeButtonText}>
-                {target ? t('sections.target.changeButton') : t('sections.target.changeButton')}
-              </Text>
+            <TouchableOpacity style={changeButton} onPress={() => setPickerVisible(true)}>
+              <Text style={changeButtonText}>{t('sections.target.changeButton')}</Text>
             </TouchableOpacity>
           </View>
-
           {target ? (
             <View style={{ gap: 2, marginTop: 6 }}>
               <Text style={targetName}>{target.name}</Text>
@@ -168,30 +189,43 @@ export const TelescopeSimulator = ({ navigation }: any) => {
           )}
         </View>
 
-        {/* ── Result cards ─────────────────────────────────────────────────────── */}
-        {simulatorValues && (
+        {/* ── Results ──────────────────────────────────────────────────────────── */}
+        {eyepieceValues && (
           <View style={sectionCard}>
             <Text style={sectionTitle}>{t('sections.results.title')}</Text>
-            <SimulatorResultCards values={simulatorValues} />
+            <SimulatorResultCards mode="eyepiece" values={eyepieceValues} />
+          </View>
+        )}
+        {cameraValues && (
+          <View style={sectionCard}>
+            <Text style={sectionTitle}>{t('sections.results.title')}</Text>
+            <SimulatorResultCards mode="camera" values={cameraValues} />
           </View>
         )}
 
-        {/* ── Field renderer ────────────────────────────────────────────────────── */}
+        {/* ── Field ────────────────────────────────────────────────────────────── */}
         <View style={{ gap: 8 }}>
           <Text style={sectionTitle}>{t('sections.field.title')}</Text>
-          {!hasGear ? (
+          {!hasValidSetup ? (
             <Text style={emptyText}>{t('sections.field.noGear')}</Text>
-          ) : (
+          ) : instrumentMode === 'eyepiece' && eyepieceValues ? (
             <FieldRenderer
+              mode="eyepiece"
               target={target}
-              tfovDeg={simulatorValues?.tfovDeg ?? 1}
+              tfovDeg={eyepieceValues.tfovDeg}
             />
-          )}
+          ) : instrumentMode === 'camera' && cameraValues ? (
+            <FieldRenderer
+              mode="camera"
+              target={target}
+              fovWidthDeg={cameraValues.fovWidthDeg}
+              fovHeightDeg={cameraValues.fovHeightDeg}
+            />
+          ) : null}
         </View>
 
       </ScrollView>
 
-      {/* Object picker modal */}
       <ObjectPickerModal
         visible={pickerVisible}
         planets={planets}
@@ -214,7 +248,7 @@ const formatAngular = (deg: number): string => {
   return `${(arcmin * 60).toFixed(0)}"`
 }
 
-// ── Inline styles ─────────────────────────────────────────────────────────────────
+// ── Styles ────────────────────────────────────────────────────────────────────────
 
 const sectionCard = {
   backgroundColor: app_colors.white_no_opacity,

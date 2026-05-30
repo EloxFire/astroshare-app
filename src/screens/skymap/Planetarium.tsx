@@ -278,6 +278,11 @@ export default function Planetarium({ route, navigation }: any) {
   // ─── Timeline ────────────────────────────────────────────────────────────────
   const [referenceDate, setReferenceDate]   = useState<Dayjs>(dayjs());
   const [timelinePlaying, setTimelinePlaying] = useState(true);
+  const [planetariumFov, setPlanetariumFov] = useState(75);
+  // Stable ref so the RAF loop can call the latest setState without stale closure
+  const fovNotifyRef = useRef<(f: number) => void>(() => {});
+  fovNotifyRef.current = setPlanetariumFov;
+  const lastFovUpdateMs = useRef(0);
   const playIntervalRef        = useRef<ReturnType<typeof setInterval> | null>(null);
   const referenceDateRef       = useRef<Dayjs>(referenceDate);
   // Used to debounce React-state writes from rapid chevron taps to at most
@@ -520,6 +525,14 @@ export default function Planetarium({ route, navigation }: any) {
         if (wasAnimating) ctrl.tickAnimation();
         if (!wasAnimating) ctrl.tickInertia(w);
         ctrl.tickFov();
+
+        // Notify React of FOV changes at ~10fps — enough for smooth overlay resize
+        // without triggering excessive re-renders.
+        const fovNow = performance.now();
+        if (fovNow - lastFovUpdateMs.current > 100) {
+          lastFovUpdateMs.current = fovNow;
+          fovNotifyRef.current(ctrl.fov);
+        }
 
         updateStarFovScale(refs.starsCloud, ctrl.fov);
         ctrl.applyToCamera(camera);
@@ -813,6 +826,7 @@ export default function Planetarium({ route, navigation }: any) {
           onToggleFocusedConstellation={toggleFocusedConstellation}
           isFocusedConstellationOn={focusedConstellationOn}
           onCenterObject={handleCenterObject}
+          cameraFovDeg={planetariumFov}
           isFollowing={followSelection}
           onToggleFollow={() => setFollowSelection((v) => !v)}
           timelineDate={referenceDate}

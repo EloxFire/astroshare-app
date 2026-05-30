@@ -1,5 +1,21 @@
 import React, {useEffect, useMemo, useRef, useState} from "react";
-import {Image, LayoutChangeEvent, PanResponder, Text, TouchableOpacity, View} from "react-native";
+import {Dimensions, Image, LayoutChangeEvent, Modal, PanResponder, ScrollView, Text, TouchableOpacity, View} from "react-native";
+import Constants from "expo-constants";
+import { useAuth } from "../../contexts/AuthContext";
+import { useAstroGear } from "../../contexts/GearContext";
+import { getTelescopes } from "../../helpers/scripts/gear/telescopes";
+import { getEyepieces } from "../../helpers/scripts/gear/eyepieces";
+import { getCameras } from "../../helpers/scripts/gear/cameras";
+import { Telescope } from "../../helpers/types/gear/Telescope";
+import { Eyepiece } from "../../helpers/types/gear/Eyepiece";
+import { Camera } from "../../helpers/types/gear/Camera";
+import {
+  computeMagnification,
+  computeTFOV,
+  computeCameraValues,
+} from "../../helpers/scripts/simulator/computeSimulatorValues";
+import { GearSelector, BarlowFactor, InstrumentMode } from "../simulator/GearSelector";
+import { routes } from "../../helpers/routes";
 import {LinearGradient} from "expo-linear-gradient";
 import {planetariumUIStyles} from "../../styles/components/skymap/planetariumUI";
 import {useSettings} from "../../contexts/AppSettingsContext";
@@ -45,6 +61,7 @@ interface PlanetariumUIProps {
   isFocusedConstellationOn?: boolean;
   isFollowing: boolean;
   onToggleFollow: () => void;
+  cameraFovDeg: number;
   timelineDate: Dayjs;
   onSeekTimeline: (date: Dayjs) => void;
   onAdjustTimeline: (unit: 'second' | 'minute' | 'hour' | 'day' | 'month' | 'year', delta: number) => void;
@@ -54,10 +71,24 @@ interface PlanetariumUIProps {
   isTimelinePlaying: boolean;
 }
 
-export default function PlanetariumUI({ navigation, infos, onShowGround, onShowConstellations, onShowConstellationLabels, onShowAzGrid, onShowEqGrid, onShowDSO, onShowPlanets, onShowCompassLabels, onCenterObject, onSelectObject, onSelectFromSearch, onShowAtmosphere, onShowStarLabels, onShowSolarSystemLabels, onToggleFocusedConstellation, isFocusedConstellationOn = true, isFollowing, onToggleFollow, timelineDate, onSeekTimeline, onAdjustTimeline, onChangeTimelineDate, onResetTimelineDate, onToggleTimelinePlay, isTimelinePlaying }: PlanetariumUIProps) {
+export default function PlanetariumUI({ navigation, infos, onShowGround, onShowConstellations, onShowConstellationLabels, onShowAzGrid, onShowEqGrid, onShowDSO, onShowPlanets, onShowCompassLabels, onCenterObject, onSelectObject, onSelectFromSearch, onShowAtmosphere, onShowStarLabels, onShowSolarSystemLabels, onToggleFocusedConstellation, isFocusedConstellationOn = true, isFollowing, onToggleFollow, cameraFovDeg, timelineDate, onSeekTimeline, onAdjustTimeline, onChangeTimelineDate, onResetTimelineDate, onToggleTimelinePlay, isTimelinePlaying }: PlanetariumUIProps) {
 
   const {currentUserLocation} = useSettings();
   const {currentLocale} = useTranslation();
+  const { currentUser } = useAuth();
+  const { currentGear } = useAstroGear();
+
+  // ── FOV overlay state ────────────────────────────────────────────────────────
+  const [showFovOverlay, setShowFovOverlay] = useState(false);
+  const [showFovGearPicker, setShowFovGearPicker] = useState(false);
+  const [fovTelescopes, setFovTelescopes] = useState<Telescope[]>([]);
+  const [fovEyepieces, setFovEyepieces] = useState<Eyepiece[]>([]);
+  const [fovCameras, setFovCameras] = useState<Camera[]>([]);
+  const [fovTelescope, setFovTelescope] = useState<Telescope | null>(null);
+  const [fovEyepiece, setFovEyepiece] = useState<Eyepiece | null>(null);
+  const [fovCamera, setFovCamera] = useState<Camera | null>(null);
+  const [fovInstrumentMode, setFovInstrumentMode] = useState<InstrumentMode>('eyepiece');
+  const [fovBarlowFactor, setFovBarlowFactor] = useState<BarlowFactor>(1);
   const [currentTime, setCurrentTime] = useState<string>(timelineDate.format('HH:mm'));
   const [isNightTime, setIsNightTime] = useState<boolean>(false);
   const displayAnchorRef = useRef<Dayjs>(timelineDate);
@@ -72,6 +103,62 @@ export default function PlanetariumUI({ navigation, infos, onShowGround, onShowC
   const sliderRatioRef = useRef<number>(0);
   const isDraggingRef = useRef<boolean>(false);
   const dragStartRatioRef = useRef<number>(0);
+
+  // Load gear on mount and pre-select from current active gear
+  useEffect(() => {
+    if (!currentUser?.uid) return;
+    (async () => {
+      const [scopes, eps, cams] = await Promise.all([
+        getTelescopes(currentUser.uid),
+        getEyepieces(currentUser.uid),
+        getCameras(currentUser.uid),
+      ]);
+      setFovTelescopes(scopes);
+      setFovEyepieces(eps);
+      setFovCameras(cams);
+      const activeScope = currentGear?.telescope ? scopes.find(s => s.id === currentGear.telescope) : scopes[0] ?? null;
+      const activeEp    = currentGear?.eyepiece   ? eps.find(e => e.id === currentGear.eyepiece)     : eps[0]   ?? null;
+      const activeCam   = currentGear?.camera      ? cams.find(c => c.id === currentGear.camera)      : cams[0]  ?? null;
+      if (activeScope) setFovTelescope(activeScope);
+      if (activeEp)    setFovEyepiece(activeEp);
+      if (activeCam)   setFovCamera(activeCam);
+    })();
+  }, [currentUser?.uid]);
+
+  // Compute overlay pixel dimensions from gear + current 3D camera FOV
+  const fovOverlay = useMemo(() => {
+    if (!fovTelescope) return null;
+    const H = Dimensions.get('window').height;
+    const perspPx = (deg: number) =>
+      H * Math.tan((deg / 2) * Math.PI / 180) / Math.tan((cameraFovDeg / 2) * Math.PI / 180);
+
+    if (fovInstrumentMode === 'eyepiece' && fovEyepiece) {
+      const G    = computeMagnification(fovTelescope.focalLength, fovEyepiece.focalLength, fovBarlowFactor);
+      const tfov = computeTFOV(fovEyepiece.apparentFieldOfView, G);
+      return { kind: 'eyepiece' as const, diameter: perspPx(tfov), tfov };
+    }
+    if (fovInstrumentMode === 'camera' && fovCamera) {
+      const cv = computeCameraValues(
+        fovTelescope.focalLength,
+        fovCamera.sensorSize.width,
+        fovCamera.sensorSize.height,
+        fovCamera.pixelSize,
+        fovBarlowFactor,
+      );
+      return { kind: 'camera' as const, widthPx: perspPx(cv.fovWidthDeg), heightPx: perspPx(cv.fovHeightDeg), fovWidth: cv.fovWidthDeg, fovHeight: cv.fovHeightDeg };
+    }
+    return null;
+  }, [fovTelescope, fovEyepiece, fovCamera, fovInstrumentMode, fovBarlowFactor, cameraFovDeg]);
+
+  const hasFovGear = fovTelescope !== null &&
+    (fovInstrumentMode === 'eyepiece' ? fovEyepiece !== null : fovCamera !== null);
+
+  const formatFovAngle = (deg: number) => {
+    if (deg >= 1) return `${deg.toFixed(2)}°`;
+    const arcmin = deg * 60;
+    if (arcmin >= 1) return `${arcmin.toFixed(1)}'`;
+    return `${(arcmin * 60).toFixed(0)}"`;
+  };
 
   const [showLayerModal, setShowLayerModal] = useState<boolean>(false);
   const [showSearchBar, setShowSearchBar] = useState<boolean>(false);
@@ -453,6 +540,124 @@ export default function PlanetariumUI({ navigation, infos, onShowGround, onShowC
         )
       }
 
+      {/* ── FOV gear picker button ────────────────────────────────────────────── */}
+      <TouchableOpacity
+        style={[
+          planetariumUIStyles.container.uiButton,
+          {
+            top: Constants.statusBarHeight
+              ? Constants.statusBarHeight + 50 * 4 + 10
+              : 50 * 4 + 10,
+          },
+        ]}
+        onPress={() => setShowFovGearPicker(true)}
+      >
+        <Image
+          style={[planetariumUIStyles.container.uiButton.icon, hasFovGear && { tintColor: 'rgba(255,255,255,0.9)' }]}
+          source={require('../../../assets/icons/FiTelescope.png')}
+        />
+      </TouchableOpacity>
+
+      {/* ── FOV overlay toggle (only when gear is configured) ────────────────── */}
+      {hasFovGear && (
+        <TouchableOpacity
+          style={[
+            planetariumUIStyles.container.uiButton,
+            {
+              top: Constants.statusBarHeight
+                ? Constants.statusBarHeight + 50 * 5 + 10
+                : 50 * 5 + 10,
+              borderColor: showFovOverlay ? 'rgba(255,255,255,0.6)' : 'rgba(255,255,255,0.15)',
+              backgroundColor: showFovOverlay ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.7)',
+            },
+          ]}
+          onPress={() => setShowFovOverlay(v => !v)}
+        >
+          <Image
+            style={[planetariumUIStyles.container.uiButton.icon, showFovOverlay && { tintColor: app_colors.white }]}
+            source={require('../../../assets/icons/FiCircle.png')}
+          />
+        </TouchableOpacity>
+      )}
+
+      {/* ── FOV overlay circle / rectangle ───────────────────────────────────── */}
+      {showFovOverlay && fovOverlay && (() => {
+        const BRACKET = 14;
+
+        if (fovOverlay.kind === 'eyepiece') {
+          const d = fovOverlay.diameter;
+          return (
+            <View pointerEvents="none" style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, alignItems: 'center', justifyContent: 'center', zIndex: 9 }}>
+              <View style={{ width: d, height: d, borderRadius: d / 2, borderWidth: 1.5, borderColor: 'rgba(255,255,255,0.55)' }} />
+              <Text style={fovLabelStyle}>{formatFovAngle(fovOverlay.tfov)}</Text>
+            </View>
+          );
+        }
+
+        const rW = fovOverlay.widthPx;
+        const rH = fovOverlay.heightPx;
+        const corners = ['tl', 'tr', 'bl', 'br'] as const;
+        return (
+          <View pointerEvents="none" style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, alignItems: 'center', justifyContent: 'center', zIndex: 9 }}>
+            <View style={{ width: rW, height: rH }}>
+              <View style={{ flex: 1, borderWidth: 1, borderColor: 'rgba(255,255,255,0.45)' }} />
+              {corners.map(c => (
+                <View key={c} style={{
+                  position: 'absolute',
+                  width: BRACKET, height: BRACKET,
+                  top: c[0] === 't' ? -1 : undefined, bottom: c[0] === 'b' ? -1 : undefined,
+                  left: c[1] === 'l' ? -1 : undefined, right: c[1] === 'r' ? -1 : undefined,
+                  borderTopWidth:    c[0] === 't' ? 2.5 : 0,
+                  borderBottomWidth: c[0] === 'b' ? 2.5 : 0,
+                  borderLeftWidth:   c[1] === 'l' ? 2.5 : 0,
+                  borderRightWidth:  c[1] === 'r' ? 2.5 : 0,
+                  borderColor: 'rgba(255,255,255,0.85)',
+                }} />
+              ))}
+            </View>
+            <Text style={fovLabelStyle}>
+              {formatFovAngle(fovOverlay.fovWidth)} × {formatFovAngle(fovOverlay.fovHeight)}
+            </Text>
+          </View>
+        );
+      })()}
+
+      {/* ── FOV gear picker modal ─────────────────────────────────────────────── */}
+      <Modal visible={showFovGearPicker} transparent animationType="slide" onRequestClose={() => setShowFovGearPicker(false)}>
+        <View style={{ flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,0.6)' }}>
+          <View style={{ backgroundColor: '#0d0d0d', borderTopLeftRadius: 20, borderTopRightRadius: 20, paddingHorizontal: 16, paddingTop: 16, maxHeight: '80%' }}>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+              <Text style={{ color: app_colors.white, fontFamily: 'GilroyBlack', fontSize: 18 }}>Champ de vue</Text>
+              <TouchableOpacity onPress={() => setShowFovGearPicker(false)}>
+                <Text style={{ color: app_colors.white, fontSize: 18, opacity: 0.6 }}>✕</Text>
+              </TouchableOpacity>
+            </View>
+            <ScrollView showsVerticalScrollIndicator={false}>
+              <GearSelector
+                telescopes={fovTelescopes}
+                eyepieces={fovEyepieces}
+                cameras={fovCameras}
+                selectedTelescope={fovTelescope}
+                selectedEyepiece={fovEyepiece}
+                selectedCamera={fovCamera}
+                instrumentMode={fovInstrumentMode}
+                barlowFactor={fovBarlowFactor}
+                onSelectTelescope={setFovTelescope}
+                onSelectEyepiece={setFovEyepiece}
+                onSelectCamera={setFovCamera}
+                onInstrumentModeChange={setFovInstrumentMode}
+                onSelectBarlow={setFovBarlowFactor}
+                onGoToGear={() => {
+                  setShowFovGearPicker(false);
+                  navigation.navigate(routes.auth.profile.astroGearManagement.home.path);
+                }}
+              />
+              <View style={{ height: 30 }} />
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
+
       {
         showSearchBar && (
           <PlanetariumSearchModal
@@ -666,3 +871,14 @@ export default function PlanetariumUI({ navigation, infos, onShowGround, onShowC
     </View>
   );
 }
+
+const fovLabelStyle = {
+  color: 'rgba(255,255,255,0.6)',
+  fontFamily: 'DMMonoRegular',
+  fontSize: 10,
+  backgroundColor: 'rgba(0,0,0,0.45)',
+  paddingHorizontal: 6,
+  paddingVertical: 2,
+  borderRadius: 4,
+  marginTop: 5,
+};
