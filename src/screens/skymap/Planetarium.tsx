@@ -298,8 +298,11 @@ export default function Planetarium({ route, navigation }: any) {
     simDate: dayjs(),
   });
   const timelinePlayingRef = useRef<boolean>(true);
-  // Throttle for the React-state UI clock update (1fps is plenty for display)
-  const lastUiDateUpdateMs = useRef<number>(0);
+  // Seek lock: set to true while the slider is being dragged so the 1fps UI
+  // interval cannot update timelineDate and trigger the sliderRatio effect,
+  // which would snap the thumb away from the user's finger.
+  const isSeekingRef   = useRef<boolean>(false);
+  const seekTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Keep referenceDateRef in sync with explicit React state writes
   // (seek, adjust, reset). In play mode the RAF loop overwrites it every frame
@@ -313,16 +316,31 @@ export default function Planetarium({ route, navigation }: any) {
   }, [dsoCatalog]);
 
   // ─── Timeline play/pause ─────────────────────────────────────────────────────
-  // No more setInterval: the RAF loop advances the clock via the wall-clock
-  // anchor at 60fps. This effect only syncs the ref and re-anchors on resume.
 
   useEffect(() => {
     timelinePlayingRef.current = timelinePlaying;
     if (timelinePlaying) {
-      // Re-anchor to current reference date so the RAF picks up from where we
-      // left off (paused position) without any jump.
+      // Re-anchor from the current frozen position so the RAF resumes without jump.
       playAnchorRef.current = { wallMs: performance.now(), simDate: referenceDateRef.current };
     }
+  }, [timelinePlaying]);
+
+  // ─── UI clock update (1fps setInterval) ──────────────────────────────────────
+  // The RAF loop does NOT call setReferenceDate — that would trigger the slider's
+  // sliderRatio useEffect mid-drag and snap the thumb. Instead this interval fires
+  // once per second, but is a no-op while the user is dragging (isSeekingRef).
+
+  useEffect(() => {
+    if (!timelinePlaying) return;
+    const id = setInterval(() => {
+      if (isSeekingRef.current) return;
+      const now = playAnchorRef.current.simDate.add(
+        performance.now() - playAnchorRef.current.wallMs,
+        'millisecond',
+      );
+      setReferenceDate(now);
+    }, 1000);
+    return () => clearInterval(id);
   }, [timelinePlaying]);
 
   // ─── Status bar ──────────────────────────────────────────────────────────────
@@ -565,14 +583,11 @@ export default function Planetarium({ route, navigation }: any) {
           : referenceDateRef.current;
         const rafDateObj = rafDate.toDate();
 
-        // Keep ref in sync every frame so seek/adjust always see the current time.
+        // Keep ref in sync every frame so seek/adjust always read current sim time.
+        // React state (timelineDate prop) is updated by the 1fps interval instead —
+        // never from here — to avoid triggering the slider's sliderRatio effect
+        // while the user is dragging.
         referenceDateRef.current = rafDate;
-
-        // Update React state clock display at ~1fps — plenty for the UI ticker.
-        if (rafNow - lastUiDateUpdateMs.current > 1000) {
-          lastUiDateUpdateMs.current = rafNow;
-          setReferenceDate(rafDate);
-        }
 
         const rafLoc = currentUserLocationRef.current;
         const rafObs = rafLoc ? { latitude: rafLoc.lat, longitude: rafLoc.lon } : null;
@@ -662,12 +677,21 @@ export default function Planetarium({ route, navigation }: any) {
     }
   };
 
-  // ─── Seek callback (used by slider) ──────────────────────────────────────────
-  // Re-anchors the wall-clock so the RAF loop resumes from the seeked position.
+  // ─── Seek callback (used by slider — fires on every drag move) ───────────────
+  // Re-anchors the wall-clock anchor so the RAF shows the seeked time instantly.
+  // Also raises isSeekingRef so the 1fps interval cannot overwrite timelineDate
+  // while the thumb is moving; the lock self-releases 400ms after the last move.
 
   const onSeekTimeline = useCallback((date: Dayjs) => {
     referenceDateRef.current = date;
     playAnchorRef.current = { wallMs: performance.now(), simDate: date };
+
+    isSeekingRef.current = true;
+    if (seekTimeoutRef.current !== null) clearTimeout(seekTimeoutRef.current);
+    seekTimeoutRef.current = setTimeout(() => {
+      isSeekingRef.current = false;
+      seekTimeoutRef.current = null;
+    }, 400);
   }, []);
 
   // ─── Chevron-button adjustment ────────────────────────────────────────────────
