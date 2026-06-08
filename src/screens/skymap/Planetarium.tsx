@@ -397,7 +397,10 @@ export default function Planetarium({ route, navigation }: any) {
     if ('family' in selectedObject && (selectedObject as any).family === 'Sun') {
       const sunInfos = buildSunComputedInfos(getSunData(safeDate, observer));
       setComputedInfos(sunInfos);
-      if (pendingFocusRef.current) { pendingFocusRef.current = false; applyFocus(sunInfos); }
+      // Only consume the pending focus if the GL controller is already ready.
+      // If it's not (initial navigation before scene loads), the loading-completion
+      // effect below will pick it up once controllerRef is set.
+      if (pendingFocusRef.current && controllerRef.current) { pendingFocusRef.current = false; applyFocus(sunInfos); }
       return;
     }
 
@@ -405,8 +408,8 @@ export default function Planetarium({ route, navigation }: any) {
     const light = computeObject({ object: selectedObject as any, observer, lang: currentLocale, date: safeDate, light: true });
     setComputedInfos(light);
 
-    // Apply focus with fresh data — no race condition with computedInfos state
-    if (pendingFocusRef.current && light) { pendingFocusRef.current = false; applyFocus(light); }
+    // Apply focus with fresh data — only if the GL controller is already ready.
+    if (pendingFocusRef.current && light && controllerRef.current) { pendingFocusRef.current = false; applyFocus(light); }
 
     // Phase 2: full info deferred; cache makes it instant on repeat selection
     const timer = setTimeout(() => {
@@ -448,6 +451,44 @@ export default function Planetarium({ route, navigation }: any) {
   useEffect(() => {
     lastEphemerisRafMs.current = 0; // reset throttle → RAF will update on next frame
   }, [loading, currentUserLocation]);
+
+  // ─── Apply pending focus once GL scene is ready ───────────────────────────────
+  // When navigating from CelestialBodyOverview the selected object is set before
+  // the GL controller is initialised, so the computed-object effect above leaves
+  // pendingFocusRef.current = true.  This fires once loading becomes false — at
+  // which point controllerRef is guaranteed non-null — and completes the animation.
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    if (loading) return;
+    if (!pendingFocusRef.current) return;
+    const infos = computedInfosRef.current;
+    if (!infos || !controllerRef.current || !sceneRefsRef.current) return;
+
+    const { degRa, degDec, family } = infos.base;
+    if (typeof degRa !== 'number' || typeof degDec !== 'number') return;
+
+    pendingFocusRef.current = false;
+    controllerRef.current.animateTo(degRa, degDec, 60);
+    controllerRef.current.setFov(getIdealFov(selectedObject));
+
+    const refs = sceneRefsRef.current;
+
+    if (family === 'DSO') {
+      const mesh = findDsoMeshInScene(refs.dsoGroup, selectedObject);
+      if (mesh) {
+        positionSelectionCircle(refs.selectionCircle, mesh, refs.camera, 'dso');
+        return;
+      }
+    }
+
+    let arcmin: number | undefined;
+    if (family === 'DSO') {
+      const m = String((selectedObject as any)?.apparent_size ?? '').match(/[\d.]+/);
+      if (m) arcmin = parseFloat(m[0]);
+    }
+    positionSelectionCircleAtRaDec(refs.selectionCircle, degRa, degDec, refs.camera, family, arcmin);
+  }, [loading]); // selectedObject intentionally omitted — only needs to fire on loading→false
 
   // ─── Background precompute: warm cache for Messier DSOs after scene loads ─────
 
