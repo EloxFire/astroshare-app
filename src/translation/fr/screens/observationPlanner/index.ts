@@ -20,6 +20,12 @@ export const observationPlannerTranslations = {
       stars: "Étoiles brillantes",
       dso: "Objets du ciel profond",
     },
+    dsoTypes: {
+      galaxies: "Galaxies",
+      nebulae: "Nébuleuses",
+      globularClusters: "Amas globulaires",
+      openClusters: "Amas ouverts",
+    },
     fov: {
       width: "Champ (°) - largeur",
       height: "Champ (°) - hauteur",
@@ -76,6 +82,13 @@ export const observationPlannerTranslations = {
       search: "Lancer la recherche",
       searchAgain: "Relancer la recherche",
       clear: "Supprimer la recherche",
+    },
+    sort: {
+      label: "Trier par",
+      settingTime: "Coucher",
+      risingTime: "Lever",
+      magnitude: "Magnitude",
+      altitude: "Altitude",
     },
     messages: {
       empty: "Aucun résultat ne correspond à vos critères",

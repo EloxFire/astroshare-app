@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from 'react';
-import {KeyboardAvoidingView, Modal, Platform, ScrollView, Text, View} from "react-native";
+import React, {useMemo, useState} from 'react';
+import {KeyboardAvoidingView, Modal, ScrollView, Text, TouchableOpacity, View} from "react-native";
 import {globalStyles} from "../../styles/global";
 import {i18n} from "../../helpers/scripts/i18n";
 import {observationPlannerScreenStyles} from "../../styles/screens/observationPlanner/observationPlannerScreen";
@@ -10,12 +10,9 @@ import {useStarCatalog} from "../../contexts/StarsContext";
 import {routes} from "../../helpers/routes";
 import { capitalize } from '../../helpers/scripts/utils/formatters/capitalize';
 import { app_colors, storageKeys } from '../../helpers/constants';
-import { DSO } from '../../helpers/types/DSO';
-import { GlobalPlanet } from '../../helpers/types/GlobalPlanet';
-import { ObservationPlannerParams, planObservationNight } from '../../helpers/scripts/astro/planner/observationPlanner';
+import { ObservationPlannerParams, planObservationNight, PlannerResult } from '../../helpers/scripts/astro/planner/observationPlanner';
 import { showToast } from '../../helpers/scripts/showToast';
 import { useDsoCatalog } from '../../contexts/DSOContext';
-import { Star } from '../../helpers/types/Star';
 import { ObservationPlannerModalContent } from '../../helpers/types/observationPlanner/ObservationPlannerModalContent';
 import { getSunData } from '../../helpers/scripts/astro/solar/sunData';
 import { ObservationPlannerObjectCard } from '../../components/cards/ObservationPlannerObjectCard';
@@ -49,6 +46,10 @@ function ObservationPlannerScreen({navigation}: any) {
   const [showEndDatePicker, setShowEndDatePicker] = useState<boolean>(false);
   const [showEndTimePicker, setShowEndTimePicker] = useState<boolean>(false);
   const [dsoEnabled, setDsoEnabled] = useState<boolean>(true);
+  const [dsoGalaxies, setDsoGalaxies] = useState<boolean>(true);
+  const [dsoNebulae, setDsoNebulae] = useState<boolean>(true);
+  const [dsoGlobularClusters, setDsoGlobularClusters] = useState<boolean>(true);
+  const [dsoOpenClusters, setDsoOpenClusters] = useState<boolean>(true);
   const [starsEnabled, setStarsEnabled] = useState<boolean>(false);
   const [planetsEnabled, setPlanetsEnabled] = useState<boolean>(true);
 
@@ -63,7 +64,41 @@ function ObservationPlannerScreen({navigation}: any) {
   // Paramètres et état de la recherche
   const [maxResults, setMaxResults] = useState<number | null>(null);
   const [perObjectObsTime, setPerObjectObsTime] = useState<number | null>(null);
-  const [resultsList, setResultsList] = useState<((DSO | GlobalPlanet | Star)[]) | null>(null);
+  const [resultsList, setResultsList] = useState<PlannerResult[] | null>(null);
+
+  type SortKey = 'settingTime' | 'risingTime' | 'magnitude' | 'altitude';
+  const [sortBy, setSortBy] = useState<SortKey>('settingTime');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+
+  const sortedResults = useMemo(() => {
+    if (!resultsList) return null;
+    return [...resultsList].sort((a, b) => {
+      let valA: number;
+      let valB: number;
+      switch (sortBy) {
+        case 'settingTime': valA = a.settingMinute; valB = b.settingMinute; break;
+        case 'risingTime':  valA = a.risingMinute;  valB = b.risingMinute;  break;
+        case 'magnitude':   valA = a.magnitude ?? Number.POSITIVE_INFINITY; valB = b.magnitude ?? Number.POSITIVE_INFINITY; break;
+        case 'altitude':    valA = a.currentAlt;    valB = b.currentAlt;    break;
+        default:            valA = a.settingMinute; valB = b.settingMinute;
+      }
+      const aInf = !Number.isFinite(valA);
+      const bInf = !Number.isFinite(valB);
+      if (aInf && bInf) return 0;
+      if (aInf) return 1;
+      if (bInf) return -1;
+      return sortOrder === 'asc' ? valA - valB : valB - valA;
+    });
+  }, [resultsList, sortBy, sortOrder]);
+
+  const handleSortPress = (key: SortKey) => {
+    if (sortBy === key) {
+      setSortOrder(prev => prev === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortBy(key);
+      setSortOrder(key === 'altitude' ? 'desc' : 'asc');
+    }
+  };
 
   const checkVisibility = () => {
     // Check if sun is below horizon at the start date/time
@@ -137,6 +172,12 @@ function ObservationPlannerScreen({navigation}: any) {
           dso: dsoEnabled,
           planets: planetsEnabled,
           stars: starsEnabled
+        },
+        dsoSubTypes: {
+          galaxies: dsoGalaxies,
+          nebulae: dsoNebulae,
+          globularClusters: dsoGlobularClusters,
+          openClusters: dsoOpenClusters,
         },
         magnitude: {
           min: minMag || -30,
@@ -397,6 +438,14 @@ function ObservationPlannerScreen({navigation}: any) {
 
             <ToolButton isChecked={planetsEnabled} onPress={() => setPlanetsEnabled(!planetsEnabled)} hasCheckbox icon={require('../../../assets/icons/astro/planets/color/JUPITER.png')} text={i18n.t('observationPlanner.filters.targets.planets')} />
             <ToolButton isChecked={dsoEnabled} onPress={() => setDsoEnabled(!dsoEnabled)} hasCheckbox icon={require('../../../assets/icons/astro/CL+N.png')} text={i18n.t('observationPlanner.filters.targets.dso')} />
+            {dsoEnabled && (
+              <View style={{ paddingLeft: 16, gap: 4 }}>
+                <ToolButton isChecked={dsoGalaxies} onPress={() => setDsoGalaxies(!dsoGalaxies)} hasCheckbox icon={require('../../../assets/icons/astro/G.png')} text={i18n.t('observationPlanner.filters.dsoTypes.galaxies')} />
+                <ToolButton isChecked={dsoNebulae} onPress={() => setDsoNebulae(!dsoNebulae)} hasCheckbox icon={require('../../../assets/icons/astro/NEB.png')} text={i18n.t('observationPlanner.filters.dsoTypes.nebulae')} />
+                <ToolButton isChecked={dsoGlobularClusters} onPress={() => setDsoGlobularClusters(!dsoGlobularClusters)} hasCheckbox icon={require('../../../assets/icons/astro/GCL.png')} text={i18n.t('observationPlanner.filters.dsoTypes.globularClusters')} />
+                <ToolButton isChecked={dsoOpenClusters} onPress={() => setDsoOpenClusters(!dsoOpenClusters)} hasCheckbox icon={require('../../../assets/icons/astro/OCL.png')} text={i18n.t('observationPlanner.filters.dsoTypes.openClusters')} />
+              </View>
+            )}
             <ToolButton isChecked={starsEnabled} onPress={() => setStarsEnabled(!starsEnabled)} hasCheckbox icon={require('../../../assets/icons/astro/BRIGHTSTAR.png')} text={i18n.t('observationPlanner.filters.targets.stars')} />
           </View>
 
@@ -474,13 +523,47 @@ function ObservationPlannerScreen({navigation}: any) {
             )
           }
           {
-            resultsList && resultsList.length > 0 && (
+            sortedResults && sortedResults.length > 0 && (
               <View style={observationPlannerScreenStyles.content.bloc}>
                 <Text style={observationPlannerScreenStyles.content.bloc.title}>{i18n.t('observationPlanner.screen.steps.results')}</Text>
                 <Text style={observationPlannerScreenStyles.content.bloc.subtitle}>{i18n.t('observationPlanner.screen.messages.recommended')}</Text>
+
+                {/* Sort chips */}
+                <View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 8}}>
+                  {(['settingTime', 'risingTime', 'magnitude', 'altitude'] as const).map(key => {
+                    const isActive = sortBy === key;
+                    return (
+                      <TouchableOpacity
+                        key={key}
+                        onPress={() => handleSortPress(key)}
+                        style={{
+                          paddingHorizontal: 12,
+                          paddingVertical: 6,
+                          borderRadius: 20,
+                          borderWidth: 1,
+                          borderColor: isActive ? app_colors.white : app_colors.white_twenty,
+                          backgroundColor: isActive ? app_colors.white_twenty : 'transparent',
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          gap: 4,
+                        }}
+                      >
+                        <Text style={{color: isActive ? app_colors.white : app_colors.white_sixty, fontSize: 11, fontFamily: 'GilroyBold'}}>
+                          {i18n.t(`observationPlanner.screen.sort.${key}`)}
+                        </Text>
+                        {isActive && (
+                          <Text style={{color: app_colors.white, fontSize: 11}}>
+                            {sortOrder === 'asc' ? '↑' : '↓'}
+                          </Text>
+                        )}
+                      </TouchableOpacity>
+                    );
+                  })}
+                </View>
+
                 {
-                  resultsList.slice(0, maxResults || 10).map((obj, index) => (
-                    <ObservationPlannerObjectCard key={index} object={obj} navigation={navigation} date={startDate.hour(Number(startTime.split(':')[0])).minute(Number(startTime.split(':')[1]))} />
+                  sortedResults.slice(0, maxResults || 10).map((result, index) => (
+                    <ObservationPlannerObjectCard key={index} object={result.object} navigation={navigation} date={startDate.hour(Number(startTime.split(':')[0])).minute(Number(startTime.split(':')[1]))} />
                   ))
                 }
 
