@@ -9,5 +9,10 @@ export const locationModalTranslations = {
     "common_name": "Place",
     "country": "Country",
     "default_altitude": "Default altitude"
+  },
+  "observatories": {
+    "title": "Switch location",
+    "gps": "GPS position",
+    "manage": "Manage my sites"
   }
 }

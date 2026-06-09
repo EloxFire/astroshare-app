@@ -94,6 +94,7 @@ export const routes = {
       },
       observatories: {
         home: { path: 'ObservatoriesScreen', requirements: []},
+        crud: { path: 'ObservatoryCrud', requirements: []},
       }
     },
     forgotPassword: { path: 'ForgotPassword', requirements: [] },

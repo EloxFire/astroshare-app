@@ -145,6 +145,7 @@ export const PersonnalInfosScreen = ({navigation}: any) => {
               {
                 showDatePicker && (
                   <DateTimePicker
+                    minimumDate={new Date('1900-01-01')}
                     maximumDate={new Date()}
                     value={ birthday ? new Date(birthday) : new Date() }
                     mode='date'
