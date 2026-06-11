@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {View, Text, TouchableOpacity, Image, ActivityIndicator} from 'react-native';
+import {View, Text, TouchableOpacity, Image, ActivityIndicator, Platform} from 'react-native';
 import { i18n } from '../../helpers/scripts/i18n';
 import { globalStyles } from '../../styles/global';
 import PageTitle from '../../components/commons/PageTitle';
@@ -269,7 +269,7 @@ export default function PlanetaryConjunctionScreen({ navigation }: any) {
             <DateTimePicker
               value={startDate}
               mode='date'
-              display='default'
+              display={Platform.OS === 'ios' ? 'compact' : 'default'}
               themeVariant={'dark'}
               onChange={(event, selectedDate) => {
                 if (event.type === 'dismissed') {

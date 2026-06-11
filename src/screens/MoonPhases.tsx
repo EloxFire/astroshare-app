@@ -108,9 +108,7 @@ export default function MoonPhases({ navigation }: any) {
       setSelectedMonth(dayjs(date).month())
     }
 
-    if (Platform.OS === 'android') {
-      setShowDatePicker(false)
-    }
+    setShowDatePicker(false)
   }
 
   const handleMonthChange = (direction: 'next' | 'previous') => {
@@ -145,7 +143,7 @@ export default function MoonPhases({ navigation }: any) {
         <DateTimePicker
           value={selectedDate.toDate()}
           mode="date"
-          display="default"
+          display={Platform.OS === 'ios' ? 'compact' : 'default'}
           onChange={handleDatePickerChange}
           accentColor={app_colors.yellow}
           // Maximum date at 31 december of current year

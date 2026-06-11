@@ -22,7 +22,7 @@ import SimpleButton from '../../components/commons/buttons/SimpleButton';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import InputWithIcon from '../../components/forms/InputWithIcon';
 import { getData, storeData } from '../../helpers/storage';
-import { DeviceEventEmitter } from 'react-native';
+import { DeviceEventEmitter, Platform } from 'react-native';
 import ToolButton from '../../components/commons/buttons/ToolButton';
 
 function ObservationPlannerScreen({navigation}: any) {
@@ -265,7 +265,7 @@ function ObservationPlannerScreen({navigation}: any) {
                 <DateTimePicker
                   value={startDate.toDate()}
                   mode='date'
-                  display='default'
+                  display={Platform.OS === 'ios' ? 'compact' : 'default'}
                   themeVariant={'dark'}
                   onChange={(event, selectedDate) => {
                     if (event.type === 'dismissed') {
@@ -297,7 +297,7 @@ function ObservationPlannerScreen({navigation}: any) {
                 <DateTimePicker
                   value={startDate.toDate()}
                   mode='time'
-                  display='default'
+                  display={Platform.OS === 'ios' ? 'compact' : 'default'}
                   themeVariant={'dark'}
                   onChange={(event, selectedDate) => {
                     if (event.type === 'dismissed') {
@@ -329,7 +329,7 @@ function ObservationPlannerScreen({navigation}: any) {
                 <DateTimePicker
                   value={endDate.toDate()}
                   mode='date'
-                  display='default'
+                  display={Platform.OS === 'ios' ? 'compact' : 'default'}
                   themeVariant={'dark'}
                   onChange={(event, selectedDate) => {
                     if (event.type === 'dismissed') {
@@ -361,7 +361,7 @@ function ObservationPlannerScreen({navigation}: any) {
                 <DateTimePicker
                   value={endDate.toDate()}
                   mode='time'
-                  display='default'
+                  display={Platform.OS === 'ios' ? 'compact' : 'default'}
                   themeVariant={'dark'}
                   onChange={(event, selectedDate) => {
                     if (event.type === 'dismissed') {

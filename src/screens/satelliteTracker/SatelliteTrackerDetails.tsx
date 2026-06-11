@@ -105,8 +105,8 @@ export default function SatelliteTrackerDetails({ route, navigation }: any) {
             mapRef.current.animateToRegion({
               latitude: firstPosition.satlatitude,
               longitude: firstPosition.satlongitude,
-              latitudeDelta: 0,
-              longitudeDelta: 1000,
+              latitudeDelta: 80,
+              longitudeDelta: 80,
             }, 1000);
           }
 

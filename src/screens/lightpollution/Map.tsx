@@ -2,7 +2,7 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, Image, Dimensions, Platform } from 'react-native';
-import MapView, { MapViewProps, Marker, PROVIDER_GOOGLE, Region, UrlTile } from 'react-native-maps';
+import MapView, { MapViewProps, Marker, PROVIDER_GOOGLE, UrlTile } from 'react-native-maps';
 import { app_colors } from '../../helpers/constants';
 import { lightPollutionMapStyles } from '../../styles/screens/lightpollution/map';
 import PageTitle from '../../components/commons/PageTitle';
@@ -57,7 +57,6 @@ const LightPollutionMap: React.FC = ({navigation}: any) => {
 
   const mapRef = useRef<MapView | null>(null);
   const [showOverlay, setShowOverlay] = useState(true);
-  const [region, setRegion] = useState<Region>(INITIAL_REGION);
   const [selectedPosition, setSelectedPosition] = useState<{ latitude: number; longitude: number } | null>(null);
   const [pollutionData, setPollutionData] = useState<LightPollutionData | null>(null);
   const colorScaleLevels = Object.keys(lightpollution_bortle_colors)
@@ -70,17 +69,13 @@ const LightPollutionMap: React.FC = ({navigation}: any) => {
 
   useEffect(() => {
     if (currentUserLocation) {
-      const region = {
+      mapRef.current?.animateToRegion({
         latitude: currentUserLocation.lat,
         longitude: currentUserLocation.lon,
         latitudeDelta: 40,
         longitudeDelta: 40,
-      };
-      setRegion(region);
-
-      // Animer la carte vers la région de l'utilisateur
-      mapRef.current?.animateToRegion(region, 1000);
-      }
+      }, 1000);
+    }
   }, [])
 
   const toggleOverlay = () => {
@@ -118,17 +113,14 @@ const LightPollutionMap: React.FC = ({navigation}: any) => {
 
     fetchPollutionData(city.lat, city.lon);
 
-    const region = {
+    setSelectedPosition({ latitude: city.lat, longitude: city.lon });
+
+    mapRef.current?.animateToRegion({
       latitude: city.lat,
       longitude: city.lon,
       latitudeDelta: 10,
       longitudeDelta: 10,
-    };
-    setRegion(region);
-    setSelectedPosition({ latitude: city.lat, longitude: city.lon });
-
-    // Animer la carte vers la région de la ville recherchée
-    mapRef.current?.animateToRegion(region, 1000);
+    }, 1000);
 
     setSearchVisible(false);
     setSearchString('');
@@ -189,7 +181,6 @@ const LightPollutionMap: React.FC = ({navigation}: any) => {
         customMapStyle={mapStyle}
         provider={Platform.OS === 'android' ? PROVIDER_GOOGLE : undefined}
         initialRegion={INITIAL_REGION}
-        region={region}
         showsUserLocation
         showsMyLocationButton={false}
         rotateEnabled={false}

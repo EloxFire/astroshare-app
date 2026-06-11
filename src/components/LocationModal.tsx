@@ -188,7 +188,7 @@ export default function LocationModal({ visible, onClose }: LocationModalProps) 
             initialRegion={{
               latitude: currentUserLocation?.lat ?? 0,
               longitude: currentUserLocation?.lon ?? 0,
-              latitudeDelta: 0,
+              latitudeDelta: 0.05,
               longitudeDelta: 0.05,
             }}
           />

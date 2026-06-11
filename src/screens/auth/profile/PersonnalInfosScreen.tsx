@@ -1,6 +1,6 @@
 import dayjs from "dayjs"
 import React, { useState, useEffect } from "react"
-import { View, ScrollView, TouchableOpacity, Text, Image } from "react-native"
+import { View, ScrollView, TouchableOpacity, Text, Image, Platform } from "react-native"
 import SimpleButton from "../../../components/commons/buttons/SimpleButton"
 import PageTitle from "../../../components/commons/PageTitle"
 import InputWithIcon from "../../../components/forms/InputWithIcon"
@@ -149,7 +149,7 @@ export const PersonnalInfosScreen = ({navigation}: any) => {
                     maximumDate={new Date()}
                     value={ birthday ? new Date(birthday) : new Date() }
                     mode='date'
-                    display='default'
+                    display={Platform.OS === 'ios' ? 'compact' : 'default'}
                     themeVariant={'dark'}
                     onChange={(event, selectedDate) => {
                       if (event.type === 'dismissed') {
