@@ -19,10 +19,10 @@ import { ObservationPlannerObjectCard } from '../../components/cards/Observation
 import dayjs, {Dayjs} from "dayjs";
 import PageTitle from "../../components/commons/PageTitle";
 import SimpleButton from '../../components/commons/buttons/SimpleButton';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import DateTimePickerModal from '../../components/commons/DateTimePickerModal';
 import InputWithIcon from '../../components/forms/InputWithIcon';
 import { getData, storeData } from '../../helpers/storage';
-import { DeviceEventEmitter, Platform } from 'react-native';
+import { DeviceEventEmitter } from 'react-native';
 import ToolButton from '../../components/commons/buttons/ToolButton';
 
 function ObservationPlannerScreen({navigation}: any) {
@@ -260,134 +260,75 @@ function ObservationPlannerScreen({navigation}: any) {
           <View style={observationPlannerScreenStyles.content.bloc}>
             <Text style={observationPlannerScreenStyles.content.bloc.title}>{i18n.t('observationPlanner.screen.steps.sessionDuration')}</Text>
 
-            {
-              showStartPicker && (
-                <DateTimePicker
-                  value={startDate.toDate()}
-                  mode='date'
-                  display={Platform.OS === 'ios' ? 'compact' : 'default'}
-                  themeVariant={'dark'}
-                  onChange={(event, selectedDate) => {
-                    if (event.type === 'dismissed') {
-                      setShowStartPicker(false)
-                    }
-                    if (event.type === 'set' && selectedDate) {
-                      console.log("Setting start date:", selectedDate);
-                      
-                      setShowStartPicker(false)
-                      setStartDate(dayjs(selectedDate))
+            <DateTimePickerModal
+              visible={showStartPicker}
+              mode='date'
+              value={startDate.toDate()}
+              onCancel={() => setShowStartPicker(false)}
+              onConfirm={(selectedDate) => {
+                setShowStartPicker(false)
+                setStartDate(dayjs(selectedDate))
+                if (dayjs(selectedDate).isAfter(endDate)) {
+                  const [startHour, startMinute] = startTime.split(':').map(Number);
+                  const newEndTime = dayjs(selectedDate).hour(startHour).minute(startMinute).add(3, 'hour');
+                  setEndDate(dayjs(selectedDate));
+                  setEndTime(newEndTime.format('HH:mm'));
+                }
+              }}
+            />
 
-                      // If new start date is after end date, set end date to start date and endTime to startTime + 3h
-                      if (dayjs(selectedDate).isAfter(endDate)) {
-                        const newEndDate = dayjs(selectedDate);
-                        const [startHour, startMinute] = startTime.split(':').map(Number);
-                        const newEndTime = dayjs(selectedDate).hour(startHour).minute(startMinute).add(3, 'hour');
-                        
-                        setEndDate(newEndDate);
-                        setEndTime(newEndTime.format('HH:mm'));
-                      }
-                    }
-                  }}
-                />
-              )
-            }
+            <DateTimePickerModal
+              visible={showStartTimePicker}
+              mode='time'
+              value={startDate.toDate()}
+              onCancel={() => setShowStartTimePicker(false)}
+              onConfirm={(selectedDate) => {
+                setShowStartTimePicker(false)
+                setStartTime(dayjs(selectedDate).format('HH:mm'))
+                const startDateTime = startDate.hour(Number(dayjs(selectedDate).format('HH'))).minute(Number(dayjs(selectedDate).format('mm')));
+                const endDateTime = endDate.hour(Number(endTime.split(':')[0])).minute(Number(endTime.split(':')[1]));
+                if (startDate.isSame(endDate, 'day') && startDateTime.isAfter(endDateTime)) {
+                  setEndTime(startDateTime.add(3, 'hour').format('HH:mm'));
+                }
+              }}
+            />
 
-            {
-              showStartTimePicker && (
-                <DateTimePicker
-                  value={startDate.toDate()}
-                  mode='time'
-                  display={Platform.OS === 'ios' ? 'compact' : 'default'}
-                  themeVariant={'dark'}
-                  onChange={(event, selectedDate) => {
-                    if (event.type === 'dismissed') {
-                      setShowStartTimePicker(false)
-                    }
-                    if (event.type === 'set' && selectedDate) {
-                      console.log("Setting start time:", selectedDate);
-                      
-                      setShowStartTimePicker(false)
-                      setStartTime(dayjs(selectedDate).format('HH:mm'))
+            <DateTimePickerModal
+              visible={showEndDatePicker}
+              mode='date'
+              value={endDate.toDate()}
+              onCancel={() => setShowEndDatePicker(false)}
+              onConfirm={(selectedDate) => {
+                setShowEndDatePicker(false)
+                setEndDate(dayjs(selectedDate))
+                if (dayjs(selectedDate).isBefore(startDate)) {
+                  const [endHour, endMinute] = endTime.split(':').map(Number);
+                  const newStartTime = dayjs(selectedDate).hour(endHour).minute(endMinute).subtract(3, 'hour');
+                  setStartDate(dayjs(selectedDate));
+                  setStartTime(newStartTime.format('HH:mm'));
+                }
+              }}
+            />
 
-                      // If new start time is after end time on the same day, adjust end time to +3H
-                      const startDateTime = startDate.hour(Number(dayjs(selectedDate).format('HH'))).minute(Number(dayjs(selectedDate).format('mm')));
-                      const endDateTime = endDate.hour(Number(endTime.split(':')[0])).minute(Number(endTime.split(':')[1]));
-                      if (startDate.isSame(endDate, 'day') && startDateTime.isAfter(endDateTime)) {
-                        console.log("Adjusting end time to +3 hours");
-                        
-                        const adjustedEndTime = startDateTime.add(3, 'hour');
-                        setEndTime(adjustedEndTime.format('HH:mm'));
-                      }
-                    }
-                  }}
-                />
-              )
-            }
-
-            {
-              showEndDatePicker && (
-                <DateTimePicker
-                  value={endDate.toDate()}
-                  mode='date'
-                  display={Platform.OS === 'ios' ? 'compact' : 'default'}
-                  themeVariant={'dark'}
-                  onChange={(event, selectedDate) => {
-                    if (event.type === 'dismissed') {
-                      setShowEndDatePicker(false)
-                    }
-                    if (event.type === 'set' && selectedDate) {
-                      console.log("Setting end date:", selectedDate);
-                      
-                      setShowEndDatePicker(false)
-                      setEndDate(dayjs(selectedDate))
-
-                      // If new end date is before start date, set start date to end date and startTime to endTime - 3h
-                      if (dayjs(selectedDate).isBefore(startDate)) {
-                        const newStartDate = dayjs(selectedDate);
-                        const [endHour, endMinute] = endTime.split(':').map(Number);
-                        const newStartTime = dayjs(selectedDate).hour(endHour).minute(endMinute).subtract(3, 'hour');
-                        
-                        setStartDate(newStartDate);
-                        setStartTime(newStartTime.format('HH:mm'));
-                      }
-                    }
-                  }}
-                />
-              )
-            }
-
-            {
-              showEndTimePicker && (
-                <DateTimePicker
-                  value={endDate.toDate()}
-                  mode='time'
-                  display={Platform.OS === 'ios' ? 'compact' : 'default'}
-                  themeVariant={'dark'}
-                  onChange={(event, selectedDate) => {
-                    if (event.type === 'dismissed') {
-                      setShowEndTimePicker(false)
-                    }
-                    if (event.type === 'set' && selectedDate) {
-                      setShowEndTimePicker(false)
-                      setEndTime(dayjs(selectedDate).format('HH:mm'))
-
-                      // If new end time is before start time on the same day, adjust start time to -3H
-                      const startDateTime = startDate.hour(Number(startTime.split(':')[0])).minute(Number(startTime.split(':')[1]));
-                      const endDateTime = endDate.hour(Number(dayjs(selectedDate).format('HH'))).minute(Number(dayjs(selectedDate).format('mm')));
-                      if (endDate.isSame(startDate, 'day') && endDateTime.isBefore(startDateTime)) {
-                        const adjustedStartDateTime = endDateTime.subtract(3, 'hour');
-                        setStartTime(adjustedStartDateTime.format('HH:mm'));
-
-                        // Keep start date in sync when the 3h shift crosses midnight
-                        if (!adjustedStartDateTime.isSame(startDate, 'day')) {
-                          setStartDate(adjustedStartDateTime.startOf('day'));
-                        }
-                      }
-                    }
-                  }}
-                />
-              )
-            }
+            <DateTimePickerModal
+              visible={showEndTimePicker}
+              mode='time'
+              value={endDate.toDate()}
+              onCancel={() => setShowEndTimePicker(false)}
+              onConfirm={(selectedDate) => {
+                setShowEndTimePicker(false)
+                setEndTime(dayjs(selectedDate).format('HH:mm'))
+                const startDateTime = startDate.hour(Number(startTime.split(':')[0])).minute(Number(startTime.split(':')[1]));
+                const endDateTime = endDate.hour(Number(dayjs(selectedDate).format('HH'))).minute(Number(dayjs(selectedDate).format('mm')));
+                if (endDate.isSame(startDate, 'day') && endDateTime.isBefore(startDateTime)) {
+                  const adjustedStart = endDateTime.subtract(3, 'hour');
+                  setStartTime(adjustedStart.format('HH:mm'));
+                  if (!adjustedStart.isSame(startDate, 'day')) {
+                    setStartDate(adjustedStart.startOf('day'));
+                  }
+                }
+              }}
+            />
             
 
             <View>

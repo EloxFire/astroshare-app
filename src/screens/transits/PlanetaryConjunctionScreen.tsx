@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {View, Text, TouchableOpacity, Image, ActivityIndicator, Platform} from 'react-native';
+import {View, Text, TouchableOpacity, Image, ActivityIndicator} from 'react-native';
 import { i18n } from '../../helpers/scripts/i18n';
 import { globalStyles } from '../../styles/global';
 import PageTitle from '../../components/commons/PageTitle';
@@ -21,7 +21,7 @@ import {GlobalPlanet} from "../../helpers/types/GlobalPlanet";
 import {app_colors} from "../../helpers/constants";
 import {getObjectIcon} from "../../helpers/scripts/astro/objects/getObjectIcon";
 import SimpleButton from "../../components/commons/buttons/SimpleButton";
-import DateTimePicker from '@react-native-community/datetimepicker';
+import DateTimePickerModal from '../../components/commons/DateTimePickerModal';
 import {getSpecificPlanetsConjunctions} from "../../helpers/scripts/astro/objects/getSpecificPlanetsConjunctions";
 import {showToast} from "../../helpers/scripts/showToast";
 import {useAuth} from "../../contexts/AuthContext";
@@ -264,45 +264,27 @@ export default function PlanetaryConjunctionScreen({ navigation }: any) {
           </View>
         </View>
 
-        {
-          isStartDateModalVisible && (
-            <DateTimePicker
-              value={startDate}
-              mode='date'
-              display={Platform.OS === 'ios' ? 'compact' : 'default'}
-              themeVariant={'dark'}
-              onChange={(event, selectedDate) => {
-                if (event.type === 'dismissed') {
-                  setIsStartDateModalVisible(false)
-                }
-                if (event.type === 'set' && selectedDate) {
-                  setIsStartDateModalVisible(false)
-                  setStartDate(selectedDate)
-                }
-              }}
-            />
-          )
-        }
+        <DateTimePickerModal
+          visible={isStartDateModalVisible}
+          mode='date'
+          value={startDate}
+          onCancel={() => setIsStartDateModalVisible(false)}
+          onConfirm={(selectedDate) => {
+            setIsStartDateModalVisible(false)
+            setStartDate(selectedDate)
+          }}
+        />
 
-        {
-          isEndDateModalVisible && (
-            <DateTimePicker
-              value={endDate}
-              mode='date'
-              themeVariant={'dark'}
-              display='default'
-              onChange={(event, selectedDate) => {
-                if (event.type === 'dismissed') {
-                  setIsEndDateModalVisible(false)
-                }
-                if (event.type === 'set' && selectedDate) {
-                  setIsEndDateModalVisible(false)
-                  setEndDate(selectedDate)
-                }
-              }}
-            />
-          )
-        }
+        <DateTimePickerModal
+          visible={isEndDateModalVisible}
+          mode='date'
+          value={endDate}
+          onCancel={() => setIsEndDateModalVisible(false)}
+          onConfirm={(selectedDate) => {
+            setIsEndDateModalVisible(false)
+            setEndDate(selectedDate)
+          }}
+        />
 
         {
           loadingConjunctions && <ActivityIndicator size='large' color={app_colors.white} />

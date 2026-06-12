@@ -1,6 +1,6 @@
 import dayjs from "dayjs"
 import React, { useState, useEffect } from "react"
-import { View, ScrollView, TouchableOpacity, Text, Image, Platform } from "react-native"
+import { View, ScrollView, TouchableOpacity, Text, Image } from "react-native"
 import SimpleButton from "../../../components/commons/buttons/SimpleButton"
 import PageTitle from "../../../components/commons/PageTitle"
 import InputWithIcon from "../../../components/forms/InputWithIcon"
@@ -14,7 +14,7 @@ import { getData } from "../../../helpers/storage"
 import { globalStyles } from "../../../styles/global"
 import { personnalInfosScreenStyles } from "../../../styles/screens/auth/personnalInfosScreen"
 import { profileScreenStyles } from "../../../styles/screens/auth/profile"
-import DateTimePicker from '@react-native-community/datetimepicker';
+import DateTimePickerModal from '../../../components/commons/DateTimePickerModal';
 
 export const PersonnalInfosScreen = ({navigation}: any) => {
 
@@ -142,29 +142,18 @@ export const PersonnalInfosScreen = ({navigation}: any) => {
                 active
               />
 
-              {
-                showDatePicker && (
-                  <DateTimePicker
-                    minimumDate={new Date('1900-01-01')}
-                    maximumDate={new Date()}
-                    value={ birthday ? new Date(birthday) : new Date() }
-                    mode='date'
-                    display={Platform.OS === 'ios' ? 'compact' : 'default'}
-                    themeVariant={'dark'}
-                    onChange={(event, selectedDate) => {
-                      if (event.type === 'dismissed') {
-                        setShowDatePicker(false)
-                      }
-                      if (event.type === 'set' && selectedDate) {
-                        console.log("Setting end date:", selectedDate);
-                        
-                        setShowDatePicker(false)
-                        setBirthday(selectedDate.toISOString().split('T')[0])
-                      }
-                    }}
-                  />
-                )
-              }
+              <DateTimePickerModal
+                visible={showDatePicker}
+                mode='date'
+                value={birthday ? new Date(birthday) : new Date()}
+                onCancel={() => setShowDatePicker(false)}
+                onConfirm={(selectedDate) => {
+                  setShowDatePicker(false)
+                  setBirthday(selectedDate.toISOString().split('T')[0])
+                }}
+                minimumDate={new Date('1900-01-01')}
+                maximumDate={new Date()}
+              />
 
               <InputWithIcon
                 placeholder={currentUser.profile?.pseudonym || "Pseudonyme"}

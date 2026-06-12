@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import {ActivityIndicator, Image, ScrollView, Text, View, Platform} from 'react-native'
+import {ActivityIndicator, Image, ScrollView, Text, View} from 'react-native'
 import { globalStyles } from '../styles/global'
 import { moonPhasesStyles } from '../styles/screens/moonPhases'
 import {
@@ -23,7 +23,7 @@ import {sendAnalyticsEvent} from "../helpers/scripts/analytics";
 import {eventTypes} from "../helpers/constants/analytics";
 import {routes} from "../helpers/routes";
 import SimpleButton from '../components/commons/buttons/SimpleButton'
-import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
+import DateTimePickerModal from '../components/commons/DateTimePickerModal';
 
 export default function MoonPhases({ navigation }: any) {
 
@@ -96,21 +96,6 @@ export default function MoonPhases({ navigation }: any) {
     setLoadingMonth(false)
   }
 
-  const handleDatePickerChange = (event: DateTimePickerEvent, date?: Date) => {
-    if (event.type === 'dismissed') {
-      setShowDatePicker(false)
-      return
-    }
-
-    if (date) {
-      setSelectedDate(dayjs(date))
-      setSelectedYear(dayjs(date).year())
-      setSelectedMonth(dayjs(date).month())
-    }
-
-    setShowDatePicker(false)
-  }
-
   const handleMonthChange = (direction: 'next' | 'previous') => {
     if (direction === 'next' && (selectedYear === dayjs().year() && selectedMonth === 11)) {
       return
@@ -138,20 +123,21 @@ export default function MoonPhases({ navigation }: any) {
       <PageTitle navigation={navigation} title={i18n.t('home.buttons.moon_phases.title')} subtitle={i18n.t('home.buttons.moon_phases.subtitle')} backRoute={routes.home.path} />
       <View style={globalStyles.screens.separator} />
 
-      {
-        showDatePicker &&
-        <DateTimePicker
-          value={selectedDate.toDate()}
-          mode="date"
-          display={Platform.OS === 'ios' ? 'compact' : 'default'}
-          onChange={handleDatePickerChange}
-          accentColor={app_colors.yellow}
-          // Maximum date at 31 december of current year
-          maximumDate={new Date(dayjs().year(), 11, 31)}
-          // Minimum date at 1 january 2011
-          minimumDate={new Date(2011, 0, 1)}
-        />
-      }
+      <DateTimePickerModal
+        visible={showDatePicker}
+        mode="date"
+        value={selectedDate.toDate()}
+        onCancel={() => setShowDatePicker(false)}
+        onConfirm={(date) => {
+          setShowDatePicker(false)
+          setSelectedDate(dayjs(date))
+          setSelectedYear(dayjs(date).year())
+          setSelectedMonth(dayjs(date).month())
+        }}
+        accentColor={app_colors.yellow}
+        maximumDate={new Date(dayjs().year(), 11, 31)}
+        minimumDate={new Date(2011, 0, 1)}
+      />
 
       <ScrollView>
       <DisclaimerBar message={i18n.t('moonPhases.disclaimer', {startDate: dayjs('2011-01-01').format('DD MMMM YYYY'), endDate: dayjs().endOf('year').format('DD MMMM YYYY')})} type={"info"} soft/>
