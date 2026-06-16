@@ -23,6 +23,8 @@ module.exports = {
       "ITSAppUsesNonExemptEncryption": false,
       "NSLocationWhenInUseUsageDescription": "Autoriser ${PRODUCT_NAME} à utiliser votre position.",
       "NSMotionUsageDescription": "Autoriser ${PRODUCT_NAME} à utiliser les capteurs de mouvement pour afficher les objets célestes dans la bonne orientation.",
+      "NSCameraUsageDescription": "Autoriser ${PRODUCT_NAME} à utiliser l'appareil photo pour scanner votre carte bancaire lors du paiement.",
+      "NSFaceIDUsageDescription": "Autoriser ${PRODUCT_NAME} à utiliser Face ID pour sécuriser vos paiements.",
       "UIBackgroundModes": ["location", "fetch"],
       "LSApplicationQueriesSchemes": ["comgooglemaps", "googlemaps", "waze", "citymapper"]
     },
