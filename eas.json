@@ -19,6 +19,9 @@
         "simulator": true
       }
     },
+    "testflight": {
+      "autoIncrement": true
+    },
     "production": {
       "autoIncrement": true
     }
