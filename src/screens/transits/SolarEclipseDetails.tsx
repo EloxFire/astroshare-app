@@ -34,6 +34,7 @@ export default function SolarEclipseDetails({ navigation, route }: any) {
   const [loadingCircumstances, setLoadingCircumstances] = useState<boolean>(false);
   const [searchVisible, setSearchVisible] = useState(false);
   const [searchString, setSearchString] = useState('');
+  const [searchLoading, setSearchLoading] = useState(false);
   const mapRef = useRef(null)
 
   useEffect(() => {
@@ -116,13 +117,18 @@ export default function SolarEclipseDetails({ navigation, route }: any) {
 
   const handleCitySearch = async () => {
     if (!searchString.trim()) return;
-    const results = await getCityCoords(searchString);
-    if (!results?.length) return;
-    const { lat, lon } = results[0];
-    handleMapPress(null, { latitude: lat, longitude: lon });
-    (mapRef.current as any)?.animateToRegion({ latitude: lat, longitude: lon, latitudeDelta: 5, longitudeDelta: 5 }, 800);
-    setSearchVisible(false);
-    setSearchString('');
+    setSearchLoading(true);
+    try {
+      const results = await getCityCoords(searchString);
+      if (!results?.length) return;
+      const { lat, lon } = results[0];
+      handleMapPress(null, { latitude: lat, longitude: lon });
+      (mapRef.current as any)?.animateToRegion({ latitude: lat, longitude: lon, latitudeDelta: 5, longitudeDelta: 5 }, 800);
+      setSearchVisible(false);
+      setSearchString('');
+    } finally {
+      setSearchLoading(false);
+    }
   };
 
   return (
@@ -140,6 +146,7 @@ export default function SolarEclipseDetails({ navigation, route }: any) {
             provider={Platform.OS === 'android' ? PROVIDER_GOOGLE : undefined}
             style={solarEclipseDetailsStyles.map}
             customMapStyle={mapStyle}
+            userInterfaceStyle="dark"
             initialRegion={{
               latitude: currentUserLocation.lat || 0,
               longitude: currentUserLocation.lon || 0,
@@ -231,6 +238,7 @@ export default function SolarEclipseDetails({ navigation, route }: any) {
                 icon={require('../../../assets/icons/FiSearch.png')}
                 search={handleCitySearch}
                 keyboardType='default'
+                loading={searchLoading}
               />
             </View>
           )}

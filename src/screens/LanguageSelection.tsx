@@ -30,7 +30,7 @@ export default function LanguageSelection({ navigation }: any) {
     updateLocale(code)
     await storeData('locale', code)
     sendAnalyticsEvent(currentUser, currentUserLocation, 'user_changed_language', eventTypes.BUTTON_CLICK, {newLocale: code}, code)
-    navigation.push(routes.home.path)
+    navigation.navigate(routes.home.path)
   }
 
   return (

@@ -208,8 +208,8 @@ export default function SatelliteTrackerDetails({ route, navigation }: any) {
       mapRef.current.animateToRegion({
         latitude: satelliteInfos.currentPosition.satlatitude,
         longitude: satelliteInfos.currentPosition.satlongitude,
-        latitudeDelta: 0,
-        longitudeDelta: 1000,
+        latitudeDelta: 80,
+        longitudeDelta: 80,
       }, 1000);
     }
   }
@@ -250,11 +250,12 @@ export default function SatelliteTrackerDetails({ route, navigation }: any) {
                 provider={Platform.OS === 'android' ? PROVIDER_GOOGLE : undefined}
                 style={satelliteTrackerStyles.content.mapContainer.map}
                 customMapStyle={mapStyle}
+                userInterfaceStyle="dark"
                 initialRegion={{
                   latitude: satelliteInfos ? satelliteInfos.currentPosition.satlatitude : 0,
                   longitude: satelliteInfos ? satelliteInfos.currentPosition.satlongitude : 0,
-                  latitudeDelta: 0,
-                  longitudeDelta: 1000,
+                  latitudeDelta: 80,
+                  longitudeDelta: 80,
                 }}
                 rotateEnabled={false}
                 cameraZoomRange={{ minCenterCoordinateDistance: 1000 }}

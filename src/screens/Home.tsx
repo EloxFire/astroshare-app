@@ -42,7 +42,7 @@ export default function Home({ navigation }: any) {
     (async () => {
       const firstLaunch = await isFirstLaunch();
       if (firstLaunch) {
-        navigation.push(routes.onboarding.path)
+        navigation.replace(routes.onboarding.path)
       }else{
         sendAnalyticsEvent(currentUser, currentUserLocation, 'Home screen view', eventTypes.SCREEN_VIEW, {firstLaunch: firstLaunch}, currentLocale)
       }

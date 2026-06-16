@@ -519,7 +519,7 @@ export default function PlanetariumUI({ navigation, infos, onShowGround, onShowC
   }, [objectInfos, currentInfoTab, onCenterObject, isFollowing, onToggleFollow]);
 
   return (
-    <View style={planetariumUIStyles.container}>
+    <View style={planetariumUIStyles.container} pointerEvents="box-none">
       <TouchableOpacity style={[planetariumUIStyles.container.uiButton, planetariumUIStyles.container.buttons.back]} onPress={() => navigation.goBack()}>
         <Image style={[planetariumUIStyles.container.uiButton.icon, {transform: [{ rotate: '90deg' }]}]} source={require('../../../assets/icons/FiChevronDown.png')} />
       </TouchableOpacity>

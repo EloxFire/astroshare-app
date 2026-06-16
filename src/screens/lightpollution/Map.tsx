@@ -2,7 +2,7 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, Image, Dimensions, Platform } from 'react-native';
-import MapView, { MapViewProps, Marker, PROVIDER_GOOGLE, UrlTile } from 'react-native-maps';
+import MapView, { MapViewProps, Marker, PROVIDER_GOOGLE, Region, UrlTile } from 'react-native-maps';
 import { app_colors } from '../../helpers/constants';
 import { lightPollutionMapStyles } from '../../styles/screens/lightpollution/map';
 import PageTitle from '../../components/commons/PageTitle';
@@ -66,6 +66,7 @@ const LightPollutionMap: React.FC = ({navigation}: any) => {
   const [detailedLegendVisible, setDetailedLegendVisible] = useState(false);
   const [searchVisible, setSearchVisible] = useState(false);
   const [searchString, setSearchString] = useState<string>('');
+  const [searchLoading, setSearchLoading] = useState(false);
 
   useEffect(() => {
     if (currentUserLocation) {
@@ -98,32 +99,36 @@ const LightPollutionMap: React.FC = ({navigation}: any) => {
       return
     }
 
+    setSearchLoading(true);
+    try {
+      const cityCoords = await getCityCoords(searchString)
+      if (cityCoords.length === 0) return;
 
-    const cityCoords = await getCityCoords(searchString)
-    if (cityCoords.length === 0) return;
+      const city: LocationObject = {
+        lat: cityCoords[0].lat,
+        lon: cityCoords[0].lon,
+        common_name: cityCoords[0].local_names.fr,
+        country: cityCoords[0].country,
+        state: cityCoords[0].state || '',
+        dms: convertDDtoDMS(cityCoords[0].lat, cityCoords[0].lon)
+      }
 
-    const city: LocationObject = {
-      lat: cityCoords[0].lat,
-      lon: cityCoords[0].lon,
-      common_name: cityCoords[0].local_names.fr,
-      country: cityCoords[0].country,
-      state: cityCoords[0].state || '',
-      dms: convertDDtoDMS(cityCoords[0].lat, cityCoords[0].lon)
+      fetchPollutionData(city.lat, city.lon);
+
+      setSelectedPosition({ latitude: city.lat, longitude: city.lon });
+
+      mapRef.current?.animateToRegion({
+        latitude: city.lat,
+        longitude: city.lon,
+        latitudeDelta: 10,
+        longitudeDelta: 10,
+      }, 1000);
+
+      setSearchVisible(false);
+      setSearchString('');
+    } finally {
+      setSearchLoading(false);
     }
-
-    fetchPollutionData(city.lat, city.lon);
-
-    setSelectedPosition({ latitude: city.lat, longitude: city.lon });
-
-    mapRef.current?.animateToRegion({
-      latitude: city.lat,
-      longitude: city.lon,
-      latitudeDelta: 10,
-      longitudeDelta: 10,
-    }, 1000);
-
-    setSearchVisible(false);
-    setSearchString('');
   }
 
   const fetchPollutionData = useCallback(async (lat: number, lon: number) => {
@@ -179,6 +184,7 @@ const LightPollutionMap: React.FC = ({navigation}: any) => {
         ref={mapRef}
         style={lightPollutionMapStyles.map}
         customMapStyle={mapStyle}
+        userInterfaceStyle="dark"
         provider={Platform.OS === 'android' ? PROVIDER_GOOGLE : undefined}
         initialRegion={INITIAL_REGION}
         showsUserLocation
@@ -192,7 +198,8 @@ const LightPollutionMap: React.FC = ({navigation}: any) => {
         {showOverlay && (
           <UrlTile
             urlTemplate={LIGHT_POLLUTION_TILE_URL}
-            maximumZ={MAX_ZOOM_LEVEL}
+            maximumZ={MAX_ZOOM_LEVEL + 3}
+            maximumNativeZ={MAX_ZOOM_LEVEL}
             minimumZ={MIN_ZOOM_LEVEL}
             zIndex={10}
             opacity={0.6}
@@ -239,6 +246,7 @@ const LightPollutionMap: React.FC = ({navigation}: any) => {
                 search={handleSearch}
                 keyboardType='default'
                 additionalStyles={lightPollutionMapStyles.controlsContainer.header.searchInput}
+                loading={searchLoading}
               />
             )
           }

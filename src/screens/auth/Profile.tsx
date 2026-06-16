@@ -30,7 +30,7 @@ export default function ProfileScreen({ navigation }: any) {
 
   const handleLogout = async () => {
     await logoutUser()
-    navigation.push(routes.home.path)
+    navigation.navigate(routes.home.path)
   }
 
   if(!currentUser) return (<></>)

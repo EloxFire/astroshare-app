@@ -172,7 +172,7 @@ export default function SolarWeather({ navigation }: any) {
             <Text style={[solarWeatherStyles.container.subtitle, solarWeatherStyles.container.disclaimer]}>{i18n.t('solarWeather.containers.disclaimer')}</Text>
             {
               isImageMode ?
-                <Image priority={'high'} placeholder={localizedImagePlaceholders[i18n.locale]} source={!currentImageUrl ? undefined : { uri: currentImageUrl }} style={solarWeatherStyles.sunImage} />
+                <Image priority={'high'} placeholder={localizedImagePlaceholders[i18n.locale]} placeholderContentFit={'contain'} contentFit={'contain'} source={!currentImageUrl ? undefined : { uri: currentImageUrl }} style={solarWeatherStyles.sunImage} />
                 :
                 <>
                   <Video
@@ -185,7 +185,7 @@ export default function SolarWeather({ navigation }: any) {
                     resizeMode={ResizeMode.CONTAIN}
                     style={{ width: Dimensions.get('window').width - 40, height: Dimensions.get('window').width - 40, marginVertical: 10, borderRadius: 10, opacity: loadingImage ? .1 : 1, borderWidth: 1, borderColor: app_colors.white_twenty }}
                   >
-                    <Image placeholder={localizedVideoPlaceholders[i18n.locale]} style={{ width: Dimensions.get('window').width - 40, height: Dimensions.get('window').width - 40, marginVertical: 10, borderRadius: 10 }} />
+                    <Image placeholder={localizedVideoPlaceholders[i18n.locale]} placeholderContentFit={'contain'} contentFit={'contain'} style={{ width: Dimensions.get('window').width - 40, height: Dimensions.get('window').width - 40, marginVertical: 10, borderRadius: 10 }} />
                   </Video>
                 </>
             }
@@ -214,7 +214,7 @@ export default function SolarWeather({ navigation }: any) {
             <Text style={solarWeatherStyles.container.subtitle}>{i18n.t('solarWeather.sources.soho')}</Text>
             {
               isCmeImageMode ?
-                <Image priority={'high'} placeholder={localizedImagePlaceholders[i18n.locale]} cachePolicy={'none'} source={!currentCmeImageUrl ? undefined : { uri: currentCmeImageUrl }} style={solarWeatherStyles.sunImage} />
+                <Image priority={'high'} placeholder={localizedImagePlaceholders[i18n.locale]} placeholderContentFit={'contain'} contentFit={'contain'} cachePolicy={'none'} source={!currentCmeImageUrl ? undefined : { uri: currentCmeImageUrl }} style={solarWeatherStyles.sunImage} />
                 :
                 <Video
                   ref={videoRef}
@@ -226,7 +226,7 @@ export default function SolarWeather({ navigation }: any) {
                   resizeMode={ResizeMode.CONTAIN}
                   style={{ width: Dimensions.get('window').width - 40, height: Dimensions.get('window').width - 40, marginVertical: 10, borderRadius: 10, opacity: loadingCME ? .1 : 1, borderWidth: 1, borderColor: app_colors.white_twenty }}
                 >
-                  <Image placeholder={localizedVideoPlaceholders[i18n.locale]} cachePolicy={'none'} style={{ width: Dimensions.get('window').width - 40, height: Dimensions.get('window').width - 40, marginVertical: 10, borderRadius: 10 }} />
+                  <Image placeholder={localizedVideoPlaceholders[i18n.locale]} placeholderContentFit={'contain'} contentFit={'contain'} cachePolicy={'none'} style={{ width: Dimensions.get('window').width - 40, height: Dimensions.get('window').width - 40, marginVertical: 10, borderRadius: 10 }} />
                 </Video>
             }
             <View style={solarWeatherStyles.container.buttons}>

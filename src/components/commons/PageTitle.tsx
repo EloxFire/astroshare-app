@@ -24,7 +24,7 @@ export default function PageTitle({ navigation, title, subtitle, backRoute }: Pa
 
   const handleGoBack = () => {
     if(backRoute){
-      navigation.push(backRoute)
+      navigation.navigate(backRoute)
     }else{
       const prevRoute = navigation.getState().routes[navigation.getState().index - 1].name
       sendAnalyticsEvent(currentUser, currentUserLocation, 'back_button_pressed', eventTypes.BUTTON_CLICK, { from: title, to: prevRoute }, currentLocale)

@@ -179,6 +179,7 @@ export default function LocationModal({ visible, onClose }: LocationModalProps) 
           <MapView
             provider={Platform.OS === 'android' ? PROVIDER_GOOGLE : undefined}
             customMapStyle={mapStyle}
+            userInterfaceStyle="dark"
             style={locationHeaderStyles.modal.mapContainer}
             zoomEnabled
             scrollEnabled

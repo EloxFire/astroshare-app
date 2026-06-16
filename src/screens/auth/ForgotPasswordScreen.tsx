@@ -43,19 +43,19 @@ export const ForgotPasswordScreen = ({ navigation }: any) => {
     }
 
     sendAnalyticsEvent(currentUser, currentUserLocation, 'reset_password_success', eventTypes.USER_LOGIN, {}, currentLocale)
-    navigation.push(routes.auth.login.path)
+    navigation.navigate(routes.auth.login.path)
     setLoading(false)
   }
 
   const handleReturnToLogin = () => {
     sendAnalyticsEvent(currentUser, currentUserLocation, 'navigate_to_login', eventTypes.BUTTON_CLICK, {from: "forgot_password_screen"}, currentLocale)
-    navigation.push(routes.auth.login.path)
+    navigation.navigate(routes.auth.login.path)
   }
 
   return (
     <View style={globalStyles.body}>
       <View style={pageTitleStyles.container}>
-        <TouchableOpacity onPress={() => navigation.push(routes.home.path)}>
+        <TouchableOpacity onPress={() => navigation.navigate(routes.home.path)}>
           <Image style={pageTitleStyles.container.icon} source={require('../../../assets/icons/FiChevronDown.png')}/>
         </TouchableOpacity>
       </View>

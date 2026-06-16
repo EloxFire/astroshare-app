@@ -208,6 +208,7 @@ export const ObservatoryCrud = ({ navigation, route }: any) => {
                 ref={mapRef}
                 provider={Platform.OS === 'android' ? PROVIDER_GOOGLE : undefined}
                 customMapStyle={mapStyle}
+                userInterfaceStyle="dark"
                 style={{ flex: 1 }}
                 onPress={handleMapPress}
                 initialRegion={{
