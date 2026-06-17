@@ -895,73 +895,73 @@ export default function Planetarium({ route, navigation }: any) {
   // ─── Render ──────────────────────────────────────────────────────────────────
 
   return (
-    <GestureHandlerRootView>
-      {!loading && (
-        <PlanetariumUI
-          navigation={navigation}
-          infos={computedInfos}
-          onSelectObject={(obj) => {
-            setSelectedObject(obj as PlanetariumSelectableObject);
-          }}
-          onSelectFromSearch={(obj) => {
-            setSelectedObject(obj as PlanetariumSelectableObject);
-            pendingFocusRef.current = true;
-            setFollowSelection(true);
-          }}
-          onShowEqGrid={()              => toggleLayer(LAYER_NAMES.eqGrid)}
-          onShowConstellations={()      => toggleLayer(LAYER_NAMES.constellations)}
-          onShowConstellationLabels={()  => toggleLayer(LAYER_NAMES.constellationLabels)}
-          onShowAzGrid={()              => toggleLayer(LAYER_NAMES.azGrid)}
-          onShowGround={toggleGround}
-          onShowPlanets={()             => toggleLayer(LAYER_NAMES.planets)}
-          onShowDSO={()                 => toggleLayer(LAYER_NAMES.dso)}
-          onShowCompassLabels={()       => toggleLayer(LAYER_NAMES.compassLabels)}
-          onShowAtmosphere={toggleAtmosphere}
-          onShowStarLabels={toggleStarLabels}
-          onShowSolarSystemLabels={toggleSolarSystemLabels}
-          onToggleFocusedConstellation={toggleFocusedConstellation}
-          isFocusedConstellationOn={focusedConstellationOn}
-          onCenterObject={handleCenterObject}
-          cameraFovDeg={planetariumFov}
-          isFollowing={followSelection}
-          onToggleFollow={() => setFollowSelection((v) => !v)}
-          timelineDate={referenceDate}
-          isTimelinePlaying={timelinePlaying}
-          onToggleTimelinePlay={() => {
-            setTimelinePlaying((v) => {
-              const next = !v;
-              timelinePlayingRef.current = next;
-              if (next) {
-                // Resuming: anchor from the current frozen position
-                playAnchorRef.current = { wallMs: performance.now(), simDate: referenceDateRef.current };
-              }
-              return next;
-            });
-          }}
-          onSeekTimeline={onSeekTimeline}
-          onAdjustTimeline={onAdjustTimeline}
-          onChangeTimelineDate={(date: Dayjs) => {
-            referenceDateRef.current = date;
-            playAnchorRef.current = { wallMs: performance.now(), simDate: date };
-            setReferenceDate(date);
-          }}
-          onResetTimelineDate={() => {
-            const now = dayjs();
-            referenceDateRef.current = now;
-            playAnchorRef.current = { wallMs: performance.now(), simDate: now };
-            timelinePlayingRef.current = true;
-            setTimelinePlaying(true);
-            setReferenceDate(now);
-          }}
-        />
-      )}
-
+    <GestureHandlerRootView style={{ flex: 1 }}>
       <View style={planetariumStyles.container}>
         <GestureDetector gesture={composedGestures}>
           <View style={{ flex: 1 }}>
             <GLView style={{ flex: 1 }} onContextCreate={onContextCreate} />
           </View>
         </GestureDetector>
+
+        {!loading && (
+          <PlanetariumUI
+            navigation={navigation}
+            infos={computedInfos}
+            onSelectObject={(obj) => {
+              setSelectedObject(obj as PlanetariumSelectableObject);
+            }}
+            onSelectFromSearch={(obj) => {
+              setSelectedObject(obj as PlanetariumSelectableObject);
+              pendingFocusRef.current = true;
+              setFollowSelection(true);
+            }}
+            onShowEqGrid={()              => toggleLayer(LAYER_NAMES.eqGrid)}
+            onShowConstellations={()      => toggleLayer(LAYER_NAMES.constellations)}
+            onShowConstellationLabels={()  => toggleLayer(LAYER_NAMES.constellationLabels)}
+            onShowAzGrid={()              => toggleLayer(LAYER_NAMES.azGrid)}
+            onShowGround={toggleGround}
+            onShowPlanets={()             => toggleLayer(LAYER_NAMES.planets)}
+            onShowDSO={()                 => toggleLayer(LAYER_NAMES.dso)}
+            onShowCompassLabels={()       => toggleLayer(LAYER_NAMES.compassLabels)}
+            onShowAtmosphere={toggleAtmosphere}
+            onShowStarLabels={toggleStarLabels}
+            onShowSolarSystemLabels={toggleSolarSystemLabels}
+            onToggleFocusedConstellation={toggleFocusedConstellation}
+            isFocusedConstellationOn={focusedConstellationOn}
+            onCenterObject={handleCenterObject}
+            cameraFovDeg={planetariumFov}
+            isFollowing={followSelection}
+            onToggleFollow={() => setFollowSelection((v) => !v)}
+            timelineDate={referenceDate}
+            isTimelinePlaying={timelinePlaying}
+            onToggleTimelinePlay={() => {
+              setTimelinePlaying((v) => {
+                const next = !v;
+                timelinePlayingRef.current = next;
+                if (next) {
+                  // Resuming: anchor from the current frozen position
+                  playAnchorRef.current = { wallMs: performance.now(), simDate: referenceDateRef.current };
+                }
+                return next;
+              });
+            }}
+            onSeekTimeline={onSeekTimeline}
+            onAdjustTimeline={onAdjustTimeline}
+            onChangeTimelineDate={(date: Dayjs) => {
+              referenceDateRef.current = date;
+              playAnchorRef.current = { wallMs: performance.now(), simDate: date };
+              setReferenceDate(date);
+            }}
+            onResetTimelineDate={() => {
+              const now = dayjs();
+              referenceDateRef.current = now;
+              playAnchorRef.current = { wallMs: performance.now(), simDate: now };
+              timelinePlayingRef.current = true;
+              setTimelinePlaying(true);
+              setReferenceDate(now);
+            }}
+          />
+        )}
 
         {loading && (
           <View style={planetariumStyles.loadingScreen}>
