@@ -35,6 +35,11 @@ export default function GlobalSummary({ noHeader }: GlobalSummaryProps) {
   const [visiblePlanets, setVisiblePlanets] = useState<GlobalPlanet[]>([])
 
   useEffect(() => {
+    if (!currentUserLocation) {
+      setLoading(false)
+      return;
+    }
+
     getInfos()
 
     const interval = setInterval(() => {
@@ -42,10 +47,13 @@ export default function GlobalSummary({ noHeader }: GlobalSummaryProps) {
     }, 300000)
 
     return () => clearInterval(interval)
-  }, [])
+  }, [currentUserLocation])
 
   const getInfos = async (): Promise<void> => {
-    if(!currentUserLocation) return;
+    if(!currentUserLocation) {
+      setLoading(false)
+      return;
+    }
     setLoading(true)
     setCurrentWeather(null)
     setVisiblePlanets([])
