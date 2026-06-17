@@ -94,6 +94,7 @@ export default function LunarEclipseDetails({ navigation, route }: any) {
       const results = await getCityCoords(searchString);
       if (!results?.length) return;
       const { lat, lon } = results[0];
+      sendAnalyticsEvent(currentUser, currentUserLocation, 'lunar_eclipse_details_city_search', eventTypes.BUTTON_CLICK, {searchString}, currentLocale)
       handleMapPress(null, { latitude: lat, longitude: lon });
       (mapRef.current as any)?.animateToRegion({ latitude: lat, longitude: lon, latitudeDelta: 5, longitudeDelta: 5 }, 800);
       setSearchVisible(false);
@@ -113,6 +114,7 @@ export default function LunarEclipseDetails({ navigation, route }: any) {
       setSvgWidth(Dimensions.get('window').width - 20);
       setSvgHeight(Dimensions.get('window').height - 20);
     }
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'lunar_eclipse_details_toggle_svg_map', eventTypes.BUTTON_CLICK, {expanded: !svgPressed}, currentLocale)
   }
 
   return (
@@ -160,7 +162,10 @@ export default function LunarEclipseDetails({ navigation, route }: any) {
         <SimpleButton
           text={"Retour"}
           icon={require('../../../assets/icons/FiChevronLeft.png')}
-          onPress={() => navigation.goBack()}
+          onPress={() => {
+            sendAnalyticsEvent(currentUser, currentUserLocation, 'lunar_eclipse_details_back', eventTypes.BUTTON_CLICK, {}, currentLocale)
+            navigation.goBack()
+          }}
           backgroundColor={app_colors.black}
           textColor={app_colors.white}
           active
@@ -177,7 +182,11 @@ export default function LunarEclipseDetails({ navigation, route }: any) {
       }}>
         <SimpleButton
           icon={require('../../../assets/icons/FiSearch.png')}
-          onPress={() => { setSearchVisible(!searchVisible); setSearchString(''); }}
+          onPress={() => {
+            setSearchVisible(!searchVisible)
+            setSearchString('')
+            sendAnalyticsEvent(currentUser, currentUserLocation, 'lunar_eclipse_details_toggle_search', eventTypes.BUTTON_CLICK, {searchVisible: !searchVisible}, currentLocale)
+          }}
           backgroundColor={app_colors.black}
           textColor={app_colors.white}
           active

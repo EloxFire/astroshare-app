@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { View, TouchableOpacity, ScrollView, ActivityIndicator, Image, Text } from "react-native"
 import InputWithIcon from "../../components/forms/InputWithIcon"
 import { useSettings } from "../../contexts/AppSettingsContext"
@@ -20,6 +20,10 @@ export const ForgotPasswordScreen = ({ navigation }: any) => {
   const { resetPassword, currentUser } = useAuth()
   const { currentLocale } = useTranslation()
   const { currentUserLocation } = useSettings()
+
+  useEffect(() => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'forgot_password_screen_view', eventTypes.SCREEN_VIEW, {}, currentLocale)
+  }, [])
 
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)

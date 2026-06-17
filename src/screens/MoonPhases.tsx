@@ -144,7 +144,7 @@ export default function MoonPhases({ navigation }: any) {
       <View style={[moonPhasesStyles.content, {marginBottom: 10, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}]}>
         <SimpleButton
           icon={require('../../assets/icons/FiChevronLeft.png')}
-          onPress={() => setSelectedDate(selectedDate.subtract(1, 'day'))}
+          onPress={() => { sendAnalyticsEvent(currentUser, currentUserLocation, 'moon_phases_previous_day_click', eventTypes.BUTTON_CLICK, { date: selectedDate.subtract(1, 'day').format('YYYY-MM-DD') }, currentLocale); setSelectedDate(selectedDate.subtract(1, 'day')) }}
           active
           activeBorderColor={app_colors.white_twenty}
         />
@@ -157,7 +157,7 @@ export default function MoonPhases({ navigation }: any) {
               textAdditionalStyles={{textTransform: 'uppercase', fontFamily: 'DMMonoMedium'}}
               active
               activeBorderColor={app_colors.white_twenty}
-              onPress={() => setShowDatePicker((current) => !current)}
+              onPress={() => { sendAnalyticsEvent(currentUser, currentUserLocation, 'moon_phases_date_picker_open', eventTypes.BUTTON_CLICK, {}, currentLocale); setShowDatePicker((current) => !current) }}
             />
             {
               !selectedDate.isSame(dayjs(), 'day') &&
@@ -167,7 +167,7 @@ export default function MoonPhases({ navigation }: any) {
                 textAdditionalStyles={{textTransform: 'uppercase', fontFamily: 'DMMonoMedium', fontSize: 12}}
                 active
                 activeBorderColor={app_colors.white_twenty}
-                onPress={() => handleResetDate()}
+                onPress={() => { sendAnalyticsEvent(currentUser, currentUserLocation, 'moon_phases_reset_date_click', eventTypes.BUTTON_CLICK, {}, currentLocale); handleResetDate() }}
               />
             }
           </View>
@@ -175,7 +175,7 @@ export default function MoonPhases({ navigation }: any) {
         </View>
         <SimpleButton
           icon={require('../../assets/icons/FiChevronRight.png')}
-          onPress={() => setSelectedDate(selectedDate.add(1, 'day'))}
+          onPress={() => { sendAnalyticsEvent(currentUser, currentUserLocation, 'moon_phases_next_day_click', eventTypes.BUTTON_CLICK, { date: selectedDate.add(1, 'day').format('YYYY-MM-DD') }, currentLocale); setSelectedDate(selectedDate.add(1, 'day')) }}
           active
           activeBorderColor={app_colors.white_twenty}
         />
@@ -249,14 +249,14 @@ export default function MoonPhases({ navigation }: any) {
               icon={require('../../assets/icons/FiChevronLeft.png')}
               active
               activeBorderColor={app_colors.white_twenty}
-              onPress={() => handleMonthChange('previous')}
+              onPress={() => { sendAnalyticsEvent(currentUser, currentUserLocation, 'moon_phases_previous_month_click', eventTypes.BUTTON_CLICK, { month: selectedMonth, year: selectedYear }, currentLocale); handleMonthChange('previous') }}
             />
             <Text style={moonPhasesStyles.content.calendar.selectorRow.currentMonth}>{capitalize(dayjs().month(selectedMonth).format('MMMM YYYY'))}</Text>
             <SimpleButton
               icon={require('../../assets/icons/FiChevronRight.png')}
               active
               activeBorderColor={app_colors.white_twenty}
-              onPress={() => handleMonthChange('next')}
+              onPress={() => { sendAnalyticsEvent(currentUser, currentUserLocation, 'moon_phases_next_month_click', eventTypes.BUTTON_CLICK, { month: selectedMonth, year: selectedYear }, currentLocale); handleMonthChange('next') }}
             />
           </View>
 

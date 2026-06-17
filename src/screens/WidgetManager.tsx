@@ -29,6 +29,7 @@ export default function WidgetManager({ navigation }: any) {
 
 
   const handleWidget = (newWidget: string) => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'widget_manager_widget_select', eventTypes.BUTTON_CLICK, { selectedWidget: newWidget }, currentLocale)
     updateSelectedHomeWidget(newWidget)
   }
 

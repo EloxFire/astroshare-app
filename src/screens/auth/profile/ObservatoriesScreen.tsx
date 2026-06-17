@@ -10,16 +10,24 @@ import { useObservatories } from '../../../contexts/ObservatoriesContext';
 import { useSettings } from '../../../contexts/AppSettingsContext';
 import { useAuth } from '../../../contexts/AuthContext';
 import { app_colors } from '../../../helpers/constants';
+import { eventTypes } from '../../../helpers/constants/analytics';
 import { routes } from '../../../helpers/routes';
+import { sendAnalyticsEvent } from '../../../helpers/scripts/analytics';
 import { i18n } from '../../../helpers/scripts/i18n';
+import { useTranslation } from '../../../hooks/useTranslation';
 import { globalStyles } from '../../../styles/global';
 import { profileScreenStyles } from '../../../styles/screens/auth/profile';
 
 export const ObservatoriesScreen = ({ navigation }: any) => {
   const { currentUser } = useAuth();
   const { currentUserLocation } = useSettings();
+  const { currentLocale } = useTranslation();
   const { observatories, selectedObservatory, refreshObservatories } = useObservatories();
   const isFocused = useIsFocused();
+
+  useEffect(() => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'observatories_screen_view', eventTypes.SCREEN_VIEW, {}, currentLocale)
+  }, [])
 
   useEffect(() => {
     if (!isFocused || !currentUser?.uid) return;
@@ -62,7 +70,7 @@ export const ObservatoriesScreen = ({ navigation }: any) => {
               withArrow
               fullWidth
               text={i18n.t('profile.observatories.list.add')}
-              onPress={() => navigation.navigate(routes.auth.profile.observatories.crud.path)}
+              onPress={() => { sendAnalyticsEvent(currentUser, currentUserLocation, 'add_observatory_clicked', eventTypes.BUTTON_CLICK, {}, currentLocale); navigation.navigate(routes.auth.profile.observatories.crud.path) }}
               textColor={app_colors.white}
               backgroundColor={app_colors.white_no_opacity}
               iconColor={app_colors.white}

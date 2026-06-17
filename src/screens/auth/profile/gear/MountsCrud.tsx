@@ -73,6 +73,7 @@ export const MountsCrud = ({navigation, route}: any) => {
       return;
     }
 
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'add_mount_saved', eventTypes.BUTTON_CLICK, {mountName: mount.name}, currentLocale)
     await addMount(currentUser.uid, mount);
     updateCurrentMount(mount)
     navigation.goBack();
@@ -84,6 +85,7 @@ export const MountsCrud = ({navigation, route}: any) => {
       return;
     }
 
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'delete_mount_clicked', eventTypes.BUTTON_CLICK, {mountId: mount.id}, currentLocale)
     await deleteMount(currentUser.uid, mount.id);
     updateCurrentMount(null)
     navigation.goBack();
@@ -95,6 +97,7 @@ export const MountsCrud = ({navigation, route}: any) => {
       return;
     }
 
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'save_mount_changes_clicked', eventTypes.BUTTON_CLICK, {mountName: mount.name}, currentLocale)
     await updateMount(currentUser.uid, mount);
     navigation.goBack();
   }

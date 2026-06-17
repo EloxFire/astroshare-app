@@ -87,6 +87,7 @@ export default function SolarWeather({ navigation }: any) {
   }, [])
 
   const handleChangeSunImage = (filter: ESunFilter, type: 'img' | 'video') => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'solar_weather_sun_filter_change', eventTypes.BUTTON_CLICK, { filter, type }, currentLocale)
     setCurrentImageUrl(undefined)
     setLoadingImage(true)
 
@@ -99,6 +100,7 @@ export default function SolarWeather({ navigation }: any) {
   }
 
   const handleChangeCMEImage = (filter: ECmeFilters, type: 'img' | 'video') => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'solar_weather_cme_filter_change', eventTypes.BUTTON_CLICK, { filter, type }, currentLocale)
     setCurrentCmeImageUrl(undefined)
     setLoadingCME(true)
 
@@ -159,10 +161,10 @@ export default function SolarWeather({ navigation }: any) {
           {/* SUN CONTAINER */}
           <View style={solarWeatherStyles.container}>
             <View style={{ display: 'flex', flexDirection: 'row' }}>
-              <TouchableOpacity onPress={() => setIsImageMode(true)} style={{ height: 35, flex: 1, borderBottomWidth: isImageMode ? 1 : 0, borderColor: app_colors.white, marginBottom: 10, padding: 5 }}>
+              <TouchableOpacity onPress={() => { sendAnalyticsEvent(currentUser, currentUserLocation, 'solar_weather_sun_image_mode_click', eventTypes.BUTTON_CLICK, { mode: 'image' }, currentLocale); setIsImageMode(true) }} style={{ height: 35, flex: 1, borderBottomWidth: isImageMode ? 1 : 0, borderColor: app_colors.white, marginBottom: 10, padding: 5 }}>
                 <Text style={{ fontFamily: 'GilroyBlack', color: app_colors.white, textTransform: 'uppercase', textAlign: "center", fontSize: 18 }}>{i18n.t('solarWeather.containers.switches.image')}</Text>
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => setIsImageMode(false)} style={{ height: 35, flex: 1, borderBottomWidth: isImageMode ? 0 : 1, borderColor: app_colors.white, marginBottom: 10, padding: 5 }}>
+              <TouchableOpacity onPress={() => { sendAnalyticsEvent(currentUser, currentUserLocation, 'solar_weather_sun_video_mode_click', eventTypes.BUTTON_CLICK, { mode: 'video' }, currentLocale); setIsImageMode(false) }} style={{ height: 35, flex: 1, borderBottomWidth: isImageMode ? 0 : 1, borderColor: app_colors.white, marginBottom: 10, padding: 5 }}>
                 <Text style={{ fontFamily: 'GilroyBlack', color: app_colors.white, textTransform: 'uppercase', textAlign: "center", fontSize: 18 }}>{i18n.t('solarWeather.containers.switches.video')}</Text>
               </TouchableOpacity>
             </View>
@@ -203,10 +205,10 @@ export default function SolarWeather({ navigation }: any) {
           {/* CME CONTAINER */}
           <View style={solarWeatherStyles.container}>
             <View style={{ display: 'flex', flexDirection: 'row' }}>
-              <TouchableOpacity onPress={() => setIsCmeImageMode(true)} style={{ height: 35, flex: 1, borderBottomWidth: isCmeImageMode ? 1 : 0, borderColor: app_colors.white, marginBottom: 10, padding: 5 }}>
+              <TouchableOpacity onPress={() => { sendAnalyticsEvent(currentUser, currentUserLocation, 'solar_weather_cme_image_mode_click', eventTypes.BUTTON_CLICK, { mode: 'image' }, currentLocale); setIsCmeImageMode(true) }} style={{ height: 35, flex: 1, borderBottomWidth: isCmeImageMode ? 1 : 0, borderColor: app_colors.white, marginBottom: 10, padding: 5 }}>
                 <Text style={{ fontFamily: 'GilroyBlack', color: app_colors.white, textTransform: 'uppercase', textAlign: "center", fontSize: 18 }}>{i18n.t('solarWeather.containers.switches.image')}</Text>
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => setIsCmeImageMode(false)} style={{ height: 35, flex: 1, borderBottomWidth: isCmeImageMode ? 0 : 1, borderColor: app_colors.white, marginBottom: 10, padding: 5 }}>
+              <TouchableOpacity onPress={() => { sendAnalyticsEvent(currentUser, currentUserLocation, 'solar_weather_cme_video_mode_click', eventTypes.BUTTON_CLICK, { mode: 'video' }, currentLocale); setIsCmeImageMode(false) }} style={{ height: 35, flex: 1, borderBottomWidth: isCmeImageMode ? 0 : 1, borderColor: app_colors.white, marginBottom: 10, padding: 5 }}>
                 <Text style={{ fontFamily: 'GilroyBlack', color: app_colors.white, textTransform: 'uppercase', textAlign: "center", fontSize: 18 }}>{i18n.t('solarWeather.containers.switches.video')}</Text>
               </TouchableOpacity>
             </View>

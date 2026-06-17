@@ -63,17 +63,19 @@ export const TelescopesCrud = ({navigation, route}: any) => {
       return;
     }
 
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'add_telescope_saved', eventTypes.BUTTON_CLICK, {telescopeName: telescope.name}, currentLocale)
     await addTelescope(currentUser.uid, telescope);
     updateCurrentTelescope(telescope)
     navigation.goBack();
   }
-  
+
   const removeTelescope = async () => {
     if (!currentUser) {
       showToast({ message: "Utilisateur non authentifié.", type: "error" });
       return;
     }
 
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'delete_telescope_clicked', eventTypes.BUTTON_CLICK, {telescopeId: telescope.id}, currentLocale)
     await deleteTelescope(currentUser.uid, telescope.id);
     updateCurrentTelescope(null)
     navigation.goBack();
@@ -85,6 +87,7 @@ export const TelescopesCrud = ({navigation, route}: any) => {
       return;
     }
 
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'save_telescope_changes_clicked', eventTypes.BUTTON_CLICK, {telescopeName: telescope.name}, currentLocale)
     await updateTelescope(currentUser.uid, telescope);
     navigation.goBack();
   }

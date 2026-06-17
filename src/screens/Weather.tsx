@@ -97,7 +97,7 @@ export default function Weather({ navigation }: any) {
       </View>
       {
         searchedCity &&
-        <TouchableOpacity style={weatherStyles.weatherContainer.resetButton} onPress={() => getCurrent()}>
+        <TouchableOpacity style={weatherStyles.weatherContainer.resetButton} onPress={() => { sendAnalyticsEvent(currentUser, currentUserLocation, 'weather_reset_to_current_location_click', eventTypes.BUTTON_CLICK, {}, currentLocale); getCurrent() }}>
           <Image source={require('../../assets/icons/FiRepeat.png')} style={{ width: 15, height: 15, marginRight: 10 }} />
           <Text style={weatherStyles.content.text}>{i18n.t('weather.reset_button', { city: currentUserLocation.common_name || "" })}</Text>
         </TouchableOpacity>

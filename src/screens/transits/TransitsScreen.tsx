@@ -47,6 +47,7 @@ export default function TransitsScreen({ navigation }: any) {
             text={i18n.t('transits.planetaryConjunction.title')}
             subtitle={i18n.t('transits.planetaryConjunction.subtitle')}
             image={require('../../../assets/images/tools/conjunction.png')}
+            onPress={() => sendAnalyticsEvent(currentUser, currentUserLocation, 'transits_navigate_planetary_conjunctions', eventTypes.BUTTON_CLICK, {}, currentLocale)}
           />
           <ToolButton
             disabled={!isProUser(currentUser)}
@@ -56,6 +57,7 @@ export default function TransitsScreen({ navigation }: any) {
             text={i18n.t('transits.solarEclipse.title')}
             subtitle={i18n.t('transits.solarEclipse.subtitle')}
             image={require('../../../assets/images/tools/solareclipse.png')}
+            onPress={() => sendAnalyticsEvent(currentUser, currentUserLocation, 'transits_navigate_solar_eclipses', eventTypes.BUTTON_CLICK, {}, currentLocale)}
           />
           <ToolButton
             disabled={!isProUser(currentUser)}
@@ -65,6 +67,7 @@ export default function TransitsScreen({ navigation }: any) {
             text={i18n.t('transits.lunarEclipse.title')}
             subtitle={i18n.t('transits.lunarEclipse.subtitle')}
             image={require('../../../assets/images/tools/lunareclipse.png')}
+            onPress={() => sendAnalyticsEvent(currentUser, currentUserLocation, 'transits_navigate_lunar_eclipses', eventTypes.BUTTON_CLICK, {}, currentLocale)}
           />
           {/*<ToolButton disabled isPremium navigation={navigation} text={i18n.t('transits.issTransit.title')} subtitle={i18n.t('transits.issTransit.subtitle')} image={require('../../../assets/images/tools/isstransit.png')} />*/}
           {

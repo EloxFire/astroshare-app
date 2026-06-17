@@ -239,7 +239,10 @@ export default function SatelliteTrackerDetails({ route, navigation }: any) {
               <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
                 <SimpleButton
                   text={i18n.t('satelliteTrackers.details.2dMap.button')}
-                  onPress={() => {centerSatelliteOnMap(mapRef, satelliteInfos)}}
+                  onPress={() => {
+                    sendAnalyticsEvent(currentUser, currentUserLocation, 'satellite_tracker_details_center_on_map', eventTypes.BUTTON_CLICK, {noradId}, currentLocale)
+                    centerSatelliteOnMap(mapRef, satelliteInfos)
+                  }}
                   icon={require('../../../assets/icons/FiIss.png')}
                   textColor={app_colors.white}
                   align={'center'}

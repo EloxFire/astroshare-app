@@ -5,7 +5,12 @@ import { PaymentIcon } from "react-native-payment-card-icons"
 import { getStatusBackgroundColor } from "../../../helpers/api/stripe/getStripeStatusColors"
 import { updatePaymentMethod } from "../../../helpers/api/stripe/updatePaymentMethod"
 import { app_colors } from "../../../helpers/constants"
+import { eventTypes } from "../../../helpers/constants/analytics"
+import { sendAnalyticsEvent } from "../../../helpers/scripts/analytics"
 import { i18n } from "../../../helpers/scripts/i18n"
+import { useSettings } from "../../../contexts/AppSettingsContext"
+import { useAuth } from "../../../contexts/AuthContext"
+import { useTranslation } from "../../../hooks/useTranslation"
 import { globalStyles } from "../../../styles/global"
 import { subscriptionDetailsStyles } from "../../../styles/screens/profile/subscription/subscriptionDetails"
 import { subscriptionManagementStyles } from "../../../styles/screens/profile/subscription/subscriptionManagement"
@@ -18,14 +23,22 @@ import { updateSubscriptionAutoRenew } from "../../../helpers/api/stripe/updateS
 export const SubscriptionDetails = ({ navigation, route }: any) => {
 
   const { object } = route.params
+  const { currentUserLocation } = useSettings()
+  const { currentUser } = useAuth()
+  const { currentLocale } = useTranslation()
 
   const [subscription, setSubscription] = useState<any>(null)
+
+  useEffect(() => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'subscription_details_screen_view', eventTypes.SCREEN_VIEW, {}, currentLocale)
+  }, [])
 
   useEffect(() => {
     setSubscription(object)
   }, [object])
 
   const updateCard = async () => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'update_payment_method_clicked', eventTypes.BUTTON_CLICK, {}, currentLocale)
     const portalUrl = await updatePaymentMethod()
     if (portalUrl) {
       Linking.openURL(portalUrl);
@@ -35,6 +48,7 @@ export const SubscriptionDetails = ({ navigation, route }: any) => {
   }
 
   const updateRenewal = async () => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'toggle_subscription_renewal_clicked', eventTypes.BUTTON_CLICK, {cancel_at_period_end: subscription?.cancel_at_period_end}, currentLocale)
     const updatedSub = await updateSubscriptionAutoRenew()
     setSubscription(null)
     setSubscription(updatedSub)

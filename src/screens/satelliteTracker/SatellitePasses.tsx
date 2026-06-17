@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import { ScrollView, Text, View } from "react-native";
 import dayjs from 'dayjs';
 import 'dayjs/locale/fr';
@@ -10,11 +10,26 @@ import {app_colors} from "../../helpers/constants";
 import { satelliteTrackerStyles } from "../../styles/screens/satelliteTracker/satelliteTrackerStyles";
 import { SatellitePass } from "../../helpers/types/IssPass";
 import SatellitePassCard from "../../components/cards/SatellitePassCard";
+import {sendAnalyticsEvent} from "../../helpers/scripts/analytics";
+import {eventTypes} from "../../helpers/constants/analytics";
+import {useSettings} from "../../contexts/AppSettingsContext";
+import {useAuth} from "../../contexts/AuthContext";
+import {useTranslation} from "../../hooks/useTranslation";
 
 dayjs.locale('fr');
 
 export default function SatellitePasses({ navigation, route }: any) {
   const params = route.params;
+  const { currentUserLocation } = useSettings()
+  const { currentUser } = useAuth()
+  const { currentLocale } = useTranslation()
+
+  useEffect(() => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'satellite_passes_screen_view', eventTypes.SCREEN_VIEW, {
+      satelliteName: params?.satelliteInfos?.satname,
+      passCount: params?.passes?.length,
+    }, currentLocale)
+  }, []);
 
   // Regrouper les passages par date
   const passesByDate = params.passes.reduce((acc: { [date: string]: any[] }, pass: any) => {

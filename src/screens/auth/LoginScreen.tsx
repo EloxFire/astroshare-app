@@ -21,6 +21,10 @@ export default function LoginScreen({ navigation }: any) {
   const { currentLocale } = useTranslation()
   const { currentUserLocation } = useSettings()
 
+  useEffect(() => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'login_screen_view', eventTypes.SCREEN_VIEW, {}, currentLocale)
+  }, [])
+
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)

@@ -1,10 +1,13 @@
-import React, {useMemo, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import {KeyboardAvoidingView, Modal, ScrollView, Text, TouchableOpacity, View} from "react-native";
 import {globalStyles} from "../../styles/global";
 import {i18n} from "../../helpers/scripts/i18n";
 import {observationPlannerScreenStyles} from "../../styles/screens/observationPlanner/observationPlannerScreen";
 import {useTranslation} from "../../hooks/useTranslation";
 import {useSettings} from "../../contexts/AppSettingsContext";
+import {useAuth} from "../../contexts/AuthContext";
+import {sendAnalyticsEvent} from "../../helpers/scripts/analytics";
+import {eventTypes} from "../../helpers/constants/analytics";
 import {useSolarSystem} from "../../contexts/SolarSystemContext";
 import {useStarCatalog} from "../../contexts/StarsContext";
 import {routes} from "../../helpers/routes";
@@ -28,6 +31,7 @@ import ToolButton from '../../components/commons/buttons/ToolButton';
 function ObservationPlannerScreen({navigation}: any) {
   const { currentLocale } = useTranslation();
   const { currentUserLocation } = useSettings();
+  const { currentUser } = useAuth();
   const { planets } = useSolarSystem();
   const { starsCatalog } = useStarCatalog();
   const { dsoCatalog } = useDsoCatalog();
@@ -66,6 +70,10 @@ function ObservationPlannerScreen({navigation}: any) {
   const [perObjectObsTime, setPerObjectObsTime] = useState<number | null>(null);
   const [resultsList, setResultsList] = useState<PlannerResult[] | null>(null);
 
+  useEffect(() => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'observation_planner_screen_view', eventTypes.SCREEN_VIEW, {}, currentLocale)
+  }, [])
+
   type SortKey = 'settingTime' | 'risingTime' | 'magnitude' | 'altitude';
   const [sortBy, setSortBy] = useState<SortKey>('settingTime');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
@@ -92,6 +100,7 @@ function ObservationPlannerScreen({navigation}: any) {
   }, [resultsList, sortBy, sortOrder]);
 
   const handleSortPress = (key: SortKey) => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'planner_sort_changed', eventTypes.BUTTON_CLICK, { sortKey: key }, currentLocale)
     if (sortBy === key) {
       setSortOrder(prev => prev === 'asc' ? 'desc' : 'asc');
     } else {
@@ -149,6 +158,10 @@ function ObservationPlannerScreen({navigation}: any) {
   };
 
   const handleSearch = async () => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'planner_generate_plan_clicked', eventTypes.BUTTON_CLICK, {
+      dsoEnabled, planetsEnabled, starsEnabled,
+      startDate: startDate.format('YYYY-MM-DD'), endDate: endDate.format('YYYY-MM-DD'),
+    }, currentLocale)
     setIsPlanning(true);
     setResultsList(null);
     try {
@@ -339,14 +352,14 @@ function ObservationPlannerScreen({navigation}: any) {
                   text={capitalize(startDate.format('ddd DD MMM YYYY'))}
                   textColor={app_colors.white}
                   align='flex-start'
-                  onPress={() => setShowStartPicker(true)}
+                  onPress={() => { setShowStartPicker(true); sendAnalyticsEvent(currentUser, currentUserLocation, 'planner_date_changed', eventTypes.BUTTON_CLICK, { field: 'start_date' }, currentLocale) }}
                 />
                 <SimpleButton
                   icon={require('../../../assets/icons/FiClock.png')}
                   text={capitalize(startTime.replace(':', 'h'))}
                   textColor={app_colors.white}
                   align='flex-start'
-                  onPress={() => setShowStartTimePicker(true)}
+                  onPress={() => { setShowStartTimePicker(true); sendAnalyticsEvent(currentUser, currentUserLocation, 'planner_date_changed', eventTypes.BUTTON_CLICK, { field: 'start_time' }, currentLocale) }}
                 />
 
               </View>
@@ -360,14 +373,14 @@ function ObservationPlannerScreen({navigation}: any) {
                   text={capitalize(endDate.format('ddd DD MMM YYYY'))}
                   textColor={app_colors.white}
                   align='flex-start'
-                  onPress={() => setShowEndDatePicker(true)}
+                  onPress={() => { setShowEndDatePicker(true); sendAnalyticsEvent(currentUser, currentUserLocation, 'planner_date_changed', eventTypes.BUTTON_CLICK, { field: 'end_date' }, currentLocale) }}
                 />
                 <SimpleButton
                   icon={require('../../../assets/icons/FiClock.png')}
                   text={capitalize(endTime.replace(':', 'h'))}
                   textColor={app_colors.white}
                   align='flex-start'
-                  onPress={() => setShowEndTimePicker(true)}
+                  onPress={() => { setShowEndTimePicker(true); sendAnalyticsEvent(currentUser, currentUserLocation, 'planner_date_changed', eventTypes.BUTTON_CLICK, { field: 'end_time' }, currentLocale) }}
                 />
               </View>
             </View>
@@ -377,17 +390,17 @@ function ObservationPlannerScreen({navigation}: any) {
           <View style={observationPlannerScreenStyles.content.bloc}>
             <Text style={observationPlannerScreenStyles.content.bloc.title}>{i18n.t('observationPlanner.screen.steps.objectTypes')}</Text>
 
-            <ToolButton isChecked={planetsEnabled} onPress={() => setPlanetsEnabled(!planetsEnabled)} hasCheckbox icon={require('../../../assets/icons/astro/planets/color/JUPITER.png')} text={i18n.t('observationPlanner.filters.targets.planets')} />
-            <ToolButton isChecked={dsoEnabled} onPress={() => setDsoEnabled(!dsoEnabled)} hasCheckbox icon={require('../../../assets/icons/astro/CL+N.png')} text={i18n.t('observationPlanner.filters.targets.dso')} />
+            <ToolButton isChecked={planetsEnabled} onPress={() => { setPlanetsEnabled(!planetsEnabled); sendAnalyticsEvent(currentUser, currentUserLocation, 'planner_filter_changed', eventTypes.BUTTON_CLICK, { filter: 'planets', enabled: !planetsEnabled }, currentLocale) }} hasCheckbox icon={require('../../../assets/icons/astro/planets/color/JUPITER.png')} text={i18n.t('observationPlanner.filters.targets.planets')} />
+            <ToolButton isChecked={dsoEnabled} onPress={() => { setDsoEnabled(!dsoEnabled); sendAnalyticsEvent(currentUser, currentUserLocation, 'planner_filter_changed', eventTypes.BUTTON_CLICK, { filter: 'dso', enabled: !dsoEnabled }, currentLocale) }} hasCheckbox icon={require('../../../assets/icons/astro/CL+N.png')} text={i18n.t('observationPlanner.filters.targets.dso')} />
             {dsoEnabled && (
               <View style={{ paddingLeft: 16, gap: 4 }}>
-                <ToolButton isChecked={dsoGalaxies} onPress={() => setDsoGalaxies(!dsoGalaxies)} hasCheckbox icon={require('../../../assets/icons/astro/G.png')} text={i18n.t('observationPlanner.filters.dsoTypes.galaxies')} />
-                <ToolButton isChecked={dsoNebulae} onPress={() => setDsoNebulae(!dsoNebulae)} hasCheckbox icon={require('../../../assets/icons/astro/NEB.png')} text={i18n.t('observationPlanner.filters.dsoTypes.nebulae')} />
-                <ToolButton isChecked={dsoGlobularClusters} onPress={() => setDsoGlobularClusters(!dsoGlobularClusters)} hasCheckbox icon={require('../../../assets/icons/astro/GCL.png')} text={i18n.t('observationPlanner.filters.dsoTypes.globularClusters')} />
-                <ToolButton isChecked={dsoOpenClusters} onPress={() => setDsoOpenClusters(!dsoOpenClusters)} hasCheckbox icon={require('../../../assets/icons/astro/OCL.png')} text={i18n.t('observationPlanner.filters.dsoTypes.openClusters')} />
+                <ToolButton isChecked={dsoGalaxies} onPress={() => { setDsoGalaxies(!dsoGalaxies); sendAnalyticsEvent(currentUser, currentUserLocation, 'planner_filter_changed', eventTypes.BUTTON_CLICK, { filter: 'galaxies', enabled: !dsoGalaxies }, currentLocale) }} hasCheckbox icon={require('../../../assets/icons/astro/G.png')} text={i18n.t('observationPlanner.filters.dsoTypes.galaxies')} />
+                <ToolButton isChecked={dsoNebulae} onPress={() => { setDsoNebulae(!dsoNebulae); sendAnalyticsEvent(currentUser, currentUserLocation, 'planner_filter_changed', eventTypes.BUTTON_CLICK, { filter: 'nebulae', enabled: !dsoNebulae }, currentLocale) }} hasCheckbox icon={require('../../../assets/icons/astro/NEB.png')} text={i18n.t('observationPlanner.filters.dsoTypes.nebulae')} />
+                <ToolButton isChecked={dsoGlobularClusters} onPress={() => { setDsoGlobularClusters(!dsoGlobularClusters); sendAnalyticsEvent(currentUser, currentUserLocation, 'planner_filter_changed', eventTypes.BUTTON_CLICK, { filter: 'globular_clusters', enabled: !dsoGlobularClusters }, currentLocale) }} hasCheckbox icon={require('../../../assets/icons/astro/GCL.png')} text={i18n.t('observationPlanner.filters.dsoTypes.globularClusters')} />
+                <ToolButton isChecked={dsoOpenClusters} onPress={() => { setDsoOpenClusters(!dsoOpenClusters); sendAnalyticsEvent(currentUser, currentUserLocation, 'planner_filter_changed', eventTypes.BUTTON_CLICK, { filter: 'open_clusters', enabled: !dsoOpenClusters }, currentLocale) }} hasCheckbox icon={require('../../../assets/icons/astro/OCL.png')} text={i18n.t('observationPlanner.filters.dsoTypes.openClusters')} />
               </View>
             )}
-            <ToolButton isChecked={starsEnabled} onPress={() => setStarsEnabled(!starsEnabled)} hasCheckbox icon={require('../../../assets/icons/astro/BRIGHTSTAR.png')} text={i18n.t('observationPlanner.filters.targets.stars')} />
+            <ToolButton isChecked={starsEnabled} onPress={() => { setStarsEnabled(!starsEnabled); sendAnalyticsEvent(currentUser, currentUserLocation, 'planner_filter_changed', eventTypes.BUTTON_CLICK, { filter: 'stars', enabled: !starsEnabled }, currentLocale) }} hasCheckbox icon={require('../../../assets/icons/astro/BRIGHTSTAR.png')} text={i18n.t('observationPlanner.filters.targets.stars')} />
           </View>
 
           {/* OTHER FILTERS */}
@@ -430,7 +443,7 @@ function ObservationPlannerScreen({navigation}: any) {
               <SimpleButton
                 icon={require('../../../assets/icons/FiSearch.png')}
                 text={i18n.t('observationPlanner.screen.buttons.search')}
-                onPress={() => checkVisibility()}
+                onPress={() => { sendAnalyticsEvent(currentUser, currentUserLocation, 'planner_generate_plan_clicked', eventTypes.BUTTON_CLICK, {}, currentLocale); checkVisibility() }}
                 backgroundColor={app_colors.white}
                 textColor={app_colors.black}
                 iconColor={app_colors.black}
@@ -512,7 +525,7 @@ function ObservationPlannerScreen({navigation}: any) {
                   <SimpleButton
                     icon={require('../../../assets/icons/FiSearch.png')}
                     text={i18n.t('observationPlanner.screen.buttons.searchAgain')}
-                    onPress={() => checkVisibility()}
+                    onPress={() => { sendAnalyticsEvent(currentUser, currentUserLocation, 'planner_generate_plan_clicked', eventTypes.BUTTON_CLICK, {}, currentLocale); checkVisibility() }}
                     backgroundColor={app_colors.white}
                     textColor={app_colors.black}
                     iconColor={app_colors.black}

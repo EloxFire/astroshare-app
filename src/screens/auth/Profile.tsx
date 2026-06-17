@@ -29,6 +29,7 @@ export default function ProfileScreen({ navigation }: any) {
   }, [])
 
   const handleLogout = async () => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'logout_clicked', eventTypes.BUTTON_CLICK, {}, currentLocale)
     await logoutUser()
     navigation.navigate(routes.home.path)
   }

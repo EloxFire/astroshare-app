@@ -26,6 +26,9 @@ import { useStarCatalog } from '../../contexts/StarsContext';
 import { useSolarSystem } from '../../contexts/SolarSystemContext';
 import { useDsoCatalog } from '../../contexts/DSOContext';
 import { useTranslation } from '../../hooks/useTranslation';
+import { useAuth } from '../../contexts/AuthContext';
+import { sendAnalyticsEvent } from '../../helpers/scripts/analytics';
+import { eventTypes } from '../../helpers/constants/analytics';
 
 import { app_colors } from '../../helpers/constants';
 import { i18n } from '../../helpers/scripts/i18n';
@@ -218,6 +221,7 @@ function getIdealFov(object: any): number {
 export default function Planetarium({ route, navigation }: any) {
   const { currentLocale } = useTranslation();
   const { currentUserLocation } = useSettings();
+  const { currentUser } = useAuth();
   const { starsCatalog } = useStarCatalog();
   const { planets, moonCoords } = useSolarSystem();
   const { dsoCatalog } = useDsoCatalog();
@@ -274,6 +278,10 @@ export default function Planetarium({ route, navigation }: any) {
   useEffect(() => { computedInfosRef.current = computedInfos; }, [computedInfos]);
   useEffect(() => { currentUserLocationRef.current = currentUserLocation; }, [currentUserLocation]);
   useEffect(() => { moonCoordsRef.current = moonCoords; }, [moonCoords]);
+
+  useEffect(() => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'planetarium_screen_view', eventTypes.SCREEN_VIEW, {}, currentLocale)
+  }, []);
 
   // ─── Timeline ────────────────────────────────────────────────────────────────
   const [referenceDate, setReferenceDate]   = useState<Dayjs>(dayjs());

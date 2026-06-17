@@ -3,6 +3,10 @@ import { Dimensions, ScrollView, Text, View } from 'react-native'
 import { globalStyles } from '../../styles/global'
 import { Star } from '../../helpers/types/Star'
 import { useSettings } from '../../contexts/AppSettingsContext'
+import { sendAnalyticsEvent } from '../../helpers/scripts/analytics'
+import { eventTypes } from '../../helpers/constants/analytics'
+import { useAuth } from '../../contexts/AuthContext'
+import { useTranslation } from '../../hooks/useTranslation'
 import { calculateHorizonAngle } from '../../helpers/scripts/astro/calculateHorizonAngle'
 import {convertEquatorialToHorizontal, isBodyAboveHorizon} from '@observerly/astrometry'
 import { Circle, G, Image, Line, Mask, Polyline, Rect, Svg, Text as SvgText } from 'react-native-svg';
@@ -24,6 +28,8 @@ import { getConstellationJSONFormatted } from './getConstellationJSONFormatted'
 export default function SkyMapGenerator({ navigation }: any) {
 
   const { currentUserLocation } = useSettings()
+  const { currentUser } = useAuth()
+  const { currentLocale } = useTranslation()
   const { planets, moonCoords } = useSolarSystem()
   const {starsCatalog, starCatalogLoading} = useStarCatalog();
 
@@ -40,8 +46,12 @@ export default function SkyMapGenerator({ navigation }: any) {
   const [starsToDisplay, setStarsToDisplay] = useState<Star[]>([])
 
   useEffect(() => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'sky_map_generator_screen_view', eventTypes.SCREEN_VIEW, {}, currentLocale)
+  }, [])
+
+  useEffect(() => {
     console.log("CONSTELLATION JSON PROCESSING");
-    
+
     getConstellationJSONFormatted()
   }, [])
 
@@ -284,9 +294,9 @@ export default function SkyMapGenerator({ navigation }: any) {
       <View style={{ marginTop: 20 }}>
         <DSOValues title={i18n.t('skymap.flatmap.localTime')} chipValue chipColor={app_colors.grey} value={dayjs(currentTime).format('HH:mm:ss').replace(':', 'h').replace(':', 'm') + "s"} />
         <ScrollView style={{ marginTop: 10, borderTopWidth: 1, borderColor: app_colors.white_forty, paddingTop: 10 }}>
-          <ToggleButton title={i18n.t('skymap.flatmap.constellations')} onToggle={() => setShowConstellations(!showConstellations)} toggled={showConstellations} />
-          <ToggleButton title={i18n.t('skymap.flatmap.constellationsName')} onToggle={() => setShowConstellationsName(!showConstellationsName)} toggled={showConstellationsName} />
-          <ToggleButton title={i18n.t('skymap.flatmap.planets')} onToggle={() => setShowPlanets(!showPlanets)} toggled={showPlanets} />
+          <ToggleButton title={i18n.t('skymap.flatmap.constellations')} onToggle={() => { setShowConstellations(!showConstellations); sendAnalyticsEvent(currentUser, currentUserLocation, 'skymap_toggle_constellations', eventTypes.BUTTON_CLICK, { enabled: !showConstellations }, currentLocale) }} toggled={showConstellations} />
+          <ToggleButton title={i18n.t('skymap.flatmap.constellationsName')} onToggle={() => { setShowConstellationsName(!showConstellationsName); sendAnalyticsEvent(currentUser, currentUserLocation, 'skymap_toggle_constellation_names', eventTypes.BUTTON_CLICK, { enabled: !showConstellationsName }, currentLocale) }} toggled={showConstellationsName} />
+          <ToggleButton title={i18n.t('skymap.flatmap.planets')} onToggle={() => { setShowPlanets(!showPlanets); sendAnalyticsEvent(currentUser, currentUserLocation, 'skymap_toggle_planets', eventTypes.BUTTON_CLICK, { enabled: !showPlanets }, currentLocale) }} toggled={showPlanets} />
           {/* <Text style={{ color: 'white' }}>{constellationsAsterisms[0].features[0].properties?.name}</Text> */}
           {/* <Text style={{ color: 'white' }}>{JSON.stringify(constellationsAsterisms[0].features[0].properties?.centrum)}</Text> */}
         </ScrollView>

@@ -35,11 +35,8 @@ export default function ToolButton({ text, image, icon, navigation, targetScreen
 
   const handleButtonPress = () => {
     if (disabled) return;
-    if (onPress) {
-      onPress()
-    } else {
-      handleNavigation()
-    }
+    onPress?.()
+    handleNavigation()
   }
 
   return (

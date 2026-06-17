@@ -63,6 +63,10 @@ export default function ResourceDetails({ navigation, route }: any) {
   const [downloadLoading, setDownloadLoading] = useState<boolean>(false);
 
   useEffect(() => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'resource_details_screen_view', eventTypes.SCREEN_VIEW, { resource: resource.title }, currentLocale)
+  }, [])
+
+  useEffect(() => {
     if (currentLocale === "fr") {
       const frenchResult = readingTime(resource.content || "", {language: 'fr'}).text;
       setReadTime(frenchResult);

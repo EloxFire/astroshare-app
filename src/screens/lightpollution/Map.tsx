@@ -81,6 +81,7 @@ const LightPollutionMap: React.FC = ({navigation}: any) => {
 
   const toggleOverlay = () => {
     setShowOverlay(!showOverlay);
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'lightpollution_map_toggle_overlay', eventTypes.BUTTON_CLICK, {showOverlay: !showOverlay}, currentLocale)
   }
 
   const handlePressMap = (event: any) => {
@@ -92,6 +93,7 @@ const LightPollutionMap: React.FC = ({navigation}: any) => {
 
   const toggleLegend = () => {
     setDetailedLegendVisible(!detailedLegendVisible);
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'lightpollution_map_toggle_legend', eventTypes.BUTTON_CLICK, {detailedLegendVisible: !detailedLegendVisible}, currentLocale)
   }
 
   const handleSearch = async () => {
@@ -99,6 +101,7 @@ const LightPollutionMap: React.FC = ({navigation}: any) => {
       return
     }
 
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'lightpollution_map_city_search', eventTypes.BUTTON_CLICK, {searchString}, currentLocale)
     setSearchLoading(true);
     try {
       const cityCoords = await getCityCoords(searchString)
@@ -251,7 +254,10 @@ const LightPollutionMap: React.FC = ({navigation}: any) => {
             )
           }
           <View style={lightPollutionMapStyles.controlsContainer.header.buttons}>
-            <TouchableOpacity style={lightPollutionMapStyles.controlsContainer.header.buttons.button} onPress={() => setSearchVisible(!searchVisible)}>
+            <TouchableOpacity style={lightPollutionMapStyles.controlsContainer.header.buttons.button} onPress={() => {
+              setSearchVisible(!searchVisible)
+              sendAnalyticsEvent(currentUser, currentUserLocation, 'lightpollution_map_toggle_search', eventTypes.BUTTON_CLICK, {searchVisible: !searchVisible}, currentLocale)
+            }}>
               <Image source={require('../../../assets/icons/FiSearch.png')} style={lightPollutionMapStyles.controlsContainer.header.buttons.button.icon} />
             </TouchableOpacity>
 
@@ -261,7 +267,10 @@ const LightPollutionMap: React.FC = ({navigation}: any) => {
 
             {
               selectedPosition && (
-                <TouchableOpacity style={lightPollutionMapStyles.controlsContainer.header.buttons.button} onPress={() => setSelectedPosition(null)}>
+                <TouchableOpacity style={lightPollutionMapStyles.controlsContainer.header.buttons.button} onPress={() => {
+                  setSelectedPosition(null)
+                  sendAnalyticsEvent(currentUser, currentUserLocation, 'lightpollution_map_reset_position', eventTypes.BUTTON_CLICK, {}, currentLocale)
+                }}>
                   <Image source={require('../../../assets/icons/FiRepeat.png')} style={lightPollutionMapStyles.controlsContainer.header.buttons.button.icon} />
                 </TouchableOpacity>
               )

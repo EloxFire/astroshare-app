@@ -6,6 +6,9 @@ import PageTitle from '../../components/commons/PageTitle'
 import { i18n } from '../../helpers/scripts/i18n'
 import { useAuth } from '../../contexts/AuthContext'
 import { useSettings } from '../../contexts/AppSettingsContext'
+import { sendAnalyticsEvent } from '../../helpers/scripts/analytics'
+import { eventTypes } from '../../helpers/constants/analytics'
+import { useTranslation } from '../../hooks/useTranslation'
 import { useAstroGear } from '../../contexts/GearContext'
 import { useSolarSystem } from '../../contexts/SolarSystemContext'
 import { useDsoCatalog } from '../../contexts/DSOContext'
@@ -41,6 +44,7 @@ export const TelescopeSimulator = ({ navigation }: any) => {
 
   const { currentUser } = useAuth()
   const { currentUserLocation } = useSettings()
+  const { currentLocale } = useTranslation()
   const { currentGear } = useAstroGear()
   const { planets, moonCoords } = useSolarSystem()
   const { dsoCatalog, dsoCatalogLoading } = useDsoCatalog()
@@ -61,6 +65,10 @@ export const TelescopeSimulator = ({ navigation }: any) => {
   // Target object
   const [target, setTarget] = useState<SimulatorTarget | null>(null)
   const [pickerVisible, setPickerVisible] = useState(false)
+
+  useEffect(() => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'telescope_simulator_screen_view', eventTypes.SCREEN_VIEW, {}, currentLocale)
+  }, [])
 
   // Load gear from storage on focus
   useEffect(() => {
@@ -125,7 +133,10 @@ export const TelescopeSimulator = ({ navigation }: any) => {
 
   // ── Target selection ──────────────────────────────────────────────────────────────
 
-  const handleSelectDSO = (dso: DSO) => setTarget(getDSOTarget(dso))
+  const handleSelectDSO = (dso: DSO) => {
+    setTarget(getDSOTarget(dso))
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'simulator_dso_selected', eventTypes.BUTTON_CLICK, { dso: dso.name }, currentLocale)
+  }
 
   const handleSelectPlanet = (planet: GlobalPlanet | SpecialSkyObject) => {
     if ('family' in planet) {
@@ -133,6 +144,7 @@ export const TelescopeSimulator = ({ navigation }: any) => {
     } else {
       setTarget(getPlanetTarget(planet as GlobalPlanet, currentUserLocation))
     }
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'simulator_planet_selected', eventTypes.BUTTON_CLICK, { planet: planet.name }, currentLocale)
   }
 
   // ── Render ────────────────────────────────────────────────────────────────────────
@@ -156,12 +168,12 @@ export const TelescopeSimulator = ({ navigation }: any) => {
             selectedCamera={selectedCamera}
             instrumentMode={instrumentMode}
             barlowFactor={barlowFactor}
-            onSelectTelescope={setSelectedTelescope}
-            onSelectEyepiece={setSelectedEyepiece}
-            onSelectCamera={setSelectedCamera}
-            onSelectBarlow={setBarlowFactor}
-            onInstrumentModeChange={setInstrumentMode}
-            onGoToGear={() => navigation.navigate(routes.auth.profile.astroGearManagement.home.path)}
+            onSelectTelescope={(scope) => { setSelectedTelescope(scope); sendAnalyticsEvent(currentUser, currentUserLocation, 'simulator_telescope_selected', eventTypes.BUTTON_CLICK, { telescope: scope?.name }, currentLocale) }}
+            onSelectEyepiece={(ep) => { setSelectedEyepiece(ep); sendAnalyticsEvent(currentUser, currentUserLocation, 'simulator_eyepiece_selected', eventTypes.BUTTON_CLICK, { eyepiece: ep?.name }, currentLocale) }}
+            onSelectCamera={(cam) => { setSelectedCamera(cam); sendAnalyticsEvent(currentUser, currentUserLocation, 'simulator_camera_selected', eventTypes.BUTTON_CLICK, { camera: cam?.name }, currentLocale) }}
+            onSelectBarlow={(factor) => { setBarlowFactor(factor); sendAnalyticsEvent(currentUser, currentUserLocation, 'simulator_barlow_selected', eventTypes.BUTTON_CLICK, { factor }, currentLocale) }}
+            onInstrumentModeChange={(mode) => { setInstrumentMode(mode); sendAnalyticsEvent(currentUser, currentUserLocation, 'simulator_instrument_mode_changed', eventTypes.BUTTON_CLICK, { mode }, currentLocale) }}
+            onGoToGear={() => { navigation.navigate(routes.auth.profile.astroGearManagement.home.path); sendAnalyticsEvent(currentUser, currentUserLocation, 'simulator_go_to_gear_clicked', eventTypes.BUTTON_CLICK, {}, currentLocale) }}
           />
         </View>
 
@@ -169,7 +181,7 @@ export const TelescopeSimulator = ({ navigation }: any) => {
         <View style={sectionCard}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
             <Text style={sectionTitle}>{t('sections.target.title')}</Text>
-            <TouchableOpacity style={changeButton} onPress={() => setPickerVisible(true)}>
+            <TouchableOpacity style={changeButton} onPress={() => { setPickerVisible(true); sendAnalyticsEvent(currentUser, currentUserLocation, 'simulator_change_target_clicked', eventTypes.BUTTON_CLICK, {}, currentLocale) }}>
               <Text style={changeButtonText}>{t('sections.target.changeButton')}</Text>
             </TouchableOpacity>
           </View>

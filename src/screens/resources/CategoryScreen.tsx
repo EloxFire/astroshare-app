@@ -11,10 +11,19 @@ import ScreenInfo from "../../components/ScreenInfo";
 import InputWithIcon from "../../components/forms/InputWithIcon";
 import { Resource } from "../../helpers/types/resources/Resource";
 import { ResourceCard } from "../../components/cards/ResourceCard";
+import { sendAnalyticsEvent } from "../../helpers/scripts/analytics";
+import { eventTypes } from "../../helpers/constants/analytics";
+import { useSettings } from "../../contexts/AppSettingsContext";
+import { useAuth } from "../../contexts/AuthContext";
+import { useTranslation } from "../../hooks/useTranslation";
 
 export default function ResourcesHome({ navigation, route }: any) {
 
   const { category } = route.params;
+
+  const { currentUserLocation } = useSettings();
+  const { currentUser } = useAuth();
+  const { currentLocale } = useTranslation();
 
   const [resources, setResources] = useState<Resource[]>([]);
   const [userSearchText, setUserSearchText] = useState<string>("");
@@ -39,6 +48,7 @@ export default function ResourcesHome({ navigation, route }: any) {
   }
 
   const handleSearch = () => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'search_resources_clicked', eventTypes.BUTTON_CLICK, { query: userSearchText, category: category.title }, currentLocale)
     if(userSearchText.trim() === "") {
       fetchResources();
       return;
@@ -50,6 +60,7 @@ export default function ResourcesHome({ navigation, route }: any) {
   }
 
   useEffect(() => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'resources_category_screen_view', eventTypes.SCREEN_VIEW, {}, currentLocale)
     fetchResources();
   }, []);
 

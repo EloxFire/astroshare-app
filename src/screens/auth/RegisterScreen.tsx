@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Image, ScrollView, Text, TouchableOpacity, View} from "react-native";
 import {globalStyles} from "../../styles/global";
 import {i18n} from "../../helpers/scripts/i18n";
@@ -19,7 +19,11 @@ export default function RegisterScreen({ navigation }: any) {
   const {registerUser, loginUser} = useAuth()
   const {currentUser} = useAuth()
   const { currentLocale } = useTranslation()
-  const { currentUserLocation } = useSettings() 
+  const { currentUserLocation } = useSettings()
+
+  useEffect(() => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'register_screen_view', eventTypes.SCREEN_VIEW, {}, currentLocale)
+  }, [])
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')

@@ -6,14 +6,18 @@ import { v4 as uuidv4 } from 'uuid';
 import SimpleButton from '../../../../components/commons/buttons/SimpleButton';
 import PageTitle from '../../../../components/commons/PageTitle';
 import InputWithIcon from '../../../../components/forms/InputWithIcon';
+import { useSettings } from '../../../../contexts/AppSettingsContext';
 import { useAuth } from '../../../../contexts/AuthContext';
 import { useObservatories } from '../../../../contexts/ObservatoriesContext';
 import { getLocationName } from '../../../../helpers/api/getLocationFromCoords';
 import { app_colors } from '../../../../helpers/constants';
+import { eventTypes } from '../../../../helpers/constants/analytics';
 import { mapStyle } from '../../../../helpers/mapJsonStyle';
+import { sendAnalyticsEvent } from '../../../../helpers/scripts/analytics';
 import { i18n } from '../../../../helpers/scripts/i18n';
 import { showToast } from '../../../../helpers/scripts/showToast';
 import { Observatory } from '../../../../helpers/types/Observatory';
+import { useTranslation } from '../../../../hooks/useTranslation';
 import { gearFormsStyles } from '../../../../styles/screens/profile/gear/gearForms';
 import { globalStyles } from '../../../../styles/global';
 
@@ -40,6 +44,8 @@ const AMENITIES: { key: AmenityKey; icon: any; labelKey: string }[] = [
 
 export const ObservatoryCrud = ({ navigation, route }: any) => {
   const { currentUser } = useAuth();
+  const { currentUserLocation } = useSettings();
+  const { currentLocale } = useTranslation();
   const { saveObservatory, removeObservatory } = useObservatories();
 
   const [mode, setMode] = useState<'add' | 'edit'>('add');
@@ -47,6 +53,10 @@ export const ObservatoryCrud = ({ navigation, route }: any) => {
   const [obs, setObs] = useState<Observatory>(EMPTY_OBS());
 
   const mapRef = useRef<any>(null);
+
+  useEffect(() => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'observatory_crud_screen_view', eventTypes.SCREEN_VIEW, {}, currentLocale)
+  }, [])
 
   useEffect(() => {
     if (route.params?.selectedObservatory) {
@@ -80,6 +90,7 @@ export const ObservatoryCrud = ({ navigation, route }: any) => {
   };
 
   const detectGps = async () => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'detect_gps_clicked', eventTypes.BUTTON_CLICK, {}, currentLocale)
     setLocating(true);
     try {
       const { status } = await Location.requestForegroundPermissionsAsync();
@@ -119,12 +130,14 @@ export const ObservatoryCrud = ({ navigation, route }: any) => {
       showToast({ message: i18n.t('profile.observatories.crud.coordsRequired'), type: 'error' });
       return;
     }
+    sendAnalyticsEvent(currentUser, currentUserLocation, mode === 'edit' ? 'save_observatory_clicked' : 'create_observatory_clicked', eventTypes.BUTTON_CLICK, {mode}, currentLocale)
     await saveObservatory({ ...obs, updatedAt: new Date().toISOString() });
     navigation.goBack();
   };
 
   const handleDelete = async () => {
     if (!currentUser) return;
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'delete_observatory_clicked', eventTypes.BUTTON_CLICK, {observatoryId: obs.id}, currentLocale)
     await removeObservatory(obs.id);
     navigation.goBack();
   };

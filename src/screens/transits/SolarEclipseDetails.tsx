@@ -18,6 +18,7 @@ import InputWithIcon from "../../components/forms/InputWithIcon";
 import {useAuth} from "../../contexts/AuthContext";
 import {useTranslation} from "../../hooks/useTranslation";
 import {sendAnalyticsEvent} from "../../helpers/scripts/analytics";
+import {eventTypes} from "../../helpers/constants/analytics";
 
 export default function SolarEclipseDetails({ navigation, route }: any) {
   const {currentUserLocation} = useSettings()
@@ -38,7 +39,7 @@ export default function SolarEclipseDetails({ navigation, route }: any) {
   const mapRef = useRef(null)
 
   useEffect(() => {
-    sendAnalyticsEvent(currentUser, currentUserLocation, 'Solar eclipse details screen view', 'screen_view', {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'solar_eclipse_details_screen_view', eventTypes.SCREEN_VIEW, {
       eclipseType: routeEclipse.type,
       eclipseDate: routeEclipse.calendarDate,
     }, currentLocale);
@@ -122,6 +123,7 @@ export default function SolarEclipseDetails({ navigation, route }: any) {
       const results = await getCityCoords(searchString);
       if (!results?.length) return;
       const { lat, lon } = results[0];
+      sendAnalyticsEvent(currentUser, currentUserLocation, 'solar_eclipse_details_city_search', eventTypes.BUTTON_CLICK, {searchString}, currentLocale)
       handleMapPress(null, { latitude: lat, longitude: lon });
       (mapRef.current as any)?.animateToRegion({ latitude: lat, longitude: lon, latitudeDelta: 5, longitudeDelta: 5 }, 800);
       setSearchVisible(false);
@@ -196,7 +198,10 @@ export default function SolarEclipseDetails({ navigation, route }: any) {
             <SimpleButton
               text={"Retour"}
               icon={require('../../../assets/icons/FiChevronLeft.png')}
-              onPress={() => navigation.goBack()}
+              onPress={() => {
+                sendAnalyticsEvent(currentUser, currentUserLocation, 'solar_eclipse_details_back', eventTypes.BUTTON_CLICK, {}, currentLocale)
+                navigation.goBack()
+              }}
               backgroundColor={app_colors.black}
               textColor={app_colors.white}
               active
@@ -213,7 +218,11 @@ export default function SolarEclipseDetails({ navigation, route }: any) {
           }}>
             <SimpleButton
               icon={require('../../../assets/icons/FiSearch.png')}
-              onPress={() => { setSearchVisible(!searchVisible); setSearchString(''); }}
+              onPress={() => {
+                setSearchVisible(!searchVisible)
+                setSearchString('')
+                sendAnalyticsEvent(currentUser, currentUserLocation, 'solar_eclipse_details_toggle_search', eventTypes.BUTTON_CLICK, {searchVisible: !searchVisible}, currentLocale)
+              }}
               backgroundColor={app_colors.black}
               textColor={app_colors.white}
               active
