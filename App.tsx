@@ -12,7 +12,7 @@ import utc from 'dayjs/plugin/utc';
 import { StatusBar } from "expo-status-bar";
 import * as SystemUI from 'expo-system-ui';
 import { useEffect, useState } from "react";
-import { LogBox, Text, View } from "react-native";
+import { KeyboardAvoidingView, LogBox, Platform, Text, View } from "react-native";
 import 'react-native-get-random-values';
 import { RootSiblingParent } from 'react-native-root-siblings';
 import './firebaseConfig';
@@ -180,6 +180,10 @@ export default function App() {
                               <DashboardAchievementsWatcher />
                               <StatusBar animated style="light" translucent />
 
+                              <KeyboardAvoidingView
+                                behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+                                style={{ flex: 1 }}
+                              >
                               <Stack.Navigator screenOptions={{ headerShown: false }}>
                                 {/*ONBOARDING*/}
                                 <Stack.Screen name={routes.onboarding.path} component={Onboarding} />
@@ -277,6 +281,8 @@ export default function App() {
                                 <Stack.Screen name={routes.auth.profile.observatories.home.path} component={ObservatoriesScreen} />
                                 <Stack.Screen name={routes.auth.profile.observatories.crud.path} component={ObservatoryCrud} />
                               </Stack.Navigator>
+                              </KeyboardAvoidingView>
+
                           </LaunchDataContextProvider>
                         </SpaceXContextProvider>
                       </StarsContextProvider>

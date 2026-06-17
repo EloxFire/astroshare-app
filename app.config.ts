@@ -53,7 +53,7 @@ module.exports = {
       }
     },
     package: "fr.eavagliano.astroshare",
-    softwareKeyboardLayoutMode: "pan"
+    softwareKeyboardLayoutMode: "resize"
   },
   web: {
     favicon: "./assets/favicon.png"
