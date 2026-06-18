@@ -32,6 +32,13 @@ export const routes = {
       }
     },
   },
+  partners: {
+    sevun: {
+      home: { path: 'SevunScreen', requirements: [] },
+      module: { path: 'SevunModuleScreen', requirements: [] },
+      resource: { path: 'SevunResourceScreen', requirements: [] },
+    }
+  },
   dashboard: {
     home: { path: 'DashboardScreen', requirements: [] },
     achievements: { path: 'DashboardAchievementsScreen', requirements: [] },

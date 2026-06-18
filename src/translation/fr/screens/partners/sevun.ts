@@ -1,0 +1,37 @@
+export const sevunTranslations = {
+  card: {
+    title: "Sevun NOVA",
+    subtitle: "Parcours pédagogique de l'AFA",
+    cta: "Découvrir",
+  },
+  home: {
+    title: "Sevun NOVA",
+    subtitle: "Votre parcours d'apprentissage personnalisé",
+    section_learn: "Apprendre",
+    section_learn_subtitle: "Ressources officielles de l'AFA",
+    progress: "complétées",
+    all_done: "Terminé !",
+  },
+  modules: {
+    beginner: "Débutant",
+    intermediate: "Intermédiaire",
+    advanced: "Avancé",
+    beginner_description: "Découvrez les bases de l'astronomie et faites vos premiers pas sous les étoiles.",
+    intermediate_description: "Approfondissez vos connaissances et maîtrisez les techniques d'observation.",
+    advanced_description: "Maîtrisez l'astrophotographie et contribuez à la science citoyenne.",
+    resources_count: "ressources",
+    start: "Commencer le module",
+    continue: "Continuer",
+    completed: "Terminé",
+    locked: "Terminez le module précédent",
+  },
+  resource: {
+    watch: "Regarder la vidéo",
+    mark_done: "Marquer comme complété",
+    mark_undone: "Retirer la complétion",
+    completed_badge: "Complété",
+    duration: "Durée",
+    back_to_module: "Retour au module",
+    open_youtube: "Ouvrir dans YouTube",
+  },
+};

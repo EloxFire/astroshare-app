@@ -14,7 +14,7 @@ import {eventTypes} from "../helpers/constants/analytics";
 import {useAuth} from "../contexts/AuthContext";
 import {useTranslation} from "../hooks/useTranslation";
 import { checkAppUpdate } from '../helpers/scripts/utils/checkAppUpdate';
-import { isProUser } from '../helpers/scripts/auth/checkUserRole';
+import { isProUser, isSevunUser } from '../helpers/scripts/auth/checkUserRole';
 import LocationHeader from '../components/LocationHeader';
 import AppHeader from '../components/commons/AppHeader';
 import BannerHandler from '../components/banners/BannerHandler';
@@ -23,6 +23,7 @@ import HomeSearchModule from '../components/forms/HomeSearchModule';
 import HomeWidgetDisplay from '../components/widgets/HomeWidgetDisplay';
 import NewsBannerHandler from "../components/banners/NewsBannerHandler";
 import AppUpdateModal from '../components/modals/AppUpdateModal';
+import SevunCard from '../components/home/SevunCard';
 import { useDsoCatalog } from '../contexts/DSOContext';
 import { useStarCatalog } from '../contexts/StarsContext';
 
@@ -132,6 +133,14 @@ export default function Home({ navigation }: any) {
           <Text style={globalStyles.sections.subtitle}>{i18n.t('home.resources.subtitle')}</Text>
           <View style={homeStyles.nasaTools.buttons}>
             <ToolButton disabled={!hasInternetConnection} navigation={navigation} targetScreen={routes.resources.home.path} text={i18n.t('home.buttons.resources.title')} subtitle={i18n.t('home.buttons.resources.subtitle')} image={require('../../assets/images/tools/resources.png')} onPress={() => sendAnalyticsEvent(currentUser, currentUserLocation, 'home_resources_clicked', eventTypes.BUTTON_CLICK, {}, currentLocale)} />
+            {isSevunUser(currentUser) && (
+              <SevunCard
+                onPress={() => {
+                  sendAnalyticsEvent(currentUser, currentUserLocation, 'home_sevun_card_clicked', eventTypes.BUTTON_CLICK, {}, currentLocale);
+                  navigation.navigate(routes.partners.sevun.home.path);
+                }}
+                />
+            )}
           </View>
         </View>
       </ScrollView>

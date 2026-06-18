@@ -18,6 +18,11 @@ export type User = {
   ref?: string;
   createdAt?: Date;
   updatedAt?: Date;
+  fromPartner?: boolean;
+  partnerInfos?: {
+    name: string;
+    [key: string]: any;
+  };
   profile?: {
     firstname?: string;
     lastname?: string;
