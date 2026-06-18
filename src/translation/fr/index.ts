@@ -44,6 +44,7 @@ import { dashboardTranslations } from "./screens/dashboard";
 import { profileTranslations } from "./screens/profile";
 import { astroGearTranslations } from "./common/astroGear";
 import { telescopeSimulatorHomeTranslations } from "./screens/simulator/telescopeSimulatorHome";
+import { sevunTranslations } from "./screens/partners/sevun";
 
 export const frTranslations = {
   onboarding: onboardingTranslations,
@@ -95,5 +96,8 @@ export const frTranslations = {
   gear: astroGearTranslations,
   telescopeSimulator: {
     home: telescopeSimulatorHomeTranslations,
-  }
+  },
+  partners: {
+    sevun: sevunTranslations,
+  },
 }

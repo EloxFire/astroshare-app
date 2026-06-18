@@ -1,0 +1,37 @@
+export const sevunTranslations = {
+  card: {
+    title: "AFA Learning Path",
+    subtitle: "French Astronomy Association · Official educational pathway",
+    cta: "Discover",
+  },
+  home: {
+    title: "AFA Learning Path",
+    subtitle: "Your official astronomy learning journey",
+    section_learn: "Learn",
+    section_learn_subtitle: "Official training in partnership with the AFA",
+    progress: "completed",
+    all_done: "Done!",
+  },
+  modules: {
+    beginner: "Beginner",
+    intermediate: "Intermediate",
+    advanced: "Advanced",
+    beginner_description: "Discover the basics of astronomy and take your first steps under the stars.",
+    intermediate_description: "Deepen your knowledge and master observation techniques.",
+    advanced_description: "Master astrophotography and contribute to citizen science.",
+    resources_count: "resources",
+    start: "Start module",
+    continue: "Continue",
+    completed: "Completed",
+    locked: "Complete previous module first",
+  },
+  resource: {
+    watch: "Watch video",
+    mark_done: "Mark as completed",
+    mark_undone: "Remove completion",
+    completed_badge: "Completed",
+    duration: "Duration",
+    back_to_module: "Back to module",
+    open_youtube: "Open in YouTube",
+  },
+};

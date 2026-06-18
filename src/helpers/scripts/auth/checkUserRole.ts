@@ -9,7 +9,6 @@ export const isProUser: (user: User) => boolean = (user: User): boolean => {
   if(user.isAdmin) return true;
   return user.role === UserRoles.SUBSCRIBER
 };
-
 /**
  * Authoritative PRO check: queries the backend (GET /auth/me, unified Stripe + RevenueCat role)
  * and falls back to the RevenueCat "pro" entitlement directly if the backend is unreachable.
@@ -20,7 +19,7 @@ export const checkProStatusFromBackend = async (): Promise<boolean> => {
   try {
     const accessToken = await getData(storageKeys.auth.accessToken);
 
-    const response = await fetch(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/auth/me`, {
+    const response = await await fetch(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/auth/me`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${accessToken}`,
@@ -37,4 +36,14 @@ export const checkProStatusFromBackend = async (): Promise<boolean> => {
     console.warn('[isProUser] Backend unavailable, falling back to RevenueCat entitlement:', error);
     return getSubscriptionStatus();
   }
+};
+
+export const isSevunUser = (user: User | null): boolean => {
+  if (!user) return false;
+  if (user.isAdmin) return true;
+  return (
+    user.role === UserRoles.SUBSCRIBER &&
+    user.fromPartner === true &&
+    user.partnerInfos?.name === 'SEVUN'
+  );
 };

@@ -98,6 +98,9 @@ import { loadingSplashStyles } from "./src/styles/screens/loadingSplash";
 import { SubscriptionManagement } from "./src/screens/auth/subscription/SubscriptionManagement";
 import { SubscriptionDetails } from "./src/screens/auth/subscription/SubscriptionDetails";
 import { TelescopeSimulator } from "./src/screens/simulator/TelescopeSimulator";
+import SevunScreen from "./src/screens/partners/sevun/SevunScreen";
+import SevunModuleScreen from "./src/screens/partners/sevun/SevunModuleScreen";
+import SevunResourceScreen from "./src/screens/partners/sevun/SevunResourceScreen";
 
 dayjs.locale('fr');
 dayjs.extend(LocalizedFormat)
@@ -276,6 +279,11 @@ export default function App() {
                                 <Stack.Screen name={routes.auth.profile.astroGearManagement.mounts.crud.path} component={MountsCrud} />
                                 <Stack.Screen name={routes.auth.profile.observatories.home.path} component={ObservatoriesScreen} />
                                 <Stack.Screen name={routes.auth.profile.observatories.crud.path} component={ObservatoryCrud} />
+
+                                {/*PARTNER SCREENS*/}
+                                <Stack.Screen name={routes.partners.sevun.home.path} component={SevunScreen} />
+                                <Stack.Screen name={routes.partners.sevun.module.path} component={SevunModuleScreen} />
+                                <Stack.Screen name={routes.partners.sevun.resource.path} component={SevunResourceScreen} />
                               </Stack.Navigator>
 
                           </LaunchDataContextProvider>

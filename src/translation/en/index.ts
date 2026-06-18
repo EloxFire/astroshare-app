@@ -43,6 +43,7 @@ import { checklistManagerTranslations } from "./screens/checklists";
 import { dashboardTranslations } from "./screens/dashboard";
 import { profileTranslations } from "./screens/profile";
 import { astroGearTranslations } from "./common/astroGear";
+import { sevunTranslations } from "./screens/partners/sevun";
 
 export const enTranslations = {
   onboarding: onboardingTranslations,
@@ -91,4 +92,7 @@ export const enTranslations = {
   dashboard: dashboardTranslations,
   profile: profileTranslations,
   gear: astroGearTranslations,
+  partners: {
+    sevun: sevunTranslations,
+  },
 }
