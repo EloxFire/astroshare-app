@@ -431,9 +431,19 @@ export default function CelestialBodyOverview({ route, navigation }: any) {
             <View style={{width: getObjectFamily(object) === 'Planet' ? '100%' : '100%', paddingTop: 10, display: 'flex', flexDirection: "column", justifyContent: 'space-between'}}>
               <View>
                 <DSOValues title={i18n.t('detailsPages.dso.labels.type')} value={getObjectType(object)} />
-                <DSOValues title={i18n.t('detailsPages.dso.labels.constellation')} value={objectInfos?.base.constellation} />
-                <DSOValues title={i18n.t('detailsPages.dso.labels.rightAscension')} value={typeof(object.ra) === 'number' ? convertDegreesRaToHMS(object.ra) : prettyRa(object.ra)} />
-                <DSOValues title={i18n.t('detailsPages.dso.labels.declination')} value={typeof(object.dec) === 'number' ? convertDegreesDecToDMS(object.dec) : prettyRa(object.dec)} />
+                {objectInfos?.base.constellation && objectInfos.base.constellation !== 'N/A' && (
+                  <DSOValues title={i18n.t('detailsPages.dso.labels.constellation')} value={objectInfos.base.constellation} />
+                )}
+                <DSOValues title={i18n.t('detailsPages.dso.labels.rightAscension')} value={
+                  objectInfos?.base.degRa != null
+                    ? convertDegreesRaToHMS(objectInfos.base.degRa)
+                    : typeof(object.ra) === 'number' ? convertDegreesRaToHMS(object.ra) : prettyRa(object.ra)
+                } />
+                <DSOValues title={i18n.t('detailsPages.dso.labels.declination')} value={
+                  objectInfos?.base.degDec != null
+                    ? convertDegreesDecToDMS(objectInfos.base.degDec)
+                    : typeof(object.dec) === 'number' ? convertDegreesDecToDMS(object.dec) : prettyRa(object.dec)
+                } />
 
                 {
                   getObjectFamily(object) === 'Planet' && objectInfos?.planetAdditionalInfos && (

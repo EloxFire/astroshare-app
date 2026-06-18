@@ -11,17 +11,30 @@ import { globalStyles } from "../../styles/global"
 import { checklistsHomeStyles } from "../../styles/screens/checklists/home"
 import InputWithIcon from "../../components/forms/InputWithIcon"
 import { ChecklistComponent } from "../../components/checklists/ChecklistComponent"
+import { sendAnalyticsEvent } from "../../helpers/scripts/analytics"
+import { eventTypes } from "../../helpers/constants/analytics"
+import { useSettings } from "../../contexts/AppSettingsContext"
+import { useAuth } from "../../contexts/AuthContext"
+import { useTranslation } from "../../hooks/useTranslation"
 
 type ChecklistItem = { id: string; text: string; completed: boolean }
 type Checklist = { id: string; title: string; description?: string; items: ChecklistItem[] }
 
 export const ChecklistsHome = ({ navigation }: any) => {
+  const { currentUserLocation } = useSettings()
+  const { currentUser } = useAuth()
+  const { currentLocale } = useTranslation()
+
   const [checklists, setChecklists] = useState<Checklist[]>([])
   const [loading, setLoading] = useState(true)
   const [newChecklistTitle, setNewChecklistTitle] = useState('')
   const [newChecklistDescription, setNewChecklistDescription] = useState('')
   const [newItemInputs, setNewItemInputs] = useState<Record<string, string>>({})
   const [expandedChecklists, setExpandedChecklists] = useState<Record<string, boolean>>({})
+
+  useEffect(() => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'checklists_home_screen_view', eventTypes.SCREEN_VIEW, {}, currentLocale)
+  }, [])
 
   useEffect(() => {
     const initializeChecklists = async () => {
@@ -64,6 +77,7 @@ export const ChecklistsHome = ({ navigation }: any) => {
       items: [],
     }
 
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'create_checklist_clicked', eventTypes.BUTTON_CLICK, { title: newChecklist.title }, currentLocale)
     await persistChecklists([...checklists, newChecklist])
     setExpandedChecklists(prev => ({ ...prev, [newChecklist.id]: false }))
     setNewChecklistTitle('')
@@ -71,6 +85,8 @@ export const ChecklistsHome = ({ navigation }: any) => {
   }
 
   const handleDeleteChecklist = async (checklistId: string) => {
+    const checklist = checklists.find(c => c.id === checklistId)
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'delete_checklist_clicked', eventTypes.BUTTON_CLICK, { title: checklist?.title }, currentLocale)
     const updated = checklists.filter(checklist => checklist.id !== checklistId)
     await persistChecklists(updated)
     setExpandedChecklists(prev => {
@@ -122,6 +138,9 @@ export const ChecklistsHome = ({ navigation }: any) => {
   }
 
   const toggleChecklist = (checklistId: string) => {
+    const checklist = checklists.find(c => c.id === checklistId)
+    const isExpanding = !expandedChecklists[checklistId]
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'toggle_checklist_clicked', eventTypes.BUTTON_CLICK, { title: checklist?.title, expanded: isExpanding }, currentLocale)
     setExpandedChecklists(prev => ({ ...prev, [checklistId]: !prev[checklistId] }))
   }
 

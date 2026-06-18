@@ -1,5 +1,21 @@
-import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
-import {Image, LayoutChangeEvent, PanResponder, Text, TouchableOpacity, View} from "react-native";
+import React, {useEffect, useMemo, useRef, useState} from "react";
+import {Dimensions, Image, LayoutChangeEvent, Modal, PanResponder, ScrollView, Text, TouchableOpacity, View} from "react-native";
+import Constants from "expo-constants";
+import { useAuth } from "../../contexts/AuthContext";
+import { useAstroGear } from "../../contexts/GearContext";
+import { getTelescopes } from "../../helpers/scripts/gear/telescopes";
+import { getEyepieces } from "../../helpers/scripts/gear/eyepieces";
+import { getCameras } from "../../helpers/scripts/gear/cameras";
+import { Telescope } from "../../helpers/types/gear/Telescope";
+import { Eyepiece } from "../../helpers/types/gear/Eyepiece";
+import { Camera } from "../../helpers/types/gear/Camera";
+import {
+  computeMagnification,
+  computeTFOV,
+  computeCameraValues,
+} from "../../helpers/scripts/simulator/computeSimulatorValues";
+import { GearSelector, BarlowFactor, InstrumentMode } from "../simulator/GearSelector";
+import { routes } from "../../helpers/routes";
 import {LinearGradient} from "expo-linear-gradient";
 import {planetariumUIStyles} from "../../styles/components/skymap/planetariumUI";
 import {useSettings} from "../../contexts/AppSettingsContext";
@@ -9,6 +25,7 @@ import {ComputedObjectInfos} from "../../helpers/types/objects/ComputedObjectInf
 import {DSO} from "../../helpers/types/DSO";
 import {Star} from "../../helpers/types/Star";
 import {GlobalPlanet} from "../../helpers/types/GlobalPlanet";
+import {SpecialSkyObject} from "../../helpers/types/SpecialSkyObject";
 import VisibilityGraph from "../graphs/VisibilityGraph";
 import SimpleButton from "../commons/buttons/SimpleButton";
 import SimpleBadge from "../badges/SimpleBadge";
@@ -35,21 +52,43 @@ interface PlanetariumUIProps {
   onShowDSO: () => void;
   onShowCompassLabels: () => void;
   onCenterObject: () => void;
-  onSelectObject: (obj: DSO | GlobalPlanet | Star) => void;
+  onSelectObject: (obj: DSO | GlobalPlanet | Star | SpecialSkyObject) => void;
+  onSelectFromSearch: (obj: DSO | GlobalPlanet | Star | SpecialSkyObject) => void;
   onShowAtmosphere?: () => void;
+  onShowStarLabels?: () => void;
+  onShowSolarSystemLabels?: () => void;
+  onToggleFocusedConstellation?: () => void;
+  isFocusedConstellationOn?: boolean;
   isFollowing: boolean;
   onToggleFollow: () => void;
+  cameraFovDeg: number;
   timelineDate: Dayjs;
+  onSeekTimeline: (date: Dayjs) => void;
+  onAdjustTimeline: (unit: 'second' | 'minute' | 'hour' | 'day' | 'month' | 'year', delta: number) => void;
   onChangeTimelineDate: (next: Dayjs) => void;
   onResetTimelineDate: () => void;
   onToggleTimelinePlay: () => void;
   isTimelinePlaying: boolean;
 }
 
-export default function PlanetariumUI({ navigation, infos, onShowGround, onShowConstellations, onShowConstellationLabels, onShowAzGrid, onShowEqGrid, onShowDSO, onShowPlanets, onShowCompassLabels, onCenterObject, onSelectObject, onShowAtmosphere, isFollowing, onToggleFollow, timelineDate, onChangeTimelineDate, onResetTimelineDate, onToggleTimelinePlay, isTimelinePlaying }: PlanetariumUIProps) {
+export default function PlanetariumUI({ navigation, infos, onShowGround, onShowConstellations, onShowConstellationLabels, onShowAzGrid, onShowEqGrid, onShowDSO, onShowPlanets, onShowCompassLabels, onCenterObject, onSelectObject, onSelectFromSearch, onShowAtmosphere, onShowStarLabels, onShowSolarSystemLabels, onToggleFocusedConstellation, isFocusedConstellationOn = true, isFollowing, onToggleFollow, cameraFovDeg, timelineDate, onSeekTimeline, onAdjustTimeline, onChangeTimelineDate, onResetTimelineDate, onToggleTimelinePlay, isTimelinePlaying }: PlanetariumUIProps) {
 
   const {currentUserLocation} = useSettings();
   const {currentLocale} = useTranslation();
+  const { currentUser } = useAuth();
+  const { currentGear } = useAstroGear();
+
+  // ── FOV overlay state ────────────────────────────────────────────────────────
+  const [showFovOverlay, setShowFovOverlay] = useState(false);
+  const [showFovGearPicker, setShowFovGearPicker] = useState(false);
+  const [fovTelescopes, setFovTelescopes] = useState<Telescope[]>([]);
+  const [fovEyepieces, setFovEyepieces] = useState<Eyepiece[]>([]);
+  const [fovCameras, setFovCameras] = useState<Camera[]>([]);
+  const [fovTelescope, setFovTelescope] = useState<Telescope | null>(null);
+  const [fovEyepiece, setFovEyepiece] = useState<Eyepiece | null>(null);
+  const [fovCamera, setFovCamera] = useState<Camera | null>(null);
+  const [fovInstrumentMode, setFovInstrumentMode] = useState<InstrumentMode>('eyepiece');
+  const [fovBarlowFactor, setFovBarlowFactor] = useState<BarlowFactor>(1);
   const [currentTime, setCurrentTime] = useState<string>(timelineDate.format('HH:mm'));
   const [isNightTime, setIsNightTime] = useState<boolean>(false);
   const displayAnchorRef = useRef<Dayjs>(timelineDate);
@@ -57,12 +96,69 @@ export default function PlanetariumUI({ navigation, infos, onShowGround, onShowC
   const clockRafRef = useRef<number | null>(null);
   const lastClockStringRef = useRef<string>(currentTime);
   const lastIsNightRef = useRef<boolean>(false);
-  const SLIDER_RANGE_HOURS = 12;
-  const sliderAnchorRef = useRef<Dayjs>(dayjs());
-  const [sliderOffsetHours, setSliderOffsetHours] = useState<number>(0);
   const [sliderWidth, setSliderWidth] = useState<number>(0);
-  const sliderFrameRef = useRef<number | null>(null);
-  const pendingSliderRatioRef = useRef<number | null>(null);
+  const sliderWidthRef = useRef<number>(0);
+  const sliderDayRef = useRef<Dayjs>(timelineDate.startOf('day'));
+  const [sliderRatio, setSliderRatio] = useState<number>(0);
+  const sliderRatioRef = useRef<number>(0);
+  const isDraggingRef = useRef<boolean>(false);
+  const dragStartRatioRef = useRef<number>(0);
+
+  // Load gear on mount and pre-select from current active gear
+  useEffect(() => {
+    if (!currentUser?.uid) return;
+    (async () => {
+      const [scopes, eps, cams] = await Promise.all([
+        getTelescopes(currentUser.uid),
+        getEyepieces(currentUser.uid),
+        getCameras(currentUser.uid),
+      ]);
+      setFovTelescopes(scopes);
+      setFovEyepieces(eps);
+      setFovCameras(cams);
+      const activeScope = currentGear?.telescope ? scopes.find(s => s.id === currentGear.telescope) : scopes[0] ?? null;
+      const activeEp    = currentGear?.eyepiece   ? eps.find(e => e.id === currentGear.eyepiece)     : eps[0]   ?? null;
+      const activeCam   = currentGear?.camera      ? cams.find(c => c.id === currentGear.camera)      : cams[0]  ?? null;
+      if (activeScope) setFovTelescope(activeScope);
+      if (activeEp)    setFovEyepiece(activeEp);
+      if (activeCam)   setFovCamera(activeCam);
+    })();
+  }, [currentUser?.uid]);
+
+  // Compute overlay pixel dimensions from gear + current 3D camera FOV
+  const fovOverlay = useMemo(() => {
+    if (!fovTelescope) return null;
+    const H = Dimensions.get('window').height;
+    const perspPx = (deg: number) =>
+      H * Math.tan((deg / 2) * Math.PI / 180) / Math.tan((cameraFovDeg / 2) * Math.PI / 180);
+
+    if (fovInstrumentMode === 'eyepiece' && fovEyepiece) {
+      const G    = computeMagnification(fovTelescope.focalLength, fovEyepiece.focalLength, fovBarlowFactor);
+      const tfov = computeTFOV(fovEyepiece.apparentFieldOfView, G);
+      return { kind: 'eyepiece' as const, diameter: perspPx(tfov), tfov };
+    }
+    if (fovInstrumentMode === 'camera' && fovCamera) {
+      const cv = computeCameraValues(
+        fovTelescope.focalLength,
+        fovCamera.sensorSize.width,
+        fovCamera.sensorSize.height,
+        fovCamera.pixelSize,
+        fovBarlowFactor,
+      );
+      return { kind: 'camera' as const, widthPx: perspPx(cv.fovWidthDeg), heightPx: perspPx(cv.fovHeightDeg), fovWidth: cv.fovWidthDeg, fovHeight: cv.fovHeightDeg };
+    }
+    return null;
+  }, [fovTelescope, fovEyepiece, fovCamera, fovInstrumentMode, fovBarlowFactor, cameraFovDeg]);
+
+  const hasFovGear = fovTelescope !== null &&
+    (fovInstrumentMode === 'eyepiece' ? fovEyepiece !== null : fovCamera !== null);
+
+  const formatFovAngle = (deg: number) => {
+    if (deg >= 1) return `${deg.toFixed(2)}°`;
+    const arcmin = deg * 60;
+    if (arcmin >= 1) return `${arcmin.toFixed(1)}'`;
+    return `${(arcmin * 60).toFixed(0)}"`;
+  };
 
   const [showLayerModal, setShowLayerModal] = useState<boolean>(false);
   const [showSearchBar, setShowSearchBar] = useState<boolean>(false);
@@ -121,23 +217,33 @@ export default function PlanetariumUI({ navigation, infos, onShowGround, onShowC
     };
   }, [currentUserLocation, isTimelinePlaying]);
 
+  // Keep sliderDayRef in sync with the calendar date (not the time).
   useEffect(() => {
-    const anchor = sliderAnchorRef.current;
-    const deltaMinutes = timelineDate.diff(anchor, 'minute');
-    const clampedMinutes = Math.min(Math.max(deltaMinutes, -SLIDER_RANGE_HOURS * 60), SLIDER_RANGE_HOURS * 60);
-    setSliderOffsetHours(clampedMinutes / 60);
-  }, [SLIDER_RANGE_HOURS, timelineDate]);
+    sliderDayRef.current = timelineDate.startOf('day');
+  }, [timelineDate]);
+
+  // Sync thumb position from parent when not dragging.
+  useEffect(() => {
+    if (isDraggingRef.current) return;
+    const mins = timelineDate.diff(timelineDate.startOf('day'), 'minute');
+    const r = Math.min(Math.max(mins / (24 * 60), 0), 1);
+    sliderRatioRef.current = r;
+    setSliderRatio(r);
+  }, [timelineDate]);
 
   const observer = useMemo(() => {
     if (!currentUserLocation) return null;
     return { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon };
   }, [currentUserLocation]);
 
+  // Recompute sun times once per day, not every second.
+  const dateDayStr = timelineDate.format('YYYY-MM-DD');
   const sunTimes = useMemo(() => {
     if (!observer) return { sunrise: null as Dayjs | null, sunset: null as Dayjs | null };
     const sunData = getSunData(timelineDate, observer);
     return { sunrise: sunData.visibility.sunrise, sunset: sunData.visibility.sunset };
-  }, [observer, timelineDate]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [observer, dateDayStr]);
 
   useEffect(() => {
     // console.log("[PlanetariumUI] Infos updated:", infos);
@@ -167,65 +273,64 @@ export default function PlanetariumUI({ navigation, infos, onShowGround, onShowC
   }
 
   const handleShowTimeline = () => {
-    if (!showTimelineModal) {
-      sliderAnchorRef.current = timelineDate;
-    }
     setShowTimelineModal(!showTimelineModal);
     setShowSearchBar(false);
     setShowLayerModal(false);
   }
 
   const adjustTimeline = (unit: 'second' | 'minute' | 'hour' | 'day' | 'month' | 'year', delta: number) => {
-    onChangeTimelineDate(timelineDate.add(delta, unit));
+    onAdjustTimeline(unit, delta);
   };
 
   const handleResetTimeline = () => {
     onResetTimelineDate();
-    setShowTimelineModal(false);
   };
 
   const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
 
-  const sliderPercent = useMemo(() => {
-    return clamp((sliderOffsetHours + SLIDER_RANGE_HOURS) / (SLIDER_RANGE_HOURS * 2), 0, 1);
-  }, [SLIDER_RANGE_HOURS, sliderOffsetHours]);
-
   const handleSliderLayout = (event: LayoutChangeEvent) => {
-    setSliderWidth(event.nativeEvent.layout.width);
+    const w = event.nativeEvent.layout.width;
+    setSliderWidth(w);
+    sliderWidthRef.current = w;
   };
 
-  const setTimelineFromRatio = useCallback((ratio: number) => {
-    const clamped = clamp(ratio, 0, 1);
-    pendingSliderRatioRef.current = clamped;
-
-    if (sliderFrameRef.current !== null) return;
-
-    sliderFrameRef.current = requestAnimationFrame(() => {
-      const nextRatio = pendingSliderRatioRef.current;
-      pendingSliderRatioRef.current = null;
-      sliderFrameRef.current = null;
-      if (nextRatio === null) return;
-
-      const minutesFromAnchor = (nextRatio * SLIDER_RANGE_HOURS * 2 - SLIDER_RANGE_HOURS) * 60;
-      const nextDate = sliderAnchorRef.current.add(minutesFromAnchor, 'minute');
-      onChangeTimelineDate(nextDate);
-    });
-  }, [SLIDER_RANGE_HOURS, onChangeTimelineDate]);
-
+  // PanResponder: updates local thumb state + calls onSeekTimeline (ref write only,
+  // no parent state update). onChangeTimelineDate fires once on release.
   const sliderPanResponder = useMemo(() => PanResponder.create({
     onStartShouldSetPanResponder: () => true,
     onMoveShouldSetPanResponder: () => true,
     onPanResponderGrant: (evt) => {
-      if (!sliderWidth) return;
-      const ratio = clamp(evt.nativeEvent.locationX / sliderWidth, 0, 1);
-      setTimelineFromRatio(ratio);
+      const w = sliderWidthRef.current;
+      if (!w) return;
+      isDraggingRef.current = true;
+      const ratio = Math.min(Math.max(evt.nativeEvent.locationX / w, 0), 1);
+      dragStartRatioRef.current = ratio;
+      sliderRatioRef.current = ratio;
+      setSliderRatio(ratio);
+      const date = sliderDayRef.current.add(ratio * 24 * 60, 'minute');
+      displayAnchorRef.current = date;
+      wallClockAnchorRef.current = Date.now();
+      onSeekTimeline(date);
     },
-    onPanResponderMove: (evt) => {
-      if (!sliderWidth) return;
-      const ratio = clamp(evt.nativeEvent.locationX / sliderWidth, 0, 1);
-      setTimelineFromRatio(ratio);
+    onPanResponderMove: (_evt, gestureState) => {
+      const w = sliderWidthRef.current;
+      if (!w) return;
+      // gestureState.dx = cumulative displacement since grant — reliable regardless
+      // of which child element the finger is currently over.
+      const ratio = Math.min(Math.max(dragStartRatioRef.current + gestureState.dx / w, 0), 1);
+      sliderRatioRef.current = ratio;
+      setSliderRatio(ratio);
+      const date = sliderDayRef.current.add(ratio * 24 * 60, 'minute');
+      displayAnchorRef.current = date;
+      wallClockAnchorRef.current = Date.now();
+      onSeekTimeline(date);
     },
-  }), [setTimelineFromRatio, sliderWidth]);
+    onPanResponderRelease: () => {
+      isDraggingRef.current = false;
+      const date = sliderDayRef.current.add(sliderRatioRef.current * 24 * 60, 'minute');
+      onChangeTimelineDate(date);
+    },
+  }), [onSeekTimeline, onChangeTimelineDate]);
 
   const timelinePhaseLabel = useMemo(() => {
     const { sunrise, sunset } = sunTimes;
@@ -237,59 +342,37 @@ export default function PlanetariumUI({ navigation, infos, onShowGround, onShowC
     return 'Night';
   }, [sunTimes, timelineDate]);
 
+  // Gradient only recomputes when the day changes (sunTimes changes once per day).
   const timelineGradient = useMemo(() => {
-    const nightColor = '#09192c';
-    const dayColor = '#09192c'; // remove bright daylight color from timeline
-    const twilightColor = '#1bb5ff';
-
-    const rangeStart = sliderAnchorRef.current.subtract(SLIDER_RANGE_HOURS, 'hour');
-    const rangeEnd = sliderAnchorRef.current.add(SLIDER_RANGE_HOURS, 'hour');
-    const totalMinutes = Math.max(rangeEnd.diff(rangeStart, 'minute'), 1);
+    const nightColor = '#070d1a';
+    const twilightColor = '#1e4080';
+    const dayColor = '#ffffff';
     const { sunrise, sunset } = sunTimes;
 
     if (!sunrise || !sunset) {
-      const isNightPhase = observer ? isNight(timelineDate.toDate(), observer) : true;
-      return {
-        colors: isNightPhase ? [nightColor, nightColor] : [dayColor, dayColor],
-        locations: [0, 1]
-      };
+      return { colors: [nightColor, nightColor] as string[], locations: [0, 1] as number[] };
     }
 
-    const sunrisePos = clamp(sunrise.diff(rangeStart, 'minute') / totalMinutes, 0, 1);
-    const sunsetPos = clamp(sunset.diff(rangeStart, 'minute') / totalMinutes, 0, 1);
-    const dawnStart = clamp(sunrisePos - 0.05, 0, 1);
-    const dawnEnd = clamp(sunrisePos + 0.05, 0, 1);
-    const duskStart = clamp(sunsetPos - 0.05, 0, 1);
-    const duskEnd = clamp(sunsetPos + 0.05, 0, 1);
+    const dayStart = sunrise.startOf('day');
+    const totalMinutes = 24 * 60;
+    const tw = 0.03;
+    const srPos = Math.min(Math.max(sunrise.diff(dayStart, 'minute') / totalMinutes, 0), 1);
+    const ssPos = Math.min(Math.max(sunset.diff(dayStart, 'minute') / totalMinutes, 0), 1);
 
     return {
-      colors: [
-        nightColor,
-        twilightColor,
-        dayColor,
-        dayColor,
-        twilightColor,
-        nightColor,
-      ],
+      colors: [nightColor, twilightColor, dayColor, dayColor, twilightColor, nightColor] as string[],
       locations: [
         0,
-        dawnStart,
-        dawnEnd,
-        duskStart,
-        duskEnd,
+        Math.min(Math.max(srPos - tw, 0), 1),
+        Math.min(Math.max(srPos + tw, 0), 1),
+        Math.min(Math.max(ssPos - tw, 0), 1),
+        Math.min(Math.max(ssPos + tw, 0), 1),
         1,
-      ]
+      ] as number[],
     };
-  }, [SLIDER_RANGE_HOURS, observer, sunTimes, timelineDate]);
+  }, [sunTimes]);
 
-  const sliderThumbLeft = sliderWidth ? sliderPercent * sliderWidth : sliderPercent * 240;
-  useEffect(() => {
-    return () => {
-      if (sliderFrameRef.current !== null) {
-        cancelAnimationFrame(sliderFrameRef.current);
-      }
-    };
-  }, []);
+  const sliderThumbLeft = sliderWidth ? sliderRatio * sliderWidth : 0;
 
   const objectInfoContent = useMemo(() => {
     if (!objectInfos) return null;
@@ -436,7 +519,7 @@ export default function PlanetariumUI({ navigation, infos, onShowGround, onShowC
   }, [objectInfos, currentInfoTab, onCenterObject, isFollowing, onToggleFollow]);
 
   return (
-    <View style={planetariumUIStyles.container}>
+    <View style={planetariumUIStyles.container} pointerEvents="box-none">
       <TouchableOpacity style={[planetariumUIStyles.container.uiButton, planetariumUIStyles.container.buttons.back]} onPress={() => navigation.goBack()}>
         <Image style={[planetariumUIStyles.container.uiButton.icon, {transform: [{ rotate: '90deg' }]}]} source={require('../../../assets/icons/FiChevronDown.png')} />
       </TouchableOpacity>
@@ -457,11 +540,129 @@ export default function PlanetariumUI({ navigation, infos, onShowGround, onShowC
         )
       }
 
+      {/* ── FOV gear picker button ────────────────────────────────────────────── */}
+      <TouchableOpacity
+        style={[
+          planetariumUIStyles.container.uiButton,
+          {
+            top: Constants.statusBarHeight
+              ? Constants.statusBarHeight + 50 * 4 + 10
+              : 50 * 4 + 10,
+          },
+        ]}
+        onPress={() => setShowFovGearPicker(true)}
+      >
+        <Image
+          style={[planetariumUIStyles.container.uiButton.icon, hasFovGear && { tintColor: 'rgba(255,255,255,0.9)' }]}
+          source={require('../../../assets/icons/FiTelescope.png')}
+        />
+      </TouchableOpacity>
+
+      {/* ── FOV overlay toggle (only when gear is configured) ────────────────── */}
+      {hasFovGear && (
+        <TouchableOpacity
+          style={[
+            planetariumUIStyles.container.uiButton,
+            {
+              top: Constants.statusBarHeight
+                ? Constants.statusBarHeight + 50 * 5 + 10
+                : 50 * 5 + 10,
+              borderColor: showFovOverlay ? 'rgba(255,255,255,0.6)' : 'rgba(255,255,255,0.15)',
+              backgroundColor: showFovOverlay ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.7)',
+            },
+          ]}
+          onPress={() => setShowFovOverlay(v => !v)}
+        >
+          <Image
+            style={[planetariumUIStyles.container.uiButton.icon, showFovOverlay && { tintColor: app_colors.white }]}
+            source={require('../../../assets/icons/FiCircle.png')}
+          />
+        </TouchableOpacity>
+      )}
+
+      {/* ── FOV overlay circle / rectangle ───────────────────────────────────── */}
+      {showFovOverlay && fovOverlay && (() => {
+        const BRACKET = 14;
+
+        if (fovOverlay.kind === 'eyepiece') {
+          const d = fovOverlay.diameter;
+          return (
+            <View pointerEvents="none" style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, alignItems: 'center', justifyContent: 'center', zIndex: 9 }}>
+              <View style={{ width: d, height: d, borderRadius: d / 2, borderWidth: 1.5, borderColor: 'rgba(255,255,255,0.55)' }} />
+              <Text style={fovLabelStyle}>{formatFovAngle(fovOverlay.tfov)}</Text>
+            </View>
+          );
+        }
+
+        const rW = fovOverlay.widthPx;
+        const rH = fovOverlay.heightPx;
+        const corners = ['tl', 'tr', 'bl', 'br'] as const;
+        return (
+          <View pointerEvents="none" style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, alignItems: 'center', justifyContent: 'center', zIndex: 9 }}>
+            <View style={{ width: rW, height: rH }}>
+              <View style={{ flex: 1, borderWidth: 1, borderColor: 'rgba(255,255,255,0.45)' }} />
+              {corners.map(c => (
+                <View key={c} style={{
+                  position: 'absolute',
+                  width: BRACKET, height: BRACKET,
+                  top: c[0] === 't' ? -1 : undefined, bottom: c[0] === 'b' ? -1 : undefined,
+                  left: c[1] === 'l' ? -1 : undefined, right: c[1] === 'r' ? -1 : undefined,
+                  borderTopWidth:    c[0] === 't' ? 2.5 : 0,
+                  borderBottomWidth: c[0] === 'b' ? 2.5 : 0,
+                  borderLeftWidth:   c[1] === 'l' ? 2.5 : 0,
+                  borderRightWidth:  c[1] === 'r' ? 2.5 : 0,
+                  borderColor: 'rgba(255,255,255,0.85)',
+                }} />
+              ))}
+            </View>
+            <Text style={fovLabelStyle}>
+              {formatFovAngle(fovOverlay.fovWidth)} × {formatFovAngle(fovOverlay.fovHeight)}
+            </Text>
+          </View>
+        );
+      })()}
+
+      {/* ── FOV gear picker modal ─────────────────────────────────────────────── */}
+      <Modal visible={showFovGearPicker} transparent animationType="slide" onRequestClose={() => setShowFovGearPicker(false)}>
+        <View style={{ flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,0.6)' }}>
+          <View style={{ backgroundColor: '#0d0d0d', borderTopLeftRadius: 20, borderTopRightRadius: 20, paddingHorizontal: 16, paddingTop: 16, maxHeight: '80%' }}>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+              <Text style={{ color: app_colors.white, fontFamily: 'GilroyBlack', fontSize: 18 }}>Champ de vue</Text>
+              <TouchableOpacity onPress={() => setShowFovGearPicker(false)}>
+                <Text style={{ color: app_colors.white, fontSize: 18, opacity: 0.6 }}>✕</Text>
+              </TouchableOpacity>
+            </View>
+            <ScrollView showsVerticalScrollIndicator={false}>
+              <GearSelector
+                telescopes={fovTelescopes}
+                eyepieces={fovEyepieces}
+                cameras={fovCameras}
+                selectedTelescope={fovTelescope}
+                selectedEyepiece={fovEyepiece}
+                selectedCamera={fovCamera}
+                instrumentMode={fovInstrumentMode}
+                barlowFactor={fovBarlowFactor}
+                onSelectTelescope={setFovTelescope}
+                onSelectEyepiece={setFovEyepiece}
+                onSelectCamera={setFovCamera}
+                onInstrumentModeChange={setFovInstrumentMode}
+                onSelectBarlow={setFovBarlowFactor}
+                onGoToGear={() => {
+                  setShowFovGearPicker(false);
+                  navigation.navigate(routes.auth.profile.astroGearManagement.home.path);
+                }}
+              />
+              <View style={{ height: 30 }} />
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
+
       {
         showSearchBar && (
           <PlanetariumSearchModal
             onClose={() => setShowSearchBar(false)}
-            onSelect={(obj) => onSelectObject(obj)}
+            onSelect={(obj) => onSelectFromSearch(obj)}
             navigation={navigation}
             timelineDate={timelineDate}
           />
@@ -509,6 +710,35 @@ export default function PlanetariumUI({ navigation, infos, onShowGround, onShowC
                 <Text style={planetariumUIStyles.container.layersModal.button.text}>Atmosphère</Text>
               </TouchableOpacity>
             )}
+            {onShowStarLabels && (
+              <TouchableOpacity style={planetariumUIStyles.container.layersModal.button} onPress={() => onShowStarLabels()}>
+                <Image style={planetariumUIStyles.container.layersModal.button.icon} source={require('../../../assets/icons/FiStar.png')} />
+                <Text style={planetariumUIStyles.container.layersModal.button.text}>Noms étoiles</Text>
+              </TouchableOpacity>
+            )}
+            {onShowSolarSystemLabels && (
+              <TouchableOpacity style={planetariumUIStyles.container.layersModal.button} onPress={() => onShowSolarSystemLabels()}>
+                <Image style={planetariumUIStyles.container.layersModal.button.icon} source={require('../../../assets/icons/FiPlanet.png')} />
+                <Text style={planetariumUIStyles.container.layersModal.button.text}>Noms planètes</Text>
+              </TouchableOpacity>
+            )}
+            {onToggleFocusedConstellation && (
+              <TouchableOpacity style={planetariumUIStyles.container.layersModal.button} onPress={() => onToggleFocusedConstellation()}>
+                <Image
+                  style={[
+                    planetariumUIStyles.container.layersModal.button.icon,
+                    { tintColor: isFocusedConstellationOn ? app_colors.white : app_colors.white_twenty },
+                  ]}
+                  source={require('../../../assets/icons/FiViewPoint.png')}
+                />
+                <Text style={[
+                  planetariumUIStyles.container.layersModal.button.text,
+                  { color: isFocusedConstellationOn ? app_colors.white_sixty : app_colors.white_twenty },
+                ]}>
+                  Visée auto
+                </Text>
+              </TouchableOpacity>
+            )}
           </View>
         )
       }
@@ -516,7 +746,7 @@ export default function PlanetariumUI({ navigation, infos, onShowGround, onShowC
       {
         showTimelineModal && (
           <View pointerEvents="box-none" style={planetariumUIStyles.container.timelineModal}>
-            <View pointerEvents="box-only" style={planetariumUIStyles.container.timelineModal.compactCard}>
+            <View style={planetariumUIStyles.container.timelineModal.compactCard}>
               <View style={planetariumUIStyles.container.timelineModal.row}>
                 <View style={planetariumUIStyles.container.timelineModal.column}>
                   <View style={planetariumUIStyles.container.timelineModal.arrowRow}>
@@ -564,20 +794,63 @@ export default function PlanetariumUI({ navigation, infos, onShowGround, onShowC
                 </View>
               </View>
 
-              {/* <View style={planetariumUIStyles.container.timelineModal.sliderBlock}>
+              <View style={planetariumUIStyles.container.timelineModal.sliderBlock}>
                 <View style={planetariumUIStyles.container.timelineModal.sliderLabels}>
-                  <Text style={planetariumUIStyles.container.timelineModal.sliderLabel}>-12h</Text>
-                  <Text style={planetariumUIStyles.container.timelineModal.sliderLabel}>+12h</Text>
+                  <Text style={planetariumUIStyles.container.timelineModal.sliderLabel}>00:00</Text>
+                  <Text style={planetariumUIStyles.container.timelineModal.sliderLabel}>12:00</Text>
+                  <Text style={planetariumUIStyles.container.timelineModal.sliderLabel}>23:59</Text>
                 </View>
+                {/*
+                  Hit area: 36px tall for easy touch, NO overflow:hidden so the
+                  thumb is never clipped. Only the inner gradient strip clips.
+                */}
                 <View
-                  style={planetariumUIStyles.container.timelineModal.sliderTrack}
+                  style={{ width: '100%', height: 36, justifyContent: 'center' }}
                   onLayout={handleSliderLayout}
                   {...sliderPanResponder.panHandlers}
                 >
-                  <View style={[planetariumUIStyles.container.timelineModal.sliderThumb, { left: sliderThumbLeft - 10 }]} />
+                  {/* Gradient track — overflow:hidden only here for rounded corners */}
+                  <View style={{ height: 8, borderRadius: 10, overflow: 'hidden' }}>
+                    <LinearGradient
+                      style={{ position: 'absolute', left: 0, right: 0, top: 0, bottom: 0 }}
+                      colors={timelineGradient.colors as any}
+                      locations={timelineGradient.locations as any}
+                      start={{ x: 0, y: 0 }}
+                      end={{ x: 1, y: 0 }}
+                    />
+                    {sunTimes.sunrise && sliderWidth > 0 && (
+                      <View style={{
+                        position: 'absolute',
+                        left: clamp(sunTimes.sunrise.diff(timelineDate.startOf('day'), 'minute') / (24 * 60), 0, 1) * sliderWidth - 1,
+                        top: 0, bottom: 0, width: 2,
+                        backgroundColor: 'rgba(255, 190, 60, 0.9)',
+                      }} />
+                    )}
+                    {sunTimes.sunset && sliderWidth > 0 && (
+                      <View style={{
+                        position: 'absolute',
+                        left: clamp(sunTimes.sunset.diff(timelineDate.startOf('day'), 'minute') / (24 * 60), 0, 1) * sliderWidth - 1,
+                        top: 0, bottom: 0, width: 2,
+                        backgroundColor: 'rgba(255, 110, 30, 0.9)',
+                      }} />
+                    )}
+                  </View>
+                  {/* Thumb lives outside the clipped track so it's never cut off */}
+                  <View style={[
+                    planetariumUIStyles.container.timelineModal.sliderThumb,
+                    { left: sliderThumbLeft - 10, top: 8, borderWidth: 2, borderColor: app_colors.white },
+                  ]} />
                 </View>
-                <Text style={planetariumUIStyles.container.timelineModal.sliderStatus}>{timelinePhaseLabel}</Text>
-              </View> */}
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 2 }}>
+                  <Text style={planetariumUIStyles.container.timelineModal.sliderLabel}>
+                    {sunTimes.sunrise ? `↑ ${sunTimes.sunrise.format('HH:mm')}` : ''}
+                  </Text>
+                  <Text style={planetariumUIStyles.container.timelineModal.sliderStatus}>{timelinePhaseLabel}</Text>
+                  <Text style={planetariumUIStyles.container.timelineModal.sliderLabel}>
+                    {sunTimes.sunset ? `↓ ${sunTimes.sunset.format('HH:mm')}` : ''}
+                  </Text>
+                </View>
+              </View>
             </View>
           </View>
         )
@@ -598,3 +871,14 @@ export default function PlanetariumUI({ navigation, infos, onShowGround, onShowC
     </View>
   );
 }
+
+const fovLabelStyle = {
+  color: 'rgba(255,255,255,0.6)',
+  fontFamily: 'DMMonoRegular',
+  fontSize: 10,
+  backgroundColor: 'rgba(0,0,0,0.45)',
+  paddingHorizontal: 6,
+  paddingVertical: 2,
+  borderRadius: 4,
+  marginTop: 5,
+};

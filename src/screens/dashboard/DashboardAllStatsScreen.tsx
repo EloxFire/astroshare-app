@@ -23,7 +23,7 @@ export const DashboardAllStatsScreen = ({ navigation }: any) => {
   const { currentLocale } = useTranslation()
 
   useEffect(() => {
-    sendAnalyticsEvent(currentUser, currentUserLocation, 'Dashboard detailed statistics screen view', eventTypes.SCREEN_VIEW, {}, currentLocale)
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'dashboard_all_stats_screen_view', eventTypes.SCREEN_VIEW, {}, currentLocale)
   }, [])
 
 
@@ -108,7 +108,10 @@ export const DashboardAllStatsScreen = ({ navigation }: any) => {
                 fullWidth
                 align="center"
                 active={selectedMetric === filter.key}
-                onPress={() => setSelectedMetric(filter.key)}
+                onPress={() => {
+                  sendAnalyticsEvent(currentUser, currentUserLocation, 'filter_stats_clicked', eventTypes.BUTTON_CLICK, { metric: filter.key }, currentLocale)
+                  setSelectedMetric(filter.key)
+                }}
                 icon={filter.icon}
                 iconColor={selectedMetric === filter.key ? app_colors.black : app_colors.white}
                 text={filter.label}

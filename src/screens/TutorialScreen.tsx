@@ -27,7 +27,7 @@ export default function TutorialScreen({ navigation }: any) {
 
   const onPressNext = () => {
     if (currentStep === tutorialScreens.length - 1) {
-      navigation.push(routes.home.path)
+      navigation.navigate(routes.home.path)
     } else {
       setCurrentStep(currentStep + 1)
     }

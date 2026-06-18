@@ -70,9 +70,18 @@ export default function SatelliteTracker({ navigation }: any) {
         <DisclaimerBar message={i18n.t('satelliteTrackers.home.disclaimer')} type='info'/>
         <View style={{ paddingBottom: 80 }}>
           <View style={satelliteTrackerHomeStyles.buttons}>
-            <ToolButton text={i18n.t('satelliteTrackers.home.buttons.25544.title', {name: KNOWN_NORAD_IDS[25544 as keyof typeof KNOWN_NORAD_IDS]})} subtitle={i18n.t('satelliteTrackers.home.buttons.25544.subtitle')} image={require('../../../assets/images/tools/isstracker.png')} onPress={() => navigation.navigate(routes.satellitesTrackers.details.path, {noradId: BASE_NORAD_IDS.ISS})} />
-            <ToolButton disabled text={i18n.t('satelliteTrackers.home.buttons.starlink.title')} subtitle={i18n.t('satelliteTrackers.home.buttons.starlink.subtitle')} image={require('../../../assets/images/tools/starlinktracker.png')} onPress={() => navigation.navigate(routes.satellitesTrackers.details.path, {noradId: null})} />
-            <ToolButton text={i18n.t('satelliteTrackers.home.buttons.48274.title', {name: KNOWN_NORAD_IDS[48274 as keyof typeof KNOWN_NORAD_IDS]})} subtitle={i18n.t('satelliteTrackers.home.buttons.48274.subtitle')} image={require('../../../assets/images/tools/tiangongtracker.png')} onPress={() => navigation.navigate(routes.satellitesTrackers.details.path, {noradId: BASE_NORAD_IDS.CSS})} />
+            <ToolButton text={i18n.t('satelliteTrackers.home.buttons.25544.title', {name: KNOWN_NORAD_IDS[25544 as keyof typeof KNOWN_NORAD_IDS]})} subtitle={i18n.t('satelliteTrackers.home.buttons.25544.subtitle')} image={require('../../../assets/images/tools/isstracker.png')} onPress={() => {
+              sendAnalyticsEvent(currentUser, currentUserLocation, 'satellite_tracker_select_iss', eventTypes.BUTTON_CLICK, {noradId: BASE_NORAD_IDS.ISS}, currentLocale)
+              navigation.navigate(routes.satellitesTrackers.details.path, {noradId: BASE_NORAD_IDS.ISS})
+            }} />
+            <ToolButton disabled text={i18n.t('satelliteTrackers.home.buttons.starlink.title')} subtitle={i18n.t('satelliteTrackers.home.buttons.starlink.subtitle')} image={require('../../../assets/images/tools/starlinktracker.png')} onPress={() => {
+              sendAnalyticsEvent(currentUser, currentUserLocation, 'satellite_tracker_select_starlink', eventTypes.BUTTON_CLICK, {noradId: null}, currentLocale)
+              navigation.navigate(routes.satellitesTrackers.details.path, {noradId: null})
+            }} />
+            <ToolButton text={i18n.t('satelliteTrackers.home.buttons.48274.title', {name: KNOWN_NORAD_IDS[48274 as keyof typeof KNOWN_NORAD_IDS]})} subtitle={i18n.t('satelliteTrackers.home.buttons.48274.subtitle')} image={require('../../../assets/images/tools/tiangongtracker.png')} onPress={() => {
+              sendAnalyticsEvent(currentUser, currentUserLocation, 'satellite_tracker_select_tiangong', eventTypes.BUTTON_CLICK, {noradId: BASE_NORAD_IDS.CSS}, currentLocale)
+              navigation.navigate(routes.satellitesTrackers.details.path, {noradId: BASE_NORAD_IDS.CSS})
+            }} />
           </View>
           <View style={satelliteTrackerHomeStyles.addContainer}>
             <Text style={satelliteTrackerHomeStyles.addContainer.title}>Mes satellites personnalisés</Text>
@@ -80,7 +89,10 @@ export default function SatelliteTracker({ navigation }: any) {
               disabled={!isProUser(currentUser)}
               text={i18n.t('satelliteTrackers.home.buttons.custom.title')}
               subtitle={i18n.t('satelliteTrackers.home.buttons.custom.subtitle')}
-              onPress={() => navigation.navigate(routes.satellitesTrackers.addCustomSatellite.path)}
+              onPress={() => {
+                sendAnalyticsEvent(currentUser, currentUserLocation, 'satellite_tracker_add_custom_satellite', eventTypes.BUTTON_CLICK, {}, currentLocale)
+                navigation.navigate(routes.satellitesTrackers.addCustomSatellite.path)
+              }}
               icon={require('../../../assets/icons/FiPlus.png')}
               isPremium={!isProUser(currentUser)}
             />
@@ -95,12 +107,18 @@ export default function SatelliteTracker({ navigation }: any) {
                           text={i18n.t('satelliteTrackers.home.buttons.customSatellite.title', {name: satellite.object_name})}
                           subtitle={i18n.t('satelliteTrackers.home.buttons.customSatellite.subtitle', {noradId: satellite.norad_id})}
                           image={require('../../../assets/images/tools/satellitesconstellation.png')}
-                          onPress={() => navigation.navigate(routes.satellitesTrackers.details.path, {noradId: satellite.norad_id})}
+                          onPress={() => {
+                            sendAnalyticsEvent(currentUser, currentUserLocation, 'satellite_tracker_select_custom_satellite', eventTypes.BUTTON_CLICK, {noradId: satellite.norad_id, name: satellite.object_name}, currentLocale)
+                            navigation.navigate(routes.satellitesTrackers.details.path, {noradId: satellite.norad_id})
+                          }}
                         />
                       </View>
                       <TouchableOpacity
                         disabled={!isProUser(currentUser)}
-                        onPress={() => handleRemoveSatellite(satellite.norad_id)}
+                        onPress={() => {
+                          sendAnalyticsEvent(currentUser, currentUserLocation, 'satellite_tracker_delete_custom_satellite', eventTypes.BUTTON_CLICK, {noradId: satellite.norad_id, name: satellite.object_name}, currentLocale)
+                          handleRemoveSatellite(satellite.norad_id)
+                        }}
                         style={satelliteTrackerHomeStyles.addContainer.deleteButton}
                         accessibilityRole="button"
                         accessibilityLabel={i18n.t('satelliteTrackers.home.buttons.customSatellite.deleteLabel', { noradId: satellite.norad_id })}

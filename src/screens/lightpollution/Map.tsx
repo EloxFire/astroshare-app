@@ -57,7 +57,6 @@ const LightPollutionMap: React.FC = ({navigation}: any) => {
 
   const mapRef = useRef<MapView | null>(null);
   const [showOverlay, setShowOverlay] = useState(true);
-  const [region, setRegion] = useState<Region>(INITIAL_REGION);
   const [selectedPosition, setSelectedPosition] = useState<{ latitude: number; longitude: number } | null>(null);
   const [pollutionData, setPollutionData] = useState<LightPollutionData | null>(null);
   const colorScaleLevels = Object.keys(lightpollution_bortle_colors)
@@ -67,24 +66,22 @@ const LightPollutionMap: React.FC = ({navigation}: any) => {
   const [detailedLegendVisible, setDetailedLegendVisible] = useState(false);
   const [searchVisible, setSearchVisible] = useState(false);
   const [searchString, setSearchString] = useState<string>('');
+  const [searchLoading, setSearchLoading] = useState(false);
 
   useEffect(() => {
     if (currentUserLocation) {
-      const region = {
+      mapRef.current?.animateToRegion({
         latitude: currentUserLocation.lat,
         longitude: currentUserLocation.lon,
         latitudeDelta: 40,
         longitudeDelta: 40,
-      };
-      setRegion(region);
-
-      // Animer la carte vers la région de l'utilisateur
-      mapRef.current?.animateToRegion(region, 1000);
-      }
+      }, 1000);
+    }
   }, [])
 
   const toggleOverlay = () => {
     setShowOverlay(!showOverlay);
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'lightpollution_map_toggle_overlay', eventTypes.BUTTON_CLICK, {showOverlay: !showOverlay}, currentLocale)
   }
 
   const handlePressMap = (event: any) => {
@@ -96,6 +93,7 @@ const LightPollutionMap: React.FC = ({navigation}: any) => {
 
   const toggleLegend = () => {
     setDetailedLegendVisible(!detailedLegendVisible);
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'lightpollution_map_toggle_legend', eventTypes.BUTTON_CLICK, {detailedLegendVisible: !detailedLegendVisible}, currentLocale)
   }
 
   const handleSearch = async () => {
@@ -103,35 +101,37 @@ const LightPollutionMap: React.FC = ({navigation}: any) => {
       return
     }
 
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'lightpollution_map_city_search', eventTypes.BUTTON_CLICK, {searchString}, currentLocale)
+    setSearchLoading(true);
+    try {
+      const cityCoords = await getCityCoords(searchString)
+      if (cityCoords.length === 0) return;
 
-    const cityCoords = await getCityCoords(searchString)
-    if (cityCoords.length === 0) return;
+      const city: LocationObject = {
+        lat: cityCoords[0].lat,
+        lon: cityCoords[0].lon,
+        common_name: cityCoords[0].local_names.fr,
+        country: cityCoords[0].country,
+        state: cityCoords[0].state || '',
+        dms: convertDDtoDMS(cityCoords[0].lat, cityCoords[0].lon)
+      }
 
-    const city: LocationObject = {
-      lat: cityCoords[0].lat,
-      lon: cityCoords[0].lon,
-      common_name: cityCoords[0].local_names.fr,
-      country: cityCoords[0].country,
-      state: cityCoords[0].state || '',
-      dms: convertDDtoDMS(cityCoords[0].lat, cityCoords[0].lon)
+      fetchPollutionData(city.lat, city.lon);
+
+      setSelectedPosition({ latitude: city.lat, longitude: city.lon });
+
+      mapRef.current?.animateToRegion({
+        latitude: city.lat,
+        longitude: city.lon,
+        latitudeDelta: 10,
+        longitudeDelta: 10,
+      }, 1000);
+
+      setSearchVisible(false);
+      setSearchString('');
+    } finally {
+      setSearchLoading(false);
     }
-
-    fetchPollutionData(city.lat, city.lon);
-
-    const region = {
-      latitude: city.lat,
-      longitude: city.lon,
-      latitudeDelta: 10,
-      longitudeDelta: 10,
-    };
-    setRegion(region);
-    setSelectedPosition({ latitude: city.lat, longitude: city.lon });
-
-    // Animer la carte vers la région de la ville recherchée
-    mapRef.current?.animateToRegion(region, 1000);
-
-    setSearchVisible(false);
-    setSearchString('');
   }
 
   const fetchPollutionData = useCallback(async (lat: number, lon: number) => {
@@ -187,9 +187,9 @@ const LightPollutionMap: React.FC = ({navigation}: any) => {
         ref={mapRef}
         style={lightPollutionMapStyles.map}
         customMapStyle={mapStyle}
+        userInterfaceStyle="dark"
         provider={Platform.OS === 'android' ? PROVIDER_GOOGLE : undefined}
         initialRegion={INITIAL_REGION}
-        region={region}
         showsUserLocation
         showsMyLocationButton={false}
         rotateEnabled={false}
@@ -201,7 +201,8 @@ const LightPollutionMap: React.FC = ({navigation}: any) => {
         {showOverlay && (
           <UrlTile
             urlTemplate={LIGHT_POLLUTION_TILE_URL}
-            maximumZ={MAX_ZOOM_LEVEL}
+            maximumZ={MAX_ZOOM_LEVEL + 3}
+            maximumNativeZ={MAX_ZOOM_LEVEL}
             minimumZ={MIN_ZOOM_LEVEL}
             zIndex={10}
             opacity={0.6}
@@ -248,11 +249,15 @@ const LightPollutionMap: React.FC = ({navigation}: any) => {
                 search={handleSearch}
                 keyboardType='default'
                 additionalStyles={lightPollutionMapStyles.controlsContainer.header.searchInput}
+                loading={searchLoading}
               />
             )
           }
           <View style={lightPollutionMapStyles.controlsContainer.header.buttons}>
-            <TouchableOpacity style={lightPollutionMapStyles.controlsContainer.header.buttons.button} onPress={() => setSearchVisible(!searchVisible)}>
+            <TouchableOpacity style={lightPollutionMapStyles.controlsContainer.header.buttons.button} onPress={() => {
+              setSearchVisible(!searchVisible)
+              sendAnalyticsEvent(currentUser, currentUserLocation, 'lightpollution_map_toggle_search', eventTypes.BUTTON_CLICK, {searchVisible: !searchVisible}, currentLocale)
+            }}>
               <Image source={require('../../../assets/icons/FiSearch.png')} style={lightPollutionMapStyles.controlsContainer.header.buttons.button.icon} />
             </TouchableOpacity>
 
@@ -262,7 +267,10 @@ const LightPollutionMap: React.FC = ({navigation}: any) => {
 
             {
               selectedPosition && (
-                <TouchableOpacity style={lightPollutionMapStyles.controlsContainer.header.buttons.button} onPress={() => setSelectedPosition(null)}>
+                <TouchableOpacity style={lightPollutionMapStyles.controlsContainer.header.buttons.button} onPress={() => {
+                  setSelectedPosition(null)
+                  sendAnalyticsEvent(currentUser, currentUserLocation, 'lightpollution_map_reset_position', eventTypes.BUTTON_CLICK, {}, currentLocale)
+                }}>
                   <Image source={require('../../../assets/icons/FiRepeat.png')} style={lightPollutionMapStyles.controlsContainer.header.buttons.button.icon} />
                 </TouchableOpacity>
               )

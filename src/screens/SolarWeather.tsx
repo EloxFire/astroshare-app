@@ -87,6 +87,7 @@ export default function SolarWeather({ navigation }: any) {
   }, [])
 
   const handleChangeSunImage = (filter: ESunFilter, type: 'img' | 'video') => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'solar_weather_sun_filter_change', eventTypes.BUTTON_CLICK, { filter, type }, currentLocale)
     setCurrentImageUrl(undefined)
     setLoadingImage(true)
 
@@ -99,6 +100,7 @@ export default function SolarWeather({ navigation }: any) {
   }
 
   const handleChangeCMEImage = (filter: ECmeFilters, type: 'img' | 'video') => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'solar_weather_cme_filter_change', eventTypes.BUTTON_CLICK, { filter, type }, currentLocale)
     setCurrentCmeImageUrl(undefined)
     setLoadingCME(true)
 
@@ -159,10 +161,10 @@ export default function SolarWeather({ navigation }: any) {
           {/* SUN CONTAINER */}
           <View style={solarWeatherStyles.container}>
             <View style={{ display: 'flex', flexDirection: 'row' }}>
-              <TouchableOpacity onPress={() => setIsImageMode(true)} style={{ height: 35, flex: 1, borderBottomWidth: isImageMode ? 1 : 0, borderColor: app_colors.white, marginBottom: 10, padding: 5 }}>
+              <TouchableOpacity onPress={() => { sendAnalyticsEvent(currentUser, currentUserLocation, 'solar_weather_sun_image_mode_click', eventTypes.BUTTON_CLICK, { mode: 'image' }, currentLocale); setIsImageMode(true) }} style={{ height: 35, flex: 1, borderBottomWidth: isImageMode ? 1 : 0, borderColor: app_colors.white, marginBottom: 10, padding: 5 }}>
                 <Text style={{ fontFamily: 'GilroyBlack', color: app_colors.white, textTransform: 'uppercase', textAlign: "center", fontSize: 18 }}>{i18n.t('solarWeather.containers.switches.image')}</Text>
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => setIsImageMode(false)} style={{ height: 35, flex: 1, borderBottomWidth: isImageMode ? 0 : 1, borderColor: app_colors.white, marginBottom: 10, padding: 5 }}>
+              <TouchableOpacity onPress={() => { sendAnalyticsEvent(currentUser, currentUserLocation, 'solar_weather_sun_video_mode_click', eventTypes.BUTTON_CLICK, { mode: 'video' }, currentLocale); setIsImageMode(false) }} style={{ height: 35, flex: 1, borderBottomWidth: isImageMode ? 0 : 1, borderColor: app_colors.white, marginBottom: 10, padding: 5 }}>
                 <Text style={{ fontFamily: 'GilroyBlack', color: app_colors.white, textTransform: 'uppercase', textAlign: "center", fontSize: 18 }}>{i18n.t('solarWeather.containers.switches.video')}</Text>
               </TouchableOpacity>
             </View>
@@ -172,7 +174,7 @@ export default function SolarWeather({ navigation }: any) {
             <Text style={[solarWeatherStyles.container.subtitle, solarWeatherStyles.container.disclaimer]}>{i18n.t('solarWeather.containers.disclaimer')}</Text>
             {
               isImageMode ?
-                <Image priority={'high'} placeholder={localizedImagePlaceholders[i18n.locale]} source={!currentImageUrl ? undefined : { uri: currentImageUrl }} style={solarWeatherStyles.sunImage} />
+                <Image priority={'high'} placeholder={localizedImagePlaceholders[i18n.locale]} placeholderContentFit={'contain'} contentFit={'contain'} source={!currentImageUrl ? undefined : { uri: currentImageUrl }} style={solarWeatherStyles.sunImage} />
                 :
                 <>
                   <Video
@@ -185,7 +187,7 @@ export default function SolarWeather({ navigation }: any) {
                     resizeMode={ResizeMode.CONTAIN}
                     style={{ width: Dimensions.get('window').width - 40, height: Dimensions.get('window').width - 40, marginVertical: 10, borderRadius: 10, opacity: loadingImage ? .1 : 1, borderWidth: 1, borderColor: app_colors.white_twenty }}
                   >
-                    <Image placeholder={localizedVideoPlaceholders[i18n.locale]} style={{ width: Dimensions.get('window').width - 40, height: Dimensions.get('window').width - 40, marginVertical: 10, borderRadius: 10 }} />
+                    <Image placeholder={localizedVideoPlaceholders[i18n.locale]} placeholderContentFit={'contain'} contentFit={'contain'} style={{ width: Dimensions.get('window').width - 40, height: Dimensions.get('window').width - 40, marginVertical: 10, borderRadius: 10 }} />
                   </Video>
                 </>
             }
@@ -203,10 +205,10 @@ export default function SolarWeather({ navigation }: any) {
           {/* CME CONTAINER */}
           <View style={solarWeatherStyles.container}>
             <View style={{ display: 'flex', flexDirection: 'row' }}>
-              <TouchableOpacity onPress={() => setIsCmeImageMode(true)} style={{ height: 35, flex: 1, borderBottomWidth: isCmeImageMode ? 1 : 0, borderColor: app_colors.white, marginBottom: 10, padding: 5 }}>
+              <TouchableOpacity onPress={() => { sendAnalyticsEvent(currentUser, currentUserLocation, 'solar_weather_cme_image_mode_click', eventTypes.BUTTON_CLICK, { mode: 'image' }, currentLocale); setIsCmeImageMode(true) }} style={{ height: 35, flex: 1, borderBottomWidth: isCmeImageMode ? 1 : 0, borderColor: app_colors.white, marginBottom: 10, padding: 5 }}>
                 <Text style={{ fontFamily: 'GilroyBlack', color: app_colors.white, textTransform: 'uppercase', textAlign: "center", fontSize: 18 }}>{i18n.t('solarWeather.containers.switches.image')}</Text>
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => setIsCmeImageMode(false)} style={{ height: 35, flex: 1, borderBottomWidth: isCmeImageMode ? 0 : 1, borderColor: app_colors.white, marginBottom: 10, padding: 5 }}>
+              <TouchableOpacity onPress={() => { sendAnalyticsEvent(currentUser, currentUserLocation, 'solar_weather_cme_video_mode_click', eventTypes.BUTTON_CLICK, { mode: 'video' }, currentLocale); setIsCmeImageMode(false) }} style={{ height: 35, flex: 1, borderBottomWidth: isCmeImageMode ? 0 : 1, borderColor: app_colors.white, marginBottom: 10, padding: 5 }}>
                 <Text style={{ fontFamily: 'GilroyBlack', color: app_colors.white, textTransform: 'uppercase', textAlign: "center", fontSize: 18 }}>{i18n.t('solarWeather.containers.switches.video')}</Text>
               </TouchableOpacity>
             </View>
@@ -214,7 +216,7 @@ export default function SolarWeather({ navigation }: any) {
             <Text style={solarWeatherStyles.container.subtitle}>{i18n.t('solarWeather.sources.soho')}</Text>
             {
               isCmeImageMode ?
-                <Image priority={'high'} placeholder={localizedImagePlaceholders[i18n.locale]} cachePolicy={'none'} source={!currentCmeImageUrl ? undefined : { uri: currentCmeImageUrl }} style={solarWeatherStyles.sunImage} />
+                <Image priority={'high'} placeholder={localizedImagePlaceholders[i18n.locale]} placeholderContentFit={'contain'} contentFit={'contain'} cachePolicy={'none'} source={!currentCmeImageUrl ? undefined : { uri: currentCmeImageUrl }} style={solarWeatherStyles.sunImage} />
                 :
                 <Video
                   ref={videoRef}
@@ -226,7 +228,7 @@ export default function SolarWeather({ navigation }: any) {
                   resizeMode={ResizeMode.CONTAIN}
                   style={{ width: Dimensions.get('window').width - 40, height: Dimensions.get('window').width - 40, marginVertical: 10, borderRadius: 10, opacity: loadingCME ? .1 : 1, borderWidth: 1, borderColor: app_colors.white_twenty }}
                 >
-                  <Image placeholder={localizedVideoPlaceholders[i18n.locale]} cachePolicy={'none'} style={{ width: Dimensions.get('window').width - 40, height: Dimensions.get('window').width - 40, marginVertical: 10, borderRadius: 10 }} />
+                  <Image placeholder={localizedVideoPlaceholders[i18n.locale]} placeholderContentFit={'contain'} contentFit={'contain'} cachePolicy={'none'} style={{ width: Dimensions.get('window').width - 40, height: Dimensions.get('window').width - 40, marginVertical: 10, borderRadius: 10 }} />
                 </Video>
             }
             <View style={solarWeatherStyles.container.buttons}>

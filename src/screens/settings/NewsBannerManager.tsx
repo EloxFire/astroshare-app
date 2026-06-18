@@ -48,7 +48,7 @@ export default function NewsBannerManager({ navigation }: any) {
       />
       <View style={globalStyles.screens.separator} />
       <View style={{marginVertical: 10}}>
-        <ToolButton icon={require('../../../assets/icons/FiNewspaper.png')} text={i18n.t('settings.buttons.newsBannerManager.title')} hasCheckbox isChecked={homeNewsBannerVisible} onPress={() => handleHomeNewsBanner()} />
+        <ToolButton icon={require('../../../assets/icons/FiNewspaper.png')} text={i18n.t('settings.buttons.newsBannerManager.title')} hasCheckbox isChecked={homeNewsBannerVisible} onPress={() => { sendAnalyticsEvent(currentUser, currentUserLocation, 'news_banner_toggle', eventTypes.BUTTON_CLICK, { homeNewsBannerVisible: !homeNewsBannerVisible }, currentLocale); handleHomeNewsBanner() }} />
       </View>
       <Text style={[globalStyles.sections.title, {marginBottom: 10}]}>Les dernières actualités</Text>
       <ScrollView>

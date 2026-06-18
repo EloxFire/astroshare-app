@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import {ActivityIndicator, Image, ScrollView, Text, View, Platform} from 'react-native'
+import {ActivityIndicator, Image, ScrollView, Text, View} from 'react-native'
 import { globalStyles } from '../styles/global'
 import { moonPhasesStyles } from '../styles/screens/moonPhases'
 import {
@@ -23,7 +23,7 @@ import {sendAnalyticsEvent} from "../helpers/scripts/analytics";
 import {eventTypes} from "../helpers/constants/analytics";
 import {routes} from "../helpers/routes";
 import SimpleButton from '../components/commons/buttons/SimpleButton'
-import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
+import DateTimePickerModal from '../components/commons/DateTimePickerModal';
 
 export default function MoonPhases({ navigation }: any) {
 
@@ -96,23 +96,6 @@ export default function MoonPhases({ navigation }: any) {
     setLoadingMonth(false)
   }
 
-  const handleDatePickerChange = (event: DateTimePickerEvent, date?: Date) => {
-    if (event.type === 'dismissed') {
-      setShowDatePicker(false)
-      return
-    }
-
-    if (date) {
-      setSelectedDate(dayjs(date))
-      setSelectedYear(dayjs(date).year())
-      setSelectedMonth(dayjs(date).month())
-    }
-
-    if (Platform.OS === 'android') {
-      setShowDatePicker(false)
-    }
-  }
-
   const handleMonthChange = (direction: 'next' | 'previous') => {
     if (direction === 'next' && (selectedYear === dayjs().year() && selectedMonth === 11)) {
       return
@@ -140,27 +123,28 @@ export default function MoonPhases({ navigation }: any) {
       <PageTitle navigation={navigation} title={i18n.t('home.buttons.moon_phases.title')} subtitle={i18n.t('home.buttons.moon_phases.subtitle')} backRoute={routes.home.path} />
       <View style={globalStyles.screens.separator} />
 
-      {
-        showDatePicker &&
-        <DateTimePicker
-          value={selectedDate.toDate()}
-          mode="date"
-          display="default"
-          onChange={handleDatePickerChange}
-          accentColor={app_colors.yellow}
-          // Maximum date at 31 december of current year
-          maximumDate={new Date(dayjs().year(), 11, 31)}
-          // Minimum date at 1 january 2011
-          minimumDate={new Date(2011, 0, 1)}
-        />
-      }
+      <DateTimePickerModal
+        visible={showDatePicker}
+        mode="date"
+        value={selectedDate.toDate()}
+        onCancel={() => setShowDatePicker(false)}
+        onConfirm={(date) => {
+          setShowDatePicker(false)
+          setSelectedDate(dayjs(date))
+          setSelectedYear(dayjs(date).year())
+          setSelectedMonth(dayjs(date).month())
+        }}
+        accentColor={app_colors.yellow}
+        maximumDate={new Date(dayjs().year(), 11, 31)}
+        minimumDate={new Date(2011, 0, 1)}
+      />
 
       <ScrollView>
       <DisclaimerBar message={i18n.t('moonPhases.disclaimer', {startDate: dayjs('2011-01-01').format('DD MMMM YYYY'), endDate: dayjs().endOf('year').format('DD MMMM YYYY')})} type={"info"} soft/>
       <View style={[moonPhasesStyles.content, {marginBottom: 10, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}]}>
         <SimpleButton
           icon={require('../../assets/icons/FiChevronLeft.png')}
-          onPress={() => setSelectedDate(selectedDate.subtract(1, 'day'))}
+          onPress={() => { sendAnalyticsEvent(currentUser, currentUserLocation, 'moon_phases_previous_day_click', eventTypes.BUTTON_CLICK, { date: selectedDate.subtract(1, 'day').format('YYYY-MM-DD') }, currentLocale); setSelectedDate(selectedDate.subtract(1, 'day')) }}
           active
           activeBorderColor={app_colors.white_twenty}
         />
@@ -173,7 +157,7 @@ export default function MoonPhases({ navigation }: any) {
               textAdditionalStyles={{textTransform: 'uppercase', fontFamily: 'DMMonoMedium'}}
               active
               activeBorderColor={app_colors.white_twenty}
-              onPress={() => setShowDatePicker((current) => !current)}
+              onPress={() => { sendAnalyticsEvent(currentUser, currentUserLocation, 'moon_phases_date_picker_open', eventTypes.BUTTON_CLICK, {}, currentLocale); setShowDatePicker((current) => !current) }}
             />
             {
               !selectedDate.isSame(dayjs(), 'day') &&
@@ -183,7 +167,7 @@ export default function MoonPhases({ navigation }: any) {
                 textAdditionalStyles={{textTransform: 'uppercase', fontFamily: 'DMMonoMedium', fontSize: 12}}
                 active
                 activeBorderColor={app_colors.white_twenty}
-                onPress={() => handleResetDate()}
+                onPress={() => { sendAnalyticsEvent(currentUser, currentUserLocation, 'moon_phases_reset_date_click', eventTypes.BUTTON_CLICK, {}, currentLocale); handleResetDate() }}
               />
             }
           </View>
@@ -191,7 +175,7 @@ export default function MoonPhases({ navigation }: any) {
         </View>
         <SimpleButton
           icon={require('../../assets/icons/FiChevronRight.png')}
-          onPress={() => setSelectedDate(selectedDate.add(1, 'day'))}
+          onPress={() => { sendAnalyticsEvent(currentUser, currentUserLocation, 'moon_phases_next_day_click', eventTypes.BUTTON_CLICK, { date: selectedDate.add(1, 'day').format('YYYY-MM-DD') }, currentLocale); setSelectedDate(selectedDate.add(1, 'day')) }}
           active
           activeBorderColor={app_colors.white_twenty}
         />
@@ -265,14 +249,14 @@ export default function MoonPhases({ navigation }: any) {
               icon={require('../../assets/icons/FiChevronLeft.png')}
               active
               activeBorderColor={app_colors.white_twenty}
-              onPress={() => handleMonthChange('previous')}
+              onPress={() => { sendAnalyticsEvent(currentUser, currentUserLocation, 'moon_phases_previous_month_click', eventTypes.BUTTON_CLICK, { month: selectedMonth, year: selectedYear }, currentLocale); handleMonthChange('previous') }}
             />
             <Text style={moonPhasesStyles.content.calendar.selectorRow.currentMonth}>{capitalize(dayjs().month(selectedMonth).format('MMMM YYYY'))}</Text>
             <SimpleButton
               icon={require('../../assets/icons/FiChevronRight.png')}
               active
               activeBorderColor={app_colors.white_twenty}
-              onPress={() => handleMonthChange('next')}
+              onPress={() => { sendAnalyticsEvent(currentUser, currentUserLocation, 'moon_phases_next_month_click', eventTypes.BUTTON_CLICK, { month: selectedMonth, year: selectedYear }, currentLocale); handleMonthChange('next') }}
             />
           </View>
 

@@ -1,28 +1,28 @@
-import React, {useEffect, useState} from 'react';
-import {KeyboardAvoidingView, Modal, Platform, ScrollView, Text, View} from "react-native";
+import React, {useEffect, useMemo, useState} from 'react';
+import {KeyboardAvoidingView, Modal, ScrollView, Text, TouchableOpacity, View} from "react-native";
 import {globalStyles} from "../../styles/global";
 import {i18n} from "../../helpers/scripts/i18n";
 import {observationPlannerScreenStyles} from "../../styles/screens/observationPlanner/observationPlannerScreen";
 import {useTranslation} from "../../hooks/useTranslation";
 import {useSettings} from "../../contexts/AppSettingsContext";
+import {useAuth} from "../../contexts/AuthContext";
+import {sendAnalyticsEvent} from "../../helpers/scripts/analytics";
+import {eventTypes} from "../../helpers/constants/analytics";
 import {useSolarSystem} from "../../contexts/SolarSystemContext";
 import {useStarCatalog} from "../../contexts/StarsContext";
 import {routes} from "../../helpers/routes";
 import { capitalize } from '../../helpers/scripts/utils/formatters/capitalize';
 import { app_colors, storageKeys } from '../../helpers/constants';
-import { DSO } from '../../helpers/types/DSO';
-import { GlobalPlanet } from '../../helpers/types/GlobalPlanet';
-import { ObservationPlannerParams, planObservationNight } from '../../helpers/scripts/astro/planner/observationPlanner';
+import { ObservationPlannerParams, planObservationNight, PlannerResult } from '../../helpers/scripts/astro/planner/observationPlanner';
 import { showToast } from '../../helpers/scripts/showToast';
 import { useDsoCatalog } from '../../contexts/DSOContext';
-import { Star } from '../../helpers/types/Star';
 import { ObservationPlannerModalContent } from '../../helpers/types/observationPlanner/ObservationPlannerModalContent';
 import { getSunData } from '../../helpers/scripts/astro/solar/sunData';
 import { ObservationPlannerObjectCard } from '../../components/cards/ObservationPlannerObjectCard';
 import dayjs, {Dayjs} from "dayjs";
 import PageTitle from "../../components/commons/PageTitle";
 import SimpleButton from '../../components/commons/buttons/SimpleButton';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import DateTimePickerModal from '../../components/commons/DateTimePickerModal';
 import InputWithIcon from '../../components/forms/InputWithIcon';
 import { getData, storeData } from '../../helpers/storage';
 import { DeviceEventEmitter } from 'react-native';
@@ -31,6 +31,7 @@ import ToolButton from '../../components/commons/buttons/ToolButton';
 function ObservationPlannerScreen({navigation}: any) {
   const { currentLocale } = useTranslation();
   const { currentUserLocation } = useSettings();
+  const { currentUser } = useAuth();
   const { planets } = useSolarSystem();
   const { starsCatalog } = useStarCatalog();
   const { dsoCatalog } = useDsoCatalog();
@@ -49,6 +50,10 @@ function ObservationPlannerScreen({navigation}: any) {
   const [showEndDatePicker, setShowEndDatePicker] = useState<boolean>(false);
   const [showEndTimePicker, setShowEndTimePicker] = useState<boolean>(false);
   const [dsoEnabled, setDsoEnabled] = useState<boolean>(true);
+  const [dsoGalaxies, setDsoGalaxies] = useState<boolean>(true);
+  const [dsoNebulae, setDsoNebulae] = useState<boolean>(true);
+  const [dsoGlobularClusters, setDsoGlobularClusters] = useState<boolean>(true);
+  const [dsoOpenClusters, setDsoOpenClusters] = useState<boolean>(true);
   const [starsEnabled, setStarsEnabled] = useState<boolean>(false);
   const [planetsEnabled, setPlanetsEnabled] = useState<boolean>(true);
 
@@ -63,7 +68,46 @@ function ObservationPlannerScreen({navigation}: any) {
   // Paramètres et état de la recherche
   const [maxResults, setMaxResults] = useState<number | null>(null);
   const [perObjectObsTime, setPerObjectObsTime] = useState<number | null>(null);
-  const [resultsList, setResultsList] = useState<((DSO | GlobalPlanet | Star)[]) | null>(null);
+  const [resultsList, setResultsList] = useState<PlannerResult[] | null>(null);
+
+  useEffect(() => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'observation_planner_screen_view', eventTypes.SCREEN_VIEW, {}, currentLocale)
+  }, [])
+
+  type SortKey = 'settingTime' | 'risingTime' | 'magnitude' | 'altitude';
+  const [sortBy, setSortBy] = useState<SortKey>('settingTime');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+
+  const sortedResults = useMemo(() => {
+    if (!resultsList) return null;
+    return [...resultsList].sort((a, b) => {
+      let valA: number;
+      let valB: number;
+      switch (sortBy) {
+        case 'settingTime': valA = a.settingMinute; valB = b.settingMinute; break;
+        case 'risingTime':  valA = a.risingMinute;  valB = b.risingMinute;  break;
+        case 'magnitude':   valA = a.magnitude ?? Number.POSITIVE_INFINITY; valB = b.magnitude ?? Number.POSITIVE_INFINITY; break;
+        case 'altitude':    valA = a.currentAlt;    valB = b.currentAlt;    break;
+        default:            valA = a.settingMinute; valB = b.settingMinute;
+      }
+      const aInf = !Number.isFinite(valA);
+      const bInf = !Number.isFinite(valB);
+      if (aInf && bInf) return 0;
+      if (aInf) return 1;
+      if (bInf) return -1;
+      return sortOrder === 'asc' ? valA - valB : valB - valA;
+    });
+  }, [resultsList, sortBy, sortOrder]);
+
+  const handleSortPress = (key: SortKey) => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'planner_sort_changed', eventTypes.BUTTON_CLICK, { sortKey: key }, currentLocale)
+    if (sortBy === key) {
+      setSortOrder(prev => prev === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortBy(key);
+      setSortOrder(key === 'altitude' ? 'desc' : 'asc');
+    }
+  };
 
   const checkVisibility = () => {
     // Check if sun is below horizon at the start date/time
@@ -114,6 +158,10 @@ function ObservationPlannerScreen({navigation}: any) {
   };
 
   const handleSearch = async () => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'planner_generate_plan_clicked', eventTypes.BUTTON_CLICK, {
+      dsoEnabled, planetsEnabled, starsEnabled,
+      startDate: startDate.format('YYYY-MM-DD'), endDate: endDate.format('YYYY-MM-DD'),
+    }, currentLocale)
     setIsPlanning(true);
     setResultsList(null);
     try {
@@ -137,6 +185,12 @@ function ObservationPlannerScreen({navigation}: any) {
           dso: dsoEnabled,
           planets: planetsEnabled,
           stars: starsEnabled
+        },
+        dsoSubTypes: {
+          galaxies: dsoGalaxies,
+          nebulae: dsoNebulae,
+          globularClusters: dsoGlobularClusters,
+          openClusters: dsoOpenClusters,
         },
         magnitude: {
           min: minMag || -30,
@@ -219,134 +273,75 @@ function ObservationPlannerScreen({navigation}: any) {
           <View style={observationPlannerScreenStyles.content.bloc}>
             <Text style={observationPlannerScreenStyles.content.bloc.title}>{i18n.t('observationPlanner.screen.steps.sessionDuration')}</Text>
 
-            {
-              showStartPicker && (
-                <DateTimePicker
-                  value={startDate.toDate()}
-                  mode='date'
-                  display='default'
-                  themeVariant={'dark'}
-                  onChange={(event, selectedDate) => {
-                    if (event.type === 'dismissed') {
-                      setShowStartPicker(false)
-                    }
-                    if (event.type === 'set' && selectedDate) {
-                      console.log("Setting start date:", selectedDate);
-                      
-                      setShowStartPicker(false)
-                      setStartDate(dayjs(selectedDate))
+            <DateTimePickerModal
+              visible={showStartPicker}
+              mode='date'
+              value={startDate.toDate()}
+              onCancel={() => setShowStartPicker(false)}
+              onConfirm={(selectedDate) => {
+                setShowStartPicker(false)
+                setStartDate(dayjs(selectedDate))
+                if (dayjs(selectedDate).isAfter(endDate)) {
+                  const [startHour, startMinute] = startTime.split(':').map(Number);
+                  const newEndTime = dayjs(selectedDate).hour(startHour).minute(startMinute).add(3, 'hour');
+                  setEndDate(dayjs(selectedDate));
+                  setEndTime(newEndTime.format('HH:mm'));
+                }
+              }}
+            />
 
-                      // If new start date is after end date, set end date to start date and endTime to startTime + 3h
-                      if (dayjs(selectedDate).isAfter(endDate)) {
-                        const newEndDate = dayjs(selectedDate);
-                        const [startHour, startMinute] = startTime.split(':').map(Number);
-                        const newEndTime = dayjs(selectedDate).hour(startHour).minute(startMinute).add(3, 'hour');
-                        
-                        setEndDate(newEndDate);
-                        setEndTime(newEndTime.format('HH:mm'));
-                      }
-                    }
-                  }}
-                />
-              )
-            }
+            <DateTimePickerModal
+              visible={showStartTimePicker}
+              mode='time'
+              value={startDate.toDate()}
+              onCancel={() => setShowStartTimePicker(false)}
+              onConfirm={(selectedDate) => {
+                setShowStartTimePicker(false)
+                setStartTime(dayjs(selectedDate).format('HH:mm'))
+                const startDateTime = startDate.hour(Number(dayjs(selectedDate).format('HH'))).minute(Number(dayjs(selectedDate).format('mm')));
+                const endDateTime = endDate.hour(Number(endTime.split(':')[0])).minute(Number(endTime.split(':')[1]));
+                if (startDate.isSame(endDate, 'day') && startDateTime.isAfter(endDateTime)) {
+                  setEndTime(startDateTime.add(3, 'hour').format('HH:mm'));
+                }
+              }}
+            />
 
-            {
-              showStartTimePicker && (
-                <DateTimePicker
-                  value={startDate.toDate()}
-                  mode='time'
-                  display='default'
-                  themeVariant={'dark'}
-                  onChange={(event, selectedDate) => {
-                    if (event.type === 'dismissed') {
-                      setShowStartTimePicker(false)
-                    }
-                    if (event.type === 'set' && selectedDate) {
-                      console.log("Setting start time:", selectedDate);
-                      
-                      setShowStartTimePicker(false)
-                      setStartTime(dayjs(selectedDate).format('HH:mm'))
+            <DateTimePickerModal
+              visible={showEndDatePicker}
+              mode='date'
+              value={endDate.toDate()}
+              onCancel={() => setShowEndDatePicker(false)}
+              onConfirm={(selectedDate) => {
+                setShowEndDatePicker(false)
+                setEndDate(dayjs(selectedDate))
+                if (dayjs(selectedDate).isBefore(startDate)) {
+                  const [endHour, endMinute] = endTime.split(':').map(Number);
+                  const newStartTime = dayjs(selectedDate).hour(endHour).minute(endMinute).subtract(3, 'hour');
+                  setStartDate(dayjs(selectedDate));
+                  setStartTime(newStartTime.format('HH:mm'));
+                }
+              }}
+            />
 
-                      // If new start time is after end time on the same day, adjust end time to +3H
-                      const startDateTime = startDate.hour(Number(dayjs(selectedDate).format('HH'))).minute(Number(dayjs(selectedDate).format('mm')));
-                      const endDateTime = endDate.hour(Number(endTime.split(':')[0])).minute(Number(endTime.split(':')[1]));
-                      if (startDate.isSame(endDate, 'day') && startDateTime.isAfter(endDateTime)) {
-                        console.log("Adjusting end time to +3 hours");
-                        
-                        const adjustedEndTime = startDateTime.add(3, 'hour');
-                        setEndTime(adjustedEndTime.format('HH:mm'));
-                      }
-                    }
-                  }}
-                />
-              )
-            }
-
-            {
-              showEndDatePicker && (
-                <DateTimePicker
-                  value={endDate.toDate()}
-                  mode='date'
-                  display='default'
-                  themeVariant={'dark'}
-                  onChange={(event, selectedDate) => {
-                    if (event.type === 'dismissed') {
-                      setShowEndDatePicker(false)
-                    }
-                    if (event.type === 'set' && selectedDate) {
-                      console.log("Setting end date:", selectedDate);
-                      
-                      setShowEndDatePicker(false)
-                      setEndDate(dayjs(selectedDate))
-
-                      // If new end date is before start date, set start date to end date and startTime to endTime - 3h
-                      if (dayjs(selectedDate).isBefore(startDate)) {
-                        const newStartDate = dayjs(selectedDate);
-                        const [endHour, endMinute] = endTime.split(':').map(Number);
-                        const newStartTime = dayjs(selectedDate).hour(endHour).minute(endMinute).subtract(3, 'hour');
-                        
-                        setStartDate(newStartDate);
-                        setStartTime(newStartTime.format('HH:mm'));
-                      }
-                    }
-                  }}
-                />
-              )
-            }
-
-            {
-              showEndTimePicker && (
-                <DateTimePicker
-                  value={endDate.toDate()}
-                  mode='time'
-                  display='default'
-                  themeVariant={'dark'}
-                  onChange={(event, selectedDate) => {
-                    if (event.type === 'dismissed') {
-                      setShowEndTimePicker(false)
-                    }
-                    if (event.type === 'set' && selectedDate) {
-                      setShowEndTimePicker(false)
-                      setEndTime(dayjs(selectedDate).format('HH:mm'))
-
-                      // If new end time is before start time on the same day, adjust start time to -3H
-                      const startDateTime = startDate.hour(Number(startTime.split(':')[0])).minute(Number(startTime.split(':')[1]));
-                      const endDateTime = endDate.hour(Number(dayjs(selectedDate).format('HH'))).minute(Number(dayjs(selectedDate).format('mm')));
-                      if (endDate.isSame(startDate, 'day') && endDateTime.isBefore(startDateTime)) {
-                        const adjustedStartDateTime = endDateTime.subtract(3, 'hour');
-                        setStartTime(adjustedStartDateTime.format('HH:mm'));
-
-                        // Keep start date in sync when the 3h shift crosses midnight
-                        if (!adjustedStartDateTime.isSame(startDate, 'day')) {
-                          setStartDate(adjustedStartDateTime.startOf('day'));
-                        }
-                      }
-                    }
-                  }}
-                />
-              )
-            }
+            <DateTimePickerModal
+              visible={showEndTimePicker}
+              mode='time'
+              value={endDate.toDate()}
+              onCancel={() => setShowEndTimePicker(false)}
+              onConfirm={(selectedDate) => {
+                setShowEndTimePicker(false)
+                setEndTime(dayjs(selectedDate).format('HH:mm'))
+                const startDateTime = startDate.hour(Number(startTime.split(':')[0])).minute(Number(startTime.split(':')[1]));
+                const endDateTime = endDate.hour(Number(dayjs(selectedDate).format('HH'))).minute(Number(dayjs(selectedDate).format('mm')));
+                if (endDate.isSame(startDate, 'day') && endDateTime.isBefore(startDateTime)) {
+                  const adjustedStart = endDateTime.subtract(3, 'hour');
+                  setStartTime(adjustedStart.format('HH:mm'));
+                  if (!adjustedStart.isSame(startDate, 'day')) {
+                    setStartDate(adjustedStart.startOf('day'));
+                  }
+                }
+              }}
+            />
             
 
             <View>
@@ -357,14 +352,14 @@ function ObservationPlannerScreen({navigation}: any) {
                   text={capitalize(startDate.format('ddd DD MMM YYYY'))}
                   textColor={app_colors.white}
                   align='flex-start'
-                  onPress={() => setShowStartPicker(true)}
+                  onPress={() => { setShowStartPicker(true); sendAnalyticsEvent(currentUser, currentUserLocation, 'planner_date_changed', eventTypes.BUTTON_CLICK, { field: 'start_date' }, currentLocale) }}
                 />
                 <SimpleButton
                   icon={require('../../../assets/icons/FiClock.png')}
                   text={capitalize(startTime.replace(':', 'h'))}
                   textColor={app_colors.white}
                   align='flex-start'
-                  onPress={() => setShowStartTimePicker(true)}
+                  onPress={() => { setShowStartTimePicker(true); sendAnalyticsEvent(currentUser, currentUserLocation, 'planner_date_changed', eventTypes.BUTTON_CLICK, { field: 'start_time' }, currentLocale) }}
                 />
 
               </View>
@@ -378,14 +373,14 @@ function ObservationPlannerScreen({navigation}: any) {
                   text={capitalize(endDate.format('ddd DD MMM YYYY'))}
                   textColor={app_colors.white}
                   align='flex-start'
-                  onPress={() => setShowEndDatePicker(true)}
+                  onPress={() => { setShowEndDatePicker(true); sendAnalyticsEvent(currentUser, currentUserLocation, 'planner_date_changed', eventTypes.BUTTON_CLICK, { field: 'end_date' }, currentLocale) }}
                 />
                 <SimpleButton
                   icon={require('../../../assets/icons/FiClock.png')}
                   text={capitalize(endTime.replace(':', 'h'))}
                   textColor={app_colors.white}
                   align='flex-start'
-                  onPress={() => setShowEndTimePicker(true)}
+                  onPress={() => { setShowEndTimePicker(true); sendAnalyticsEvent(currentUser, currentUserLocation, 'planner_date_changed', eventTypes.BUTTON_CLICK, { field: 'end_time' }, currentLocale) }}
                 />
               </View>
             </View>
@@ -395,9 +390,17 @@ function ObservationPlannerScreen({navigation}: any) {
           <View style={observationPlannerScreenStyles.content.bloc}>
             <Text style={observationPlannerScreenStyles.content.bloc.title}>{i18n.t('observationPlanner.screen.steps.objectTypes')}</Text>
 
-            <ToolButton isChecked={planetsEnabled} onPress={() => setPlanetsEnabled(!planetsEnabled)} hasCheckbox icon={require('../../../assets/icons/astro/planets/color/JUPITER.png')} text={i18n.t('observationPlanner.filters.targets.planets')} />
-            <ToolButton isChecked={dsoEnabled} onPress={() => setDsoEnabled(!dsoEnabled)} hasCheckbox icon={require('../../../assets/icons/astro/CL+N.png')} text={i18n.t('observationPlanner.filters.targets.dso')} />
-            <ToolButton isChecked={starsEnabled} onPress={() => setStarsEnabled(!starsEnabled)} hasCheckbox icon={require('../../../assets/icons/astro/BRIGHTSTAR.png')} text={i18n.t('observationPlanner.filters.targets.stars')} />
+            <ToolButton isChecked={planetsEnabled} onPress={() => { setPlanetsEnabled(!planetsEnabled); sendAnalyticsEvent(currentUser, currentUserLocation, 'planner_filter_changed', eventTypes.BUTTON_CLICK, { filter: 'planets', enabled: !planetsEnabled }, currentLocale) }} hasCheckbox icon={require('../../../assets/icons/astro/planets/color/JUPITER.png')} text={i18n.t('observationPlanner.filters.targets.planets')} />
+            <ToolButton isChecked={dsoEnabled} onPress={() => { setDsoEnabled(!dsoEnabled); sendAnalyticsEvent(currentUser, currentUserLocation, 'planner_filter_changed', eventTypes.BUTTON_CLICK, { filter: 'dso', enabled: !dsoEnabled }, currentLocale) }} hasCheckbox icon={require('../../../assets/icons/astro/CL+N.png')} text={i18n.t('observationPlanner.filters.targets.dso')} />
+            {dsoEnabled && (
+              <View style={{ paddingLeft: 16, gap: 4 }}>
+                <ToolButton isChecked={dsoGalaxies} onPress={() => { setDsoGalaxies(!dsoGalaxies); sendAnalyticsEvent(currentUser, currentUserLocation, 'planner_filter_changed', eventTypes.BUTTON_CLICK, { filter: 'galaxies', enabled: !dsoGalaxies }, currentLocale) }} hasCheckbox icon={require('../../../assets/icons/astro/G.png')} text={i18n.t('observationPlanner.filters.dsoTypes.galaxies')} />
+                <ToolButton isChecked={dsoNebulae} onPress={() => { setDsoNebulae(!dsoNebulae); sendAnalyticsEvent(currentUser, currentUserLocation, 'planner_filter_changed', eventTypes.BUTTON_CLICK, { filter: 'nebulae', enabled: !dsoNebulae }, currentLocale) }} hasCheckbox icon={require('../../../assets/icons/astro/NEB.png')} text={i18n.t('observationPlanner.filters.dsoTypes.nebulae')} />
+                <ToolButton isChecked={dsoGlobularClusters} onPress={() => { setDsoGlobularClusters(!dsoGlobularClusters); sendAnalyticsEvent(currentUser, currentUserLocation, 'planner_filter_changed', eventTypes.BUTTON_CLICK, { filter: 'globular_clusters', enabled: !dsoGlobularClusters }, currentLocale) }} hasCheckbox icon={require('../../../assets/icons/astro/GCL.png')} text={i18n.t('observationPlanner.filters.dsoTypes.globularClusters')} />
+                <ToolButton isChecked={dsoOpenClusters} onPress={() => { setDsoOpenClusters(!dsoOpenClusters); sendAnalyticsEvent(currentUser, currentUserLocation, 'planner_filter_changed', eventTypes.BUTTON_CLICK, { filter: 'open_clusters', enabled: !dsoOpenClusters }, currentLocale) }} hasCheckbox icon={require('../../../assets/icons/astro/OCL.png')} text={i18n.t('observationPlanner.filters.dsoTypes.openClusters')} />
+              </View>
+            )}
+            <ToolButton isChecked={starsEnabled} onPress={() => { setStarsEnabled(!starsEnabled); sendAnalyticsEvent(currentUser, currentUserLocation, 'planner_filter_changed', eventTypes.BUTTON_CLICK, { filter: 'stars', enabled: !starsEnabled }, currentLocale) }} hasCheckbox icon={require('../../../assets/icons/astro/BRIGHTSTAR.png')} text={i18n.t('observationPlanner.filters.targets.stars')} />
           </View>
 
           {/* OTHER FILTERS */}
@@ -440,7 +443,7 @@ function ObservationPlannerScreen({navigation}: any) {
               <SimpleButton
                 icon={require('../../../assets/icons/FiSearch.png')}
                 text={i18n.t('observationPlanner.screen.buttons.search')}
-                onPress={() => checkVisibility()}
+                onPress={() => { sendAnalyticsEvent(currentUser, currentUserLocation, 'planner_generate_plan_clicked', eventTypes.BUTTON_CLICK, {}, currentLocale); checkVisibility() }}
                 backgroundColor={app_colors.white}
                 textColor={app_colors.black}
                 iconColor={app_colors.black}
@@ -474,13 +477,47 @@ function ObservationPlannerScreen({navigation}: any) {
             )
           }
           {
-            resultsList && resultsList.length > 0 && (
+            sortedResults && sortedResults.length > 0 && (
               <View style={observationPlannerScreenStyles.content.bloc}>
                 <Text style={observationPlannerScreenStyles.content.bloc.title}>{i18n.t('observationPlanner.screen.steps.results')}</Text>
                 <Text style={observationPlannerScreenStyles.content.bloc.subtitle}>{i18n.t('observationPlanner.screen.messages.recommended')}</Text>
+
+                {/* Sort chips */}
+                <View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 8}}>
+                  {(['settingTime', 'risingTime', 'magnitude', 'altitude'] as const).map(key => {
+                    const isActive = sortBy === key;
+                    return (
+                      <TouchableOpacity
+                        key={key}
+                        onPress={() => handleSortPress(key)}
+                        style={{
+                          paddingHorizontal: 12,
+                          paddingVertical: 6,
+                          borderRadius: 20,
+                          borderWidth: 1,
+                          borderColor: isActive ? app_colors.white : app_colors.white_twenty,
+                          backgroundColor: isActive ? app_colors.white_twenty : 'transparent',
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          gap: 4,
+                        }}
+                      >
+                        <Text style={{color: isActive ? app_colors.white : app_colors.white_sixty, fontSize: 11, fontFamily: 'GilroyBold'}}>
+                          {i18n.t(`observationPlanner.screen.sort.${key}`)}
+                        </Text>
+                        {isActive && (
+                          <Text style={{color: app_colors.white, fontSize: 11}}>
+                            {sortOrder === 'asc' ? '↑' : '↓'}
+                          </Text>
+                        )}
+                      </TouchableOpacity>
+                    );
+                  })}
+                </View>
+
                 {
-                  resultsList.slice(0, maxResults || 10).map((obj, index) => (
-                    <ObservationPlannerObjectCard key={index} object={obj} navigation={navigation} date={startDate.hour(Number(startTime.split(':')[0])).minute(Number(startTime.split(':')[1]))} />
+                  sortedResults.slice(0, maxResults || 10).map((result, index) => (
+                    <ObservationPlannerObjectCard key={index} object={result.object} navigation={navigation} date={startDate.hour(Number(startTime.split(':')[0])).minute(Number(startTime.split(':')[1]))} />
                   ))
                 }
 
@@ -488,7 +525,7 @@ function ObservationPlannerScreen({navigation}: any) {
                   <SimpleButton
                     icon={require('../../../assets/icons/FiSearch.png')}
                     text={i18n.t('observationPlanner.screen.buttons.searchAgain')}
-                    onPress={() => checkVisibility()}
+                    onPress={() => { sendAnalyticsEvent(currentUser, currentUserLocation, 'planner_generate_plan_clicked', eventTypes.BUTTON_CLICK, {}, currentLocale); checkVisibility() }}
                     backgroundColor={app_colors.white}
                     textColor={app_colors.black}
                     iconColor={app_colors.black}

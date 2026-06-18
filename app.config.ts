@@ -1,10 +1,11 @@
 import * as dotenv from "dotenv";
+import { useInsertionEffect } from "react";
 dotenv.config();
 
 module.exports = {
   name: "Astroshare",
   slug: "astroshare-app",
-  version: "v2.6.0",
+  version: "2.7.0",
   orientation: "portrait",
   icon: "./assets/icon.png",
   userInterfaceStyle: "light",
@@ -22,8 +23,13 @@ module.exports = {
       "ITSAppUsesNonExemptEncryption": false,
       "NSLocationWhenInUseUsageDescription": "Autoriser ${PRODUCT_NAME} à utiliser votre position.",
       "NSMotionUsageDescription": "Autoriser ${PRODUCT_NAME} à utiliser les capteurs de mouvement pour afficher les objets célestes dans la bonne orientation.",
-      "UIBackgroundModes": ["location", "fetch", "processing"],
+      "NSCameraUsageDescription": "Autoriser ${PRODUCT_NAME} à utiliser l'appareil photo pour scanner votre carte bancaire lors du paiement.",
+      "NSFaceIDUsageDescription": "Autoriser ${PRODUCT_NAME} à utiliser Face ID pour sécuriser vos paiements.",
+      "UIBackgroundModes": ["location", "fetch"],
       "LSApplicationQueriesSchemes": ["comgooglemaps", "googlemaps", "waze", "citymapper"]
+    },
+    config:{
+      useInsertionEffect: false,
     }
   },
   android: {

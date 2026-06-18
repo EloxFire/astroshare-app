@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Dimensions,
   ScrollView,
@@ -14,6 +14,11 @@ import { i18n } from "../../helpers/scripts/i18n";
 import { globalStyles } from "../../styles/global";
 import { useStarCatalog } from "../../contexts/StarsContext";
 import { Star } from "../../helpers/types/Star";
+import { sendAnalyticsEvent } from "../../helpers/scripts/analytics";
+import { eventTypes } from "../../helpers/constants/analytics";
+import { useSettings } from "../../contexts/AppSettingsContext";
+import { useAuth } from "../../contexts/AuthContext";
+import { useTranslation } from "../../hooks/useTranslation";
 
 const MAP_PADDING = 24;
 const MAX_STARS = 400;
@@ -94,9 +99,16 @@ const shortestAngleDiff = (value: number, center: number) => {
 
 export default function ConstellationMaps({ navigation }: any) {
   const { starsCatalog, starCatalogLoading } = useStarCatalog();
+  const { currentUserLocation } = useSettings();
+  const { currentUser } = useAuth();
+  const { currentLocale } = useTranslation();
   const [selectedConstellationName, setSelectedConstellationName] = useState<string>(
     CONSTELLATION_NAMES[0] ?? ""
   );
+
+  useEffect(() => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'constellation_maps_screen_view', eventTypes.SCREEN_VIEW, {}, currentLocale)
+  }, [])
 
   const screenWidth = Dimensions.get("window").width;
   const mapSize = Math.min(screenWidth - 40, 360);
@@ -250,7 +262,10 @@ export default function ConstellationMaps({ navigation }: any) {
             return (
               <TouchableOpacity
                 key={name}
-                onPress={() => setSelectedConstellationName(name)}
+                onPress={() => {
+                  setSelectedConstellationName(name)
+                  sendAnalyticsEvent(currentUser, currentUserLocation, 'constellation_selected', eventTypes.BUTTON_CLICK, { constellation: name }, currentLocale)
+                }}
                 style={[
                   styles.selectorChip,
                   isActive ? styles.selectorChipActive : null

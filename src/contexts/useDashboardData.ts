@@ -341,6 +341,10 @@ export const useDashboardData = (options?: UseDashboardDataOptions) => {
     setLoading(true);
 
     const planetAliases: Record<string, string> = {
+      sun: "sun",
+      soleil: "sun",
+      moon: "moon",
+      lune: "moon",
       mercury: "mercury",
       mercure: "mercury",
       venus: "venus",

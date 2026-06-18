@@ -60,7 +60,7 @@ export const buildAchievementsCategories = (stats: DashboardStats): AchievementC
   const typeSteps = [1, 5, 20, 50, 75];
   const miscSteps = [1, 5, 20, 50, 100];
   const challengeSteps = [1, 5, 10, 15];
-  const solarSystemPlanets = ["mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune"] as const;
+  const solarSystemPlanets = ["sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn", "uranus", "neptune"] as const;
 
   const observedTypes = {
     star: stats.typeObservedCounts["star"] || 0,

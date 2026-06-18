@@ -32,7 +32,7 @@ export const DashboardAchievementsScreen: React.FC<DashboardAchievementsScreenPr
   const { currentLocale } = useTranslation()
 
   useEffect(() => {
-    sendAnalyticsEvent(currentUser, currentUserLocation, 'Dashboard achievements statistics screen view', eventTypes.SCREEN_VIEW, {}, currentLocale)
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'dashboard_achievements_screen_view', eventTypes.SCREEN_VIEW, {}, currentLocale)
   }, [])
 
   return (

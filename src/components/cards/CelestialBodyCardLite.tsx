@@ -9,6 +9,7 @@ import {computeObject} from "../../helpers/scripts/astro/objects/computeObject";
 import {useTranslation} from "../../hooks/useTranslation";
 import {GlobalPlanet} from "../../helpers/types/GlobalPlanet";
 import {DSO} from "../../helpers/types/DSO";
+import {SpecialSkyObject} from "../../helpers/types/SpecialSkyObject";
 import {Image} from "expo-image";
 import {getObjectIcon} from "../../helpers/scripts/astro/objects/getObjectIcon";
 import {getObjectName} from "../../helpers/scripts/astro/objects/getObjectName";
@@ -17,9 +18,11 @@ import {getObjectFamily} from "../../helpers/scripts/astro/objects/getObjectFami
 import {app_colors} from "../../helpers/constants";
 import {astroImages} from "../../helpers/scripts/loadImages";
 import {getWindDir} from "../../helpers/scripts/getWindDir";
+import {astroshareApi} from "../../helpers/api";
+import dayjs from "dayjs";
 
 interface CelestialBodyCardLiteProps {
-  object: Star | DSO | GlobalPlanet
+  object: Star | DSO | GlobalPlanet | SpecialSkyObject
   navigation: any
 }
 
@@ -28,6 +31,7 @@ export default function CelestialBodyCardLite({ object, navigation }: CelestialB
   const { currentUserLocation } = useSettings()
   const { currentLocale } = useTranslation()
   const [objectInfos, setObjectInfos] = useState<ComputedObjectInfos | null>(null)
+  const [moonImageSource, setMoonImageSource] = useState<{ uri: string } | null>(null)
 
   useEffect(() => {
     if (!currentUserLocation) return;
@@ -43,9 +47,18 @@ export default function CelestialBodyCardLite({ object, navigation }: CelestialB
     return () => clearInterval(interval);
   }, [object, currentLocale, currentUserLocation])
 
+  useEffect(() => {
+    if ((object as SpecialSkyObject).family !== 'Moon') return;
+    let cancelled = false;
+    astroshareApi.get('/moon/illustration?date=' + dayjs().format('YYYY-MM-DD'))
+      .then(res => { if (!cancelled) setMoonImageSource({ uri: res.data.url }); })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, [object])
+
   return (
     <TouchableOpacity onPress={() => navigation.push(routes.celestialBodies.details.path, { object: object })} style={objectCardLiteStyles.card}>
-      <Image source={getObjectIcon(object)} style={objectCardLiteStyles.card.icon} />
+      <Image source={moonImageSource ?? getObjectIcon(object)} style={objectCardLiteStyles.card.icon} />
       <View style={objectCardLiteStyles.card.data}>
         {
           objectInfos?.base.otherName ? (

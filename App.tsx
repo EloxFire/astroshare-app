@@ -23,6 +23,7 @@ import { DsoContextProvider } from './src/contexts/DSOContext';
 import { AstroGearContextProvider } from './src/contexts/GearContext';
 import { LaunchDataContextProvider } from "./src/contexts/LaunchContext";
 import { ObservationSpotProvider } from "./src/contexts/ObservationSpotContext";
+import { ObservatoriesProvider } from './src/contexts/ObservatoriesContext';
 import { SolarSystemProvider } from "./src/contexts/SolarSystemContext";
 import { SpaceXContextProvider } from "./src/contexts/SpaceXContext";
 import { StarsContextProvider } from "./src/contexts/StarsContext";
@@ -51,6 +52,8 @@ import LoginScreen from "./src/screens/auth/LoginScreen";
 import ProfileScreen from "./src/screens/auth/Profile";
 import RegisterScreen from "./src/screens/auth/RegisterScreen";
 import { AstroGearManagementScreen } from './src/screens/auth/profile/AstroGearManagementScreen';
+import { ObservatoriesScreen } from './src/screens/auth/profile/ObservatoriesScreen';
+import { ObservatoryCrud } from './src/screens/auth/profile/observatories/ObservatoryCrud';
 import { PersonnalInfosScreen } from './src/screens/auth/profile/PersonnalInfosScreen';
 import { CamerasCrud } from './src/screens/auth/profile/gear/CamerasCrud';
 import { EyepiecesCrud } from './src/screens/auth/profile/gear/EyepiecesCrud';
@@ -94,6 +97,7 @@ import TransitsScreen from "./src/screens/transits/TransitsScreen";
 import { loadingSplashStyles } from "./src/styles/screens/loadingSplash";
 import { SubscriptionManagement } from "./src/screens/auth/subscription/SubscriptionManagement";
 import { SubscriptionDetails } from "./src/screens/auth/subscription/SubscriptionDetails";
+import { TelescopeSimulator } from "./src/screens/simulator/TelescopeSimulator";
 
 dayjs.locale('fr');
 dayjs.extend(LocalizedFormat)
@@ -166,6 +170,7 @@ export default function App() {
           <AuthContextProvider>
             <AppSettingsProvider>
               <AstroGearContextProvider>
+                <ObservatoriesProvider>
                 <ObservationSpotProvider>
                   <SolarSystemProvider>
                     <DsoContextProvider>
@@ -240,6 +245,9 @@ export default function App() {
                                 {/* CLOCK SCREENS */}
                                 <Stack.Screen name={routes.clock.home.path} component={ClockHome} />
 
+                                {/* TELESCOPE SIMULATOR SCREENS */}
+                                <Stack.Screen name={routes.telescopeSimulator.home.path} component={TelescopeSimulator} />
+
                                 {/*ROCKET LAUNCHES SCREENS*/}
                                 <Stack.Screen name={routes.launchesScreen.path} component={LaunchesScreen} />
                                 <Stack.Screen name={routes.launchDetails.path} component={LaunchDetails} />
@@ -266,13 +274,17 @@ export default function App() {
                                 <Stack.Screen name={routes.auth.profile.astroGearManagement.eyepieces.crud.path} component={EyepiecesCrud} />
                                 <Stack.Screen name={routes.auth.profile.astroGearManagement.cameras.crud.path} component={CamerasCrud} />
                                 <Stack.Screen name={routes.auth.profile.astroGearManagement.mounts.crud.path} component={MountsCrud} />
+                                <Stack.Screen name={routes.auth.profile.observatories.home.path} component={ObservatoriesScreen} />
+                                <Stack.Screen name={routes.auth.profile.observatories.crud.path} component={ObservatoryCrud} />
                               </Stack.Navigator>
+
                           </LaunchDataContextProvider>
                         </SpaceXContextProvider>
                       </StarsContextProvider>
                     </DsoContextProvider>
                   </SolarSystemProvider>
                 </ObservationSpotProvider>
+                </ObservatoriesProvider>
               </AstroGearContextProvider>
             </AppSettingsProvider>
           </AuthContextProvider>

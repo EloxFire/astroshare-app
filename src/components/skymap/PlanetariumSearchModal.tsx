@@ -1,5 +1,5 @@
-import React, {useRef, useState} from "react";
-import {ActivityIndicator, FlatList, Keyboard, ListRenderItemInfo, SafeAreaView, View} from "react-native";
+import React, {useEffect, useRef, useState} from "react";
+import {ActivityIndicator, FlatList, Keyboard, ScrollView, Text, TouchableOpacity, View} from "react-native";
 import {planetariumSearchModalStyles} from "../../styles/components/skymap/planetariumSearchModal";
 import {app_colors} from "../../helpers/constants";
 import {universalObjectSearch} from "../../helpers/scripts/universalObjectSearch";
@@ -7,6 +7,7 @@ import {useSolarSystem} from "../../contexts/SolarSystemContext";
 import {DSO} from "../../helpers/types/DSO";
 import {GlobalPlanet} from "../../helpers/types/GlobalPlanet";
 import {Star} from "../../helpers/types/Star";
+import {SpecialSkyObject} from "../../helpers/types/SpecialSkyObject";
 import CelestialBodyCardLite from "../cards/CelestialBodyCardLite";
 import InputWithIcon from "../forms/InputWithIcon";
 import ScreenInfo from "../ScreenInfo";
@@ -28,58 +29,100 @@ import {Dayjs} from "dayjs";
 interface PlanetariumSearchModalProps {
   onClose: () => void;
   navigation: any;
-  onSelect: (obj: DSO | GlobalPlanet | Star) => void;
+  onSelect: (obj: DSO | GlobalPlanet | Star | SpecialSkyObject) => void;
   timelineDate: Dayjs;
 }
 
 export default function PlanetariumSearchModal({ onClose, navigation, onSelect, timelineDate }: PlanetariumSearchModalProps) {
 
-  const { hasInternetConnection, currentUserLocation } = useSettings()
+  const { currentUserLocation } = useSettings()
   const { planets } = useSolarSystem()
+  const { starsCatalog } = useStarCatalog()
+  const { dsoCatalog } = useDsoCatalog()
   const {currentUser} = useAuth()
   const { currentLocale } = useTranslation()
 
   const [searchString, setSearchString] = useState('')
   const [searchResults, setSearchResults] = useState<DSO[]>([])
-  const [planetResults, setPlanetResults] = useState<GlobalPlanet[]>([])
+  const [planetResults, setPlanetResults] = useState<(GlobalPlanet | SpecialSkyObject)[]>([])
   const [starsResults, setStarsResults] = useState<Star[]>([])
   const [searchResultsLoading, setSearchResultsLoading] = useState(false)
-  const [data, setData] = useState<(DSO | GlobalPlanet | Star)[]>([])
+  const [data, setData] = useState<(DSO | GlobalPlanet | Star | SpecialSkyObject)[]>([])
+  const [suggestions, setSuggestions] = useState<string[]>([])
 
   const resultsFlatListRef = useRef<FlatList>(null)
 
-  const handleSearch = async () => {
+  // Autocomplete: filter local catalogs as the user types (debounced 150ms)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const query = searchString.trim().toLowerCase();
+      if (query.length < 2) { setSuggestions([]); return; }
 
-    if (!hasInternetConnection) {
-      showToast({ message: i18n.t('common.errors.noInternetConnection'), type: 'error' })
-      return;
-    }
+      const results: string[] = [];
+
+      // Sun / Moon always appear first if query is a prefix of their name
+      const solarBodies = [
+        { en: 'Sun',  fr: i18n.t('common.planets.Sun')  },
+        { en: 'Moon', fr: i18n.t('common.planets.Moon') },
+      ];
+      solarBodies.forEach(({ en, fr }) => {
+        if (en.toLowerCase().startsWith(query) || fr.toLowerCase().startsWith(query)) {
+          results.push(fr);
+        }
+      });
+
+      planets
+        .filter(p => p.name.toLowerCase().startsWith(query))
+        .forEach(p => results.push(p.name));
+
+      if (dsoCatalog?.length) {
+        dsoCatalog
+          .filter(d => {
+            const names = (d.common_names || '').toLowerCase();
+            const id = (d.name || '').toLowerCase();
+            return names.includes(query) || id.startsWith(query);
+          })
+          .slice(0, 5)
+          .forEach(d => {
+            const label = d.common_names ? d.common_names.split(',')[0].trim() : d.name;
+            if (label) results.push(label);
+          });
+      }
+
+      setSuggestions([...new Set(results)].slice(0, 6));
+    }, 150);
+    return () => clearTimeout(timer);
+  }, [searchString, dsoCatalog, planets]);
+
+  const handleSearch = async (overrideSearch?: string) => {
+    const searchTerm = overrideSearch ?? searchString;
 
     if (!currentUserLocation) {
       showToast({ message: i18n.t('common.errors.noLocation'), type: 'error' })
       return;
     }
 
-    if (searchString === '' || !searchString) return;
+    if (!searchTerm) return;
 
-    const formatedSearchString = searchString.trim().replaceAll('*', '');
+    const formatedSearchString = searchTerm.trim().replaceAll('*', '');
 
     sendAnalyticsEvent(currentUser, currentUserLocation, 'planetarium_user_search', eventTypes.BUTTON_CLICK, { search_term: formatedSearchString }, currentLocale)
 
     setSearchResults([])
     setPlanetResults([])
     setStarsResults([])
+    setSuggestions([])
     Keyboard.dismiss()
 
     setSearchResultsLoading(true)
 
     let realSearch = getRealSearch(formatedSearchString);
 
-    const { planetResults: searchedPlanets, starsResults: searchedStars, dsoResults: searchedDSOs } = await universalObjectSearch(realSearch, planets);
+    const { planetResults: searchedPlanets, starsResults: searchedStars, dsoResults: searchedDSOs } = await universalObjectSearch(realSearch, planets, starsCatalog, dsoCatalog);
     setSearchResults(searchedDSOs);
     setPlanetResults(searchedPlanets);
     setStarsResults(searchedStars);
-    const mergedResults: (DSO | GlobalPlanet | Star)[] = [...searchedPlanets, ...searchedDSOs, ...searchedStars]
+    const mergedResults: (DSO | GlobalPlanet | Star | SpecialSkyObject)[] = [...searchedPlanets, ...searchedDSOs, ...searchedStars]
     setData(mergedResults);
     setSearchResultsLoading(false)
   }
@@ -112,6 +155,36 @@ export default function PlanetariumSearchModal({ onClose, navigation, onSelect, 
         />
       </View>
       {
+        suggestions.length > 0 && (
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={{ paddingVertical: 8, flexGrow: 0, flexShrink: 0 }}
+            contentContainerStyle={{ paddingHorizontal: 10, gap: 8, alignItems: 'center' }}
+          >
+            {suggestions.map((s, i) => (
+              <TouchableOpacity
+                key={i}
+                onPress={() => {
+                  setSearchString(s);
+                  handleSearch(s);
+                }}
+                style={{
+                  backgroundColor: app_colors.white_twenty,
+                  paddingHorizontal: 14,
+                  paddingVertical: 7,
+                  borderRadius: 16,
+                  borderWidth: 1,
+                  borderColor: app_colors.white_forty,
+                }}
+              >
+                <Text style={{ color: app_colors.white, fontSize: 13 }}>{s}</Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        )
+      }
+      {
         searchResults.length === 0 && planetResults.length === 0 && starsResults.length === 0 && !searchResultsLoading &&
           <ScreenInfo image={require('../../../assets/icons/FiSearch.png')} text={"Recherchez un objet céleste"}/>
       }
@@ -136,7 +209,7 @@ export default function PlanetariumSearchModal({ onClose, navigation, onSelect, 
                 date={timelineDate}
               />
             )}
-            keyExtractor={item => `${item.dec}-${item.ra}`}
+            keyExtractor={item => `${(item as any).family ?? 'obj'}-${item.dec}-${item.ra}`}
           />
       }
     </View>

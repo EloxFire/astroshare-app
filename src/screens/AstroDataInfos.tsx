@@ -1,11 +1,25 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { View, ScrollView, Text } from 'react-native'
 import PageTitle from '../components/commons/PageTitle'
 import { i18n } from '../helpers/scripts/i18n'
 import { globalStyles } from '../styles/global'
 import { settingsStyles } from '../styles/screens/settings'
+import { sendAnalyticsEvent } from '../helpers/scripts/analytics'
+import { eventTypes } from '../helpers/constants/analytics'
+import { useSettings } from '../contexts/AppSettingsContext'
+import { useAuth } from '../contexts/AuthContext'
+import { useTranslation } from '../hooks/useTranslation'
 
 export default function AstroDataInfos({ navigation }: any) {
+
+  const { currentUserLocation } = useSettings()
+  const { currentUser } = useAuth()
+  const { currentLocale } = useTranslation()
+
+  useEffect(() => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'astro_data_infos_screen_view', eventTypes.SCREEN_VIEW, {}, currentLocale)
+  }, [])
+
   return (
     <View style={globalStyles.body}>
       <PageTitle

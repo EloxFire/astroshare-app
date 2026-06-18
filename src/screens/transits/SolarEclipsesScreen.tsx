@@ -67,7 +67,10 @@ export function SolarEclipsesScreen({navigation}: any) {
           <CheckBox
             disabled={loading}
             style={{flex: 1, paddingVertical: 5, color: app_colors.white, marginBottom: 10}}
-            onClick={() => setShowOnlyVisible(!showOnlyVisible)}
+            onClick={() => {
+              setShowOnlyVisible(!showOnlyVisible)
+              sendAnalyticsEvent(currentUser, currentUserLocation, 'solar_eclipses_toggle_visible_only', eventTypes.BUTTON_CLICK, {showOnlyVisible: !showOnlyVisible}, currentLocale)
+            }}
             isChecked={showOnlyVisible}
             checkBoxColor={app_colors.white}
             leftTextStyle={{color: app_colors.white_sixty, fontFamily: 'GilroyRegular'}}
@@ -88,7 +91,10 @@ export function SolarEclipsesScreen({navigation}: any) {
               textAdditionalStyles={{fontFamily: 'GilroyBlack'}}
               active
               icon={require('../../../assets/icons/FiChevronLeft.png')}
-              onPress={() => setSelectedYear(selectedYear - 1)}
+              onPress={() => {
+                setSelectedYear(selectedYear - 1)
+                sendAnalyticsEvent(currentUser, currentUserLocation, 'solar_eclipses_year_previous', eventTypes.BUTTON_CLICK, {year: selectedYear - 1}, currentLocale)
+              }}
               activeBorderColor={app_colors.white_twenty}
             />
 
@@ -101,7 +107,10 @@ export function SolarEclipsesScreen({navigation}: any) {
               textAdditionalStyles={{fontFamily: 'GilroyBlack'}}
               active
               icon={require('../../../assets/icons/FiChevronRight.png')}
-              onPress={() => setSelectedYear(selectedYear + 1)}
+              onPress={() => {
+                setSelectedYear(selectedYear + 1)
+                sendAnalyticsEvent(currentUser, currentUserLocation, 'solar_eclipses_year_next', eventTypes.BUTTON_CLICK, {year: selectedYear + 1}, currentLocale)
+              }}
               activeBorderColor={app_colors.white_twenty}
             />
 
@@ -115,7 +124,10 @@ export function SolarEclipsesScreen({navigation}: any) {
               align={'center'}
               small
               textAdditionalStyles={{fontFamily: 'GilroyBlack'}}
-              onPress={() => findNextEclipse()}
+              onPress={() => {
+                findNextEclipse()
+                sendAnalyticsEvent(currentUser, currentUserLocation, 'solar_eclipses_search', eventTypes.BUTTON_CLICK, {year: selectedYear, showOnlyVisible}, currentLocale)
+              }}
             />
           </View>
 

@@ -26,7 +26,6 @@ import { changelogScreenTranslations } from "./screens/settings/changelog";
 import { skymapGeneratorTranslations } from "./screens/skymapGenerator";
 import { solarWeatherTranslations } from "./screens/solarWeather";
 import { transitsTranslations } from "./screens/transits";
-import { viewpointsManagerTranslations } from "./screens/viewpointsManager";
 import { weatherTranslation } from "./screens/weather";
 import {launchesScreenTranslations} from "./screens/launches";
 import {notificationsTranslations} from "./common/notifications";
@@ -44,6 +43,7 @@ import { checklistManagerTranslations } from "./screens/checklists";
 import { dashboardTranslations } from "./screens/dashboard";
 import { profileTranslations } from "./screens/profile";
 import { astroGearTranslations } from "./common/astroGear";
+import { telescopeSimulatorHomeTranslations } from "./screens/simulator/telescopeSimulatorHome";
 
 export const frTranslations = {
   onboarding: onboardingTranslations,
@@ -66,7 +66,6 @@ export const frTranslations = {
   satelliteTrackers: satelliteTrackerTranslations,
   // skymapGenerator: skymapGeneratorTranslations,
   skymap: skymapTranslations,
-  viewpointsManager: viewpointsManagerTranslations,
   resultCards: resultCardsTranslations,
   cards: cardsTranslations,
   favouriteScreen: favouriteScreenTranslations,
@@ -94,4 +93,7 @@ export const frTranslations = {
   dashboard: dashboardTranslations,
   profile: profileTranslations,
   gear: astroGearTranslations,
+  telescopeSimulator: {
+    home: telescopeSimulatorHomeTranslations,
+  }
 }

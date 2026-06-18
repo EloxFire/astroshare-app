@@ -20,6 +20,12 @@ export const observationPlannerTranslations = {
       stars: "Bright stars",
       dso: "Deep sky",
     },
+    dsoTypes: {
+      galaxies: "Galaxies",
+      nebulae: "Nebulae",
+      globularClusters: "Globular clusters",
+      openClusters: "Open clusters",
+    },
     fov: {
       width: "FOV (°) - width",
       height: "FOV (°) - height",
@@ -76,6 +82,13 @@ export const observationPlannerTranslations = {
       search: "Start search",
       searchAgain: "Search again",
       clear: "Clear search",
+    },
+    sort: {
+      label: "Sort by",
+      settingTime: "Setting",
+      risingTime: "Rising",
+      magnitude: "Magnitude",
+      altitude: "Altitude",
     },
     messages: {
       empty: "No results match your criteria",

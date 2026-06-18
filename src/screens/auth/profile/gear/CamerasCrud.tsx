@@ -87,6 +87,7 @@ export const CamerasCrud = ({navigation, route}: any) => {
       return;
     }
 
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'add_camera_saved', eventTypes.BUTTON_CLICK, {cameraName: camera.name}, currentLocale)
     await addCamera(currentUser.uid, camera);
     updateCurrentCamera(camera)
     navigation.goBack();
@@ -98,6 +99,7 @@ export const CamerasCrud = ({navigation, route}: any) => {
       return;
     }
 
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'delete_camera_clicked', eventTypes.BUTTON_CLICK, {cameraId: camera.id}, currentLocale)
     await deleteCamera(currentUser.uid, camera.id);
     updateCurrentCamera(null)
     navigation.goBack();
@@ -109,6 +111,7 @@ export const CamerasCrud = ({navigation, route}: any) => {
       return;
     }
 
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'save_camera_changes_clicked', eventTypes.BUTTON_CLICK, {cameraName: camera.name}, currentLocale)
     await updateCamera(currentUser.uid, camera);
     navigation.goBack();
   }

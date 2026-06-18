@@ -37,14 +37,14 @@ export default function ScopeAlignment({ navigation }: any) {
       setCurrentStep(currentStep + 1)
     }else {
       sendAnalyticsEvent(currentUser, currentUserLocation, 'Return home from scope alignment', eventTypes.BUTTON_CLICK, {currentStep: currentStep}, currentLocale)
-      navigation.push(routes.home.path)
+      navigation.navigate(routes.home.path)
     }
   }
 
   const handlePreviousStep = () => {
     if(currentStep === 1) {
       sendAnalyticsEvent(currentUser, currentUserLocation, 'Return home from scope alignment', eventTypes.BUTTON_CLICK, {currentStep: currentStep}, currentLocale)
-      navigation.push(routes.home.path)
+      navigation.navigate(routes.home.path)
     }else {
       sendAnalyticsEvent(currentUser, currentUserLocation, 'Previous step polar scope alignment', eventTypes.BUTTON_CLICK, {currentStep: currentStep}, currentLocale)
       setCurrentStep(currentStep - 1);

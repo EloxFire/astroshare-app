@@ -105,8 +105,8 @@ export default function SatelliteTrackerDetails({ route, navigation }: any) {
             mapRef.current.animateToRegion({
               latitude: firstPosition.satlatitude,
               longitude: firstPosition.satlongitude,
-              latitudeDelta: 0,
-              longitudeDelta: 1000,
+              latitudeDelta: 80,
+              longitudeDelta: 80,
             }, 1000);
           }
 
@@ -208,8 +208,8 @@ export default function SatelliteTrackerDetails({ route, navigation }: any) {
       mapRef.current.animateToRegion({
         latitude: satelliteInfos.currentPosition.satlatitude,
         longitude: satelliteInfos.currentPosition.satlongitude,
-        latitudeDelta: 0,
-        longitudeDelta: 1000,
+        latitudeDelta: 80,
+        longitudeDelta: 80,
       }, 1000);
     }
   }
@@ -239,7 +239,10 @@ export default function SatelliteTrackerDetails({ route, navigation }: any) {
               <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
                 <SimpleButton
                   text={i18n.t('satelliteTrackers.details.2dMap.button')}
-                  onPress={() => {centerSatelliteOnMap(mapRef, satelliteInfos)}}
+                  onPress={() => {
+                    sendAnalyticsEvent(currentUser, currentUserLocation, 'satellite_tracker_details_center_on_map', eventTypes.BUTTON_CLICK, {noradId}, currentLocale)
+                    centerSatelliteOnMap(mapRef, satelliteInfos)
+                  }}
                   icon={require('../../../assets/icons/FiIss.png')}
                   textColor={app_colors.white}
                   align={'center'}
@@ -250,11 +253,12 @@ export default function SatelliteTrackerDetails({ route, navigation }: any) {
                 provider={Platform.OS === 'android' ? PROVIDER_GOOGLE : undefined}
                 style={satelliteTrackerStyles.content.mapContainer.map}
                 customMapStyle={mapStyle}
+                userInterfaceStyle="dark"
                 initialRegion={{
                   latitude: satelliteInfos ? satelliteInfos.currentPosition.satlatitude : 0,
                   longitude: satelliteInfos ? satelliteInfos.currentPosition.satlongitude : 0,
-                  latitudeDelta: 0,
-                  longitudeDelta: 1000,
+                  latitudeDelta: 80,
+                  longitudeDelta: 80,
                 }}
                 rotateEnabled={false}
                 cameraZoomRange={{ minCenterCoordinateDistance: 1000 }}

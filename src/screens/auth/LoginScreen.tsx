@@ -21,6 +21,10 @@ export default function LoginScreen({ navigation }: any) {
   const { currentLocale } = useTranslation()
   const { currentUserLocation } = useSettings()
 
+  useEffect(() => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'login_screen_view', eventTypes.SCREEN_VIEW, {}, currentLocale)
+  }, [])
+
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
@@ -45,24 +49,24 @@ export default function LoginScreen({ navigation }: any) {
     }
 
     sendAnalyticsEvent(currentUser, currentUserLocation, 'login_success', eventTypes.USER_LOGIN, {}, currentLocale)
-    navigation.push(routes.auth.profile.home.path)
+    navigation.navigate(routes.auth.profile.home.path)
     setLoading(false)
   }
 
   const handleRegisterNavigation = () => {
     sendAnalyticsEvent(currentUser, currentUserLocation, 'navigate_to_register', eventTypes.BUTTON_CLICK, {from: "login screen"}, currentLocale)
-    navigation.push(routes.auth.register.path)
+    navigation.navigate(routes.auth.register.path)
   }
 
   const handleForgotPassword = () => {
     sendAnalyticsEvent(currentUser, currentUserLocation, 'navigate_to_forgot_password', eventTypes.BUTTON_CLICK, {from: "login screen"}, currentLocale)
-    navigation.push(routes.auth.forgotPassword.path)
+    navigation.navigate(routes.auth.forgotPassword.path)
   }
 
   return (
     <View style={globalStyles.body}>
       <View style={pageTitleStyles.container}>
-        <TouchableOpacity onPress={() => navigation.push(routes.home.path)}>
+        <TouchableOpacity onPress={() => navigation.navigate(routes.home.path)}>
           <Image style={pageTitleStyles.container.icon} source={require('../../../assets/icons/FiChevronDown.png')}/>
         </TouchableOpacity>
       </View>
@@ -81,6 +85,8 @@ export default function LoginScreen({ navigation }: any) {
               placeholder={i18n.t('auth.placeholders.email')}
               type={"text"}
               additionalStyles={{marginBottom: 0}}
+              inputStyle={{fontSize: 16}}
+              autoCapitalize="none"
             />
 
             <InputWithIcon
@@ -91,6 +97,8 @@ export default function LoginScreen({ navigation }: any) {
               search={() => setShowPassword(!showPassword)}
               type={showPassword ? 'text' : 'password'}
               additionalStyles={{marginBottom: 0}}
+              inputStyle={{fontSize: 16}}
+              autoCapitalize="none"
               alternateSubmitEvent={() => handleFormSubmit()}
             />
 

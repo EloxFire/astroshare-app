@@ -13,6 +13,7 @@ import {
   getBodyNextRise,
   getBodyNextSet,
   getConstellation,
+  getLunarEquatorialCoordinate,
   HorizontalCoordinate,
   isBodyAboveHorizon,
   isBodyCircumpolar,
@@ -37,16 +38,20 @@ import {getObjectType} from "./getObjectType";
 import {getObjectName} from "./getObjectName";
 import { getConstellationName } from "../../getConstellationName";
 import {getSunData} from "../solar/sunData";
+import {SpecialSkyObject} from "../../../types/SpecialSkyObject";
 
-type SpecialSkyObject = {
-  family: 'Sun' | 'Moon';
-  name: string;
-  ra: number;
-  dec: number;
-  icon: ImageSourcePropType;
-  phase?: string;
-  v_mag?: number;
-};
+// ─── Compute cache (DSO + Star only — static objects) ────────────────────────
+
+type _CacheEntry = { infos: ComputedObjectInfos; expiresAt: number };
+const _computeCache = new Map<string, _CacheEntry>();
+const _CACHE_TTL_MS = 30 * 60 * 1000;
+
+function _cacheKey(family: string, id: string, lat: number, lon: number, date: Date): string {
+  const hour = Math.floor(date.getTime() / 3_600_000);
+  return `${family}:${id}:${lat.toFixed(1)}:${lon.toFixed(1)}:${hour}`;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 
 interface ComputeObjectProps {
   object: DSO | Star | GlobalPlanet | SpecialSkyObject;
@@ -54,6 +59,8 @@ interface ComputeObjectProps {
   lang: string;
   altitude?: number;
   date?: Dayjs;
+  /** Skip expensive rise/set scan and visibility graph — ideal for list cards */
+  light?: boolean;
 }
 
 const isSpecialSkyObject = (object: any): object is SpecialSkyObject => {
@@ -142,7 +149,11 @@ export const computeObject = (props: ComputeObjectProps): ComputedObjectInfos | 
         };
       }
 
-      const target: EquatorialCoordinate = { ra: props.object.ra, dec: props.object.dec };
+      // For the Moon, always recompute ra/dec from the reference date so the
+      // displayed position is accurate regardless of when the search stub was built.
+      const target: EquatorialCoordinate = props.object.family === 'Moon'
+        ? getLunarEquatorialCoordinate(referenceDate)
+        : { ra: props.object.ra, dec: props.object.dec };
       const objectConstellation: Constellation | undefined = getConstellation(target);
       const localizedConstellationName: string = objectConstellation ? getConstellationName(objectConstellation.abbreviation) : 'N/A';
       const isCurrentlyVisible: boolean = isBodyAboveHorizon(referenceDate, props.observer, target, horizonAngle);
@@ -236,10 +247,12 @@ export const computeObject = (props: ComputeObjectProps): ComputedObjectInfos | 
           otherName: props.object.family === 'Moon' ? props.object.phase : undefined,
           constellation: localizedConstellationName,
           icon: props.object.icon,
-          ra: props.object.ra,
-          dec: props.object.dec,
-          degRa: props.object.ra,
-          degDec: props.object.dec,
+          // Use the resolved target coordinates (recomputed from date for Moon)
+          // rather than the zeroed-out stub values.
+          ra: target.ra,
+          dec: target.dec,
+          degRa: target.ra,
+          degDec: target.dec,
           v_mag: magnitude,
           b_mag: undefined,
           j_mag: undefined,
@@ -278,6 +291,14 @@ export const computeObject = (props: ComputeObjectProps): ComputedObjectInfos | 
     }
 
     const objectFamily: "DSO" | "Star" | "Planet" | "Other" = getObjectFamily(props.object);
+
+    // Cache check (non-light, static objects only)
+    if (!props.light && (objectFamily === 'DSO' || objectFamily === 'Star')) {
+      const _id = objectFamily === 'DSO' ? (props.object as DSO).name : (props.object as Star).ids;
+      const _key = _cacheKey(objectFamily, _id, props.observer.latitude, props.observer.longitude, referenceDate);
+      const _hit = _computeCache.get(_key);
+      if (_hit && Date.now() < _hit.expiresAt) return _hit.infos;
+    }
 
 
     let degDec: number = objectFamily === 'DSO' ? convertDMSToDegreeFromString(props.object.dec as string) : props.object.dec as number
@@ -362,13 +383,11 @@ export const computeObject = (props: ComputeObjectProps): ComputedObjectInfos | 
     }
     
 
-    if(!isObjectCircumpolar) {
+    if (!props.light && !isObjectCircumpolar) {
       const nextRise: false | TransitInstance = getBodyNextRise(referenceDate, props.observer, target, horizonAngle);
       const nextSet: boolean | TransitInstance = getBodyNextSet(referenceDate, props.observer, target, horizonAngle);
 
       if(isTransitInstance(nextRise)){
-        // console.log('[computeObject] Next rise datetime (UTC): ', nextRise.datetime);
-        
         objectNextRise = dayjs(nextRise.datetime).add(localOffsetMinutes, 'minute');
       }
 
@@ -443,31 +462,31 @@ export const computeObject = (props: ComputeObjectProps): ComputedObjectInfos | 
     }
 
 
-    // COMPUTE OBJECT VISIBILITY GRAPH.
-    // I want to get object altitude from H-6 hours to H+6 hours.
-    // I need to get the object altitude every 1 hour.
-    const objectAltitudes: number[] = [];
-    const altitudesHours: string[] = [];
-    const now: Dayjs = referenceNow;
-    const H: number = 6; // Number of hours to compute visibility graph
-    let graphCurrentHorizontal: HorizontalCoordinate | null = null;
-    for (let i = -H; i <= H; i++) {
-      const date: Dayjs = now.add(i, 'hour');
-      const horizontalCoords: HorizontalCoordinate = convertEquatorialToHorizontal(date.toDate(), props.observer, target);
-      if (i === 0) {
-        graphCurrentHorizontal = horizontalCoords;
+    // COMPUTE OBJECT VISIBILITY GRAPH (skipped in light mode)
+    let displayedCurrentAltitude = objectCurrentAltitude;
+    let displayedCurrentAzimuth = objectCurrentAzimuth;
+    let objectAltitudes: number[] = [];
+    let altitudesHours: string[] = [];
+    if (!props.light) {
+      const now: Dayjs = referenceNow;
+      const H: number = 6;
+      for (let i = -H; i <= H; i++) {
+        const date: Dayjs = now.add(i, 'hour');
+        const horizontalCoords: HorizontalCoordinate = convertEquatorialToHorizontal(date.toDate(), props.observer, target);
+        if (i === 0) {
+          displayedCurrentAltitude = horizontalCoords.alt;
+          displayedCurrentAzimuth = horizontalCoords.az;
+        }
+        objectAltitudes.push(horizontalCoords.alt);
+        altitudesHours.push(date.format('HH:mm'));
       }
-      objectAltitudes.push(horizontalCoords.alt);
-      altitudesHours.push(date.format('HH:mm'));
     }
-    const displayedCurrentAltitude = graphCurrentHorizontal?.alt ?? objectCurrentAltitude;
-    const displayedCurrentAzimuth = graphCurrentHorizontal?.az ?? objectCurrentAzimuth;
 
 
     // GESTION DES INFORMATIONS SUPLÉMENTAIRES (si dispo)
     // Seul les DSO ont des infos supplémentaires
     let dsoAdditionalInfos: ComputedObjectInfos['dsoAdditionalInfos'] = undefined;
-    if(objectFamily === 'DSO') {
+    if(!props.light && objectFamily === 'DSO') {
       dsoAdditionalInfos = {
         image: (props.object as DSO).image_url !== "" ? {uri: (props.object as DSO).image_url} : require('../../../../../assets/icons/astro/OTHER.png'),
         distance: (props.object as DSO).distance ? `${(props.object as DSO).distance} ${(props.object as DSO).dist_unit}` : 'N/A',
@@ -480,7 +499,7 @@ export const computeObject = (props: ComputeObjectProps): ComputedObjectInfos | 
     }
 
     let planetAdditionalInfos: ComputedObjectInfos['planetAdditionalInfos'] = undefined;
-    if(objectFamily === 'Planet') {
+    if(!props.light && objectFamily === 'Planet') {
       planetAdditionalInfos = {
         symbol: (props.object as GlobalPlanet).symbol,
         solarSystemPosition: getPlanetPosition((props.object as GlobalPlanet).name) + '/8',
@@ -496,7 +515,7 @@ export const computeObject = (props: ComputeObjectProps): ComputedObjectInfos | 
 
 
 
-    return {
+    const _result: ComputedObjectInfos = {
       base: {
         family: objectFamily,
         type: objectType,
@@ -538,6 +557,16 @@ export const computeObject = (props: ComputeObjectProps): ComputedObjectInfos | 
       dsoAdditionalInfos: dsoAdditionalInfos,
       planetAdditionalInfos: planetAdditionalInfos,
       error: '',
+    };
+
+    // Cache static objects for 30 min (non-light only)
+    if (!props.light && (objectFamily === 'DSO' || objectFamily === 'Star')) {
+      const _id = objectFamily === 'DSO' ? (props.object as DSO).name : (props.object as Star).ids;
+      const _key = _cacheKey(objectFamily, _id, props.observer.latitude, props.observer.longitude, referenceDate);
+      if (_computeCache.size >= 400) _computeCache.delete(_computeCache.keys().next().value!);
+      _computeCache.set(_key, { infos: _result, expiresAt: Date.now() + _CACHE_TTL_MS });
     }
+
+    return _result;
   }
 }

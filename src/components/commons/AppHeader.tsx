@@ -77,33 +77,33 @@ export default function AppHeader({ navigation }: any) {
   const handleProfilePress = () => {
     if(currentUser){
       sendAnalyticsEvent(currentUser, currentUserLocation, 'Profile button pressed', eventTypes.BUTTON_CLICK, {target: "profile screen"}, currentLocale)
-      navigation.push(routes.auth.profile.home.path)
+      navigation.navigate(routes.auth.profile.home.path)
     }else{
       sendAnalyticsEvent(currentUser, currentUserLocation, 'Login button pressed', eventTypes.BUTTON_CLICK, {target: "login screen"}, currentLocale)
-      navigation.push(routes.auth.login.path)
+      navigation.navigate(routes.auth.login.path)
     }
   }
 
   const handleFavPress = () => {
     sendAnalyticsEvent(currentUser, currentUserLocation, 'Favorites button pressed', eventTypes.BUTTON_CLICK, {}, currentLocale)
-    navigation.push(routes.favorites.path)
+    navigation.navigate(routes.favorites.path)
   }
 
   const handleSettingsPress = () => {
     sendAnalyticsEvent(currentUser, currentUserLocation, 'Settings button pressed', eventTypes.BUTTON_CLICK, {}, currentLocale)
-    navigation.push(routes.settings.home.path)
+    navigation.navigate(routes.settings.home.path)
   }
 
   const handleTutorialPress = () => {
     sendAnalyticsEvent(currentUser, currentUserLocation, 'Tutorial button pressed', eventTypes.BUTTON_CLICK, {}, currentLocale)
-    navigation.push(routes.settings.tutorial.path)
+    navigation.navigate(routes.settings.tutorial.path)
   }
 
   const handleSellscreenPress = () => {
     sendAnalyticsEvent(currentUser, currentUserLocation, 'Sell screen button pressed', eventTypes.BUTTON_CLICK, {}, currentLocale)
       .then(() => {
         console.log('[Analytics] Sell screen button pressed event sent successfully');
-        navigation.push(routes.sellScreen.path)
+        navigation.navigate(routes.sellScreen.path)
       })
   }
 

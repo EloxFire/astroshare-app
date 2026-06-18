@@ -25,7 +25,7 @@ export const DashboardScreen = ({ navigation }: any) => {
   const { currentLocale } = useTranslation()
 
   useEffect(() => {
-    sendAnalyticsEvent(currentUser, currentUserLocation, 'Dashboard screen view', eventTypes.SCREEN_VIEW, {}, currentLocale)
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'dashboard_screen_view', eventTypes.SCREEN_VIEW, {}, currentLocale)
   }, [])
 
   const {
@@ -86,7 +86,10 @@ export const DashboardScreen = ({ navigation }: any) => {
           </View>
           <TouchableOpacity
             style={dashboardStyles.linkButton}
-            onPress={() => navigation.navigate(routes.dashboard.stats.path)}
+            onPress={() => {
+              sendAnalyticsEvent(currentUser, currentUserLocation, 'view_all_stats_clicked', eventTypes.BUTTON_CLICK, {}, currentLocale)
+              navigation.navigate(routes.dashboard.stats.path)
+            }}
           >
             <Text style={dashboardStyles.linkButton.text}>{i18n.t("dashboard.actions.viewAllStats")}</Text>
             <Image source={require("../../../assets/icons/FiChevronRight.png")} style={dashboardStyles.linkButton.icon} />
@@ -123,7 +126,10 @@ export const DashboardScreen = ({ navigation }: any) => {
           </View> */}
           <TouchableOpacity
             style={dashboardStyles.linkButton}
-            onPress={() => navigation.navigate(routes.dashboard.messier.path)}
+            onPress={() => {
+              sendAnalyticsEvent(currentUser, currentUserLocation, 'view_messier_catalog_clicked', eventTypes.BUTTON_CLICK, {}, currentLocale)
+              navigation.navigate(routes.dashboard.messier.path)
+            }}
           >
             <Text style={dashboardStyles.linkButton.text}>{i18n.t("dashboard.actions.viewMessier")}</Text>
             <Image source={require("../../../assets/icons/FiChevronRight.png")} style={dashboardStyles.linkButton.icon} />
@@ -145,7 +151,10 @@ export const DashboardScreen = ({ navigation }: any) => {
           </View>
           <TouchableOpacity
             style={dashboardStyles.linkButton}
-            onPress={() => navigation.navigate(routes.dashboard.activities.path)}
+            onPress={() => {
+              sendAnalyticsEvent(currentUser, currentUserLocation, 'view_activities_clicked', eventTypes.BUTTON_CLICK, {}, currentLocale)
+              navigation.navigate(routes.dashboard.activities.path)
+            }}
           >
             <Text style={dashboardStyles.linkButton.text}>{i18n.t("dashboard.actions.viewActivities")}</Text>
             <Image source={require("../../../assets/icons/FiChevronRight.png")} style={dashboardStyles.linkButton.icon} />
@@ -172,7 +181,10 @@ export const DashboardScreen = ({ navigation }: any) => {
 
           <TouchableOpacity
             style={dashboardStyles.linkButton}
-            onPress={() => navigation.navigate(routes.dashboard.achievements.path)}
+            onPress={() => {
+              sendAnalyticsEvent(currentUser, currentUserLocation, 'view_achievements_clicked', eventTypes.BUTTON_CLICK, {}, currentLocale)
+              navigation.navigate(routes.dashboard.achievements.path)
+            }}
           >
             <Text style={dashboardStyles.linkButton.text}>{i18n.t("dashboard.actions.viewAchievements")}</Text>
             <Image source={require("../../../assets/icons/FiChevronRight.png")} style={dashboardStyles.linkButton.icon} />

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { ScrollView, Text, View } from "react-native";
 import PageTitle from "../../components/commons/PageTitle";
 import { dashboardStyles } from "../../styles/screens/dashboard";
@@ -6,9 +6,22 @@ import { globalStyles } from "../../styles/global";
 import { useDashboardData } from "../../contexts/useDashboardData";
 import { i18n } from "../../helpers/scripts/i18n";
 import { DashboardRecentActivityCard } from "../../components/cards/DashboardRecentActivityCard";
+import { sendAnalyticsEvent } from "../../helpers/scripts/analytics";
+import { eventTypes } from "../../helpers/constants/analytics";
+import { useSettings } from "../../contexts/AppSettingsContext";
+import { useAuth } from "../../contexts/AuthContext";
+import { useTranslation } from "../../hooks/useTranslation";
 
 export const DashboardActivitiesScreen = ({ navigation }: any) => {
   const { recentActivities } = useDashboardData({ notify: false });
+
+  const { currentUserLocation } = useSettings();
+  const { currentUser } = useAuth();
+  const { currentLocale } = useTranslation();
+
+  useEffect(() => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'dashboard_activities_screen_view', eventTypes.SCREEN_VIEW, {}, currentLocale)
+  }, [])
 
   return (
     <View style={globalStyles.body}>

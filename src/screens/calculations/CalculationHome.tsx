@@ -53,6 +53,7 @@ export default function CalculationHome({ navigation }: any) {
   const t = (path: string, params?: Record<string, any>) => i18n.t(`calculations.home.${path}`, params);
 
   const computeCalculations = () => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'calculation_compute_clicked', eventTypes.BUTTON_CLICK, { focalUnit }, currentLocale)
     const parsedFocalInput = focalLengthInput ? parseFloat(focalLengthInput.replace(',', '.')) : undefined;
     const focalLength = parsedFocalInput ? (focalUnit === 'mm' ? parsedFocalInput : parsedFocalInput * 25.4) : undefined;
 
@@ -71,6 +72,7 @@ export default function CalculationHome({ navigation }: any) {
   }
 
   const resetCalculations = () => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'calculation_reset_clicked', eventTypes.BUTTON_CLICK, {}, currentLocale)
     setFocalLengthInput('');
     setFocalUnit('mm');
     setDiameter(undefined);
@@ -101,6 +103,7 @@ export default function CalculationHome({ navigation }: any) {
     if(unit === focalUnit){
       return;
     }
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'calculation_unit_changed', eventTypes.BUTTON_CLICK, { unit }, currentLocale)
 
     if(focalLengthInput){
       const parsedValue = parseFloat(focalLengthInput.replace(',', '.'));
@@ -247,7 +250,7 @@ export default function CalculationHome({ navigation }: any) {
                   return (
                     <TouchableOpacity
                       key={pupilValue}
-                      onPress={() => setSelectedPupil(pupilValue as 5 | 6 | 7)}
+                      onPress={() => { setSelectedPupil(pupilValue as 5 | 6 | 7); sendAnalyticsEvent(currentUser, currentUserLocation, 'calculation_pupil_size_changed', eventTypes.BUTTON_CLICK, { pupilSize: pupilValue }, currentLocale) }}
                       style={[calculationHomeStyles.chip, isActive && calculationHomeStyles.chipActive]}
                     >
                       <Text style={calculationHomeStyles.chipText}>{pupilValue} mm</Text>

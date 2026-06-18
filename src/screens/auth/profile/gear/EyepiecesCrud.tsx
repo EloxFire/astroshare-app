@@ -60,6 +60,7 @@ export const EyepiecesCrud = ({navigation, route}: any) => {
       return;
     }
 
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'add_eyepiece_saved', eventTypes.BUTTON_CLICK, {eyepieceName: eyepiece.name}, currentLocale)
     await addEyepiece(currentUser.uid, eyepiece);
     updateCurrentEyepiece(eyepiece)
     navigation.goBack();
@@ -71,6 +72,7 @@ export const EyepiecesCrud = ({navigation, route}: any) => {
       return;
     }
 
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'delete_eyepiece_clicked', eventTypes.BUTTON_CLICK, {eyepieceId: eyepiece.id}, currentLocale)
     await deleteEyepiece(currentUser.uid, eyepiece.id);
     updateCurrentEyepiece(null)
     navigation.goBack();
@@ -82,6 +84,7 @@ export const EyepiecesCrud = ({navigation, route}: any) => {
       return;
     }
 
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'save_eyepiece_changes_clicked', eventTypes.BUTTON_CLICK, {eyepieceName: eyepiece.name}, currentLocale)
     await updateEyepiece(currentUser.uid, eyepiece);
     navigation.goBack();
   }

@@ -11,8 +11,17 @@ import SimpleButton from "../../components/commons/buttons/SimpleButton";
 import ScreenInfo from "../../components/ScreenInfo";
 import ToolButton from "../../components/commons/buttons/ToolButton";
 import InputWithIcon from "../../components/forms/InputWithIcon";
+import { sendAnalyticsEvent } from "../../helpers/scripts/analytics";
+import { eventTypes } from "../../helpers/constants/analytics";
+import { useSettings } from "../../contexts/AppSettingsContext";
+import { useAuth } from "../../contexts/AuthContext";
+import { useTranslation } from "../../hooks/useTranslation";
 
 export default function ResourcesHome({ navigation }: any) {
+
+  const { currentUserLocation } = useSettings();
+  const { currentUser } = useAuth();
+  const { currentLocale } = useTranslation();
 
   const [categories, setCategories] = useState<Category[]>([]);
   const [userSearchText, setUserSearchText] = useState<string>("");
@@ -61,6 +70,7 @@ export default function ResourcesHome({ navigation }: any) {
   }
 
   const handleSearch = () => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'search_categories_clicked', eventTypes.BUTTON_CLICK, { query: userSearchText }, currentLocale)
     if(userSearchText.trim() === "") {
       fetchCategories();
       return;
@@ -75,6 +85,7 @@ export default function ResourcesHome({ navigation }: any) {
   }
 
   useEffect(() => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'resources_home_screen_view', eventTypes.SCREEN_VIEW, {}, currentLocale)
     fetchCategories();
     fetchTotalResources();
   }, []);
@@ -131,7 +142,10 @@ export default function ResourcesHome({ navigation }: any) {
                 text={category.title}
                 subtitle={category.description}
                 image={{ uri: category.illustrationUrl }}
-                onPress={() => navigation.navigate(routes.resources.categoryScreen.path, { category: category })}
+                onPress={() => {
+                  sendAnalyticsEvent(currentUser, currentUserLocation, 'open_category_clicked', eventTypes.BUTTON_CLICK, { category: category.title }, currentLocale)
+                  navigation.navigate(routes.resources.categoryScreen.path, { category: category })
+                }}
               />
             )
           })

@@ -65,7 +65,9 @@ export const commonTranslations = {
     removeFav: "Retirer des favoris",
     addFav: "Ajouter aux favoris",
     overview: "Aperçu",
-    more: "En savoir plus"
+    more: "En savoir plus",
+    cancel: "Annuler",
+    confirm: "Confirmer",
   },
   time: {
     time: "Temps",

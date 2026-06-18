@@ -37,7 +37,7 @@ export const PersonnalInfosCard = ({navigation}: any) => {
         fullWidth
         withArrow
         align="flex-start"
-        icon={require('../../../../assets/icons/FiObservatory.png')}
+        icon={require('../../../../assets/icons/FiPinMap.png')}
         text={i18n.t('auth.profile.personnalInfos.addresses.title')}
         onPress={() => {navigation.navigate(routes.auth.profile.observatories.home.path)}}
         iconColor={app_colors.white}

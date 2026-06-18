@@ -31,7 +31,6 @@ import { skymapTranslations } from "./screens/skymap";
 import { skymapGeneratorTranslations } from "./screens/skymap/skymapGenerator";
 import { solarWeatherTranslations } from "./screens/solarWeather";
 import { tutorialScreen } from "./screens/tutorialScreen";
-import { viewpointsManagerTranslations } from "./screens/viewpointsManager";
 import { changelogScreenTranslations } from "./screens/settings/changelog";
 import {launchesScreenTranslations} from "./screens/launches";
 import {notificationsTranslations} from "./common/notifications";
@@ -64,7 +63,6 @@ export const enTranslations = {
   solarWeather: solarWeatherTranslations,
   satelliteTracker: satelliteTrackerTranslations,
   skymap: skymapTranslations,
-  viewpointsManager: viewpointsManagerTranslations,
   resultCards: resultCardsTranslations,
   pro: proTranslations,
   favouriteScreen: favouriteScreenTranslations,

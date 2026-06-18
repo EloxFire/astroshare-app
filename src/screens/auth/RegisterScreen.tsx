@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Image, ScrollView, Text, TouchableOpacity, View} from "react-native";
 import {globalStyles} from "../../styles/global";
 import {i18n} from "../../helpers/scripts/i18n";
@@ -19,7 +19,11 @@ export default function RegisterScreen({ navigation }: any) {
   const {registerUser, loginUser} = useAuth()
   const {currentUser} = useAuth()
   const { currentLocale } = useTranslation()
-  const { currentUserLocation } = useSettings() 
+  const { currentUserLocation } = useSettings()
+
+  useEffect(() => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'register_screen_view', eventTypes.SCREEN_VIEW, {}, currentLocale)
+  }, [])
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -50,20 +54,20 @@ export default function RegisterScreen({ navigation }: any) {
         return;
       }
       sendAnalyticsEvent(currentUser, currentUserLocation, 'login_success_after_register', eventTypes.USER_LOGIN, {}, currentLocale)
-      navigation.push(routes.auth.profile.home.path);
+      navigation.navigate(routes.auth.profile.home.path);
       setLoading(false);
     }
   }
 
   const handleLoginNavigation = () => {
     sendAnalyticsEvent(currentUser, currentUserLocation, 'navigate_to_login', eventTypes.BUTTON_CLICK, {from: "register screen"}, currentLocale)
-    navigation.push(routes.auth.login.path)
+    navigation.navigate(routes.auth.login.path)
   }
 
   return (
     <View style={globalStyles.body}>
       <View style={pageTitleStyles.container}>
-        <TouchableOpacity onPress={() => navigation.push(routes.home.path)}>
+        <TouchableOpacity onPress={() => navigation.navigate(routes.home.path)}>
           <Image style={pageTitleStyles.container.icon} source={require('../../../assets/icons/FiChevronDown.png')}/>
         </TouchableOpacity>
       </View>
@@ -82,6 +86,8 @@ export default function RegisterScreen({ navigation }: any) {
               placeholder={i18n.t('auth.placeholders.email')}
               type={"text"}
               additionalStyles={{marginBottom: 0}}
+              inputStyle={{fontSize: 16}}
+              autoCapitalize="none"
             />
 
             <InputWithIcon
@@ -92,6 +98,8 @@ export default function RegisterScreen({ navigation }: any) {
               search={() => setShowPassword(!showPassword)}
               type={showPassword ? 'text' : 'password'}
               additionalStyles={{marginBottom: 0}}
+              inputStyle={{fontSize: 16}}
+              autoCapitalize="none"
             />
 
             <InputWithIcon
@@ -102,6 +110,8 @@ export default function RegisterScreen({ navigation }: any) {
               search={() => setShowPassword(!showPassword)}
               type={showPassword ? 'text' : 'password'}
               additionalStyles={{marginBottom: 0}}
+              inputStyle={{fontSize: 16}}
+              autoCapitalize="none"
               alternateSubmitEvent={() => handleFormSubmit()}
             />
 

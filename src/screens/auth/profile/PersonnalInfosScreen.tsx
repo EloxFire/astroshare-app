@@ -5,20 +5,30 @@ import SimpleButton from "../../../components/commons/buttons/SimpleButton"
 import PageTitle from "../../../components/commons/PageTitle"
 import InputWithIcon from "../../../components/forms/InputWithIcon"
 import { useAuth } from "../../../contexts/AuthContext"
+import { useSettings } from "../../../contexts/AppSettingsContext"
 import { storageKeys, app_colors } from "../../../helpers/constants"
+import { eventTypes } from "../../../helpers/constants/analytics"
 import { availableUserProfilePictures } from "../../../helpers/scripts/auth/availableUserProfilePicture"
 import { i18n } from "../../../helpers/scripts/i18n"
 import { showToast } from "../../../helpers/scripts/showToast"
+import { sendAnalyticsEvent } from "../../../helpers/scripts/analytics"
 import { capitalize } from "../../../helpers/scripts/utils/formatters/capitalize"
 import { getData } from "../../../helpers/storage"
 import { globalStyles } from "../../../styles/global"
 import { personnalInfosScreenStyles } from "../../../styles/screens/auth/personnalInfosScreen"
 import { profileScreenStyles } from "../../../styles/screens/auth/profile"
-import DateTimePicker from '@react-native-community/datetimepicker';
+import DateTimePickerModal from '../../../components/commons/DateTimePickerModal';
+import { useTranslation } from "../../../hooks/useTranslation"
 
 export const PersonnalInfosScreen = ({navigation}: any) => {
 
   const { currentUser, updateCurrentUser } = useAuth()
+  const { currentUserLocation } = useSettings()
+  const { currentLocale } = useTranslation()
+
+  useEffect(() => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'personal_infos_screen_view', eventTypes.SCREEN_VIEW, {}, currentLocale)
+  }, [])
 
   const [firstname, setFirstname] = useState<string>(currentUser.profile?.firstname || "")
   const [lastname, setLastname] = useState<string>(currentUser.profile?.lastname || "")
@@ -37,6 +47,7 @@ export const PersonnalInfosScreen = ({navigation}: any) => {
   }, [currentUser.profile?.profilePicture])
 
   const handleSavePersonnalInfos = async () => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'save_personal_infos_clicked', eventTypes.BUTTON_CLICK, {}, currentLocale)
     console.log("Saving personnal infos...", {firstname, lastname, birthday, pseudonym, bio, activeProfilePictureId});
 
     const accessToken = await getData(storageKeys.auth.accessToken);
@@ -87,7 +98,7 @@ export const PersonnalInfosScreen = ({navigation}: any) => {
             <Text style={profileScreenStyles.content.section.subtitle}>Sélectionnez une illustration pour votre profil utilisateur</Text>
             <View style={personnalInfosScreenStyles.profilePicturesContainer}>
               <View style={{marginBottom: 20}}>
-                <TouchableOpacity onPress={() => setActiveProfilePictureId(null)} style={[personnalInfosScreenStyles.profilePicturesContainer.profilePicture, {borderColor: !activeProfilePictureId ? app_colors.yellow : app_colors.white_sixty}]}>
+                <TouchableOpacity onPress={() => { sendAnalyticsEvent(currentUser, currentUserLocation, 'select_profile_picture', eventTypes.BUTTON_CLICK, {pictureId: null}, currentLocale); setActiveProfilePictureId(null) }} style={[personnalInfosScreenStyles.profilePicturesContainer.profilePicture, {borderColor: !activeProfilePictureId ? app_colors.yellow : app_colors.white_sixty}]}>
                   <Image style={personnalInfosScreenStyles.profilePicturesContainer.defaultIcon} source={require('../../../../assets/icons/FiUser.png')} />
                 </TouchableOpacity>
                 <Text style={{color: app_colors.white, textAlign: 'center', fontSize: 10}}>Aucun</Text>
@@ -96,7 +107,7 @@ export const PersonnalInfosScreen = ({navigation}: any) => {
                 availableUserProfilePictures.map((picture) => {
                   return (
                     <View style={{marginBottom: 20}} key={picture.id}>
-                      <TouchableOpacity onPress={() => setActiveProfilePictureId(picture.id)}>
+                      <TouchableOpacity onPress={() => { sendAnalyticsEvent(currentUser, currentUserLocation, 'select_profile_picture', eventTypes.BUTTON_CLICK, {pictureId: picture.id}, currentLocale); setActiveProfilePictureId(picture.id) }}>
                         <Image style={[personnalInfosScreenStyles.profilePicturesContainer.profilePicture, {borderColor: activeProfilePictureId === picture.id ? app_colors.yellow : app_colors.white_sixty}]} source={picture.source} />
                       </TouchableOpacity>
                       <Text style={{color: app_colors.white, textAlign: 'center', fontSize: 10}}>{picture.name}</Text>
@@ -142,28 +153,18 @@ export const PersonnalInfosScreen = ({navigation}: any) => {
                 active
               />
 
-              {
-                showDatePicker && (
-                  <DateTimePicker
-                    maximumDate={new Date()}
-                    value={ birthday ? new Date(birthday) : new Date() }
-                    mode='date'
-                    display='default'
-                    themeVariant={'dark'}
-                    onChange={(event, selectedDate) => {
-                      if (event.type === 'dismissed') {
-                        setShowDatePicker(false)
-                      }
-                      if (event.type === 'set' && selectedDate) {
-                        console.log("Setting end date:", selectedDate);
-                        
-                        setShowDatePicker(false)
-                        setBirthday(selectedDate.toISOString().split('T')[0])
-                      }
-                    }}
-                  />
-                )
-              }
+              <DateTimePickerModal
+                visible={showDatePicker}
+                mode='date'
+                value={birthday ? new Date(birthday) : new Date()}
+                onCancel={() => setShowDatePicker(false)}
+                onConfirm={(selectedDate) => {
+                  setShowDatePicker(false)
+                  setBirthday(selectedDate.toISOString().split('T')[0])
+                }}
+                minimumDate={new Date('1900-01-01')}
+                maximumDate={new Date()}
+              />
 
               <InputWithIcon
                 placeholder={currentUser.profile?.pseudonym || "Pseudonyme"}

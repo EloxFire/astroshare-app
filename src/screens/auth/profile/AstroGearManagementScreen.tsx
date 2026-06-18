@@ -95,7 +95,7 @@ export const AstroGearManagementScreen = ({navigation}: any) => {
               withArrow
               fullWidth
               text="Ajouter un télescope"
-              onPress={() => {navigation.navigate(routes.auth.profile.astroGearManagement.telescopes.crud.path)}}
+              onPress={() => { sendAnalyticsEvent(currentUser, currentUserLocation, 'add_telescope_clicked', eventTypes.BUTTON_CLICK, {}, currentLocale); navigation.navigate(routes.auth.profile.astroGearManagement.telescopes.crud.path) }}
               textColor={app_colors.white}
               backgroundColor={app_colors.white_no_opacity}
               iconColor={app_colors.white}
@@ -120,7 +120,7 @@ export const AstroGearManagementScreen = ({navigation}: any) => {
               withArrow
               fullWidth
               text="Ajouter un oculaire"
-              onPress={() => {navigation.navigate(routes.auth.profile.astroGearManagement.eyepieces.crud.path)}}
+              onPress={() => { sendAnalyticsEvent(currentUser, currentUserLocation, 'add_eyepiece_clicked', eventTypes.BUTTON_CLICK, {}, currentLocale); navigation.navigate(routes.auth.profile.astroGearManagement.eyepieces.crud.path) }}
               textColor={app_colors.white}
               backgroundColor={app_colors.white_no_opacity}
               iconColor={app_colors.white}
@@ -146,7 +146,7 @@ export const AstroGearManagementScreen = ({navigation}: any) => {
               withArrow
               fullWidth
               text="Ajouter une caméra"
-              onPress={() => {navigation.navigate(routes.auth.profile.astroGearManagement.cameras.crud.path)}}
+              onPress={() => { sendAnalyticsEvent(currentUser, currentUserLocation, 'add_camera_clicked', eventTypes.BUTTON_CLICK, {}, currentLocale); navigation.navigate(routes.auth.profile.astroGearManagement.cameras.crud.path) }}
               textColor={app_colors.white}
               backgroundColor={app_colors.white_no_opacity}
               iconColor={app_colors.white}
@@ -172,7 +172,7 @@ export const AstroGearManagementScreen = ({navigation}: any) => {
               withArrow
               fullWidth
               text="Ajouter une monture"
-              onPress={() => {navigation.navigate(routes.auth.profile.astroGearManagement.mounts.crud.path)}}
+              onPress={() => { sendAnalyticsEvent(currentUser, currentUserLocation, 'add_mount_clicked', eventTypes.BUTTON_CLICK, {}, currentLocale); navigation.navigate(routes.auth.profile.astroGearManagement.mounts.crud.path) }}
               textColor={app_colors.white}
               backgroundColor={app_colors.white_no_opacity}
               iconColor={app_colors.white}
