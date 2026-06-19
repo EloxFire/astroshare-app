@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { GeographicCoordinate, getTwilightBandsForDay, EquatorialCoordinate, isBodyAboveHorizon, TwilightBand } from "@observerly/astrometry";
+import { GeographicCoordinate, getTwilightBandsForDay, TwilightBand } from "@observerly/astrometry";
 import { ImageSourcePropType, View, ImageBackground, ActivityIndicator, Text, Image } from "react-native";
 import { useSettings } from "../../../contexts/AppSettingsContext";
 import { useSpot } from "../../../contexts/ObservationSpotContext";
@@ -49,6 +49,18 @@ export default function GlobalSummary({ noHeader }: GlobalSummaryProps) {
     return () => clearInterval(interval)
   }, [currentUserLocation])
 
+  useEffect(() => {
+    if (!planets.length || !currentUserLocation) return;
+
+    const altitude = selectedSpot ? selectedSpot.equipments.altitude : defaultAltitude;
+    const horizonAngle = calculateHorizonAngle(extractNumbers(altitude))
+
+    const vp = planets.filter((planet: GlobalPlanet) =>
+      planet.name !== 'Earth' && planet.alt > horizonAngle
+    )
+    setVisiblePlanets(vp)
+  }, [planets, currentUserLocation, selectedSpot, defaultAltitude])
+
   const getInfos = async (): Promise<void> => {
     if(!currentUserLocation) {
       setLoading(false)
@@ -56,12 +68,9 @@ export default function GlobalSummary({ noHeader }: GlobalSummaryProps) {
     }
     setLoading(true)
     setCurrentWeather(null)
-    setVisiblePlanets([])
     setBackgroundColor(twilightBandsBackgrounds.Night)
 
-    const altitude = selectedSpot ? selectedSpot.equipments.altitude : defaultAltitude;
     const observer: GeographicCoordinate = { latitude: currentUserLocation.lat, longitude: currentUserLocation.lon }
-    const horizonAngle = calculateHorizonAngle(extractNumbers(altitude))
 
     try {
       const weather = await getWeather(currentUserLocation.lat, currentUserLocation.lon)
@@ -79,17 +88,6 @@ export default function GlobalSummary({ noHeader }: GlobalSummaryProps) {
       setBackgroundColor(twilightBandsBackgrounds.Night)
     }
 
-    let vp: GlobalPlanet[] = [];
-    planets.forEach((planet: GlobalPlanet) => {
-      const target: EquatorialCoordinate = { ra: planet.ra, dec: planet.dec }
-      const isAbove = isBodyAboveHorizon(new Date(), observer, target, horizonAngle)
-
-      if (isAbove && planet.name !== 'Earth') {
-        vp.push(planet)
-      }
-    })
-
-    setVisiblePlanets(vp)
     setLoading(false)
   }
 
