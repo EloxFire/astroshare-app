@@ -12,6 +12,7 @@ export function createDSOLayer(
   getDsoCatalog: () => DSO[],
   setSelectedObject: (dso: DSO | null) => void,
   reporter?: PlanetariumLoadingReporter,
+  localUrlMap?: Map<string, string>,
 ): THREE.Group {
   const total = (planetariumImages as any).images.length;
   reporter?.({ stepId: 'dso', title: 'Deep-sky objects', detail: `Building ${total} DSO billboards`, status: 'active' });
@@ -41,7 +42,8 @@ export function createDSOLayer(
     geometry.setAttribute('uv', new THREE.Float32BufferAttribute(uvCoords, 2));
     geometry.setIndex([0, 1, 2, 2, 3, 0]);
 
-    const texture = new ExpoTHREE.TextureLoader().load(image.imageUrl);
+    const textureUri = localUrlMap?.get(image.imageUrl) ?? image.imageUrl;
+    const texture = new ExpoTHREE.TextureLoader().load(textureUri);
     const material = new THREE.ShaderMaterial({
       uniforms: {
         map:         { value: texture },

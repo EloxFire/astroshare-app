@@ -164,6 +164,24 @@ export default function PlanetariumUI({ navigation, infos, onShowGround, onShowC
   const [showSearchBar, setShowSearchBar] = useState<boolean>(false);
   const [showTimelineModal, setShowTimelineModal] = useState<boolean>(false);
 
+  // Mirror the initial visibility set in SceneBuilder / layer files
+  const [layerActive, setLayerActive] = useState({
+    constellations:        false,
+    constellationLabels:   false,
+    eqGrid:                false,
+    azGrid:                false,
+    ground:                true,
+    planets:               true,
+    dso:                   true,
+    compassLabels:         true,
+    atmosphere:            true,
+    starLabels:            true,
+    solarSystemLabels:     true,
+  });
+
+  const toggleLayerActive = (key: keyof typeof layerActive) =>
+    setLayerActive((prev) => ({ ...prev, [key]: !prev[key] }));
+
   const [objectInfos, setObjectInfos] = useState<ComputedObjectInfos | null>(null);
   const [currentInfoTab, setCurrentInfoTab] = useState<number>(0);
   const lastObjectKeyRef = useRef<string | null>(null);
@@ -672,69 +690,63 @@ export default function PlanetariumUI({ navigation, infos, onShowGround, onShowC
       {
         showLayerModal && (
           <View style={planetariumUIStyles.container.layersModal}>
-            <TouchableOpacity style={planetariumUIStyles.container.layersModal.button} onPress={() => onShowConstellations()}>
-              <Image style={planetariumUIStyles.container.layersModal.button.icon} source={require('../../../assets/icons/FiConstellation.png')} />
-              <Text style={planetariumUIStyles.container.layersModal.button.text}>Constel</Text>
+            <TouchableOpacity style={planetariumUIStyles.container.layersModal.button} onPress={() => { onShowConstellations(); toggleLayerActive('constellations'); }}>
+              <Image style={[planetariumUIStyles.container.layersModal.button.icon, { tintColor: layerActive.constellations ? app_colors.white : app_colors.white_sixty }]} source={require('../../../assets/icons/FiConstellation.png')} />
+              <Text style={[planetariumUIStyles.container.layersModal.button.text, { color: layerActive.constellations ? app_colors.white : app_colors.white_sixty }]}>Constel</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={planetariumUIStyles.container.layersModal.button} onPress={() => onShowConstellationLabels()}>
-              <Image style={planetariumUIStyles.container.layersModal.button.icon} source={require('../../../assets/icons/FiFileText.png')} />
-              <Text style={planetariumUIStyles.container.layersModal.button.text}>Labels</Text>
+            <TouchableOpacity style={planetariumUIStyles.container.layersModal.button} onPress={() => { onShowConstellationLabels(); toggleLayerActive('constellationLabels'); }}>
+              <Image style={[planetariumUIStyles.container.layersModal.button.icon, { tintColor: layerActive.constellationLabels ? app_colors.white : app_colors.white_sixty }]} source={require('../../../assets/icons/FiFileText.png')} />
+              <Text style={[planetariumUIStyles.container.layersModal.button.text, { color: layerActive.constellationLabels ? app_colors.white : app_colors.white_sixty }]}>Labels</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={planetariumUIStyles.container.layersModal.button} onPress={() => onShowEqGrid()}>
-              <Image style={planetariumUIStyles.container.layersModal.button.icon} source={require('../../../assets/icons/FiEqGrid.png')} />
-              <Text style={planetariumUIStyles.container.layersModal.button.text}>Grille EQ</Text>
+            <TouchableOpacity style={planetariumUIStyles.container.layersModal.button} onPress={() => { onShowEqGrid(); toggleLayerActive('eqGrid'); }}>
+              <Image style={[planetariumUIStyles.container.layersModal.button.icon, { tintColor: layerActive.eqGrid ? app_colors.white : app_colors.white_sixty }]} source={require('../../../assets/icons/FiEqGrid.png')} />
+              <Text style={[planetariumUIStyles.container.layersModal.button.text, { color: layerActive.eqGrid ? app_colors.white : app_colors.white_sixty }]}>Grille EQ</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={planetariumUIStyles.container.layersModal.button} onPress={() => onShowAzGrid()}>
-              <Image style={planetariumUIStyles.container.layersModal.button.icon} source={require('../../../assets/icons/FiAzGrid.png')} />
-              <Text style={planetariumUIStyles.container.layersModal.button.text}>Grille AZ</Text>
+            <TouchableOpacity style={planetariumUIStyles.container.layersModal.button} onPress={() => { onShowAzGrid(); toggleLayerActive('azGrid'); }}>
+              <Image style={[planetariumUIStyles.container.layersModal.button.icon, { tintColor: layerActive.azGrid ? app_colors.white : app_colors.white_sixty }]} source={require('../../../assets/icons/FiAzGrid.png')} />
+              <Text style={[planetariumUIStyles.container.layersModal.button.text, { color: layerActive.azGrid ? app_colors.white : app_colors.white_sixty }]}>Grille AZ</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={planetariumUIStyles.container.layersModal.button} onPress={() => onShowPlanets()}>
-              <Image style={planetariumUIStyles.container.layersModal.button.icon} source={require('../../../assets/icons/FiPlanet.png')} />
-              <Text style={planetariumUIStyles.container.layersModal.button.text}>Planètes</Text>
+            <TouchableOpacity style={planetariumUIStyles.container.layersModal.button} onPress={() => { onShowPlanets(); toggleLayerActive('planets'); }}>
+              <Image style={[planetariumUIStyles.container.layersModal.button.icon, { tintColor: layerActive.planets ? app_colors.white : app_colors.white_sixty }]} source={require('../../../assets/icons/FiPlanet.png')} />
+              <Text style={[planetariumUIStyles.container.layersModal.button.text, { color: layerActive.planets ? app_colors.white : app_colors.white_sixty }]}>Planètes</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={planetariumUIStyles.container.layersModal.button} onPress={() => onShowDSO()}>
-              <Image style={planetariumUIStyles.container.layersModal.button.icon} source={require('../../../assets/icons/astro/DRKN.png')} />
-              <Text style={planetariumUIStyles.container.layersModal.button.text}>DSO</Text>
+            <TouchableOpacity style={planetariumUIStyles.container.layersModal.button} onPress={() => { onShowDSO(); toggleLayerActive('dso'); }}>
+              <Image style={[planetariumUIStyles.container.layersModal.button.icon, { tintColor: layerActive.dso ? app_colors.white : app_colors.white_sixty }]} source={require('../../../assets/icons/astro/DRKN.png')} />
+              <Text style={[planetariumUIStyles.container.layersModal.button.text, { color: layerActive.dso ? app_colors.white : app_colors.white_sixty }]}>DSO</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={planetariumUIStyles.container.layersModal.button} onPress={() => onShowGround()}>
-              <Image style={planetariumUIStyles.container.layersModal.button.icon} source={require('../../../assets/icons/FiMountain.png')} />
-              <Text style={planetariumUIStyles.container.layersModal.button.text}>Terrain</Text>
+            <TouchableOpacity style={planetariumUIStyles.container.layersModal.button} onPress={() => { onShowGround(); toggleLayerActive('ground'); }}>
+              <Image style={[planetariumUIStyles.container.layersModal.button.icon, { tintColor: layerActive.ground ? app_colors.white : app_colors.white_sixty }]} source={require('../../../assets/icons/FiMountain.png')} />
+              <Text style={[planetariumUIStyles.container.layersModal.button.text, { color: layerActive.ground ? app_colors.white : app_colors.white_sixty }]}>Terrain</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={planetariumUIStyles.container.layersModal.button} onPress={() => onShowCompassLabels()}>
-              <Image style={planetariumUIStyles.container.layersModal.button.icon} source={require('../../../assets/icons/FiCompass.png')} />
-              <Text style={planetariumUIStyles.container.layersModal.button.text}>Boussole</Text>
+            <TouchableOpacity style={planetariumUIStyles.container.layersModal.button} onPress={() => { onShowCompassLabels(); toggleLayerActive('compassLabels'); }}>
+              <Image style={[planetariumUIStyles.container.layersModal.button.icon, { tintColor: layerActive.compassLabels ? app_colors.white : app_colors.white_sixty }]} source={require('../../../assets/icons/FiCompass.png')} />
+              <Text style={[planetariumUIStyles.container.layersModal.button.text, { color: layerActive.compassLabels ? app_colors.white : app_colors.white_sixty }]}>Boussole</Text>
             </TouchableOpacity>
             {onShowAtmosphere && (
-              <TouchableOpacity style={planetariumUIStyles.container.layersModal.button} onPress={() => onShowAtmosphere()}>
-                <Image style={planetariumUIStyles.container.layersModal.button.icon} source={require('../../../assets/icons/FiCloud.png')} />
-                <Text style={planetariumUIStyles.container.layersModal.button.text}>Atmosphère</Text>
+              <TouchableOpacity style={planetariumUIStyles.container.layersModal.button} onPress={() => { onShowAtmosphere!(); toggleLayerActive('atmosphere'); }}>
+                <Image style={[planetariumUIStyles.container.layersModal.button.icon, { tintColor: layerActive.atmosphere ? app_colors.white : app_colors.white_sixty }]} source={require('../../../assets/icons/FiCloud.png')} />
+                <Text style={[planetariumUIStyles.container.layersModal.button.text, { color: layerActive.atmosphere ? app_colors.white : app_colors.white_sixty }]}>Atmosphère</Text>
               </TouchableOpacity>
             )}
             {onShowStarLabels && (
-              <TouchableOpacity style={planetariumUIStyles.container.layersModal.button} onPress={() => onShowStarLabels()}>
-                <Image style={planetariumUIStyles.container.layersModal.button.icon} source={require('../../../assets/icons/FiStar.png')} />
-                <Text style={planetariumUIStyles.container.layersModal.button.text}>Noms étoiles</Text>
+              <TouchableOpacity style={planetariumUIStyles.container.layersModal.button} onPress={() => { onShowStarLabels!(); toggleLayerActive('starLabels'); }}>
+                <Image style={[planetariumUIStyles.container.layersModal.button.icon, { tintColor: layerActive.starLabels ? app_colors.white : app_colors.white_sixty }]} source={require('../../../assets/icons/FiStar.png')} />
+                <Text style={[planetariumUIStyles.container.layersModal.button.text, { color: layerActive.starLabels ? app_colors.white : app_colors.white_sixty }]}>Noms étoiles</Text>
               </TouchableOpacity>
             )}
             {onShowSolarSystemLabels && (
-              <TouchableOpacity style={planetariumUIStyles.container.layersModal.button} onPress={() => onShowSolarSystemLabels()}>
-                <Image style={planetariumUIStyles.container.layersModal.button.icon} source={require('../../../assets/icons/FiPlanet.png')} />
-                <Text style={planetariumUIStyles.container.layersModal.button.text}>Noms planètes</Text>
+              <TouchableOpacity style={planetariumUIStyles.container.layersModal.button} onPress={() => { onShowSolarSystemLabels!(); toggleLayerActive('solarSystemLabels'); }}>
+                <Image style={[planetariumUIStyles.container.layersModal.button.icon, { tintColor: layerActive.solarSystemLabels ? app_colors.white : app_colors.white_sixty }]} source={require('../../../assets/icons/FiPlanet.png')} />
+                <Text style={[planetariumUIStyles.container.layersModal.button.text, { color: layerActive.solarSystemLabels ? app_colors.white : app_colors.white_sixty }]}>Noms planètes</Text>
               </TouchableOpacity>
             )}
             {onToggleFocusedConstellation && (
               <TouchableOpacity style={planetariumUIStyles.container.layersModal.button} onPress={() => onToggleFocusedConstellation()}>
                 <Image
-                  style={[
-                    planetariumUIStyles.container.layersModal.button.icon,
-                    { tintColor: isFocusedConstellationOn ? app_colors.white : app_colors.white_twenty },
-                  ]}
+                  style={[planetariumUIStyles.container.layersModal.button.icon, { tintColor: isFocusedConstellationOn ? app_colors.white : app_colors.white_sixty }]}
                   source={require('../../../assets/icons/FiViewPoint.png')}
                 />
-                <Text style={[
-                  planetariumUIStyles.container.layersModal.button.text,
-                  { color: isFocusedConstellationOn ? app_colors.white_sixty : app_colors.white_twenty },
-                ]}>
+                <Text style={[planetariumUIStyles.container.layersModal.button.text, { color: isFocusedConstellationOn ? app_colors.white : app_colors.white_sixty }]}>
                   Visée auto
                 </Text>
               </TouchableOpacity>

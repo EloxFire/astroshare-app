@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import * as ExpoTHREE from 'expo-three';
+import * as FileSystem from 'expo-file-system';
 import { ExpoWebGLRenderingContext } from 'expo-gl';
 import { Dayjs } from 'dayjs';
 import { convertHorizontalToEquatorial } from '@observerly/astrometry';
@@ -21,9 +22,51 @@ import { createDSOLayer } from './layers/DSOLayer';
 import { createConstellationLines, createConstellationLabels, createStarLabels } from './layers/ConstellationsLayer';
 import { FocusedConstellationLayer } from './layers/FocusedConstellationLayer';
 import { createGridLayer, GridLayerResult } from './layers/GridLayer';
+import { GridLabelsLayer } from './layers/GridLabelsLayer';
 import { createCompassLayer } from './layers/CompassLayer';
 import { createSelectionCircle } from './layers/SelectionCircle';
 import { loadBitmapFont } from './utils/BitmapText';
+import planetariumImages from '../planetarium_images.json';
+
+const DSO_CONCURRENT = 8;
+
+async function warmDSOTextureCache(reporter?: PlanetariumLoadingReporter): Promise<Map<string, string>> {
+  const urls: string[] = (planetariumImages as any).images.map((img: any) => img.imageUrl as string);
+  const localMap = new Map<string, string>();
+  const total = urls.length;
+
+  const cacheDir = new FileSystem.Directory(FileSystem.Paths.cache, 'dso_textures');
+  if (!cacheDir.exists) {
+    cacheDir.create({ intermediates: true });
+  }
+
+  let done = 0;
+  for (let i = 0; i < total; i += DSO_CONCURRENT) {
+    const batch = urls.slice(i, i + DSO_CONCURRENT);
+    const results = await Promise.allSettled(
+      batch.map(async (url) => {
+        const filename = url.split('/').pop()!;
+        const localFile = new FileSystem.File(cacheDir, filename);
+        if (!localFile.exists) {
+          await FileSystem.File.downloadFileAsync(url, localFile);
+        }
+        return { url, localUri: localFile.uri };
+      }),
+    );
+    results.forEach((r) => {
+      if (r.status === 'fulfilled') localMap.set(r.value.url, r.value.localUri);
+    });
+    done = Math.min(done + batch.length, total);
+    reporter?.({
+      stepId: 'dso-cache',
+      title: 'DSO image cache',
+      detail: `${done}/${total} images ready`,
+      status: done < total ? 'active' : 'done',
+    });
+  }
+
+  return localMap;
+}
 
 export type SceneRefs = {
   scene: THREE.Scene;
@@ -43,6 +86,7 @@ export type SceneRefs = {
   starLabels: THREE.Group;
   focusedConstellationLayer: FocusedConstellationLayer;
   selectionCircle: THREE.Group;
+  gridLabelsLayer: GridLabelsLayer;
   zenithVec: THREE.Vector3;
   glViewWidth: number;
   glViewHeight: number;
@@ -95,6 +139,7 @@ export async function buildScene(
 
   reporter?.({ stepId: 'grids', title: 'Coordinate grids', detail: 'Building EQ and AZ grids', status: 'active' });
   const { eqGrid, azGrid } = createGridLayer(location, dateObj);
+  const gridLabelsLayer = new GridLabelsLayer(bitmapFont);
   reporter?.({ stepId: 'grids', title: 'Coordinate grids', detail: 'Coordinate grids ready', status: 'done' });
 
   reporter?.({ stepId: 'ground', title: 'Horizon mask', detail: 'Computing local horizon', status: 'active' });
@@ -107,7 +152,8 @@ export async function buildScene(
 
   const starsCloud = createStarsLayer(visibleStars, setSelectedObject, reporter);
   const solarSystemLayer = new SolarSystemLayer(initialSnapshot, dateObj, setSelectedObject, reporter);
-  const dsoGroup = createDSOLayer(getDsoCatalog, setSelectedObject, reporter);
+  const localDsoUrlMap = await warmDSOTextureCache(reporter);
+  const dsoGroup = createDSOLayer(getDsoCatalog, setSelectedObject, reporter, localDsoUrlMap);
   const constellationLines = createConstellationLines();
   constellationLines.visible = false; // off by default
   const starLabels = createStarLabels(visibleStars, bitmapFont);
@@ -129,6 +175,8 @@ export async function buildScene(
   scene.add(focusedConstellationLayer.group);
   scene.add(eqGrid);
   scene.add(azGrid);
+  scene.add(gridLabelsLayer.eqLabelsGroup);
+  scene.add(gridLabelsLayer.azLabelsGroup);
   scene.add(compassLabels);
   scene.add(selectionCircle);
   solarSystemLayer.addToScene(scene);
@@ -160,6 +208,7 @@ export async function buildScene(
     starLabels,
     focusedConstellationLayer,
     selectionCircle,
+    gridLabelsLayer,
     zenithVec,
     glViewWidth,
     glViewHeight,

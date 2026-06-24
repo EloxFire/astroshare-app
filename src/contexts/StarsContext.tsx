@@ -34,6 +34,7 @@ export function StarsContextProvider({ children }: StarsContextProviderProps) {
     setStarCatalogLoading(true);
     try {
       console.log(`Starting to fetch stars... (This may take a while)`);
+      let totalDocuments = 0;
       while (hasMore) {
         const response = await axios.get(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/stars?totalLimit=20000`,
           {
@@ -41,16 +42,17 @@ export function StarsContextProvider({ children }: StarsContextProviderProps) {
           }
         );
 
-        const { data, currentPage: page, totalPages, totalDocuments } = response.data;
+        const { data, currentPage: page, totalPages, totalDocuments: total } = response.data;
 
-        allStars = [...allStars, ...data];
+        allStars.push(...data);
         currentPage = page + 1;
         hasMore = page < totalPages;
-        setStarsTotal(totalDocuments);
-        setStarsLoaded(allStars.length);
-        setStarsLoadedPercentage(Math.round((allStars.length / totalDocuments) * 100));
+        totalDocuments = total;
       }
 
+      setStarsTotal(totalDocuments);
+      setStarsLoaded(allStars.length);
+      setStarsLoadedPercentage(100);
       setStarsCatalog(allStars);
       console.log(`Retrieved ${allStars.length} stars`);
     } catch (error) {

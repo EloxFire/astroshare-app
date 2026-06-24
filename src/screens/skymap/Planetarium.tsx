@@ -97,6 +97,7 @@ const LOADING_STEPS = [
   { id: 'planets',        title: 'Planets',                pendingDetail: 'Planet meshes not started yet' },
   { id: 'moon',           title: 'Moon',                   pendingDetail: 'Moon mesh not started yet' },
   { id: 'sun',            title: 'Sun',                    pendingDetail: 'Sun mesh not started yet' },
+  { id: 'dso-cache',       title: 'DSO image cache',         pendingDetail: 'DSO images not cached yet' },
   { id: 'dso',            title: 'Deep-sky objects',       pendingDetail: 'DSO meshes not started yet' },
   { id: 'grids',          title: 'Coordinate grids',       pendingDetail: 'Sky grids not started yet' },
   { id: 'finalize',       title: 'Final assembly',         pendingDetail: 'Scene graph not assembled yet' },
@@ -519,7 +520,7 @@ export default function Planetarium({ route, navigation }: any) {
         if (batchStart < messier.length) setTimeout(processBatch, 100);
       };
       processBatch();
-    }, 3000);
+    }, 15000);
 
     return () => clearTimeout(timer);
   }, [loading, currentUserLocation]);
@@ -579,6 +580,14 @@ export default function Planetarium({ route, navigation }: any) {
       // screen is still visible, so the first user-visible frame is already smooth.
       refs.renderer.render(refs.scene, refs.camera);
       gl.endFrameEXP();
+
+      // Force Hermes to JIT-compile the heavy astronomy code paths now (while
+      // the loading screen is still shown) rather than on the first user tap.
+      const firstDso = dsoCatalogRef.current[0];
+      if (firstDso) {
+        try { computeObject({ object: firstDso, observer, lang: currentLocale, date: referenceDate }); }
+        catch (_) {}
+      }
 
       // Minimum loading delay
       const elapsed = Date.now() - startedAt;
@@ -650,11 +659,16 @@ export default function Planetarium({ route, navigation }: any) {
           const horiz = convertEquatorialToHorizontal(lastEphemerisDateRef.current, rafObs, {
             ra: ctrl.lookRa, dec: ctrl.lookDec,
           });
-          const corrected = convertHorizontalToEquatorial(rafDateObj, rafObs, {
-            alt: horiz.alt, az: horiz.az,
-          });
-          if (isFinite(corrected.ra) && isFinite(corrected.dec)) {
-            ctrl.setLook(corrected.ra, corrected.dec);
+          // Skip correction near zenith/nadir: azimuth is numerically degenerate at
+          // alt ≈ ±90° and produces wild RA swings each frame → camera spin.
+          // The drift contribution at those altitudes is negligible anyway.
+          if (Math.abs(horiz.alt) < 85) {
+            const corrected = convertHorizontalToEquatorial(rafDateObj, rafObs, {
+              alt: horiz.alt, az: horiz.az,
+            });
+            if (isFinite(corrected.ra) && isFinite(corrected.dec)) {
+              ctrl.setLook(corrected.ra, corrected.dec);
+            }
           }
         }
         lastEphemerisDateRef.current = rafDateObj;
@@ -709,6 +723,22 @@ export default function Planetarium({ route, navigation }: any) {
         refs.focusedConstellationLayer.group.visible = inFocusMode;
         if (inFocusMode) {
           refs.focusedConstellationLayer.tick(ctrl.lookRa, ctrl.lookDec, camera);
+        }
+
+        if (refs.eqGrid.visible || refs.azGrid.visible) {
+          refs.gridLabelsLayer.update(
+            camera,
+            refs.eqGrid.visible,
+            refs.azGrid.visible,
+            refs.azGrid,
+            rafObs,
+            rafDateObj,
+            zenithVecRef.current,
+            groundVisibleRef.current,
+          );
+        } else {
+          refs.gridLabelsLayer.eqLabelsGroup.visible = false;
+          refs.gridLabelsLayer.azLabelsGroup.visible = false;
         }
 
         refs.renderer.render(refs.scene, camera);

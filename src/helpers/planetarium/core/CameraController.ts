@@ -11,6 +11,11 @@ const MIN_DEC = -89.9;
 const MAX_DEC = 89.9;
 const INERTIA_STOP_THRESHOLD = 0.2;
 
+// sin(88°): inertia stops when the look direction gets this close to the zenith.
+// Above this threshold the alt/az coordinate system is degenerate; preventing
+// inertia from drifting into this zone avoids the spinning altogether.
+const ZENITH_INERTIA_DOT = Math.sin(88 * Math.PI / 180); // ≈ 0.9994
+
 export class CameraController {
   lookRa: number;
   lookDec: number;
@@ -31,6 +36,10 @@ export class CameraController {
   // When set, keeps the horizon visually horizontal.
   private zenithVec: THREE.Vector3 | null = null;
 
+  // Last up vector applied to the camera, used as a stable reference when the
+  // camera is near the zenith so the up vector doesn't suddenly rotate.
+  private lastUpVec: THREE.Vector3 | null = null;
+
   constructor(initialRa = 0, initialDec = 45, initialFov = 75) {
     this.lookRa = initialRa;
     this.lookDec = initialDec;
@@ -45,7 +54,8 @@ export class CameraController {
   applyPanDelta(deltaX: number, deltaY: number, glViewWidth: number): void {
     const sensitivity = (this.fov * (Math.PI / 180)) / Math.max(1, glViewWidth) * PAN_SENSITIVITY_SCALE;
     const lookVec = raDecToVec3(this.lookRa, this.lookDec, 1).normalize();
-    const upVec = getCameraUp(this.lookRa, this.lookDec, this.zenithVec ?? undefined);
+    // Use the previous frame's up so the pan axes stay stable near the zenith.
+    const upVec = getCameraUp(this.lookRa, this.lookDec, this.zenithVec ?? undefined, this.lastUpVec ?? undefined);
     const rightVec = new THREE.Vector3().crossVectors(lookVec, upVec).normalize();
 
     // Both axes inverted relative to finger (natural drag, like Stellarium):
@@ -59,6 +69,9 @@ export class CameraController {
     const { ra, dec } = vec3ToRaDec(newLook);
     this.lookRa = ra;
     this.lookDec = Math.max(MIN_DEC, Math.min(MAX_DEC, dec));
+
+    // Keep lastUpVec current through the pan so each sub-step inherits a stable up.
+    this.lastUpVec = upVec.clone();
     // NOTE: do NOT touch this.vX / this.vY here — those belong to inertia only.
   }
 
@@ -93,6 +106,20 @@ export class CameraController {
     const fovScale = Math.pow(Math.min(1, this.fov / 75), 2);
     const dt = 1 / 60;
     this.applyPanDelta(this.vX * dt * fovScale, this.vY * dt * fovScale, glViewWidth);
+
+    // Stop inertia as soon as the camera drifts too close to the zenith/nadir.
+    // Beyond this point the alt/az system is degenerate — letting inertia carry
+    // the camera further would cause the coordinate-singularity spinning.
+    if (this.zenithVec) {
+      const look = raDecToVec3(this.lookRa, this.lookDec, 1).normalize();
+      if (Math.abs(look.dot(this.zenithVec)) > ZENITH_INERTIA_DOT) {
+        this.inertiaActive = false;
+        this.vX = 0;
+        this.vY = 0;
+        return false;
+      }
+    }
+
     this.vX *= FRICTION;
     this.vY *= FRICTION;
     return true;
@@ -159,7 +186,9 @@ export class CameraController {
 
   applyToCamera(camera: THREE.PerspectiveCamera): void {
     const target = raDecToVec3(this.lookRa, this.lookDec, 100);
-    camera.up.copy(getCameraUp(this.lookRa, this.lookDec, this.zenithVec ?? undefined));
+    const up = getCameraUp(this.lookRa, this.lookDec, this.zenithVec ?? undefined, this.lastUpVec ?? undefined);
+    this.lastUpVec = up.clone();
+    camera.up.copy(up);
     camera.fov = this.fov;
     camera.lookAt(target);
     camera.updateProjectionMatrix();
