@@ -926,9 +926,12 @@ export default function Planetarium({ route, navigation }: any) {
 
   // ─── Loading screen helpers ───────────────────────────────────────────────────
 
-  const loadingSteps = LOADING_STEPS.map((s) => ({ id: s.id, ...stepsState[s.id] }));
-  const completedCount = loadingSteps.filter((s) => s.status === 'done').length;
-  const progress = loadingSteps.length === 0 ? 0 : completedCount / loadingSteps.length;
+  const loadingSteps    = LOADING_STEPS.map((s) => ({ id: s.id, ...stepsState[s.id] }));
+  const completedCount  = loadingSteps.filter((s) => s.status === 'done').length;
+  const progress        = loadingSteps.length === 0 ? 0 : completedCount / loadingSteps.length;
+  const activeLoadStep  = loadingSteps.find((s) => s.status === 'active' || s.status === 'error') ?? null;
+  const doneLoadSteps   = loadingSteps.filter((s) => s.status === 'done');
+  const pendingLoadSteps = loadingSteps.filter((s) => s.status === 'pending');
 
   // ─── Render ──────────────────────────────────────────────────────────────────
 
@@ -1018,72 +1021,88 @@ export default function Planetarium({ route, navigation }: any) {
                   ? i18n.t('skymap.planetarium.loading.failedTitle')
                   : i18n.t('skymap.planetarium.loading.subtitle')}
               </Text>
-              <Text style={[planetariumStyles.loadingProgressMeta, { marginTop: 10 }]}>
-                {i18n.t('skymap.planetarium.loading.progressMeta', { progress: Math.round(progress * 100) })}
-              </Text>
-              <Text style={[planetariumStyles.loadingProgressMeta, { marginBottom: 10 }]}>
-                {i18n.t('skymap.planetarium.loading.completedSteps', { completed: completedCount, total: loadingSteps.length })}
-              </Text>
-              <View style={planetariumStyles.loadingProgressTrack}>
+
+              {/* Progress bar */}
+              <View style={[planetariumStyles.loadingProgressTrack, { marginTop: 14, marginBottom: 6 }]}>
                 <View
                   style={[
                     planetariumStyles.loadingProgressFill,
                     {
-                      width: `${Math.max(8, Math.round(progress * 100))}%`,
+                      width: `${Math.max(4, Math.round(progress * 100))}%`,
                       backgroundColor: loadingError ? app_colors.red : app_colors.green_eighty,
                     },
                   ]}
                 />
               </View>
-              <Text style={planetariumStyles.loadingSectionTitle}>
-                {i18n.t('skymap.planetarium.loading.detailedSteps')}
+              <Text style={[planetariumStyles.loadingProgressMeta, { marginBottom: 14 }]}>
+                {completedCount}/{loadingSteps.length} {i18n.t('skymap.planetarium.loading.completedSteps', { completed: completedCount, total: loadingSteps.length })} — {Math.round(progress * 100)}%
               </Text>
-              <ScrollView
-                style={planetariumStyles.loadingContent}
-                contentContainerStyle={planetariumStyles.loadingContentInner}
-                showsVerticalScrollIndicator
-              >
-                {loadingSteps.map((step, index) => (
-                  <View
-                    key={step.id}
-                    style={[
-                      planetariumStyles.loadingStepRow,
-                      index === 0 ? planetariumStyles.loadingStepRowFirst : null,
-                      step.status === 'active' ? planetariumStyles.loadingStepRowActive : null,
-                      step.status === 'done'   ? planetariumStyles.loadingStepRowDone   : null,
-                      step.status === 'error'  ? planetariumStyles.loadingStepRowError  : null,
-                    ]}
-                  >
-                    <View style={planetariumStyles.loadingStepHeader}>
-                      <Text style={planetariumStyles.loadingStepTitle}>
-                        {translatedStep(step.id, step.status, 'title', step.title)}
-                      </Text>
-                      <View
-                        style={[
-                          planetariumStyles.loadingBadge,
-                          step.status === 'active' ? planetariumStyles.loadingBadgeActive : null,
-                          step.status === 'done'   ? planetariumStyles.loadingBadgeDone   : null,
-                          step.status === 'error'  ? planetariumStyles.loadingBadgeError  : null,
-                        ]}
-                      >
-                        <Text style={planetariumStyles.loadingBadgeText}>
-                          {i18n.t(`skymap.planetarium.loading.badges.${badgeKey(step.status)}`, { defaultValue: badgeKey(step.status) })}
-                        </Text>
-                      </View>
-                    </View>
-                    <Text
+
+              {/* ── Active step (always visible, prominent) ── */}
+              {activeLoadStep && (
+                <View
+                  style={[
+                    planetariumStyles.loadingStepRow,
+                    planetariumStyles.loadingStepRowFirst,
+                    activeLoadStep.status === 'error'
+                      ? planetariumStyles.loadingStepRowError
+                      : planetariumStyles.loadingStepRowActive,
+                    { marginBottom: 14 },
+                  ]}
+                >
+                  <View style={planetariumStyles.loadingStepHeader}>
+                    <Text style={[planetariumStyles.loadingStepTitle, { fontSize: 14 }]}>
+                      {translatedStep(activeLoadStep.id, activeLoadStep.status, 'title', activeLoadStep.title)}
+                    </Text>
+                    <View
                       style={[
-                        planetariumStyles.loadingStepDetail,
-                        step.status === 'error' ? planetariumStyles.loadingErrorText : null,
+                        planetariumStyles.loadingBadge,
+                        activeLoadStep.status === 'error'
+                          ? planetariumStyles.loadingBadgeError
+                          : planetariumStyles.loadingBadgeActive,
                       ]}
                     >
-                      {step.status === 'error' && loadingError
-                        ? loadingError
-                        : translatedStep(step.id, step.status, 'detail', step.detail)}
-                    </Text>
+                      <Text style={planetariumStyles.loadingBadgeText}>
+                        {i18n.t(`skymap.planetarium.loading.badges.${badgeKey(activeLoadStep.status)}`, { defaultValue: badgeKey(activeLoadStep.status) })}
+                      </Text>
+                    </View>
                   </View>
-                ))}
-              </ScrollView>
+                  <Text
+                    style={[
+                      planetariumStyles.loadingStepDetail,
+                      { fontSize: 11 },
+                      activeLoadStep.status === 'error' ? planetariumStyles.loadingErrorText : null,
+                    ]}
+                  >
+                    {activeLoadStep.status === 'error' && loadingError
+                      ? loadingError
+                      : translatedStep(activeLoadStep.id, activeLoadStep.status, 'detail', activeLoadStep.detail)}
+                  </Text>
+                </View>
+              )}
+
+              {/* ── Completed steps (compact chips) ── */}
+              {doneLoadSteps.length > 0 && (
+                <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6 }}>
+                  {doneLoadSteps.map((step) => (
+                    <View
+                      key={step.id}
+                      style={[planetariumStyles.loadingBadge, planetariumStyles.loadingBadgeDone]}
+                    >
+                      <Text style={[planetariumStyles.loadingBadgeText, { fontSize: 10 }]}>
+                        ✓ {translatedStep(step.id, step.status, 'title', step.title)}
+                      </Text>
+                    </View>
+                  ))}
+                </View>
+              )}
+
+              {/* ── Pending steps (subtle count) ── */}
+              {pendingLoadSteps.length > 0 && (
+                <Text style={[planetariumStyles.loadingProgressMeta, { marginTop: 10 }]}>
+                  {pendingLoadSteps.length} étape{pendingLoadSteps.length > 1 ? 's' : ''} restante{pendingLoadSteps.length > 1 ? 's' : ''} — {pendingLoadSteps.map((s) => translatedStep(s.id, s.status, 'title', s.title)).join(', ')}
+                </Text>
+              )}
             </View>
           </View>
         )}

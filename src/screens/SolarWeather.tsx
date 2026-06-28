@@ -7,7 +7,7 @@ import { ESunFilter, ESunFilterBackup } from '../helpers/types/SunFilter'
 import { ResizeMode, Video } from 'expo-av'
 import { ECmeFilters } from '../helpers/types/CmeFilters'
 import { Image } from 'expo-image'
-import { localizedForecastPlaceholders, localizedImagePlaceholders, localizedVideoPlaceholders } from '../helpers/scripts/loadImages'
+import { localizedForecastPlaceholders, localizedImagePlaceholders } from '../helpers/scripts/loadImages'
 import { i18n } from '../helpers/scripts/i18n'
 import PageTitle from '../components/commons/PageTitle'
 import SimpleButton from '../components/commons/buttons/SimpleButton'
@@ -41,22 +41,27 @@ export default function SolarWeather({ navigation }: any) {
   const { currentUser } = useAuth()
   const { currentLocale } = useTranslation()
 
-  const videoRef = useRef(null);
+  const sunVideoRef = useRef<any>(null);
+  const cmeVideoRef = useRef<any>(null);
 
   const [sunData, setSunData] = useState<ComputedSunInfos | null>(null);
 
   // SUN
   const [loadingImage, setLoadingImage] = useState<boolean>(false)
+  const [isSunVideoBuffering, setIsSunVideoBuffering] = useState<boolean>(false)
   const [isImageMode, setIsImageMode] = useState<boolean>(true)
-  //const [currentImageFilter, setCurrentImageFilter] = useState<ESunFilterBackup>('HMI_CONTINUUM' as ESunFilterBackup)
   const [currentImageFilter, setCurrentImageFilter] = useState<ESunFilter>('HMI_IC' as ESunFilter)
   const [currentImageUrl, setCurrentImageUrl] = useState<string | undefined>("")
+  // Video URL is stable — stamped once on filter change, not inline in render
+  const [currentVideoUrl, setCurrentVideoUrl] = useState<string | undefined>(undefined)
 
   // CME
-  const [loadingCME, setLoadingCME] = useState<boolean>(false)
+  const [, setLoadingCME] = useState<boolean>(false)
+  const [isCmeVideoBuffering, setIsCmeVideoBuffering] = useState<boolean>(false)
   const [isCmeImageMode, setIsCmeImageMode] = useState<boolean>(true)
   const [currentCmeImageFilter, setCurrentCmeImageFilter] = useState<ECmeFilters>('C2' as ECmeFilters)
   const [currentCmeImageUrl, setCurrentCmeImageUrl] = useState<string | undefined>("")
+  const [currentCmeVideoUrl, setCurrentCmeVideoUrl] = useState<string | undefined>(undefined)
 
   const [solarWindData, setSolarWindData] = useState<SolarWindData[]>([])
 
@@ -88,27 +93,35 @@ export default function SolarWeather({ navigation }: any) {
 
   const handleChangeSunImage = (filter: ESunFilter, type: 'img' | 'video') => {
     sendAnalyticsEvent(currentUser, currentUserLocation, 'solar_weather_sun_filter_change', eventTypes.BUTTON_CLICK, { filter, type }, currentLocale)
-    setCurrentImageUrl(undefined)
-    setLoadingImage(true)
-
-    setTimeout(() => {
-      setCurrentImageFilter(filter)
-      //setCurrentImageUrl(sunImagesSrcWavelengthsBackup[filter] + '?' + new Date())
-      setCurrentImageUrl(type === 'img' ? sunImagesSrcWavelengths[filter] + '?' + new Date() : sunVideoSrcWavelengths[filter] + '?' + new Date())
-      setLoadingImage(false)
-    }, 300)
+    setCurrentImageFilter(filter)
+    if (type === 'img') {
+      setCurrentImageUrl(undefined)
+      setLoadingImage(true)
+      setTimeout(() => {
+        setCurrentImageUrl(sunImagesSrcWavelengths[filter] + '?' + Date.now())
+        setLoadingImage(false)
+      }, 300)
+    } else {
+      // Stamp URL once here — not inline in render — to avoid re-fetching on every re-render
+      setIsSunVideoBuffering(true)
+      setCurrentVideoUrl(sunVideoSrcWavelengths[filter] + '?' + Date.now())
+    }
   }
 
   const handleChangeCMEImage = (filter: ECmeFilters, type: 'img' | 'video') => {
     sendAnalyticsEvent(currentUser, currentUserLocation, 'solar_weather_cme_filter_change', eventTypes.BUTTON_CLICK, { filter, type }, currentLocale)
-    setCurrentCmeImageUrl(undefined)
-    setLoadingCME(true)
-
-    setTimeout(() => {
-      setCurrentCmeImageFilter(filter)
-      setCurrentCmeImageUrl(type === 'img' ? cmeImageSrc[filter] + '?' + new Date() : cmeVideoSrc[filter] + '?' + new Date())
-      setLoadingCME(false)
-    }, 300)
+    setCurrentCmeImageFilter(filter)
+    if (type === 'img') {
+      setCurrentCmeImageUrl(undefined)
+      setLoadingCME(true)
+      setTimeout(() => {
+        setCurrentCmeImageUrl(cmeImageSrc[filter] + '?' + Date.now())
+        setLoadingCME(false)
+      }, 300)
+    } else {
+      setIsCmeVideoBuffering(true)
+      setCurrentCmeVideoUrl(cmeVideoSrc[filter] + '?' + Date.now())
+    }
   }
 
   return (
@@ -120,9 +133,9 @@ export default function SolarWeather({ navigation }: any) {
         backRoute={routes.home.path}
       />
       <View style={globalStyles.screens.separator} />
-      <View style={{ marginBottom: 10 }}>
+      {/* <View style={{ marginBottom: 10 }}>
         <DisclaimerBar message={i18n.t('solarWeather.disclaimer')} type='error' soft />
-      </View>
+      </View> */}
       <ScrollView>
         <View>
           {/* SUN EPHEMERIS */}
@@ -164,32 +177,40 @@ export default function SolarWeather({ navigation }: any) {
               <TouchableOpacity onPress={() => { sendAnalyticsEvent(currentUser, currentUserLocation, 'solar_weather_sun_image_mode_click', eventTypes.BUTTON_CLICK, { mode: 'image' }, currentLocale); setIsImageMode(true) }} style={{ height: 35, flex: 1, borderBottomWidth: isImageMode ? 1 : 0, borderColor: app_colors.white, marginBottom: 10, padding: 5 }}>
                 <Text style={{ fontFamily: 'GilroyBlack', color: app_colors.white, textTransform: 'uppercase', textAlign: "center", fontSize: 18 }}>{i18n.t('solarWeather.containers.switches.image')}</Text>
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => { sendAnalyticsEvent(currentUser, currentUserLocation, 'solar_weather_sun_video_mode_click', eventTypes.BUTTON_CLICK, { mode: 'video' }, currentLocale); setIsImageMode(false) }} style={{ height: 35, flex: 1, borderBottomWidth: isImageMode ? 0 : 1, borderColor: app_colors.white, marginBottom: 10, padding: 5 }}>
+              <TouchableOpacity onPress={() => { sendAnalyticsEvent(currentUser, currentUserLocation, 'solar_weather_sun_video_mode_click', eventTypes.BUTTON_CLICK, { mode: 'video' }, currentLocale); setIsImageMode(false); handleChangeSunImage(currentImageFilter, 'video') }} style={{ height: 35, flex: 1, borderBottomWidth: isImageMode ? 0 : 1, borderColor: app_colors.white, marginBottom: 10, padding: 5 }}>
                 <Text style={{ fontFamily: 'GilroyBlack', color: app_colors.white, textTransform: 'uppercase', textAlign: "center", fontSize: 18 }}>{i18n.t('solarWeather.containers.switches.video')}</Text>
               </TouchableOpacity>
             </View>
             <Text style={solarWeatherStyles.container.title}>{i18n.t('solarWeather.containers.instrument', { currentImageFilter: currentImageFilter })}</Text>
             <Text style={[solarWeatherStyles.container.subtitle, { opacity: 1 }]}>{i18n.t('solarWeather.containers.zone', { zone: loadingImage ? i18n.t('common.loadings.simple') : i18n.t(`solarWeather.studyZones.${currentImageFilter}`) })}</Text>
             <Text style={solarWeatherStyles.container.subtitle}>{i18n.t('solarWeather.sources.sdoSoho')}</Text>
-            <Text style={[solarWeatherStyles.container.subtitle, solarWeatherStyles.container.disclaimer]}>{i18n.t('solarWeather.containers.disclaimer')}</Text>
             {
               isImageMode ?
                 <Image priority={'high'} placeholder={localizedImagePlaceholders[i18n.locale]} placeholderContentFit={'contain'} contentFit={'contain'} source={!currentImageUrl ? undefined : { uri: currentImageUrl }} style={solarWeatherStyles.sunImage} />
                 :
-                <>
-                  <Video
-                    ref={videoRef}
-                    source={{ uri: sunVideoSrcWavelengths[currentImageFilter] + '?' + new Date() }}
-                    isMuted={true}
-                    shouldPlay={true}
-                    rate={2.0}
-                    isLooping={true}
-                    resizeMode={ResizeMode.CONTAIN}
-                    style={{ width: Dimensions.get('window').width - 40, height: Dimensions.get('window').width - 40, marginVertical: 10, borderRadius: 10, opacity: loadingImage ? .1 : 1, borderWidth: 1, borderColor: app_colors.white_twenty }}
-                  >
-                    <Image placeholder={localizedVideoPlaceholders[i18n.locale]} placeholderContentFit={'contain'} contentFit={'contain'} style={{ width: Dimensions.get('window').width - 40, height: Dimensions.get('window').width - 40, marginVertical: 10, borderRadius: 10 }} />
-                  </Video>
-                </>
+                <View style={{ width: Dimensions.get('window').width - 40, height: Dimensions.get('window').width - 40, marginVertical: 10, borderRadius: 10, overflow: 'hidden', borderWidth: 1, borderColor: app_colors.white_twenty }}>
+                  {currentVideoUrl && (
+                    <Video
+                      ref={sunVideoRef}
+                      source={{ uri: currentVideoUrl }}
+                      isMuted={true}
+                      shouldPlay={true}
+                      rate={2.0}
+                      isLooping={true}
+                      resizeMode={ResizeMode.CONTAIN}
+                      style={{ width: '100%', height: '100%' }}
+                      onPlaybackStatusUpdate={(status) => {
+                        if (status.isLoaded) setIsSunVideoBuffering(status.isBuffering && !status.isPlaying)
+                      }}
+                      onReadyForDisplay={() => setIsSunVideoBuffering(false)}
+                    />
+                  )}
+                  {(isSunVideoBuffering || !currentVideoUrl) && (
+                    <View style={{ position: 'absolute', inset: 0, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(0,0,0,0.55)' }}>
+                      <ActivityIndicator size="large" color={app_colors.white} />
+                    </View>
+                  )}
+                </View>
             }
             <View style={solarWeatherStyles.container.buttons}>
               {
@@ -208,7 +229,7 @@ export default function SolarWeather({ navigation }: any) {
               <TouchableOpacity onPress={() => { sendAnalyticsEvent(currentUser, currentUserLocation, 'solar_weather_cme_image_mode_click', eventTypes.BUTTON_CLICK, { mode: 'image' }, currentLocale); setIsCmeImageMode(true) }} style={{ height: 35, flex: 1, borderBottomWidth: isCmeImageMode ? 1 : 0, borderColor: app_colors.white, marginBottom: 10, padding: 5 }}>
                 <Text style={{ fontFamily: 'GilroyBlack', color: app_colors.white, textTransform: 'uppercase', textAlign: "center", fontSize: 18 }}>{i18n.t('solarWeather.containers.switches.image')}</Text>
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => { sendAnalyticsEvent(currentUser, currentUserLocation, 'solar_weather_cme_video_mode_click', eventTypes.BUTTON_CLICK, { mode: 'video' }, currentLocale); setIsCmeImageMode(false) }} style={{ height: 35, flex: 1, borderBottomWidth: isCmeImageMode ? 0 : 1, borderColor: app_colors.white, marginBottom: 10, padding: 5 }}>
+              <TouchableOpacity onPress={() => { sendAnalyticsEvent(currentUser, currentUserLocation, 'solar_weather_cme_video_mode_click', eventTypes.BUTTON_CLICK, { mode: 'video' }, currentLocale); setIsCmeImageMode(false); handleChangeCMEImage(currentCmeImageFilter, 'video') }} style={{ height: 35, flex: 1, borderBottomWidth: isCmeImageMode ? 0 : 1, borderColor: app_colors.white, marginBottom: 10, padding: 5 }}>
                 <Text style={{ fontFamily: 'GilroyBlack', color: app_colors.white, textTransform: 'uppercase', textAlign: "center", fontSize: 18 }}>{i18n.t('solarWeather.containers.switches.video')}</Text>
               </TouchableOpacity>
             </View>
@@ -218,18 +239,29 @@ export default function SolarWeather({ navigation }: any) {
               isCmeImageMode ?
                 <Image priority={'high'} placeholder={localizedImagePlaceholders[i18n.locale]} placeholderContentFit={'contain'} contentFit={'contain'} cachePolicy={'none'} source={!currentCmeImageUrl ? undefined : { uri: currentCmeImageUrl }} style={solarWeatherStyles.sunImage} />
                 :
-                <Video
-                  ref={videoRef}
-                  source={{ uri: cmeVideoSrc[currentCmeImageFilter] + '?' + new Date() }}
-                  isMuted={true}
-                  shouldPlay={true}
-                  rate={1.0}
-                  isLooping={true}
-                  resizeMode={ResizeMode.CONTAIN}
-                  style={{ width: Dimensions.get('window').width - 40, height: Dimensions.get('window').width - 40, marginVertical: 10, borderRadius: 10, opacity: loadingCME ? .1 : 1, borderWidth: 1, borderColor: app_colors.white_twenty }}
-                >
-                  <Image placeholder={localizedVideoPlaceholders[i18n.locale]} placeholderContentFit={'contain'} contentFit={'contain'} cachePolicy={'none'} style={{ width: Dimensions.get('window').width - 40, height: Dimensions.get('window').width - 40, marginVertical: 10, borderRadius: 10 }} />
-                </Video>
+                <View style={{ width: Dimensions.get('window').width - 40, height: Dimensions.get('window').width - 40, marginVertical: 10, borderRadius: 10, overflow: 'hidden', borderWidth: 1, borderColor: app_colors.white_twenty }}>
+                  {currentCmeVideoUrl && (
+                    <Video
+                      ref={cmeVideoRef}
+                      source={{ uri: currentCmeVideoUrl }}
+                      isMuted={true}
+                      shouldPlay={true}
+                      rate={1.0}
+                      isLooping={true}
+                      resizeMode={ResizeMode.CONTAIN}
+                      style={{ width: '100%', height: '100%' }}
+                      onPlaybackStatusUpdate={(status) => {
+                        if (status.isLoaded) setIsCmeVideoBuffering(status.isBuffering && !status.isPlaying)
+                      }}
+                      onReadyForDisplay={() => setIsCmeVideoBuffering(false)}
+                    />
+                  )}
+                  {(isCmeVideoBuffering || !currentCmeVideoUrl) && (
+                    <View style={{ position: 'absolute', inset: 0, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(0,0,0,0.55)' }}>
+                      <ActivityIndicator size="large" color={app_colors.white} />
+                    </View>
+                  )}
+                </View>
             }
             <View style={solarWeatherStyles.container.buttons}>
               {
