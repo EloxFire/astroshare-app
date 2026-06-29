@@ -5,7 +5,7 @@ dotenv.config();
 module.exports = {
   name: "Astroshare",
   slug: "astroshare-app",
-  version: "2.7.1",
+  version: "2.7.2",
   orientation: "portrait",
   icon: "./assets/icon.png",
   userInterfaceStyle: "light",
@@ -33,7 +33,6 @@ module.exports = {
     }
   },
   android: {
-    versionCode: 46,
     adaptiveIcon: {
       foregroundImage: "./assets/adaptive-icon.png",
       backgroundColor: "#000000"
