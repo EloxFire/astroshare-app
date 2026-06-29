@@ -20,7 +20,8 @@
       }
     },
     "testflight": {
-      "autoIncrement": true
+      "autoIncrement": true,
+      "environment": "development"
     },
     "production": {
       "autoIncrement": true
