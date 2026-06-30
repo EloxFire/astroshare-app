@@ -21,8 +21,8 @@ module.exports = {
     bundleIdentifier: "fr.eavagliano.astroshare",
     infoPlist: {
       "ITSAppUsesNonExemptEncryption": false,
-      "NSLocationWhenInUseUsageDescription": "Autoriser ${PRODUCT_NAME} à utiliser votre position.",
-      "NSMotionUsageDescription": "Autoriser ${PRODUCT_NAME} à utiliser les capteurs de mouvement pour afficher les objets célestes dans la bonne orientation.",
+      "NSLocationWhenInUseUsageDescription": "Astroshare utilise votre position pour calculer les horaires de lever et coucher des astres, déterminer les objets visibles depuis votre emplacement et afficher l'horizon réel dans le planétarium 3D.",
+      "NSMotionUsageDescription": "Astroshare utilise les capteurs de mouvement de votre appareil pour détecter son orientation et synchroniser la vue du planétarium 3D avec la direction réelle vers laquelle vous pointez votre téléphone.",
       "NSCameraUsageDescription": "Autoriser ${PRODUCT_NAME} à utiliser l'appareil photo pour scanner votre carte bancaire lors du paiement.",
       "NSFaceIDUsageDescription": "Autoriser ${PRODUCT_NAME} à utiliser Face ID pour sécuriser vos paiements.",
       "UIBackgroundModes": ["location", "fetch"],
@@ -83,7 +83,7 @@ module.exports = {
     [
       "expo-sensors",
       {
-        motionPermission: "Autoriser Astroshare à utiliser les capteurs de mouvement."
+        motionPermission: "Astroshare utilise les capteurs de mouvement de votre appareil pour détecter son orientation et synchroniser la vue du planétarium 3D avec la direction réelle vers laquelle vous pointez votre téléphone."
       }
     ],
     [

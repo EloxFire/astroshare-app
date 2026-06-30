@@ -1,6 +1,7 @@
 export const sellScreenTranslations = {
   subtitle: 'Explore even further !',
   toPayment: "Continue",
+  toRegister: "Create an account to continue",
   description: "Astroshare Pro offers you a multitude of new features to explore the universe in depth. Choose the subscription that suits you best and enjoy the benefits of Astroshare Pro!",
   offers: {
     monthlyTitle: "Astroshare Pro - Monthly",

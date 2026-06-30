@@ -216,17 +216,22 @@ export default function SellScreen({ navigation }: any) {
             </View>
           </View>
         </ScrollView>
-        <View style={{backgroundColor: app_colors.white_no_opacity, height: 100, display: 'flex', justifyContent: 'center', alignItems: 'center', borderTopRightRadius: 10, borderTopLeftRadius: 10}}>
+        <View style={{backgroundColor: app_colors.white_no_opacity, paddingVertical: 14, paddingHorizontal: 20, display: 'flex', justifyContent: 'center', alignItems: 'center', borderTopRightRadius: 10, borderTopLeftRadius: 10}}>
           <SimpleButton
-            text={i18n.t('pro.sellScreen.toPayment')}
+            text={currentUser ? i18n.t('pro.sellScreen.toPayment') : i18n.t('pro.sellScreen.toRegister')}
             onPress={() => {handlePayment()}}
             disabled={stripeLoading}
+            loading={stripeLoading}
             backgroundColor={app_colors.white}
             textColor={app_colors.black}
+            iconColor={app_colors.black}
             width={'80%'}
             align={'center'}
-            textAdditionalStyles={{fontFamily: 'GilroyBlack', fontSize: 20}}
+            textAdditionalStyles={{fontFamily: 'GilroyBlack', fontSize: currentUser ? 20 : 16}}
           />
+          <Text style={{color: app_colors.white, opacity: 0.5, fontSize: 11, fontFamily: 'GilroyRegular', textAlign: 'center', marginTop: 10}}>
+            Un compte est nécessaire pour activer votre abonnement PRO et retrouver vos données et achats sur tous vos appareils.
+          </Text>
         </View>
       </View>
     </StripeProvider>
