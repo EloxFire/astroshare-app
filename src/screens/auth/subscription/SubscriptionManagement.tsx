@@ -16,6 +16,9 @@ import ScreenInfo from "../../../components/ScreenInfo";
 import ProLocker from "../../../components/cards/ProLocker";
 import { routes } from "../../../helpers/routes";
 import { useIsFocused } from "@react-navigation/native";
+import { getSubscriptionStatus } from "../../../helpers/api/revenuecat/getSubscriptionStatus";
+import { openStoreSubscriptionSettings } from "../../../helpers/api/revenuecat/openStoreSubscriptionSettings";
+import SimpleButton from "../../../components/commons/buttons/SimpleButton";
 
 export const SubscriptionManagement = ({ navigation } : any) => {
 
@@ -27,6 +30,7 @@ export const SubscriptionManagement = ({ navigation } : any) => {
   const [subscriptions, setSubscriptions] = useState<any[]>([])
   const [payments, setPayments] = useState<any[]>([])
   const [loading, setLoading] = useState<boolean>(true)
+  const [isPro, setIsPro] = useState<boolean>(false)
 
   useEffect(() => {
     sendAnalyticsEvent(currentUser, currentUserLocation, 'subscription_management_screen_view', eventTypes.SCREEN_VIEW, {}, currentLocale)
@@ -38,6 +42,7 @@ export const SubscriptionManagement = ({ navigation } : any) => {
     }
 
     retrieveCurrentSubscription()
+    getSubscriptionStatus().then(setIsPro)
   }, [isFocused])
 
   const retrieveCurrentSubscription = async () => {
@@ -52,10 +57,15 @@ export const SubscriptionManagement = ({ navigation } : any) => {
 
     const data = await response.json()
     console.log('Current subscription data:', data.subscriptions)
-    
+
     setPayments(data.payments)
     setSubscriptions(data.subscriptions)
     setLoading(false)
+  }
+
+  const handleManageSubscription = () => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'manage_subscription_clicked', eventTypes.BUTTON_CLICK, {}, currentLocale)
+    openStoreSubscriptionSettings()
   }
 
   return (
@@ -68,6 +78,29 @@ export const SubscriptionManagement = ({ navigation } : any) => {
       <View style={globalStyles.screens.separator} />
       <ScrollView>
         <View style={globalStyles.content}>
+          {
+            isPro && (
+              <View style={subscriptionManagementStyles.section}>
+                <Text style={subscriptionManagementStyles.section.title}>Abonnement actif</Text>
+                <View style={subscriptionManagementStyles.section.body}>
+                  <Text style={subscriptionManagementStyles.section.text}>
+                    Votre abonnement Astroshare PRO est actif. Vous pouvez gérer son renouvellement ou son mode de paiement directement depuis les réglages de votre store.
+                  </Text>
+                  <SimpleButton
+                    text="Gérer mon abonnement"
+                    icon={require('../../../../assets/icons/FiCreditCard.png')}
+                    backgroundColor={app_colors.white}
+                    textColor={app_colors.black}
+                    iconColor={app_colors.black}
+                    fullWidth
+                    align="flex-start"
+                    onPress={handleManageSubscription}
+                  />
+                </View>
+              </View>
+            )
+          }
+
           <View style={subscriptionManagementStyles.section}>
             <Text style={subscriptionManagementStyles.section.title}>Vos abonnements Astroshare PRO</Text>
             <View style={subscriptionManagementStyles.section.body}>
@@ -115,7 +148,7 @@ export const SubscriptionManagement = ({ navigation } : any) => {
           </View>
 
           {
-            !loading && subscriptions.length === 0 && payments.length === 0 && (
+            !loading && !isPro && subscriptions.length === 0 && payments.length === 0 && (
               <ProLocker id={routes.auth.profile.subscriptionManagement.home.path} navigation={navigation} image={require('../../../../assets/images/tools/apod.png')} darker small />
             )
           }

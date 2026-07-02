@@ -1,64 +1,38 @@
 import React from 'react'
-import {Image, ImageBackground, Text, TouchableOpacity, View} from 'react-native'
+import {Text, TouchableOpacity, View} from 'react-native'
 import {sellScreenStyles} from "../../styles/screens/pro/sellScreen";
 import {app_colors} from "../../helpers/constants";
 import {i18n} from "../../helpers/scripts/i18n";
-import {formatEuro} from "../../helpers/scripts/utils/formatters/formaters";
-import {useTranslation} from "../../hooks/useTranslation";
-import {ProPackage} from "../../helpers/types/ProPackage";
 
 interface ProOfferCardProps {
   name: string;
-  features: string[];
-  price: number;
-  type: string;
+  price: string;
+  type: 'monthly' | 'yearly' | 'lifetime';
   active: boolean;
-  discount?: string;
+  highlight?: string;
   onClick: () => void
 }
 
-export default function ProOfferCard({name, features, price, discount, type, active, onClick}: ProOfferCardProps) {
+export default function ProOfferCard({name, price, highlight, type, active, onClick}: ProOfferCardProps) {
 
-  const { currentLCID } = useTranslation()
-
-  const typesTranslations: any = {
+  const typesTranslations: Record<string, string> = {
     'monthly': i18n.t('pro.sellScreen.offers.cards.priceMonthly'),
-    'yearly': i18n.t('pro.sellScreen.offers.cards.priceYearly')
+    'yearly': i18n.t('pro.sellScreen.offers.cards.priceYearly'),
+    'lifetime': i18n.t('pro.sellScreen.offers.cards.priceLifetime'),
   }
 
   return (
-    <TouchableOpacity onPress={onClick} style={[sellScreenStyles.content.offers.offerCard, {borderColor: active ? app_colors.yellow : 'transparent'}]}>
-      <View>
-        <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 10}}>
-          <View style={[sellScreenStyles.content.offers.offerCard.selected, {backgroundColor: active ? app_colors.yellow : 'transparent'}]}/>
-          <Text style={sellScreenStyles.content.offers.offerCard.title}>{name}</Text>
-          {
-            discount && (
-              <Text style={sellScreenStyles.content.offers.offerCard.discount}>{discount}</Text>
-            )
-          }
-        </View>
+    <TouchableOpacity onPress={onClick} style={[sellScreenStyles.content.offers.offerCard, {borderColor: active ? app_colors.yellow : app_colors.white_twenty}]}>
+      <View style={{flex: 1, flexShrink: 1, flexDirection: 'row', alignItems: 'center', gap: 10, paddingRight: 10}}>
+        <View style={[sellScreenStyles.content.offers.offerCard.selected, {borderColor: active ? app_colors.yellow : app_colors.white_forty, backgroundColor: active ? app_colors.yellow : 'transparent'}]}/>
+        <Text style={sellScreenStyles.content.offers.offerCard.title} numberOfLines={1}>{name}</Text>
         {
-          active && (
-            <View style={{marginTop: 10, opacity: .8, gap: 5}}>
-              {
-                features.map((feature: string, index: number) => {
-                  return (
-                    <View key={index} style={{display: 'flex', flexDirection: 'row', alignItems: 'flex-start', gap: 5}}>
-                      <Image source={require('../../../assets/icons/FiCheck.png')} style={{width: 15, height: 15}}/>
-                      <Text style={{color: app_colors.white, fontSize: 14, fontFamily: 'DMMonoRegular'}}>{feature}</Text>
-                    </View>
-                  )
-                })
-              }
-            </View>
+          highlight && (
+            <Text style={sellScreenStyles.content.offers.offerCard.highlight} numberOfLines={1}>{highlight}</Text>
           )
         }
       </View>
-      <View style={{display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 5, flex: 1}}>
-        <Text style={sellScreenStyles.content.offers.offerCard.price}>{formatEuro(price, currentLCID)} {typesTranslations[type]}</Text>
-
-      </View>
+      <Text style={sellScreenStyles.content.offers.offerCard.price} numberOfLines={1}>{price} {typesTranslations[type]}</Text>
     </TouchableOpacity>
   )
 }

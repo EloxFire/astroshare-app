@@ -1,3 +1,4 @@
+/** @deprecated Stripe checkout products are replaced by RevenueCat offerings (see src/helpers/api/revenuecat/getOfferings.ts). Kept for the existing Stripe web subscriber base. */
 export const getStripeProducts = async () => {
   try {
     const response = await fetch(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/stripe/products`, {

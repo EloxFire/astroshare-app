@@ -28,6 +28,7 @@ import { SolarSystemProvider } from "./src/contexts/SolarSystemContext";
 import { SpaceXContextProvider } from "./src/contexts/SpaceXContext";
 import { StarsContextProvider } from "./src/contexts/StarsContext";
 import { app_colors } from "./src/helpers/constants";
+import { configureRevenueCat } from "./src/helpers/api/revenuecat";
 import { routes } from "./src/helpers/routes";
 import { setupAnalytics } from "./src/helpers/scripts/analytics";
 import './src/helpers/scripts/i18n/index';
@@ -72,7 +73,6 @@ import LaunchDetails from "./src/screens/launches/LaunchDetails";
 import LaunchesScreen from "./src/screens/launches/Launches";
 import LightPollutionMap from './src/screens/lightpollution/Map';
 import ObservationPlannerScreen from "./src/screens/observationPlanner/ObservationPlannerScreen";
-import PaywallScreen from "./src/screens/pro/PaywallScreen";
 import SellScreen from "./src/screens/pro/SellScreen";
 import CategoryScreen from './src/screens/resources/CategoryScreen';
 import ResourceDetails from './src/screens/resources/ResourceDetails';
@@ -126,6 +126,7 @@ export default function App() {
     async function prepare() {
       try {
         await SystemUI.setBackgroundColorAsync(app_colors.black)
+        configureRevenueCat()
         await useFonts()
         console.log('[App init] App starting...');
         console.log('[App init] Loading fonts...');
@@ -221,7 +222,6 @@ export default function App() {
 
                                 {/*MARKETING SCREENS*/}
                                 <Stack.Screen name={routes.sellScreen.path} component={SellScreen} />
-                                <Stack.Screen name={routes.pro.paywallScreen.path} component={PaywallScreen} />
 
                                 {/*SATELLITE TRACKING SCREENS*/}
                                 <Stack.Screen name={routes.satelliteTracker.path} component={SatelliteTracker} />

@@ -1,3 +1,4 @@
+/** @deprecated Stripe payment flow is replaced by RevenueCat (see src/helpers/api/revenuecat). Kept for the existing Stripe web subscriber base. */
 export const finishStripePayment = async (userId: string, type: 'one-time' | 'subscription') => {
   try {
     const response = await fetch(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/stripe/finish-payment`, {

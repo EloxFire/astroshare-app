@@ -66,6 +66,11 @@ export const Polaris = {
   dec: 89.26410897,
 }
 
+export const revenueCatConstants = {
+  offeringId: 'Main',
+  entitlementId: 'pro',
+}
+
 export const storageKeys = {
   firstLaunch: 'firstLaunch',
   viewPoints: 'viewPoints',

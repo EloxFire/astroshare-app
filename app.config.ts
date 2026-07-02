@@ -25,7 +25,7 @@ module.exports = {
       "NSMotionUsageDescription": "Astroshare utilise les capteurs de mouvement de votre appareil pour détecter son orientation et synchroniser la vue du planétarium 3D avec la direction réelle vers laquelle vous pointez votre téléphone.",
       "NSCameraUsageDescription": "Autoriser ${PRODUCT_NAME} à utiliser l'appareil photo pour scanner votre carte bancaire lors du paiement.",
       "NSFaceIDUsageDescription": "Autoriser ${PRODUCT_NAME} à utiliser Face ID pour sécuriser vos paiements.",
-      "UIBackgroundModes": ["location", "fetch"],
+      "UIBackgroundModes": ["fetch"],
       "LSApplicationQueriesSchemes": ["comgooglemaps", "googlemaps", "waze", "citymapper"]
     },
     config:{

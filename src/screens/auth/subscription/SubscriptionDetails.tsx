@@ -19,6 +19,7 @@ import SimpleButton from "../../../components/commons/buttons/SimpleButton"
 import DSOValues from "../../../components/commons/DSOValues"
 import PageTitle from "../../../components/commons/PageTitle"
 import { updateSubscriptionAutoRenew } from "../../../helpers/api/stripe/updateSubscriptionAutoRenew"
+import { openStoreSubscriptionSettings } from "../../../helpers/api/revenuecat/openStoreSubscriptionSettings"
 
 export const SubscriptionDetails = ({ navigation, route }: any) => {
 
@@ -28,6 +29,11 @@ export const SubscriptionDetails = ({ navigation, route }: any) => {
   const { currentLocale } = useTranslation()
 
   const [subscription, setSubscription] = useState<any>(null)
+
+  // Legacy Stripe subscriptions (existing web subscribers) carry Stripe-shaped fields and are
+  // managed via the Stripe billing portal. Subscriptions coming from RevenueCat/store billing
+  // are managed natively via the App Store / Play Store and don't carry a `provider` of 'stripe'.
+  const isStripeSubscription = subscription?.provider ? subscription.provider === 'stripe' : true
 
   useEffect(() => {
     sendAnalyticsEvent(currentUser, currentUserLocation, 'subscription_details_screen_view', eventTypes.SCREEN_VIEW, {}, currentLocale)
@@ -45,6 +51,11 @@ export const SubscriptionDetails = ({ navigation, route }: any) => {
     } else {
       console.error('Failed to retrieve the customer portal URL');
     }
+  }
+
+  const manageStoreSubscription = () => {
+    sendAnalyticsEvent(currentUser, currentUserLocation, 'manage_subscription_clicked', eventTypes.BUTTON_CLICK, {}, currentLocale)
+    openStoreSubscriptionSettings()
   }
 
   const updateRenewal = async () => {
@@ -125,36 +136,62 @@ export const SubscriptionDetails = ({ navigation, route }: any) => {
             />
           </View>
 
-          <View style={[globalStyles.globalContainer, {display: 'flex', flexDirection: 'column', gap: 10, alignItems: 'flex-start'}]}>
-            <Text style={subscriptionManagementStyles.section.title}>Moyen de paiement</Text>
+          {
+            isStripeSubscription ? (
+              <View style={[globalStyles.globalContainer, {display: 'flex', flexDirection: 'column', gap: 10, alignItems: 'flex-start'}]}>
+                <Text style={subscriptionManagementStyles.section.title}>Moyen de paiement</Text>
 
-            <View style={globalStyles.row}>
-              <PaymentIcon type={'security-code-front'} variant="flatRounded" width={120} height={100} />
-              <View style={{ marginLeft: 20 }}>
-                <Text style={subscriptionDetailsStyles.payment.brand}>{subscription.default_payment_method?.card?.brand || 'Carte de crédit'}</Text>
-                <Text style={{ color: app_colors.white, fontSize: 14, fontFamily: 'DMMonoRegular' as 'DMMonoRegular' }}>**** **** **** {subscription.default_payment_method?.card?.last4 || '****'}</Text>
-                <Text style={{ color: app_colors.white, fontSize: 14, fontFamily: 'DMMonoRegular' as 'DMMonoRegular' }}>Exp : {subscription.default_payment_method?.card?.exp_month || '**'}/{subscription.default_payment_method?.card?.exp_year || '**'}</Text>
+                <View style={globalStyles.row}>
+                  <PaymentIcon type={'security-code-front'} variant="flatRounded" width={120} height={100} />
+                  <View style={{ marginLeft: 20 }}>
+                    <Text style={subscriptionDetailsStyles.payment.brand}>{subscription.default_payment_method?.card?.brand || 'Carte de crédit'}</Text>
+                    <Text style={{ color: app_colors.white, fontSize: 14, fontFamily: 'DMMonoRegular' as 'DMMonoRegular' }}>**** **** **** {subscription.default_payment_method?.card?.last4 || '****'}</Text>
+                    <Text style={{ color: app_colors.white, fontSize: 14, fontFamily: 'DMMonoRegular' as 'DMMonoRegular' }}>Exp : {subscription.default_payment_method?.card?.exp_month || '**'}/{subscription.default_payment_method?.card?.exp_year || '**'}</Text>
+                  </View>
+                </View>
+                <SimpleButton
+                  text="Modifier le moyen de paiement"
+                  icon={require('../../../../assets/icons/FiCreditCard.png')}
+                  backgroundColor={app_colors.white}
+                  textColor={app_colors.black}
+                  iconColor={app_colors.black}
+                  fullWidth
+                  align="flex-start"
+                  disabled={subscription.canceled_at}
+                  onPress={() => updateCard()}
+                />
               </View>
-            </View>
-            <SimpleButton
-              text="Modifier le moyen de paiement"
-              icon={require('../../../../assets/icons/FiCreditCard.png')}
-              backgroundColor={app_colors.white}
-              textColor={app_colors.black}
-              iconColor={app_colors.black}
-              fullWidth
-              align="flex-start"
-              disabled={subscription.canceled_at}
-              onPress={() => updateCard()}
-            />
-          </View>
+            ) : (
+              <View style={[globalStyles.globalContainer, {display: 'flex', flexDirection: 'column', gap: 10, alignItems: 'flex-start'}]}>
+                <Text style={subscriptionManagementStyles.section.title}>Moyen de paiement</Text>
+                <Text style={{ color: app_colors.white, fontSize: 14, fontFamily: 'DMMonoRegular' as 'DMMonoRegular' }}>
+                  Le moyen de paiement est géré directement par l'App Store ou le Play Store.
+                </Text>
+              </View>
+            )
+          }
 
 
           <View style={[globalStyles.globalContainer, {display: 'flex', flexDirection: 'column', gap: 10}]}>
             <Text style={subscriptionManagementStyles.section.title}>Actions</Text>
 
             {
-              !subscription.canceled_at && (
+              !isStripeSubscription && (
+                <SimpleButton
+                  text="Gérer mon abonnement"
+                  icon={require('../../../../assets/icons/FiCreditCard.png')}
+                  backgroundColor={app_colors.white}
+                  textColor={app_colors.black}
+                  iconColor={app_colors.black}
+                  fullWidth
+                  align="flex-start"
+                  onPress={() => manageStoreSubscription()}
+                />
+              )
+            }
+
+            {
+              isStripeSubscription && !subscription.canceled_at && (
                 <SimpleButton
                   text="Désactiver le renouvellement automatique"
                   icon={require('../../../../assets/icons/FiXCircle.png')}
@@ -170,7 +207,7 @@ export const SubscriptionDetails = ({ navigation, route }: any) => {
             }
 
             {
-              subscription.canceled_at && new Date(subscription.current_period_end * 1000) > new Date() && subscription.status !== 'canceled' && (
+              isStripeSubscription && subscription.canceled_at && new Date(subscription.current_period_end * 1000) > new Date() && subscription.status !== 'canceled' && (
                 <SimpleButton
                   text="Réactiver l'abonnement"
                   icon={require('../../../../assets/icons/FiZap.png')}
@@ -185,7 +222,7 @@ export const SubscriptionDetails = ({ navigation, route }: any) => {
               )
             }
 
-            {(subscription.canceled_at && new Date(subscription.current_period_end * 1000) <= new Date()) || subscription.status === 'canceled' && (
+            {isStripeSubscription && ((subscription.canceled_at && new Date(subscription.current_period_end * 1000) <= new Date()) || subscription.status === 'canceled') && (
               <>
                 <Text style={{ color: app_colors.white, fontSize: 14, fontFamily: 'DMMonoRegular' as 'DMMonoRegular' }}>Aucune action possible (abonnement résilié). Pour plus d'aide contactez le support Astroshare.</Text>
                 <Text style={{ color: app_colors.white, fontSize: 14, fontFamily: 'DMMonoRegular' as 'DMMonoRegular', textAlign: 'center' }}>contact@astroshare.fr</Text>

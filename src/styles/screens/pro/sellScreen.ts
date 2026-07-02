@@ -34,13 +34,23 @@ export const sellScreenStyles = {
       fontFamily: 'DMMonoRegular' as 'DMMonoRegular',
     },
 
+    descriptionLead: {
+      color: app_colors.white,
+      fontSize: 17,
+      fontFamily: 'GilroyMedium' as 'GilroyMedium',
+      textAlign: 'left' as 'left',
+      marginTop: 60,
+      lineHeight: 22,
+    },
+
     description: {
       color: app_colors.white,
-      fontSize: 16,
+      fontSize: 14,
       fontFamily: 'GilroyRegular' as 'GilroyRegular',
-      opacity: .5,
-      textAlign: 'center' as 'center',
-      marginTop: 30,
+      opacity: .55,
+      textAlign: 'left' as 'left',
+      marginTop: 6,
+      lineHeight: 19,
     },
 
     offers: {
@@ -52,45 +62,48 @@ export const sellScreenStyles = {
         backgroundColor: app_colors.white_no_opacity,
         borderWidth: 1,
         borderColor: app_colors.white_twenty,
-        borderRadius: 10,
-        padding: 10,
-        marginBottom: 20,
+        borderRadius: 12,
+        paddingVertical: 14,
+        paddingHorizontal: 14,
+        marginBottom: 12,
 
         display: 'flex' as 'flex',
         flexDirection: 'row' as 'row',
-        alignItems: 'flex-start' as 'flex-start',
+        alignItems: 'center' as 'center',
         justifyContent: 'space-between' as 'space-between',
 
         title: {
           color: app_colors.white,
-          fontSize: 18,
-          fontFamily: 'GilroyBlack' as 'GilroyBlack',
+          fontSize: 15,
+          fontFamily: 'GilroyMedium' as 'GilroyMedium',
+          flexShrink: 1,
         },
 
         price: {
           color: app_colors.white,
-          fontSize: 16,
+          fontSize: 14,
           fontFamily: 'DMMonoMedium' as 'DMMonoMedium',
+          flexShrink: 0,
         },
 
-        discount: {
-          // position: 'absolute' as 'absolute',
-          // top: -25,
-          color: app_colors.black,
-          fontSize: 14,
-          fontFamily: 'GilroyBlack' as 'GilroyBlack',
-          backgroundColor: app_colors.yellow,
+        highlight: {
+          color: app_colors.yellow,
+          fontSize: 11,
+          fontFamily: 'GilroyMedium' as 'GilroyMedium',
+          borderWidth: 1,
+          borderColor: app_colors.yellow,
           paddingVertical: 2,
-          paddingHorizontal: 5,
-          borderRadius: 5,
+          paddingHorizontal: 6,
+          borderRadius: 20,
+          overflow: 'hidden' as 'hidden',
         },
 
         selected: {
-          width: 15,
-          height: 15,
+          width: 14,
+          height: 14,
           borderRadius: 30,
           borderWidth: 1,
-          borderColor: app_colors.white_twenty,
+          borderColor: app_colors.white_forty,
         }
       }
     }

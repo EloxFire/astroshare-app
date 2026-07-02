@@ -1,3 +1,4 @@
+/** @deprecated Stripe payment sheet checkout is replaced by RevenueCat purchases (see src/helpers/api/revenuecat). Kept for the existing Stripe web subscriber base. */
 export const getStripePublishableKey = async (): Promise<string> => {
   try {
     const response = await fetch(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/stripe/stripetoken`, {

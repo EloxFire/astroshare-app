@@ -7,6 +7,7 @@ import { storageKeys } from "../helpers/constants"
 import { useTranslation } from '../hooks/useTranslation'
 import { signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
 import { auth } from '../../firebaseConfig'
+import { loginRevenueCat, logoutRevenueCat } from '../helpers/api/revenuecat'
 
 const AuthContext = createContext<any>({})
 
@@ -45,10 +46,11 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
         );
   
         const { user } = resp.data;
-  
+
         await storeData(storageKeys.auth.accessToken, accessToken);
         await storeObject(storageKeys.auth.user, user);
-  
+        await loginRevenueCat(firebaseUser.uid);
+
         setCurrentUser(user);
       } catch (e) {
         // Si l’API refuse ou autre, on peut forcer un logout local
@@ -146,6 +148,7 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
     await removeData(storageKeys.auth.refreshToken)
     await removeData(storageKeys.auth.accessToken)
     await removeData(storageKeys.auth.user)
+    await logoutRevenueCat()
     setCurrentUser(null)
   }
 
