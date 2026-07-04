@@ -19,9 +19,13 @@
         "simulator": true
       }
     },
-    "testflight": {
+    "testflight-dev": {
       "autoIncrement": true,
       "environment": "development"
+    },
+    "testflight-prod": {
+      "autoIncrement": true,
+      "environment": "production"
     },
     "production": {
       "autoIncrement": true

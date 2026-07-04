@@ -6,7 +6,7 @@ const IS_DEV = process.env.EXPO_PUBLIC_ENV === "dev";
 module.exports = {
   name: IS_DEV ? "DEV Astroshare" : "Astroshare",
   slug: "astroshare-app",
-  version: "2.8.1",
+  version: "2.8.2",
   orientation: "portrait",
   icon: IS_DEV ? "./assets/icon-dev.png" : "./assets/icon.png",
   userInterfaceStyle: "light",
@@ -18,6 +18,7 @@ module.exports = {
   },
   assetBundlePatterns: ["**/*"],
   ios: {
+    buildNumber: "20",
     supportsTablet: true,
     bundleIdentifier: IS_DEV
       ? "fr.eavagliano.astroshare.dev"
@@ -45,6 +46,7 @@ module.exports = {
     }
   },
   android: {
+    versionCode: 95,
     adaptiveIcon: {
       foregroundImage: IS_DEV
         ? "./assets/adaptive-icon-dev.png"
@@ -79,7 +81,7 @@ module.exports = {
     eas: {
       projectId: "d66b5c83-1f63-4749-8eaf-68ebaeea3859"
     },
-    appEnv: process.env.APP_ENV ?? "production"
+    appEnv: process.env.EXPO_PUBLIC_ENV ?? "production"
   },
   plugins: [
     ["expo-asset"],
