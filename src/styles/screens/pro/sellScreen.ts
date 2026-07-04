@@ -1,12 +1,37 @@
 import { app_colors } from "../../../helpers/constants";
-import {Dimensions, StatusBar} from "react-native";
 
 export const sellScreenStyles = {
+  header: {
+    position: 'relative' as 'relative',
+    minHeight: 260,
+    paddingBottom: 30,
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
+    overflow: 'hidden' as 'hidden',
+
+    backgroundImage: {
+      position: 'absolute' as 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      zIndex: -1,
+    },
+
+    bgFilter: {
+      position: 'absolute' as 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+    }
+  },
+
   content: {
     display: 'flex' as 'flex',
     flexDirection: 'column' as 'column',
     marginBottom: 80,
-    paddingTop: 50,
+    marginTop: 20,
 
     highlightTitle: {
       color: app_colors.white,
@@ -58,6 +83,20 @@ export const sellScreenStyles = {
       flexDirection: 'column' as 'column',
       marginTop: 20,
 
+      emptyState: {
+        alignItems: 'center' as 'center',
+        gap: 12,
+        paddingVertical: 20,
+
+        text: {
+          color: app_colors.white,
+          opacity: .6,
+          fontSize: 13,
+          fontFamily: 'GilroyRegular' as 'GilroyRegular',
+          textAlign: 'center' as 'center',
+        },
+      },
+
       offerCard: {
         backgroundColor: app_colors.white_no_opacity,
         borderWidth: 1,
@@ -106,25 +145,6 @@ export const sellScreenStyles = {
           borderColor: app_colors.white_forty,
         }
       }
-    }
-  },
-
-  backgroundImage: {
-    position: 'absolute' as 'absolute',
-    top: 0,
-    left: 0,
-    width: Dimensions.get('window').width,
-    height: Dimensions.get('window').height / 4 + 10,
-    zIndex: -1,
-    borderBottomLeftRadius: 20,
-    borderBottomRightRadius: 20,
-
-    bgFilter:{
-      position: 'absolute' as 'absolute',
-      top: 0,
-      left: 0,
-      width: Dimensions.get('window').width,
-      height: Dimensions.get('window').height / 4,
     }
   }
 }

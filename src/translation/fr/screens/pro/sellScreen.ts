@@ -15,6 +15,8 @@ export const sellScreenTranslations = {
     proceedToPayment: "Procéder au paiement",
     bestValue: "Meilleure offre",
     bestValueWithDiscount: "Meilleure offre · -{{percent}}%",
+    loadError: "Impossible de charger les offres pour le moment.",
+    retry: "Réessayer",
     cards: {
       priceMonthly: "/ mois",
       priceYearly: "/ an",

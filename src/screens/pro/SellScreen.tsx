@@ -60,19 +60,27 @@ export default function SellScreen({ navigation }: any) {
     sendAnalyticsEvent(currentUser, currentUserLocation, 'Sell screen view', eventTypes.SCREEN_VIEW, {}, currentLocale)
   }, []);
 
+  const loadOfferings = async () => {
+    setOfferingsLoading(true)
+
+    const offeringPackages = await getOfferings()
+    const sortedPackages = [...offeringPackages].sort((a, b) => {
+      return (packageTypeOrder[a.packageType] ?? 99) - (packageTypeOrder[b.packageType] ?? 99)
+    })
+
+    const annualPackage = sortedPackages.find((pack) => pack.packageType === 'ANNUAL')
+
+    setPackages(sortedPackages)
+    setSelectedPackage(annualPackage || sortedPackages[0] || null)
+    setOfferingsLoading(false)
+
+    if (sortedPackages.length === 0) {
+      sendAnalyticsEvent(currentUser, currentUserLocation, 'offerings_load_empty', eventTypes.ERROR, {}, currentLocale)
+    }
+  }
+
   useEffect(() => {
-    (async () => {
-      const offeringPackages = await getOfferings()
-      const sortedPackages = [...offeringPackages].sort((a, b) => {
-        return (packageTypeOrder[a.packageType] ?? 99) - (packageTypeOrder[b.packageType] ?? 99)
-      })
-
-      const annualPackage = sortedPackages.find((pack) => pack.packageType === 'ANNUAL')
-
-      setPackages(sortedPackages)
-      setSelectedPackage(annualPackage || sortedPackages[0] || null)
-      setOfferingsLoading(false)
-    })()
+    loadOfferings()
   }, []);
 
   const getAnnualDiscountPercent = () => {
@@ -88,7 +96,11 @@ export default function SellScreen({ navigation }: any) {
   }
 
   const handlePurchase = async () => {
-    if (!selectedPackage) return;
+    if (!selectedPackage) {
+      showToast({ message: "Aucune offre disponible pour le moment, réessayez plus tard", type: "error" });
+      sendAnalyticsEvent(currentUser, currentUserLocation, 'purchase_clicked_no_offer', eventTypes.ERROR, {}, currentLocale);
+      return;
+    }
 
     if (!currentUser) {
       showToast({
@@ -149,31 +161,50 @@ export default function SellScreen({ navigation }: any) {
   return (
     <View style={[globalStyles.body, {paddingTop: 0, paddingHorizontal: 0}]}>
       <ScrollView contentContainerStyle={{paddingHorizontal: 10, paddingTop: Constants.statusBarHeight ? Constants.statusBarHeight + 20 : 20}}>
-        <Image style={sellScreenStyles.backgroundImage} source={require('../../../assets/images/tools/resources.png')}/>
-        <LinearGradient
-          // Background Linear Gradient
-          colors={['rgba(0,0,0,1)', 'transparent']}
-          style={sellScreenStyles.backgroundImage.bgFilter}
-          locations={[0, 1]}
-        />
+        <View style={sellScreenStyles.header}>
+          <Image style={sellScreenStyles.header.backgroundImage} contentFit="cover" source={require('../../../assets/images/tools/resources.png')}/>
+          <LinearGradient
+            // Background Linear Gradient
+            colors={['rgba(0,0,0,1)', 'transparent']}
+            style={sellScreenStyles.header.bgFilter}
+            locations={[0, 1]}
+          />
 
-        <View style={pageTitleStyles.container}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Image style={pageTitleStyles.container.icon} source={require('../../../assets/icons/FiChevronDown.png')}/>
-          </TouchableOpacity>
-        </View>
-        <View style={sellScreenStyles.content}>
-          <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+          <View style={pageTitleStyles.container}>
+            <TouchableOpacity onPress={() => navigation.goBack()}>
+              <Image style={pageTitleStyles.container.icon} source={require('../../../assets/icons/FiChevronDown.png')}/>
+            </TouchableOpacity>
+          </View>
+          <View style={{display: 'flex', flexDirection: 'row', alignItems: 'center', marginTop: 20}}>
             <Text style={sellScreenStyles.content.title}>Astroshare</Text>
             <ProBadge additionalStyles={{transform: [{scale: 2.8}], marginLeft: 30}} customColor={app_colors.yellow}/>
           </View>
           <Text style={sellScreenStyles.content.subtitle}>{i18n.t('pro.sellScreen.subtitle')}</Text>
           <Text style={sellScreenStyles.content.descriptionLead}>{i18n.t('pro.sellScreen.descriptionLead')}</Text>
           <Text style={sellScreenStyles.content.description}>{i18n.t('pro.sellScreen.description')}</Text>
+        </View>
+        <View style={sellScreenStyles.content}>
           <View style={sellScreenStyles.content.offers}>
             {
               offeringsLoading && packages.length === 0 &&
               <ActivityIndicator size="large" color={app_colors.yellow} style={{marginTop: 20, marginBottom: 50}}/>
+            }
+            {
+              !offeringsLoading && packages.length === 0 && (
+                <View style={sellScreenStyles.content.offers.emptyState}>
+                  <Text style={sellScreenStyles.content.offers.emptyState.text}>
+                    {i18n.t('pro.sellScreen.offers.loadError')}
+                  </Text>
+                  <SimpleButton
+                    text={i18n.t('pro.sellScreen.offers.retry')}
+                    onPress={() => loadOfferings()}
+                    backgroundColor={app_colors.white_no_opacity}
+                    textColor={app_colors.white}
+                    iconColor={app_colors.white}
+                    align="center"
+                  />
+                </View>
+              )
             }
             {
               packages.map((pack: PurchasesPackage, index: number) => {
@@ -209,7 +240,7 @@ export default function SellScreen({ navigation }: any) {
         <SimpleButton
           text={currentUser ? i18n.t('pro.sellScreen.toPayment') : i18n.t('pro.sellScreen.toRegister')}
           onPress={() => {handlePurchase()}}
-          disabled={offeringsLoading || purchaseLoading || !selectedPackage}
+          disabled={offeringsLoading || purchaseLoading}
           loading={purchaseLoading}
           backgroundColor={app_colors.white}
           textColor={app_colors.black}
