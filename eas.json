@@ -32,6 +32,26 @@
     }
   },
   "submit": {
-    "production": {}
+    "testflight-dev": {
+      "ios": {
+        "ascAppId": "6787407962"
+      },
+      "android": {
+        "applicationId": "fr.eavagliano.astroshare.dev"
+      }
+    },
+    "testflight-prod": {
+      "ios": {
+        "ascAppId": "6737229342"
+      },
+    },
+    "production": {
+      "ios": {
+        "ascAppId": "6737229342"
+      },
+      "android": {
+        "applicationId": "fr.eavagliano.astroshare"
+      }
+    }
   }
 }
