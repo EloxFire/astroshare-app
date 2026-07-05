@@ -82,6 +82,15 @@ export const authScreensTranslations = {
       subscriptionManagement: {
         title: "Gestion de l'abonnement",
         subtitle: "Moyens de paiement, factures, etc.",
+        summary: {
+          product: "Produit",
+          frequency: "Fréquence",
+          price: "Prix",
+          periodEnd: "Fin de la période",
+          reason: "Motif",
+          trial: "Essai gratuit",
+          pastDueWarning: "Un problème est survenu avec votre dernier paiement. Merci de mettre à jour votre moyen de paiement.",
+        },
         cancel: {
           warning: "Êtes-vous sûr de vouloir annuler votre abonnement ? Vous conserverez l'accès à Astroshare Pro jusqu'à la fin de votre période de facturation actuelle.",
           success: "Votre abonnement a été annulé avec succès. Vous conserverez l'accès à Astroshare Pro jusqu'à la fin de votre période de facturation actuelle.",

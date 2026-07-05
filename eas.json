@@ -44,6 +44,9 @@
       "ios": {
         "ascAppId": "6737229342"
       },
+      "android": {
+        "applicationId": "fr.eavagliano.astroshare"
+      }
     },
     "production": {
       "ios": {

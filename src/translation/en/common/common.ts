@@ -144,5 +144,9 @@ export const commonTranslations = {
     Saturn: "Saturn",
     Uranus: "Uranus",
     Neptune: "Neptune"
+  },
+  paymentStatus: {
+    expired: "Expired",
+    unknown: "Unknown status",
   }
 }

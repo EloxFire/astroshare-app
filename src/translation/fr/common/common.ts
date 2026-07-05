@@ -157,6 +157,8 @@ export const commonTranslations = {
     requires_payment_method: "Incomplet",
     other: "Autre",
     cancellation_requested: "Annulation demandée",
+    expired: "Expiré",
+    unknown: "Statut inconnu",
   },
   subscriptionPeriod: {
     year: "Annuel",

@@ -1,4 +1,5 @@
 import {UserRoles} from "./UserRoles";
+import {Subscription} from "./Subscription";
 
 export type User = {
   email: string;
@@ -8,13 +9,15 @@ export type User = {
   uid: string;
   isAdmin: boolean;
   subscriptionDate?: Date;
-  subscription?: string;
   subscriptionName?: string;
   subscriptionRenewal?: Date;
   subscriptionCategory?: string;
   hasCancelledSubscription?: boolean;
   subscriptionCancelledAt?: Date;
   subscriptionId?: string;
+  subscription?: Subscription;
+  subscriptionSource?: 'stripe' | 'revenuecat' | 'none';
+  subscriptionExpiresAt?: Date | null;
   ref?: string;
   createdAt?: Date;
   updatedAt?: Date;

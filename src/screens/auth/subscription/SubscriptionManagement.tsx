@@ -19,6 +19,7 @@ import { useIsFocused } from "@react-navigation/native";
 import { getSubscriptionStatus } from "../../../helpers/api/revenuecat/getSubscriptionStatus";
 import { openStoreSubscriptionSettings } from "../../../helpers/api/revenuecat/openStoreSubscriptionSettings";
 import SimpleButton from "../../../components/commons/buttons/SimpleButton";
+import { SubscriptionSummaryCard } from "../../../components/cards/subscriptions/SubscriptionSummaryCard";
 
 export const SubscriptionManagement = ({ navigation } : any) => {
 
@@ -79,23 +80,25 @@ export const SubscriptionManagement = ({ navigation } : any) => {
       <ScrollView>
         <View style={globalStyles.content}>
           {
-            isPro && (
+            currentUser?.subscription && (
               <View style={subscriptionManagementStyles.section}>
-                <Text style={subscriptionManagementStyles.section.title}>Abonnement actif</Text>
+                <Text style={subscriptionManagementStyles.section.title}>Votre abonnement</Text>
                 <View style={subscriptionManagementStyles.section.body}>
-                  <Text style={subscriptionManagementStyles.section.text}>
-                    Votre abonnement Astroshare PRO est actif. Vous pouvez gérer son renouvellement ou son mode de paiement directement depuis les réglages de votre store.
-                  </Text>
-                  <SimpleButton
-                    text="Gérer mon abonnement"
-                    icon={require('../../../../assets/icons/FiCreditCard.png')}
-                    backgroundColor={app_colors.white}
-                    textColor={app_colors.black}
-                    iconColor={app_colors.black}
-                    fullWidth
-                    align="flex-start"
-                    onPress={handleManageSubscription}
-                  />
+                  <SubscriptionSummaryCard subscription={currentUser.subscription} />
+                  {
+                    currentUser.subscription.metadata?.source === 'revenuecat' && (
+                      <SimpleButton
+                        text="Gérer mon abonnement"
+                        icon={require('../../../../assets/icons/FiCreditCard.png')}
+                        backgroundColor={app_colors.white}
+                        textColor={app_colors.black}
+                        iconColor={app_colors.black}
+                        fullWidth
+                        align="flex-start"
+                        onPress={handleManageSubscription}
+                      />
+                    )
+                  }
                 </View>
               </View>
             )
@@ -148,7 +151,7 @@ export const SubscriptionManagement = ({ navigation } : any) => {
           </View>
 
           {
-            !loading && !isPro && subscriptions.length === 0 && payments.length === 0 && (
+            !loading && !isPro && !currentUser?.subscription && subscriptions.length === 0 && payments.length === 0 && (
               <ProLocker id={routes.auth.profile.subscriptionManagement.home.path} navigation={navigation} image={require('../../../../assets/images/tools/apod.png')} darker small />
             )
           }

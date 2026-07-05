@@ -81,6 +81,15 @@ export const authScreensTranslations = {
       subscriptionManagement: {
         title: "Subscription management",
         subtitle: "Payment methods, invoices, etc.",
+        summary: {
+          product: "Product",
+          frequency: "Frequency",
+          price: "Price",
+          periodEnd: "Period end",
+          reason: "Reason",
+          trial: "Free trial",
+          pastDueWarning: "There was a problem with your last payment. Please update your payment method.",
+        },
         cancel: {
           warning: "Are you sure you want to cancel your subscription? You will keep access to Astroshare Pro until the end of your current billing period.",
           success: "Your subscription has been canceled successfully. You will keep access to Astroshare Pro until the end of your current billing period.",
