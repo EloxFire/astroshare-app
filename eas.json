@@ -7,11 +7,13 @@
     "development": {
       "developmentClient": true,
       "distribution": "internal",
-      "autoIncrement": true
+      "autoIncrement": true,
+      "environment": "development"
     },
     "preview": {
       "distribution": "internal",
       "autoIncrement": true,
+      "environment": "development",
       "android": {
         "buildType": "apk"
       },

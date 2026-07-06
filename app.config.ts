@@ -6,7 +6,7 @@ const IS_DEV = process.env.EXPO_PUBLIC_ENV === "dev";
 module.exports = {
   name: IS_DEV ? "DEV Astroshare" : "Astroshare",
   slug: "astroshare-app",
-  version: "2.8.3",
+  version: "2.8.4",
   orientation: "portrait",
   icon: IS_DEV ? "./assets/icon-dev.png" : "./assets/icon.png",
   userInterfaceStyle: "light",
@@ -48,9 +48,7 @@ module.exports = {
   android: {
     versionCode: 95,
     adaptiveIcon: {
-      foregroundImage: IS_DEV
-        ? "./assets/adaptive-icon-dev.png"
-        : "./assets/adaptive-icon.png",
+      foregroundImage: "./assets/adaptive-icon.png",
       backgroundColor: "#000000"
     },
     googleServicesFile:
