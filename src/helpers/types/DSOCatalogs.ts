@@ -1,1 +1,0 @@
-export type DSOCatalog = 'messier' | 'ngc' | 'ic' | 'all';

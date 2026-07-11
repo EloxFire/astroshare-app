@@ -6,7 +6,7 @@ const IS_DEV = process.env.EXPO_PUBLIC_ENV === "dev";
 module.exports = {
   name: IS_DEV ? "DEV Astroshare" : "Astroshare",
   slug: "astroshare-app",
-  version: "2.8.4",
+  version: "3.0.0",
   orientation: "portrait",
   icon: IS_DEV ? "./assets/icon-dev.png" : "./assets/icon.png",
   userInterfaceStyle: "light",
@@ -82,6 +82,9 @@ module.exports = {
     appEnv: process.env.EXPO_PUBLIC_ENV ?? "production"
   },
   plugins: [
+    "expo-image",
+    "expo-sharing",
+    "expo-status-bar",
     ["expo-asset"],
     ["expo-font"],
     [
