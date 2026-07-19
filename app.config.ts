@@ -82,6 +82,11 @@ module.exports = {
     appEnv: process.env.EXPO_PUBLIC_ENV ?? "production"
   },
   plugins: [
+    "@react-native-community/datetimepicker",
+    "@stripe/stripe-react-native",
+    "expo-image",
+    "expo-sharing",
+    "expo-status-bar",
     ["expo-asset"],
     ["expo-font"],
     [
