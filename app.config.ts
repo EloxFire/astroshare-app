@@ -6,7 +6,7 @@ const IS_DEV = process.env.EXPO_PUBLIC_ENV === "dev";
 module.exports = {
   name: IS_DEV ? "DEV Astroshare" : "Astroshare",
   slug: "astroshare-app",
-  version: "2.8.4",
+  version: "2.8.5",
   orientation: "portrait",
   icon: IS_DEV ? "./assets/icon-dev.png" : "./assets/icon.png",
   userInterfaceStyle: "light",
@@ -112,7 +112,11 @@ module.exports = {
     [
       "expo-build-properties",
       {
-        usesClearTextTraffic: true
+        usesClearTextTraffic: true,
+        android: {
+          compileSdkVersion: 36,
+          targetSdkVersion: 36
+        }
       }
     ]
   ]
