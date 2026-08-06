@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Linking, Modal, Text, TouchableOpacity, View } from 'react-native'
+import { Linking, Modal, Platform, Text, TouchableOpacity, View } from 'react-native'
 import { appUpdateModalStyles } from '../../styles/components/modals/appUpdateModal'
 import { getData, storeData } from '../../helpers/storage';
 import { storageKeys } from '../../helpers/constants';
@@ -8,6 +8,11 @@ import { NewsLog } from '../../helpers/types/NewsLog';
 interface AppUpdateModalProps {
   isVisible: boolean
   onClose: () => void
+}
+
+const storeUrls: Record<string, string> = {
+  ios: 'https://apps.apple.com/fr/app/astroshare/id6737229342',
+  android: 'https://play.google.com/store/apps/details?id=fr.eavagliano.astroshare',
 }
 
 export default function AppUpdateModal({ isVisible, onClose }: AppUpdateModalProps) {
@@ -33,7 +38,8 @@ export default function AppUpdateModal({ isVisible, onClose }: AppUpdateModalPro
         }
 
         <TouchableOpacity style={appUpdateModalStyles.modal.button} onPress={() => {
-          Linking.openURL('https://play.google.com/store/apps/details?id=fr.eavagliano.astroshare');
+          const url = storeUrls[Platform.OS];
+          if (url) Linking.openURL(url);
         }}>
           <Text style={appUpdateModalStyles.modal.button.text}>Mettre à jour</Text>
         </TouchableOpacity>
