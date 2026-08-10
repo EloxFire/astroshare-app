@@ -3,10 +3,10 @@ dotenv.config();
 
 const IS_DEV = process.env.EXPO_PUBLIC_ENV === "dev";
 
-// app.config.ts ne peut pas importer d'autres fichiers .ts du projet (ex: ./src/helpers/colors) :
+// app.config.ts ne peut pas importer d'autres fichiers .ts du projet (ex: ./src/helpers/variables) :
 // Expo ne transpile que ce fichier, pas ses imports transitifs, et le require() échoue au chargement
 // de la config (expo config / expo start / eas build cassés). Garder les valeurs en dur ici.
-const SPLASH_BACKGROUND_COLOR = "#F2D7FF"; // app_colors.background_purple (src/helpers/colors.ts)
+const SPLASH_BACKGROUND_COLOR = "#F2D7FF"; // valeur figée ici, voir app_colors dans src/helpers/variables.ts
 
 module.exports = {
   name: IS_DEV ? "DEV Astroshare" : "Astroshare",
