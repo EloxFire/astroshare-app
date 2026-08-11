@@ -5,11 +5,18 @@ import { StatusBar } from 'expo-status-bar';
 import { Compass, House, NotebookPen, Settings, Search, X } from 'lucide-react-native';
 import { app_colors } from '../src/helpers/variables';
 import { PlatformPressable } from 'expo-router/build/react-navigation';
+import { useAppFonts } from '../src/hooks/useAppFonts';
 
 export default function RootLayout() {
+  const [fontsLoaded] = useAppFonts();
+
+  if (!fontsLoaded) {
+    return null;
+  }
+
   return (
     <React.Fragment>
-      <StatusBar style="auto" />
+      <StatusBar style="light" />
       <Tabs screenOptions={{
         tabBarActiveTintColor: app_colors.accent,
         headerShown: false,

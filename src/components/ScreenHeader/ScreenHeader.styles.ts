@@ -16,11 +16,12 @@ export const screenHeaderStyles = {
     titleContainer: {
       flexDirection: "row" as const,
       alignItems: "center" as const,
+      marginTop: 20,
 
       title: {
-        fontSize: typography.outfit.screenTitle.fontSize,
-        fontFamily: typography.outfit.screenTitle.fontFamily,
+        ...typography.ztNature.screenTitle,
         color: app_colors.white,
+        whiteSpace: "pre-line" as const,
       }
     },
   },

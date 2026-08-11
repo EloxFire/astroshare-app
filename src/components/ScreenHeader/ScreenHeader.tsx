@@ -1,7 +1,7 @@
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { router, usePathname } from "expo-router";
 import { ChevronLeft, User, UserCircle, UserCircle2 } from "lucide-react-native";
-import { app_colors } from "../../helpers/variables";
+import { app_colors, typography } from "../../helpers/variables";
 import { screenHeaderStyles } from "./ScreenHeader.styles";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AstroshareFullLogo from "../../../assets/logos/astroshare_full_no_slogan.svg";

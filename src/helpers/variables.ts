@@ -3,13 +3,25 @@
 // Quand une valeur de la spec est une fourchette (ex: "11–13 px"), on prend le milieu
 // et on garde la fourchette d'origine en commentaire pour ne rien perdre au passage.
 
+// Applique une opacité (0–1) à une couleur hex pleine (#RRGGBB) en ajoutant le suffixe alpha hex.
+// RN ne supporte pas rgba() en tant que fonction : seule une string hex/rgba littérale fonctionne.
+export const withOpacity = (hexColor: string, opacity: number): string => {
+  const alpha = Math.round(opacity * 255)
+    .toString(16)
+    .padStart(2, "0");
+  return `${hexColor}${alpha}`;
+};
+
 export const app_colors = {
   black: "#000000",
   white: "#FFFFFF",
   grey: "#808080",
   primary: "#230B5A",
   accent: "#8E01F9",
-  yellow: "#FFD700",
+  yellow: {
+    light: "#FFE993",
+    main: "#FFD700",
+  },
   background: "#FCF4FF",
 };
 
@@ -77,12 +89,18 @@ export const radius = {
   keyboardKey: 5,
 };
 
-// Polices "Outfit" (600 uniquement) et "DM Mono" (400/600, + 500 en seule exception) :
-// pas encore chargées dans le projet. Il faudra ajouter les fichiers sous assets/fonts/
-// + un hook useFonts (voir l'ancienne app pour référence) avant que fontFamily ait un effet réel.
+// Polices chargées via src/hooks/useAppFonts.ts (branché dans app/_layout.tsx).
+// ZT Nature remplace Outfit pour la marque (titres). Seuls Regular/Bold/Italic sont fournis
+// pour ZT Nature (pas de fichier "SemiBold" séparé) : les rôles ci-dessous, prévus en 600,
+// utilisent donc ZTNatureBold — c'est la seule graisse marquée disponible en dehors de Regular.
+//
+// ⚠️ Pas de fichier DMMono-SemiBold.ttf fourni : "DMMonoSemiBold" ci-dessous ne charge rien et
+// retombe sur la police système tant que ce fichier n'est pas ajouté dans assets/fonts/ +
+// useAppFonts.ts. Ne pas le remplacer par DMMonoMedium (500) en attendant : la règle de graisse
+// réserve explicitement le 500 à la texture système (barre d'état, clavier), jamais à la marque.
 //
 // Règle de graisse — deux graisses de marque seulement, jamais une troisième :
-// - Outfit SemiBold (600) : tous les titres, noms d'outils, valeurs chiffrées, libellés de cartes.
+// - ZT Nature Bold : tous les titres, noms d'outils, valeurs chiffrées, libellés de cartes.
 // - DM Mono SemiBold (600) : dès qu'un texte est en capitales + letter-spacing (labels de section,
 //   chips/filtres, badges, libellés de tuiles, libellés de nav, micro-labels sur fond sombre),
 //   + valeurs en gras des lignes clé/valeur, + boutons pilules.
@@ -92,15 +110,16 @@ export const radius = {
 //   du clavier uniquement (texture système, pas la marque).
 // La hiérarchie visuelle se fait par la taille/couleur/opacité, jamais par une graisse de plus.
 export const typography = {
-  outfit: {
-    screenTitle: { fontFamily: "OutfitSemiBold", fontSize: 27, lineHeight: 27 }, // line-height 1
-    toolTitleOpen: { fontFamily: "OutfitSemiBold", fontSize: 19 },
-    cardTitle: { fontFamily: "OutfitSemiBold", fontSize: 14 },
-    rowName: { fontFamily: "OutfitSemiBold", fontSize: 11.5 },
-    numericValue: { fontFamily: "OutfitSemiBold", fontSize: 18 },
+  ztNature: {
+    screenTitle: { fontFamily: "ZTNatureBold", fontSize: 27, lineHeight: 27 }, // line-height 1
+    toolTitleOpen: { fontFamily: "ZTNatureBold", fontSize: 19 },
+    cardTitle: { fontFamily: "ZTNatureBold", fontSize: 14 },
+    rowName: { fontFamily: "ZTNatureBold", fontSize: 11.5 },
+    numericValue: { fontFamily: "ZTNatureBold", fontSize: 18 },
   },
   dmMono: {
     semiBold: {
+      // ⚠️ DMMonoSemiBold non chargée (voir avertissement ci-dessus) — fallback système en attendant.
       sectionLabel: { fontFamily: "DMMonoSemiBold", fontSize: 9.5, letterSpacing: 9.5 * 0.16 },
       chip: { fontFamily: "DMMonoSemiBold", fontSize: 9, letterSpacing: 9 * 0.06 },
       badge: { fontFamily: "DMMonoSemiBold", fontSize: 7.5, letterSpacing: 7.5 * 0.1 },
@@ -151,7 +170,7 @@ export const gaps = {
 
   sectionSeparator: {
     height: 1,
-    color: `${app_colors.primary}29`, // rgba(35,11,90,.16)
+    color: withOpacity(app_colors.primary, 0.16),
     before: 9,
     after: 10,
   },
