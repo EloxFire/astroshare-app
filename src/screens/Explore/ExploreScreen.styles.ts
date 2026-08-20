@@ -5,6 +5,6 @@ export const exploreScreenStyles = {
   screen: globalStyles.screen,
   header: {
     height: 20,
-    backgroundColor: app_colors.primary,
+    backgroundColor: app_colors.primary.main,
   },
 };

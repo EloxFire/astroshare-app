@@ -2,7 +2,7 @@ import { useFonts } from "expo-font";
 
 // Charge les polices de marque (ZT Nature) + fonctionnelle (DM Mono).
 // Pas de fichier DMMono-SemiBold.ttf fourni pour l'instant : les styles qui référencent
-// "DMMonoSemiBold" (voir typography.dmMono.semiBold dans variables.ts) retomberont
+// "DMMonoMedium" (voir typography.dmMono.semiBold dans variables.ts) retomberont
 // silencieusement sur la police système tant que ce fichier n'est pas ajouté ici.
 export const useAppFonts = () =>
   useFonts({

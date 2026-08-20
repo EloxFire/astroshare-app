@@ -6,7 +6,7 @@ export const screenHeaderStyles = {
     paddingHorizontal: spacing.screen.horizontal,
     paddingBottom: 12,
     gap: 12,
-    backgroundColor: app_colors.primary,
+    backgroundColor: app_colors.primary.main,
 
     homeHeader: {
       flexDirection: "row" as const,

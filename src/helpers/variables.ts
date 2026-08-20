@@ -15,9 +15,15 @@ export const withOpacity = (hexColor: string, opacity: number): string => {
 export const app_colors = {
   black: "#000000",
   white: "#FFFFFF",
-  grey: "#808080",
-  primary: "#230B5A",
-  accent: "#8E01F9",
+  grey: "#dcdcdc",
+  primary: {
+    light: "#230B5A16", // 16% opacity
+    main: "#230B5A",
+  },
+  accent: {
+    light: "#F2D7FF",
+    main: "#8E01F9",
+  },
   yellow: {
     light: "#FFE993",
     main: "#FFD700",
@@ -94,7 +100,7 @@ export const radius = {
 // pour ZT Nature (pas de fichier "SemiBold" séparé) : les rôles ci-dessous, prévus en 600,
 // utilisent donc ZTNatureBold — c'est la seule graisse marquée disponible en dehors de Regular.
 //
-// ⚠️ Pas de fichier DMMono-SemiBold.ttf fourni : "DMMonoSemiBold" ci-dessous ne charge rien et
+// ⚠️ Pas de fichier DMMono-SemiBold.ttf fourni : "DMMonoMedium" ci-dessous ne charge rien et
 // retombe sur la police système tant que ce fichier n'est pas ajouté dans assets/fonts/ +
 // useAppFonts.ts. Ne pas le remplacer par DMMonoMedium (500) en attendant : la règle de graisse
 // réserve explicitement le 500 à la texture système (barre d'état, clavier), jamais à la marque.
@@ -119,16 +125,16 @@ export const typography = {
   },
   dmMono: {
     semiBold: {
-      // ⚠️ DMMonoSemiBold non chargée (voir avertissement ci-dessus) — fallback système en attendant.
-      sectionLabel: { fontFamily: "DMMonoSemiBold", fontSize: 9.5, letterSpacing: 9.5 * 0.16 },
-      chip: { fontFamily: "DMMonoSemiBold", fontSize: 9, letterSpacing: 9 * 0.06 },
-      badge: { fontFamily: "DMMonoSemiBold", fontSize: 7.5, letterSpacing: 7.5 * 0.1 },
-      tileLabel: { fontFamily: "DMMonoSemiBold", fontSize: 8, lineHeight: 8 * 1.25 },
+      // ⚠️ DMMonoMedium non chargée (voir avertissement ci-dessus) — fallback système en attendant.
+      sectionLabel: { fontFamily: "DMMonoMedium", fontSize: 9.5, letterSpacing: 9.5 * 0.16 },
+      chip: { fontFamily: "DMMonoMedium", fontSize: 9, letterSpacing: 9 * 0.06 },
+      badge: { fontFamily: "DMMonoMedium", fontSize: 7.5, letterSpacing: 7.5 * 0.1 },
+      tileLabel: { fontFamily: "DMMonoMedium", fontSize: 8, lineHeight: 8 * 1.25 },
       // Taille non spécifiée par la spec — à fixer au moment de l'implémentation du composant.
-      navLabel: { fontFamily: "DMMonoSemiBold" }, // libellés de nav
-      microLabelOnDark: { fontFamily: "DMMonoSemiBold" }, // micro-labels sur fond sombre
-      keyValueBoldValue: { fontFamily: "DMMonoSemiBold" }, // valeur en gras d'une ligne clé/valeur
-      pillButton: { fontFamily: "DMMonoSemiBold" }, // texte des boutons pilules
+      navLabel: { fontFamily: "DMMonoMedium" }, // libellés de nav
+      microLabelOnDark: { fontFamily: "DMMonoMedium" }, // micro-labels sur fond sombre
+      keyValueBoldValue: { fontFamily: "DMMonoMedium" }, // valeur en gras d'une ligne clé/valeur
+      pillButton: { fontFamily: "DMMonoMedium" }, // texte des boutons pilules
     },
     regular: {
       subline: { fontFamily: "DMMonoRegular", fontSize: 9, lineHeight: 9 * 1.35 },
@@ -170,7 +176,7 @@ export const gaps = {
 
   sectionSeparator: {
     height: 1,
-    color: withOpacity(app_colors.primary, 0.16),
+    color: withOpacity(app_colors.primary.main, 0.16),
     before: 9,
     after: 10,
   },

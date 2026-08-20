@@ -1,6 +1,6 @@
 import { Tabs } from 'expo-router';
 import React from 'react';
-import { TouchableOpacity, View } from 'react-native';
+import { KeyboardAvoidingView, TouchableOpacity, View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { Compass, House, NotebookPen, Settings, Search, X, Telescope, LayoutGrid } from 'lucide-react-native';
 import { app_colors } from '../src/helpers/variables';
@@ -18,7 +18,7 @@ export default function RootLayout() {
     <React.Fragment>
       <StatusBar style="light" />
       <Tabs screenOptions={{
-        tabBarActiveTintColor: app_colors.accent,
+        tabBarActiveTintColor: app_colors.accent.main,
         headerShown: false,
         tabBarStyle: {
           height: 60,
@@ -62,11 +62,11 @@ export default function RootLayout() {
                 width: size + 35,
                 height: size + 35,
                 borderRadius: (size + 35) / 2,
-                backgroundColor: focused ? app_colors.accent : app_colors.primary,
+                backgroundColor: focused ? app_colors.accent.main : app_colors.primary.main,
                 alignItems: 'center',
                 justifyContent: 'center',
                 // Add glow effect when focused
-                shadowColor: focused ? app_colors.accent : app_colors.primary,
+                shadowColor: focused ? app_colors.accent.main : app_colors.primary.main,
                 shadowOffset: { width: 0, height: 0 },
                 shadowOpacity: focused ? 0.7 : 0,
                 shadowRadius: focused ? 10 : 0,

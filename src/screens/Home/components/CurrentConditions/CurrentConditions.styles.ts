@@ -27,20 +27,20 @@ export const currentConditionsStyles = {
 
           title: {
             fontSize: 10,
-            color: app_colors.primary,
+            color: app_colors.primary.main,
             textTransform: "uppercase" as const,
           },
           value: {
             ...typography.dmMono.semiBold,
             fontSize: 22,
-            color: app_colors.primary,
+            color: app_colors.primary.main,
             fontWeight: "bold" as const,
           }
         },
 
         withBorder: {
           borderRightWidth: 1,
-          borderRightColor: withOpacity(app_colors.primary, 0.2),
+          borderRightColor: withOpacity(app_colors.primary.main, 0.2),
         }
       },
     }
