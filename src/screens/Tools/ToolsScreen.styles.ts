@@ -4,6 +4,7 @@ import { app_colors, gaps, spacing, typography, withOpacity } from "../../helper
 export const toolsScreenStyles = {
   screen: globalStyles.screen,
   content: {
+    flex: 1,
     padding: spacing.screenMargin,
     gap: gaps.sectionSeparator.after,
 
@@ -16,10 +17,29 @@ export const toolsScreenStyles = {
       display: "flex" as const,
       flexDirection: "row" as const,
       justifyContent: "space-between" as const,
-      gap: gaps.sectionSeparator.after,
+      gap: 20,
       paddingBottom: gaps.sectionSeparator.after,
       borderBottomWidth: 1,
       borderBottomColor: withOpacity(app_colors.primary.main, 0.5),
+      marginBottom: gaps.sectionSeparator.after,
+      paddingTop: gaps.sectionSeparator.after,
+    },
+
+    toolSection: {
+      display: "flex" as const,
+      gap: gaps.sectionSeparator.after,
+      flexDirection: "column" as const,
+      borderBottomWidth: 1,
+      borderBottomColor: withOpacity(app_colors.primary.main, 0.5),
+      paddingBottom: gaps.sectionSeparator.after,
+      marginBottom: gaps.sectionSeparator.after,
+
+      toolsList: {
+        display: "flex" as const,
+        flexWrap: "wrap" as const,
+        flexDirection: "row" as const,
+        justifyContent: "flex-start" as const,
+      }
     }
   }
 };

@@ -6,7 +6,7 @@ import { create } from 'zustand'
 const defaultUserData: UserSettingsData = {
   nightMode: false,
   locale: "fr-FR",
-  pinnedTools: ["moon-phases-calendar"],
+  pinnedTools: ["moon-phases-calendar", "polar-align"],
 }
 
 export const useUserDataStore = create<UserSettingsData>()(
