@@ -8,16 +8,17 @@ import AstroshareFullLogo from "../../../assets/logos/astroshare_full_no_slogan.
 
 interface ScreenHeaderProps {
   title: string;
+  main?: boolean;
 }
 
-export const ScreenHeader = ({ title }: ScreenHeaderProps) => {
+export const ScreenHeader = ({ title, main = true }: ScreenHeaderProps) => {
   const canGoBack = router.canGoBack();
   const pathname = usePathname();
 
   const isHomeScreen = pathname === "/";
 
   return (
-      <SafeAreaView style={screenHeaderStyles.container}>
+      <SafeAreaView style={[screenHeaderStyles.container, !main && screenHeaderStyles.container.light]}>
         {
           isHomeScreen && (
             <View style={screenHeaderStyles.container.homeHeader}>
@@ -33,11 +34,11 @@ export const ScreenHeader = ({ title }: ScreenHeaderProps) => {
         <View style={screenHeaderStyles.container.titleContainer}>
           {canGoBack && (
             <TouchableOpacity style={screenHeaderStyles.backButton} onPress={() => router.back()}>
-              <ChevronLeft color={app_colors.white} size={24} />
+              <ChevronLeft color={!main ? app_colors.primary.main : app_colors.white} size={24} />
             </TouchableOpacity>
           )}
           <View >
-            <Text style={screenHeaderStyles.container.titleContainer.title}>{title}</Text>
+            <Text style={[screenHeaderStyles.container.titleContainer.title, !main && screenHeaderStyles.container.titleContainer.title.light]}>{title}</Text>
           </View>
         </View>
       </SafeAreaView>

@@ -1,16 +1,13 @@
-import { Dimensions } from "react-native";
 import { app_colors, gaps, radius, typography } from "../../../../helpers/variables";
 
+export const TOOL_BUTTON_WIDTH = 54;
 
-const GAP = 20;
-
-const getItemWidth = (
-  screenWidth: number,
-  itemsPerRow: number,
-  padding: number
+export const getRowGap = (
+  containerWidth: number,
+  itemsPerRow: number
 ): number => {
-  const availableWidth = screenWidth - padding * 2 - GAP * (itemsPerRow - 1);
-  return availableWidth / itemsPerRow;
+  const totalItemsWidth = TOOL_BUTTON_WIDTH * itemsPerRow;
+  return (containerWidth - totalItemsWidth) / (itemsPerRow - 1);
 };
 
 export const toolButtonStyles = {
@@ -23,8 +20,8 @@ export const toolButtonStyles = {
     square: {
       backgroundColor: app_colors.accent.light,
       borderRadius: radius.badge44,
-      height: getItemWidth(Dimensions.get("window").width, 5, 20),
-      width: getItemWidth(Dimensions.get("window").width, 5, 20),
+      width: TOOL_BUTTON_WIDTH,
+      height: TOOL_BUTTON_WIDTH,
       display: "flex" as const,
       justifyContent: "center" as const,
       alignItems: "center" as const,
@@ -36,8 +33,8 @@ export const toolButtonStyles = {
 
     name: {
       ...typography.dmMono.regular.cardBody,
-      fontSize: 10,
-      width: 54,
+      fontSize: 9,
+      width: TOOL_BUTTON_WIDTH,
       textAlign: "center" as const,
     }
   }

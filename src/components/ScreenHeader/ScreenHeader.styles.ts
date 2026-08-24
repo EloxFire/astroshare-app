@@ -8,6 +8,10 @@ export const screenHeaderStyles = {
     gap: 12,
     backgroundColor: app_colors.primary.main,
 
+    light: {
+      backgroundColor: app_colors.background,
+    },
+
     homeHeader: {
       flexDirection: "row" as const,
       justifyContent: "space-between" as const,
@@ -16,19 +20,25 @@ export const screenHeaderStyles = {
     titleContainer: {
       flexDirection: "row" as const,
       alignItems: "center" as const,
-      marginTop: 20,
+      marginTop: 10,
 
       title: {
         ...typography.ztNature.screenTitle,
         color: app_colors.white,
         whiteSpace: "pre-line" as const,
+
+        light: {
+          fontSize: 20,
+          color: app_colors.primary.main,
+        }
       }
     },
   },
   backButton: {
-    width: 36,
-    height: 36,
+    width: 24,
+    height: 24,
     borderRadius: 18,
+    marginRight: 8,
     alignItems: "center" as const,
     justifyContent: "center" as const,
   },

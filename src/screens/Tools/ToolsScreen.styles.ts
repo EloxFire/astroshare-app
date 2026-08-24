@@ -17,7 +17,6 @@ export const toolsScreenStyles = {
       display: "flex" as const,
       flexDirection: "row" as const,
       justifyContent: "space-between" as const,
-      gap: 20,
       paddingBottom: gaps.sectionSeparator.after,
       borderBottomWidth: 1,
       borderBottomColor: withOpacity(app_colors.primary.main, 0.5),
@@ -36,9 +35,14 @@ export const toolsScreenStyles = {
 
       toolsList: {
         display: "flex" as const,
-        flexWrap: "wrap" as const,
-        flexDirection: "row" as const,
-        justifyContent: "flex-start" as const,
+        flexDirection: "column" as const,
+        gap: 5,
+
+        row: {
+          display: "flex" as const,
+          flexDirection: "row" as const,
+          justifyContent: "flex-start" as const,
+        }
       }
     }
   }

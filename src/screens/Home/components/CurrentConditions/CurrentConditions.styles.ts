@@ -31,10 +31,9 @@ export const currentConditionsStyles = {
             textTransform: "uppercase" as const,
           },
           value: {
-            ...typography.dmMono.semiBold,
+            ...typography.dmMono.semiBold.keyValueBoldValue,
             fontSize: 22,
             color: app_colors.primary.main,
-            fontWeight: "bold" as const,
           }
         },
 

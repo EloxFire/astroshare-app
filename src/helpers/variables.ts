@@ -18,6 +18,7 @@ export const app_colors = {
   grey: "#dcdcdc",
   primary: {
     light: "#230B5A16", // 16% opacity
+    medium: "#230B5A50", // 50% opacity
     main: "#230B5A",
   },
   accent: {
