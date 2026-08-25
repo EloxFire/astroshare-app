@@ -95,6 +95,12 @@ module.exports = {
     ["expo-asset"],
     ["expo-font"],
     [
+      "react-native-maps",
+      {
+        googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY
+      }
+    ],
+    [
       "expo-notifications",
       {
         icon: "./assets/icon.png",

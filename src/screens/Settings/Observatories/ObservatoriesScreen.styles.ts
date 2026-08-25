@@ -1,5 +1,5 @@
 import { globalStyles } from "../../../helpers/globalStyles";
-import { gaps, spacing } from "../../../helpers/variables";
+import { gaps, radius, spacing } from "../../../helpers/variables";
 
 export const observatoriesScreenStyles = {
   screen: globalStyles.screen,
@@ -8,4 +8,15 @@ export const observatoriesScreenStyles = {
     padding: spacing.screenMargin,
     gap: gaps.sectionSeparator.after,
   },
+
+  mapContainer: {
+    borderRadius: radius.heroCard,
+    overflow: "hidden" as const,
+    height: 200,
+
+    map: {
+      height: "100%" as const,
+      width: "100%" as const,
+    }
+  }
 }
