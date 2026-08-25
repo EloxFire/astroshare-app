@@ -76,7 +76,7 @@ module.exports = {
     package: IS_DEV
       ? "fr.eavagliano.astroshare.dev"
       : "fr.eavagliano.astroshare",
-    softwareKeyboardLayoutMode: "padding",
+    softwareKeyboardLayoutMode: "resize",
   },
   web: {
     favicon: "./assets/favicon.png"
