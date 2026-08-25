@@ -9,9 +9,10 @@ import AstroshareFullLogo from "../../../assets/logos/astroshare_full_no_slogan.
 interface ScreenHeaderProps {
   title: string;
   main?: boolean;
+  disableBackButton?: boolean;
 }
 
-export const ScreenHeader = ({ title, main = true }: ScreenHeaderProps) => {
+export const ScreenHeader = ({ title, main = true, disableBackButton = false }: ScreenHeaderProps) => {
   const canGoBack = router.canGoBack();
   const pathname = usePathname();
 
@@ -32,7 +33,7 @@ export const ScreenHeader = ({ title, main = true }: ScreenHeaderProps) => {
         }
 
         <View style={screenHeaderStyles.container.titleContainer}>
-          {canGoBack && (
+          {canGoBack && !disableBackButton && (
             <TouchableOpacity style={screenHeaderStyles.backButton} onPress={() => router.back()}>
               <ChevronLeft color={!main ? app_colors.primary.main : app_colors.white} size={24} />
             </TouchableOpacity>

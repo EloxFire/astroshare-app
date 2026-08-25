@@ -62,7 +62,7 @@ const ToolsScreen = () => {
 
   return (
     <View style={toolsScreenStyles.screen}>
-      <ScreenHeader title="Outils" />
+      <ScreenHeader title="Outils" disableBackButton />
       <View style={toolsScreenStyles.content}>
         <InputWithIcon
           icon={Search}

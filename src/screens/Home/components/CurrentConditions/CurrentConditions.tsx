@@ -1,8 +1,11 @@
 import { View, Text } from "react-native";
 import { currentConditionsStyles } from "./CurrentConditions.styles";
 import { MoonIcon } from "lucide-react-native";
+import { useMoon } from "../../../../hooks/useMoon";
 
 export default function CurrentConditions() {
+
+  const moon = useMoon(new Date());
 
   const blocs = [
     {
@@ -17,7 +20,7 @@ export default function CurrentConditions() {
     },
     {
       title: "Discrète",
-      value: "34%",
+      value: moon.getLunarIllumination().toFixed(0) + "%",
       icon: <MoonIcon color="white" size={34} />
     }
   ]
