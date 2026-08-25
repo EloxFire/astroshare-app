@@ -19,6 +19,8 @@ import {
   getLunarMeanEclipticLongitude,
   getLunarMeanEclipticLongitudeOfTheAscendingNode,
   getLunarMeanGeometricLongitude,
+  getLunarNextRise,
+  getLunarNextSet,
   getLunarPhase,
   getLunarPhaseAngle,
   getLunarPhaseLabel,
@@ -35,6 +37,7 @@ import {
   type LunarAngularDiameterObserver,
   type Observer,
   type Phase,
+  type TransitInstance,
 } from "../helpers/astrometry/moon";
 
 // Chaque valeur n'est calculée qu'à la première demande, puis mise en cache sur
@@ -71,10 +74,21 @@ class Moon {
   private fullMoon?: boolean;
   private nextFullMoon?: Date;
   private blueMoon?: boolean;
+  private nextRise?: TransitInstance | false;
+  private nextSet?: TransitInstance | boolean;
 
   constructor(date: Date, observer?: Observer) {
     this.date = date;
     this.observer = observer;
+  }
+
+  // Utilisée par les éphémérides (lever/coucher), qui ont besoin d'un observer
+  // géographique — contrairement au reste des méthodes de cette classe.
+  private requireObserver(method: string): Observer {
+    if (!this.observer) {
+      throw new Error(`useMoon: ${method}() nécessite un observer (useMoon(date, observer)).`);
+    }
+    return this.observer;
   }
 
   getLunarAnnualEquationCorrection(): number {
@@ -286,6 +300,20 @@ class Moon {
       this.blueMoon = isBlueMoon(this.date);
     }
     return this.blueMoon;
+  }
+
+  getLunarNextRise(): TransitInstance | false {
+    if (this.nextRise === undefined) {
+      this.nextRise = getLunarNextRise(this.date, this.requireObserver("getLunarNextRise"));
+    }
+    return this.nextRise;
+  }
+
+  getLunarNextSet(): TransitInstance | boolean {
+    if (this.nextSet === undefined) {
+      this.nextSet = getLunarNextSet(this.date, this.requireObserver("getLunarNextSet"));
+    }
+    return this.nextSet;
   }
 }
 

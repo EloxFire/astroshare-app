@@ -1,4 +1,7 @@
 import {
+  getBodyNextRise,
+  getBodyNextSet,
+  isBodyAboveHorizon,
   getLunarAge as observerlyGetLunarAge,
   getLunarAngularDiameter as observerlyGetLunarAngularDiameter,
   getLunarAnnualEquationCorrection as observerlyGetLunarAnnualEquationCorrection,
@@ -33,9 +36,10 @@ import {
   type GeographicCoordinate,
   type Observer,
   type Phase,
+  type TransitInstance,
 } from "@observerly/astrometry";
 
-export type { EclipticCoordinate, EquatorialCoordinate, GeographicCoordinate, Observer, Phase };
+export type { EclipticCoordinate, EquatorialCoordinate, GeographicCoordinate, Observer, Phase, TransitInstance };
 export { LUNAR_SYNODIC_MONTH };
 
 export type LunarAge = {
@@ -113,6 +117,45 @@ export const isFullMoon = (date: Date): boolean => observerlyIsFullMoon(date);
 export const getNextFullMoon = (date: Date): Date => observerlyGetNextFullMoon(date);
 
 export const isBlueMoon = (date: Date): boolean => observerlyIsBlueMoon(date);
+
+// La Lune met environ un jour lunaire (~24h50) entre deux levers (ou deux couchers)
+// identiques : reculer de 30h avant de rechercher en avant garantit de retomber sur
+// l'occurrence précédente, sans jamais remonter jusqu'à celle d'avant.
+const PREVIOUS_TRANSIT_SEARCH_MARGIN_MS = 30 * 60 * 60 * 1000;
+
+/**
+ * getLunarNextRise()
+ *
+ * Le prochain lever de Lune pour un observateur donné. Si la Lune est déjà levée
+ * à `date` (donc son "prochain lever" au sens strict serait demain), on renvoie à
+ * la place son lever précédent (celui en cours), plus pertinent à afficher.
+ *
+ * @returns Le lever (précédent ou suivant selon le cas), `false` si la Lune ne se
+ * lève jamais pour cet observateur.
+ */
+export const getLunarNextRise = (date: Date, observer: Observer): TransitInstance | false => {
+  const alreadyRisen = isBodyAboveHorizon(date, observer, getLunarEquatorialCoordinate(date));
+  const searchFrom = alreadyRisen ? new Date(date.getTime() - PREVIOUS_TRANSIT_SEARCH_MARGIN_MS) : date;
+  return getBodyNextRise(searchFrom, observer, getLunarEquatorialCoordinate(searchFrom));
+};
+
+/**
+ * getLunarNextSet()
+ *
+ * Le prochain coucher de Lune pour un observateur donné. Si la Lune est déjà
+ * couchée à `date` (donc son "prochain coucher" au sens strict serait après le
+ * prochain lever, potentiellement demain), on renvoie à la place son coucher
+ * précédent — pour toujours afficher une paire cohérente avec `getLunarNextRise`
+ * (levée → lever précédent + coucher suivant ; couchée → coucher précédent + lever suivant).
+ *
+ * @returns Le coucher (précédent ou suivant selon le cas), `true` si la Lune ne se
+ * couche jamais (circumpolaire) pour cet observateur, `false` si elle ne se lève jamais.
+ */
+export const getLunarNextSet = (date: Date, observer: Observer): TransitInstance | boolean => {
+  const alreadySet = !isBodyAboveHorizon(date, observer, getLunarEquatorialCoordinate(date));
+  const searchFrom = alreadySet ? new Date(date.getTime() - PREVIOUS_TRANSIT_SEARCH_MARGIN_MS) : date;
+  return getBodyNextSet(searchFrom, observer, getLunarEquatorialCoordinate(searchFrom));
+};
 
 const LUNAR_PHASE_LABELS_FR: Record<Phase, string> = {
   New: "Nouvelle lune",
