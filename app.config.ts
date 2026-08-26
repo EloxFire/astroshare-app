@@ -59,7 +59,7 @@ module.exports = {
     },
     googleServicesFile:
       process.env.GOOGLE_SERVICES_JSON ??
-      "./android/app/DEVgoogle-services.json",
+      "./docs/fr.eavagliano.astroshare.dev_google_services.json",
     permissions: [
       "android.permission.ACCESS_FINE_LOCATION",
       "android.permission.SCHEDULE_EXACT_ALARM"
@@ -97,7 +97,7 @@ module.exports = {
     [
       "react-native-maps",
       {
-        googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY
+        androidGoogleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY
       }
     ],
     [
