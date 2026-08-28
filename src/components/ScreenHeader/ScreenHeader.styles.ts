@@ -31,6 +31,19 @@ export const screenHeaderStyles = {
           fontSize: 20,
           color: app_colors.primary.main,
         }
+      },
+
+      subtitle: {
+        fontFamily: "DMMonoMedium",
+        fontSize: 12,
+        textTransform: "uppercase" as const,
+        color: app_colors.primary.medium,
+        whiteSpace: "pre-line" as const,
+
+        light: {
+          fontSize: 16,
+          color: app_colors.primary.main,
+        }
       }
     },
   },

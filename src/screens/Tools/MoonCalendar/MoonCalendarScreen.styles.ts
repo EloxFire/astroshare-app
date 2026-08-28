@@ -133,7 +133,7 @@ export const moonCalendarScreenStyles = {
       withBorder: {
         borderBottomWidth: 1,
         borderBottomColor: app_colors.primary.light,
-        paddingBottom: 5,
+        paddingBottom: 10,
       }
     }
   }

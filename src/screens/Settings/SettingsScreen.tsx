@@ -1,4 +1,5 @@
 import { StatusBar, Text, TouchableOpacity, View } from "react-native";
+import { globalStyles } from "../../helpers/globalStyles";
 import { useRouter } from 'expo-router';
 import { settingsScreenStyles } from "./SettingsScreen.styles";
 import { ScreenHeader } from "../../components/ScreenHeader/ScreenHeader";
@@ -46,7 +47,7 @@ export const SettingsScreen = () => {
             settingsCategories.map((category) => {
               return (
                 <View key={category.id} style={{marginBottom: 20}}>
-                  <Text style={settingsScreenStyles.settingsList.categoryTitle}>{category.name}</Text>
+                  <Text style={globalStyles.categoryTitle}>{category.name}</Text>
                   {
                     settingsList.map((setting) => {
                       if (setting.category === category.id) {

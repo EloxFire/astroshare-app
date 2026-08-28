@@ -1,0 +1,1 @@
+export type GpsPosition = { latitude: number; longitude: number; elevation: number };

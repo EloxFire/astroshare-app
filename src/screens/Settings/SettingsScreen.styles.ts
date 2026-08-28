@@ -55,12 +55,13 @@ export const settingsScreenStyles = {
     gap: 10,
     marginTop: 20,
 
-    categoryTitle: {
-      color: app_colors.primary.medium,
-      fontSize: 14,
-      fontFamily: "DMMonoMedium",
-      textTransform: "uppercase" as const,
-    },
+    // FIND IN GLOBAL STYLES NOW
+    // categoryTitle: {
+    //   color: app_colors.primary.medium,
+    //   fontSize: 14,
+    //   fontFamily: "DMMonoMedium",
+    //   textTransform: "uppercase" as const,
+    // },
 
     settingItem: {
       display: "flex" as const,

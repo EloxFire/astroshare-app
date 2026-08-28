@@ -1,9 +1,10 @@
 import { Tabs } from 'expo-router';
-import React from 'react';
 import { KeyboardAvoidingView, TouchableOpacity, View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
+import { QueryClientProvider } from '@tanstack/react-query';
 import { Compass, House, NotebookPen, Settings, Search, X, Telescope, LayoutGrid } from 'lucide-react-native';
 import { app_colors } from '../src/helpers/variables';
+import { queryClient } from '../src/helpers/queryClient';
 import { PlatformPressable } from 'expo-router/build/react-navigation';
 import { useAppFonts } from '../src/hooks/useAppFonts';
 
@@ -15,7 +16,7 @@ export default function RootLayout() {
   }
 
   return (
-    <React.Fragment>
+    <QueryClientProvider client={queryClient}>
       <StatusBar style="light" />
       <Tabs screenOptions={{
         tabBarActiveTintColor: app_colors.accent.main,
@@ -113,6 +114,6 @@ export default function RootLayout() {
           href: null, // hide from tab bar
         }} />
       </Tabs>
-    </React.Fragment>
+    </QueryClientProvider>
   );
 }

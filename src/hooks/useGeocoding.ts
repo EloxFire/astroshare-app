@@ -1,0 +1,39 @@
+import { useQuery } from "@tanstack/react-query";
+import { fetchWeather, fetchLocationName, fetchLightPollution } from "../helpers/api/geocoding";
+import type { GeocodingFlags } from "../types/geocoding";
+
+export const useGeocoding = (lat: number | null, lon: number | null, flags: GeocodingFlags = {}, lang: string = "fr") => {
+  // TODO: "fr" en dur temporairement, à remplacer par i18n.locale une fois branché
+  const hasCoords = lat !== null && lon !== null;
+
+  const weatherQuery = useQuery({
+    queryKey: ["weather", lat, lon, lang],
+    queryFn: () => fetchWeather(lat as number, lon as number, lang),
+    enabled: hasCoords && !!flags.withWeather,
+  });
+
+  const locationNameQuery = useQuery({
+    queryKey: ["locationName", lat, lon],
+    queryFn: () => fetchLocationName(lat as number, lon as number),
+    enabled: hasCoords && !!flags.withLocationName,
+    staleTime: Infinity, // un couple lat/lon pointe toujours vers le même lieu
+  });
+
+  const lightPollutionQuery = useQuery({
+    queryKey: ["lightPollution", lat, lon],
+    queryFn: () => fetchLightPollution(lat as number, lon as number),
+    enabled: hasCoords && !!flags.withLightPollution,
+    staleTime: Infinity,
+  });
+
+  const queries = [weatherQuery, locationNameQuery, lightPollutionQuery];
+
+  return {
+    weather: weatherQuery.data,
+    locationName: locationNameQuery.data,
+    lightPollution: lightPollutionQuery.data,
+    isLoading: queries.some((q) => q.isLoading),
+    isError: queries.some((q) => q.isError),
+    error: queries.find((q) => q.error)?.error ?? null,
+  };
+};

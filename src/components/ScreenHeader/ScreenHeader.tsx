@@ -9,10 +9,11 @@ import AstroshareFullLogo from "../../../assets/logos/astroshare_full_no_slogan.
 interface ScreenHeaderProps {
   title: string;
   main?: boolean;
+  subtitle?: string;
   disableBackButton?: boolean;
 }
 
-export const ScreenHeader = ({ title, main = true, disableBackButton = false }: ScreenHeaderProps) => {
+export const ScreenHeader = ({ title, main = true, disableBackButton = false, subtitle }: ScreenHeaderProps) => {
   const canGoBack = router.canGoBack();
   const pathname = usePathname();
 
@@ -40,6 +41,9 @@ export const ScreenHeader = ({ title, main = true, disableBackButton = false }: 
           )}
           <View >
             <Text style={[screenHeaderStyles.container.titleContainer.title, !main && screenHeaderStyles.container.titleContainer.title.light]}>{title}</Text>
+            {subtitle && !main && (
+              <Text style={screenHeaderStyles.container.titleContainer.subtitle}>{subtitle}</Text>
+            )}
           </View>
         </View>
       </SafeAreaView>
