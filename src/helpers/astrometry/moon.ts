@@ -38,6 +38,7 @@ import {
   type Phase,
   type TransitInstance,
 } from "@observerly/astrometry";
+import i18next from "../../i18n";
 
 export type { EclipticCoordinate, EquatorialCoordinate, GeographicCoordinate, Observer, Phase, TransitInstance };
 export { LUNAR_SYNODIC_MONTH };
@@ -157,16 +158,8 @@ export const getLunarNextSet = (date: Date, observer: Observer): TransitInstance
   return getBodyNextSet(searchFrom, observer, getLunarEquatorialCoordinate(searchFrom));
 };
 
-const LUNAR_PHASE_LABELS_FR: Record<Phase, string> = {
-  New: "Nouvelle lune",
-  "Waxing Crescent": "Croissant montant",
-  "First Quarter": "Premier quartier",
-  "Waxing Gibbous": "Gibbeuse croissante",
-  Full: "Pleine lune",
-  "Waning Gibbous": "Gibbeuse décroissante",
-  "Last Quarter": "Dernier quartier",
-  "Waning Crescent": "Croissant descendant",
-  Invalid: "Phase inconnue",
-};
-
-export const getLunarPhaseLabel = (phase: Phase): string => LUNAR_PHASE_LABELS_FR[phase];
+// Traduit via i18next (namespace "moon", clé "phases.<Phase>") plutôt qu'un dictionnaire
+// FR en dur — voir src/i18n/locales/{fr,en,it}/moon.json. i18next.t() marche hors composant
+// React (pas de hook nécessaire) ; la réactivité au changement de langue vient du composant
+// appelant, qui doit lui-même utiliser useTranslation() pour se re-render.
+export const getLunarPhaseLabel = (phase: Phase): string => i18next.t(`phases.${phase}`, { ns: "moon" });

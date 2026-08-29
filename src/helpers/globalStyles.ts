@@ -22,7 +22,6 @@ export const globalStyles = {
       backgroundColor: app_colors.white,
       borderRadius: radius.heroCard,
       padding: 10,
-      marginTop: 10,
       gap: 10,
       borderWidth: 1,
       borderColor: app_colors.accent.light,

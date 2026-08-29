@@ -1,0 +1,65 @@
+{
+  "language": {
+    "title": "Langue",
+    "sections": {
+      "completed": "Traductions complètes",
+      "inProgress": "Traductions en cours"
+    },
+    "autoLanguage": {
+      "title": "Langue automatique",
+      "description": "Utiliser la langue de votre appareil (actuellement : {{deviceLanguage}})"
+    },
+    "noInProgress": "Aucune traduction en cours"
+  },
+  "screen": {
+    "title": "Réglages",
+    "createAccountCard": {
+      "title": "Pas encore de compte ?",
+      "subtitle": "Personnalisez votre expérience et sauvegardez vos préférences !"
+    }
+  },
+  "categories": {
+    "appearance": "Personnalisation",
+    "observation": "Mon observation",
+    "account": "Compte et sécurité",
+    "application": "Application"
+  },
+  "items": {
+    "display-night-mode": {
+      "name": "Affichage et mode nuit",
+      "description": "Activez ou désactivez le mode nuit"
+    },
+    "language": {
+      "name": "Langue",
+      "description": "Choisissez la langue de l'application"
+    },
+    "observatories": {
+      "name": "Observatoires",
+      "description": "Gérez vos lieux d'observation"
+    }
+  },
+  "observatories": {
+    "screenTitle": "Vos observatoires",
+    "registeredCount": "Observatoires enregistrés",
+    "useCurrentLocation": {
+      "title": "Utiliser ma position actuelle",
+      "subtitle": "Priorité sur tous les autres lieux"
+    },
+    "listTitle": "Vos observatoires",
+    "emptyList": "Vous n'avez pas encore ajouté d'observatoire.",
+    "addButton": "Ajouter un observatoire",
+    "activeBadge": "Actif",
+    "bortleLabel": "Bortle {{value}}",
+    "altitudeAbbreviated": "alt. {{value}} m"
+  },
+  "addObservatory": {
+    "screenTitle": "Nouveau lieu",
+    "screenSubtitle": "Étape 1/2 - Emplacement",
+    "searchPrompt": "Recherchez ou appuyez sur la carte",
+    "searchPlaceholder": "Aix-en-Provence",
+    "selectedLocationMarker": "Lieu sélectionné",
+    "latitude": "Latitude",
+    "longitude": "Longitude",
+    "altitude": "Altitude"
+  }
+}

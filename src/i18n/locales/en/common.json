@@ -1,0 +1,31 @@
+{
+  "tabs": {
+    "home": "Home",
+    "explore": "Explore",
+    "tools": "Tools",
+    "settings": "Settings"
+  },
+  "placeholders": {
+    "explore": "Explore Screen",
+    "search": "Search Screen",
+    "profile": "Profile Screen"
+  },
+  "units": {
+    "meters": "{{value}} m",
+    "kilometers": "{{value}} km"
+  },
+  "errors": {
+    "locationPermissionDenied": "Location permission denied",
+    "locationError": "Location error",
+    "apiError": "Something went wrong, please try again"
+  },
+  "home": {
+    "greeting": "Beautiful night\nfor stargazing",
+    "tonightSection": "Tonight",
+    "conditions": {
+      "temperature": "Mild",
+      "cloudCover": "No clouds",
+      "moonIllumination": "Faint"
+    }
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "screen": {
+    "title": "Moon Calendar"
+  },
+  "tabs": {
+    "tonight": "Tonight",
+    "month": "Month"
+  },
+  "phases": {
+    "New": "New Moon",
+    "Waxing Crescent": "Waxing Crescent",
+    "First Quarter": "First Quarter",
+    "Waxing Gibbous": "Waxing Gibbous",
+    "Full": "Full Moon",
+    "Waning Gibbous": "Waning Gibbous",
+    "Last Quarter": "Last Quarter",
+    "Waning Crescent": "Waning Crescent",
+    "Invalid": "Unknown phase"
+  },
+  "cardinalDirections": [
+    "north", "north-northeast", "northeast", "east-northeast",
+    "east", "east-southeast", "southeast", "south-southeast",
+    "south", "south-southwest", "southwest", "west-southwest",
+    "west", "west-northwest", "northwest", "north-northwest"
+  ],
+  "transit": {
+    "loading": "...",
+    "notApplicable": "N/A",
+    "neverSets": "Never sets"
+  },
+  "daysUntil": {
+    "newMoon_one": "New Moon in {{count}} day",
+    "newMoon_other": "New Moon in {{count}} days",
+    "fullMoon_one": "Full Moon in {{count}} day",
+    "fullMoon_other": "Full Moon in {{count}} days"
+  },
+  "dayProgress": "Day: {{age}} / {{total}}",
+  "stats": {
+    "illumination": "Illumination",
+    "age": "age",
+    "ageValue": "{{value}} d",
+    "diameter": "Diameter"
+  },
+  "ephemeris": {
+    "rise": "Rise",
+    "culmination": "Culmination",
+    "set": "Set",
+    "distance": "Distance",
+    "distanceValue": "{{value}} km"
+  }
+}

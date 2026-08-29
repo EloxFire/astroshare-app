@@ -12,8 +12,10 @@ import ObservatoryCard from "./ObservatoryCard/ObservatoryCard";
 import { globalStyles } from "../../../helpers/globalStyles";
 import { router } from "expo-router";
 import { useCurrentGpsPosition } from "../../../hooks/useCurrentGpsPosition";
+import { useTranslation } from "react-i18next";
 
 const ObservatoriesScreen = () => {
+  const { t } = useTranslation("settings");
 
   const userObservatories = useUserDataStore((state) => state.observatories);
   const activeObservatoryId = useUserDataStore((state) => state.activeObservatoryId);
@@ -53,7 +55,7 @@ const ObservatoriesScreen = () => {
 
   return (
     <View style={observatoriesScreenStyles.screen}>
-      <ScreenHeader title="Vos observatoires" main={false} />
+      <ScreenHeader title={t("observatories.screenTitle")} main={false} />
       <View style={observatoriesScreenStyles.content}>
         <View style={observatoriesScreenStyles.mapContainer}>
           <MapView
@@ -80,7 +82,7 @@ const ObservatoriesScreen = () => {
         <ChipsContainer
           chips={[
             {
-              title: "Observatoires enregistrés",
+              title: t("observatories.registeredCount"),
               value: userObservatories.length.toString(),
             },
           ]}
@@ -90,8 +92,8 @@ const ObservatoriesScreen = () => {
           <View style={observatoriesScreenStyles.useGpsContainer.content}>
             <LocateFixed color={app_colors.yellow.light} size={24} />
             <View>
-              <Text style={observatoriesScreenStyles.useGpsContainer.content.title}>Utiliser ma position actuelle</Text>
-              <Text style={observatoriesScreenStyles.useGpsContainer.content.subtitle}>Priorité sur tous les autres lieux</Text>
+              <Text style={observatoriesScreenStyles.useGpsContainer.content.title}>{t("observatories.useCurrentLocation.title")}</Text>
+              <Text style={observatoriesScreenStyles.useGpsContainer.content.subtitle}>{t("observatories.useCurrentLocation.subtitle")}</Text>
             </View>
           </View>
           {/* Make a custom switch button component to enable/disable GPS usage */}
@@ -102,10 +104,10 @@ const ObservatoriesScreen = () => {
         </View>
 
         <View style={observatoriesScreenStyles.observatoriesList}>
-          <Text style={globalStyles.categoryTitle}>Vos observatoires</Text>
+          <Text style={globalStyles.categoryTitle}>{t("observatories.listTitle")}</Text>
           {
             userObservatories.length === 0 && (
-              <Text style={observatoriesScreenStyles.observatoriesList.emptyListText}>Vous n'avez pas encore ajouté d'observatoire.</Text>
+              <Text style={observatoriesScreenStyles.observatoriesList.emptyListText}>{t("observatories.emptyList")}</Text>
             )
           }
           {
@@ -116,7 +118,7 @@ const ObservatoriesScreen = () => {
 
           <TouchableOpacity style={observatoriesScreenStyles.observatoriesList.addObservatoryButton} onPress={handleAddObservatory}>
             <MapPinPlusIcon color={app_colors.accent.main} size={16} />
-            <Text style={observatoriesScreenStyles.observatoriesList.addObservatoryButton.text}>Ajouter un observatoire</Text>
+            <Text style={observatoriesScreenStyles.observatoriesList.addObservatoryButton.text}>{t("observatories.addButton")}</Text>
           </TouchableOpacity>
         </View>
 

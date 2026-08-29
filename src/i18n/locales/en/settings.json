@@ -1,0 +1,65 @@
+{
+  "language": {
+    "title": "Language",
+    "sections": {
+      "completed": "Complete translations",
+      "inProgress": "In-progress translations"
+    },
+    "autoLanguage": {
+      "title": "Automatic language",
+      "description": "Use your device language (currently: {{deviceLanguage}})"
+    },
+    "noInProgress": "No translation in progress"
+  },
+  "screen": {
+    "title": "Settings",
+    "createAccountCard": {
+      "title": "No account yet?",
+      "subtitle": "Personalize your experience and save your preferences!"
+    }
+  },
+  "categories": {
+    "appearance": "Personalization",
+    "observation": "My observation",
+    "account": "Account & security",
+    "application": "Application"
+  },
+  "items": {
+    "display-night-mode": {
+      "name": "Display & night mode",
+      "description": "Turn night mode on or off"
+    },
+    "language": {
+      "name": "Language",
+      "description": "Choose the app language"
+    },
+    "observatories": {
+      "name": "Observatories",
+      "description": "Manage your observation spots"
+    }
+  },
+  "observatories": {
+    "screenTitle": "Your observatories",
+    "registeredCount": "Registered observatories",
+    "useCurrentLocation": {
+      "title": "Use my current location",
+      "subtitle": "Takes priority over all other locations"
+    },
+    "listTitle": "Your observatories",
+    "emptyList": "You haven't added an observatory yet.",
+    "addButton": "Add an observatory",
+    "activeBadge": "Active",
+    "bortleLabel": "Bortle {{value}}",
+    "altitudeAbbreviated": "alt. {{value}} m"
+  },
+  "addObservatory": {
+    "screenTitle": "New location",
+    "screenSubtitle": "Step 1/2 - Location",
+    "searchPrompt": "Search or tap on the map",
+    "searchPlaceholder": "Aix-en-Provence",
+    "selectedLocationMarker": "Selected location",
+    "latitude": "Latitude",
+    "longitude": "Longitude",
+    "altitude": "Altitude"
+  }
+}

@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import * as Location from "expo-location";
+import { useTranslation } from "react-i18next";
 import { GpsPosition } from "../types/gpsLocation";
 import { useGeocoding } from "./useGeocoding";
 import type { GeocodingFlags } from "../types/geocoding";
 
 export const useCurrentGpsPosition = (enabled: boolean = true, flags: GeocodingFlags = {}) => {
+  const { t } = useTranslation();
   const [position, setPosition] = useState<GpsPosition | null>(null);
   const [gpsLoading, setGpsLoading] = useState(false);
   const [gpsError, setGpsError] = useState<string | null>(null);
@@ -20,7 +22,7 @@ export const useCurrentGpsPosition = (enabled: boolean = true, flags: GeocodingF
       try {
         const { status } = await Location.requestForegroundPermissionsAsync();
         if (status !== "granted") {
-          if (!cancelled) setGpsError("Permission de localisation refusée");
+          if (!cancelled) setGpsError(t("errors.locationPermissionDenied"));
           return;
         }
         const { coords } = await Location.getCurrentPositionAsync();
@@ -29,7 +31,7 @@ export const useCurrentGpsPosition = (enabled: boolean = true, flags: GeocodingF
           setPosition({ latitude: coords.latitude, longitude: coords.longitude, elevation: coords.altitude ?? 0 });
         }
       } catch (e) {
-        if (!cancelled) setGpsError(e instanceof Error ? e.message : "Erreur de localisation");
+        if (!cancelled) setGpsError(e instanceof Error ? e.message : t("errors.locationError"));
       } finally {
         if (!cancelled) setGpsLoading(false);
       }

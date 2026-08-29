@@ -8,9 +8,11 @@ import { ChevronRightIcon } from "lucide-react-native";
 import { app_colors } from "../../helpers/variables";
 import { settingsCategories } from "../../helpers/settings/appSettingsCategories";
 import { settingsList } from "../../helpers/settings/appSetting";
+import { useTranslation } from "react-i18next";
 
 export const SettingsScreen = () => {
   const router = useRouter();
+  const { t } = useTranslation("settings");
   useEffect(() => {
     StatusBar.setBarStyle("dark-content")
   }, [])
@@ -26,7 +28,7 @@ export const SettingsScreen = () => {
 
   return (
     <View style={settingsScreenStyles.screen}>
-      <ScreenHeader title="Réglages" main={false} disableBackButton />
+      <ScreenHeader title={t("screen.title")} main={false} disableBackButton />
       <View style={settingsScreenStyles.content}>
 
         {/* Carte de gestion du compte */}
@@ -34,8 +36,8 @@ export const SettingsScreen = () => {
         {/* Carte "Créer un compte en dur pour l'instant" */}
         <TouchableOpacity style={settingsScreenStyles.createAccountCard} onPress={handleCreateAccountPress}>
           <View style={settingsScreenStyles.createAccountCard.textContainer}>
-            <Text style={settingsScreenStyles.createAccountCard.textContainer.title}>Pas encore de compte ?</Text>
-            <Text style={settingsScreenStyles.createAccountCard.textContainer.subtitle}>Personnalisez votre expérience et sauvegardez vos préférences !</Text>
+            <Text style={settingsScreenStyles.createAccountCard.textContainer.title}>{t("screen.createAccountCard.title")}</Text>
+            <Text style={settingsScreenStyles.createAccountCard.textContainer.subtitle}>{t("screen.createAccountCard.subtitle")}</Text>
           </View>
           <View style={settingsScreenStyles.createAccountCard.button}>
             <ChevronRightIcon color={app_colors.white} size={20} />
@@ -47,7 +49,7 @@ export const SettingsScreen = () => {
             settingsCategories.map((category) => {
               return (
                 <View key={category.id} style={{marginBottom: 20}}>
-                  <Text style={globalStyles.categoryTitle}>{category.name}</Text>
+                  <Text style={globalStyles.categoryTitle}>{t(`categories.${category.id}`)}</Text>
                   {
                     settingsList.map((setting) => {
                       if (setting.category === category.id) {
@@ -56,8 +58,8 @@ export const SettingsScreen = () => {
                             <View style={settingsScreenStyles.settingsList.settingItem.content}>
                               {setting.icon && <setting.icon color={app_colors.primary.main} size={20} style={{marginBottom: 5}} />}
                               <View>
-                                <Text style={settingsScreenStyles.settingsList.settingItem.content.title}>{setting.name}</Text>
-                                <Text style={settingsScreenStyles.settingsList.settingItem.content.subtitle}>{setting.description}</Text>
+                                <Text style={settingsScreenStyles.settingsList.settingItem.content.title}>{t(`items.${setting.id}.name`)}</Text>
+                                <Text style={settingsScreenStyles.settingsList.settingItem.content.subtitle}>{t(`items.${setting.id}.description`)}</Text>
                               </View>
                             </View>
                             <ChevronRightIcon color={app_colors.primary.main} size={20} />

@@ -5,7 +5,6 @@ export const toolsList: AstroshareTool[] = [
   // Moon phases calendar
   {
     toolId: "moon-phases-calendar",
-    toolName: "Lune",
     ToolIcon: MoonIcon, 
     category: "prepare",
     access: "free",
@@ -13,14 +12,12 @@ export const toolsList: AstroshareTool[] = [
   // Alignement polaire / Viseur polaire numérique
   {
     toolId: "polar-align",
-    toolName: "Viseur polaire",
     ToolIcon: CompassIcon, 
     category: "prepare",
     access: "free",
   },
   {
     toolId: "planetarium",
-    toolName: "Planétarium",
     ToolIcon: Orbit, 
     category: "observe",
     access: "free",
@@ -28,7 +25,6 @@ export const toolsList: AstroshareTool[] = [
   // Météo générale
   {
     toolId: "weather",
-    toolName: "Météo",
     ToolIcon: CloudSun, 
     category: "prepare",
     access: "free",
@@ -36,7 +32,6 @@ export const toolsList: AstroshareTool[] = [
   // Calculs astronomiques
   {
     toolId: "astro-calculations",
-    toolName: "Calculs",
     ToolIcon: Calculator, 
     category: "observe",
     access: "free",
@@ -44,7 +39,6 @@ export const toolsList: AstroshareTool[] = [
   // Carte pollution lumineuse
   {
     toolId: "light-pollution-map",
-    toolName: "Pollution lumineuse",
     ToolIcon: LucideLightbulb, 
     category: "prepare",
     access: "premium",
@@ -52,7 +46,6 @@ export const toolsList: AstroshareTool[] = [
   // Statistiques d'observation
   {
     toolId: "user-stats",
-    toolName: "Statistiques",
     ToolIcon: TrendingUp, 
     category: "follow-up",
     access: "free",
@@ -60,7 +53,6 @@ export const toolsList: AstroshareTool[] = [
   // Glossaire / lexique astro
   {
     toolId: "astro-glossary",
-    toolName: "Glossaire",
     ToolIcon: SpellCheck, 
     category: "learn",
     access: "free",
@@ -68,7 +60,6 @@ export const toolsList: AstroshareTool[] = [
   // Satellite tracker
   {
     toolId: "satellite-tracker",
-    toolName: "Suivi satellite",
     ToolIcon: Satellite, 
     category: "observe",
     access: "freemium",
@@ -76,7 +67,6 @@ export const toolsList: AstroshareTool[] = [
   // Métée de l'espace / Soleil
   {
     toolId: "space-weather",
-    toolName: "Météo de l'espace",
     ToolIcon: Sun, 
     category: "prepare",
     access: "freemium",
@@ -84,7 +74,6 @@ export const toolsList: AstroshareTool[] = [
   // APOD
   {
     toolId: "apod",
-    toolName: "APOD",
     ToolIcon: CameraIcon, 
     category: "follow-up",
     access: "free",
@@ -92,7 +81,6 @@ export const toolsList: AstroshareTool[] = [
   // Calendrier des lancements spatiaux
   {
     toolId: "space-launches",
-    toolName: "Lancements spatiaux",
     ToolIcon: Rocket, 
     category: "follow-up",
     access: "free",
@@ -100,7 +88,6 @@ export const toolsList: AstroshareTool[] = [
   // Horloges
   {
     toolId: "clocks",
-    toolName: "Horloges",
     ToolIcon: ClockIcon, 
     category: "prepare",
     access: "free",
@@ -108,7 +95,6 @@ export const toolsList: AstroshareTool[] = [
   // Eclipses lunaires et solaires
   {
     toolId: "eclipses",
-    toolName: "Éclipses",
     ToolIcon: EclipseIcon, 
     category: "observe",
     access: "premium",
@@ -116,7 +102,6 @@ export const toolsList: AstroshareTool[] = [
   // Conjonctions planétaires / Conjonctions planètes-lune / Conjonctions entre deux astres donnés
   {
     toolId: "conjunctions-calculator",
-    toolName: "Conjonctions",
     ToolIcon: Blend, 
     category: "observe",
     access: "freemium",
@@ -124,7 +109,6 @@ export const toolsList: AstroshareTool[] = [
   // Transits ISS
   {
     toolId: "iss-transits",
-    toolName: "Transits ISS",
     ToolIcon: BringToFront, 
     category: "observe",
     access: "premium",
@@ -132,7 +116,6 @@ export const toolsList: AstroshareTool[] = [
   // Modèles 3D du système solaire / Lunes / Vaisseaux spatiaux / Astéroïdes / Comètes
   {
     toolId: "3d-viewer",
-    toolName: "Modèles 3D",
     ToolIcon: Rotate3d,
     category: "observe",
     access: "freemium",
@@ -140,7 +123,6 @@ export const toolsList: AstroshareTool[] = [
   // Listes a points / Todo lists / Checklists / Listes de contrôle
   {
     toolId: "checklists",
-    toolName: "Checklists",
     ToolIcon: NotepadTextIcon,
     category: "prepare",
     access: "free",
@@ -148,7 +130,6 @@ export const toolsList: AstroshareTool[] = [
   // Simlateur de champ occulaire / caméra
   {
     toolId: "field-simulator",
-    toolName: "Simulateur de champ",
     ToolIcon: CircleDotDashed,
     category: "observe",
     access: "free",
@@ -156,7 +137,6 @@ export const toolsList: AstroshareTool[] = [
   // Planificateur de nuit
   {
     toolId: "night-planner",
-    toolName: "Planificateur de nuit",
     ToolIcon: Waypoints,
     category: "prepare",
     access: "freemium",
@@ -164,7 +144,6 @@ export const toolsList: AstroshareTool[] = [
   // Fiches détaillées sur des objets notables / Messier / NGC / Planètes / Lunes / Astéroïdes / Comètes
   {
     toolId: "memo-sheets",
-    toolName: "Fiches détaillées",
     ToolIcon: BookIcon,
     category: "learn",
     access: "free",

@@ -1,0 +1,51 @@
+{
+  "screen": {
+    "title": "Calendario lunare"
+  },
+  "tabs": {
+    "tonight": "Stasera",
+    "month": "Mese"
+  },
+  "phases": {
+    "New": "Luna nuova",
+    "Waxing Crescent": "Crescente illuminante",
+    "First Quarter": "Primo quarto",
+    "Waxing Gibbous": "Gibbosa crescente",
+    "Full": "Luna piena",
+    "Waning Gibbous": "Gibbosa calante",
+    "Last Quarter": "Ultimo quarto",
+    "Waning Crescent": "Calante",
+    "Invalid": "Fase sconosciuta"
+  },
+  "cardinalDirections": [
+    "nord", "nord-nord-est", "nord-est", "est-nord-est",
+    "est", "est-sud-est", "sud-est", "sud-sud-est",
+    "sud", "sud-sud-ovest", "sud-ovest", "ovest-sud-ovest",
+    "ovest", "ovest-nord-ovest", "nord-ovest", "nord-nord-ovest"
+  ],
+  "transit": {
+    "loading": "...",
+    "notApplicable": "N/D",
+    "neverSets": "Non tramonta mai"
+  },
+  "daysUntil": {
+    "newMoon_one": "Luna nuova tra {{count}} giorno",
+    "newMoon_other": "Luna nuova tra {{count}} giorni",
+    "fullMoon_one": "Luna piena tra {{count}} giorno",
+    "fullMoon_other": "Luna piena tra {{count}} giorni"
+  },
+  "dayProgress": "Giorno: {{age}} / {{total}}",
+  "stats": {
+    "illumination": "Illuminazione",
+    "age": "età",
+    "ageValue": "{{value}} g",
+    "diameter": "Diametro"
+  },
+  "ephemeris": {
+    "rise": "Sorge",
+    "culmination": "Culminazione",
+    "set": "Tramonta",
+    "distance": "Distanza",
+    "distanceValue": "{{value}} km"
+  }
+}

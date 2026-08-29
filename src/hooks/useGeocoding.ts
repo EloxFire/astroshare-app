@@ -1,14 +1,18 @@
 import { useQuery } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import { fetchWeather, fetchLocationName, fetchLightPollution } from "../helpers/api/geocoding";
 import type { GeocodingFlags } from "../types/geocoding";
 
-export const useGeocoding = (lat: number | null, lon: number | null, flags: GeocodingFlags = {}, lang: string = "fr") => {
-  // TODO: "fr" en dur temporairement, à remplacer par i18n.locale une fois branché
+export const useGeocoding = (lat: number | null, lon: number | null, flags: GeocodingFlags = {}, lang?: string) => {
+  // useTranslation() (pas i18next.language directement) pour re-render et refetch
+  // automatiquement si l'utilisateur change de langue en cours de session.
+  const { i18n } = useTranslation();
+  const resolvedLang = lang ?? i18n.language;
   const hasCoords = lat !== null && lon !== null;
 
   const weatherQuery = useQuery({
-    queryKey: ["weather", lat, lon, lang],
-    queryFn: () => fetchWeather(lat as number, lon as number, lang),
+    queryKey: ["weather", lat, lon, resolvedLang],
+    queryFn: () => fetchWeather(lat as number, lon as number, resolvedLang),
     enabled: hasCoords && !!flags.withWeather,
   });
 

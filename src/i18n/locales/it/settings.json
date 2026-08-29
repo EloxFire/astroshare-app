@@ -1,0 +1,65 @@
+{
+  "language": {
+    "title": "Lingua",
+    "sections": {
+      "completed": "Traduzioni complete",
+      "inProgress": "Traduzioni in corso"
+    },
+    "autoLanguage": {
+      "title": "Lingua automatica",
+      "description": "Usa la lingua del tuo dispositivo (attualmente: {{deviceLanguage}})"
+    },
+    "noInProgress": "Nessuna traduzione in corso"
+  },
+  "screen": {
+    "title": "Impostazioni",
+    "createAccountCard": {
+      "title": "Non hai ancora un account?",
+      "subtitle": "Personalizza la tua esperienza e salva le tue preferenze!"
+    }
+  },
+  "categories": {
+    "appearance": "Personalizzazione",
+    "observation": "La mia osservazione",
+    "account": "Account e sicurezza",
+    "application": "Applicazione"
+  },
+  "items": {
+    "display-night-mode": {
+      "name": "Schermo e modalità notturna",
+      "description": "Attiva o disattiva la modalità notturna"
+    },
+    "language": {
+      "name": "Lingua",
+      "description": "Scegli la lingua dell'app"
+    },
+    "observatories": {
+      "name": "Osservatori",
+      "description": "Gestisci i tuoi luoghi di osservazione"
+    }
+  },
+  "observatories": {
+    "screenTitle": "I tuoi osservatori",
+    "registeredCount": "Osservatori registrati",
+    "useCurrentLocation": {
+      "title": "Usa la mia posizione attuale",
+      "subtitle": "Priorità su tutti gli altri luoghi"
+    },
+    "listTitle": "I tuoi osservatori",
+    "emptyList": "Non hai ancora aggiunto un osservatorio.",
+    "addButton": "Aggiungi un osservatorio",
+    "activeBadge": "Attivo",
+    "bortleLabel": "Bortle {{value}}",
+    "altitudeAbbreviated": "alt. {{value}} m"
+  },
+  "addObservatory": {
+    "screenTitle": "Nuovo luogo",
+    "screenSubtitle": "Passo 1/2 - Posizione",
+    "searchPrompt": "Cerca o tocca sulla mappa",
+    "searchPlaceholder": "Aix-en-Provence",
+    "selectedLocationMarker": "Posizione selezionata",
+    "latitude": "Latitudine",
+    "longitude": "Longitudine",
+    "altitude": "Altitudine"
+  }
+}

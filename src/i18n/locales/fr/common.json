@@ -1,0 +1,31 @@
+{
+  "tabs": {
+    "home": "Accueil",
+    "explore": "Explorer",
+    "tools": "Outils",
+    "settings": "Réglages"
+  },
+  "placeholders": {
+    "explore": "Écran Explorer",
+    "search": "Écran Recherche",
+    "profile": "Écran Profil"
+  },
+  "units": {
+    "meters": "{{value}} m",
+    "kilometers": "{{value}} km"
+  },
+  "errors": {
+    "locationPermissionDenied": "Permission de localisation refusée",
+    "locationError": "Erreur de localisation",
+    "apiError": "Une erreur est survenue, veuillez réessayer"
+  },
+  "home": {
+    "greeting": "Belle nuit\npour observer",
+    "tonightSection": "À voir ce soir",
+    "conditions": {
+      "temperature": "Doux",
+      "cloudCover": "Aucun nuage",
+      "moonIllumination": "Discrète"
+    }
+  }
+}

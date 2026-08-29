@@ -1,0 +1,36 @@
+{
+  "screen": {
+    "title": "Tools",
+    "searchPlaceholder": "Search a tool, an object, a calculation...",
+    "pinnedSection": "Pinned (5 max)"
+  },
+  "categories": {
+    "prepare": "Prepare",
+    "observe": "Observe",
+    "follow-up": "Follow-up",
+    "learn": "Learn"
+  },
+  "names": {
+    "moon-phases-calendar": "Moon",
+    "polar-align": "Polar Scope",
+    "planetarium": "Planetarium",
+    "weather": "Weather",
+    "astro-calculations": "Calculations",
+    "light-pollution-map": "Light Pollution",
+    "user-stats": "Statistics",
+    "astro-glossary": "Glossary",
+    "satellite-tracker": "Satellite Tracker",
+    "space-weather": "Space Weather",
+    "apod": "APOD",
+    "space-launches": "Space Launches",
+    "clocks": "Clocks",
+    "eclipses": "Eclipses",
+    "conjunctions-calculator": "Conjunctions",
+    "iss-transits": "ISS Transits",
+    "3d-viewer": "3D Models",
+    "checklists": "Checklists",
+    "field-simulator": "Field Simulator",
+    "night-planner": "Night Planner",
+    "memo-sheets": "Detail Sheets"
+  }
+}

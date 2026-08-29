@@ -12,6 +12,7 @@ import { toolCategories } from "../../helpers/tools/categories";
 import { getRowGap } from "./components/ToolButton/ToolButton.styles";
 import { spacing } from "../../helpers/variables";
 import { useDebounce } from "../../hooks/useDebounce";
+import { useTranslation } from "react-i18next";
 
 const TOOLS_PER_ROW = 5;
 
@@ -24,6 +25,7 @@ const chunkIntoRows = <T,>(items: T[], size: number): T[][] => {
 };
 
 const ToolsScreen = () => {
+  const { t } = useTranslation("tools");
 
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredTools, setFilteredTools] = useState(toolsList);
@@ -49,9 +51,9 @@ const ToolsScreen = () => {
 
   const handleSearch = useDebounce((query: string) => {
     const searched = toolsList.filter((tool) =>
-      tool.toolName.toLowerCase().includes(query.toLowerCase())
+      t(`names.${tool.toolId}`).toLowerCase().includes(query.toLowerCase())
     );
-    console.log(`Recherche pour "${query}":`, searched.length > 0 ? searched.map(t => t.toolName) : "Aucun outil trouvé.");
+    console.log(`Recherche pour "${query}":`, searched.length > 0 ? searched.map(tool => tool.toolId) : "Aucun outil trouvé.");
     setFilteredTools(searched);
   }, 300);
 
@@ -62,23 +64,26 @@ const ToolsScreen = () => {
 
   return (
     <View style={toolsScreenStyles.screen}>
-      <ScreenHeader title="Outils" disableBackButton />
+      <ScreenHeader title={t("screen.title")} disableBackButton />
       <View style={toolsScreenStyles.content}>
-        <InputWithIcon
-          icon={Search}
-          placeholder="Chercher un outil, un objet, un calcul..."
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-        />
+        <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
+          <InputWithIcon
+            icon={Search}
+            placeholder={t("screen.searchPlaceholder")}
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            action={() => handleSearch(searchQuery)}
+          />
+        </View>
 
         <ScrollView showsVerticalScrollIndicator={false}>
-          <Text style={toolsScreenStyles.content.sectionTitle}>Épinglés (5 max)</Text>
+          <Text style={toolsScreenStyles.content.sectionTitle}>{t("screen.pinnedSection")}</Text>
           <View style={toolsScreenStyles.content.pinnedTools}>
             {
               userPinnedTools.map((toolId) => {
-                const tool = toolsList.find((t) => t.toolId === toolId);
+                const tool = toolsList.find((candidate) => candidate.toolId === toolId);
                 if (!tool) return null;
-                return <ToolButton key={toolId} icon={tool.ToolIcon} toolId={tool.toolId} toolname={tool.toolName} variant="pinned" />;
+                return <ToolButton key={toolId} icon={tool.ToolIcon} toolId={tool.toolId} toolname={t(`names.${tool.toolId}`)} variant="pinned" />;
               })
             }
             {
@@ -95,7 +100,7 @@ const ToolsScreen = () => {
 
               return (
                 <View key={category.id} style={toolsScreenStyles.content.toolSection}>
-                  <Text style={toolsScreenStyles.content.sectionTitle}>{category.name}</Text>
+                  <Text style={toolsScreenStyles.content.sectionTitle}>{t(`categories.${category.id}`)}</Text>
 
                   <View style={toolsScreenStyles.content.toolSection.toolsList}>
                     {
@@ -103,7 +108,7 @@ const ToolsScreen = () => {
                         <View key={`${category.id}-row-${rowIndex}`} style={[toolsScreenStyles.content.toolSection.toolsList.row, { gap: rowGap }]}>
                           {
                             row.map((tool) => (
-                              <ToolButton key={tool.toolId} icon={tool.ToolIcon} toolId={tool.toolId} toolname={tool.toolName} />
+                              <ToolButton key={tool.toolId} icon={tool.ToolIcon} toolId={tool.toolId} toolname={t(`names.${tool.toolId}`)} />
                             ))
                           }
                         </View>

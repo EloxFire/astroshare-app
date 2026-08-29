@@ -1,3 +1,5 @@
+import i18next from "../../i18n";
+
 export const convertDecimalLatitudeToDMS = (decimalLatitude: number): string => {
   const absoluteLatitude = Math.abs(decimalLatitude);
   const degrees = Math.floor(absoluteLatitude);
@@ -18,4 +20,14 @@ export const convertDecimalLongitudeToDMS = (decimalLongitude: number): string =
   const direction = decimalLongitude >= 0 ? "E" : "W";
 
   return `${degrees}°${minutes}'${seconds}" ${direction}`;
+};
+
+// Traduit via i18next (namespace "moon", clé "cardinalDirections", tableau de 16 valeurs)
+// plutôt qu'un tableau FR en dur — voir src/i18n/locales/{fr,en,it}/moon.json. Seul
+// consommateur actuel : l'affichage des lever/coucher de Lune (MoonCalendarScreen).
+export const convertAzimuthToCardinalDirection = (azimuthDegrees: number): string => {
+  const normalized = ((azimuthDegrees % 360) + 360) % 360;
+  const index = Math.round(normalized / 22.5) % 16;
+  const directions = i18next.t("cardinalDirections", { ns: "moon", returnObjects: true }) as string[];
+  return directions[index];
 };

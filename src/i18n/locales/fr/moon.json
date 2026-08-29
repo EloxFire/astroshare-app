@@ -1,0 +1,51 @@
+{
+  "screen": {
+    "title": "Calendrier lunaire"
+  },
+  "tabs": {
+    "tonight": "Ce soir",
+    "month": "Mois"
+  },
+  "phases": {
+    "New": "Nouvelle lune",
+    "Waxing Crescent": "Croissant montant",
+    "First Quarter": "Premier quartier",
+    "Waxing Gibbous": "Gibbeuse croissante",
+    "Full": "Pleine lune",
+    "Waning Gibbous": "Gibbeuse décroissante",
+    "Last Quarter": "Dernier quartier",
+    "Waning Crescent": "Croissant descendant",
+    "Invalid": "Phase inconnue"
+  },
+  "cardinalDirections": [
+    "nord", "nord-nord-est", "nord-est", "est-nord-est",
+    "est", "est-sud-est", "sud-est", "sud-sud-est",
+    "sud", "sud-sud-ouest", "sud-ouest", "ouest-sud-ouest",
+    "ouest", "ouest-nord-ouest", "nord-ouest", "nord-nord-ouest"
+  ],
+  "transit": {
+    "loading": "...",
+    "notApplicable": "N/A",
+    "neverSets": "Ne se couche pas"
+  },
+  "daysUntil": {
+    "newMoon_one": "Nouvelle Lune dans {{count}} jour",
+    "newMoon_other": "Nouvelle Lune dans {{count}} jours",
+    "fullMoon_one": "Pleine lune dans {{count}} jour",
+    "fullMoon_other": "Pleine lune dans {{count}} jours"
+  },
+  "dayProgress": "Jour : {{age}} / {{total}}",
+  "stats": {
+    "illumination": "Illumination",
+    "age": "âge",
+    "ageValue": "{{value}} j",
+    "diameter": "Diamètre"
+  },
+  "ephemeris": {
+    "rise": "Lever",
+    "culmination": "Culmination",
+    "set": "Coucher",
+    "distance": "Distance",
+    "distanceValue": "{{value}} km"
+  }
+}

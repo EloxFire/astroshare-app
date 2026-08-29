@@ -11,8 +11,10 @@ import { useLocationSearch } from "../../../../hooks/useLocationSearch"
 import { useCurrentGpsPosition } from "../../../../hooks/useCurrentGpsPosition"
 import { GpsPosition } from "../../../../types/gpsLocation"
 import { app_colors } from "../../../../helpers/variables"
+import { useTranslation } from "react-i18next"
 
 const AddNewObservatoryScreen = () => {
+  const { t } = useTranslation("settings");
 
   const mapRef = useRef<MapView>(null);
   const currentUserLocation = useCurrentGpsPosition(true, { withLocationName: true, withLightPollution: true });
@@ -74,14 +76,14 @@ const AddNewObservatoryScreen = () => {
 
   return (
     <View style={globalStyles.screen}>
-      <ScreenHeader title="Nouveau lieu" main={false} subtitle="Étape 1/2 - Emplacement" />
+      <ScreenHeader title={t("addObservatory.screenTitle")} main={false} subtitle={t("addObservatory.screenSubtitle")} />
 
       <View style={globalStyles.content}>
-        <Text style={globalStyles.categoryTitle}>Recherchez ou appuyez sur la carte</Text>
+        <Text style={globalStyles.categoryTitle}>{t("addObservatory.searchPrompt")}</Text>
         <View style={{display: "flex", flexDirection: "row", alignItems: "center", gap: 5, marginBottom: 10}}>
           <InputWithIcon
             icon={Search}
-            placeholder="Aix-en-Provence"
+            placeholder={t("addObservatory.searchPlaceholder")}
             value={searchQuery}
             onChangeText={setSearchQuery}
             action={handleSearchLocation}
@@ -124,8 +126,7 @@ const AddNewObservatoryScreen = () => {
                     latitude: userActiveLocation.latitude,
                     longitude: userActiveLocation.longitude,
                   }}
-                  title="Selected Location"
-
+                  title={t("addObservatory.selectedLocationMarker")}
                 />
               )
             }
@@ -134,21 +135,21 @@ const AddNewObservatoryScreen = () => {
 
         <View style={globalStyles.content.heroCard}>
           <View style={[globalStyles.content.heroCard.item, globalStyles.content.heroCard.item.withBorder]}>
-            <Text style={globalStyles.content.heroCard.item.title}>Latitude</Text>
+            <Text style={globalStyles.content.heroCard.item.title}>{t("addObservatory.latitude")}</Text>
             <Text style={globalStyles.content.heroCard.item.value}>
               {currentUserLocation.position ? convertDecimalLatitudeToDMS(currentUserLocation.position.latitude) : "..."}
             </Text>
           </View>
           <View style={[globalStyles.content.heroCard.item, globalStyles.content.heroCard.item.withBorder]}>
-            <Text style={globalStyles.content.heroCard.item.title}>Longitude</Text>
+            <Text style={globalStyles.content.heroCard.item.title}>{t("addObservatory.longitude")}</Text>
             <Text style={globalStyles.content.heroCard.item.value}>
               {currentUserLocation.position ? convertDecimalLongitudeToDMS(currentUserLocation.position.longitude) : "..."}
             </Text>
           </View>
           <View style={globalStyles.content.heroCard.item}>
-            <Text style={globalStyles.content.heroCard.item.title}>Altitude</Text>
+            <Text style={globalStyles.content.heroCard.item.title}>{t("addObservatory.altitude")}</Text>
             <Text style={globalStyles.content.heroCard.item.value}>
-              {currentUserLocation.position ? `${Math.round(currentUserLocation.position.elevation)} m` : "..."}
+              {currentUserLocation.position ? t("common:units.meters", { value: Math.round(currentUserLocation.position.elevation) }) : "..."}
             </Text>
           </View>
         </View>

@@ -1,0 +1,31 @@
+{
+  "tabs": {
+    "home": "Home",
+    "explore": "Esplora",
+    "tools": "Strumenti",
+    "settings": "Impostazioni"
+  },
+  "placeholders": {
+    "explore": "Schermata Esplora",
+    "search": "Schermata Ricerca",
+    "profile": "Schermata Profilo"
+  },
+  "units": {
+    "meters": "{{value}} m",
+    "kilometers": "{{value}} km"
+  },
+  "errors": {
+    "locationPermissionDenied": "Permesso di localizzazione negato",
+    "locationError": "Errore di localizzazione",
+    "apiError": "Si è verificato un errore, riprova"
+  },
+  "home": {
+    "greeting": "Bella notte\nper osservare",
+    "tonightSection": "Da vedere stasera",
+    "conditions": {
+      "temperature": "Mite",
+      "cloudCover": "Nessuna nuvola",
+      "moonIllumination": "Debole"
+    }
+  }
+}

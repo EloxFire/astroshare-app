@@ -2,24 +2,25 @@ import { View, Text } from "react-native";
 import { currentConditionsStyles } from "./CurrentConditions.styles";
 import { MoonIcon } from "lucide-react-native";
 import { useMoon } from "../../../../hooks/useMoon";
+import { useTranslation } from "react-i18next";
 
 export default function CurrentConditions() {
-
+  const { t } = useTranslation();
   const moon = useMoon(new Date());
 
   const blocs = [
     {
-      title: "Doux",
+      title: t("home.conditions.temperature"),
       value: "18°C",
       icon: null,
     },
     {
-      title: "Aucun nuage",
+      title: t("home.conditions.cloudCover"),
       value: "0%",
       icon: null
     },
     {
-      title: "Discrète",
+      title: t("home.conditions.moonIllumination"),
       value: moon.getLunarIllumination().toFixed(0) + "%",
       icon: <MoonIcon color="white" size={34} />
     }

@@ -1,3 +1,4 @@
+import '../src/i18n';
 import { Tabs } from 'expo-router';
 import { KeyboardAvoidingView, TouchableOpacity, View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
@@ -7,11 +8,15 @@ import { app_colors } from '../src/helpers/variables';
 import { queryClient } from '../src/helpers/queryClient';
 import { PlatformPressable } from 'expo-router/build/react-navigation';
 import { useAppFonts } from '../src/hooks/useAppFonts';
+import { useI18nReady } from '../src/i18n/useI18nReady';
+import { useTranslation } from 'react-i18next';
 
 export default function RootLayout() {
   const [fontsLoaded] = useAppFonts();
+  const i18nReady = useI18nReady();
+  const { t } = useTranslation();
 
-  if (!fontsLoaded) {
+  if (!fontsLoaded || !i18nReady) {
     return null;
   }
 
@@ -30,7 +35,7 @@ export default function RootLayout() {
         <Tabs.Screen name="(home)" options={{
           // Remove android ripple effect on tab press
           headerPressColor: 'transparent',
-          title: 'Accueil',
+          title: t('tabs.home'),
           tabBarIcon: ({ color, size }) => (
             <House color={color} size={size} />
           ),
@@ -43,7 +48,7 @@ export default function RootLayout() {
           ),
         }} />
         <Tabs.Screen name="explore" options={{
-          title: 'Explorer',
+          title: t('tabs.explore'),
           tabBarIcon: ({ color, size }) => (
             <Telescope color={color} size={size} />
           ),
@@ -85,7 +90,7 @@ export default function RootLayout() {
           ),
         }} />
         <Tabs.Screen name="tools" options={{
-          title: 'Outils',
+          title: t('tabs.tools'),
           tabBarIcon: ({ color, size }) => (
             <LayoutGrid color={color} size={size} />
           ),
@@ -98,7 +103,7 @@ export default function RootLayout() {
           ),
         }} />
         <Tabs.Screen name="settings" options={{
-          title: 'Réglages',
+          title: t('tabs.settings'),
           tabBarIcon: ({ color, size }) => (
             <Settings color={color} size={size} />
           ),
