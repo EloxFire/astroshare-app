@@ -119,10 +119,92 @@ export const getNextFullMoon = (date: Date): Date => observerlyGetNextFullMoon(d
 
 export const isBlueMoon = (date: Date): boolean => observerlyIsBlueMoon(date);
 
+// La lib expose getNextNewMoon/getNextFullMoon, mais pas d'équivalent pour les quartiers.
+// getLunarAge(date).age donne l'âge de la Lune en jours DEPUIS LA DERNIÈRE NOUVELLE LUNE
+// (donc borné entre 0 et LUNAR_SYNODIC_MONTH, et qui retombe à ~0 à chaque nouvelle lune) :
+// Premier Quartier ≈ 1/4 de cycle, Pleine Lune ≈ 1/2, Dernier Quartier ≈ 3/4, Nouvelle ≈ 0/cycle.
+// On cherche donc "la prochaine date où cet âge atteint X jours" par balayage + bissection.
+
+const QUARTER_SEARCH_STEP_MS = 6 * 60 * 60 * 1000; // pas de balayage grossier : 6h
+const QUARTER_SEARCH_PRECISION_MS = 60 * 60 * 1000; // précision finale visée : 1h (largement suffisant pour un affichage jour/heure)
+
+// Affine par dichotomie l'intervalle [before, after] (où l'on sait que l'âge cherché se
+// trouve) jusqu'à obtenir la précision voulue.
+const bisectAgeCrossing = (before: Date, after: Date, targetAgeDays: number): Date => {
+  let low = before;
+  let high = after;
+  while (high.getTime() - low.getTime() > QUARTER_SEARCH_PRECISION_MS) {
+    const middle = new Date((low.getTime() + high.getTime()) / 2);
+    if (getLunarAge(middle).age < targetAgeDays) {
+      low = middle;
+    } else {
+      high = middle;
+    }
+  }
+  return high;
+};
+
+// Trouve la prochaine date après `fromDate` où l'âge de la Lune atteint `targetAgeDays`.
+const findNextAgeCrossing = (fromDate: Date, targetAgeDays: number): Date => {
+  let previousDate = fromDate;
+  let previousAge = getLunarAge(previousDate).age;
+
+  // Balayage grossier, jour par (petit bout de) jour, jusqu'à repérer l'intervalle où
+  // l'âge franchit la cible. Deux cas possibles à chaque pas :
+  // - l'âge dépasse la cible normalement (on a trouvé l'intervalle, on arrête ici) ;
+  // - l'âge retombe brutalement (une Nouvelle Lune a eu lieu entre les deux dates) : la
+  //   cible est déjà passée dans le cycle actuel, elle ne reviendra qu'au cycle suivant —
+  //   on continue simplement le balayage, l'âge repart de ~0.
+  for (;;) {
+    const nextDate = new Date(previousDate.getTime() + QUARTER_SEARCH_STEP_MS);
+    const nextAge = getLunarAge(nextDate).age;
+
+    const targetReachedThisStep = previousAge < targetAgeDays && nextAge >= targetAgeDays;
+    if (targetReachedThisStep) {
+      return bisectAgeCrossing(previousDate, nextDate, targetAgeDays);
+    }
+
+    previousDate = nextDate;
+    previousAge = nextAge;
+  }
+};
+
+/**
+ * getNextFirstQuarter()
+ *
+ * Le prochain Premier Quartier (≈ 1/4 du cycle lunaire après la dernière Nouvelle Lune).
+ */
+export const getNextFirstQuarter = (date: Date): Date => findNextAgeCrossing(date, LUNAR_SYNODIC_MONTH / 4);
+
+/**
+ * getNextLastQuarter()
+ *
+ * Le prochain Dernier Quartier (≈ 3/4 du cycle lunaire après la dernière Nouvelle Lune).
+ */
+export const getNextLastQuarter = (date: Date): Date => findNextAgeCrossing(date, (LUNAR_SYNODIC_MONTH * 3) / 4);
+
 // La Lune met environ un jour lunaire (~24h50) entre deux levers (ou deux couchers)
 // identiques : reculer de 30h avant de rechercher en avant garantit de retomber sur
 // l'occurrence précédente, sans jamais remonter jusqu'à celle d'avant.
 const PREVIOUS_TRANSIT_SEARCH_MARGIN_MS = 30 * 60 * 60 * 1000;
+
+// BUG CONNU de @observerly/astrometry (confirmé en lisant node_modules/@observerly/astrometry/dist/temporal.js) :
+// convertGreenwhichSiderealTimeToUniversalTime() calcule correctement une heure UTC, mais construit
+// le Date final avec le constructeur LOCAL (`new Date(année, mois, jour, h, m, s)`) au lieu de
+// `Date.UTC(...)`. Résultat : l'instant absolu retourné par getBodyNextRise/getBodyNextSet est décalé
+// de l'offset UTC courant de l'appareil (ex: +2h en France l'été) par rapport à la vraie heure UTC du
+// lever/coucher. Même bug déjà rencontré et corrigé dans la V2 d'AstroShare (voir sur la branche `main` :
+// src/helpers/scripts/astro/objects/computeMoon.ts, qui fait `.add(localOffsetMinutes, 'minute')`).
+// On applique ici la même correction, au plus près de la source, pour que le reste du code (formatage
+// UTC/heure locale/fuseau choisi dans useAppUnits) reçoive un datetime déjà correct.
+// NB : getNextNewMoon/getNextFullMoon/getLunarAge passent par un autre chemin de calcul dans la lib
+// (recherche par pas de temps en millisecondes, pas de reconstruction de Date via année/mois/jour) et
+// ne sont PAS concernées par ce bug — seuls le lever et le coucher le sont.
+const fixObserverlyTransitDateBug = <T extends TransitInstance | boolean>(transit: T): T => {
+  if (typeof transit !== "object") return transit; // `false`/`true` (jamais de lever/coucher) : rien à corriger
+  const deviceUtcOffsetMs = -new Date().getTimezoneOffset() * 60 * 1000; // getTimezoneOffset() est signé à l'envers (UTC - local)
+  return { ...transit, datetime: new Date(transit.datetime.getTime() + deviceUtcOffsetMs) };
+};
 
 /**
  * getLunarNextRise()
@@ -137,7 +219,7 @@ const PREVIOUS_TRANSIT_SEARCH_MARGIN_MS = 30 * 60 * 60 * 1000;
 export const getLunarNextRise = (date: Date, observer: Observer): TransitInstance | false => {
   const alreadyRisen = isBodyAboveHorizon(date, observer, getLunarEquatorialCoordinate(date));
   const searchFrom = alreadyRisen ? new Date(date.getTime() - PREVIOUS_TRANSIT_SEARCH_MARGIN_MS) : date;
-  return getBodyNextRise(searchFrom, observer, getLunarEquatorialCoordinate(searchFrom));
+  return fixObserverlyTransitDateBug(getBodyNextRise(searchFrom, observer, getLunarEquatorialCoordinate(searchFrom)));
 };
 
 /**
@@ -155,7 +237,7 @@ export const getLunarNextRise = (date: Date, observer: Observer): TransitInstanc
 export const getLunarNextSet = (date: Date, observer: Observer): TransitInstance | boolean => {
   const alreadySet = !isBodyAboveHorizon(date, observer, getLunarEquatorialCoordinate(date));
   const searchFrom = alreadySet ? new Date(date.getTime() - PREVIOUS_TRANSIT_SEARCH_MARGIN_MS) : date;
-  return getBodyNextSet(searchFrom, observer, getLunarEquatorialCoordinate(searchFrom));
+  return fixObserverlyTransitDateBug(getBodyNextSet(searchFrom, observer, getLunarEquatorialCoordinate(searchFrom)));
 };
 
 // Traduit via i18next (namespace "moon", clé "phases.<Phase>") plutôt qu'un dictionnaire

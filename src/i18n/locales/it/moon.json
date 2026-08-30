@@ -47,5 +47,14 @@
     "set": "Tramonta",
     "distance": "Distanza",
     "distanceValue": "{{value}} km"
+  },
+  "phasesOverview": {
+    "title": "Prossime fasi"
+  },
+  "phasesShort": {
+    "New": "Nuova",
+    "First Quarter": "Primo q.",
+    "Full": "Piena",
+    "Last Quarter": "Ultimo q."
   }
 }

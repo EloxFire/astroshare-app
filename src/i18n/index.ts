@@ -2,9 +2,18 @@ import i18next from "i18next";
 import { initReactI18next } from "react-i18next";
 import * as Localization from "expo-localization";
 import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
 import "dayjs/locale/fr";
 import "dayjs/locale/en";
 import "dayjs/locale/it";
+
+// Active dayjs.utc(...) (switch UTC/heure locale) et dayjs.tz(...) (fuseau horaire choisi
+// explicitement par l'utilisateur) dans toute l'app — voir useAppUnits. `timezone` a besoin
+// que `utc` soit étendu avant lui (contrainte de dayjs). Fait ici une seule fois, au même
+// endroit que le reste de la config globale de dayjs.
+dayjs.extend(utc);
+dayjs.extend(timezone);
 import { useUserDataStore } from "../store/userData.store";
 import { supportedLanguages } from "../helpers/langs";
 import common_fr from "./locales/fr/common.json";

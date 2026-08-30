@@ -47,5 +47,14 @@
     "set": "Set",
     "distance": "Distance",
     "distanceValue": "{{value}} km"
+  },
+  "phasesOverview": {
+    "title": "Upcoming phases"
+  },
+  "phasesShort": {
+    "New": "New",
+    "First Quarter": "1st Qtr",
+    "Full": "Full",
+    "Last Quarter": "Last Qtr"
   }
 }

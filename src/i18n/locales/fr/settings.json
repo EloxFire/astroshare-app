@@ -33,6 +33,10 @@
       "name": "Langue",
       "description": "Choisissez la langue de l'application"
     },
+    "units": {
+      "name": "Unités et formats",
+      "description": "Fuseau horaire, unités de distance et de température"
+    },
     "observatories": {
       "name": "Observatoires",
       "description": "Gérez vos lieux d'observation"
@@ -61,5 +65,25 @@
     "latitude": "Latitude",
     "longitude": "Longitude",
     "altitude": "Altitude"
+  },
+  "units": {
+    "title": "Unités et formats",
+    "time": {
+      "title": "Heure UTC",
+      "description": "Afficher les heures en UTC plutôt qu'en heure locale"
+    },
+    "timezone": {
+      "title": "Fuseau horaire",
+      "automatic": "Automatique (fuseau de l'appareil)",
+      "searchPlaceholder": "Rechercher un fuseau (ex: Paris, Tokyo...)"
+    },
+    "distance": {
+      "title": "Miles",
+      "description": "Afficher les distances en miles plutôt qu'en kilomètres"
+    },
+    "temperature": {
+      "title": "Fahrenheit",
+      "description": "Afficher les températures en Fahrenheit plutôt qu'en Celsius"
+    }
   }
 }

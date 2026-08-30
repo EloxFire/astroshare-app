@@ -29,6 +29,7 @@ const defaultUserData: UserSettingsState = {
   activeObservatoryId: null,
   units: {
     time: "local",
+    timezone: null,
     distance: "km",
     temperature: "celsius",
   }
@@ -45,6 +46,7 @@ export const useUserDataStore = create<UserSettingsData>()(
       setActiveObservatoryId: (newActiveObservatoryId: string | null) => set({activeObservatoryId: newActiveObservatoryId}),
       setPinnedTools: (newPinnedTools: [string?, string?, string?, string?, string?]) => set({pinnedTools: newPinnedTools}),
       setTimeUnit: (newTimeUnit: "utc" | "local") => set((state) => ({units: {...state.units, time: newTimeUnit}})),
+      setTimezone: (newTimezone: string | null) => set((state) => ({units: {...state.units, timezone: newTimezone}})),
       setDistanceUnit: (newDistanceUnit: "km" | "mi") => set((state) => ({units: {...state.units, distance: newDistanceUnit}})),
       setTemperatureUnit: (newTemperatureUnit: "celsius" | "fahrenheit") => set((state) => ({units: {...state.units, temperature: newTemperatureUnit}})),
     }),

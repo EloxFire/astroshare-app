@@ -10,11 +10,25 @@ import { PlatformPressable } from 'expo-router/build/react-navigation';
 import { useAppFonts } from '../src/hooks/useAppFonts';
 import { useI18nReady } from '../src/i18n/useI18nReady';
 import { useTranslation } from 'react-i18next';
+import { useEffect } from 'react';
+import { useUserDataStore } from '../src/store/userData.store';
+import { GPS_POSITION_QUERY_KEY, fetchGpsPosition } from '../src/hooks/useCurrentGpsPosition';
 
 export default function RootLayout() {
   const [fontsLoaded] = useAppFonts();
   const i18nReady = useI18nReady();
   const { t } = useTranslation();
+
+  // Précharge la position GPS dès le démarrage, uniquement si l'app est en mode "position
+  // actuelle" (pas d'observatoire actif) — sinon on demanderait la permission de localisation
+  // inutilement à un utilisateur qui a choisi un observatoire enregistré. Le cache (queryKey
+  // partagée, voir useCurrentGpsPosition.ts) profite ensuite à tous les écrans qui en ont
+  // besoin : plus de temps d'attente au moment de la navigation.
+  useEffect(() => {
+    if (useUserDataStore.getState().activeObservatoryId === null) {
+      queryClient.prefetchQuery({ queryKey: GPS_POSITION_QUERY_KEY, queryFn: fetchGpsPosition });
+    }
+  }, []);
 
   if (!fontsLoaded || !i18nReady) {
     return null;

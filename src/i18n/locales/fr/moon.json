@@ -47,5 +47,14 @@
     "set": "Coucher",
     "distance": "Distance",
     "distanceValue": "{{value}} km"
+  },
+  "phasesOverview": {
+    "title": "Prochaines phases"
+  },
+  "phasesShort": {
+    "New": "Nouvelle",
+    "First Quarter": "Premier q.",
+    "Full": "Pleine",
+    "Last Quarter": "Dernier q."
   }
 }

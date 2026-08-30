@@ -136,5 +136,43 @@ export const moonCalendarScreenStyles = {
         paddingBottom: 10,
       }
     }
+  },
+
+  mainPhasesContainer: {
+    marginTop: 10,
+    display: "flex" as const,
+    flexDirection: "row" as const,
+    justifyContent: "space-between" as const,
+    gap: 8,
+
+    card: {
+      flex: 1,
+      display: "flex" as const,
+      flexDirection: "column" as const,
+      alignItems: "center" as const,
+      gap: 4,
+
+      // backgroundColor sert de placeholder tant que l'illustration (requête réseau,
+      // voir useQueries dans MoonCalendarScreen.tsx) n'a pas fini de charger — sans ça
+      // l'Image est totalement transparente et donne une impression de blocage.
+      image: {
+        width: 52,
+        height: 52,
+        borderRadius: 26,
+        // backgroundColor: app_colors.accent.light,
+      },
+
+      date: {
+        color: app_colors.primary.main,
+        fontFamily: "DMMonoMedium",
+        fontSize: 11,
+      },
+
+      label: {
+        color: app_colors.primary.medium,
+        fontFamily: "ZTNatureRegular",
+        fontSize: 11,
+      }
+    }
   }
 };

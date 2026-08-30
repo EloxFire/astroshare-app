@@ -33,6 +33,10 @@
       "name": "Language",
       "description": "Choose the app language"
     },
+    "units": {
+      "name": "Units & formats",
+      "description": "Time zone, distance and temperature units"
+    },
     "observatories": {
       "name": "Observatories",
       "description": "Manage your observation spots"
@@ -61,5 +65,25 @@
     "latitude": "Latitude",
     "longitude": "Longitude",
     "altitude": "Altitude"
+  },
+  "units": {
+    "title": "Units & formats",
+    "time": {
+      "title": "UTC time",
+      "description": "Show times in UTC instead of local time"
+    },
+    "timezone": {
+      "title": "Time zone",
+      "automatic": "Automatic (device time zone)",
+      "searchPlaceholder": "Search a time zone (e.g. Paris, Tokyo...)"
+    },
+    "distance": {
+      "title": "Miles",
+      "description": "Show distances in miles instead of kilometers"
+    },
+    "temperature": {
+      "title": "Fahrenheit",
+      "description": "Show temperatures in Fahrenheit instead of Celsius"
+    }
   }
 }

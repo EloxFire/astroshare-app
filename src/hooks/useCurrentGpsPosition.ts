@@ -1,46 +1,47 @@
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import * as Location from "expo-location";
 import { useTranslation } from "react-i18next";
 import { GpsPosition } from "../types/gpsLocation";
 import { useGeocoding } from "./useGeocoding";
 import type { GeocodingFlags } from "../types/geocoding";
 
+// Sentinelle interne (pas un texte affiché) : queryFn ne peut pas appeler useTranslation()
+// (ce n'est pas un hook), donc l'erreur est traduite après coup, côté hook, à partir de ce code.
+const PERMISSION_DENIED = "PERMISSION_DENIED";
+
+// Clé stable exportée : une seule entrée de cache pour "la position actuelle de l'appareil",
+// partagée par tous les écrans qui la demandent (au lieu d'un fetch GPS par écran comme avant).
+// Réutilisée par app/_layout.tsx pour la précharger dès le démarrage de l'app.
+export const GPS_POSITION_QUERY_KEY = ["gpsPosition"];
+
+export const fetchGpsPosition = async (): Promise<GpsPosition> => {
+  const { status } = await Location.requestForegroundPermissionsAsync();
+  if (status !== "granted") throw new Error(PERMISSION_DENIED);
+
+  const coords = (await Location.getCurrentPositionAsync()).coords;
+
+  // coords.altitude peut être `null` (simulateur, capteur indisponible) — 0 par défaut
+  return { latitude: coords.latitude, longitude: coords.longitude, elevation: coords.altitude ?? 0 };
+};
+
 export const useCurrentGpsPosition = (enabled: boolean = true, flags: GeocodingFlags = {}) => {
   const { t } = useTranslation();
-  const [position, setPosition] = useState<GpsPosition | null>(null);
-  const [gpsLoading, setGpsLoading] = useState(false);
-  const [gpsError, setGpsError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (!enabled) return;
+  // useQuery (pas useState/useEffect comme avant) : la position est mise en cache une seule
+  // fois pour toute l'app (queryKey fixe), donc naviguer entre plusieurs écrans qui en ont
+  // besoin ne redemande le GPS qu'une fois — les suivants lisent le cache instantanément
+  // (staleTime hérité de la config globale, voir helpers/queryClient.ts : 5 minutes).
+  const { data: position, isLoading: gpsLoading, error: gpsErrorRaw } = useQuery({
+    queryKey: GPS_POSITION_QUERY_KEY,
+    queryFn: fetchGpsPosition,
+    enabled,
+  });
 
-    let cancelled = false;
-
-    (async () => {
-      setGpsLoading(true);
-      setGpsError(null);
-      try {
-        const { status } = await Location.requestForegroundPermissionsAsync();
-        if (status !== "granted") {
-          if (!cancelled) setGpsError(t("errors.locationPermissionDenied"));
-          return;
-        }
-        const { coords } = await Location.getCurrentPositionAsync();
-        if (!cancelled) {
-          // coords.altitude peut être `null` (simulateur, capteur indisponible) — 0 par défaut
-          setPosition({ latitude: coords.latitude, longitude: coords.longitude, elevation: coords.altitude ?? 0 });
-        }
-      } catch (e) {
-        if (!cancelled) setGpsError(e instanceof Error ? e.message : t("errors.locationError"));
-      } finally {
-        if (!cancelled) setGpsLoading(false);
-      }
-    })();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [enabled]);
+  const gpsError = gpsErrorRaw
+    ? gpsErrorRaw.message === PERMISSION_DENIED
+      ? t("errors.locationPermissionDenied")
+      : t("errors.locationError")
+    : null;
 
   const { weather, locationName, lightPollution, isLoading: geocodingLoading, error: geocodingError } = useGeocoding(
     position?.latitude ?? null,
@@ -49,7 +50,7 @@ export const useCurrentGpsPosition = (enabled: boolean = true, flags: GeocodingF
   );
 
   return {
-    position,
+    position: position ?? null,
     weather,
     locationName,
     lightPollution,
