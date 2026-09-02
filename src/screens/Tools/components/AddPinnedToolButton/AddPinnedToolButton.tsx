@@ -1,5 +1,4 @@
-import React from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 import { Plus } from "lucide-react-native";
 import { app_colors } from "../../../../helpers/variables";
 import { addPinnedToolButtonStyles } from "./AddPinnedToolButton.styles";
@@ -15,7 +14,6 @@ export default function AddPinnedToolButton() {
       <View style={addPinnedToolButtonStyles.button.square}>
         <Plus color={app_colors.primary.main} />
       </View>
-      {/* <Text style={addPinnedToolButtonStyles.button.name}>Ajouter</Text> */}
     </TouchableOpacity>
   )
 }

@@ -8,11 +8,12 @@ import { StatusBar } from "expo-status-bar";
 import { useTranslation } from "react-i18next";
 import { languageScreenStyles } from "./Language.styles";
 import { useUserDataStore } from "../../../store/userData.store";
-import { Check, Phone, Smartphone } from "lucide-react-native";
+import { Check, Languages, Smartphone } from "lucide-react-native";
 import { app_colors } from "../../../helpers/variables";
 import SwitchButton from "../../../components/SwitchButton/SwitchButton";
 import * as Localization from "expo-localization";
 import getUnicodeFlagIcon from 'country-flag-icons/unicode'
+import InfoCard from "../../../components/InfoCard/InfoCard";
 
 const LanguageScreen = () => {
 
@@ -118,6 +119,13 @@ const LanguageScreen = () => {
             )
           }
         </View>
+
+        <InfoCard
+          title={t("language.infoCard.title")}
+          description={t("language.infoCard.description")}
+          icon={Languages}
+          link="https://traduction.astroshare.fr"
+        />
       </View>
     </View>
   )

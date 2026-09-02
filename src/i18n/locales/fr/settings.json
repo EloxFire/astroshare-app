@@ -3,13 +3,17 @@
     "title": "Langue",
     "sections": {
       "completed": "Traductions complètes",
-      "inProgress": "Traductions en cours"
+      "inProgress": "Traductions incomplètes"
     },
     "autoLanguage": {
       "title": "Langue automatique",
       "description": "Utiliser la langue de votre appareil (actuellement : {{deviceLanguage}})"
     },
-    "noInProgress": "Aucune traduction en cours"
+    "noInProgress": "Aucune traduction en cours",
+    "infoCard": {
+      "title": "Aider à traduire Astroshare",
+      "description": "Rejoignez notre communauté de traducteurs et aidez-nous à rendre Astroshare accessible à tous !"
+    }
   },
   "screen": {
     "title": "Réglages",
@@ -75,7 +79,11 @@
     "timezone": {
       "title": "Fuseau horaire",
       "automatic": "Automatique (fuseau de l'appareil)",
-      "searchPlaceholder": "Rechercher un fuseau (ex: Paris, Tokyo...)"
+      "searchPlaceholder": "Rechercher un fuseau (ex: Paris, Tokyo...)",
+      "infoCard": {
+        "title": "Fuseau horaire actuel",
+        "description": "{{timezone}} ({{offset}})."
+      }
     },
     "distance": {
       "title": "Miles",

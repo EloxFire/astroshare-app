@@ -32,5 +32,3 @@ export const useDebounce = <Args extends unknown[]>(
     [delay]
   );
 };
-
-export default useDebounce;

@@ -18,15 +18,18 @@
     "Invalid": "Phase inconnue"
   },
   "cardinalDirections": [
-    "nord", "nord-nord-est", "nord-est", "est-nord-est",
-    "est", "est-sud-est", "sud-est", "sud-sud-est",
-    "sud", "sud-sud-ouest", "sud-ouest", "ouest-sud-ouest",
-    "ouest", "ouest-nord-ouest", "nord-ouest", "nord-nord-ouest"
+    "N", "N-N-E", "N-E", "E-N-E",
+    "E", "E-S-E", "S-E", "S-S-E",
+    "S", "S-S-W", "S-W", "W-S-W",
+    "W", "W-N-W", "N-W", "N-N-W"
   ],
   "transit": {
     "loading": "...",
     "notApplicable": "N/A",
-    "neverSets": "Ne se couche pas"
+    "neverSets": "Ne se couche pas",
+    "today": "{{time}} | {{direction}}",
+    "tomorrow": "Demain, {{time}} | {{direction}}",
+    "yesterday": "Hier, {{time}} | {{direction}}"
   },
   "daysUntil": {
     "newMoon_one": "Nouvelle Lune dans {{count}} jour",
@@ -46,7 +49,9 @@
     "culmination": "Culmination",
     "set": "Coucher",
     "distance": "Distance",
-    "distanceValue": "{{value}} km"
+    "distanceValue": "{{value}} km",
+    "altitude": "Altitude",
+    "altitudeValue": "{{value}}°"
   },
   "phasesOverview": {
     "title": "Prochaines phases"
@@ -56,5 +61,21 @@
     "First Quarter": "Premier q.",
     "Full": "Pleine",
     "Last Quarter": "Dernier q."
+  },
+  "month": {
+    "weekdays": ["L", "M", "M", "J", "V", "S", "D"],
+    "todayLegend": "Aujourd'hui",
+    "phaseAbbreviations": {
+      "New": "NL",
+      "First Quarter": "PQ",
+      "Full": "PL",
+      "Last Quarter": "DQ"
+    }
+  },
+  "detail": {
+    "riseSet": "Lever · coucher",
+    "riseSetValue": "{{rise}} · {{set}}",
+    "nextPhase": "Prochaine phase",
+    "nextPhaseValue": "{{phase}} · {{date}}"
   }
 }

@@ -3,7 +3,7 @@
     "title": "Lingua",
     "sections": {
       "completed": "Traduzioni complete",
-      "inProgress": "Traduzioni in corso"
+      "inProgress": "Traduzioni incomplete"
     },
     "autoLanguage": {
       "title": "Lingua automatica",

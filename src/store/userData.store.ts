@@ -4,23 +4,6 @@ import { UserSettingsData, UserSettingsState } from "../types/userSettingsData";
 import { create } from 'zustand'
 import { Observatory } from "../types/observatory";
 
-// const aix: Observatory = {
-//   id: "aix",
-//   name: "La Sinne - AAAOV",
-//   latitude: 43.529742,
-//   longitude: 5.447427,
-//   elevation: 200,
-//   bortle: 4,
-// }
-
-// const paris: Observatory = {
-//   id: "ventabren",
-//   name: "Plateau de Ventabren",
-//   latitude: 48.8367,
-//   longitude: 2.3369,
-//   elevation: 100,
-// }
-
 const defaultUserData: UserSettingsState = {
   nightMode: false,
   locale: null,

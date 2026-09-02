@@ -26,7 +26,10 @@
   "transit": {
     "loading": "...",
     "notApplicable": "N/A",
-    "neverSets": "Never sets"
+    "neverSets": "Never sets",
+    "today": "{{time}} - {{direction}}",
+    "tomorrow": "Tomorrow, {{time}} - {{direction}}",
+    "yesterday": "Yesterday, {{time}} - {{direction}}"
   },
   "daysUntil": {
     "newMoon_one": "New Moon in {{count}} day",
@@ -46,7 +49,9 @@
     "culmination": "Culmination",
     "set": "Set",
     "distance": "Distance",
-    "distanceValue": "{{value}} km"
+    "distanceValue": "{{value}} km",
+    "altitude": "Altitude",
+    "altitudeValue": "{{value}}°"
   },
   "phasesOverview": {
     "title": "Upcoming phases"
@@ -56,5 +61,21 @@
     "First Quarter": "1st Qtr",
     "Full": "Full",
     "Last Quarter": "Last Qtr"
+  },
+  "month": {
+    "weekdays": ["M", "T", "W", "T", "F", "S", "S"],
+    "todayLegend": "Today",
+    "phaseAbbreviations": {
+      "New": "NM",
+      "First Quarter": "FQ",
+      "Full": "FM",
+      "Last Quarter": "LQ"
+    }
+  },
+  "detail": {
+    "riseSet": "Rise · set",
+    "riseSetValue": "{{rise}} · {{set}}",
+    "nextPhase": "Next phase",
+    "nextPhaseValue": "{{phase}} · {{date}}"
   }
 }

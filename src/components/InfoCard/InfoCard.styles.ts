@@ -9,10 +9,12 @@ export const infoCardStyles = {
     display: "flex" as const,
     flexDirection: "row" as const,
     gap: 10,
+    alignItems: "center" as const,
 
     infos: {
       display: "flex" as const,
       flexDirection: "column" as const,
+      flex: 1,
       gap: 5,
 
       title: {
@@ -24,7 +26,7 @@ export const infoCardStyles = {
       description: {
         color: app_colors.white,
         fontFamily: "ZTNatureRegular",
-        fontSize: 14,
+        fontSize: 12,
       }
     }
   }

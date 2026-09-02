@@ -6,10 +6,11 @@ import { InputWithIcon } from "../../../../components/InputWithIcon/InputWithIco
 import { globalStyles } from "../../../../helpers/globalStyles";
 import { useUserDataStore } from "../../../../store/userData.store";
 import { useTranslation } from "react-i18next";
-import { Check, Search } from "lucide-react-native";
+import { Check, InfoIcon, Search } from "lucide-react-native";
 import { app_colors } from "../../../../helpers/variables";
 import { timezoneScreenStyles } from "./TimezoneScreen.styles";
 import { ALL_TIMEZONES } from "../../../../helpers/timezones";
+import InfoCard from "../../../../components/InfoCard/InfoCard";
 
 const TimezoneScreen = () => {
   const router = useRouter();
@@ -45,6 +46,12 @@ const TimezoneScreen = () => {
             action={() => {}}
           />
         </View>
+
+        <InfoCard
+          title={t("units.timezone.infoCard.title")}
+          description={t("units.timezone.infoCard.description", { timezone: currentTimezone ?? t("units.timezone.automatic"), offset: currentTimezone ? new Date().toLocaleString("en-US", { timeZone: currentTimezone, timeZoneName: "short" }).split(" ")[2] : "" })}
+          icon={InfoIcon}
+        />
 
         {/* flex: 1 nécessaire : une View dans une colonne flex ne prend pas la place
             restante par défaut en React Native (flexShrink: 0 implicite) — sans ça la

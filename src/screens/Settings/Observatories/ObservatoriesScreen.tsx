@@ -1,10 +1,10 @@
-import { Platform, Text, TouchableOpacity, View } from "react-native"
+import { Text, TouchableOpacity, View } from "react-native"
 import { useEffect, useRef, useState } from "react";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import { observatoriesScreenStyles } from "./ObservatoriesScreen.styles";
 import { ScreenHeader } from "../../../components/ScreenHeader/ScreenHeader";
 import ChipsContainer from "../../../components/ChipsContainer/ChipsContainer";
-import { LocateFixed, MapPinPlusIcon, Plus } from "lucide-react-native";
+import { LocateFixed, MapPinPlusIcon } from "lucide-react-native";
 import { app_colors } from "../../../helpers/variables";
 import SwitchButton from "../../../components/SwitchButton/SwitchButton";
 import { useUserDataStore } from "../../../store/userData.store";
@@ -24,6 +24,11 @@ const ObservatoriesScreen = () => {
   const currentUserLocation = useCurrentGpsPosition();
 
   const mapRef = useRef<MapView>(null);
+  // Nécessaire depuis que la position GPS est préchargée au démarrage (app/_layout.tsx) :
+  // elle peut être déjà en cache quand cet écran se monte, avant même que la vue native de
+  // la carte soit prête (mapRef.current encore null) — sans ça, le centrage échoue
+  // silencieusement une fois et ne se redéclenche jamais (position.deps ne change plus).
+  const [isMapReady, setIsMapReady] = useState(false);
 
   const [isEnabled, setIsEnabled] = useState(activeObservatoryId === null);
   const toggleGpsUsage = () => {
@@ -43,7 +48,7 @@ const ObservatoriesScreen = () => {
   }
 
   useEffect(() => {
-    if (currentUserLocation.position) {
+    if (isMapReady && currentUserLocation.position) {
       mapRef.current?.animateToRegion({
         latitude: currentUserLocation.position.latitude,
         longitude: currentUserLocation.position.longitude,
@@ -51,7 +56,7 @@ const ObservatoriesScreen = () => {
         longitudeDelta: 0.0421,
       }, 1000);
     }
-  }, [currentUserLocation.position]);
+  }, [isMapReady, currentUserLocation.position]);
 
   return (
     <View style={observatoriesScreenStyles.screen}>
@@ -62,7 +67,7 @@ const ObservatoriesScreen = () => {
             ref={mapRef}
             style={observatoriesScreenStyles.mapContainer.map}
             provider={PROVIDER_GOOGLE}
-            onMapReady={() => {console.log("Map is ready");}}
+            onMapReady={() => setIsMapReady(true)}
 
             initialRegion={{
               latitude: 0,

@@ -1,4 +1,3 @@
-import { StatusBar } from "expo-status-bar";
 import { app_colors, gaps, radius, spacing, typography, withOpacity } from "./variables";
 
 export const globalStyles = {

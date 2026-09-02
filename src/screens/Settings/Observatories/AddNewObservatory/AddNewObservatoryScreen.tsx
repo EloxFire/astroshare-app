@@ -17,12 +17,17 @@ const AddNewObservatoryScreen = () => {
   const { t } = useTranslation("settings");
 
   const mapRef = useRef<MapView>(null);
+  // Nécessaire depuis que la position GPS est préchargée au démarrage (app/_layout.tsx) :
+  // elle peut être déjà en cache quand cet écran se monte, avant même que la vue native de
+  // la carte soit prête (mapRef.current encore null) — sans ça, le centrage échoue
+  // silencieusement une fois et ne se redéclenche jamais (position ne change plus après).
+  const [isMapReady, setIsMapReady] = useState(false);
   const currentUserLocation = useCurrentGpsPosition(true, { withLocationName: true, withLightPollution: true });
 
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [submittedQuery, setSubmittedQuery] = useState<string>("");
   const [userActiveLocation, setUserActiveLocation] = useState<GpsPosition | null>(null);
-  const { results, isLoading, isError, error } = useLocationSearch(submittedQuery);
+  const { results } = useLocationSearch(submittedQuery);
 
   const handleSearchCurrentLocation = () => {
     if (currentUserLocation.position) {
@@ -48,7 +53,7 @@ const AddNewObservatoryScreen = () => {
   // }
 
   useEffect(() => {
-    if (currentUserLocation.position) {
+    if (isMapReady && currentUserLocation.position) {
       mapRef.current?.animateToRegion({
         latitude: currentUserLocation.position.latitude,
         longitude: currentUserLocation.position.longitude,
@@ -56,7 +61,7 @@ const AddNewObservatoryScreen = () => {
         longitudeDelta: 0.0421,
       }, 500);
     }
-  }, [currentUserLocation.position]);
+  }, [isMapReady, currentUserLocation.position]);
 
   useEffect(() => {
     if (results && results.length > 0) {
@@ -106,7 +111,7 @@ const AddNewObservatoryScreen = () => {
             ref={mapRef}
             style={adddNewObservatoryScreenStyles.mapContainer.map}
             provider={PROVIDER_GOOGLE}
-            onMapReady={() => {console.log("Map is ready");}}
+            onMapReady={() => setIsMapReady(true)}
 
             initialRegion={{
               latitude: 0,

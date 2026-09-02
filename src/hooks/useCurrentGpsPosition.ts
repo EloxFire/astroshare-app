@@ -16,9 +16,14 @@ export const GPS_POSITION_QUERY_KEY = ["gpsPosition"];
 
 export const fetchGpsPosition = async (): Promise<GpsPosition> => {
   const { status } = await Location.requestForegroundPermissionsAsync();
-  if (status !== "granted") throw new Error(PERMISSION_DENIED);
+  if (status !== "granted") {
+    console.log("[useCurrentGpsPosition] Permission de localisation refusée");
+    throw new Error(PERMISSION_DENIED)
+  };
 
   const coords = (await Location.getCurrentPositionAsync()).coords;
+  console.log("[useCurrentGpsPosition] Position GPS obtenue :", coords);
+  
 
   // coords.altitude peut être `null` (simulateur, capteur indisponible) — 0 par défaut
   return { latitude: coords.latitude, longitude: coords.longitude, elevation: coords.altitude ?? 0 };

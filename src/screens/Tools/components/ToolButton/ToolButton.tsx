@@ -1,4 +1,3 @@
-import React from "react";
 import { toolButtonStyles } from "./ToolButton.styles";
 import { Text, TouchableOpacity, View } from "react-native";
 import { LucideIcon } from "lucide-react-native";

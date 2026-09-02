@@ -1,4 +1,4 @@
-import { Blend, BookIcon, BookSearchIcon, Boxes, BringToFront, Calculator, CameraIcon, CircleDotDashed, ClockIcon, CloudSun, CompassIcon, EclipseIcon, LucideLightbulb, MoonIcon, NotepadTextIcon, Orbit, Rocket, Rotate3d, Satellite, SpellCheck, StarsIcon, Sun, TrendingUp, Waypoints } from "lucide-react-native";
+import { Blend, BookIcon, BringToFront, Calculator, CameraIcon, CircleDotDashed, ClockIcon, CloudSun, CompassIcon, EclipseIcon, LucideLightbulb, MoonIcon, NotepadTextIcon, Orbit, Rocket, Rotate3d, Satellite, SpellCheck, Sun, TrendingUp, Waypoints } from "lucide-react-native";
 import { AstroshareTool } from "../../types/tools/astroshareTool";
 
 export const toolsList: AstroshareTool[] = [

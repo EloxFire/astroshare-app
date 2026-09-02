@@ -7,7 +7,6 @@ export const supportedLanguages = [
   { code: "it", name: "Italiano", flagCode: "IT" },
   // { code: "es", name: "Español", flagCode: "ES" },
   // { code: "de", name: "Deutsch", flagCode: "DE" },
-  // { code: "it", name: "Italiano", flagCode: "IT" },
   // { code: "pt", name: "Português", flagCode: "PT" },
   // { code: "ru", name: "Русский", flagCode: "RU" },
   // { code: "zh", name: "中文", flagCode: "CN" },

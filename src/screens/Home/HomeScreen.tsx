@@ -1,11 +1,9 @@
-import { StatusBar, Text, View } from "react-native";
-import { homeScreenStyles } from "./HomeScreen.styles";
+import { StatusBar, View } from "react-native";
 import { ScreenHeader } from "../../components/ScreenHeader/ScreenHeader";
 import { globalStyles } from "../../helpers/globalStyles";
 import CurrentConditions from "./components/CurrentConditions/CurrentConditions";
 import Tonight from "./components/Tonight/Tonight";
 import { useEffect } from "react";
-import useMoon from "../../hooks/useMoon";
 import { useTranslation } from "react-i18next";
 
 export const HomeScreen = () => {

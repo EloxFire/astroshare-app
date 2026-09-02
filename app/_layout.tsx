@@ -1,9 +1,9 @@
 import '../src/i18n';
 import { Tabs } from 'expo-router';
-import { KeyboardAvoidingView, TouchableOpacity, View } from 'react-native';
+import { View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { QueryClientProvider } from '@tanstack/react-query';
-import { Compass, House, NotebookPen, Settings, Search, X, Telescope, LayoutGrid } from 'lucide-react-native';
+import { House, Settings, Search, Telescope, LayoutGrid } from 'lucide-react-native';
 import { app_colors } from '../src/helpers/variables';
 import { queryClient } from '../src/helpers/queryClient';
 import { PlatformPressable } from 'expo-router/build/react-navigation';
@@ -11,7 +11,6 @@ import { useAppFonts } from '../src/hooks/useAppFonts';
 import { useI18nReady } from '../src/i18n/useI18nReady';
 import { useTranslation } from 'react-i18next';
 import { useEffect } from 'react';
-import { useUserDataStore } from '../src/store/userData.store';
 import { GPS_POSITION_QUERY_KEY, fetchGpsPosition } from '../src/hooks/useCurrentGpsPosition';
 
 export default function RootLayout() {
@@ -25,9 +24,7 @@ export default function RootLayout() {
   // partagée, voir useCurrentGpsPosition.ts) profite ensuite à tous les écrans qui en ont
   // besoin : plus de temps d'attente au moment de la navigation.
   useEffect(() => {
-    if (useUserDataStore.getState().activeObservatoryId === null) {
-      queryClient.prefetchQuery({ queryKey: GPS_POSITION_QUERY_KEY, queryFn: fetchGpsPosition });
-    }
+    queryClient.query({ queryKey: GPS_POSITION_QUERY_KEY, queryFn: fetchGpsPosition, staleTime: 5 * 60 * 1000 }); // 5 minutes
   }, []);
 
   if (!fontsLoaded || !i18nReady) {
@@ -53,6 +50,7 @@ export default function RootLayout() {
           tabBarIcon: ({ color, size }) => (
             <House color={color} size={size} />
           ),
+          popToTopOnBlur: true,
           tabBarButton: (props) => ( // this is what i added
             <PlatformPressable
               {...props}
@@ -66,6 +64,7 @@ export default function RootLayout() {
           tabBarIcon: ({ color, size }) => (
             <Telescope color={color} size={size} />
           ),
+          popToTopOnBlur: true,
           tabBarButton: (props) => ( // this is what i added
             <PlatformPressable
               {...props}
@@ -95,6 +94,7 @@ export default function RootLayout() {
               <Search color={app_colors.white} size={size} />
             </View>
           ),
+          popToTopOnBlur: true,
           tabBarButton: (props) => ( // this is what i added
             <PlatformPressable
               {...props}
@@ -108,6 +108,7 @@ export default function RootLayout() {
           tabBarIcon: ({ color, size }) => (
             <LayoutGrid color={color} size={size} />
           ),
+          popToTopOnBlur: true,
           tabBarButton: (props) => ( // this is what i added
             <PlatformPressable
               {...props}
@@ -121,6 +122,7 @@ export default function RootLayout() {
           tabBarIcon: ({ color, size }) => (
             <Settings color={color} size={size} />
           ),
+          popToTopOnBlur: true,
           tabBarButton: (props) => ( // this is what i added
             <PlatformPressable
               {...props}

@@ -26,7 +26,10 @@
   "transit": {
     "loading": "...",
     "notApplicable": "N/D",
-    "neverSets": "Non tramonta mai"
+    "neverSets": "Non tramonta mai",
+    "today": "{{time}} - {{direction}}",
+    "tomorrow": "Domani, {{time}} - {{direction}}",
+    "yesterday": "Ieri, {{time}} - {{direction}}"
   },
   "daysUntil": {
     "newMoon_one": "Luna nuova tra {{count}} giorno",
@@ -46,7 +49,9 @@
     "culmination": "Culminazione",
     "set": "Tramonta",
     "distance": "Distanza",
-    "distanceValue": "{{value}} km"
+    "distanceValue": "{{value}} km",
+    "altitude": "Altitudine",
+    "altitudeValue": "{{value}}°"
   },
   "phasesOverview": {
     "title": "Prossime fasi"
@@ -56,5 +61,21 @@
     "First Quarter": "Primo q.",
     "Full": "Piena",
     "Last Quarter": "Ultimo q."
+  },
+  "month": {
+    "weekdays": ["L", "M", "M", "G", "V", "S", "D"],
+    "todayLegend": "Oggi",
+    "phaseAbbreviations": {
+      "New": "LN",
+      "First Quarter": "PQ",
+      "Full": "LP",
+      "Last Quarter": "UQ"
+    }
+  },
+  "detail": {
+    "riseSet": "Sorge · tramonta",
+    "riseSetValue": "{{rise}} · {{set}}",
+    "nextPhase": "Prossima fase",
+    "nextPhaseValue": "{{phase}} · {{date}}"
   }
 }
