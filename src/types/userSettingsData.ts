@@ -1,3 +1,4 @@
+import { GpsLocation } from "./gpsLocation";
 import { Observatory } from "./observatory";
 
 export type UserSettingsState = {
@@ -6,6 +7,7 @@ export type UserSettingsState = {
   pinnedTools: [string?, string?, string?, string?, string?]; // Max 5 outils épinglés
   observatories: Observatory[];
   activeObservatoryId: string | null; //uuid d'un observatoire - null = position gps actuelle
+  lastKnownLocation: GpsLocation | null; // null = pas encore de position gps connue
   units: {
     time: "utc" | "local";
     // Ne compte que si time === "local" : null = fuseau horaire de l'appareil (défaut),
@@ -21,6 +23,7 @@ export type UserSettingsState = {
 export type UserSettingsActions = {
   setNightMode: (newNightModeValue: boolean) => void;
   setLocale: (newLocale: string | null) => void;
+  setLastKnownLocation: (newLastKnownLocation: GpsLocation | null) => void;
   addObservatory: (newObservatory: Observatory) => void;
   removeObservatory: (observatoryIdToRemove: string) => void;
   setActiveObservatoryId: (newActiveObservatoryId: string | null) => void;

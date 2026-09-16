@@ -3,12 +3,14 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { UserSettingsData, UserSettingsState } from "../types/userSettingsData";
 import { create } from 'zustand'
 import { Observatory } from "../types/observatory";
+import { GpsLocation } from "../types/gpsLocation";
 
 const defaultUserData: UserSettingsState = {
   nightMode: false,
   locale: null,
   pinnedTools: ["moon-phases-calendar", "polar-align"],
   observatories: [],
+  lastKnownLocation: null,
   activeObservatoryId: null,
   units: {
     time: "local",
@@ -24,6 +26,7 @@ export const useUserDataStore = create<UserSettingsData>()(
       ...defaultUserData,
       setNightMode: (newNightModeValue: boolean) => set({nightMode: newNightModeValue}),
       setLocale: (newLocale: string | null) => set({locale: newLocale}),
+      setLastKnownLocation: (newLastKnownLocation: GpsLocation | null) => set({lastKnownLocation: newLastKnownLocation}),
       addObservatory: (newObservatory: Observatory) => set((state) => ({observatories: [...state.observatories, newObservatory]})),
       removeObservatory: (observatoryIdToRemove: string) => set((state) => ({observatories: state.observatories.filter(obs => obs.id !== observatoryIdToRemove)})),
       setActiveObservatoryId: (newActiveObservatoryId: string | null) => set({activeObservatoryId: newActiveObservatoryId}),

@@ -1,30 +1,27 @@
-import type { ApiEnvelope, WeatherData, LocationName, LightPollutionData } from "../../types/geocoding";
-
 const BASE_URL = process.env.EXPO_PUBLIC_ASTROSHARE_API_URL;
 
-const fetchJson = async <T>(url: string): Promise<T> => {
-  const response = await fetch(url);
-  if (!response.ok) {
-    throw new Error(`Astroshare API error (${response.status}) on ${url}`);
+export const getLocationName = async (latitude: number, longitude: number): Promise<{
+  name: string;
+  local_names: Record<string, string>;
+  country: string;
+  state: string;
+} | null> => {
+  try {
+    const response = await fetch(`${BASE_URL}/location/name?lat=${latitude}&lon=${longitude}`);
+    if (!response.ok) {
+      throw new Error(`[getLocationName] HTTP error! status: ${response.status}`);
+    }
+    
+    const data = await response.json();
+
+    return {
+      name: data.data.name,
+      local_names: data.data.local_names,
+      country: data.data.country,
+      state: data.data.state
+    }
+  } catch (error) {
+    console.error("[getLocationName] Error fetching location name:", error);
+    return null;
   }
-  return response.json();
-};
-
-export const fetchWeather = async (lat: number, lon: number, lang: string): Promise<WeatherData> => {
-  const json = await fetchJson<ApiEnvelope<WeatherData>>(`${BASE_URL}/weather?lat=${lat}&lon=${lon}&lang=${lang}`);
-  return json.data;
-};
-
-export const fetchLocationName = async (lat: number, lon: number): Promise<LocationName> => {
-  const json = await fetchJson<ApiEnvelope<LocationName>>(`${BASE_URL}/location/name?lat=${lat}&lon=${lon}`);
-  return json.data;
-};
-
-export const fetchLightPollution = (lat: number, lon: number) =>
-  fetchJson<LightPollutionData>(`${BASE_URL}/lightpollution?lat=${lat}&lon=${lon}`);
-
-// Recherche par nom (géocodage direct) — même forme que LocationName, en tableau
-export const fetchLocationCoords = async (name: string): Promise<LocationName[]> => {
-  const json = await fetchJson<ApiEnvelope<LocationName[]>>(`${BASE_URL}/location/coords?name=${encodeURIComponent(name)}`);
-  return json.data;
 };

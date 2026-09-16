@@ -7,9 +7,9 @@ import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps"
 import { useEffect, useRef, useState } from "react"
 import { adddNewObservatoryScreenStyles } from "./addNewObservatoryScreen.styles"
 import { convertDecimalLatitudeToDMS, convertDecimalLongitudeToDMS } from "../../../../helpers/location/convert"
-import { useLocationSearch } from "../../../../hooks/useLocationSearch"
-import { useCurrentGpsPosition } from "../../../../hooks/useCurrentGpsPosition"
-import { GpsPosition } from "../../../../types/gpsLocation"
+// import { useLocationSearch } from "../../../../hooks/useLocationSearch"
+// import { useCurrentGpsPosition } from "../../../../hooks/useCurrentGpsPosition"
+// import { GpsPosition } from "../../../../types/gpsLocation"
 import { app_colors } from "../../../../helpers/variables"
 import { useTranslation } from "react-i18next"
 
@@ -22,24 +22,24 @@ const AddNewObservatoryScreen = () => {
   // la carte soit prête (mapRef.current encore null) — sans ça, le centrage échoue
   // silencieusement une fois et ne se redéclenche jamais (position ne change plus après).
   const [isMapReady, setIsMapReady] = useState(false);
-  const currentUserLocation = useCurrentGpsPosition(true, { withLocationName: true, withLightPollution: true });
+  // const currentUserLocation = useCurrentGpsPosition(true, { withLocationName: true, withLightPollution: true });
 
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [submittedQuery, setSubmittedQuery] = useState<string>("");
-  const [userActiveLocation, setUserActiveLocation] = useState<GpsPosition | null>(null);
-  const { results } = useLocationSearch(submittedQuery);
+  // const [userActiveLocation, setUserActiveLocation] = useState<GpsPosition | null>(null);
+  // const { results } = useLocationSearch(submittedQuery);
 
-  const handleSearchCurrentLocation = () => {
-    if (currentUserLocation.position) {
-      setUserActiveLocation(currentUserLocation.position);
-      mapRef.current?.animateToRegion({
-        latitude: currentUserLocation.position.latitude,
-        longitude: currentUserLocation.position.longitude,
-        latitudeDelta: 0.0922,
-        longitudeDelta: 0.0421,
-      }, 1000);
-    }
-  }
+  // const handleSearchCurrentLocation = () => {
+  //   if (currentUserLocation.position) {
+  //     setUserActiveLocation(currentUserLocation.position);
+  //     mapRef.current?.animateToRegion({
+  //       latitude: currentUserLocation.position.latitude,
+  //       longitude: currentUserLocation.position.longitude,
+  //       latitudeDelta: 0.0922,
+  //       longitudeDelta: 0.0421,
+  //     }, 1000);
+  //   }
+  // }
 
   const handleSearchLocation = () => {
     console.log("Searching for location:", searchQuery);
@@ -52,31 +52,31 @@ const AddNewObservatoryScreen = () => {
   //   setUserActiveLocation({ latitude, longitude, elevation: 0 });
   // }
 
-  useEffect(() => {
-    if (isMapReady && currentUserLocation.position) {
-      mapRef.current?.animateToRegion({
-        latitude: currentUserLocation.position.latitude,
-        longitude: currentUserLocation.position.longitude,
-        latitudeDelta: 0.0922,
-        longitudeDelta: 0.0421,
-      }, 500);
-    }
-  }, [isMapReady, currentUserLocation.position]);
+  // useEffect(() => {
+  //   if (isMapReady && currentUserLocation.position) {
+  //     mapRef.current?.animateToRegion({
+  //       latitude: currentUserLocation.position.latitude,
+  //       longitude: currentUserLocation.position.longitude,
+  //       latitudeDelta: 0.0922,
+  //       longitudeDelta: 0.0421,
+  //     }, 500);
+  //   }
+  // }, [isMapReady, currentUserLocation.position]);
 
-  useEffect(() => {
-    if (results && results.length > 0) {
-      const firstResult = results[0];
-      if (firstResult.lat && firstResult.lon) {
-        setUserActiveLocation({ latitude: firstResult.lat, longitude: firstResult.lon, elevation: 0 });
-        mapRef.current?.animateToRegion({
-          latitude: firstResult.lat,
-          longitude: firstResult.lon,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
-        }, 1000);
-      }
-    }
-  }, [results]);
+  // useEffect(() => {
+  //   if (results && results.length > 0) {
+  //     const firstResult = results[0];
+  //     if (firstResult.lat && firstResult.lon) {
+  //       setUserActiveLocation({ latitude: firstResult.lat, longitude: firstResult.lon, elevation: 0 });
+  //       mapRef.current?.animateToRegion({
+  //         latitude: firstResult.lat,
+  //         longitude: firstResult.lon,
+  //         latitudeDelta: 0.0922,
+  //         longitudeDelta: 0.0421,
+  //       }, 1000);
+  //     }
+  //   }
+  // }, [results]);
 
 
   return (
@@ -99,7 +99,7 @@ const AddNewObservatoryScreen = () => {
             // }}
           />
           <TouchableOpacity
-            onPress={handleSearchCurrentLocation}
+            // onPress={handleSearchCurrentLocation}
             style={{ marginLeft: 10, padding: 10, backgroundColor: app_colors.primary.main, borderRadius: 5 }}
           >
             <LocateFixedIcon color="white" size={20} />
@@ -124,7 +124,7 @@ const AddNewObservatoryScreen = () => {
             showsUserLocation
             // onPress={handleMapPress}
           >
-            {
+            {/* {
               userActiveLocation && (
                 <Marker
                   coordinate={{
@@ -134,7 +134,7 @@ const AddNewObservatoryScreen = () => {
                   title={t("addObservatory.selectedLocationMarker")}
                 />
               )
-            }
+            } */}
           </MapView>
         </View>
 
@@ -142,19 +142,19 @@ const AddNewObservatoryScreen = () => {
           <View style={[globalStyles.content.heroCard.item, globalStyles.content.heroCard.item.withBorder]}>
             <Text style={globalStyles.content.heroCard.item.title}>{t("addObservatory.latitude")}</Text>
             <Text style={globalStyles.content.heroCard.item.value}>
-              {currentUserLocation.position ? convertDecimalLatitudeToDMS(currentUserLocation.position.latitude) : "..."}
+              {/* {currentUserLocation.position ? convertDecimalLatitudeToDMS(currentUserLocation.position.latitude) : "..."} */}
             </Text>
           </View>
           <View style={[globalStyles.content.heroCard.item, globalStyles.content.heroCard.item.withBorder]}>
             <Text style={globalStyles.content.heroCard.item.title}>{t("addObservatory.longitude")}</Text>
             <Text style={globalStyles.content.heroCard.item.value}>
-              {currentUserLocation.position ? convertDecimalLongitudeToDMS(currentUserLocation.position.longitude) : "..."}
+              {/* {currentUserLocation.position ? convertDecimalLongitudeToDMS(currentUserLocation.position.longitude) : "..."} */}
             </Text>
           </View>
           <View style={globalStyles.content.heroCard.item}>
             <Text style={globalStyles.content.heroCard.item.title}>{t("addObservatory.altitude")}</Text>
             <Text style={globalStyles.content.heroCard.item.value}>
-              {currentUserLocation.position ? t("common:units.meters", { value: Math.round(currentUserLocation.position.elevation) }) : "..."}
+              {/* {currentUserLocation.position ? t("common:units.meters", { value: Math.round(currentUserLocation.position.elevation) }) : "..."} */}
             </Text>
           </View>
         </View>

@@ -13,7 +13,7 @@ import { app_colors } from "../../../helpers/variables";
 import SwitchButton from "../../../components/SwitchButton/SwitchButton";
 import * as Localization from "expo-localization";
 import getUnicodeFlagIcon from 'country-flag-icons/unicode'
-import InfoCard from "../../../components/InfoCard/InfoCard";
+import InfoCard from "../../../components/cards/InfoCard/InfoCard";
 
 const LanguageScreen = () => {
 

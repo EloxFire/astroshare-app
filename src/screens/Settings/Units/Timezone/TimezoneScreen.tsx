@@ -10,7 +10,7 @@ import { Check, InfoIcon, Search } from "lucide-react-native";
 import { app_colors } from "../../../../helpers/variables";
 import { timezoneScreenStyles } from "./TimezoneScreen.styles";
 import { ALL_TIMEZONES } from "../../../../helpers/timezones";
-import InfoCard from "../../../../components/InfoCard/InfoCard";
+import InfoCard from "../../../../components/cards/InfoCard/InfoCard";
 
 const TimezoneScreen = () => {
   const router = useRouter();

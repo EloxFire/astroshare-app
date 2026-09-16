@@ -11,7 +11,6 @@ import { useUserDataStore } from "../../../store/userData.store";
 import ObservatoryCard from "./ObservatoryCard/ObservatoryCard";
 import { globalStyles } from "../../../helpers/globalStyles";
 import { router } from "expo-router";
-import { useCurrentGpsPosition } from "../../../hooks/useCurrentGpsPosition";
 import { useTranslation } from "react-i18next";
 
 const ObservatoriesScreen = () => {
@@ -21,7 +20,6 @@ const ObservatoriesScreen = () => {
   const activeObservatoryId = useUserDataStore((state) => state.activeObservatoryId);
   const setActiveObservatoryId = useUserDataStore((state) => state.setActiveObservatoryId);
 
-  const currentUserLocation = useCurrentGpsPosition();
 
   const mapRef = useRef<MapView>(null);
   // Nécessaire depuis que la position GPS est préchargée au démarrage (app/_layout.tsx) :
@@ -47,16 +45,16 @@ const ObservatoriesScreen = () => {
     router.push("/settings/observatories/addNewObservatory");
   }
 
-  useEffect(() => {
-    if (isMapReady && currentUserLocation.position) {
-      mapRef.current?.animateToRegion({
-        latitude: currentUserLocation.position.latitude,
-        longitude: currentUserLocation.position.longitude,
-        latitudeDelta: 0.0922,
-        longitudeDelta: 0.0421,
-      }, 1000);
-    }
-  }, [isMapReady, currentUserLocation.position]);
+  // useEffect(() => {
+  //   if (isMapReady && currentUserLocation.position) {
+  //     mapRef.current?.animateToRegion({
+  //       latitude: currentUserLocation.position.latitude,
+  //       longitude: currentUserLocation.position.longitude,
+  //       latitudeDelta: 0.0922,
+  //       longitudeDelta: 0.0421,
+  //     }, 1000);
+  //   }
+  // }, [isMapReady, currentUserLocation.position]);
 
   return (
     <View style={observatoriesScreenStyles.screen}>

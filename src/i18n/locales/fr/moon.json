@@ -37,7 +37,7 @@
     "fullMoon_one": "Pleine lune dans {{count}} jour",
     "fullMoon_other": "Pleine lune dans {{count}} jours"
   },
-  "dayProgress": "Jour : {{age}} / {{total}}",
+  "dayProgress": "Cycle lunaire : {{age}}j / {{total}}j",
   "stats": {
     "illumination": "Illumination",
     "age": "âge",
@@ -46,8 +46,8 @@
   },
   "ephemeris": {
     "rise": "Lever",
-    "culmination": "Culmination",
     "set": "Coucher",
+    "culmination": "Culmination",
     "distance": "Distance",
     "distanceValue": "{{value}} km",
     "altitude": "Altitude",

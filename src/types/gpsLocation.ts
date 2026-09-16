@@ -1,1 +1,9 @@
-export type GpsPosition = { latitude: number; longitude: number; elevation: number };
+export type GpsLocation = {
+  latitude: number;
+  longitude: number;
+  elevation: number;
+  name?: string;
+  local_names?: Record<string, string>;
+  country?: string;
+  state?: string;
+};

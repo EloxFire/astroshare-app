@@ -1,4 +1,4 @@
-import { app_colors, radius } from "../../helpers/variables";
+import { app_colors, radius } from "../../../helpers/variables";
 
 export const infoCardStyles = {
   card: {
