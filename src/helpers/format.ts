@@ -1,3 +1,8 @@
+import type { TransitInstance } from "@observerly/astrometry";
+import type { TFunction } from "i18next";
+import { convertAzimuthToCardinalDirection } from "./location/convert";
+import type { FormatDate } from "../hooks/useAppUnits";
+
 // Insère une espace tous les 3 chiffres (ex: 384 400 → "384 400") — utilisé pour l'affichage
 // de grandes distances (ex: distance Terre-Lune en km).
 export const formatWithSpaces = (value: number): string => value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
@@ -28,3 +33,27 @@ export const formatLocaleNumber = (value: number, language: string, decimals = 0
 // 384400000 en "fr" → "384 400 km", en "en" → "384,400 km", en "it" → "384.400 km").
 export const formatDistanceInKm = (meters: number, language: string, decimals = 0): string =>
   `${formatLocaleNumber(meters / 1000, language, decimals)} km`;
+
+
+// Affiche l'heure + le point cardinal d'un lever/coucher, avec un préfixe "Hier"/"Demain" si le
+// transit ne tombe pas le même jour civil que `referenceDate` (voir la section "transit" de
+// moon.json). `formatDate` est injectée (plutôt que d'importer dayjs directement) pour respecter
+// le réglage UTC/heure locale de l'utilisateur — voir useAppUnits.
+export const formatTransit = (
+  transit: TransitInstance | boolean | undefined,
+  t: TFunction,
+  formatDate: FormatDate,
+  referenceDate: Date
+): string => {
+  if (transit === undefined) return t("transit.loading");
+  if (transit === false) return t("transit.notApplicable");
+  if (transit === true) return t("transit.neverSets");
+
+  const time = formatDate(transit.datetime).format("HH:mm");
+  const direction = convertAzimuthToCardinalDirection(transit.az);
+  const dayDiff = formatDate(transit.datetime).startOf("day").diff(formatDate(referenceDate).startOf("day"), "day");
+
+  if (dayDiff === -1) return t("transit.yesterday", { time, direction });
+  if (dayDiff === 1) return t("transit.tomorrow", { time, direction });
+  return t("transit.today", { time, direction });
+};

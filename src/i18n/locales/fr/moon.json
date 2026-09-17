@@ -27,7 +27,7 @@
     "loading": "...",
     "notApplicable": "N/A",
     "neverSets": "Ne se couche pas",
-    "today": "{{time}} | {{direction}}",
+    "today": "Aujourd'hui, {{time}} | {{direction}}",
     "tomorrow": "Demain, {{time}} | {{direction}}",
     "yesterday": "Hier, {{time}} | {{direction}}"
   },
@@ -47,6 +47,8 @@
   "ephemeris": {
     "rise": "Lever",
     "set": "Coucher",
+    "nextRise": "Prochain lever",
+    "nextSet": "Prochain coucher",
     "culmination": "Culmination",
     "distance": "Distance",
     "distanceValue": "{{value}} km",
@@ -77,5 +79,11 @@
     "riseSetValue": "{{rise}} · {{set}}",
     "nextPhase": "Prochaine phase",
     "nextPhaseValue": "{{phase}} · {{date}}"
+  },
+  "suggestions": {
+    "formation": {
+      "title": "Comment s'est formée la lune ?",
+      "description": "Découvrez comment la lune s'est formée et comment elle influence notre planète."
+    }
   }
 }

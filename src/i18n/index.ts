@@ -20,6 +20,7 @@ import common_fr from "./locales/fr/common.json";
 import tools_fr from "./locales/fr/tools.json";
 import moon_fr from "./locales/fr/moon.json";
 import settings_fr from "./locales/fr/settings.json";
+import suggestionsCards_fr from "./locales/fr/suggestionsCards.json";
 import common_en from "./locales/en/common.json";
 import tools_en from "./locales/en/tools.json";
 import moon_en from "./locales/en/moon.json";
@@ -53,10 +54,10 @@ i18next.use(initReactI18next).init({
   lng: resolveLanguage(useUserDataStore.getState().locale),
   fallbackLng: supportedLanguages[0].code, //fr par défaut si la langue détectée n'est pas supportée
   supportedLngs: SUPPORTED_LANGUAGES,
-  ns: ["common", "tools", "moon", "settings"],
+  ns: ["common", "tools", "moon", "settings", "suggestionsCards"],
   defaultNS: "common",
   resources: {
-    fr: { common: common_fr, tools: tools_fr, moon: moon_fr, settings: settings_fr },
+    fr: { common: common_fr, tools: tools_fr, moon: moon_fr, settings: settings_fr, suggestionsCards: suggestionsCards_fr },
     en: { common: common_en, tools: tools_en, moon: moon_en, settings: settings_en },
     it: { common: common_it, tools: tools_it, moon: moon_it, settings: settings_it },
   },

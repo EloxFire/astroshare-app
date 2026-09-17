@@ -79,6 +79,9 @@ export function GpsLocationProvider({ children }: { children: React.ReactNode })
         state: geocoding?.state,
       }
 
+      console.log("[useLocation] Position GPS récupérée :", fullLocation);
+      
+
       setLastKnownLocation(fullLocation);  
       return fullLocation;
     } catch (error) {

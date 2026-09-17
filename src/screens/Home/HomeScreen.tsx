@@ -22,6 +22,35 @@ export const HomeScreen = () => {
       <View style={globalStyles.screen.content}>
         <CurrentConditions />
         <Tonight />
+
+        {/* <Text>{JSON.stringify({ error, loading })}</Text> */}
+
+        {/*  POSITION GPS */}
+        <View>
+          <Text>GPS : </Text>
+          {loading && (
+          <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+            <ActivityIndicator size="large" color="#0000ff" />
+          </View>
+        )}
+
+        {error && (
+          <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+            <Text>{error}</Text>
+          </View>
+        )}
+
+        {location && !error && !loading && (
+          <View>
+            <Text>Latitude: {location.latitude}</Text>
+            <Text>Longitude: {location.longitude}</Text>
+          </View>
+        )}
+        </View>
+
+        
+
+
       </View>
     </View>
   );

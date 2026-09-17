@@ -16,16 +16,30 @@ export const listCardStyles = {
       alignItems: "center" as const,
       gap: 10,
 
-      title: {
-        color: app_colors.primary.medium,
-        fontFamily: "ZTNatureRegular",
-        fontSize: 14,
+      titleBloc: {
+        display: "flex" as const,
+        flexDirection: "row" as const,
+        justifyContent: "flex-start" as const,
+        alignItems: "center" as const,
+        
+        title: {
+          color: app_colors.primary.medium,
+          fontFamily: "ZTNatureRegular",
+          fontSize: 14,
+        },
       },
 
-      value: {
-        color: app_colors.primary.main,
-        fontFamily: "DMMonoMedium",
-        fontSize: 14,
+      valueBloc: {
+        display: "flex" as const,
+        flexDirection: "row" as const,
+        justifyContent: "flex-end" as const,
+        alignItems: "center" as const,
+
+        value: {
+          color: app_colors.primary.main,
+          fontFamily: "DMMonoMedium",
+          fontSize: 14,
+        },
       },
 
       withBorder: {

@@ -124,8 +124,8 @@ export const tonightViewStyles = {
       gap: 4,
 
       image: {
-        width: 52,
-        height: 52,
+        width: 64,
+        height: 64,
         borderRadius: 26,
       },
 

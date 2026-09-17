@@ -1,4 +1,5 @@
 import { ActivityIndicator, InteractionManager, Text, View } from "react-native";
+import type { SuggestionCard as SuggestionCardType } from "../../../../../types/suggestions/suggestionCard";
 import { Image } from "expo-image";
 import { useEffect, useMemo, useState } from "react";
 import { tonightViewStyles } from "./TonightView.styles";
@@ -6,21 +7,49 @@ import { useAppUnits, type FormatDate } from "../../../../../hooks/useAppUnits";
 import { useTranslation } from "react-i18next";
 import { globalStyles } from "../../../../../helpers/globalStyles";
 import { getLunarPhaseLabel, getNextFirstMoonQuarter, getNextFullMoon, getNextLastMoonQuarter } from "../../../../../helpers/astrometry/moon/moonHelpers";
-import { getLunarAge, getLunarAngularDiameter, getLunarDistance, getLunarIllumination, getLunarPhase, getNextNewMoon, LUNAR_SYNODIC_MONTH } from "@observerly/astrometry";
+import { convertEquatorialToHorizontal, getBodyNextRise, getBodyNextSet, getLunarAge, getLunarAngularDiameter, getLunarDistance, getLunarEclipticCoordinate, getLunarEquatorialCoordinate, getLunarIllumination, getLunarPhase, getNextNewMoon, LUNAR_SYNODIC_MONTH } from "@observerly/astrometry";
 import { getMoonIllustration } from "../../../../../helpers/api/moon/moonIllustration";
 import { app_colors } from "../../../../../helpers/variables";
 import ListCard from "../../../../../components/cards/ListCard/ListCard";
 import ValueCard from "../../../../../components/cards/ValueCard/ValueCard";
+import { formatDistanceInKm, formatTransit } from "../../../../../helpers/format";
+import { useLocation } from "../../../../../context/GpsContext";
+import { StatusBar } from "expo-status-bar";
+import { Stars } from "lucide-react-native";
+import { getRandomMoonCalendarSuggestion } from "../../../../../helpers/suggestions/moon/moonCalendarSuggestions";
+import SuggestionCard from "../../../../../components/cards/SuggestionCard/SuggestionCard";
 
 
 const TonightView = () => {
+
+  const { location, loading: loadingLocation } = useLocation();
+  const user = useMemo(() => ({
+    latitude: location?.latitude ?? 0,
+    longitude: location?.longitude ?? 0,
+    altitude: location?.altitude ?? 0,
+  }), [location]);
   const { t, i18n } = useTranslation("moon");
   const { formatDate } = useAppUnits();
   const [computedMoon, setComputedMoon] = useState<any>(null);
   const [loadingAdditionalData, setLoadingAdditionalData] = useState<boolean>(true);
   const [illustrationUrl, setIllustrationUrl] = useState<string | null>(null);
+  const [upcomingIllustrations, setUpcomingIllustrations] = useState<(string | null)[]>([]);
+  const [displayedSuggestion, setDisplayedSuggestion] = useState<SuggestionCardType | null>(null);
 
   const today = useMemo(() => new Date(), []);
+
+  // Les 4 prochaines phases principales, triées par date. nextNewMoon n'arrive qu'après le
+  // calcul différé (InteractionManager, voir plus bas) — tant qu'il n'est pas prêt, la liste
+  // reste vide et la carte affiche son état de chargement.
+  const upcomingPhases = useMemo(() => {
+    if (!computedMoon?.nextNewMoon) return [];
+    return [
+      { phase: "New", date: computedMoon.nextNewMoon },
+      { phase: "First Quarter", date: computedMoon.nextFirstQuarter },
+      { phase: "Full", date: computedMoon.nextFullMoon },
+      { phase: "Last Quarter", date: computedMoon.nextLastQuarter },
+    ].sort((a, b) => a.date.getTime() - b.date.getTime());
+  }, [computedMoon?.nextNewMoon, computedMoon?.nextFirstQuarter, computedMoon?.nextFullMoon, computedMoon?.nextLastQuarter]);
 
   useEffect(() => {
     const now = new Date();
@@ -35,6 +64,8 @@ const TonightView = () => {
       cycleProgress: getLunarAge(now).age / LUNAR_SYNODIC_MONTH, // LUNAR_SYNODIC_MONTH
       distance: getLunarDistance(now).toFixed(0),
       diameter: getLunarAngularDiameter(now),
+      eqCoords: getLunarEquatorialCoordinate(now),
+      coords: convertEquatorialToHorizontal(now, user, getLunarEquatorialCoordinate(now)),
     }
 
     setComputedMoon(computedMoon);
@@ -44,6 +75,8 @@ const TonightView = () => {
     const task = InteractionManager.runAfterInteractions(() => {
       setComputedMoon((prev: any) => ({
         ...prev,
+        rise: getBodyNextRise(today, user, prev?.eqCoords),
+        set: getBodyNextSet(today, user, prev?.eqCoords),
         isNewMoonNext: getNextNewMoon(new Date()) < getNextFullMoon(new Date()),
         daysUntilNextPhase: Math.round(Math.min(
           (getNextNewMoon(new Date()).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24),
@@ -63,6 +96,25 @@ const TonightView = () => {
       setIllustrationUrl(url);
     })();
   }, []);
+
+  useEffect(() => {
+    const suggestion = getRandomMoonCalendarSuggestion();
+    setDisplayedSuggestion(suggestion);
+  }, [])
+
+  // Une illustration par phase à venir, une fois la liste triée disponible (voir upcomingPhases
+  // ci-dessus — dépend de nextNewMoon, calculé après le montage).
+  useEffect(() => {
+    if (upcomingPhases.length === 0) return;
+    (async () => {
+      const urls = await Promise.all(upcomingPhases.map((event) => getMoonIllustration(event.date)));
+      setUpcomingIllustrations(urls);
+    })();
+  }, [upcomingPhases]);
+
+  useEffect(() => {
+    StatusBar.setStyle("dark");
+  }, [])
 
   return (
     <View style={[globalStyles.screen.content, { padding: 0 }]}>
@@ -90,8 +142,6 @@ const TonightView = () => {
         </View>
       </View>
 
-      {/* <Text>{illustrationUrl ?? "NA"}</Text> */}
-
       <View style={tonightViewStyles.lunarCycleProgressContainer}>
         <Text style={tonightViewStyles.lunarCycleProgressContainer.age}>{t("dayProgress", { age: computedMoon?.age?.toFixed(1) ?? "--", total: LUNAR_SYNODIC_MONTH.toFixed(1) })}</Text>
         <View style={tonightViewStyles.lunarCycleProgressContainer.progressBar}>
@@ -105,10 +155,48 @@ const TonightView = () => {
         <ValueCard title={t("stats.diameter")} value={computedMoon?.diameter != null ? `${computedMoon?.diameter.toFixed(2)} °` : "--"} />
       </View>
 
-      <ListCard items={[
-        { title: t("ephemeris.rise"), value: computedMoon?.age?.toFixed(1) ?? "--" },
-        { title: t("ephemeris.set"), value: computedMoon?.illumination ?? "--" },
+      <ListCard additionalContainerStyles={{marginTop: 20}} items={[
+        { title: t("ephemeris.nextRise"), value: formatTransit(computedMoon?.rise, t, formatDate, today) ?? "--" },
+        { title: t("ephemeris.nextSet"), value: formatTransit(computedMoon?.set, t, formatDate, today) ?? "--" },
+        { title: t("ephemeris.distance"), value: computedMoon?.distance != null ? formatDistanceInKm(computedMoon?.distance, i18n.language) : "--" },
+         { title: t("ephemeris.altitude"), value: computedMoon?.coords?.alt != null ? `${computedMoon?.coords?.alt.toFixed(2)} °` : "--" },
       ]} />
+
+      <View style={globalStyles.content.heroCard}>
+        <Text style={[globalStyles.categoryTitle, { fontSize: 12 }]}>{t("phasesOverview.title")}</Text>
+        <View style={tonightViewStyles.mainPhasesContainer}>
+          {
+            upcomingPhases.map((event, index) => (
+              <View key={event.phase} style={tonightViewStyles.mainPhasesContainer.card}>
+                <Image
+                  source={{ uri: upcomingIllustrations[index] ?? undefined }}
+                  style={tonightViewStyles.mainPhasesContainer.card.image}
+                  cachePolicy="memory-disk"
+                />
+                <Text style={tonightViewStyles.mainPhasesContainer.card.date}>
+                  {formatDate(event.date).format("D MMM").toUpperCase()}
+                </Text>
+                <Text style={tonightViewStyles.mainPhasesContainer.card.label}>
+                  {t(`phasesShort.${event.phase}`)}
+                </Text>
+              </View>
+            ))
+          }
+        </View>
+      </View>
+
+      {
+        displayedSuggestion && (
+          <SuggestionCard
+            title={t(`moonCalendar.${displayedSuggestion.id}.title`, {ns: "suggestionsCards"})}
+            description={t(`moonCalendar.${displayedSuggestion.id}.description`, {ns: "suggestionsCards"})}
+            icon={Stars}
+            link={displayedSuggestion.link}
+          />
+        )
+      }
+
+      {/* <Text>{JSON.stringify(computedMoon, null, 2)}</Text> */}
     </View>
   );
 };

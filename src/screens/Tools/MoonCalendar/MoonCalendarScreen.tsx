@@ -1,4 +1,4 @@
-import { View } from "react-native";
+import { ScrollView, View } from "react-native";
 import { ScreenHeader } from "../../../components/ScreenHeader/ScreenHeader";
 import { moonCalendarScreenStyles } from "./MoonCalendarScreen.styles";
 import { StatusBar } from "expo-status-bar";
@@ -30,7 +30,7 @@ const MoonCalendarScreen = () => {
   return (
     <View style={moonCalendarScreenStyles.screen}>
       <ScreenHeader title={t("screen.title")} main={false} />
-      <View style={moonCalendarScreenStyles.content}>
+      <ScrollView  contentContainerStyle={moonCalendarScreenStyles.content}>
         <TabSwitch
           tabs={[t("tabs.tonight"), t("tabs.month")]}
           activeTab={currentView === "tonight" ? 0 : 1}
@@ -52,7 +52,7 @@ const MoonCalendarScreen = () => {
             {/* <MonthView /> */}
           </View>
         )}
-      </View>
+      </ScrollView>
     </View>
   );
 };
