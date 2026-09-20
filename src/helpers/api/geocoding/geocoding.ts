@@ -98,4 +98,7 @@ export const getLightPollutionDataFromCoords = async (latitude: number, longitud
 // fait uniquement à l'affichage (même principe que Phase côté observerly, voir
 // getLunarPhaseLabel dans moonHelpers.ts — éviter de figer la langue dans une donnée stockée).
 export const getLightPollutionIndicatorLabel = (bortle: number): string =>
-  i18next.t(`addObservatory.lightPollution.indicators.${bortle}`, { ns: "settings" });
+  i18next.t(`lightPollution.indicators.${bortle}`, { ns: "common" });
+
+export const getLightPollutionIndicatorDescription = (bortle: number): string =>
+  i18next.t(`lightPollution.indicatorDescriptions.${bortle}`, { ns: "common" });

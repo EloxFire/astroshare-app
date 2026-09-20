@@ -1,3 +1,4 @@
+import { globalStyles } from "../../helpers/globalStyles";
 import { app_colors, gaps, radius, spacing, typography, withOpacity } from "../../helpers/variables";
 
 export const inputWithIconStyles = {
@@ -17,6 +18,10 @@ export const inputWithIconStyles = {
       borderBottomRightRadius: 0,
       borderBottomWidth: 0,
     },
+  },
+
+  label: {
+    ...globalStyles.categoryTitle
   },
 
   input: {

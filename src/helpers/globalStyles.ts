@@ -34,4 +34,18 @@ export const globalStyles = {
     fontFamily: "DMMonoMedium",
     textTransform: "uppercase" as const,
   },
+
+  defaultCard: {
+    backgroundColor: app_colors.white,
+    borderRadius: radius.heroCard,
+    padding: 10,
+    gap: 10,
+    borderWidth: 1,
+    borderColor: app_colors.accent.light,
+  },
+
+  separator: {
+    height: 1,
+    backgroundColor: app_colors.accent.light,
+  }
 }

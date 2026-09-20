@@ -5,10 +5,11 @@ import { app_colors, withOpacity } from "../../helpers/variables";
 import { inputWithIconStyles } from "./InputWithIcon.styles";
 
 interface InputWithIconProps extends TextInputProps {
-  icon: LucideIcon;
   action: () => void;
+  icon?: LucideIcon;
   suggestions?: string[];
   onSuggestionPress?: (suggestion: string) => void;
+  label?: string;
   // false (défaut) : largeur pleine (100% du parent), autonome quel que soit le contexte de
   // layout (colonne, seul, etc.) — n'utilise pas flex:1, qui se comporte différemment selon le
   // flexDirection du parent (axe horizontal en ligne, vertical en colonne) et peut entrer en
@@ -32,30 +33,33 @@ export const InputWithIcon = ({ icon: Icon, style, action, suggestions, fill = f
   }
 
   return (
-    <View style={{display: 'flex', flexDirection: 'row', ...(fill ? { flex: 1 } : { width: '100%' })}}>
-      <View style={[inputWithIconStyles.container, hasSuggestions && isFocused && inputWithIconStyles.container.withSuggestions]}>
-        <Icon color={withOpacity(app_colors.primary.main, 0.8)} size={16} />
-        <TextInput
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
-          style={[inputWithIconStyles.input, style]}
-          placeholderTextColor={withOpacity(app_colors.primary.main, 0.8)}
-          returnKeyType="search"
-          submitBehavior="submit"
-          onSubmitEditing={action}
-          keyboardType={props.keyboardType || "default"}
-          {...props}
-        />
-      </View>
-      {hasSuggestions && isFocused && (
-        <View style={inputWithIconStyles.suggestionsContainer}>
-          {suggestions.map((suggestion, index) => (
-            <TouchableOpacity onPress={() => handleSuggestionPress(suggestion)} key={index} style={[inputWithIconStyles.suggestionText, index < suggestions.length - 1 && inputWithIconStyles.suggestionText.withBorder]}>
-              <Text>{suggestion}</Text>
-            </TouchableOpacity>
-          ))}
+    <>
+      {props.label && <Text style={inputWithIconStyles.label}>{props.label}</Text>}
+      <View style={{display: 'flex', flexDirection: 'row', ...(fill ? { flex: 1 } : { width: '100%' })}}>
+        <View style={[inputWithIconStyles.container, hasSuggestions && isFocused && inputWithIconStyles.container.withSuggestions]}>
+          {Icon && <Icon color={withOpacity(app_colors.primary.main, 0.8)} size={16} />}
+          <TextInput
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
+            style={[inputWithIconStyles.input, style]}
+            placeholderTextColor={withOpacity(app_colors.primary.main, 0.8)}
+            returnKeyType="search"
+            submitBehavior="submit"
+            onSubmitEditing={action}
+            keyboardType={props.keyboardType || "default"}
+            {...props}
+          />
         </View>
-      )}
-    </View>
+        {hasSuggestions && isFocused && (
+          <View style={inputWithIconStyles.suggestionsContainer}>
+            {suggestions.map((suggestion, index) => (
+              <TouchableOpacity onPress={() => handleSuggestionPress(suggestion)} key={index} style={[inputWithIconStyles.suggestionText, index < suggestions.length - 1 && inputWithIconStyles.suggestionText.withBorder]}>
+                <Text>{suggestion}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        )}
+      </View>
+    </>
   );
 };

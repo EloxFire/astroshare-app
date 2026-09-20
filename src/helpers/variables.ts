@@ -30,6 +30,17 @@ export const app_colors = {
     main: "#FFD700",
   },
   background: "#FCF4FF",
+  bortleScale: {
+    1: '#000000', // Black – Bortle 1
+    2: '#4A4A4A', // Dark grey – Bortle 2
+    3: '#878787', // Grey – Bortle 3
+    4: '#0064FF', // Blue – Bortle 4
+    5: '#41A600', // Green – Bortle 5
+    6: '#A3C000', // Yellow-green – Bortle 6
+    7: '#E6C200', // Yellow – Bortle 7
+    8: '#FF5A00', // Orange-red – Bortle 8
+    9: '#FF0000', // Red – Bortle 9
+  }
 };
 
 export const spacing = {

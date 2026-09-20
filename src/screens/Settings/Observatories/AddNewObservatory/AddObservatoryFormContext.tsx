@@ -41,8 +41,12 @@ export const AddObservatoryFormProvider = ({ children }: { children: ReactNode }
         latitude: location.latitude,
         longitude: location.longitude,
         name: location.name || "",
+        display_name: location.name || "",
+        shared: false,
         elevation: location.elevation,
         light_pollution: location.light_pollution,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
       });
     }
   }, [])

@@ -1,6 +1,6 @@
 import { app_colors, radius, withOpacity } from "../../../../helpers/variables";
 
-export const adddNewObservatoryScreenStyles = {
+export const addNewObservatoryScreenStyles = {
   mapContainer: {
     borderRadius: radius.heroCard,
     overflow: "hidden" as const,
@@ -66,5 +66,12 @@ export const adddNewObservatoryScreenStyles = {
       fontFamily: "DMMonoMedium",
       fontSize: 16,
     }
+  },
+
+  editButton: {
+    color: app_colors.accent.main,
+    fontFamily: "DMMonoMedium",
+    fontSize: 14,
+    textTransform: "uppercase" as const,
   }
 }

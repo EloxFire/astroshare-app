@@ -11,7 +11,7 @@ import { globalStyles } from "../../../../../helpers/globalStyles"
 import { convertDecimalLatitudeToDMS, convertDecimalLongitudeToDMS } from "../../../../../helpers/location/convert"
 import { app_colors } from "../../../../../helpers/variables"
 import TabSwitch from "../../../../Tools/MoonCalendar/components/TabSwitch/TabSwitch"
-import { adddNewObservatoryScreenStyles } from "../addNewObservatoryScreen.styles"
+import { addNewObservatoryScreenStyles } from "../addNewObservatoryScreen.styles"
 import { useAddObservatoryForm } from "../AddObservatoryFormContext"
 import { useEffect, useRef, useState } from "react"
 import { useLocation } from "../../../../../context/GpsContext"
@@ -20,7 +20,7 @@ const StepOne = () => {
 
   const { t } = useTranslation("settings");
   const { fetchGpsLocation, location, fetchLocation, gpsLoading, searchLoading } = useLocation();
-  const { newObservatory, setNewObservatory } = useAddObservatoryForm();
+  const { newObservatory, setNewObservatory, setCurrentFormStep } = useAddObservatoryForm();
   const mapRef = useRef<MapView>(null);
 
   const [activeTab, setActiveTab] = useState<number>(0);
@@ -106,8 +106,8 @@ const StepOne = () => {
       <View style={[globalStyles.screen.content, {paddingBottom: 50}]}>
           <TabSwitch
             tabs={[
-              t('addObservatory.tabs.map'),
-              t('addObservatory.tabs.coords')
+              t('addObservatory.stepOne.tabs.map'),
+              t('addObservatory.stepOne.tabs.coords')
             ]}
 
             activeTab={activeTab}
@@ -117,12 +117,12 @@ const StepOne = () => {
           {
             activeTab === 0 && (
               <View style={{display: "flex", flexDirection: "column", gap: 10}}>
-                <Text style={globalStyles.categoryTitle}>{t("addObservatory.searchPrompt")}</Text>
+                <Text style={globalStyles.categoryTitle}>{t("addObservatory.stepOne.searchPrompt")}</Text>
                 <View style={{display: "flex", flexDirection: "row", alignItems: "center", gap: 5, marginBottom: 10}}>
                   <InputWithIcon
                     fill
                     icon={Search}
-                    placeholder={t("addObservatory.searchPlaceholder")}
+                    placeholder={t("addObservatory.stepOne.searchPlaceholder")}
                     value={searchQuery}
                     onChangeText={setSearchQuery}
                     action={() => handleSearch()}
@@ -166,11 +166,11 @@ const StepOne = () => {
           {
             activeTab === 1 && (
               <View style={{display: "flex", flexDirection: "column", gap: 10}}>
-                <Text style={globalStyles.categoryTitle}>{t("addObservatory.searchCoordsPrompt")}</Text>
+                <Text style={globalStyles.categoryTitle}>{t("addObservatory.stepOne.searchCoordsPrompt")}</Text>
 
                 <InputWithIcon
                   icon={DraftingCompass}
-                  placeholder={t("addObservatory.searchCoordsLatitudePlaceholder")}
+                  placeholder={t("addObservatory.stepOne.searchCoordsLatitudePlaceholder")}
                   value={searchLatitude}
                   onChangeText={setSearchLatitude}
                   action={() => {}}
@@ -178,24 +178,24 @@ const StepOne = () => {
                 />
                 <InputWithIcon
                   icon={DraftingCompass}
-                  placeholder={t("addObservatory.searchCoordsLongitudePlaceholder")}
+                  placeholder={t("addObservatory.stepOne.searchCoordsLongitudePlaceholder")}
                   value={searchLongitude}
                   onChangeText={setSearchLongitude}
                   action={() => {}}
                   keyboardType="numeric"
                 />
 
-                <TouchableOpacity style={adddNewObservatoryScreenStyles.validateButton} onPress={() => handleSearch()}>
-                  <Text style={adddNewObservatoryScreenStyles.validateButton.text}>{t("addObservatory.searchCoords")}</Text>
+                <TouchableOpacity style={addNewObservatoryScreenStyles.validateButton} onPress={() => handleSearch()}>
+                  <Text style={addNewObservatoryScreenStyles.validateButton.text}>{t("addObservatory.stepOne.searchCoords")}</Text>
                 </TouchableOpacity>
               </View>
             )
           }
 
-          <View style={adddNewObservatoryScreenStyles.mapContainer}>
+          <View style={addNewObservatoryScreenStyles.mapContainer}>
             <MapView
               ref={mapRef}
-              style={adddNewObservatoryScreenStyles.mapContainer.map}
+              style={addNewObservatoryScreenStyles.mapContainer.map}
               provider={PROVIDER_GOOGLE}
 
               initialRegion={{
@@ -216,10 +216,10 @@ const StepOne = () => {
                       latitude: newObservatory.latitude,
                       longitude: newObservatory.longitude,
                     }}
-                    title={t("addObservatory.selectedLocationMarker")}
+                    title={t("addObservatory.stepOne.selectedLocationMarker")}
                   >
-                    <View style={adddNewObservatoryScreenStyles.mapContainer.map.marker.outer}>
-                      <View style={adddNewObservatoryScreenStyles.mapContainer.map.marker.inner} />
+                    <View style={addNewObservatoryScreenStyles.mapContainer.map.marker.outer}>
+                      <View style={addNewObservatoryScreenStyles.mapContainer.map.marker.inner} />
                     </View>
                   </Marker>
                 )
@@ -230,20 +230,20 @@ const StepOne = () => {
           <ListCard 
             items={[
               {
-                title: t("addObservatory.name"),
-                value: newObservatory?.name || t("addObservatory.noName", "Sans nom"),
+                title: t("addObservatory.stepOne.name"),
+                value: newObservatory?.name || t("addObservatory.stepOne.noName", "Sans nom"),
               },
               {
-                title: t("addObservatory.latitude"),
+                title: t("addObservatory.stepOne.latitude"),
                 value: newObservatory ? convertDecimalLatitudeToDMS(newObservatory.latitude) : "...",
               },
               {
-                title: t("addObservatory.longitude"),
+                title: t("addObservatory.stepOne.longitude"),
                 value: newObservatory ? convertDecimalLongitudeToDMS(newObservatory.longitude) : "...",
               },
               {
-                title: t("addObservatory.altitude"),
-                value: newObservatory ? (newObservatory.elevation ? t("common:units.meters", { value: Math.round(newObservatory.elevation) }) : t("addObservatory.noAltitude")) : "...",
+                title: t("addObservatory.stepOne.altitude"),
+                value: newObservatory ? (newObservatory.elevation ? t("common:units.meters", { value: Math.round(newObservatory.elevation) }) : t("addObservatory.stepOne.noAltitude")) : "...",
               }
             ]}
           />
@@ -251,17 +251,17 @@ const StepOne = () => {
           <InfoCard
             icon={Lightbulb}
             title={
-              <Trans i18nKey="addObservatory.lightPollution.title" ns="settings" values={{ bortle: newObservatory?.light_pollution?.bortle ?? "?", sqm: newObservatory?.light_pollution?.mpsas ?? "?" }}>
+              <Trans i18nKey="addObservatory.stepOne.lightPollution.title" ns="settings" values={{ bortle: newObservatory?.light_pollution?.bortle ?? "?", sqm: newObservatory?.light_pollution?.mpsas ?? "?" }}>
                 <Text style={infoCardStyles.card.infos.title.bortle}>{newObservatory?.light_pollution?.bortle ?? "?"}</Text>
                 <Text style={infoCardStyles.card.infos.title.highlight}>{`(${newObservatory?.light_pollution?.mpsas ?? "?"}mag/arcsec²)`}</Text>
               </Trans>
             }
             description={
               <Trans
-                i18nKey="addObservatory.lightPollution.description"
+                i18nKey="addObservatory.stepOne.lightPollution.description"
                 ns="settings"
                 values={{
-                  source: newObservatory?.light_pollution?.source || t("addObservatory.lightPollution.noSource"),
+                  source: newObservatory?.light_pollution?.source || t("addObservatory.stepOne.lightPollution.noSource"),
                   indicator: newObservatory?.light_pollution ? getLightPollutionIndicatorLabel(newObservatory.light_pollution.bortle) : "",
                 }}
               >
@@ -273,7 +273,7 @@ const StepOne = () => {
             additionnalDescriptionStyle={{opacity: .8, fontFamily: 'DMMonoRegular', fontSize: 10}}
           />
 
-          <TouchableOpacity style={adddNewObservatoryScreenStyles.nextButton}>
+          <TouchableOpacity style={addNewObservatoryScreenStyles.nextButton} onPress={() => setCurrentFormStep(2)} disabled={!newObservatory}>
             <Text style={{color: app_colors.white, fontFamily: 'DMMonoMedium', fontSize: 16}}>{t("addObservatory.nextButton")}</Text>
             <ArrowRight color={app_colors.white} size={20} />
           </TouchableOpacity>

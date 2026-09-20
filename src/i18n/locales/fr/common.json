@@ -27,5 +27,29 @@
       "cloudCover": "Aucun nuage",
       "moonIllumination": "Discrète"
     }
+  },
+  "lightPollution": {
+    "indicators": {
+      "1": "Excellent ciel noir",
+      "2": "Ciel noir typique",
+      "3": "Ciel « rural »",
+      "4": "Transition rural/périurbain",
+      "5": "Ciel de banlieue",
+      "6": "Ciel de banlieue éclairée",
+      "7": "Transition banlieue/ville",
+      "8": "Ciel urbain",
+      "9": "Ciel de centre-ville"
+    },
+    "indicatorDescriptions": {
+      "1": "M33 clairement visible à l'oeil nu, Voie lactée spectaculaire.",
+      "2": "Ciel noir. M33 est facilement visible à l'oeil nu, Voie lactée bien structurée.",
+      "3": "Voie lactée perceptible, M15, M4, M22 visibles à l'oeil nu.",
+      "4": "Halos lumineux visibles, Voie lactée discernable au zenith uniquement.",
+      "5": "Voie lactée a peine visible, matériel au sol bien visible.",
+      "6": "Le ciel est pollué par la lumière urbaine, peu d'étoiles visibles.",
+      "7": "Voie lactée invisible, ciel très pollué par la lumière urbaine.",
+      "8": "Voie lactée invisible, objets du ciel profond difficiles à observer.",
+      "9": "Quasiment aucune étoile visible, hormis la Lune et les planètes."
+    }
   }
 }
