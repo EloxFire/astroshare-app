@@ -64,7 +64,22 @@
     "selectedLocationMarker": "Posizione selezionata",
     "latitude": "Latitudine",
     "longitude": "Longitudine",
-    "altitude": "Altitudine"
+    "altitude": "Altitudine",
+    "lightPollution": {
+      "title": "Bortle <0>{{bortle}}</0> stimato in questo luogo <1>{{sqm}}mag/arcsec²</1>",
+      "description": "Secondo {{source}} e i dati sull'inquinamento luminoso, il tuo luogo di osservazione è classificato come <0>{{indicator}}</0>.",
+      "indicators": {
+        "1": "Cielo nero eccellente",
+        "2": "Cielo nero tipico",
+        "3": "Cielo rurale",
+        "4": "Transizione rurale/periurbana",
+        "5": "Cielo suburbano",
+        "6": "Cielo suburbano illuminato",
+        "7": "Transizione periferia/città",
+        "8": "Cielo urbano",
+        "9": "Cielo di centro città"
+      }
+    }
   },
   "units": {
     "title": "Unità e formati",

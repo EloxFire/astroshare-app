@@ -64,7 +64,22 @@
     "selectedLocationMarker": "Selected location",
     "latitude": "Latitude",
     "longitude": "Longitude",
-    "altitude": "Altitude"
+    "altitude": "Altitude",
+    "lightPollution": {
+      "title": "Estimated Bortle <0>{{bortle}}</0> at this location <1>{{sqm}}mag/arcsec²</1>",
+      "description": "According to {{source}} and light pollution data, your observation location is classified as <0>{{indicator}}</0>.",
+      "indicators": {
+        "1": "Excellent dark-sky site",
+        "2": "Typical truly dark site",
+        "3": "Rural sky",
+        "4": "Rural/suburban transition",
+        "5": "Suburban sky",
+        "6": "Bright suburban sky",
+        "7": "Suburban/urban transition",
+        "8": "City sky",
+        "9": "Inner-city sky"
+      }
+    }
   },
   "units": {
     "title": "Units & formats",

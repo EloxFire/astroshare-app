@@ -61,14 +61,49 @@
     "altitudeAbbreviated": "alt. {{value}} m"
   },
   "addObservatory": {
+    "tabs": {
+      "map": "Carte",
+      "coords": "Coordonnées"
+    },
     "screenTitle": "Nouveau lieu",
     "screenSubtitle": "Étape 1/2 - Emplacement",
     "searchPrompt": "Recherchez ou appuyez sur la carte",
+    "searchCoordsPrompt": "Entrez les coordonnées GPS",
     "searchPlaceholder": "Aix-en-Provence",
+    "searchCoordsLatitudePlaceholder": "Latitude (ex: 43.5297)",
+    "searchCoordsLongitudePlaceholder": "Longitude (ex: 5.4474)",
+    "searchCoords": "Rechercher",
     "selectedLocationMarker": "Lieu sélectionné",
     "latitude": "Latitude",
     "longitude": "Longitude",
-    "altitude": "Altitude"
+    "altitude": "Altitude",
+    "noAltitude": "A définir",
+    "name": "Lieu",
+    "lightPollution": {
+      "title": "Bortle <0>{{bortle}}</0> estimé à cet endroit <1>{{sqm}}mag/arcsec²</1>",
+      "description": "Selon le {{source}} et les données de pollution lumineuse, votre lieu d'observation est classé comme <0>{{indicator}}</0>.",
+      "indicators": {
+        "1": "Excellent ciel noir",
+        "2": "Ciel noir typique",
+        "3": "Ciel « rural »",
+        "4": "Transition rural/périurbain",
+        "5": "Ciel de banlieue",
+        "6": "Ciel de banlieue éclairée",
+        "7": "Transition banlieue/ville",
+        "8": "Ciel urbain",
+        "9": "Ciel de centre-ville"
+      }
+    },
+    "noSource": "aucune source disponible",
+    "nextButton": "Continuer",
+    "backButton": "Retour",
+    "cancelButton": "Annuler",
+    "confirmCancel": {
+      "title": "Annuler l'ajout de l'observatoire ?",
+      "description": "Toutes les informations saisies seront perdues.",
+      "confirmButton": "Oui, annuler",
+      "cancelButton": "Non, continuer"
+    }
   },
   "units": {
     "title": "Unités et formats",

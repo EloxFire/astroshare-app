@@ -21,12 +21,31 @@ export const infoCardStyles = {
         color: app_colors.white,
         fontFamily: "ZTNatureBold",
         fontSize: 14,
+
+        // Style simple pour mettre en valeur un segment du titre via <Trans> (ex: la valeur
+        // SQM dans addObservatory.lightPollution.title) — mêmes police/taille que le titre,
+        // seule la couleur change.
+        highlight: {
+          // color: app_colors.yellow.main,
+          fontSize: 10,
+        },
+
+        bortle: {
+          color: app_colors.yellow.main,
+        }
       },
 
       description: {
         color: app_colors.white,
         fontFamily: "ZTNatureRegular",
         fontSize: 12,
+
+        // Même principe que title.highlight : met en valeur un segment via <Trans> (ex:
+        // l'indicateur de pollution lumineuse dans addObservatory.lightPollution.description).
+        highlight: {
+          color: app_colors.yellow.main,
+          fontFamily: "ZTNatureBold",
+        },
       }
     }
   }

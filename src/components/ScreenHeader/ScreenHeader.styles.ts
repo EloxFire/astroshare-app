@@ -10,6 +10,7 @@ export const screenHeaderStyles = {
 
     light: {
       backgroundColor: app_colors.background,
+      paddingBottom: 0,
     },
 
     homeHeader: {

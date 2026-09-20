@@ -2,16 +2,13 @@ import '../src/i18n';
 import { Tabs } from 'expo-router';
 import { View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import { QueryClientProvider } from '@tanstack/react-query';
 import { House, Settings, Search, Telescope, LayoutGrid } from 'lucide-react-native';
 import { app_colors } from '../src/helpers/variables';
 import { PlatformPressable } from 'expo-router/build/react-navigation';
 import { useAppFonts } from '../src/hooks/useAppFonts';
 import { useI18nReady } from '../src/i18n/useI18nReady';
 import { useTranslation } from 'react-i18next';
-import { useEffect } from 'react';
 import { GpsLocationProvider } from '../src/context/GpsContext';
-import Toast from '../src/components/Toast/Toast';
 
 export default function RootLayout() {
   const [fontsLoaded] = useAppFonts();

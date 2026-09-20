@@ -162,7 +162,7 @@ const TonightView = () => {
          { title: t("ephemeris.altitude"), value: computedMoon?.coords?.alt != null ? `${computedMoon?.coords?.alt.toFixed(2)} °` : "--" },
       ]} />
 
-      <View style={globalStyles.content.heroCard}>
+      <View style={tonightViewStyles.nextPhasesContainer}>
         <Text style={[globalStyles.categoryTitle, { fontSize: 12 }]}>{t("phasesOverview.title")}</Text>
         <View style={tonightViewStyles.mainPhasesContainer}>
           {
@@ -186,6 +186,7 @@ const TonightView = () => {
       </View>
 
       {
+        // TODO : Implémenter le système de ressources complet pour les suggestions.
         displayedSuggestion && (
           <SuggestionCard
             title={t(`moonCalendar.${displayedSuggestion.id}.title`, {ns: "suggestionsCards"})}

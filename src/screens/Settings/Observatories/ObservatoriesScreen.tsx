@@ -12,9 +12,12 @@ import ObservatoryCard from "./ObservatoryCard/ObservatoryCard";
 import { globalStyles } from "../../../helpers/globalStyles";
 import { router } from "expo-router";
 import { useTranslation } from "react-i18next";
+import { useLocation } from "../../../context/GpsContext";
+import { GpsLocation } from "../../../types/gpsLocation";
 
 const ObservatoriesScreen = () => {
   const { t } = useTranslation("settings");
+  const { location }: { location: GpsLocation} = useLocation();
 
   const userObservatories = useUserDataStore((state) => state.observatories);
   const activeObservatoryId = useUserDataStore((state) => state.activeObservatoryId);
@@ -45,16 +48,18 @@ const ObservatoriesScreen = () => {
     router.push("/settings/observatories/addNewObservatory");
   }
 
-  // useEffect(() => {
-  //   if (isMapReady && currentUserLocation.position) {
-  //     mapRef.current?.animateToRegion({
-  //       latitude: currentUserLocation.position.latitude,
-  //       longitude: currentUserLocation.position.longitude,
-  //       latitudeDelta: 0.0922,
-  //       longitudeDelta: 0.0421,
-  //     }, 1000);
-  //   }
-  // }, [isMapReady, currentUserLocation.position]);
+  useEffect(() => {
+    if (isMapReady && location) {
+      console.log("[ObservatoriesScreen] Centering map on GPS location: ", location);
+      
+      mapRef.current?.animateToRegion({
+        latitude: location.latitude,
+        longitude: location.longitude,
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.0421,
+      }, 1000);
+    }
+  }, [isMapReady, location]);
 
   return (
     <View style={observatoriesScreenStyles.screen}>

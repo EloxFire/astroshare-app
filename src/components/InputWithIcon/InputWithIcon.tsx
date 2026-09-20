@@ -9,9 +9,17 @@ interface InputWithIconProps extends TextInputProps {
   action: () => void;
   suggestions?: string[];
   onSuggestionPress?: (suggestion: string) => void;
+  // false (défaut) : largeur pleine (100% du parent), autonome quel que soit le contexte de
+  // layout (colonne, seul, etc.) — n'utilise pas flex:1, qui se comporte différemment selon le
+  // flexDirection du parent (axe horizontal en ligne, vertical en colonne) et peut entrer en
+  // compétition avec d'autres éléments flex:1 pour l'espace vertical restant de l'écran.
+  // true : flex:1 — à activer uniquement quand ce composant est placé à côté d'un autre élément
+  // dans une View flexDirection:"row" (ex: à côté d'un bouton), pour se partager la largeur.
+  fill?: boolean;
+  keyboardType?: TextInputProps["keyboardType"];
 }
 
-export const InputWithIcon = ({ icon: Icon, style, action, suggestions, ...props }: InputWithIconProps) => {
+export const InputWithIcon = ({ icon: Icon, style, action, suggestions, fill = false, ...props }: InputWithIconProps) => {
 
   const [isFocused, setIsFocused] = useState(false);
 
@@ -24,7 +32,7 @@ export const InputWithIcon = ({ icon: Icon, style, action, suggestions, ...props
   }
 
   return (
-    <View style={{display: 'flex', flexDirection: 'row', flex: 1, width: '100%'}}>
+    <View style={{display: 'flex', flexDirection: 'row', ...(fill ? { flex: 1 } : { width: '100%' })}}>
       <View style={[inputWithIconStyles.container, hasSuggestions && isFocused && inputWithIconStyles.container.withSuggestions]}>
         <Icon color={withOpacity(app_colors.primary.main, 0.8)} size={16} />
         <TextInput
@@ -35,6 +43,7 @@ export const InputWithIcon = ({ icon: Icon, style, action, suggestions, ...props
           returnKeyType="search"
           submitBehavior="submit"
           onSubmitEditing={action}
+          keyboardType={props.keyboardType || "default"}
           {...props}
         />
       </View>
