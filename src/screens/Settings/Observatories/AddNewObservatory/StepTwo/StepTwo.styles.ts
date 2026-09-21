@@ -92,6 +92,30 @@ export const addNewObservatoryStepTwoStyles = {
   },
 
   observatoryTypeContainer: {
-    ...globalStyles.defaultCard,
+    display: "flex" as const,
+    flexDirection: "row" as const,
+    justifyContent: "space-between" as const,
+    gap: 10,
+
+    typeButton: {
+      ...globalStyles.defaultCard,
+      display: "flex" as const,
+      flexDirection: "column" as const,
+      alignItems: "center" as const,
+      justifyContent: "center" as const,
+      gap: 5,
+      flex: 1,
+
+      text: {
+        fontFamily: "DMMonoMedium",
+        fontSize: 10,
+        textAlign: "center" as const,
+      },
+
+      active: {
+        borderColor: app_colors.accent.main,
+        borderWidth: 2,
+      }
+    }
   }
 }

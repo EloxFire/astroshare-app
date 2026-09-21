@@ -12,6 +12,8 @@ import { useState } from "react";
 import { addNewObservatoryStepTwoStyles } from "./StepTwo.styles";
 import { getLightPollutionIndicatorDescription, getLightPollutionIndicatorLabel } from "../../../../../helpers/api/geocoding/geocoding";
 import Svg, { Defs, LinearGradient, Rect, Stop } from 'react-native-svg';
+import { observatoriesTypes } from "../../../../../helpers/observatories/observatories";
+import { ObservatoryType } from "../../../../../types/observatory";
 
 const StepTwo = () => {
 
@@ -21,6 +23,7 @@ const StepTwo = () => {
   const [displayName, setDisplayName] = useState(newObservatory?.display_name || "");
   const [bortleNumber, setBortleNumber] = useState(newObservatory?.light_pollution?.bortle || 4);
   const [sqm, setSQM] = useState(newObservatory?.light_pollution?.mpsas || 20.10);
+  const [observatoryType, setObservatoryType] = useState<ObservatoryType>("home");
 
   const handleSetDisplayName = () => {
     if(!newObservatory) return;
@@ -48,6 +51,16 @@ const StepTwo = () => {
           action={() => handleSetDisplayName()}
           onChangeText={setDisplayName}
           placeholder={t("addObservatory.stepTwo.displayNamePlaceholder")}
+        />
+
+        <InputWithIcon
+          label={t("addObservatory.stepTwo.tagsLabel")}
+          value={newObservatory?.tag || ""}
+          action={() => {}}
+          onChangeText={(text) => {
+            if(newObservatory) newObservatory.tag = text;
+          }}
+          placeholder={t("addObservatory.stepTwo.tagsPlaceholder")}
         />
 
         <Text style={globalStyles.categoryTitle}>{t("addObservatory.stepTwo.skyQuality.title")}</Text>
@@ -108,8 +121,19 @@ const StepTwo = () => {
 
         <Text style={globalStyles.categoryTitle}>{t("addObservatory.stepTwo.observatoryType.title")}</Text>
         <View style={addNewObservatoryStepTwoStyles.observatoryTypeContainer}>
+          {
+            observatoriesTypes.map(({id, label, icon: Icon}) => {
+              return (
+                <TouchableOpacity key={id} style={[addNewObservatoryStepTwoStyles.observatoryTypeContainer.typeButton, observatoryType === id && addNewObservatoryStepTwoStyles.observatoryTypeContainer.typeButton.active]} onPress={() => setObservatoryType(id as ObservatoryType)}>
+                  <Icon size={20} color={app_colors.primary.main} />
+                  <Text style={addNewObservatoryStepTwoStyles.observatoryTypeContainer.typeButton.text}>{label}</Text>
+                </TouchableOpacity>
+              )
+            })
+          }
         </View>
 
+        {/* <Text style={globalStyles.categoryTitle}>{t("addObservatory.stepTwo.skyQuality.title")}</Text> */}
 
         <TouchableOpacity style={addNewObservatoryScreenStyles.nextButton}>
           <Text style={{color: app_colors.white, fontFamily: 'DMMonoMedium', fontSize: 16}}>{t("addObservatory.saveButton")}</Text>

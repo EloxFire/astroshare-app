@@ -105,6 +105,8 @@
       },
       "displayNameLabel": "Nom de l'observatoire",
       "displayNamePlaceholder": "Ex: Mon observatoire",
+      "tagsLabel": "Tags (facultatif)",
+      "tagsPlaceholder": "Ex: montagne, lac, club...",
       "skyQuality": {
         "title": "Qualité du ciel (estimé automatiquement)",
         "scaleExtremes": {

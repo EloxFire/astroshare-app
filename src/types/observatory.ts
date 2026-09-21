@@ -3,13 +3,14 @@ import { GpsLocation } from "./gpsLocation";
 // Liste fermée d'équipements possibles — sert aussi côté UI pour générer les cases à cocher
 // (une case par valeur de ObservatoryEquipment).
 export type ObservatoryEquipment = "electricity" | "parking" | "shelter" | "toilet" | "wifi" | "bedding";
+export type ObservatoryType = "home" | "private" | "public" | "observatory" | "other";
 
 export type Observatory = GpsLocation & {
   id: string; //uuid
   display_name: string;
   shared: boolean;
   tag?: string;
-  type?: "home" | "private" | "public" | "observatory" | "other";
+  type?: ObservatoryType;
   access?: "car" | "foot";
   equipment?: ObservatoryEquipment[];
   notes?: string;
