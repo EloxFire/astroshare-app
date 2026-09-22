@@ -1,6 +1,6 @@
 import { Text, TouchableOpacity, View } from "react-native"
 import { useEffect, useRef, useState } from "react";
-import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
+import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { observatoriesScreenStyles } from "./ObservatoriesScreen.styles";
 import { ScreenHeader } from "../../../components/ScreenHeader/ScreenHeader";
 import ChipsContainer from "../../../components/ChipsContainer/ChipsContainer";
@@ -83,6 +83,21 @@ const ObservatoriesScreen = () => {
             showsCompass
             showsUserLocation={isEnabled}
           >
+            {
+              userObservatories.length > 0 && userObservatories.map((observatory) => {
+                return (
+                  <Marker
+                    key={observatory.id}
+                    coordinate={{
+                      latitude: observatory.latitude,
+                      longitude: observatory.longitude,
+                    }}
+                    title={observatory.name}
+                    description={observatory.display_name || ""}
+                  />
+                )
+              })
+            }
           </MapView>
 
         </View>

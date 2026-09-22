@@ -35,7 +35,11 @@ export const AddObservatoryFormProvider = ({ children }: { children: ReactNode }
   const [newObservatory, setNewObservatory] = useState<Observatory | null>(null);
   
   useEffect(() => {
-    if(location){
+    // !newObservatory : n'initialiser qu'une seule fois, à la première position valide reçue.
+    // Sans cette garde, une nouvelle valeur de `location` plus tard (nouveau fix GPS, etc.)
+    // écraserait silencieusement le brouillon en cours (et générerait un nouvel id), effaçant
+    // toute modification déjà faite par l'utilisateur (nom, équipements, position du pin...).
+    if(location && !newObservatory){
       setNewObservatory({
         id: generateLocalId(),
         latitude: location.latitude,
@@ -49,7 +53,7 @@ export const AddObservatoryFormProvider = ({ children }: { children: ReactNode }
         updatedAt: new Date().toISOString(),
       });
     }
-  }, [])
+  }, [location, newObservatory]);
 
   return (
     <AddObservatoryFormContext.Provider

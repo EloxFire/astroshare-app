@@ -9,7 +9,7 @@ export type Observatory = GpsLocation & {
   id: string; //uuid
   display_name: string;
   shared: boolean;
-  tag?: string;
+  tags?: string[];
   type?: ObservatoryType;
   access?: "car" | "foot";
   equipment?: ObservatoryEquipment[];

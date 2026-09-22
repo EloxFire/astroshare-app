@@ -33,9 +33,13 @@ export const InputWithIcon = ({ icon: Icon, style, action, suggestions, fill = f
   }
 
   return (
-    <>
+    // fill/width doivent être sur cette View extérieure : c'est elle que le parent appelant
+    // voit et dimensionne (ex: à côté d'un bouton dans une ligne) — les mettre plus bas, sur la
+    // ligne icône+input, ne servait plus à rien depuis l'ajout du label, qui a introduit ce
+    // wrapper en colonne au-dessus.
+    <View style={{display: 'flex', flexDirection: 'column', gap: 5, ...(fill ? { flex: 1 } : { width: '100%' })}}>
       {props.label && <Text style={inputWithIconStyles.label}>{props.label}</Text>}
-      <View style={{display: 'flex', flexDirection: 'row', ...(fill ? { flex: 1 } : { width: '100%' })}}>
+      <View style={{display: 'flex', flexDirection: 'row', width: '100%'}}>
         <View style={[inputWithIconStyles.container, hasSuggestions && isFocused && inputWithIconStyles.container.withSuggestions]}>
           {Icon && <Icon color={withOpacity(app_colors.primary.main, 0.8)} size={16} />}
           <TextInput
@@ -60,6 +64,6 @@ export const InputWithIcon = ({ icon: Icon, style, action, suggestions, fill = f
           </View>
         )}
       </View>
-    </>
+    </View>
   );
 };

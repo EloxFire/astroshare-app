@@ -29,6 +29,12 @@ export const app_colors = {
     light: "#FFE993",
     main: "#FFD700",
   },
+  // Rouge "danger" (erreurs, suppression) — pas un rouge pur (#FF0000), qui tranche trop avec
+  // le reste de la palette (violets/jaunes) ; une teinte un peu moins saturée s'y fond mieux.
+  red: {
+    light: "#FFD9D9",
+    main: "#E5484D",
+  },
   background: "#FCF4FF",
   bortleScale: {
     1: '#000000', // Black – Bortle 1

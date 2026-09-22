@@ -14,7 +14,6 @@ const AddNewObservatoryScreenContent = () => {
 
   return (
     <View style={globalStyles.screen}>
-
       {
         currentFormStep === 1 && (
           <>

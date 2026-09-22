@@ -9,6 +9,6 @@ export type GpsLocation = {
   light_pollution?: {
     bortle: number; // 1-9
     mpsas: number; // MPSAS (mag/arcsec²)
-    source: string; // Source of the light pollution data
+    source?: string; // Source of the light pollution data
   }
 };

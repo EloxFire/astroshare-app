@@ -1,10 +1,12 @@
 import { Text, TouchableOpacity, View } from "react-native";
 import { observatoryCardStyles } from "./ObservatoryCard.styles";
 import { Observatory } from "../../../../types/observatory";
-import { ChevronRight, Lightbulb, LucideIcon } from "lucide-react-native";
+import { ChevronRight, Lightbulb, LucideIcon, PlusCircleIcon, Trash2 } from "lucide-react-native";
 import { app_colors } from "../../../../helpers/variables";
 import { convertDecimalLatitudeToDMS, convertDecimalLongitudeToDMS } from "../../../../helpers/location/convert";
 import { useTranslation } from "react-i18next";
+import { observatoriesEquipments } from "../../../../helpers/observatories/observatories";
+import { useState } from "react";
 
 interface ObservatoryCardProps {
   active: boolean;
@@ -27,12 +29,22 @@ const ObservatoryAttribute = ({ text, icon: Icon }: ObservatoryAttributeProps) =
 
 const ObservatoryCard = ({ active, observatory }: ObservatoryCardProps) => {
   const { t } = useTranslation("settings");
+
+  const [isDeleting, setIsDeleting] = useState(false);
+
   return (
-    <TouchableOpacity style={[observatoryCardStyles.card, active && observatoryCardStyles.card.active]} onPress={() => {console.log("Observatory card pressed")}}>
+    <TouchableOpacity
+      style={[observatoryCardStyles.card, active && observatoryCardStyles.card.active]}
+      onPress={() => {console.log("Observatory card pressed")}}
+      disabled={isDeleting}
+      onLongPress={() => {setIsDeleting(true)}}
+      onPressOut={() => {setIsDeleting(false)}}
+    >
       <View style={{display: "flex", flexDirection: "column", flex: 1}}>
         <View style={{display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 20}}>
-          <Text style={observatoryCardStyles.card.title}>{observatory.name}</Text>
+          <Text style={observatoryCardStyles.card.title}>{observatory.display_name ?? observatory.name}</Text>
           {active && <Text style={observatoryCardStyles.card.badge}>{t("observatories.activeBadge")}</Text>}
+          <Text>{observatory.id}</Text>
         </View>
         <View style={observatoryCardStyles.card.subtitleRow}>
           <Text style={observatoryCardStyles.card.subtitleRow.text}>
@@ -41,11 +53,31 @@ const ObservatoryCard = ({ active, observatory }: ObservatoryCardProps) => {
         </View>
 
         <View style={observatoryCardStyles.card.attributesRow}>
-          {observatory.bortle && <ObservatoryAttribute text={t("observatories.bortleLabel", { value: observatory.bortle })} icon={Lightbulb} />}
+          {observatory.equipment && observatory.equipment.length > 0 && (
+            observatoriesEquipments
+              .filter((equipment) => (observatory.equipment as string[]).includes(equipment.id))
+              .slice(0, 2)
+              .map((equipment) => (
+                <ObservatoryAttribute key={equipment.id} text={equipment.label} icon={equipment.icon} />
+              ))
+          )}
+          {
+            observatory.equipment && observatory.equipment.length > 2 && (
+              <ObservatoryAttribute key="equipment-overflow" text={`+${observatory.equipment.length - 2}`} icon={ChevronRight} />
+            )
+          }
         </View>
       </View>
 
-      <ChevronRight color={app_colors.accent.main} size={24} />
+      {
+        isDeleting ? (
+          <ChevronRight color={app_colors.accent.main} size={24} />
+        ) : (
+          <TouchableOpacity>
+            <Trash2 color={app_colors.red.main} size={24} />
+          </TouchableOpacity>
+        )
+      }
       
     </TouchableOpacity>
   )

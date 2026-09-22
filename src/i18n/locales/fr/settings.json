@@ -103,8 +103,10 @@
       "stepOneSummary": {
         "edit": "Modifier"
       },
-      "displayNameLabel": "Nom de l'observatoire",
+      "displayNameLabel": "Nom de l'observatoire (facultatif)",
       "displayNamePlaceholder": "Ex: Mon observatoire",
+      "elevationLabel": "Altitude (facultatif)",
+      "elevationPlaceholder": "Ex: 150 m",
       "tagsLabel": "Tags (facultatif)",
       "tagsPlaceholder": "Ex: montagne, lac, club...",
       "skyQuality": {
@@ -125,6 +127,17 @@
           "public": "Lieu public",
           "private": "Lieu privé",
           "observatory": "Observatoire",
+        }
+      },
+      "equipments": {
+        "title": "Équipements disponibles",
+        "types": {
+          "electricity": "Électricité",
+          "internet": "Internet",
+          "parking": "Parking",
+          "shelter": "Dortoir",
+          "bathroom": "Salle de bain",
+          "kitchen": "Cuisine"
         }
       },
       "notesLabel": "Description (facultatif)",

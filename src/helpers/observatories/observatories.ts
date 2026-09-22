@@ -1,4 +1,4 @@
-import { HatGlassesIcon, HomeIcon, MountainIcon, TelescopeIcon } from "lucide-react-native";
+import { BathIcon, Bed, CookingPot, HatGlassesIcon, HomeIcon, MountainIcon, ParkingCircle, PlugZap, TelescopeIcon, WifiIcon } from "lucide-react-native";
 import i18next from "../../i18n";
 
 export const observatoriesTypes = [
@@ -21,5 +21,38 @@ export const observatoriesTypes = [
     id: "observatory",
     label: i18next.t("addObservatory.stepTwo.observatoryType.types.observatory", {ns: "settings"}),
     icon: TelescopeIcon
+  }
+]
+
+export const observatoriesEquipments = [
+  {
+    id: "electricity",
+    label: i18next.t("addObservatory.stepTwo.equipments.types.electricity", {ns: "settings"}),
+    icon: PlugZap
+  },
+  {
+    id: "internet",
+    label: i18next.t("addObservatory.stepTwo.equipments.types.internet", {ns: "settings"}),
+    icon: WifiIcon
+  },
+  {
+    id: "parking",
+    label: i18next.t("addObservatory.stepTwo.equipments.types.parking", {ns: "settings"}),
+    icon: ParkingCircle
+  },
+  {
+    id: "shelter",
+    label: i18next.t("addObservatory.stepTwo.equipments.types.shelter", {ns: "settings"}),
+    icon: Bed
+  },
+  {
+    id: "bathroom",
+    label: i18next.t("addObservatory.stepTwo.equipments.types.bathroom", {ns: "settings"}),
+    icon: BathIcon
+  },
+  {
+    id: "kitchen",
+    label: i18next.t("addObservatory.stepTwo.equipments.types.kitchen", {ns: "settings"}),
+    icon: CookingPot
   }
 ]

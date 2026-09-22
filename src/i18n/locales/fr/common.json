@@ -50,6 +50,19 @@
       "7": "Voie lactée invisible, ciel très pollué par la lumière urbaine.",
       "8": "Voie lactée invisible, objets du ciel profond difficiles à observer.",
       "9": "Quasiment aucune étoile visible, hormis la Lune et les planètes."
+    },
+    "sqm": {
+      "numeric": {
+        "1": "21.99+",
+        "2": "21.89 - 21.99",
+        "3": "21.69 - 21.89",
+        "4": "21.29 - 21.69",
+        "5": "20.49 - 21.29",
+        "6": "19.09 - 20.49",
+        "7": "17.69 - 19.09",
+        "8": "16.09 - 17.69",
+        "9": "<16.09"
+      }
     }
   }
 }

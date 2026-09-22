@@ -39,7 +39,12 @@ export const addNewObservatoryStepTwoStyles = {
       justifyContent: "space-between" as const,
       marginTop: 10,
 
-      numberButton:{
+      numberButton: {
+        active: {
+          borderWidth: 1,
+          borderColor: app_colors.accent.main,
+        },
+
         width: 32,
         height: 32,
         borderRadius: radius.badge32,
@@ -50,7 +55,12 @@ export const addNewObservatoryStepTwoStyles = {
         text: {
           fontFamily: "DMMonoMedium",
           fontSize: 16,
-        }
+
+          active: {
+            color: app_colors.accent.main,
+          }
+        },
+
       },
 
       colorLine: {
@@ -91,24 +101,28 @@ export const addNewObservatoryStepTwoStyles = {
     }
   },
 
-  observatoryTypeContainer: {
+  observatoryChipContainer: {
     display: "flex" as const,
     flexDirection: "row" as const,
-    justifyContent: "space-between" as const,
+    flexWrap: "wrap" as const,
+    // La largeur exacte de chaque typeButton (2 colonnes) est calculée en JS à partir de la
+    // largeur réelle mesurée de ce conteneur (onLayout, voir StepTwo.tsx) — (largeur - gap) / 2
+    // — pour garantir un gap strict de 10px. Un width en "%" ne peut pas y arriver : le gap
+    // s'ajoute par-dessus le %, il n'en est jamais déduit, donc deux éléments à 50%+gap
+    // dépassent toujours 100% et se renvoient chacun à la ligne suivante.
     gap: 10,
 
-    typeButton: {
+    chipButton: {
       ...globalStyles.defaultCard,
       display: "flex" as const,
-      flexDirection: "column" as const,
+      flexDirection: "row" as const,
       alignItems: "center" as const,
       justifyContent: "center" as const,
-      gap: 5,
-      flex: 1,
+      gap: 10,
 
       text: {
         fontFamily: "DMMonoMedium",
-        fontSize: 10,
+        fontSize: 12,
         textAlign: "center" as const,
       },
 
