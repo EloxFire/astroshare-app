@@ -7,6 +7,7 @@ import { convertDecimalLatitudeToDMS, convertDecimalLongitudeToDMS } from "../..
 import { useTranslation } from "react-i18next";
 import { observatoriesEquipments } from "../../../../helpers/observatories/observatories";
 import { useState } from "react";
+import { useUserDataStore } from "../../../../store/userData.store";
 
 interface ObservatoryCardProps {
   active: boolean;
@@ -29,6 +30,7 @@ const ObservatoryAttribute = ({ text, icon: Icon }: ObservatoryAttributeProps) =
 
 const ObservatoryCard = ({ active, observatory }: ObservatoryCardProps) => {
   const { t } = useTranslation("settings");
+  const removeObservatory = useUserDataStore((state) => state.removeObservatory);
 
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -63,7 +65,7 @@ const ObservatoryCard = ({ active, observatory }: ObservatoryCardProps) => {
           )}
           {
             observatory.equipment && observatory.equipment.length > 2 && (
-              <ObservatoryAttribute key="equipment-overflow" text={`+${observatory.equipment.length - 2}`} icon={ChevronRight} />
+              <ObservatoryAttribute key={observatory.id} text={`+${observatory.equipment.length - 2}`} icon={ChevronRight} />
             )
           }
         </View>
@@ -73,7 +75,7 @@ const ObservatoryCard = ({ active, observatory }: ObservatoryCardProps) => {
         isDeleting ? (
           <ChevronRight color={app_colors.accent.main} size={24} />
         ) : (
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => removeObservatory(observatory.id)} style={{padding: 8}}>
             <Trash2 color={app_colors.red.main} size={24} />
           </TouchableOpacity>
         )

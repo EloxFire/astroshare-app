@@ -9,6 +9,10 @@
       "title": "Automatic language",
       "description": "Use your device language (currently: {{deviceLanguage}})"
     },
+    "infoCard": {
+      "title": "Help us translate Astroshare!",
+      "description": "Join our community of translators and help us make Astroshare accessible to everyone!"
+    },
     "noInProgress": "No translation in progress"
   },
   "screen": {

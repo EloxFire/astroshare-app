@@ -42,6 +42,20 @@ export const globalStyles = {
     gap: 10,
     borderWidth: 1,
     borderColor: app_colors.accent.light,
+
+    item: {
+      display: "flex" as const,
+      flexDirection: "row" as const,
+      alignItems: "center" as const,
+      justifyContent: "space-between" as const,
+      paddingVertical: 10,
+      paddingHorizontal: 10,
+
+      withBorder: {
+        borderBottomWidth: 1,
+        borderBottomColor: app_colors.accent.light,
+      }
+    }
   },
 
   separator: {

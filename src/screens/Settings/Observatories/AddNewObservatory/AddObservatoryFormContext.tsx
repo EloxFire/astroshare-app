@@ -1,13 +1,5 @@
 import { createContext, useContext, useEffect, useRef, useState, type ReactNode, type RefObject } from "react";
-import { useLocation } from "../../../../context/GpsContext";
-import { GpsLocation } from "../../../../types/gpsLocation";
 import { Observatory } from "../../../../types/observatory";
-
-// Id local temporaire pour un observatoire pas encore enregistré — pas besoin d'un vrai UUID
-// cryptographique ici, donc pas besoin de uuid/react-native-get-random-values (qui nécessite un
-// module natif absent d'Expo Go et d'un rebuild sinon). Horodatage + suffixe aléatoire suffisent
-// largement pour une clé unique côté client.
-const generateLocalId = (): string => `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
 
 interface AddObservatoryFormContextValue {
   currentFormStep: number;
@@ -29,32 +21,10 @@ export const useAddObservatoryForm = (): AddObservatoryFormContextValue => {
 // État et handlers partagés par StepOne / StepTwo — repris tels quels depuis
 // AddNewObservatoryScreen.tsx, seulement déplacés ici pour éviter le prop drilling.
 export const AddObservatoryFormProvider = ({ children }: { children: ReactNode }) => {
-  const { location }: { location: GpsLocation } = useLocation();
   const [currentFormStep, setCurrentFormStep] = useState<number>(1);
 
   const [newObservatory, setNewObservatory] = useState<Observatory | null>(null);
   
-  useEffect(() => {
-    // !newObservatory : n'initialiser qu'une seule fois, à la première position valide reçue.
-    // Sans cette garde, une nouvelle valeur de `location` plus tard (nouveau fix GPS, etc.)
-    // écraserait silencieusement le brouillon en cours (et générerait un nouvel id), effaçant
-    // toute modification déjà faite par l'utilisateur (nom, équipements, position du pin...).
-    if(location && !newObservatory){
-      setNewObservatory({
-        id: generateLocalId(),
-        latitude: location.latitude,
-        longitude: location.longitude,
-        name: location.name || "",
-        display_name: location.name || "",
-        shared: false,
-        elevation: location.elevation,
-        light_pollution: location.light_pollution,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      });
-    }
-  }, [location, newObservatory]);
-
   return (
     <AddObservatoryFormContext.Provider
       value={{

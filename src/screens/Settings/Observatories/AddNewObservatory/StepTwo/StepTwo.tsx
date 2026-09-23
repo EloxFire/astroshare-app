@@ -17,6 +17,7 @@ import { ObservatoryEquipment, ObservatoryType } from "../../../../../types/obse
 import { getBortleMpsas } from "../../../../../helpers/lightPollution/lightPollution";
 import { useUserDataStore } from "../../../../../store/userData.store";
 import { router } from "expo-router";
+import { generateCustomId } from "../../../../../helpers/ids";
 
 const StepTwo = () => {
 
@@ -76,6 +77,10 @@ const StepTwo = () => {
 
   const handleSubmitObservatory = () => {
     if(!newObservatory) return;
+    newObservatory.id = generateCustomId();
+    newObservatory.shared = false; // Par défaut, un nouvel observatoire est privé
+    newObservatory.createdAt = new Date().toISOString();
+    newObservatory.updatedAt = new Date().toISOString();
     newObservatory.display_name = displayName;
     newObservatory.elevation = altitude;
     newObservatory.light_pollution = {
@@ -85,6 +90,8 @@ const StepTwo = () => {
     newObservatory.type = observatoryType;
     newObservatory.equipment = observatoryEquipment;
     newObservatory.tags = tags;
+
+    console.log("Soumission du nouvel observatoire :", JSON.stringify(newObservatory, null, 2));
 
     addObservatory(newObservatory);
     router.push("/settings/observatories");

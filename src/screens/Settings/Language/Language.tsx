@@ -63,13 +63,13 @@ const LanguageScreen = () => {
         </View>
 
         <Text style={globalStyles.categoryTitle}>{t("language.sections.completed")}</Text>
-        <View style={globalStyles.content.heroCard}>
+        <View style={[globalStyles.defaultCard, {padding: 0}]}>
           {
             Object.entries(completeTranslations).map(([code, completeness], index) => {
               const lang = supportedLanguages.find(l => l.code === code);
               if (!lang) return null;
               return (
-                <TouchableOpacity onPress={() => handleChangeLocale(lang.code)} key={lang.code} style={[globalStyles.content.heroCard.item, index !== Object.entries(completeTranslations).length - 1 && globalStyles.content.heroCard.item.withBorder]}>
+                <TouchableOpacity onPress={() => handleChangeLocale(lang.code)} key={lang.code} style={[globalStyles.defaultCard.item, index !== Object.entries(completeTranslations).length - 1 && globalStyles.defaultCard.item.withBorder]}>
                   <View style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: 10 }}>
                     <Text>{getUnicodeFlagIcon(lang.flagCode)}</Text>
                     <Text style={languageScreenStyles.itemCardTitle}>{lang.name}</Text>
@@ -86,13 +86,13 @@ const LanguageScreen = () => {
         </View>
 
         <Text style={globalStyles.categoryTitle}>{t("language.sections.inProgress")}</Text>
-        <View style={globalStyles.content.heroCard}>
+        <View style={[globalStyles.defaultCard, {padding: 0}]}>
           {
             Object.entries(inProgressTranslations).map(([code, completeness], index) => {
               const lang = supportedLanguages.find(l => l.code === code);
               if (!lang) return null;
               return (
-                <TouchableOpacity onPress={() => handleChangeLocale(lang.code)} key={lang.code} style={[globalStyles.content.heroCard.item, index !== Object.entries(inProgressTranslations).length - 1 && globalStyles.content.heroCard.item.withBorder]}>
+                <TouchableOpacity onPress={() => handleChangeLocale(lang.code)} key={lang.code} style={[globalStyles.defaultCard.item, index !== Object.entries(inProgressTranslations).length - 1 && globalStyles.defaultCard.item.withBorder]}>
                   <View style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: 10 }}>
                     <Text>{getUnicodeFlagIcon(lang.flagCode)}</Text>
                     <Text style={languageScreenStyles.itemCardTitle}>{lang.name}</Text>

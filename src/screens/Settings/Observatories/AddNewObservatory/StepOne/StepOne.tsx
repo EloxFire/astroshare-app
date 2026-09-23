@@ -28,20 +28,8 @@ const StepOne = () => {
   const [searchLatitude, setSearchLatitude] = useState<string>("");
   const [searchLongitude, setSearchLongitude] = useState<string>("");
 
-  useEffect(() => {
-    if(location){
-      mapRef.current?.animateToRegion({
-        latitude: location.latitude,
-        longitude: location.longitude,
-        latitudeDelta: 0.0922,
-        longitudeDelta: 0.0421,
-      }, 1000);
-    }
-  }, [location]);
-
 
   const handleMapPress = async (event: any) => {
-    if (!newObservatory) return;
     const { latitude, longitude } = event.nativeEvent.coordinate;
     const locData = await fetchLocation(`${latitude}::${longitude}`);
     setNewObservatory(locData);
@@ -199,8 +187,8 @@ const StepOne = () => {
               provider={PROVIDER_GOOGLE}
 
               initialRegion={{
-                latitude: 0,
-                longitude: 0,
+                latitude: location?.latitude || 48.856724859667835,
+                longitude: location?.longitude || 2.349875271320343,
                 latitudeDelta: 0.0922,
                 longitudeDelta: 0.0421,
               }}
