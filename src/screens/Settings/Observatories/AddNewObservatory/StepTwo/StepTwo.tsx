@@ -12,12 +12,15 @@ import { useState } from "react";
 import { addNewObservatoryStepTwoStyles } from "./StepTwo.styles";
 import { getLightPollutionIndicatorDescription, getLightPollutionIndicatorLabel } from "../../../../../helpers/api/geocoding/geocoding";
 import Svg, { Defs, LinearGradient, Rect, Stop } from 'react-native-svg';
-import { observatoriesEquipments, observatoriesTypes } from "../../../../../helpers/observatories/observatories";
+import { observatoriesAccessTypes, observatoriesEquipments, observatoriesTypes } from "../../../../../helpers/observatories/observatories";
 import { ObservatoryEquipment, ObservatoryType } from "../../../../../types/observatory";
 import { getBortleMpsas } from "../../../../../helpers/lightPollution/lightPollution";
 import { useUserDataStore } from "../../../../../store/userData.store";
 import { router } from "expo-router";
 import { generateCustomId } from "../../../../../helpers/ids";
+// import { pickAndCompressImage, ImagePickerPermissionDeniedError } from "../../../../../helpers/images/imagePicker";
+
+
 
 const StepTwo = () => {
 
@@ -32,7 +35,10 @@ const StepTwo = () => {
   const [observatoryType, setObservatoryType] = useState<ObservatoryType>("home");
   const [observatoryEquipment, setObservatoryEquipment] = useState<ObservatoryEquipment[]>([]);
   const [tags, setTags] = useState<string[]>(newObservatory?.tags || []);
-  const [altitude, setAltitude] = useState<number | null>(newObservatory?.elevation || null);
+  const [altitude, setAltitude] = useState<number | null>(newObservatory?.elevation ? parseFloat(newObservatory.elevation.toFixed(0)) : null);
+  const [isShared, setIsShared] = useState<boolean>(newObservatory?.shared || false);
+  const [access, setAccess] = useState<"car" | "foot">(newObservatory?.access || "car");
+  const [image, setImage] = useState<string | undefined>(newObservatory?.image);
 
   // Largeur exacte des boutons de type d'observatoire (2 colonnes), calculée à partir de la
   // largeur réelle mesurée du conteneur — un width en "%" ne peut pas garantir un gap strict en
@@ -75,6 +81,19 @@ const StepTwo = () => {
     setSQM(getBortleMpsas(newBortle).toString());
   }
 
+  // const handlePickImage = async () => {
+  //   try {
+  //     const result = await pickAndCompressImage({ aspectRatio: [4, 3] }); // ou sans aspectRatio pour ne pas forcer de recadrage
+  //     if (!result) return; // utilisateur a annulé la sélection
+  //     setImage(result.base64);
+  //     if (newObservatory) newObservatory.image = result.base64;
+  //   } catch (err) {
+  //     if (err instanceof ImagePickerPermissionDeniedError) {
+  //       // afficher un message du style "Autorise l'accès à tes photos dans les réglages"
+  //     }
+  //   }
+  // };
+
   const handleSubmitObservatory = () => {
     if(!newObservatory) return;
     newObservatory.id = generateCustomId();
@@ -83,6 +102,7 @@ const StepTwo = () => {
     newObservatory.updatedAt = new Date().toISOString();
     newObservatory.display_name = displayName;
     newObservatory.elevation = altitude;
+    newObservatory.access = access;
     newObservatory.light_pollution = {
       bortle: bortleNumber,
       mpsas: parseFloat(sqm),
@@ -96,6 +116,8 @@ const StepTwo = () => {
     addObservatory(newObservatory);
     router.push("/settings/observatories");
   }
+
+
 
   return (
     <ScrollView>
@@ -140,6 +162,10 @@ const StepTwo = () => {
           }}
           placeholder={t("addObservatory.stepTwo.tagsPlaceholder")}
         />
+
+        <View style={{display: "flex", flexDirection: "column", gap: 5}}>
+          <Text style={globalStyles.categoryTitle}>{t("addObservatory.stepTwo.skyQuality.title")}</Text>
+        </View>
 
         <View style={{display: "flex", flexDirection: "column", gap: 5}}>
           <Text style={globalStyles.categoryTitle}>{t("addObservatory.stepTwo.skyQuality.title")}</Text>
@@ -195,6 +221,37 @@ const StepTwo = () => {
               <Text style={addNewObservatoryStepTwoStyles.skyQualityContainer.bortleScale.sqmContainer.text}>{t("addObservatory.stepTwo.skyQuality.sqm.label")}</Text>
               <Text style={addNewObservatoryStepTwoStyles.skyQualityContainer.bortleScale.sqmContainer.value}>{t("addObservatory.stepTwo.skyQuality.sqm.value", {sqm: sqm})}</Text>
             </View>
+          </View>
+        </View>
+
+        <View style={{display: "flex", flexDirection: "column", gap: 5}}>
+          <Text style={globalStyles.categoryTitle}>{t("addObservatory.stepTwo.observatoryAccess.title")}</Text>
+
+          <View
+            style={addNewObservatoryStepTwoStyles.observatoryChipContainer}
+            onLayout={(event) => setObservatoryChipsContainerWidth(event.nativeEvent.layout.width)}
+          >
+            {
+              observatoriesAccessTypes.map(({id, label, icon: Icon}) => {
+                return (
+                  <TouchableOpacity
+                    key={id}
+                    style={[
+                      addNewObservatoryStepTwoStyles.observatoryChipContainer.chipButton,
+                      observatoryTypeButtonWidth != null && { width: observatoryTypeButtonWidth },
+                      access === id && addNewObservatoryStepTwoStyles.observatoryChipContainer.chipButton.active,
+                    ]}
+                    onPress={() => {
+                      setAccess(id as "car" | "foot");
+                      if(newObservatory) newObservatory.access = id as "car" | "foot";
+                    }}
+                  >
+                    <Icon size={20} color={app_colors.primary.main} />
+                    <Text style={addNewObservatoryStepTwoStyles.observatoryChipContainer.chipButton.text}>{label}</Text>
+                  </TouchableOpacity>
+                )
+              })
+            }
           </View>
         </View>
 

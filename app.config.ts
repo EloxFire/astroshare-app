@@ -130,6 +130,13 @@ module.exports = {
       {
         usesClearTextTraffic: true
       }
+    ],
+    [
+      "expo-image-picker",
+      {
+        photosPermission:
+          "Astroshare a besoin d'accéder à vos photos pour vous permettre d'illustrer vos observatoires."
+      }
     ]
   ]
 };

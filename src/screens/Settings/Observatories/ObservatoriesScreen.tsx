@@ -1,4 +1,4 @@
-import { Text, TouchableOpacity, View } from "react-native"
+import { ScrollView, Text, TouchableOpacity, View } from "react-native"
 import { useEffect, useRef, useState } from "react";
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { observatoriesScreenStyles } from "./ObservatoriesScreen.styles";
@@ -64,88 +64,90 @@ const ObservatoriesScreen = () => {
   return (
     <View style={observatoriesScreenStyles.screen}>
       <ScreenHeader title={t("observatories.screenTitle")} main={false} />
-      <View style={observatoriesScreenStyles.content}>
-        <View style={observatoriesScreenStyles.mapContainer}>
-          <MapView
-            ref={mapRef}
-            style={observatoriesScreenStyles.mapContainer.map}
-            provider={PROVIDER_GOOGLE}
-            onMapReady={() => setIsMapReady(true)}
+      <ScrollView>
+        <View style={observatoriesScreenStyles.content}>
+          <View style={observatoriesScreenStyles.mapContainer}>
+            <MapView
+              ref={mapRef}
+              style={observatoriesScreenStyles.mapContainer.map}
+              provider={PROVIDER_GOOGLE}
+              onMapReady={() => setIsMapReady(true)}
 
-            initialRegion={{
-              latitude: 0,
-              longitude: 0,
-              latitudeDelta: 0.0922,
-              longitudeDelta: 0.0421,
-            }}
+              initialRegion={{
+                latitude: 0,
+                longitude: 0,
+                latitudeDelta: 0.0922,
+                longitudeDelta: 0.0421,
+              }}
 
-            mapType="standard"
-            showsCompass
-            showsUserLocation={isEnabled}
-          >
-            {
-              userObservatories.length > 0 && userObservatories.map((observatory) => {
-                return (
-                  <Marker
-                    key={observatory.id}
-                    coordinate={{
-                      latitude: observatory.latitude,
-                      longitude: observatory.longitude,
-                    }}
-                    title={observatory.name}
-                    description={observatory.display_name || ""}
-                  />
-                )
-              })
-            }
-          </MapView>
+              mapType="standard"
+              showsCompass
+              showsUserLocation={isEnabled}
+            >
+              {
+                userObservatories.length > 0 && userObservatories.map((observatory) => {
+                  return (
+                    <Marker
+                      key={observatory.id}
+                      coordinate={{
+                        latitude: observatory.latitude,
+                        longitude: observatory.longitude,
+                      }}
+                      title={observatory.name}
+                      description={observatory.display_name || ""}
+                    />
+                  )
+                })
+              }
+            </MapView>
 
-        </View>
-
-        <ChipsContainer
-          chips={[
-            {
-              title: t("observatories.registeredCount"),
-              value: userObservatories.length.toString(),
-            },
-          ]}
-        />
-
-        <View style={observatoriesScreenStyles.useGpsContainer}>
-          <View style={observatoriesScreenStyles.useGpsContainer.content}>
-            <LocateFixed color={app_colors.yellow.light} size={24} />
-            <View>
-              <Text style={observatoriesScreenStyles.useGpsContainer.content.title}>{t("observatories.useCurrentLocation.title")}</Text>
-              <Text style={observatoriesScreenStyles.useGpsContainer.content.subtitle}>{t("observatories.useCurrentLocation.subtitle")}</Text>
-            </View>
           </View>
-          {/* Make a custom switch button component to enable/disable GPS usage */}
-          <SwitchButton
-            isEnabled={isEnabled}
-            onToggle={toggleGpsUsage}
+
+          <ChipsContainer
+            chips={[
+              {
+                title: t("observatories.registeredCount"),
+                value: userObservatories.length.toString(),
+              },
+            ]}
           />
+
+          <View style={observatoriesScreenStyles.useGpsContainer}>
+            <View style={observatoriesScreenStyles.useGpsContainer.content}>
+              <LocateFixed color={app_colors.yellow.light} size={24} />
+              <View>
+                <Text style={observatoriesScreenStyles.useGpsContainer.content.title}>{t("observatories.useCurrentLocation.title")}</Text>
+                <Text style={observatoriesScreenStyles.useGpsContainer.content.subtitle}>{t("observatories.useCurrentLocation.subtitle")}</Text>
+              </View>
+            </View>
+            {/* Make a custom switch button component to enable/disable GPS usage */}
+            <SwitchButton
+              isEnabled={isEnabled}
+              onToggle={toggleGpsUsage}
+            />
+          </View>
+
+          <View style={observatoriesScreenStyles.observatoriesList}>
+            <Text style={globalStyles.categoryTitle}>{t("observatories.listTitle")}</Text>
+            {
+              userObservatories.length === 0 && (
+                <Text style={observatoriesScreenStyles.observatoriesList.emptyListText}>{t("observatories.emptyList")}</Text>
+              )
+            }
+            {
+              userObservatories.map((observatory) => (
+                <ObservatoryCard key={observatory.id} observatory={observatory} active={observatory.id === activeObservatoryId}/>
+              ))
+            }
+
+            <TouchableOpacity style={observatoriesScreenStyles.observatoriesList.addObservatoryButton} onPress={handleAddObservatory}>
+              <MapPinPlusIcon color={app_colors.accent.main} size={16} />
+              <Text style={observatoriesScreenStyles.observatoriesList.addObservatoryButton.text}>{t("observatories.addButton")}</Text>
+            </TouchableOpacity>
+          </View>
+
         </View>
-
-        <View style={observatoriesScreenStyles.observatoriesList}>
-          <Text style={globalStyles.categoryTitle}>{t("observatories.listTitle")}</Text>
-          {
-            userObservatories.length === 0 && (
-              <Text style={observatoriesScreenStyles.observatoriesList.emptyListText}>{t("observatories.emptyList")}</Text>
-            )
-          }
-          {
-            userObservatories.map((observatory) => (
-              <ObservatoryCard key={observatory.id} observatory={observatory} active={observatory.id === activeObservatoryId}/>
-            ))
-          }
-
-          <TouchableOpacity style={observatoriesScreenStyles.observatoriesList.addObservatoryButton} onPress={handleAddObservatory}>
-            <MapPinPlusIcon color={app_colors.accent.main} size={16} />
-            <Text style={observatoriesScreenStyles.observatoriesList.addObservatoryButton.text}>{t("observatories.addButton")}</Text>
-          </TouchableOpacity>
-        </View>
-
-      </View>
+      </ScrollView>
     </View>
   )
 }

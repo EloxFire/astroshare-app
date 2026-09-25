@@ -1,4 +1,4 @@
-import { BathIcon, Bed, CookingPot, HatGlassesIcon, HomeIcon, MountainIcon, ParkingCircle, PlugZap, TelescopeIcon, WifiIcon } from "lucide-react-native";
+import { BathIcon, Bed, CarIcon, CookingPot, FootprintsIcon, HatGlassesIcon, HomeIcon, MountainIcon, ParkingCircle, PlugZap, TelescopeIcon, WifiIcon } from "lucide-react-native";
 import i18next from "../../i18n";
 
 export const observatoriesTypes = [
@@ -54,5 +54,18 @@ export const observatoriesEquipments = [
     id: "kitchen",
     label: i18next.t("addObservatory.stepTwo.equipments.types.kitchen", {ns: "settings"}),
     icon: CookingPot
+  }
+]
+
+export const observatoriesAccessTypes = [
+  {
+    id: "car",
+    label: i18next.t("addObservatory.stepTwo.observatoryAccess.types.car", {ns: "settings"}),
+    icon: CarIcon
+  },
+  {
+    id: "foot",
+    label: i18next.t("addObservatory.stepTwo.observatoryAccess.types.foot", {ns: "settings"}),
+    icon: FootprintsIcon
   }
 ]

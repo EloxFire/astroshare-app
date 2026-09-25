@@ -1,10 +1,19 @@
 import { View, Text } from "react-native"
 import { badgeStyles } from "./Badge.styles"
+import { LucideIcon } from "lucide-react-native"
 
-const Badge = ({ text }: { text: string }) => {
+interface BadgeProps {
+  text: string
+  icon?: LucideIcon
+  backgroundColor?: string
+  foregroundColor?: string
+}
+
+const Badge = ({ text, icon: Icon, backgroundColor, foregroundColor }: BadgeProps) => {
   return (
-    <View style={badgeStyles.container}>
-      <Text style={badgeStyles.text}>{text}</Text>
+    <View style={[badgeStyles.container, backgroundColor && { backgroundColor }]}>
+      { Icon && <Icon size={16} color={foregroundColor || "white"} /> }
+      <Text style={[badgeStyles.container.text, foregroundColor && { color: foregroundColor }]}>{text}</Text>
     </View>
   )
 }

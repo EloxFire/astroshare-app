@@ -54,11 +54,22 @@
       "subtitle": "Priorité sur tous les autres lieux"
     },
     "listTitle": "Vos observatoires",
+    "observatoryCard": {
+      "activeBadge": "Actif",
+      "bortle": "Bortle",
+      "altitudeAbbreviated": "{{value}} m",
+      "sharedBadge": "Partagé"
+    },
     "emptyList": "Vous n'avez pas encore ajouté d'observatoire.",
     "addButton": "Ajouter un observatoire",
     "activeBadge": "Actif",
     "bortleLabel": "Bortle {{value}}",
-    "altitudeAbbreviated": "alt. {{value}} m"
+    "altitudeAbbreviated": "alt. {{value}} m",
+    "mpsasLabel": "{{value}} mag/arcsec²",
+    "observatoryAccess": {
+      "car": "Accès voiture",
+      "foot": "Accès piéton"
+    },
   },
   "addObservatory": {
     "stepOne": {
@@ -120,6 +131,20 @@
           "value": "{{sqm}} mag/arcsec²"
         }
       },
+      "observatoryImage": {
+        "title": "Image de l'observatoire (facultatif)",
+        "description": "Ajoutez une image de votre lieu d'observation pour le personnaliser.",
+        "placeholder": "Aucune image sélectionnée",
+        "selectButton": "Sélectionner une image",
+        "removeButton": "Supprimer l'image"
+      }
+      "observatoryAccess": {
+        "title": "Accès à l'observatoire",
+        "types": {
+          "car": "En voiture",
+          "foot": "À pied"
+        }
+      },
       "observatoryType": {
         "title": "Type de lieu",
         "types": {
@@ -153,6 +178,10 @@
       "confirmButton": "Oui, annuler",
       "cancelButton": "Non, continuer"
     }
+  },
+  "observatoryDetails": {
+    "screenTitle": "Détails de l'observatoire",
+    "editButton": "Modifier l'observatoire",
   },
   "units": {
     "title": "Unités et formats",

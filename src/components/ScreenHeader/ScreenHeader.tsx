@@ -11,9 +11,10 @@ interface ScreenHeaderProps {
   main?: boolean;
   subtitle?: string;
   disableBackButton?: boolean;
+  customElement?: React.ReactNode;
 }
 
-export const ScreenHeader = ({ title, main = true, disableBackButton = false, subtitle }: ScreenHeaderProps) => {
+export const ScreenHeader = ({ title, main = true, disableBackButton = false, subtitle, customElement }: ScreenHeaderProps) => {
   const canGoBack = router.canGoBack();
   const pathname = usePathname();
 

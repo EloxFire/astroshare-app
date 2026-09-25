@@ -1,86 +1,95 @@
 import { Text, TouchableOpacity, View } from "react-native";
+import { router } from "expo-router";
 import { observatoryCardStyles } from "./ObservatoryCard.styles";
 import { Observatory } from "../../../../types/observatory";
-import { ChevronRight, Lightbulb, LucideIcon, PlusCircleIcon, Trash2 } from "lucide-react-native";
+import { ChevronRight, Lightbulb, LucideIcon, Mountain, PlusCircleIcon, Trash2 } from "lucide-react-native";
 import { app_colors } from "../../../../helpers/variables";
 import { convertDecimalLatitudeToDMS, convertDecimalLongitudeToDMS } from "../../../../helpers/location/convert";
 import { useTranslation } from "react-i18next";
-import { observatoriesEquipments } from "../../../../helpers/observatories/observatories";
+import { observatoriesAccessTypes, observatoriesEquipments } from "../../../../helpers/observatories/observatories";
 import { useState } from "react";
 import { useUserDataStore } from "../../../../store/userData.store";
+import Badge from "../../../../components/Badge/Badge";
 
 interface ObservatoryCardProps {
   active: boolean;
   observatory: Observatory
 }
 
-interface ObservatoryAttributeProps {
-  text: string;
-  icon: LucideIcon
-}
-
-const ObservatoryAttribute = ({ text, icon: Icon }: ObservatoryAttributeProps) => {
+const ObservatoryQuickInfo = ({ icon: Icon, value }: { icon: LucideIcon, value?: string }) => {
   return (
-    <View style={observatoryCardStyles.card.attributesRow.attribute}>
-      <Icon color={app_colors.accent.main} size={16} />
-      <Text style={observatoryCardStyles.card.attributesRow.attribute.text}>{text}</Text>
+    <View style={observatoryCardStyles.card.body.observatoryInfos.quickInfos.quickInfo}>
+      <Icon size={16} color={app_colors.primary.main} />
+      { value && <Text style={observatoryCardStyles.card.body.observatoryInfos.quickInfos.quickInfo.value}>{value}</Text>}
     </View>
   )
 }
 
 const ObservatoryCard = ({ active, observatory }: ObservatoryCardProps) => {
   const { t } = useTranslation("settings");
-  const removeObservatory = useUserDataStore((state) => state.removeObservatory);
-
-  const [isDeleting, setIsDeleting] = useState(false);
 
   return (
     <TouchableOpacity
-      style={[observatoryCardStyles.card, active && observatoryCardStyles.card.active]}
-      onPress={() => {console.log("Observatory card pressed")}}
-      disabled={isDeleting}
-      onLongPress={() => {setIsDeleting(true)}}
-      onPressOut={() => {setIsDeleting(false)}}
+      style={[observatoryCardStyles.card]}
+      onPress={() => {
+        router.push(`/settings/observatories/${observatory.id}`);
+      }}
     >
-      <View style={{display: "flex", flexDirection: "column", flex: 1}}>
-        <View style={{display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 20}}>
-          <Text style={observatoryCardStyles.card.title}>{observatory.display_name ?? observatory.name}</Text>
-          {active && <Text style={observatoryCardStyles.card.badge}>{t("observatories.activeBadge")}</Text>}
-          <Text>{observatory.id}</Text>
+      <View style={observatoryCardStyles.card.body}>
+        <View style={observatoryCardStyles.card.body.bortleBadge}>
+          <Text style={observatoryCardStyles.card.body.bortleBadge.label}>{t('observatories.observatoryCard.bortle')}</Text>
+          <Text style={observatoryCardStyles.card.body.bortleBadge.value}>{observatory.light_pollution?.bortle}</Text>
         </View>
-        <View style={observatoryCardStyles.card.subtitleRow}>
-          <Text style={observatoryCardStyles.card.subtitleRow.text}>
-            {observatory.latitude ? convertDecimalLatitudeToDMS(observatory.latitude) :  ""} - {observatory.longitude ? convertDecimalLongitudeToDMS(observatory.longitude) : ""} - {t("observatories.altitudeAbbreviated", { value: observatory.elevation ?? "" })}
+        <View style={observatoryCardStyles.card.body.observatoryInfos}>
+          <Text style={observatoryCardStyles.card.body.observatoryInfos.observatoryName}>{observatory.display_name ?? observatory.name}</Text>
+          <Text style={observatoryCardStyles.card.body.observatoryInfos.observatoryLocation}>
+            {observatory.display_name ? observatory.name : ""}
           </Text>
+          <View style={observatoryCardStyles.card.body.observatoryInfos.quickInfos}>
+            { observatory.elevation && <ObservatoryQuickInfo icon={Mountain} value={`${observatory.elevation.toString()} m`} /> }
+            { observatory.light_pollution?.mpsas && <ObservatoryQuickInfo icon={Lightbulb} value={`${observatory.light_pollution.mpsas.toString()} mag/arcsec²`} /> }
+          </View>
         </View>
+        <View style={observatoryCardStyles.card.body.chevronRight}>
+          <ChevronRight size={20} color={app_colors.accent.main} />
+        </View>
+      </View>
 
-        <View style={observatoryCardStyles.card.attributesRow}>
-          {observatory.equipment && observatory.equipment.length > 0 && (
-            observatoriesEquipments
-              .filter((equipment) => (observatory.equipment as string[]).includes(equipment.id))
-              .slice(0, 2)
-              .map((equipment) => (
-                <ObservatoryAttribute key={equipment.id} text={equipment.label} icon={equipment.icon} />
-              ))
-          )}
+      <View style={observatoryCardStyles.card.footer}>
+        <View style={observatoryCardStyles.card.footer.observatoryEquipments}>
           {
-            observatory.equipment && observatory.equipment.length > 2 && (
-              <ObservatoryAttribute key={observatory.id} text={`+${observatory.equipment.length - 2}`} icon={ChevronRight} />
+            observatory.equipment && observatory.equipment.length > 0 && (
+              observatoriesEquipments
+                .filter((equipment) => (observatory.equipment as string[]).includes(equipment.id))
+                .map((equipment, _index, filteredEquipments) => (
+                  <ObservatoryQuickInfo
+                    key={equipment.id}
+                    icon={equipment.icon}
+                    value={filteredEquipments.length < 3 ? equipment.label : undefined}
+                  />
+                ))
+            )
+          }
+        </View>
+        <View style={observatoryCardStyles.card.footer.communityInfos}>
+          {observatory.shared && <Badge text={t('observatories.observatoryCard.sharedBadge')} />}
+          {
+            observatory.access && (
+              observatoriesAccessTypes
+                .filter((accessType) => accessType.id === observatory.access)
+                .map((accessType) => ( 
+                  <Badge
+                    key={accessType.id}
+                    icon={accessType.icon}
+                    text={t(`observatories.observatoryAccess.${observatory.access}`)}
+                    backgroundColor={app_colors.accent.light}
+                    foregroundColor={app_colors.primary.main}
+                  />
+                ))
             )
           }
         </View>
       </View>
-
-      {
-        isDeleting ? (
-          <ChevronRight color={app_colors.accent.main} size={24} />
-        ) : (
-          <TouchableOpacity onPress={() => removeObservatory(observatory.id)} style={{padding: 8}}>
-            <Trash2 color={app_colors.red.main} size={24} />
-          </TouchableOpacity>
-        )
-      }
-      
     </TouchableOpacity>
   )
 }

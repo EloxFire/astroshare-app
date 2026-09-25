@@ -13,10 +13,12 @@ export const badgeStyles = {
     // Sans ça, le badge hérite du alignItems:"stretch" par défaut d'un parent en colonne et
     // s'étire sur toute la largeur disponible au lieu de se limiter à son contenu.
     alignSelf: "flex-start" as const,
+    gap: 4,
+    
+    text: {
+      color: app_colors.white,
+      fontFamily: "DMMonoMedium",
+      fontSize: 10,
+    }
   },
-  text: {
-    color: app_colors.white,
-    fontFamily: "DMMonoMedium",
-    fontSize: 10,
-  }
 }

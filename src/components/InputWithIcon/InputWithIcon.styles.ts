@@ -8,10 +8,11 @@ export const inputWithIconStyles = {
     alignItems: "center" as const,
     gap: gaps.iconToText,
     borderWidth: 1,
-    borderColor: withOpacity(app_colors.grey, 0.5),
+    borderColor: app_colors.accent.light,
     borderRadius: radius.searchField,
     paddingVertical: spacing.banner.vertical,
     paddingHorizontal: spacing.banner.horizontal,
+    backgroundColor: app_colors.white,
 
     withSuggestions: {
       borderBottomLeftRadius: 0,
@@ -33,7 +34,7 @@ export const inputWithIconStyles = {
 
   suggestionsContainer: {
     borderWidth: 1,
-    borderColor: withOpacity(app_colors.grey, 0.5),
+    borderColor: app_colors.accent.light,
     borderBottomLeftRadius: radius.searchField,
     borderBottomRightRadius: radius.searchField,
     zIndex: 1,

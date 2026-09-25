@@ -28,6 +28,23 @@ export const globalStyles = {
     ...typography.dmMono.regular.searchPlaceholder,
   },
 
+  button: {
+    backgroundColor: app_colors.accent.main,
+    padding: 10,
+    borderRadius: radius.badge32,
+    display: "flex" as const,
+    flexDirection: "row" as const,
+    gap: 10,
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
+
+    text: {
+      fontFamily: "DMMonoMedium",
+      fontSize: 14,
+      color: app_colors.white,
+    }
+  },
+
   categoryTitle: {
     color: app_colors.primary.medium,
     fontSize: 14,

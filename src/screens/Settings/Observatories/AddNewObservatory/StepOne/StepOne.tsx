@@ -89,6 +89,16 @@ const StepOne = () => {
     }
   }
 
+  const handleNextStep = () => {
+    if(!newObservatory?.latitude || !newObservatory?.longitude) {
+      console.log("[StepOne] Cannot proceed to next step, no valid location selected.");
+      return;
+    }
+
+    console.log("[StepOne] Proceeding to next step with observatory:", newObservatory);
+    setCurrentFormStep(2);
+  }
+
   return (
     <ScrollView>
       <View style={[globalStyles.screen.content, {paddingBottom: 50}]}>
@@ -261,7 +271,7 @@ const StepOne = () => {
             additionnalDescriptionStyle={{opacity: .8, fontFamily: 'DMMonoRegular', fontSize: 10}}
           />
 
-          <TouchableOpacity style={addNewObservatoryScreenStyles.nextButton} onPress={() => setCurrentFormStep(2)} disabled={!newObservatory}>
+          <TouchableOpacity style={addNewObservatoryScreenStyles.nextButton} onPress={() => handleNextStep()}>
             <Text style={{color: app_colors.white, fontFamily: 'DMMonoMedium', fontSize: 16}}>{t("addObservatory.nextButton")}</Text>
             <ArrowRight color={app_colors.white} size={20} />
           </TouchableOpacity>
