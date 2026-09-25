@@ -30,7 +30,7 @@ const ObservatoryCard = ({ active, observatory }: ObservatoryCardProps) => {
 
   return (
     <TouchableOpacity
-      style={[observatoryCardStyles.card]}
+      style={[observatoryCardStyles.card, active && observatoryCardStyles.card.active]}
       onPress={() => {
         router.push(`/settings/observatories/${observatory.id}`);
       }}
@@ -41,7 +41,10 @@ const ObservatoryCard = ({ active, observatory }: ObservatoryCardProps) => {
           <Text style={observatoryCardStyles.card.body.bortleBadge.value}>{observatory.light_pollution?.bortle}</Text>
         </View>
         <View style={observatoryCardStyles.card.body.observatoryInfos}>
-          <Text style={observatoryCardStyles.card.body.observatoryInfos.observatoryName}>{observatory.display_name ?? observatory.name}</Text>
+          <View style={observatoryCardStyles.card.body.observatoryInfos.observatoryNameContainer}>
+            <Text style={observatoryCardStyles.card.body.observatoryInfos.observatoryNameContainer.observatoryName}>{observatory.display_name ?? observatory.name}</Text>
+            {active && <Badge text={t('observatories.observatoryCard.activeBadge')} backgroundColor={app_colors.accent.main} foregroundColor={app_colors.white} />}
+          </View>
           <Text style={observatoryCardStyles.card.body.observatoryInfos.observatoryLocation}>
             {observatory.display_name ? observatory.name : ""}
           </Text>

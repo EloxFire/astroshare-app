@@ -1,7 +1,8 @@
 import { Search, LocateFixedIcon, DraftingCompass, Lightbulb, ArrowRight } from "lucide-react-native"
 import { Trans, useTranslation } from "react-i18next"
 import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from "react-native"
-import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps"
+import MapView, { PROVIDER_GOOGLE } from "react-native-maps"
+import MapTargetMarker from "../../../../../components/MapTargetMarker/MapTargetMarker"
 import InfoCard from "../../../../../components/cards/InfoCard/InfoCard"
 import { infoCardStyles } from "../../../../../components/cards/InfoCard/InfoCard.styles"
 import ListCard from "../../../../../components/cards/ListCard/ListCard"
@@ -209,17 +210,13 @@ const StepOne = () => {
             >
               {
                 newObservatory && (
-                  <Marker
+                  <MapTargetMarker
                     coordinate={{
                       latitude: newObservatory.latitude,
                       longitude: newObservatory.longitude,
                     }}
                     title={t("addObservatory.stepOne.selectedLocationMarker")}
-                  >
-                    <View style={addNewObservatoryScreenStyles.mapContainer.map.marker.outer}>
-                      <View style={addNewObservatoryScreenStyles.mapContainer.map.marker.inner} />
-                    </View>
-                  </Marker>
+                  />
                 )
               }
             </MapView>

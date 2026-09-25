@@ -5,6 +5,11 @@ export const observatoryCardStyles = {
   card: {
     ...globalStyles.defaultCard,
 
+    active: {
+      borderWidth: 1,
+      borderColor: app_colors.accent.main,
+    },
+
     body: {
       display: "flex" as const,
       flexDirection: 'row' as const,
@@ -50,11 +55,19 @@ export const observatoryCardStyles = {
         display: "flex" as const,
         flexDirection: "column" as const,
 
-        observatoryName: {
-          fontFamily: "ZTNatureBold" as const,
-          fontSize: 16,
-          lineHeight: 16,
-          color: app_colors.primary.main,
+        observatoryNameContainer: {
+          display: "flex" as const,
+          flexDirection: "row" as const,
+          alignItems: "center" as const,
+          justifyContent: "flex-start" as const,
+          gap: 10,
+          
+          observatoryName: {
+            fontFamily: "ZTNatureBold" as const,
+            fontSize: 16,
+            lineHeight: 16,
+            color: app_colors.primary.main,
+          },
         },
 
         observatoryLocation: {

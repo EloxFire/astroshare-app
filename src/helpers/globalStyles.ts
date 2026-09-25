@@ -41,6 +41,7 @@ export const globalStyles = {
     text: {
       fontFamily: "DMMonoMedium",
       fontSize: 14,
+      lineHeight: 16,
       color: app_colors.white,
     }
   },

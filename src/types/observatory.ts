@@ -10,9 +10,9 @@ export type Observatory = GpsLocation & {
   id: string; //uuid
   display_name: string;
   shared: boolean;
+  access: ObservatoryAccess;
   tags?: string[];
   type?: ObservatoryType;
-  access?: ObservatoryAccess;
   equipment?: ObservatoryEquipment[];
   notes?: string;
   image?: string; // base64 de l'image apres compression

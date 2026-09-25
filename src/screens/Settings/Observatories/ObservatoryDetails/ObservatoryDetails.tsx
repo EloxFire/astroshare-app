@@ -1,22 +1,49 @@
-import { ScrollView, Text, TouchableOpacity, View } from "react-native"
+import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native"
 import { router, useLocalSearchParams } from "expo-router"
 import { useUserDataStore } from "../../../../store/userData.store"
 import { globalStyles } from "../../../../helpers/globalStyles"
 import { ScreenHeader } from "../../../../components/ScreenHeader/ScreenHeader"
 import { useTranslation } from "react-i18next"
-import { Pencil } from "lucide-react-native"
+import { Pencil, Trash2 } from "lucide-react-native"
 import { observatoryDetailsStyles } from "./ObservatoryDetails.styles"
+import MapView from "react-native-maps"
+import { useEffect, useRef } from "react"
+import MapTargetMarker from "../../../../components/MapTargetMarker/MapTargetMarker"
+import Badge from "../../../../components/Badge/Badge"
+import { observatoriesAccessTypes } from "../../../../helpers/observatories/observatories"
+import { app_colors } from "../../../../helpers/variables"
 
 const ObservatoryDetails = () => {
 
-  const { t } = useTranslation("settings")
+  const { t, i18n } = useTranslation("settings")
   const userObservatories = useUserDataStore((state) => state.observatories)
+  const removeObservatory = useUserDataStore((state) => state.removeObservatory)
   const observatoryId = useLocalSearchParams().observatory as string
-
   const observatory = userObservatories.find((observatory) => observatory.id === observatoryId)
 
+  const mapRef = useRef<MapView>(null)
+
+  const handleDeleteObservatory = () => {
+    if (!observatory) return;
+    // Pas de router.push ici : la suppression fait disparaître `observatory` du store, donc
+    // ObservatoryDetails se re-rend avec observatory === undefined juste après, et c'est le
+    // useEffect ci-dessous qui se charge de la redirection.
+    removeObservatory(observatory.id)
+  }
+
+  // La redirection ne peut pas se faire directement dans le corps du rendu : ça déclencherait
+  // une mise à jour de la navigation PENDANT le rendu d'ObservatoryDetails (ex: juste après une
+  // suppression, qui fait passer `observatory` à undefined au re-render), ce que React refuse
+  // ("Cannot update a component while rendering a different component"). Un useEffect s'exécute
+  // après le rendu, donc c'est le bon endroit pour cet effet de bord.
+  useEffect(() => {
+    if (!observatory) {
+      router.push("/settings/observatories")
+    }
+  }, [observatory])
+
   if (!observatory) {
-    router.push("/settings/observatories")
+    return null
   }
 
   return (
@@ -25,15 +52,76 @@ const ObservatoryDetails = () => {
 
       <ScrollView>
         <View style={[globalStyles.screen.content, {backgroundColor: 'transparent'}]}>
-          <Text style={observatoryDetailsStyles.title}>{observatory?.name}</Text>
+
+
+          <View style={observatoryDetailsStyles.locationContainer}>
+            <View style={observatoryDetailsStyles.locationContainer.mapContainer}>
+              <MapView
+                ref={mapRef}
+                style={observatoryDetailsStyles.locationContainer.mapContainer.map}
+                initialRegion={{
+                  latitude: observatory?.latitude || 0,
+                  longitude: observatory?.longitude || 0,
+                  latitudeDelta: 0.01,
+                  longitudeDelta: 0.01,
+                }}
+              >
+                <MapTargetMarker
+                  coordinate={{
+                    latitude: observatory?.latitude || 0,
+                    longitude: observatory?.longitude || 0,
+                  }}
+                />
+              </MapView>
+            </View>
+            {
+              observatory?.image && (
+                <Image source={{ uri: observatory.image }} style={observatoryDetailsStyles.locationContainer.image} />
+              )
+            }
+          </View>
+
+          <View style={observatoryDetailsStyles.titleContainer}>
+            <Text style={observatoryDetailsStyles.titleContainer.title}>{observatory?.display_name || (observatory?.local_names ? observatory?.local_names[i18n.language] : t('common.errors.unknown'))}</Text>
+            <Text style={observatoryDetailsStyles.titleContainer.subtitle}>{observatory?.name}</Text>
+
+            <View style={observatoryDetailsStyles.titleContainer.tags}>
+              <Badge
+                icon={observatoriesAccessTypes.find((accessType) => accessType.id === observatory.access)?.icon}
+                text={t(`observatories.observatoryAccess.${observatory.access}`)}
+                backgroundColor={app_colors.accent.light}
+                foregroundColor={app_colors.primary.main}
+              />
+
+              {
+                observatory.tags && observatory.tags.length > 0 && (
+                  observatory.tags.map((tag) => (
+                    <Badge
+                      key={tag}
+                      text={`#${tag}`}
+                      backgroundColor={app_colors.white}
+                      foregroundColor={app_colors.primary.main}
+                      borderColor={app_colors.primary.light}
+                    />
+                  ))
+                )
+              }
+            </View>
+          </View>
         </View>
       </ScrollView>
       
       <View style={globalStyles.screen.content}>
-        <TouchableOpacity style={globalStyles.button} onPress={() => router.push("/settings/observatories")}>
-          <Pencil color="white" size={14} />
-          <Text style={globalStyles.button.text}>{t('observatoryDetails.editButton')}</Text>
-        </TouchableOpacity>
+        <View style={observatoryDetailsStyles.actions}>
+          <TouchableOpacity style={[globalStyles.button, {flex: 1, height: '100%'}]} onPress={() => router.push("/settings/observatories")}>
+            <Pencil color="white" size={14} />
+            <Text style={globalStyles.button.text}>{t('observatoryDetails.editButton')}</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={[globalStyles.button, {backgroundColor: app_colors.red.main}]} onPress={() => handleDeleteObservatory()}>
+            <Trash2 color="white" size={22} />
+          </TouchableOpacity>
+        </View>
       </View>
 
     </View>
