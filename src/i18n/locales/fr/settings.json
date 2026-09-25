@@ -69,7 +69,7 @@
     "observatoryAccess": {
       "car": "Accès voiture",
       "foot": "Accès piéton"
-    },
+    }
   },
   "addObservatory": {
     "stepOne": {
@@ -133,11 +133,11 @@
       },
       "observatoryImage": {
         "title": "Image de l'observatoire (facultatif)",
-        "description": "Ajoutez une image de votre lieu d'observation pour le personnaliser.",
-        "placeholder": "Aucune image sélectionnée",
+        "placeholder": "Cliquez pour ajouter une image de votre observatoire",
         "selectButton": "Sélectionner une image",
-        "removeButton": "Supprimer l'image"
-      }
+        "removeButton": "Supprimer l'image",
+        "editButton": "Modifier l'image"
+      },
       "observatoryAccess": {
         "title": "Accès à l'observatoire",
         "types": {
@@ -151,7 +151,7 @@
           "home": "Domicile",
           "public": "Lieu public",
           "private": "Lieu privé",
-          "observatory": "Observatoire",
+          "observatory": "Observatoire"
         }
       },
       "equipments": {
@@ -181,7 +181,7 @@
   },
   "observatoryDetails": {
     "screenTitle": "Détails de l'observatoire",
-    "editButton": "Modifier l'observatoire",
+    "editButton": "Modifier l'observatoire"
   },
   "units": {
     "title": "Unités et formats",

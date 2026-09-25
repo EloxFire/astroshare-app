@@ -1,6 +1,6 @@
-import { ArrowRight, MapPin, TextAlignCenter } from "lucide-react-native"
+import { ArrowRight, MapPin, TextAlignCenter, X } from "lucide-react-native"
 import { useTranslation } from "react-i18next"
-import { ScrollView, Text, TouchableOpacity, View } from "react-native"
+import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native"
 import { useAddObservatoryForm } from "../AddObservatoryFormContext";
 import { globalStyles } from "../../../../../helpers/globalStyles"
 import { app_colors, radius } from "../../../../../helpers/variables"
@@ -18,7 +18,7 @@ import { getBortleMpsas } from "../../../../../helpers/lightPollution/lightPollu
 import { useUserDataStore } from "../../../../../store/userData.store";
 import { router } from "expo-router";
 import { generateCustomId } from "../../../../../helpers/ids";
-// import { pickAndCompressImage, ImagePickerPermissionDeniedError } from "../../../../../helpers/images/imagePicker";
+import { pickAndCompressImage, ImagePickerPermissionDeniedError } from "../../../../../helpers/images/imagePicker";
 
 
 
@@ -38,7 +38,7 @@ const StepTwo = () => {
   const [altitude, setAltitude] = useState<number | null>(newObservatory?.elevation ? parseFloat(newObservatory.elevation.toFixed(0)) : null);
   const [isShared, setIsShared] = useState<boolean>(newObservatory?.shared || false);
   const [access, setAccess] = useState<"car" | "foot">(newObservatory?.access || "car");
-  const [image, setImage] = useState<string | undefined>(newObservatory?.image);
+  const [image, setImage] = useState<string | null>(null);
 
   // Largeur exacte des boutons de type d'observatoire (2 colonnes), calculée à partir de la
   // largeur réelle mesurée du conteneur — un width en "%" ne peut pas garantir un gap strict en
@@ -81,18 +81,23 @@ const StepTwo = () => {
     setSQM(getBortleMpsas(newBortle).toString());
   }
 
-  // const handlePickImage = async () => {
-  //   try {
-  //     const result = await pickAndCompressImage({ aspectRatio: [4, 3] }); // ou sans aspectRatio pour ne pas forcer de recadrage
-  //     if (!result) return; // utilisateur a annulé la sélection
-  //     setImage(result.base64);
-  //     if (newObservatory) newObservatory.image = result.base64;
-  //   } catch (err) {
-  //     if (err instanceof ImagePickerPermissionDeniedError) {
-  //       // afficher un message du style "Autorise l'accès à tes photos dans les réglages"
-  //     }
-  //   }
-  // };
+  const handlePickImage = async () => {
+    try {
+      const result = await pickAndCompressImage({ aspectRatio: [4, 3] }); // ou sans aspectRatio pour ne pas forcer de recadrage
+      if (!result) return; // utilisateur a annulé la sélection
+      setImage(result.base64);
+      if (newObservatory) newObservatory.image = result.base64;
+    } catch (err) {
+      if (err instanceof ImagePickerPermissionDeniedError) {
+        // afficher un message du style "Autorise l'accès à tes photos dans les réglages"
+      }
+    }
+  };
+
+  const handleRemoveImage = () => {
+    setImage(null);
+    if (newObservatory) newObservatory.image = undefined;
+  };
 
   const handleSubmitObservatory = () => {
     if(!newObservatory) return;
@@ -107,6 +112,7 @@ const StepTwo = () => {
       bortle: bortleNumber,
       mpsas: parseFloat(sqm),
     };
+    newObservatory.image = image || undefined; // Si aucune image n'est sélectionnée, on laisse undefined
     newObservatory.type = observatoryType;
     newObservatory.equipment = observatoryEquipment;
     newObservatory.tags = tags;
@@ -164,7 +170,28 @@ const StepTwo = () => {
         />
 
         <View style={{display: "flex", flexDirection: "column", gap: 5}}>
-          <Text style={globalStyles.categoryTitle}>{t("addObservatory.stepTwo.skyQuality.title")}</Text>
+          <Text style={globalStyles.categoryTitle}>{t("addObservatory.stepTwo.observatoryImage.title")}</Text>
+
+          <TouchableOpacity style={[addNewObservatoryStepTwoStyles.observatoryImagePicker, image ? {borderStyle: "solid", padding: 0} : {}]} onPress={handlePickImage}>
+            {
+              !image ? (
+                <Text style={addNewObservatoryStepTwoStyles.observatoryImagePicker.placeholder}>{t('addObservatory.stepTwo.observatoryImage.placeholder')}</Text>
+              ) : (
+                <View style={addNewObservatoryStepTwoStyles.observatoryImagePicker.imageContainer}>
+                  <Image source={{ uri: `${image}` }} style={addNewObservatoryStepTwoStyles.observatoryImagePicker.imageContainer.image} />
+                  <View style={addNewObservatoryStepTwoStyles.observatoryImagePicker.imageContainer.overlay}>
+                    <Text style={addNewObservatoryStepTwoStyles.observatoryImagePicker.imageContainer.overlay.text}>{t('addObservatory.stepTwo.observatoryImage.editButton')}</Text>
+                  </View>
+                  <TouchableOpacity
+                    style={addNewObservatoryStepTwoStyles.observatoryImagePicker.imageContainer.deleteButton}
+                    onPress={handleRemoveImage}
+                  >
+                    <X size={16} color={app_colors.white} />
+                  </TouchableOpacity>
+                </View>
+              )
+            }
+          </TouchableOpacity>
         </View>
 
         <View style={{display: "flex", flexDirection: "column", gap: 5}}>

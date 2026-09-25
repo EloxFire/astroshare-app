@@ -101,6 +101,73 @@ export const addNewObservatoryStepTwoStyles = {
     }
   },
 
+  observatoryImagePicker: {
+    borderWidth: 1,
+    borderColor: app_colors.accent.light,
+    borderRadius: radius.heroCard,
+    borderStyle: "dashed" as const,
+    height: 200,
+    gap: 10,
+    padding: 10,
+    display: "flex" as const,
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
+    backgroundColor: app_colors.white,
+    // overflow:"hidden" fait suivre à l'image le borderRadius du conteneur automatiquement
+    // (le clip respecte le bord interne, juste sous la bordure) — pas besoin de recalculer un
+    // rayon "inset" à la main sur l'<Image> elle-même.
+    overflow: "hidden" as const,
+
+    placeholder: {
+      color: app_colors.primary.main,
+      fontFamily: "DMMonoRegular",
+      fontSize: 10,
+      textDecorationLine: "underline" as const,
+      textAlign: "center" as const,
+    },
+
+    imageContainer: {
+      width: "100%" as const,
+      height: "100%" as const,
+
+      image: {
+        width: "100%" as const,
+        height: "100%" as const,
+      },
+
+      overlay: {
+        position: "absolute" as const,
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: "rgba(0, 0, 0, 0.35)",
+        display: "flex" as const,
+        alignItems: "center" as const,
+        justifyContent: "center" as const,
+
+        text: {
+          color: app_colors.white,
+          fontFamily: "DMMonoMedium",
+          fontSize: 12,
+        }
+      },
+
+      deleteButton: {
+        position: "absolute" as const,
+        top: 8,
+        right: 8,
+        width: 28,
+        height: 28,
+        borderRadius: 14,
+        backgroundColor: "rgba(0, 0, 0, 0.5)",
+        display: "flex" as const,
+        alignItems: "center" as const,
+        justifyContent: "center" as const,
+      }
+    }
+  },
+
   observatoryChipContainer: {
     display: "flex" as const,
     flexDirection: "row" as const,
