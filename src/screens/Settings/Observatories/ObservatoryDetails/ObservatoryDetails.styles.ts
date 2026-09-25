@@ -1,6 +1,107 @@
-import { app_colors, radius } from "../../../../helpers/variables";
+import { app_colors, radius, withOpacity } from "../../../../helpers/variables";
 
 export const observatoryDetailsStyles = {
+
+  skyQualityContainer: {
+    backgroundColor: app_colors.primary.main,
+    borderRadius: radius.heroCard,
+
+    body: {
+      display: "flex" as const,
+      flexDirection: "row" as const,
+      alignItems: "center" as const,
+      padding: 10,
+      gap: 10,
+
+      bortleBadge: {
+        display: "flex" as const,
+        flexDirection: "column" as const,
+        justifyContent: "center" as const,
+        alignItems: "center" as const,
+        backgroundColor: app_colors.white,
+        borderRadius: radius.badge44,
+        width: 50,
+        height: 50,
+        gap: 5,
+        padding: 10,
+
+        label: {
+          fontFamily: "DMMonoMedium",
+          fontSize: 8,
+          lineHeight: 8,
+          color: app_colors.primary.main
+        },
+
+        value: {
+          fontFamily: "ZTNatureBold",
+          fontSize: 24,
+          lineHeight: 24,
+          color: app_colors.primary.main
+        }
+      },
+
+      observatoryInfos: {
+        display: "flex" as const,
+        flexDirection: "column" as const,
+        justifyContent: "center" as const,
+        alignItems: "flex-start" as const,
+        
+        bortleDescription: {
+          fontFamily: "ZTNatureBold",
+          fontSize: 16,
+          color: app_colors.white
+        },
+
+        bortleValue:{
+          fontFamily: "ZTNature",
+          fontSize: 12,
+          color: app_colors.yellow.main
+        },
+
+        bortleSource: {
+          fontFamily: "ZTNature",
+          fontSize: 10,
+          color: app_colors.accent.light
+        }
+      },
+
+    },
+
+    bortleScale: {
+      display: "flex" as const,
+      flexDirection: "row" as const,
+      justifyContent: "space-between" as const,
+      alignItems: "center" as const,
+      padding: 10,
+      gap: 3,
+
+      bortleValue: {
+        height: 8,
+        backgroundColor: withOpacity(app_colors.white, 0.15),
+        flex: 1,
+        borderRadius: 8,
+
+        active: {
+          backgroundColor: app_colors.yellow.main
+        }
+      },
+
+      scaleExtremes: {
+        display: "flex" as const,
+        flexDirection: "row" as const,
+        justifyContent: "space-between" as const,
+        alignItems: "center" as const,
+        paddingHorizontal: 10,
+        marginBottom: 10,
+
+        text: {
+          fontFamily: "ZTNature",
+          fontSize: 10,
+          color: withOpacity(app_colors.white, 0.5)
+        }
+      }
+    }
+  },
 
   locationContainer: {
     display: "flex" as const,

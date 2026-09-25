@@ -12,6 +12,7 @@ import MapTargetMarker from "../../../../components/MapTargetMarker/MapTargetMar
 import Badge from "../../../../components/Badge/Badge"
 import { observatoriesAccessTypes } from "../../../../helpers/observatories/observatories"
 import { app_colors } from "../../../../helpers/variables"
+import { getBortleMpsas } from "../../../../helpers/lightPollution/lightPollution"
 
 const ObservatoryDetails = () => {
 
@@ -54,33 +55,16 @@ const ObservatoryDetails = () => {
         <View style={[globalStyles.screen.content, {backgroundColor: 'transparent'}]}>
 
 
-          <View style={observatoryDetailsStyles.locationContainer}>
-            <View style={observatoryDetailsStyles.locationContainer.mapContainer}>
-              <MapView
-                ref={mapRef}
-                style={observatoryDetailsStyles.locationContainer.mapContainer.map}
-                initialRegion={{
-                  latitude: observatory?.latitude || 0,
-                  longitude: observatory?.longitude || 0,
-                  latitudeDelta: 0.01,
-                  longitudeDelta: 0.01,
-                }}
-              >
-                <MapTargetMarker
-                  coordinate={{
-                    latitude: observatory?.latitude || 0,
-                    longitude: observatory?.longitude || 0,
-                  }}
-                />
-              </MapView>
-            </View>
-            {
-              observatory?.image && (
-                <Image source={{ uri: observatory.image }} style={observatoryDetailsStyles.locationContainer.image} />
-              )
+          <Image
+            source={
+              observatory.image
+                ? { uri: observatory.image }
+                : require('../../../../../assets/images/placeholders/observatory-landscape.png')
             }
-          </View>
+            style={observatoryDetailsStyles.locationContainer.image}
+          />
 
+          
           <View style={observatoryDetailsStyles.titleContainer}>
             <Text style={observatoryDetailsStyles.titleContainer.title}>{observatory?.display_name || (observatory?.local_names ? observatory?.local_names[i18n.language] : t('common.errors.unknown'))}</Text>
             <Text style={observatoryDetailsStyles.titleContainer.subtitle}>{observatory?.name}</Text>
@@ -106,6 +90,55 @@ const ObservatoryDetails = () => {
                   ))
                 )
               }
+            </View>
+          </View>
+
+          <View style={observatoryDetailsStyles.skyQualityContainer}>
+            <View style={observatoryDetailsStyles.skyQualityContainer.body}>
+              <View style={observatoryDetailsStyles.skyQualityContainer.body.bortleBadge}>
+                <Text style={observatoryDetailsStyles.skyQualityContainer.body.bortleBadge.label}>{t('observatories.observatoryCard.bortle')}</Text>
+                <Text style={observatoryDetailsStyles.skyQualityContainer.body.bortleBadge.value}>{observatory.light_pollution?.bortle}</Text>
+              </View>
+              <View style={observatoryDetailsStyles.skyQualityContainer.body.observatoryInfos}>
+                <Text style={observatoryDetailsStyles.skyQualityContainer.body.observatoryInfos.bortleDescription}>{t(`lightPollution.indicators.${observatory.light_pollution?.bortle}`, {ns: 'common'})}</Text>
+                <Text style={observatoryDetailsStyles.skyQualityContainer.body.observatoryInfos.bortleValue}>{observatory.light_pollution?.mpsas ? t(`addObservatory.stepTwo.skyQuality.sqm.value`, {sqm: observatory.light_pollution?.mpsas}) : t(`lightPollution.sqm.numeric.${observatory.light_pollution?.bortle}`, {ns: 'common'})}</Text>
+                {/* <Text style={observatoryDetailsStyles.skyQualityContainer.body.observatoryInfos.bortleSource}>{t(`lightPollution.sqm.numeric.${observatory.light_pollution?.bortle}`, {ns: 'common'})}</Text> */}
+              </View>
+            </View>
+            <View style={observatoryDetailsStyles.skyQualityContainer.bortleScale}>
+              {
+                [1,2,3,4,5,6,7,8,9].map((number) => (
+                  <View style={[observatoryDetailsStyles.skyQualityContainer.bortleScale.bortleValue, {
+                    ...(observatory.light_pollution?.bortle && number <= observatory.light_pollution.bortle ? observatoryDetailsStyles.skyQualityContainer.bortleScale.bortleValue.active : {})
+                  }]} />
+                ))
+              }
+            </View>
+            <View style={observatoryDetailsStyles.skyQualityContainer.bortleScale.scaleExtremes}>
+              <Text style={observatoryDetailsStyles.skyQualityContainer.bortleScale.scaleExtremes.text}>{t('addObservatory.stepTwo.skyQuality.scaleExtremes.low')}</Text>
+              <Text style={observatoryDetailsStyles.skyQualityContainer.bortleScale.scaleExtremes.text}>{t('addObservatory.stepTwo.skyQuality.scaleExtremes.high')}</Text>
+            </View>
+          </View>
+          
+          <View style={observatoryDetailsStyles.locationContainer}>
+            <View style={observatoryDetailsStyles.locationContainer.mapContainer}>
+              <MapView
+                ref={mapRef}
+                style={observatoryDetailsStyles.locationContainer.mapContainer.map}
+                initialRegion={{
+                  latitude: observatory?.latitude || 0,
+                  longitude: observatory?.longitude || 0,
+                  latitudeDelta: 0.01,
+                  longitudeDelta: 0.01,
+                }}
+              >
+                <MapTargetMarker
+                  coordinate={{
+                    latitude: observatory?.latitude || 0,
+                    longitude: observatory?.longitude || 0,
+                  }}
+                />
+              </MapView>
             </View>
           </View>
         </View>

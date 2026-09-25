@@ -49,9 +49,39 @@ const ObservatoriesScreen = () => {
   }
 
   useEffect(() => {
-    if (isMapReady && location) {
+    if (!isMapReady) return;
+
+    if (userObservatories.length === 1) {
+      // fitToCoordinates avec un seul point n'a pas de "spread" à calculer et zoome au maximum
+      // (niveau rue) — on préfère ici un delta fixe équivalent à un zoom "niveau ville", cohérent
+      // avec celui utilisé ailleurs dans l'app (ex: StepOne.tsx lors d'une recherche/GPS).
+      console.log("[ObservatoriesScreen] Centering map on the single observatory: ", userObservatories[0].name);
+
+      mapRef.current?.animateToRegion({
+        latitude: userObservatories[0].latitude,
+        longitude: userObservatories[0].longitude,
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.0421,
+      }, 1000);
+    } else if (userObservatories.length > 1) {
+      // fitToCoordinates recalcule lui-même le centre et le niveau de zoom nécessaires pour que
+      // tous les points donnés soient visibles à l'écran — pas besoin de calculer une région
+      // manuellement. Se redéclenche à chaque ajout/suppression d'observatoire.
+      console.log("[ObservatoriesScreen] Fitting map to all observatories: ", userObservatories.length);
+
+      mapRef.current?.fitToCoordinates(
+        userObservatories.map((observatory) => ({
+          latitude: observatory.latitude,
+          longitude: observatory.longitude,
+        })),
+        {
+          edgePadding: { top: 50, right: 50, bottom: 50, left: 50 },
+          animated: true,
+        }
+      );
+    } else if (location) {
       console.log("[ObservatoriesScreen] Centering map on GPS location: ", location);
-      
+
       mapRef.current?.animateToRegion({
         latitude: location.latitude,
         longitude: location.longitude,
@@ -59,7 +89,7 @@ const ObservatoriesScreen = () => {
         longitudeDelta: 0.0421,
       }, 1000);
     }
-  }, [isMapReady, location]);
+  }, [isMapReady, location, userObservatories]);
 
   return (
     <View style={observatoriesScreenStyles.screen}>
