@@ -1,24 +1,9 @@
-import common_fr from "./locales/fr/common.json";
-import tools_fr from "./locales/fr/tools.json";
-import moon_fr from "./locales/fr/moon.json";
-import settings_fr from "./locales/fr/settings.json";
-import common_en from "./locales/en/common.json";
-import tools_en from "./locales/en/tools.json";
-import moon_en from "./locales/en/moon.json";
-import settings_en from "./locales/en/settings.json";
-import common_it from "./locales/it/common.json";
-import tools_it from "./locales/it/tools.json";
-import moon_it from "./locales/it/moon.json";
-import settings_it from "./locales/it/settings.json";
+import { resources } from "./resources";
 import type { SupportedLanguage } from "./index";
 
 type TranslationTree = { [key: string]: string | string[] | TranslationTree };
 
-const RESOURCES: Record<SupportedLanguage, Record<string, TranslationTree>> = {
-  fr: { common: common_fr, tools: tools_fr, moon: moon_fr, settings: settings_fr },
-  en: { common: common_en, tools: tools_en, moon: moon_en, settings: settings_en },
-  it: { common: common_it, tools: tools_it, moon: moon_it, settings: settings_it },
-};
+const RESOURCES: Record<SupportedLanguage, Record<string, TranslationTree>> = resources;
 
 const REFERENCE_LANGUAGE: SupportedLanguage = "fr";
 

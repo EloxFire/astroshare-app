@@ -16,19 +16,7 @@ dayjs.extend(utc);
 dayjs.extend(timezone);
 import { useUserDataStore } from "../store/userData.store";
 import { supportedLanguages } from "../helpers/langs";
-import common_fr from "./locales/fr/common.json";
-import tools_fr from "./locales/fr/tools.json";
-import moon_fr from "./locales/fr/moon.json";
-import settings_fr from "./locales/fr/settings.json";
-import suggestionsCards_fr from "./locales/fr/suggestionsCards.json";
-import common_en from "./locales/en/common.json";
-import tools_en from "./locales/en/tools.json";
-import moon_en from "./locales/en/moon.json";
-import settings_en from "./locales/en/settings.json";
-import common_it from "./locales/it/common.json";
-import tools_it from "./locales/it/tools.json";
-import moon_it from "./locales/it/moon.json";
-import settings_it from "./locales/it/settings.json";
+import { namespaces, resources } from "./resources";
 
 export const SUPPORTED_LANGUAGES = supportedLanguages.map((lang) => lang.code);
 export type SupportedLanguage = (typeof SUPPORTED_LANGUAGES)[number];
@@ -54,13 +42,9 @@ i18next.use(initReactI18next).init({
   lng: resolveLanguage(useUserDataStore.getState().locale),
   fallbackLng: supportedLanguages[0].code, //fr par défaut si la langue détectée n'est pas supportée
   supportedLngs: SUPPORTED_LANGUAGES,
-  ns: ["common", "tools", "moon", "settings", "suggestionsCards"],
+  ns: namespaces,
   defaultNS: "common",
-  resources: {
-    fr: { common: common_fr, tools: tools_fr, moon: moon_fr, settings: settings_fr, suggestionsCards: suggestionsCards_fr },
-    en: { common: common_en, tools: tools_en, moon: moon_en, settings: settings_en },
-    it: { common: common_it, tools: tools_it, moon: moon_it, settings: settings_it },
-  },
+  resources,
   interpolation: { escapeValue: false },
 });
 

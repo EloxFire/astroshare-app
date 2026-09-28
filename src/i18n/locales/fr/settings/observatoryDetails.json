@@ -1,0 +1,13 @@
+{
+  "screenTitle": "Détails de l'observatoire",
+  "editButton": "Modifier l'observatoire",
+  "location": {
+    "latitude": "Latitude",
+    "longitude": "Longitude",
+    "elevation": "Altitude",
+    "buttons": {
+      "copy": "Copier",
+      "navigate": "Itinéraire"
+    }
+  }
+}

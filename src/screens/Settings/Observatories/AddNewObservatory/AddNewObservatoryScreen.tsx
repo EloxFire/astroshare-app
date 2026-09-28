@@ -9,7 +9,7 @@ import StepTwo from "./StepTwo/StepTwo";
 // currentFormStep vient du AddObservatoryFormProvider — ce composant doit être un enfant du
 // Provider pour pouvoir le lire via useAddObservatoryForm().
 const AddNewObservatoryScreenContent = () => {
-  const { t } = useTranslation("settings");
+  const { t } = useTranslation("settings/addObservatory");
   const { currentFormStep } = useAddObservatoryForm();
 
   return (
@@ -17,7 +17,7 @@ const AddNewObservatoryScreenContent = () => {
       {
         currentFormStep === 1 && (
           <>
-            <ScreenHeader title={t("addObservatory.stepOne.screenTitle")} main={false} subtitle={t("addObservatory.stepOne.screenSubtitle")} />
+            <ScreenHeader title={t("stepOne.screenTitle")} main={false} subtitle={t("stepOne.screenSubtitle")} />
             <StepOne />
           </>
         )
@@ -26,7 +26,7 @@ const AddNewObservatoryScreenContent = () => {
       {
         currentFormStep === 2 && (
           <>
-            <ScreenHeader title={t("addObservatory.stepTwo.screenTitle")} main={false} subtitle={t("addObservatory.stepTwo.screenSubtitle")} />
+            <ScreenHeader title={t("stepTwo.screenTitle")} main={false} subtitle={t("stepTwo.screenSubtitle")} />
             <StepTwo />
           </>
         )

@@ -4,22 +4,22 @@ import i18next from "../../i18n";
 export const observatoriesTypes = [
   {
     id: "home",
-    label: i18next.t("addObservatory.stepTwo.observatoryType.types.home", {ns: "settings"}),
+    label: i18next.t("stepTwo.observatoryType.types.home", {ns: "settings/addObservatory"}),
     icon: HomeIcon
   },
   {
     id: "private",
-    label: i18next.t("addObservatory.stepTwo.observatoryType.types.private", {ns: "settings"}),
+    label: i18next.t("stepTwo.observatoryType.types.private", {ns: "settings/addObservatory"}),
     icon: HatGlassesIcon
   },
   {
     id: "public",
-    label: i18next.t("addObservatory.stepTwo.observatoryType.types.public", {ns: "settings"} ),
+    label: i18next.t("stepTwo.observatoryType.types.public", {ns: "settings/addObservatory"} ),
     icon: MountainIcon
   },
   {
     id: "observatory",
-    label: i18next.t("addObservatory.stepTwo.observatoryType.types.observatory", {ns: "settings"}),
+    label: i18next.t("stepTwo.observatoryType.types.observatory", {ns: "settings/addObservatory"}),
     icon: TelescopeIcon
   }
 ]
@@ -27,32 +27,32 @@ export const observatoriesTypes = [
 export const observatoriesEquipments = [
   {
     id: "electricity",
-    label: i18next.t("addObservatory.stepTwo.equipments.types.electricity", {ns: "settings"}),
+    label: i18next.t("stepTwo.equipments.types.electricity", {ns: "settings/addObservatory"}),
     icon: PlugZap
   },
   {
     id: "internet",
-    label: i18next.t("addObservatory.stepTwo.equipments.types.internet", {ns: "settings"}),
+    label: i18next.t("stepTwo.equipments.types.internet", {ns: "settings/addObservatory"}),
     icon: WifiIcon
   },
   {
     id: "parking",
-    label: i18next.t("addObservatory.stepTwo.equipments.types.parking", {ns: "settings"}),
+    label: i18next.t("stepTwo.equipments.types.parking", {ns: "settings/addObservatory"}),
     icon: ParkingCircle
   },
   {
     id: "shelter",
-    label: i18next.t("addObservatory.stepTwo.equipments.types.shelter", {ns: "settings"}),
+    label: i18next.t("stepTwo.equipments.types.shelter", {ns: "settings/addObservatory"}),
     icon: Bed
   },
   {
     id: "bathroom",
-    label: i18next.t("addObservatory.stepTwo.equipments.types.bathroom", {ns: "settings"}),
+    label: i18next.t("stepTwo.equipments.types.bathroom", {ns: "settings/addObservatory"}),
     icon: BathIcon
   },
   {
     id: "kitchen",
-    label: i18next.t("addObservatory.stepTwo.equipments.types.kitchen", {ns: "settings"}),
+    label: i18next.t("stepTwo.equipments.types.kitchen", {ns: "settings/addObservatory"}),
     icon: CookingPot
   }
 ]
@@ -60,12 +60,12 @@ export const observatoriesEquipments = [
 export const observatoriesAccessTypes = [
   {
     id: "car",
-    label: i18next.t("addObservatory.stepTwo.observatoryAccess.types.car", {ns: "settings"}),
+    label: i18next.t("stepTwo.observatoryAccess.types.car", {ns: "settings/addObservatory"}),
     icon: CarIcon
   },
   {
     id: "foot",
-    label: i18next.t("addObservatory.stepTwo.observatoryAccess.types.foot", {ns: "settings"}),
+    label: i18next.t("stepTwo.observatoryAccess.types.foot", {ns: "settings/addObservatory"}),
     icon: FootprintsIcon
   }
 ]

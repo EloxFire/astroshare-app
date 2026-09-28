@@ -7,8 +7,8 @@ import { app_colors } from "../../../helpers/variables";
 
 interface InfoCardProps {
   // Acceptent aussi un ReactNode (ex: un élément <Trans> avec un <Text> stylé imbriqué) pour
-  // pouvoir mettre en valeur une partie du texte — voir addObservatory.lightPollution.title et
-  // .description.
+  // pouvoir mettre en valeur une partie du texte — voir stepOne.lightPollution.title et
+  // .description dans settings/addObservatory.
   title: string | ReactNode;
   description: string | ReactNode;
   icon: LucideIcon

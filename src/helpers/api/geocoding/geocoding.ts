@@ -9,6 +9,10 @@ export const getLocationNameFromCoords = async (latitude: number, longitude: num
   state: string;
 } | null> => {
   try {
+    console.log("[getLocationNameFromCoords] Fetching location name for coordinates:", { latitude, longitude });
+    console.log("[getLocationNameFromCoords] BASE_URL:", BASE_URL);
+    
+    
     const response = await fetch(`${BASE_URL}/location/name?lat=${latitude}&lon=${longitude}`);
     if (!response.ok) {
       throw new Error(`[getLocationNameFromCoords] HTTP error! status: ${response.status}`);
@@ -76,6 +80,8 @@ export const getLightPollutionDataFromCoords = async (latitude: number, longitud
   try {
     const response = await fetch(`${BASE_URL}/lightpollution?lat=${latitude}&lon=${longitude}`);
     if (!response.ok) {
+      console.log("RESPONSE :", response);
+      
       throw new Error(`[getLightPollutionDataFromCoords] HTTP error! status: ${response.status}`);
     }
 
@@ -93,7 +99,7 @@ export const getLightPollutionDataFromCoords = async (latitude: number, longitud
 };
 
 // Traduit un niveau Bortle (1-9) en libellé — voir l'échelle ci-dessus et les clés
-// addObservatory.lightPollution.indicators.<1-9> dans settings.json. Pas de champ `indicator`
+// lightPollution.indicators.<1-9> dans common.json. Pas de champ `indicator`
 // stocké dans getLightPollutionData : `bortle` est déjà l'identifiant stable, la traduction se
 // fait uniquement à l'affichage (même principe que Phase côté observerly, voir
 // getLunarPhaseLabel dans moonHelpers.ts — éviter de figer la langue dans une donnée stockée).

@@ -25,7 +25,7 @@ import { pickAndCompressImage, ImagePickerPermissionDeniedError } from "../../..
 const StepTwo = () => {
 
 
-  const { t } = useTranslation("settings");
+  const { t } = useTranslation("settings/addObservatory");
   const addObservatory = useUserDataStore(state => state.addObservatory)
   const { setCurrentFormStep, newObservatory } = useAddObservatoryForm();
 
@@ -136,29 +136,29 @@ const StepTwo = () => {
             <Text style={[infoCardStyles.card.infos.description, {color: app_colors.primary.main, fontFamily: "DMMonoRegular", fontSize: 10}]}>Bortle {newObservatory!.light_pollution?.bortle} - {convertDecimalLatitudeToDMS(newObservatory!.latitude)} - {convertDecimalLatitudeToDMS(newObservatory!.longitude)}</Text>
           </View>
           <TouchableOpacity onPress={() => setCurrentFormStep(1)}>
-            <Text style={addNewObservatoryScreenStyles.editButton}>{t('addObservatory.stepTwo.stepOneSummary.edit')}</Text>
+            <Text style={addNewObservatoryScreenStyles.editButton}>{t('stepTwo.stepOneSummary.edit')}</Text>
           </TouchableOpacity>
         </View>
 
         <InputWithIcon
-          label={t("addObservatory.stepTwo.displayNameLabel")}
+          label={t("stepTwo.displayNameLabel")}
           value={displayName}
           action={() => handleSetDisplayName()}
           onChangeText={setDisplayName}
-          placeholder={t("addObservatory.stepTwo.displayNamePlaceholder")}
+          placeholder={t("stepTwo.displayNamePlaceholder")}
         />
 
         <InputWithIcon
-          label={t("addObservatory.stepTwo.elevationLabel")}
+          label={t("stepTwo.elevationLabel")}
           value={altitude !== null ? altitude.toString() : ""}
           action={() => handleSetAltitude()}
           onChangeText={(text) => setAltitude(text ? parseFloat(text) : null)}
-          placeholder={t("addObservatory.stepTwo.elevationPlaceholder")}
+          placeholder={t("stepTwo.elevationPlaceholder")}
           keyboardType="numeric"
         />
 
         <InputWithIcon
-          label={t("addObservatory.stepTwo.tagsLabel")}
+          label={t("stepTwo.tagsLabel")}
           value={tags.join(", ")}
           action={() => {}}
           onChangeText={(text) => {
@@ -166,21 +166,21 @@ const StepTwo = () => {
             setTags(newTags);
             if(newObservatory) newObservatory.tags = newTags;
           }}
-          placeholder={t("addObservatory.stepTwo.tagsPlaceholder")}
+          placeholder={t("stepTwo.tagsPlaceholder")}
         />
 
         <View style={{display: "flex", flexDirection: "column", gap: 5}}>
-          <Text style={globalStyles.categoryTitle}>{t("addObservatory.stepTwo.observatoryImage.title")}</Text>
+          <Text style={globalStyles.categoryTitle}>{t("stepTwo.observatoryImage.title")}</Text>
 
           <TouchableOpacity style={[addNewObservatoryStepTwoStyles.observatoryImagePicker, image ? {borderStyle: "solid", padding: 0} : {}]} onPress={handlePickImage}>
             {
               !image ? (
-                <Text style={addNewObservatoryStepTwoStyles.observatoryImagePicker.placeholder}>{t('addObservatory.stepTwo.observatoryImage.placeholder')}</Text>
+                <Text style={addNewObservatoryStepTwoStyles.observatoryImagePicker.placeholder}>{t('stepTwo.observatoryImage.placeholder')}</Text>
               ) : (
                 <View style={addNewObservatoryStepTwoStyles.observatoryImagePicker.imageContainer}>
                   <Image source={{ uri: `${image}` }} style={addNewObservatoryStepTwoStyles.observatoryImagePicker.imageContainer.image} />
                   <View style={addNewObservatoryStepTwoStyles.observatoryImagePicker.imageContainer.overlay}>
-                    <Text style={addNewObservatoryStepTwoStyles.observatoryImagePicker.imageContainer.overlay.text}>{t('addObservatory.stepTwo.observatoryImage.editButton')}</Text>
+                    <Text style={addNewObservatoryStepTwoStyles.observatoryImagePicker.imageContainer.overlay.text}>{t('stepTwo.observatoryImage.editButton')}</Text>
                   </View>
                   <TouchableOpacity
                     style={addNewObservatoryStepTwoStyles.observatoryImagePicker.imageContainer.deleteButton}
@@ -195,7 +195,7 @@ const StepTwo = () => {
         </View>
 
         <View style={{display: "flex", flexDirection: "column", gap: 5}}>
-          <Text style={globalStyles.categoryTitle}>{t("addObservatory.stepTwo.skyQuality.title")}</Text>
+          <Text style={globalStyles.categoryTitle}>{t("stepTwo.skyQuality.title")}</Text>
           <View style={addNewObservatoryStepTwoStyles.skyQualityContainer}>
             <View style={addNewObservatoryStepTwoStyles.skyQualityContainer.header}>
               <Text style={addNewObservatoryStepTwoStyles.skyQualityContainer.header.bortleNumber}>{bortleNumber}</Text>
@@ -238,21 +238,21 @@ const StepTwo = () => {
             </View>
 
             <View style={addNewObservatoryStepTwoStyles.skyQualityContainer.bortleScale.scaleExtremes}>
-              <Text style={addNewObservatoryStepTwoStyles.skyQualityContainer.bortleScale.scaleExtremes.text}>{t("addObservatory.stepTwo.skyQuality.scaleExtremes.low")}</Text>
-              <Text style={addNewObservatoryStepTwoStyles.skyQualityContainer.bortleScale.scaleExtremes.text}>{t("addObservatory.stepTwo.skyQuality.scaleExtremes.high")}</Text>
+              <Text style={addNewObservatoryStepTwoStyles.skyQualityContainer.bortleScale.scaleExtremes.text}>{t("stepTwo.skyQuality.scaleExtremes.low")}</Text>
+              <Text style={addNewObservatoryStepTwoStyles.skyQualityContainer.bortleScale.scaleExtremes.text}>{t("stepTwo.skyQuality.scaleExtremes.high")}</Text>
             </View>
 
             <View style={globalStyles.separator}/>
 
             <View style={addNewObservatoryStepTwoStyles.skyQualityContainer.bortleScale.sqmContainer}>
-              <Text style={addNewObservatoryStepTwoStyles.skyQualityContainer.bortleScale.sqmContainer.text}>{t("addObservatory.stepTwo.skyQuality.sqm.label")}</Text>
-              <Text style={addNewObservatoryStepTwoStyles.skyQualityContainer.bortleScale.sqmContainer.value}>{t("addObservatory.stepTwo.skyQuality.sqm.value", {sqm: sqm})}</Text>
+              <Text style={addNewObservatoryStepTwoStyles.skyQualityContainer.bortleScale.sqmContainer.text}>{t("stepTwo.skyQuality.sqm.label")}</Text>
+              <Text style={addNewObservatoryStepTwoStyles.skyQualityContainer.bortleScale.sqmContainer.value}>{t("stepTwo.skyQuality.sqm.value", {sqm: sqm})}</Text>
             </View>
           </View>
         </View>
 
         <View style={{display: "flex", flexDirection: "column", gap: 5}}>
-          <Text style={globalStyles.categoryTitle}>{t("addObservatory.stepTwo.observatoryAccess.title")}</Text>
+          <Text style={globalStyles.categoryTitle}>{t("stepTwo.observatoryAccess.title")}</Text>
 
           <View
             style={addNewObservatoryStepTwoStyles.observatoryChipContainer}
@@ -284,7 +284,7 @@ const StepTwo = () => {
 
 
         <View style={{display: "flex", flexDirection: "column", gap: 5}}>
-          <Text style={globalStyles.categoryTitle}>{t("addObservatory.stepTwo.observatoryType.title")}</Text>
+          <Text style={globalStyles.categoryTitle}>{t("stepTwo.observatoryType.title")}</Text>
           <View
             style={addNewObservatoryStepTwoStyles.observatoryChipContainer}
             onLayout={(event) => setObservatoryChipsContainerWidth(event.nativeEvent.layout.width)}
@@ -311,7 +311,7 @@ const StepTwo = () => {
         </View>
 
         <View style={{display: "flex", flexDirection: "column", gap: 5}}>
-          <Text style={globalStyles.categoryTitle}>{t("addObservatory.stepTwo.equipments.title")}</Text>
+          <Text style={globalStyles.categoryTitle}>{t("stepTwo.equipments.title")}</Text>
           <View
             style={addNewObservatoryStepTwoStyles.observatoryChipContainer}
             onLayout={(event) => setObservatoryChipsContainerWidth(event.nativeEvent.layout.width)}
@@ -338,7 +338,7 @@ const StepTwo = () => {
         </View>
 
         <TouchableOpacity style={addNewObservatoryScreenStyles.nextButton} onPress={() => handleSubmitObservatory()}>
-          <Text style={{color: app_colors.white, fontFamily: 'DMMonoMedium', fontSize: 16}}>{t("addObservatory.saveButton")}</Text>
+          <Text style={{color: app_colors.white, fontFamily: 'DMMonoMedium', fontSize: 16}}>{t("saveButton")}</Text>
           <ArrowRight color={app_colors.white} size={20} />
         </TouchableOpacity>
       </View>

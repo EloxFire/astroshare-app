@@ -105,7 +105,7 @@ export const observatoryDetailsStyles = {
 
   locationContainer: {
     display: "flex" as const,
-    flexDirection: "row" as const,
+    flexDirection: "column" as const,
     justifyContent: "center" as const,
     alignItems: "center" as const,
     gap: 10,

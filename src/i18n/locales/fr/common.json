@@ -17,7 +17,8 @@
   "errors": {
     "locationPermissionDenied": "Permission de localisation refusée",
     "locationError": "Erreur de localisation",
-    "apiError": "Une erreur est survenue, veuillez réessayer"
+    "apiError": "Une erreur est survenue, veuillez réessayer",
+    "unknown": "Inconnu"
   },
   "home": {
     "greeting": "Belle nuit\npour observer",

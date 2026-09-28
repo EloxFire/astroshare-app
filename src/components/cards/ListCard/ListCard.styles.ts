@@ -47,6 +47,33 @@ export const listCardStyles = {
         borderBottomColor: app_colors.primary.light,
         paddingBottom: 10,
       }
+    },
+
+    buttons: {
+      display: "flex" as const,
+      flexDirection: "row" as const,
+      justifyContent: "space-between" as const,
+      alignItems: "center" as const,
+      gap: 10,
+      marginTop: 10,
+
+      button: {
+        backgroundColor: app_colors.accent.light,
+        borderRadius: radius.heroCard,
+        padding: 10,
+        flex: 1,
+        display: "flex" as const,
+        flexDirection: "row" as const,
+        justifyContent: "center" as const,
+        alignItems: "center" as const,
+        gap: 5,
+
+        text: {
+          color: app_colors.accent.main,
+          fontFamily: "ZTNatureBold",
+          fontSize: 14,
+        }
+      }
     }
   }
 }

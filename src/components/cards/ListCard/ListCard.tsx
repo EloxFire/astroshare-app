@@ -1,13 +1,16 @@
-import { Text, View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 import { listCardStyles } from "./ListCard.styles";
 import { ReactNode } from "react";
+import { LucideIcon } from "lucide-react-native";
+import { app_colors } from "../../../helpers/variables";
 
 interface ListCardProps {
   items: { title: string; value: string | ReactNode; }[]
   additionalContainerStyles?: object;
+  buttons?: { title: string; onPress: () => void; icon?: LucideIcon }[]
 }
 
-function ListCard({ items, additionalContainerStyles }: ListCardProps) {
+function ListCard({ items, additionalContainerStyles, buttons }: ListCardProps) {
   return (
     <View style={[listCardStyles.card, additionalContainerStyles]}>
       {
@@ -25,6 +28,21 @@ function ListCard({ items, additionalContainerStyles }: ListCardProps) {
             </View>
           </View>
         ))
+      }
+
+      {
+        buttons && buttons.length > 0 && (
+          <View style={listCardStyles.card.buttons}>
+            {
+              buttons.slice(0, 2).map((button, index) => (
+                <TouchableOpacity key={index} onPress={button.onPress} style={listCardStyles.card.buttons.button}>
+                  {button.icon && <button.icon color={app_colors.accent.main} size={14} />}
+                  <Text style={listCardStyles.card.buttons.button.text}>{button.title}</Text>
+                </TouchableOpacity>
+              ))
+            }
+          </View>
+        )
       }
     </View>
   )

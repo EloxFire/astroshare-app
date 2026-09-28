@@ -1,10 +1,10 @@
-import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native"
+import { Image, Linking, Platform, ScrollView, Text, TouchableOpacity, View } from "react-native"
 import { router, useLocalSearchParams } from "expo-router"
 import { useUserDataStore } from "../../../../store/userData.store"
 import { globalStyles } from "../../../../helpers/globalStyles"
 import { ScreenHeader } from "../../../../components/ScreenHeader/ScreenHeader"
 import { useTranslation } from "react-i18next"
-import { Pencil, Trash2 } from "lucide-react-native"
+import { Copy, Navigation, Pencil, Share2, Trash2 } from "lucide-react-native"
 import { observatoryDetailsStyles } from "./ObservatoryDetails.styles"
 import MapView from "react-native-maps"
 import { useEffect, useRef } from "react"
@@ -13,10 +13,12 @@ import Badge from "../../../../components/Badge/Badge"
 import { observatoriesAccessTypes } from "../../../../helpers/observatories/observatories"
 import { app_colors } from "../../../../helpers/variables"
 import { getBortleMpsas } from "../../../../helpers/lightPollution/lightPollution"
+import ListCard from "../../../../components/cards/ListCard/ListCard"
+import { convertDecimalLatitudeToDMS, convertDecimalLongitudeToDMS } from "../../../../helpers/location/convert"
 
 const ObservatoryDetails = () => {
 
-  const { t, i18n } = useTranslation("settings")
+  const { t, i18n } = useTranslation("settings/observatoryDetails")
   const userObservatories = useUserDataStore((state) => state.observatories)
   const removeObservatory = useUserDataStore((state) => state.removeObservatory)
   const observatoryId = useLocalSearchParams().observatory as string
@@ -30,6 +32,23 @@ const ObservatoryDetails = () => {
     // ObservatoryDetails se re-rend avec observatory === undefined juste après, et c'est le
     // useEffect ci-dessous qui se charge de la redirection.
     removeObservatory(observatory.id)
+  }
+
+  const handleCopyCoordinates = () => {
+    if(!observatory) return;
+    navigator.clipboard.writeText(`${observatory.latitude}, ${observatory.longitude}`)
+  }
+
+  const handleGetDirections = () => {
+    if(!observatory) return;
+
+    // Open the default maps app with the observatory's coordinates: on iOS, a maps.apple.com
+    // link opens Apple Maps directly (no Info.plist declaration needed); Google Maps elsewhere.
+    const destination = `${observatory.latitude},${observatory.longitude}`;
+    const url = Platform.OS === "ios"
+      ? `https://maps.apple.com/?daddr=${destination}`
+      : `https://www.google.com/maps/dir/?api=1&destination=${destination}`;
+    Linking.openURL(url);
   }
 
   // La redirection ne peut pas se faire directement dans le corps du rendu : ça déclencherait
@@ -49,7 +68,7 @@ const ObservatoryDetails = () => {
 
   return (
     <View style={globalStyles.screen}>
-      <ScreenHeader title={t('observatoryDetails.screenTitle')} main={false} />
+      <ScreenHeader title={t('screenTitle')} main={false} />
 
       <ScrollView>
         <View style={[globalStyles.screen.content, {backgroundColor: 'transparent'}]}>
@@ -72,7 +91,7 @@ const ObservatoryDetails = () => {
             <View style={observatoryDetailsStyles.titleContainer.tags}>
               <Badge
                 icon={observatoriesAccessTypes.find((accessType) => accessType.id === observatory.access)?.icon}
-                text={t(`observatories.observatoryAccess.${observatory.access}`)}
+                text={t(`observatories.observatoryAccess.${observatory.access}`, {ns: 'settings'})}
                 backgroundColor={app_colors.accent.light}
                 foregroundColor={app_colors.primary.main}
               />
@@ -96,12 +115,12 @@ const ObservatoryDetails = () => {
           <View style={observatoryDetailsStyles.skyQualityContainer}>
             <View style={observatoryDetailsStyles.skyQualityContainer.body}>
               <View style={observatoryDetailsStyles.skyQualityContainer.body.bortleBadge}>
-                <Text style={observatoryDetailsStyles.skyQualityContainer.body.bortleBadge.label}>{t('observatories.observatoryCard.bortle')}</Text>
+                <Text style={observatoryDetailsStyles.skyQualityContainer.body.bortleBadge.label}>{t('observatories.observatoryCard.bortle', {ns: 'settings'})}</Text>
                 <Text style={observatoryDetailsStyles.skyQualityContainer.body.bortleBadge.value}>{observatory.light_pollution?.bortle}</Text>
               </View>
               <View style={observatoryDetailsStyles.skyQualityContainer.body.observatoryInfos}>
                 <Text style={observatoryDetailsStyles.skyQualityContainer.body.observatoryInfos.bortleDescription}>{t(`lightPollution.indicators.${observatory.light_pollution?.bortle}`, {ns: 'common'})}</Text>
-                <Text style={observatoryDetailsStyles.skyQualityContainer.body.observatoryInfos.bortleValue}>{observatory.light_pollution?.mpsas ? t(`addObservatory.stepTwo.skyQuality.sqm.value`, {sqm: observatory.light_pollution?.mpsas}) : t(`lightPollution.sqm.numeric.${observatory.light_pollution?.bortle}`, {ns: 'common'})}</Text>
+                <Text style={observatoryDetailsStyles.skyQualityContainer.body.observatoryInfos.bortleValue}>{observatory.light_pollution?.mpsas ? t(`stepTwo.skyQuality.sqm.value`, {ns: 'settings/addObservatory', sqm: observatory.light_pollution?.mpsas}) : t(`lightPollution.sqm.numeric.${observatory.light_pollution?.bortle}`, {ns: 'common'})}</Text>
                 {/* <Text style={observatoryDetailsStyles.skyQualityContainer.body.observatoryInfos.bortleSource}>{t(`lightPollution.sqm.numeric.${observatory.light_pollution?.bortle}`, {ns: 'common'})}</Text> */}
               </View>
             </View>
@@ -115,12 +134,41 @@ const ObservatoryDetails = () => {
               }
             </View>
             <View style={observatoryDetailsStyles.skyQualityContainer.bortleScale.scaleExtremes}>
-              <Text style={observatoryDetailsStyles.skyQualityContainer.bortleScale.scaleExtremes.text}>{t('addObservatory.stepTwo.skyQuality.scaleExtremes.low')}</Text>
-              <Text style={observatoryDetailsStyles.skyQualityContainer.bortleScale.scaleExtremes.text}>{t('addObservatory.stepTwo.skyQuality.scaleExtremes.high')}</Text>
+              <Text style={observatoryDetailsStyles.skyQualityContainer.bortleScale.scaleExtremes.text}>{t('stepTwo.skyQuality.scaleExtremes.low', {ns: 'settings/addObservatory'})}</Text>
+              <Text style={observatoryDetailsStyles.skyQualityContainer.bortleScale.scaleExtremes.text}>{t('stepTwo.skyQuality.scaleExtremes.high', {ns: 'settings/addObservatory'})}</Text>
             </View>
           </View>
           
-          <View style={observatoryDetailsStyles.locationContainer}>
+          <ListCard
+            items={[
+              {
+                title: t('location.latitude'),
+                value: convertDecimalLatitudeToDMS(observatory.latitude)
+              },
+              {
+                title: t('location.longitude'),
+                value: convertDecimalLongitudeToDMS(observatory.longitude)
+              },
+              {
+                title: t('location.elevation'),
+                value: observatory.elevation ? `${observatory.elevation} m` : t('errors.unknown', {ns: 'common'})
+              }
+            ]}
+
+            buttons={[
+              {
+                title: t('location.buttons.copy'),
+                onPress: () => handleCopyCoordinates(),
+                icon: Copy
+              },
+              {
+                title: t('location.buttons.navigate'),
+                onPress: () => handleGetDirections(),
+                icon: Navigation
+              }
+            ]}
+          />
+          {/* <View style={observatoryDetailsStyles.locationContainer}>
             <View style={observatoryDetailsStyles.locationContainer.mapContainer}>
               <MapView
                 ref={mapRef}
@@ -140,7 +188,7 @@ const ObservatoryDetails = () => {
                 />
               </MapView>
             </View>
-          </View>
+          </View> */}
         </View>
       </ScrollView>
       
@@ -148,7 +196,7 @@ const ObservatoryDetails = () => {
         <View style={observatoryDetailsStyles.actions}>
           <TouchableOpacity style={[globalStyles.button, {flex: 1, height: '100%'}]} onPress={() => router.push("/settings/observatories")}>
             <Pencil color="white" size={14} />
-            <Text style={globalStyles.button.text}>{t('observatoryDetails.editButton')}</Text>
+            <Text style={globalStyles.button.text}>{t('editButton')}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={[globalStyles.button, {backgroundColor: app_colors.red.main}]} onPress={() => handleDeleteObservatory()}>
