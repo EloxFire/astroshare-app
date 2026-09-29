@@ -1,20 +1,21 @@
-import { Image, Linking, Platform, ScrollView, Text, TouchableOpacity, View } from "react-native"
+import { Image, Linking, Platform, Text, TouchableOpacity, View } from "react-native"
 import { router, useLocalSearchParams } from "expo-router"
 import { useUserDataStore } from "../../../../store/userData.store"
 import { globalStyles } from "../../../../helpers/globalStyles"
-import { ScreenHeader } from "../../../../components/ScreenHeader/ScreenHeader"
+import { ImageHeaderScrollView } from "../../../../components/ImageHeaderScrollView/ImageHeaderScrollView"
 import { useTranslation } from "react-i18next"
 import { Copy, Navigation, Pencil, Share2, Trash2 } from "lucide-react-native"
 import { observatoryDetailsStyles } from "./ObservatoryDetails.styles"
-import MapView from "react-native-maps"
+import MapView, { Marker } from "react-native-maps"
 import { useEffect, useRef } from "react"
-import MapTargetMarker from "../../../../components/MapTargetMarker/MapTargetMarker"
-import Badge from "../../../../components/Badge/Badge"
-import { observatoriesAccessTypes } from "../../../../helpers/observatories/observatories"
+import { observatoriesAccessTypes, observatoriesEquipments } from "../../../../helpers/observatories/observatories"
 import { app_colors } from "../../../../helpers/variables"
-import { getBortleMpsas } from "../../../../helpers/lightPollution/lightPollution"
 import ListCard from "../../../../components/cards/ListCard/ListCard"
 import { convertDecimalLatitudeToDMS, convertDecimalLongitudeToDMS } from "../../../../helpers/location/convert"
+import * as Clipboard from 'expo-clipboard';
+import ListBadge from "../../../../components/Badges/ListBadge/ListBadge"
+import Badge from "../../../../components/Badges/Badge/Badge"
+import MapTargetMarker from "../../../../components/MapTargetMarker/MapTargetMarker"
 
 const ObservatoryDetails = () => {
 
@@ -23,7 +24,6 @@ const ObservatoryDetails = () => {
   const removeObservatory = useUserDataStore((state) => state.removeObservatory)
   const observatoryId = useLocalSearchParams().observatory as string
   const observatory = userObservatories.find((observatory) => observatory.id === observatoryId)
-
   const mapRef = useRef<MapView>(null)
 
   const handleDeleteObservatory = () => {
@@ -36,7 +36,7 @@ const ObservatoryDetails = () => {
 
   const handleCopyCoordinates = () => {
     if(!observatory) return;
-    navigator.clipboard.writeText(`${observatory.latitude}, ${observatory.longitude}`)
+    Clipboard.setStringAsync(`${observatory.latitude}, ${observatory.longitude}`)
   }
 
   const handleGetDirections = () => {
@@ -68,22 +68,9 @@ const ObservatoryDetails = () => {
 
   return (
     <View style={globalStyles.screen}>
-      <ScreenHeader title={t('screenTitle')} main={false} />
-
-      <ScrollView>
+      <ImageHeaderScrollView title={t('screenTitle')} image={observatory.image ? {uri: observatory.image} : require('../../../../../assets/images/placeholders/observatory-landscape.png')}>
         <View style={[globalStyles.screen.content, {backgroundColor: 'transparent'}]}>
 
-
-          <Image
-            source={
-              observatory.image
-                ? { uri: observatory.image }
-                : require('../../../../../assets/images/placeholders/observatory-landscape.png')
-            }
-            style={observatoryDetailsStyles.locationContainer.image}
-          />
-
-          
           <View style={observatoryDetailsStyles.titleContainer}>
             <Text style={observatoryDetailsStyles.titleContainer.title}>{observatory?.display_name || (observatory?.local_names ? observatory?.local_names[i18n.language] : t('common.errors.unknown'))}</Text>
             <Text style={observatoryDetailsStyles.titleContainer.subtitle}>{observatory?.name}</Text>
@@ -138,60 +125,113 @@ const ObservatoryDetails = () => {
               <Text style={observatoryDetailsStyles.skyQualityContainer.bortleScale.scaleExtremes.text}>{t('stepTwo.skyQuality.scaleExtremes.high', {ns: 'settings/addObservatory'})}</Text>
             </View>
           </View>
-          
-          <ListCard
-            items={[
-              {
-                title: t('location.latitude'),
-                value: convertDecimalLatitudeToDMS(observatory.latitude)
-              },
-              {
-                title: t('location.longitude'),
-                value: convertDecimalLongitudeToDMS(observatory.longitude)
-              },
-              {
-                title: t('location.elevation'),
-                value: observatory.elevation ? `${observatory.elevation} m` : t('errors.unknown', {ns: 'common'})
-              }
-            ]}
 
-            buttons={[
-              {
-                title: t('location.buttons.copy'),
-                onPress: () => handleCopyCoordinates(),
-                icon: Copy
-              },
-              {
-                title: t('location.buttons.navigate'),
-                onPress: () => handleGetDirections(),
-                icon: Navigation
-              }
-            ]}
-          />
-          {/* <View style={observatoryDetailsStyles.locationContainer}>
-            <View style={observatoryDetailsStyles.locationContainer.mapContainer}>
+          <View>
+            <View style={observatoryDetailsStyles.mapContainer}>
               <MapView
                 ref={mapRef}
-                style={observatoryDetailsStyles.locationContainer.mapContainer.map}
+                style={{flex: 1}}
                 initialRegion={{
-                  latitude: observatory?.latitude || 0,
-                  longitude: observatory?.longitude || 0,
+                  latitude: observatory.latitude,
+                  longitude: observatory.longitude,
                   latitudeDelta: 0.01,
                   longitudeDelta: 0.01,
                 }}
               >
                 <MapTargetMarker
                   coordinate={{
-                    latitude: observatory?.latitude || 0,
-                    longitude: observatory?.longitude || 0,
+                    latitude: observatory.latitude,
+                    longitude: observatory.longitude,
                   }}
                 />
               </MapView>
             </View>
-          </View> */}
+            
+            <ListCard
+              items={[
+                {
+                  title: t('location.latitude'),
+                  value: convertDecimalLatitudeToDMS(observatory.latitude)
+                },
+                {
+                  title: t('location.longitude'),
+                  value: convertDecimalLongitudeToDMS(observatory.longitude)
+                },
+                {
+                  title: t('location.elevation'),
+                  value: observatory.elevation ? `${observatory.elevation} m` : t('errors.unknown', {ns: 'common'})
+                }
+              ]}
+
+              additionalContainerStyles={{
+                borderTopLeftRadius: 0,
+                borderTopRightRadius: 0,
+                borderTopWidth: 0
+              }}
+
+              buttons={[
+                {
+                  title: t('location.buttons.copy'),
+                  onPress: () => handleCopyCoordinates(),
+                  icon: Copy
+                },
+                {
+                  title: t('location.buttons.navigate'),
+                  onPress: () => handleGetDirections(),
+                  icon: Navigation
+                }
+              ]}
+            />
+          </View>
+
+          <View style={observatoryDetailsStyles.equipmentsContainer}>
+            <Text style={observatoryDetailsStyles.equipmentsContainer.title}>{t('equipments.title')}</Text>
+
+            {
+              observatory.equipment && observatory.equipment.length > 0 ? (
+                <View style={observatoryDetailsStyles.equipmentsContainer.grid}>
+                  {
+                    observatory.equipment.map((equipment) => {
+                      const equipmentData = observatoriesEquipments.find((eq) => eq.id === equipment)
+                      return (
+                        <View key={equipment} style={observatoryDetailsStyles.equipmentsContainer.grid.cell}>
+                          <ListBadge
+                            text={equipmentData!.label}
+                            icon={equipmentData!.icon}
+                            backgroundColor={app_colors.accent.light}
+                            foregroundColor={app_colors.primary.main}
+                          />
+                        </View>
+                      )
+                    })
+                  }
+                </View>
+              ) : (
+                <Text style={observatoryDetailsStyles.equipmentsContainer.noEquipmentsText}>{t('equipments.noEquipments')}</Text>
+              )
+            }
+          </View>
+
+          <View style={observatoryDetailsStyles.notesContainer}>
+            <Text style={observatoryDetailsStyles.notesContainer.title}>{t('notes.title')}</Text>
+            <Text style={observatoryDetailsStyles.notesContainer.text}>{observatory.notes || t('notes.noNotes')}</Text>
+          </View>
+
+          <ListCard
+            items={[
+              {
+                title: t('metadata.createdAt'),
+                value: observatory.createdAt ? new Date(observatory.createdAt).toLocaleDateString(i18n.language, {year: 'numeric', month: 'long', day: 'numeric'}) : t('errors.unknown', {ns: 'common'})
+              },
+              {
+                title: t('metadata.updatedAt'),
+                value: observatory.updatedAt ? new Date(observatory.updatedAt).toLocaleDateString(i18n.language, {year: 'numeric', month: 'long', day: 'numeric'}) : t('errors.unknown', {ns: 'common'})
+              }
+            ]}
+          />
         </View>
-      </ScrollView>
-      
+      </ImageHeaderScrollView>
+
       <View style={globalStyles.screen.content}>
         <View style={observatoryDetailsStyles.actions}>
           <TouchableOpacity style={[globalStyles.button, {flex: 1, height: '100%'}]} onPress={() => router.push("/settings/observatories")}>

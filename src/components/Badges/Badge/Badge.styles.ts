@@ -1,4 +1,4 @@
-import { app_colors } from "../../helpers/variables";
+import { app_colors } from "../../../helpers/variables";
 
 export const badgeStyles = {
   container: {

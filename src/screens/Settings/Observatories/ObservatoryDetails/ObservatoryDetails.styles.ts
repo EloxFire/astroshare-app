@@ -1,6 +1,17 @@
+import { globalStyles } from "../../../../helpers/globalStyles";
 import { app_colors, radius, withOpacity } from "../../../../helpers/variables";
 
+const EQUIPMENTS_GRID_GUTTER = 10;
+
 export const observatoryDetailsStyles = {
+
+  image: {
+    flex: 1,
+    height: 200,
+    width: "100%" as const,
+    borderRadius: radius.heroCard,
+    resizeMode: "cover" as const,
+  },
 
   skyQualityContainer: {
     backgroundColor: app_colors.primary.main,
@@ -53,13 +64,13 @@ export const observatoryDetailsStyles = {
         },
 
         bortleValue:{
-          fontFamily: "ZTNature",
+          fontFamily: "ZTNatureRegular",
           fontSize: 12,
           color: app_colors.yellow.main
         },
 
         bortleSource: {
-          fontFamily: "ZTNature",
+          fontFamily: "ZTNatureRegular",
           fontSize: 10,
           color: app_colors.accent.light
         }
@@ -95,7 +106,7 @@ export const observatoryDetailsStyles = {
         marginBottom: 10,
 
         text: {
-          fontFamily: "ZTNature",
+          fontFamily: "ZTNatureRegular",
           fontSize: 10,
           color: withOpacity(app_colors.white, 0.5)
         }
@@ -103,33 +114,64 @@ export const observatoryDetailsStyles = {
     }
   },
 
-  locationContainer: {
-    display: "flex" as const,
-    flexDirection: "column" as const,
-    justifyContent: "center" as const,
-    alignItems: "center" as const,
-    gap: 10,
+  mapContainer: {
+    borderTopLeftRadius: radius.heroCard,
+    borderTopRightRadius: radius.heroCard,
+    overflow: "hidden" as const,
+    height: 120,
+    width: "100%" as const,
+  },
 
-    mapContainer: {
+  equipmentsContainer: {
+    ...globalStyles.defaultCard,
+
+    title: {
+      ...globalStyles.categoryTitle,
+      fontSize: 12,
+    },
+
+    // Grille 2 colonnes avec une gouttière exacte, sans mesurer le conteneur (≠ onLayout dans
+    // StepTwo) : chaque cellule fait 50% et porte la moitié de la gouttière en padding de chaque
+    // côté ; le margin négatif de la grille annule cette demi-gouttière sur les bords extérieurs.
+    // Le badge, lui, n'a aucune largeur : il remplit simplement sa cellule.
+    grid: {
       display: "flex" as const,
-      flex: 1,
-      borderRadius: radius.heroCard,
-      overflow: "hidden" as const,
+      flexDirection: "row" as const,
+      flexWrap: "wrap" as const,
+      marginHorizontal: -EQUIPMENTS_GRID_GUTTER / 2,
+      rowGap: EQUIPMENTS_GRID_GUTTER,
 
-      map: {
-        height: 200,
-        width: "100%" as const,
+      cell: {
+        width: "50%" as const,
+        paddingHorizontal: EQUIPMENTS_GRID_GUTTER / 2,
       }
     },
 
-    // flex:1 (comme mapContainer) pour un partage strict 50/50 de la largeur quand les deux
-    // sont affichés côte à côte — sans ça, l'image ne prend que sa largeur intrinsèque.
-    image: {
-      flex: 1,
-      height: 200,
-      width: "100%" as const,
-      borderRadius: radius.heroCard,
-      resizeMode: "cover" as const,
+    noEquipmentsText: {
+      fontFamily: "DMMonoRegular",
+      fontSize: 12,
+      color: app_colors.primary.medium,
+    }
+  },
+
+  notesContainer: {
+    ...globalStyles.defaultCard,
+
+    title: {
+      ...globalStyles.categoryTitle,
+      fontSize: 12,
+    },
+
+    text: {
+      fontFamily: "ZTNatureRegular",
+      fontSize: 12,
+      color: app_colors.primary.medium,
+    },
+
+    noNotesText: {
+      fontFamily: "DMMonoRegular",
+      fontSize: 12,
+      color: app_colors.primary.medium,
     }
   },
 
@@ -141,12 +183,12 @@ export const observatoryDetailsStyles = {
 
     title: {
       fontFamily: "ZTNatureBold",
-      fontSize: 22,
+      fontSize: 28,
       color: app_colors.primary.main
     },
 
     subtitle: {
-      fontFamily: "ZTNature",
+      fontFamily: "ZTNatureRegular",
       fontSize: 12,
       color: app_colors.primary.medium
     },

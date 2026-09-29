@@ -6,7 +6,7 @@ import { ChevronRight, Lightbulb, LucideIcon, Mountain, Users } from "lucide-rea
 import { app_colors } from "../../../../helpers/variables";
 import { useTranslation } from "react-i18next";
 import { observatoriesAccessTypes, observatoriesEquipments } from "../../../../helpers/observatories/observatories";
-import Badge from "../../../../components/Badge/Badge";
+import Badge from "../../../../components/Badges/Badge/Badge";
 
 interface ObservatoryCardProps {
   active: boolean;

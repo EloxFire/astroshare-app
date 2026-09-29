@@ -9,5 +9,17 @@
       "copy": "Copier",
       "navigate": "Itinéraire"
     }
+  },
+  "equipments": {
+    "title": "Équipements disponibles",
+    "noEquipments": "Aucun équipement disponible pour cet observatoire."
+  },
+  "notes": {
+    "title": "Notes",
+    "noNotes": "Aucune note disponible pour cet observatoire."
+  },
+  "metadata": {
+    "createdAt": "Créé le",
+    "updatedAt": "Mis à jour le"
   }
 }
