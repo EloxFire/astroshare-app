@@ -22,7 +22,8 @@ export const inputWithIconStyles = {
   },
 
   label: {
-    ...globalStyles.categoryTitle
+    ...globalStyles.categoryTitle,
+    fontSize: 12
   },
 
   input: {

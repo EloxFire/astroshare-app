@@ -1,8 +1,28 @@
 {
   "stepOne": {
-    "tabs": {
-      "map": "Carte",
-      "coords": "Coordonnées"
+    "form": {
+      "name": {
+        "label": "Nom de l'observatoire",
+        "placeholder": "Ex: Mon observatoire"
+      },
+      "location": {
+        "latitude": {
+          "label": "Latitude",
+          "placeholder": "Ex: 43.5297"
+        },
+        "longitude": {
+          "label": "Longitude",
+          "placeholder": "Ex: 5.4474"
+        },
+        "altitude": {
+          "label": "Altitude",
+          "placeholder": "Ex: 150 m"
+        }
+      },
+      "type": {
+        "label": "Type de lieu",
+        "placeholder": "Sélectionnez un type de lieu"
+      }
     },
     "screenTitle": "Nouveau lieu",
     "screenSubtitle": "Étape 1/2 - Emplacement",

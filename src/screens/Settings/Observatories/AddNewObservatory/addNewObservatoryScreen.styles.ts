@@ -4,12 +4,18 @@ export const addNewObservatoryScreenStyles = {
   mapContainer: {
     borderRadius: radius.heroCard,
     overflow: "hidden" as const,
-    height: 250,
+    height: 150,
 
     map: {
       height: "100%" as const,
       width: "100%" as const,
     }
+  },
+
+  coordsContainer: {
+    display: "flex" as const,
+    flexDirection: "row" as const,
+    gap: 10,
   },
 
   nextButton: {

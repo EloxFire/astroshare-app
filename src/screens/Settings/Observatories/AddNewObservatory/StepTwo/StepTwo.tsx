@@ -8,6 +8,7 @@ import { addNewObservatoryScreenStyles } from "../addNewObservatoryScreen.styles
 import { infoCardStyles } from "../../../../../components/cards/InfoCard/InfoCard.styles";
 import { convertDecimalLatitudeToDMS } from "../../../../../helpers/location/convert";
 import { InputWithIcon } from "../../../../../components/InputWithIcon/InputWithIcon";
+import { SelectInput } from "../../../../../components/SelectInput/SelectInput";
 import { useState } from "react";
 import { addNewObservatoryStepTwoStyles } from "./StepTwo.styles";
 import { getLightPollutionIndicatorDescription, getLightPollutionIndicatorLabel } from "../../../../../helpers/api/geocoding/geocoding";
@@ -39,6 +40,14 @@ const StepTwo = () => {
   const [isShared, setIsShared] = useState<boolean>(newObservatory?.shared || false);
   const [access, setAccess] = useState<"car" | "foot">(newObservatory?.access || "car");
   const [image, setImage] = useState<string | null>(null);
+
+  // Libellés traduits ici plutôt que via le `label` de observatoriesTypes, traduit une seule fois
+  // au chargement du module (donc figé dans la langue du démarrage) : ici, ils suivent un
+  // changement de langue.
+  const observatoryTypeOptions = observatoriesTypes.map(({ id }) => ({
+    label: t(`stepTwo.observatoryType.types.${id}`),
+    value: id,
+  }));
 
   // Largeur exacte des boutons de type d'observatoire (2 colonnes), calculée à partir de la
   // largeur réelle mesurée du conteneur — un width en "%" ne peut pas garantir un gap strict en
@@ -283,32 +292,12 @@ const StepTwo = () => {
         </View>
 
 
-        <View style={{display: "flex", flexDirection: "column", gap: 5}}>
-          <Text style={globalStyles.categoryTitle}>{t("stepTwo.observatoryType.title")}</Text>
-          <View
-            style={addNewObservatoryStepTwoStyles.observatoryChipContainer}
-            onLayout={(event) => setObservatoryChipsContainerWidth(event.nativeEvent.layout.width)}
-          >
-            {
-              observatoriesTypes.map(({id, label, icon: Icon}) => {
-                return (
-                  <TouchableOpacity
-                    key={id}
-                    style={[
-                      addNewObservatoryStepTwoStyles.observatoryChipContainer.chipButton,
-                      observatoryTypeButtonWidth != null && { width: observatoryTypeButtonWidth },
-                      observatoryType === id && addNewObservatoryStepTwoStyles.observatoryChipContainer.chipButton.active,
-                    ]}
-                    onPress={() => setObservatoryType(id as ObservatoryType)}
-                  >
-                    <Icon size={20} color={app_colors.primary.main} />
-                    <Text style={addNewObservatoryStepTwoStyles.observatoryChipContainer.chipButton.text}>{label}</Text>
-                  </TouchableOpacity>
-                )
-              })
-            }
-          </View>
-        </View>
+        <SelectInput
+          label={t("stepTwo.observatoryType.title")}
+          options={observatoryTypeOptions}
+          value={observatoryType}
+          onChange={setObservatoryType}
+        />
 
         <View style={{display: "flex", flexDirection: "column", gap: 5}}>
           <Text style={globalStyles.categoryTitle}>{t("stepTwo.equipments.title")}</Text>

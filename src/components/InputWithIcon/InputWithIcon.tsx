@@ -46,7 +46,7 @@ export const InputWithIcon = ({ icon: Icon, style, action, suggestions, fill = f
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
             style={[inputWithIconStyles.input, style]}
-            placeholderTextColor={withOpacity(app_colors.primary.main, 0.8)}
+            placeholderTextColor={app_colors.primary.medium}
             returnKeyType="search"
             submitBehavior="submit"
             onSubmitEditing={action}

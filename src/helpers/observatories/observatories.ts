@@ -1,7 +1,10 @@
-import { BathIcon, Bed, CarIcon, CookingPot, FootprintsIcon, HatGlassesIcon, HomeIcon, MountainIcon, ParkingCircle, PlugZap, TelescopeIcon, WifiIcon } from "lucide-react-native";
+import { BathIcon, Bed, CarIcon, CookingPot, FootprintsIcon, HatGlassesIcon, HomeIcon, LucideIcon, MountainIcon, ParkingCircle, PlugZap, TelescopeIcon, WifiIcon } from "lucide-react-native";
 import i18next from "../../i18n";
+import { ObservatoryType } from "../../types/observatory";
 
-export const observatoriesTypes = [
+// `id` typé ObservatoryType (et non string) : utilisable tel quel comme valeur d'un état
+// ObservatoryType, par exemple via les options d'un SelectInput.
+export const observatoriesTypes: { id: ObservatoryType; label: string; icon: LucideIcon }[] = [
   {
     id: "home",
     label: i18next.t("stepTwo.observatoryType.types.home", {ns: "settings/addObservatory"}),
