@@ -32,6 +32,7 @@ export type UserSettingsActions = {
   setTimezone: (newTimezone: string | null) => void;
   setDistanceUnit: (newDistanceUnit: "km" | "mi") => void;
   setTemperatureUnit: (newTemperatureUnit: "celsius" | "fahrenheit") => void;
+  resetUserData: () => void;
 }
 
 export type UserSettingsData = UserSettingsState & UserSettingsActions;

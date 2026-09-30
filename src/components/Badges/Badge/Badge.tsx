@@ -8,7 +8,7 @@ interface BadgeProps {
   backgroundColor?: string
   foregroundColor?: string
   borderColor?: string
-  action: () => void
+  action?: () => void
   active?: boolean
 }
 
@@ -16,7 +16,7 @@ const Badge = ({ text, icon: Icon, backgroundColor, foregroundColor, borderColor
   return (
     <TouchableOpacity
       disabled={!action}
-      style={[badgeStyles.container, active && badgeStyles.container.active, backgroundColor && { backgroundColor }, borderColor && { borderColor, borderWidth: 1 }]}
+      style={[badgeStyles.container, active && badgeStyles.container.active, backgroundColor && { backgroundColor }, borderColor && { borderColor, borderWidth: 1 }, action && { paddingVertical: 10, paddingHorizontal: 10 }]}
       onPress={action}
     >
       { Icon && <Icon size={16} color={foregroundColor || "white"} /> }

@@ -35,6 +35,7 @@ export const useUserDataStore = create<UserSettingsData>()(
       setTimezone: (newTimezone: string | null) => set((state) => ({units: {...state.units, timezone: newTimezone}})),
       setDistanceUnit: (newDistanceUnit: "km" | "mi") => set((state) => ({units: {...state.units, distance: newDistanceUnit}})),
       setTemperatureUnit: (newTemperatureUnit: "celsius" | "fahrenheit") => set((state) => ({units: {...state.units, temperature: newTemperatureUnit}})),
+      resetUserData: () => set(defaultUserData),
     }),
     {
       name: "astroshare_userData", // clé async storage,

@@ -1,6 +1,6 @@
-import { Search, LocateFixedIcon, DraftingCompass, Lightbulb, ArrowRight } from "lucide-react-native"
+import { Search, LocateFixedIcon, DraftingCompass, Lightbulb, ArrowRight, X } from "lucide-react-native"
 import { Trans, useTranslation } from "react-i18next"
-import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from "react-native"
+import { ActivityIndicator, Image, ScrollView, Text, TouchableOpacity, View } from "react-native"
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps"
 import MapTargetMarker from "../../../../../components/MapTargetMarker/MapTargetMarker"
 import InfoCard from "../../../../../components/cards/InfoCard/InfoCard"
@@ -19,21 +19,32 @@ import { useLocation } from "../../../../../context/GpsContext"
 import { SelectInput } from "../../../../../components/SelectInput/SelectInput"
 import { observatoriesAccessTypes, observatoriesEquipments, observatoriesTypes } from "../../../../../helpers/observatories/observatories"
 import SwitchButton from "../../../../../components/SwitchButton/SwitchButton"
-import { ObservatoryAccess, ObservatoryEquipment } from "../../../../../types/observatory"
+import { ObservatoryAccess, ObservatoryEquipment, ObservatoryType } from "../../../../../types/observatory"
 import Badge from "../../../../../components/Badges/Badge/Badge"
+import { TagsInput } from "../../../../../components/TagsInput/TagsInput"
+import { ImagePickerPermissionDeniedError, pickAndCompressImage, PickedImage } from "../../../../../helpers/images/imagePicker"
+import { addNewObservatoryStepTwoStyles } from "../StepTwo/StepTwo.styles"
+import { useUserDataStore } from "../../../../../store/userData.store"
+import { router } from "expo-router"
+import { generateCustomId } from "../../../../../helpers/ids"
 
 const StepOne = () => {
 
   const { t } = useTranslation("settings/addObservatory");
   const { fetchGpsLocation, location, fetchLocation, gpsLoading, searchLoading } = useLocation();
   const { newObservatory, setNewObservatory, setCurrentFormStep } = useAddObservatoryForm();
+  const addObservatory = useUserDataStore((state) => state.addObservatory);
   const mapRef = useRef<MapView>(null);
 
 
   const [observatoryName, setObservatoryName] = useState<string>("");
   const [observatoryElevation, setObservatoryElevation] = useState<string>("");
+  const [observatoryType, setObservatoryType] = useState<ObservatoryType | null>(null);
   const [observatoryAccessType, setObservatoryAccessType] = useState<ObservatoryAccess>("car");
   const [observatoryEquipments, setObservatoryEquipments] = useState<ObservatoryEquipment[]>([]);
+  const [observatoryTags, setObservatoryTags] = useState<string[]>([]);
+  const [observatoryNotes, setObservatoryNotes] = useState<string>("");
+  const [observatoryImage, setObservatoryImage] = useState<string | null>(null);
 
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [searchLatitude, setSearchLatitude] = useState<string>("");
@@ -47,10 +58,6 @@ const StepOne = () => {
 
     setSearchLatitude(latitude.toFixed(5).toString());
     setSearchLongitude(longitude.toFixed(5).toString());
-
-    if(observatoryName.trim() === ""){
-      setObservatoryName(locData.display_name || locData.name || "");
-    }
   }
 
   const handleFetchCurrentLocation = async () => {
@@ -67,6 +74,81 @@ const StepOne = () => {
     }
   }
 
+  const handlePickImage = async () => {
+    try {
+      const result = await pickAndCompressImage({ aspectRatio: [4, 3] }); // ou sans aspectRatio pour ne pas forcer de recadrage
+      if (!result) return; // utilisateur a annulé la sélection
+      setObservatoryImage(result.base64);
+      if (newObservatory) newObservatory.image = result.base64;
+    } catch (err) {
+      if (err instanceof ImagePickerPermissionDeniedError) {
+        // afficher un message du style "Autorise l'accès à tes photos dans les réglages"
+      }
+    }
+  };
+
+  const handleRemoveImage = () => {
+    setObservatoryImage(null);
+    if (newObservatory) newObservatory.image = undefined;
+  }
+
+  const handleSelectType = (type: ObservatoryType) => {
+    setObservatoryType(type);
+    if (!newObservatory) return;
+    setNewObservatory({ ...newObservatory, type });
+  }
+
+  const handleSelectEquipment = (equipmentId: ObservatoryEquipment) => {
+    if(observatoryEquipments.includes(equipmentId)){
+      setObservatoryEquipments(observatoryEquipments.filter((id) => id !== equipmentId));
+    } else {
+      setObservatoryEquipments([...observatoryEquipments, equipmentId]);
+    }
+  }
+
+  const handleSearchLocation = async (query: string) => {
+    if(!query || query.trim() === "") return;
+
+    const locData = await fetchLocation(query);
+    if(locData){
+      setNewObservatory(locData);
+      mapRef.current?.animateToRegion({
+        latitude: locData.latitude,
+        longitude: locData.longitude,
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.0421,
+      }, 1000);
+
+      setSearchLatitude(locData.latitude.toFixed(5).toString());
+      setSearchLongitude(locData.longitude.toFixed(5).toString());
+    }
+  }
+
+  const handleAddObservatory = () => {
+
+    if(!newObservatory) return;
+
+    newObservatory.id = generateCustomId();
+    newObservatory.shared = false; // Par défaut, un nouvel observatoire est privé
+    newObservatory.createdAt = new Date().toISOString();
+    newObservatory.updatedAt = new Date().toISOString();
+    newObservatory.elevation = observatoryElevation ? parseFloat(observatoryElevation) : null;
+    newObservatory.type = observatoryType || undefined;
+    newObservatory.access = observatoryAccessType;
+    newObservatory.equipment = observatoryEquipments;
+    newObservatory.tags = observatoryTags;
+    newObservatory.notes = observatoryNotes;
+    newObservatory.image = observatoryImage || undefined;
+    newObservatory.display_name = observatoryName.trim() !== "" ? observatoryName : newObservatory.name!;
+
+    console.log("Soumission du nouvel observatoire :", JSON.stringify(newObservatory, null, 2));
+
+    addObservatory(newObservatory);
+    // replace (et non push) : le formulaire d'ajout est retiré de l'historique de navigation,
+    // impossible d'y revenir avec le bouton retour une fois l'observatoire enregistré.
+    router.replace("/settings/observatories");
+  }
+
   return (
     <ScrollView>
       <View style={[globalStyles.screen.content, {paddingBottom: 50}]}>
@@ -75,7 +157,11 @@ const StepOne = () => {
           fill
           label={t('stepOne.form.name.label')}
           // icon={Search}
-          placeholder={t("stepOne.form.name.placeholder")}
+          // Le nom du lieu (GPS/recherche) n'est qu'une suggestion visuelle tant que l'utilisateur
+          // n'a rien tapé — jamais écrit dans observatoryName, sinon on ne peut plus distinguer
+          // "champ vide" d'un "nom personnalisé qui vaut par coïncidence le nom du lieu" (voir
+          // handleAddObservatory, qui a besoin de cette distinction pour title/subtitle).
+          placeholder={newObservatory?.name || t("stepOne.form.name.placeholder")}
           value={observatoryName}
           onChangeText={setObservatoryName}
           action={() => {}}
@@ -140,6 +226,42 @@ const StepOne = () => {
             action={() => {}}
             keyboardType="numeric"
           />
+
+        </View>
+        
+        <View style={addNewObservatoryScreenStyles.coordsContainer.buttons}>
+          <InputWithIcon
+            fill
+            label={t("stepOne.form.location.search.label")}
+            placeholder={t("stepOne.form.location.search.placeholder")}
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            action={() => handleSearchLocation(searchQuery)}
+            keyboardType="default"
+          />
+
+          <TouchableOpacity disabled={searchLoading} style={addNewObservatoryScreenStyles.coordsContainer.buttons.button} onPress={() => handleSearchLocation(searchQuery)}>
+            {
+              searchLoading ? (
+                <ActivityIndicator size="small" color={app_colors.white} />
+              ) : (
+                <>
+                  <Search size={16} color={app_colors.white} />
+                  <Text style={addNewObservatoryScreenStyles.coordsContainer.buttons.button.text}>{t("stepOne.form.location.buttons.search")}</Text>
+                </>
+              )
+            }
+          </TouchableOpacity>
+
+          <TouchableOpacity disabled={gpsLoading} style={addNewObservatoryScreenStyles.coordsContainer.buttons.button} onPress={handleFetchCurrentLocation}>
+            {
+              gpsLoading ? (
+                <ActivityIndicator size="small" color={app_colors.white} />
+              ) : (
+                <LocateFixedIcon size={16} color={app_colors.white} />
+              )
+            }
+          </TouchableOpacity>
         </View>
 
         <InfoCard
@@ -167,19 +289,38 @@ const StepOne = () => {
           additionnalDescriptionStyle={{opacity: .8, fontFamily: 'DMMonoRegular', fontSize: 10}}
         />
 
+        <View style={addNewObservatoryScreenStyles.imageContainer}>
+        <TouchableOpacity style={[addNewObservatoryStepTwoStyles.observatoryImagePicker, observatoryImage ? {borderStyle: "solid", padding: 0} : {}]} onPress={handlePickImage}>
+            {
+              !observatoryImage ? (
+                <Text style={addNewObservatoryStepTwoStyles.observatoryImagePicker.placeholder}>{t('stepTwo.observatoryImage.placeholder')}</Text>
+              ) : (
+                <View style={addNewObservatoryStepTwoStyles.observatoryImagePicker.imageContainer}>
+                  <Image source={{ uri: `${observatoryImage}` }} style={addNewObservatoryStepTwoStyles.observatoryImagePicker.imageContainer.image} />
+                  <View style={addNewObservatoryStepTwoStyles.observatoryImagePicker.imageContainer.overlay}>
+                    <Text style={addNewObservatoryStepTwoStyles.observatoryImagePicker.imageContainer.overlay.text}>{t('stepTwo.observatoryImage.editButton')}</Text>
+                  </View>
+                  <TouchableOpacity
+                    style={addNewObservatoryStepTwoStyles.observatoryImagePicker.imageContainer.deleteButton}
+                    onPress={handleRemoveImage}
+                  >
+                    <X size={16} color={app_colors.white} />
+                  </TouchableOpacity>
+                </View>
+              )
+            }
+          </TouchableOpacity>
+        </View>
+
         <Text style={[globalStyles.categoryTitle, {fontSize: 12}]}>{t("stepOne.form.type.label")}</Text>
         <View style={addNewObservatoryScreenStyles.caracteristicsContainer}>
           <SelectInput
             fill
             options={observatoriesTypes.map((type) => ({ value: type.id, label: type.label }))}
-            // label={t("stepOne.form.type.label")}
             placeholder={t("stepOne.form.type.placeholder")}
-            value={newObservatory?.type ?? null}
+            value={observatoryType}
             presentation="sheet"
-            onChange={(value) => {
-              if (!newObservatory) return;
-              setNewObservatory({ ...newObservatory, type: value });
-            }}
+            onChange={handleSelectType}
           />
 
           <TabSwitch
@@ -211,20 +352,37 @@ const StepOne = () => {
                   active={observatoryEquipments.includes(equipment.id as ObservatoryEquipment)}
                   backgroundColor={observatoryEquipments.includes(equipment.id as ObservatoryEquipment) ? app_colors.accent.main : app_colors.accent.light}
                   foregroundColor={observatoryEquipments.includes(equipment.id as ObservatoryEquipment) ? app_colors.white : app_colors.primary.main}
-                  action={() => {
-                    if (!newObservatory) return;
-                    const updatedEquipment = observatoryEquipments.includes(equipment.id as ObservatoryEquipment)
-                      ? observatoryEquipments.filter((id) => id !== equipment.id)
-                      : [...observatoryEquipments, equipment.id as ObservatoryEquipment];
-                    setObservatoryEquipments(updatedEquipment);
-                  }}
+                  action={() => handleSelectEquipment(equipment.id as ObservatoryEquipment)}
                 />
               ))
             }
           </View>
         </View>
 
-        <TouchableOpacity style={addNewObservatoryScreenStyles.nextButton} onPress={() => {}}>
+        <View style={addNewObservatoryScreenStyles.tagsContainer}>
+          <Text style={[globalStyles.categoryTitle, {fontSize: 12}]}>{t("stepOne.form.tags.label")}</Text>
+
+          <TagsInput
+            tags={observatoryTags}
+            placeholder={t("stepOne.form.tags.placeholder")}
+            onChange={setObservatoryTags}
+          />
+        </View>
+
+        <View style={addNewObservatoryScreenStyles.notesContainer}>
+          <Text style={[globalStyles.categoryTitle, {fontSize: 12}]}>{t("stepOne.form.notes.label")}</Text>
+
+          <InputWithIcon
+            multiline
+            fill
+            placeholder={t("stepOne.form.notes.placeholder")}
+            value={observatoryNotes}
+            onChangeText={setObservatoryNotes}
+            action={() => {}}
+          />
+        </View>
+
+        <TouchableOpacity style={addNewObservatoryScreenStyles.nextButton} onPress={() => handleAddObservatory()}>
           <Text style={{color: app_colors.white, fontFamily: 'DMMonoMedium', fontSize: 16}}>{t("nextButton")}</Text>
           <ArrowRight color={app_colors.white} size={20} />
         </TouchableOpacity>

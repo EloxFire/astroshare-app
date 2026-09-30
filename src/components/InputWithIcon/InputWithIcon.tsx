@@ -47,10 +47,11 @@ export const InputWithIcon = ({ icon: Icon, style, action, suggestions, fill = f
             onBlur={() => setIsFocused(false)}
             style={[inputWithIconStyles.input, style]}
             placeholderTextColor={app_colors.primary.medium}
-            returnKeyType="search"
-            submitBehavior="submit"
+            returnKeyType={props.multiline ? "default" : "done"}
+            submitBehavior={props.multiline ? "newline" : "submit"}
             onSubmitEditing={action}
             keyboardType={props.keyboardType || "default"}
+            multiline={props.multiline || false}
             {...props}
           />
         </View>

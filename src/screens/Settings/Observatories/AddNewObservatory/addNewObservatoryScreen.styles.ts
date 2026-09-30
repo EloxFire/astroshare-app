@@ -16,6 +16,30 @@ export const addNewObservatoryScreenStyles = {
     display: "flex" as const,
     flexDirection: "row" as const,
     gap: 10,
+
+    buttons: {
+      display: "flex" as const,
+      flexDirection: "row" as const,
+      gap: 10,
+      alignItems: "flex-end" as const,
+
+      button: {
+        backgroundColor: app_colors.accent.main,
+        padding: 10,
+        borderRadius: radius.badge32,
+        display: "flex" as const,
+        flexDirection: "row" as const,
+        gap: 10,
+        alignItems: "center" as const,
+        justifyContent: "center" as const,
+
+        text: {
+          color: app_colors.white,
+          fontFamily: "ZTNatureBold",
+          fontSize: 12,
+        }
+      }
+    }
   },
 
   nextButton: {
@@ -72,6 +96,35 @@ export const addNewObservatoryScreenStyles = {
       flexDirection: "row" as const,
       flexWrap: "wrap" as const,
       gap: 10,
+    }
+  },
+
+  tagsContainer: {
+    display: "flex" as const,
+    flexDirectino: "column" as const,
+    gap: 10,
+  },
+
+  notesContainer: {
+    display: "flex" as const,
+    flexDirection: "column" as const,
+    gap: 10,
+  },
+
+  imageContainer: {
+    display: "flex" as const,
+    flexDirection: "column" as const,
+    gap: 10,
+    borderRadius: radius.heroCard,
+    overflow: "hidden" as const,
+    borderWidth: 1,
+    borderColor: app_colors.accent.light,
+    borderStyle: "dashed" as const,
+
+    image: {
+      width: "100%",
+      height: 200,
+      resizeMode: "cover" as const,
     }
   }
 }

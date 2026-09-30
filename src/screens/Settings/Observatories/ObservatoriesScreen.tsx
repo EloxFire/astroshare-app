@@ -22,6 +22,10 @@ const ObservatoriesScreen = () => {
   const userObservatories = useUserDataStore((state) => state.observatories);
   const activeObservatoryId = useUserDataStore((state) => state.activeObservatoryId);
   const setActiveObservatoryId = useUserDataStore((state) => state.setActiveObservatoryId);
+  const resetUserData = useUserDataStore((state) => state.resetUserData);
+
+  console.log("[ObservatoriesScreen] User Observatories : \n", JSON.stringify(userObservatories, null, 2));
+  
 
 
   const mapRef = useRef<MapView>(null);
@@ -141,6 +145,11 @@ const ObservatoriesScreen = () => {
               },
             ]}
           />
+
+          {/* TEMPORARY RESET USER DATA */}
+          <TouchableOpacity style={observatoriesScreenStyles.resetUserDataButton} onPress={resetUserData}>
+            <Text style={observatoriesScreenStyles.resetUserDataButton.text}>{t("observatories.resetUserDataButton")}</Text>
+          </TouchableOpacity>
 
           <View style={observatoriesScreenStyles.useGpsContainer}>
             <View style={observatoriesScreenStyles.useGpsContainer.content}>

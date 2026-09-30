@@ -10,27 +10,29 @@ import StepTwo from "./StepTwo/StepTwo";
 // Provider pour pouvoir le lire via useAddObservatoryForm().
 const AddNewObservatoryScreenContent = () => {
   const { t } = useTranslation("settings/addObservatory");
-  const { currentFormStep } = useAddObservatoryForm();
+  // const { currentFormStep } = useAddObservatoryForm();
 
   return (
     <View style={globalStyles.screen}>
-      {
+      <ScreenHeader title={t("stepOne.screenTitle")} main={false} />
+      <StepOne />
+      {/* {
         currentFormStep === 1 && (
           <>
-            <ScreenHeader title={t("stepOne.screenTitle")} main={false} subtitle={t("stepOne.screenSubtitle")} />
+            <ScreenHeader title={t("stepOne.screenTitle")} main={false} />
             <StepOne />
           </>
         )
-      }
+      } */}
 
-      {
+      {/* {
         currentFormStep === 2 && (
           <>
             <ScreenHeader title={t("stepTwo.screenTitle")} main={false} subtitle={t("stepTwo.screenSubtitle")} />
             <StepTwo />
           </>
         )
-      }
+      } */}
     </View>
   )
 }

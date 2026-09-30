@@ -73,7 +73,7 @@ const ObservatoryDetails = () => {
 
           <View style={observatoryDetailsStyles.titleContainer}>
             <Text style={observatoryDetailsStyles.titleContainer.title}>{observatory?.display_name || (observatory?.local_names ? observatory?.local_names[i18n.language] : t('common.errors.unknown'))}</Text>
-            <Text style={observatoryDetailsStyles.titleContainer.subtitle}>{observatory?.name}</Text>
+            <Text style={observatoryDetailsStyles.titleContainer.subtitle}>{observatory?.name} {observatory.state ? ` - ${observatory.state}` : ''} {observatory.country ? ` - ${observatory.country}` : ''}</Text>
 
             <View style={observatoryDetailsStyles.titleContainer.tags}>
               <Badge
@@ -114,7 +114,7 @@ const ObservatoryDetails = () => {
             <View style={observatoryDetailsStyles.skyQualityContainer.bortleScale}>
               {
                 [1,2,3,4,5,6,7,8,9].map((number) => (
-                  <View style={[observatoryDetailsStyles.skyQualityContainer.bortleScale.bortleValue, {
+                  <View key={number} style={[observatoryDetailsStyles.skyQualityContainer.bortleScale.bortleValue, {
                     ...(observatory.light_pollution?.bortle && number <= observatory.light_pollution.bortle ? observatoryDetailsStyles.skyQualityContainer.bortleScale.bortleValue.active : {})
                   }]} />
                 ))

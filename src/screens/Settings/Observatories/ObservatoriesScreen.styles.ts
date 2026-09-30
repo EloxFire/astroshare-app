@@ -2,6 +2,7 @@ import { globalStyles } from "../../../helpers/globalStyles";
 import { app_colors, gaps, radius, spacing } from "../../../helpers/variables";
 
 export const observatoriesScreenStyles = {
+
   screen: globalStyles.screen,
   content: {
     flex: 1,
@@ -77,6 +78,24 @@ export const observatoriesScreenStyles = {
       color: app_colors.primary.medium,
       fontFamily: "DMMonoMedium",
       fontSize: 12,
+    }
+  },
+  resetUserDataButton: {
+    display: "flex" as const,
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
+    justifyContent: "center" as const,
+    gap: 10,
+    padding: 10,
+    borderWidth: 1,
+    borderStyle: "dashed" as const,
+    borderColor: app_colors.accent.main,
+    borderRadius: radius.heroCard,
+
+    text: {
+      color: app_colors.accent.main,
+      fontFamily: "ZTNatureBold",
+      fontSize: 14,
     }
   }
 }

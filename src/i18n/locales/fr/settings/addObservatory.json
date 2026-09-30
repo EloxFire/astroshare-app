@@ -17,6 +17,13 @@
         "altitude": {
           "label": "Altitude",
           "placeholder": "Ex: 150 m"
+        },
+        "search": {
+          "label": "Rechercher un lieu",
+          "placeholder": "Ex: Aix-en-Provence"
+        },
+        "buttons": {
+          "search": "Rechercher",
         }
       },
       "type": {
@@ -32,9 +39,22 @@
       },
       "equipments": {
         "label": "Équipements disponibles",
+      },
+      "tags": {
+        "label": "Tags",
+        "placeholder": "Ex: montagne, lac, club..."
+      },
+      "notes": {
+        "label": "Notes",
+        "placeholder": "Ex: Lieu idéal pour observer la Voie Lactée"
+      },
+      "image": {
+        "label": "Image de l'observatoire",
+        "placeholder": "Cliquez pour ajouter une image de votre observatoire",
+        "editButton": "Modifier l'image"
       }
     },
-    "screenTitle": "Nouveau lieu",
+    "screenTitle": "Ajouter un nouveau lieu",
     "screenSubtitle": "Étape 1/2 - Emplacement",
     "searchPrompt": "Recherchez ou appuyez sur la carte",
     "searchCoordsPrompt": "Entrez les coordonnées GPS",
@@ -125,7 +145,7 @@
     "notesLabel": "Description (facultatif)",
     "saveButton": "Enregistrer l'observatoire"
   },
-  "nextButton": "Continuer",
+  "nextButton": "Ajouter l'observatoire",
   "backButton": "Retour",
   "cancelButton": "Annuler",
   "saveButton": "Enregistrer l'observatoire",
