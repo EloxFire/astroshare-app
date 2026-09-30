@@ -23,6 +23,11 @@ export const tabSwitchStyles = {
       borderRadius: 10,
       flex: 1,
 
+      // Voir la prop fitContent : largeur du texte au lieu d'une part égale de la largeur.
+      fitContent: {
+        flex: 0,
+      },
+
       title: {
         ...typography.dmMono.semiBold.pillButton,
         fontSize: 12,

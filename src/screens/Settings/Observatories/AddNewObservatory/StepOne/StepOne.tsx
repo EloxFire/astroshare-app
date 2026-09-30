@@ -17,7 +17,10 @@ import { useAddObservatoryForm } from "../AddObservatoryFormContext"
 import { useEffect, useRef, useState } from "react"
 import { useLocation } from "../../../../../context/GpsContext"
 import { SelectInput } from "../../../../../components/SelectInput/SelectInput"
-import { observatoriesTypes } from "../../../../../helpers/observatories/observatories"
+import { observatoriesAccessTypes, observatoriesEquipments, observatoriesTypes } from "../../../../../helpers/observatories/observatories"
+import SwitchButton from "../../../../../components/SwitchButton/SwitchButton"
+import { ObservatoryAccess, ObservatoryEquipment } from "../../../../../types/observatory"
+import Badge from "../../../../../components/Badges/Badge/Badge"
 
 const StepOne = () => {
 
@@ -29,6 +32,8 @@ const StepOne = () => {
 
   const [observatoryName, setObservatoryName] = useState<string>("");
   const [observatoryElevation, setObservatoryElevation] = useState<string>("");
+  const [observatoryAccessType, setObservatoryAccessType] = useState<ObservatoryAccess>("car");
+  const [observatoryEquipments, setObservatoryEquipments] = useState<ObservatoryEquipment[]>([]);
 
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [searchLatitude, setSearchLatitude] = useState<string>("");
@@ -162,10 +167,12 @@ const StepOne = () => {
           additionnalDescriptionStyle={{opacity: .8, fontFamily: 'DMMonoRegular', fontSize: 10}}
         />
 
-        <View>
+        <Text style={[globalStyles.categoryTitle, {fontSize: 12}]}>{t("stepOne.form.type.label")}</Text>
+        <View style={addNewObservatoryScreenStyles.caracteristicsContainer}>
           <SelectInput
+            fill
             options={observatoriesTypes.map((type) => ({ value: type.id, label: type.label }))}
-            label={t("stepOne.form.type.label")}
+            // label={t("stepOne.form.type.label")}
             placeholder={t("stepOne.form.type.placeholder")}
             value={newObservatory?.type ?? null}
             presentation="sheet"
@@ -174,6 +181,47 @@ const StepOne = () => {
               setNewObservatory({ ...newObservatory, type: value });
             }}
           />
+
+          <TabSwitch
+            fitContent
+            activeTabForegroundColor={app_colors.accent.main}
+            tabs={observatoriesAccessTypes.map((accessType) => ({
+              text: t(`stepOne.form.type.options.${accessType.id}`),
+              icon: accessType.icon,
+            }))}
+            activeTab={observatoriesAccessTypes.findIndex((accessType) => accessType.id === observatoryAccessType)}
+            onTabPress={(index) => {
+              const selectedAccessType = observatoriesAccessTypes[index];
+              setObservatoryAccessType(selectedAccessType.id as ObservatoryAccess);
+              if (!newObservatory) return;
+              setNewObservatory({ ...newObservatory, access: selectedAccessType.id as ObservatoryAccess });
+            }}
+          />
+        </View>
+
+        <View style={addNewObservatoryScreenStyles.equipmentsContainer}>
+          <Text style={[globalStyles.categoryTitle, {fontSize: 12}]}>{t("stepOne.form.equipments.label")}</Text>
+          <View style={addNewObservatoryScreenStyles.equipmentsContainer.badges}>
+            {
+              observatoriesEquipments.map((equipment) => (
+                <Badge
+                  key={equipment.id}
+                  icon={equipment.icon}
+                  text={equipment.label}
+                  active={observatoryEquipments.includes(equipment.id as ObservatoryEquipment)}
+                  backgroundColor={observatoryEquipments.includes(equipment.id as ObservatoryEquipment) ? app_colors.accent.main : app_colors.accent.light}
+                  foregroundColor={observatoryEquipments.includes(equipment.id as ObservatoryEquipment) ? app_colors.white : app_colors.primary.main}
+                  action={() => {
+                    if (!newObservatory) return;
+                    const updatedEquipment = observatoryEquipments.includes(equipment.id as ObservatoryEquipment)
+                      ? observatoryEquipments.filter((id) => id !== equipment.id)
+                      : [...observatoryEquipments, equipment.id as ObservatoryEquipment];
+                    setObservatoryEquipments(updatedEquipment);
+                  }}
+                />
+              ))
+            }
+          </View>
         </View>
 
         <TouchableOpacity style={addNewObservatoryScreenStyles.nextButton} onPress={() => {}}>

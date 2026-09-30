@@ -20,8 +20,18 @@
         }
       },
       "type": {
-        "label": "Type de lieu",
-        "placeholder": "Sélectionnez un type de lieu"
+        "label": "Type de lieu & accès",
+        "placeholder": "Sélectionnez un type de lieu",
+        "options": {
+          "foot": "À pied",
+          "car": "En voiture"
+        }
+      },
+      "access": {
+        "label": "Accès"
+      },
+      "equipments": {
+        "label": "Équipements disponibles",
       }
     },
     "screenTitle": "Nouveau lieu",

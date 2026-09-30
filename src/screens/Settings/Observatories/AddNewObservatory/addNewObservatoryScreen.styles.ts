@@ -51,5 +51,27 @@ export const addNewObservatoryScreenStyles = {
     fontFamily: "DMMonoMedium",
     fontSize: 14,
     textTransform: "uppercase" as const,
+  },
+
+  caracteristicsContainer: {
+    display: "flex" as const,
+    flexDirection: "row" as const,
+    // Alignés par le bas : le SelectInput a un label au-dessus de son champ, pas le TabSwitch.
+    // Avec l'étirement par défaut, le switch prendrait toute la hauteur label + champ.
+    alignItems: "flex-end" as const,
+    gap: 10,
+  },
+
+  equipmentsContainer: {
+    display: "flex" as const,
+    flexDirection: "column" as const,
+    gap: 10,
+
+    badges: {
+      display: "flex" as const,
+      flexDirection: "row" as const,
+      flexWrap: "wrap" as const,
+      gap: 10,
+    }
   }
 }

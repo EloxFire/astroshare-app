@@ -14,11 +14,19 @@ export const badgeStyles = {
     // s'étire sur toute la largeur disponible au lieu de se limiter à son contenu.
     alignSelf: "flex-start" as const,
     gap: 4,
+
+    active: {
+      backgroundColor: app_colors.accent.main,
+    },
     
     text: {
       color: app_colors.white,
       fontFamily: "DMMonoMedium",
       fontSize: 10,
+
+      active: {
+        color: app_colors.white,
+      }
     }
   },
 }
