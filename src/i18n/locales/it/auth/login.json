@@ -1,0 +1,17 @@
+{
+  "slogan": "L'astronomia, in modo semplice",
+  "form": {
+    "email": {
+      "label": "Email",
+      "placeholder": "Email"
+    },
+    "password": {
+      "label": "Password",
+      "placeholder": "Password"
+    }
+  },
+  "forgotPassword": "Password dimenticata?",
+  "submitButton": "Accedi",
+  "noAccount": "Non hai ancora un account?",
+  "registerLink": "Iscriviti"
+}

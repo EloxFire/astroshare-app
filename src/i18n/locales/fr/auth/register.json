@@ -1,0 +1,30 @@
+{
+  "title": "Créer un compte",
+  "subtitle": "Synchronisez vos préférences et partagez vos découvertes avec la communauté Astroshare !",
+  "form": {
+    "username": {
+      "label": "Nom d'utilisateur",
+      "placeholder": "Nom d'utilisateur"
+    },
+    "email": {
+      "label": "Email",
+      "placeholder": "Email"
+    },
+    "password": {
+      "label": "Mot de passe",
+      "placeholder": "Mot de passe",
+      "requirements": {
+        "minLength": "8 caractères minimum",
+        "uppercase": "Une majuscule",
+        "digit": "Un chiffre"
+      }
+    }
+  },
+  "forgotPassword": "Mot de passe oublié ?",
+  "terms": {
+    "accept": "J'accepte les <0>conditions d'utilisation</0> et la <1>politique de confidentialité</1>."
+  },
+  "submitButton": "Créer mon compte",
+  "hasAccount": "Vous avez déjà un compte ?",
+  "loginLink": "Se connecter"
+}

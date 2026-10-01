@@ -117,6 +117,11 @@ const ObservatoriesScreen = () => {
               mapType="standard"
               showsCompass
               showsUserLocation={isEnabled}
+              // Sans ça, react-native-maps (New Architecture/Fabric) émet l'event natif
+              // "topUserLocationChange" dès que showsUserLocation est actif, mais Fabric ne
+              // l'enregistre côté JS que si onUserLocationChange est explicitement fourni — sinon
+              // ça plante avec "Unsupported top level event type".
+              onUserLocationChange={() => {}}
             >
               {
                 userObservatories.length > 0 && userObservatories.map((observatory) => {

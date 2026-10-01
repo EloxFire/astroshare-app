@@ -1,8 +1,8 @@
 import { app_colors, radius, spacing, withOpacity } from "../../../helpers/variables";
 
-export const loginScreenStyles = {
+export const registerScreenStyles = {
   screen: {
-    backgroundColor: app_colors.primary.main,
+    backgroundColor: app_colors.background,
     flex: 1,
     padding: spacing.screen.horizontal,
     paddingTop: 50,
@@ -10,17 +10,17 @@ export const loginScreenStyles = {
     logoContainer: {
       display: "flex" as const,
       flexDirection: "column" as const,
-      justifyContent: "center" as const,
-      alignItems: "center" as const,
+      justifyContent: "flex-start" as const,
+      alignItems: "flex-start" as const,
 
       title: {
-        color: app_colors.white,
+        color: app_colors.primary.main,
         fontSize: 35,
         fontFamily: "ZTNatureBold",
       },
 
-      slogan: {
-        color: app_colors.accent.light,
+      subtitle: {
+        color: app_colors.primary.main,
         fontSize: 12,
         fontFamily: "DMMonoRegular",
       }
@@ -50,12 +50,24 @@ export const loginScreenStyles = {
       },
     },
 
-    forgotText: {
-      color: app_colors.accent.light,
-      fontSize: 12,
-      fontFamily: "DMMonoRegular",
+    termsRow: {
+      display: "flex" as const,
+      flexDirection: "row" as const,
+      alignItems: "flex-start" as const,
+      gap: 10,
       marginTop: 20,
-      alignSelf: "flex-end" as const,
+
+      text: {
+        flex: 1,
+        color: app_colors.primary.main,
+        fontSize: 12,
+        fontFamily: "DMMonoRegular",
+        lineHeight: 12 * 1.4,
+
+        bold: {
+          fontFamily: "DMMonoMedium",
+        }
+      }
     },
 
     bottomContainer: {
@@ -68,12 +80,12 @@ export const loginScreenStyles = {
       paddingBottom: 20,
 
       noAccountText:{
-        color: withOpacity(app_colors.white, 0.7),
+        color: app_colors.primary.main,
         fontSize: 12,
         fontFamily: "DMMonoRegular",
 
         link: {
-          color: app_colors.accent.light,
+          color: app_colors.accent.main,
           fontSize: 12,
           fontFamily: "DMMonoMedium",
           marginLeft: 10,

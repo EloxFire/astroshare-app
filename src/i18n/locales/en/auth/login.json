@@ -1,0 +1,17 @@
+{
+  "slogan": "Astronomy, simplified",
+  "form": {
+    "email": {
+      "label": "Email",
+      "placeholder": "Email"
+    },
+    "password": {
+      "label": "Password",
+      "placeholder": "Password"
+    }
+  },
+  "forgotPassword": "Forgot your password?",
+  "submitButton": "Log in",
+  "noAccount": "Don't have an account yet?",
+  "registerLink": "Sign up"
+}

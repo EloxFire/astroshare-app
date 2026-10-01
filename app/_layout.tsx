@@ -10,6 +10,7 @@ import { useI18nReady } from '../src/i18n/useI18nReady';
 import { useTranslation } from 'react-i18next';
 import { GpsLocationProvider } from '../src/context/GpsContext';
 import { AuthContextProvider } from '../src/context/AuthContext';
+import { KeyboardProvider } from 'react-native-keyboard-controller';
 
 export default function RootLayout() {
   const [fontsLoaded] = useAppFonts();
@@ -21,10 +22,11 @@ export default function RootLayout() {
   }
 
   return (
-    <AuthContextProvider>
-      <GpsLocationProvider>
-        {/* <Toast /> */}
-        <StatusBar style="light" />
+    <KeyboardProvider>
+      <AuthContextProvider>
+        <GpsLocationProvider>
+          {/* <Toast /> */}
+          <StatusBar style="light" />
         <Tabs screenOptions={{
           tabBarActiveTintColor: app_colors.accent.main,
           headerShown: false,
@@ -127,9 +129,14 @@ export default function RootLayout() {
           }} />
           <Tabs.Screen name="auth" options={{
             href: null, // hide from tab bar
+            // Masque aussi la tabbar elle-même tant qu'on est dans ce groupe : comme tout
+            // auth/* est un seul écran Tabs (grâce au Stack imbriqué dans app/auth/_layout.tsx),
+            // ça couvre toutes les sous-routes (login, index, etc.) sans avoir à le répéter.
+            tabBarStyle: { display: "none" },
           }} />
         </Tabs>
-      </GpsLocationProvider>
-    </AuthContextProvider>
+        </GpsLocationProvider>
+      </AuthContextProvider>
+    </KeyboardProvider>
   );
 }
