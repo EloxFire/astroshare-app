@@ -10,7 +10,6 @@ import { useI18nReady } from '../src/i18n/useI18nReady';
 import { useTranslation } from 'react-i18next';
 import { GpsLocationProvider } from '../src/context/GpsContext';
 import { AuthContextProvider } from '../src/context/AuthContext';
-import { KeyboardProvider } from 'react-native-keyboard-controller';
 
 export default function RootLayout() {
   const [fontsLoaded] = useAppFonts();
@@ -22,11 +21,10 @@ export default function RootLayout() {
   }
 
   return (
-    <KeyboardProvider>
-      <AuthContextProvider>
-        <GpsLocationProvider>
-          {/* <Toast /> */}
-          <StatusBar style="light" />
+    <AuthContextProvider>
+      <GpsLocationProvider>
+        {/* <Toast /> */}
+        <StatusBar style="light" />
         <Tabs screenOptions={{
           tabBarActiveTintColor: app_colors.accent.main,
           headerShown: false,
@@ -135,8 +133,7 @@ export default function RootLayout() {
             tabBarStyle: { display: "none" },
           }} />
         </Tabs>
-        </GpsLocationProvider>
-      </AuthContextProvider>
-    </KeyboardProvider>
+      </GpsLocationProvider>
+    </AuthContextProvider>
   );
 }

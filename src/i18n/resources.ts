@@ -7,6 +7,7 @@ import settingsObservatoryDetails_fr from "./locales/fr/settings/observatoryDeta
 import suggestionsCards_fr from "./locales/fr/suggestionsCards.json";
 import authLogin_fr from "./locales/fr/auth/login.json";
 import authRegister_fr from "./locales/fr/auth/register.json";
+import authForgotPassword_fr from "./locales/fr/auth/forgotPassword.json";
 import common_en from "./locales/en/common.json";
 import tools_en from "./locales/en/tools.json";
 import moon_en from "./locales/en/moon.json";
@@ -15,6 +16,7 @@ import settingsAddObservatory_en from "./locales/en/settings/addObservatory.json
 import settingsObservatoryDetails_en from "./locales/en/settings/observatoryDetails.json";
 import authLogin_en from "./locales/en/auth/login.json";
 import authRegister_en from "./locales/en/auth/register.json";
+import authForgotPassword_en from "./locales/en/auth/forgotPassword.json";
 import common_it from "./locales/it/common.json";
 import tools_it from "./locales/it/tools.json";
 import moon_it from "./locales/it/moon.json";
@@ -23,6 +25,7 @@ import settingsAddObservatory_it from "./locales/it/settings/addObservatory.json
 import settingsObservatoryDetails_it from "./locales/it/settings/observatoryDetails.json";
 import authLogin_it from "./locales/it/auth/login.json";
 import authRegister_it from "./locales/it/auth/register.json";
+import authForgotPassword_it from "./locales/it/auth/forgotPassword.json";
 
 // Source unique des traductions, partagée par l'init i18next (index.ts) et le calcul de
 // complétude (translationCompleteness.ts) : un namespace ajouté ici est pris en compte partout.
@@ -41,6 +44,7 @@ export const resources = {
     suggestionsCards: suggestionsCards_fr,
     "auth/login": authLogin_fr,
     "auth/register": authRegister_fr,
+    "auth/forgotPassword": authForgotPassword_fr,
   },
   en: {
     common: common_en,
@@ -51,6 +55,7 @@ export const resources = {
     "settings/observatoryDetails": settingsObservatoryDetails_en,
     "auth/login": authLogin_en,
     "auth/register": authRegister_en,
+    "auth/forgotPassword": authForgotPassword_en,
   },
   it: {
     common: common_it,
@@ -61,6 +66,7 @@ export const resources = {
     "settings/observatoryDetails": settingsObservatoryDetails_it,
     "auth/login": authLogin_it,
     "auth/register": authRegister_it,
+    "auth/forgotPassword": authForgotPassword_it,
   },
 };
 
