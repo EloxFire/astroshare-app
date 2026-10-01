@@ -1,0 +1,8 @@
+export type UserRoles = {
+  ADMIN: "ADMIN";
+  MEMBER: "MEMBER";
+  SUBSCRIBER: "SUBSCRIBER";
+  PARTNER: "PARTNER";
+  GUEST: "GUEST";
+  BANNED: "BANNED";
+}
