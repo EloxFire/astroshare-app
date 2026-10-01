@@ -125,6 +125,9 @@ export default function RootLayout() {
           <Tabs.Screen name="profile" options={{
             href: null, // hide from tab bar
           }} />
+          <Tabs.Screen name="auth" options={{
+            href: null, // hide from tab bar
+          }} />
         </Tabs>
       </GpsLocationProvider>
     </AuthContextProvider>

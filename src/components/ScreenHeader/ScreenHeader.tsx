@@ -1,4 +1,5 @@
 import { useCallback } from "react";
+import { useAuth } from "../../context/AuthContext";
 import { Image, ImageSourcePropType, Text, TouchableOpacity, View } from "react-native";
 import { router, useFocusEffect, usePathname } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -34,6 +35,8 @@ export const ScreenHeader = ({ title, main = true, disableBackButton = false, su
   const canGoBack = router.canGoBack();
   const pathname = usePathname();
 
+  const { authUser } = useAuth();
+
   const isHomeScreen = pathname === "/";
   const withImage = !main && image !== undefined;
 
@@ -47,6 +50,14 @@ export const ScreenHeader = ({ title, main = true, disableBackButton = false, su
       return () => StatusBar.setStyle("dark");
     }, [withImage])
   );
+
+  const handleProfilePress = () => {
+    if (!authUser){
+      router.push("/auth/login");
+    }else {
+      router.push("/profile");
+    }
+  }
 
   return (
       <SafeAreaView style={[screenHeaderStyles.container, !main && screenHeaderStyles.container.light, withImage && screenHeaderStyles.container.withImage]}>
@@ -79,7 +90,7 @@ export const ScreenHeader = ({ title, main = true, disableBackButton = false, su
             <View style={screenHeaderStyles.container.homeHeader}>
               <AstroshareFullLogo width={120} height={30} />
               
-              <TouchableOpacity onPress={() => router.push("/profile")}>
+              <TouchableOpacity onPress={() => handleProfilePress()}>
                 <UserCircle color={app_colors.white} size={24} />
               </TouchableOpacity>
             </View>
