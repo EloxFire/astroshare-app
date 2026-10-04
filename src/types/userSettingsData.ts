@@ -1,5 +1,14 @@
 import { GpsLocation } from "./gpsLocation";
 import { Observatory } from "./observatory";
+import { Telescope } from "./gear/Telescope";
+import { Mount } from "./gear/Mount";
+import { AstronomySession } from "./statistics/AstronomySession";
+import { Camera } from "./gear/Camera";
+import { Eyepiece } from "./gear/Eyepiece";
+import { Filter } from "./gear/Filter";
+import { GuideScope } from "./gear/GuideScope";
+import { Focuser } from "./gear/Focuser";
+import { Setup } from "./gear/Setup";
 
 export type UserSettingsState = {
   nightMode: false | true;
@@ -17,6 +26,22 @@ export type UserSettingsState = {
     timezone: string | null;
     distance: "km" | "mi";
     temperature: "celsius" | "fahrenheit";
+  },
+  statistics: {
+    astronomySessions: AstronomySession[];
+    objectsObserved: {
+      
+    }
+  },
+  gear: {
+    telescopes: Telescope[];
+    mounts: Mount[];
+    eyepieces: Eyepiece[];
+    filters: Filter[];
+    cameras: Camera[];
+    guideScopes: GuideScope[];
+    focusers: Focuser[];
+    setups: Setup[];
   }
 }
 
@@ -33,6 +58,23 @@ export type UserSettingsActions = {
   setDistanceUnit: (newDistanceUnit: "km" | "mi") => void;
   setTemperatureUnit: (newTemperatureUnit: "celsius" | "fahrenheit") => void;
   resetUserData: () => void;
+  // Gear management actions
+  addTelescope: (newTelescope: Telescope) => void;
+  removeTelescope: (telescopeIdToRemove: string) => void;
+  addMount: (newMount: Mount) => void;
+  removeMount: (mountIdToRemove: string) => void;
+  addEyepiece: (newEyepiece: Eyepiece) => void;
+  removeEyepiece: (eyepieceIdToRemove: string) => void;
+  addFilter: (newFilter: Filter) => void;
+  removeFilter: (filterIdToRemove: string) => void;
+  addCamera: (newCamera: Camera) => void;
+  removeCamera: (cameraIdToRemove: string) => void;
+  addGuideScope: (newGuideScope: GuideScope) => void;
+  removeGuideScope: (guideScopeIdToRemove: string) => void;
+  addFocuser: (newFocuser: Focuser) => void;
+  removeFocuser: (focuserIdToRemove: string) => void;
+  addSetup: (newSetup: Setup) => void;
+  removeSetup: (setupIdToRemove: string) => void;
 }
 
 export type UserSettingsData = UserSettingsState & UserSettingsActions;

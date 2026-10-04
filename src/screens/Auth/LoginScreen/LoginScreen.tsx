@@ -7,8 +7,12 @@ import { router } from "expo-router"
 import { useEffect, useState } from "react"
 import { StatusBar } from "expo-status-bar"
 import { useTranslation } from "react-i18next"
+import { ChevronLeft } from "lucide-react-native"
+import { useAuth } from "../../../context/AuthContext"
 
 const LoginScreen = () => {
+
+  const { loginUser } = useAuth(); // Assuming you have a custom hook for authentication
   const { t } = useTranslation("auth/login");
 
   const [email, setEmail] = useState("");
@@ -18,17 +22,26 @@ const LoginScreen = () => {
     StatusBar.setStyle("light")
   }, [])
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if(email.trim() === "" || password.trim() === "") {
       // TODO: Show error message for empty fields
       return;
     }
 
-    // TODO: Implement login logic here (e.g., send a request to the backend)
+    try {
+      await loginUser(email, password);
+      router.push("/");
+    } catch (error) {
+      console.error("[LoginScreen] Error during login:", error);
+    }
   }
 
   return (
     <SafeAreaView style={loginScreenStyles.screen}>
+      <TouchableOpacity style={loginScreenStyles.screen.backButton} onPress={() => router.back()}>
+        <ChevronLeft size={24} color={app_colors.white} />
+      </TouchableOpacity>
+
       <View style={loginScreenStyles.screen.logoContainer}>
         <Image
           source={require("../../../../assets/icons/icon_white.png")}
@@ -66,7 +79,7 @@ const LoginScreen = () => {
         </TouchableOpacity>
       </View>
 
-      <TouchableOpacity style={loginScreenStyles.screen.formContainer.button}>
+      <TouchableOpacity style={loginScreenStyles.screen.formContainer.button} onPress={handleSubmit}>
         <Text style={loginScreenStyles.screen.formContainer.button.text}>{t("submitButton")}</Text>
       </TouchableOpacity>
 

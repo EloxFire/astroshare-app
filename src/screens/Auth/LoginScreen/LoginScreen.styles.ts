@@ -5,7 +5,11 @@ export const loginScreenStyles = {
     backgroundColor: app_colors.primary.main,
     flex: 1,
     padding: spacing.screen.horizontal,
-    paddingTop: 50,
+    paddingTop: 20,
+
+    backButton: {
+      marginBottom: 50,
+    },
 
     logoContainer: {
       display: "flex" as const,
