@@ -75,6 +75,7 @@ export const profileScreenStyles = {
           fontSize: 10,
           fontFamily: "DMMonoRegular",
           color: withOpacity(app_colors.primary.main, 0.8),
+          textTransform: "uppercase" as const,
         }
       },
 
@@ -106,6 +107,23 @@ export const profileScreenStyles = {
         fontSize: 10,
         fontFamily: "DMMonoRegular",
         color: app_colors.primary.main,
+      }
+    },
+
+    editButton: {
+      display: "flex" as const,
+      flexDirection: "row" as const,
+      justifyContent: "center" as const,
+      alignItems: "center" as const,
+      gap: 10,
+      backgroundColor: app_colors.accent.main,
+      padding: 15,
+      borderRadius: radius.badge32,
+
+      text: {
+        fontSize: 14,
+        fontFamily: "DMMonoMedium",
+        color: app_colors.white,
       }
     }
   },

@@ -2,7 +2,7 @@ import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { profileScreenStyles } from "./ProfileScreen.styles";
 import { useTranslation } from "react-i18next";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { ChevronLeft, Edit, Notebook } from "lucide-react-native";
+import { ChevronLeft, Edit, Notebook, UserCog } from "lucide-react-native";
 import { app_colors } from "../../helpers/variables";
 import { router } from "expo-router";
 import { useAuth } from "../../context/AuthContext";
@@ -11,6 +11,7 @@ import { availableUserProfilePictures } from "../../helpers/auth/profile/profile
 import { ScreenHeader } from "../../components/ScreenHeader/ScreenHeader";
 import { globalStyles } from "../../helpers/globalStyles";
 import InfoCard from "../../components/cards/InfoCard/InfoCard";
+import ListCard from "../../components/cards/ListCard/ListCard";
 
 export const ProfileScreen = () => {
 
@@ -86,6 +87,17 @@ export const ProfileScreen = () => {
           }
         </View>
 
+        <ListCard
+          items={[
+            {
+              title: t('infos.timestamps.createdAt'),
+              value:  "",
+            }
+          ]}
+        />
+
+        <Text>{JSON.stringify(authUser, null, 2)}</Text>
+
         <InfoCard
           icon={Notebook}
           title={t('journal.title')}
@@ -93,6 +105,11 @@ export const ProfileScreen = () => {
           link={'profile/session'}
           variant="light"
         />
+
+        <TouchableOpacity style={profileScreenStyles.content.editButton}>
+          <UserCog size={20} color={app_colors.white} />
+          <Text style={profileScreenStyles.content.editButton.text}>{t('edit')}</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );

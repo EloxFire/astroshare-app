@@ -3,7 +3,7 @@ import { Text, TouchableOpacity, View } from "react-native";
 import { infoCardStyles } from "./InfoCard.styles";
 import { ChevronRight, LucideIcon } from "lucide-react-native";
 import * as Linking from 'expo-linking';
-import { app_colors } from "../../../helpers/variables";
+import { app_colors, withOpacity } from "../../../helpers/variables";
 
 interface InfoCardProps {
   // Acceptent aussi un ReactNode (ex: un élément <Trans> avec un <Text> stylé imbriqué) pour
@@ -35,7 +35,7 @@ const InfoCard = ({ title, description, icon: Icon, link, additionnalDescription
       </View>
       {
         link && (
-          <ChevronRight size={24} color={app_colors.white} />
+          <ChevronRight size={24} color={variant === "light" ? app_colors.primary.medium : app_colors.white} />
         )
       }
     </TouchableOpacity>
