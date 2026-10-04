@@ -2,17 +2,20 @@ import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { profileScreenStyles } from "./ProfileScreen.styles";
 import { useTranslation } from "react-i18next";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { ChevronLeft, Edit } from "lucide-react-native";
+import { ChevronLeft, Edit, Notebook } from "lucide-react-native";
 import { app_colors } from "../../helpers/variables";
 import { router } from "expo-router";
 import { useAuth } from "../../context/AuthContext";
 import { User } from "../../types/auth/User";
 import { availableUserProfilePictures } from "../../helpers/auth/profile/profilePictures";
+import { ScreenHeader } from "../../components/ScreenHeader/ScreenHeader";
+import { globalStyles } from "../../helpers/globalStyles";
+import InfoCard from "../../components/cards/InfoCard/InfoCard";
 
 export const ProfileScreen = () => {
 
   const { authUser }: { authUser: User | null } = useAuth();
-  const { t } = useTranslation();
+  const { t } = useTranslation("auth/profile");
 
   const getUserProfilePicture = () => {
     if(authUser && authUser.profile &&  authUser.profile?.profilePicture){
@@ -35,38 +38,62 @@ export const ProfileScreen = () => {
   }
 
   return (
-    <ScrollView>
-      <View style={profileScreenStyles.screen}>
-        <SafeAreaView style={profileScreenStyles.header}>
-          <View style={profileScreenStyles.header.navigation}>
-            <TouchableOpacity onPress={() => router.back()}>
-              <ChevronLeft size={24} color={app_colors.white} />
-            </TouchableOpacity>
+    <View style={globalStyles.screen}>
+      <ScreenHeader main={true} />
+      <View style={profileScreenStyles.header}>
+        {/* ROUND PROFILE PICTURE */}
+        <Image
+          source={getUserProfilePicture()}
+          style={profileScreenStyles.header.profilePicture}
+        />
 
-            <TouchableOpacity onPress={() => router.back()}>
-              <Edit size={20} color={app_colors.white} />
-            </TouchableOpacity>
-          </View>
-
-          <View style={profileScreenStyles.header.content}>
-            {/* ROUND PROFILE PICTURE */}
-            <Image
-              source={getUserProfilePicture()}
-              style={profileScreenStyles.header.content.profilePicture}
-            />
-            <Text style={profileScreenStyles.header.content.name}>{getNameToDisplay()}</Text>
-            <View style={profileScreenStyles.header.content.subInfos}>
-              {authUser && authUser.profile && authUser.profile.pseudonym && <Text style={profileScreenStyles.header.content.subInfos.subInfo}>@{authUser.profile.pseudonym}</Text>}
-              {/* {authUser && authUser.role === UserRoles.SUBSCRIBER && <Text style={profileScreenStyles.header.content.subInfos.subInfo}>{t("profile.role.subscriber")}</Text>} */}
-            </View>
-          </View>
-        </SafeAreaView>
-
-        <View style={profileScreenStyles.content}>
-          <Text>{getNameToDisplay()}</Text>
-          <Text>{JSON.stringify(authUser, null, 2)}</Text>
+        <Text style={profileScreenStyles.header.name}>{getNameToDisplay()}</Text>
+        <View style={profileScreenStyles.header.subInfos}>
+          {authUser && authUser.profile && authUser.profile.pseudonym && <Text style={profileScreenStyles.header.subInfos.subInfo}>@{authUser.profile.pseudonym}</Text>}
         </View>
       </View>
-    </ScrollView>
+
+      <View style={globalStyles.content}>
+        <View style={profileScreenStyles.content.recap}>
+          <View style={profileScreenStyles.content.recap.item}>
+            <Text style={profileScreenStyles.content.recap.item.value}>0</Text>
+            <Text style={profileScreenStyles.content.recap.item.label}>{t("recap.sessions")}</Text>
+          </View>
+
+          <View style={profileScreenStyles.content.recap.separator}/>
+
+          <View style={profileScreenStyles.content.recap.item}>
+            <Text style={profileScreenStyles.content.recap.item.value}>0 h</Text>
+            <Text style={profileScreenStyles.content.recap.item.label}>{t("recap.hoursObserved")}</Text>
+          </View>
+          
+          <View style={profileScreenStyles.content.recap.separator}/>
+
+          <View style={profileScreenStyles.content.recap.item}>
+            <Text style={profileScreenStyles.content.recap.item.value}>0</Text>
+            <Text style={profileScreenStyles.content.recap.item.label}>{t("recap.objectsObserved")}</Text>
+          </View>
+        </View>
+
+        <View style={profileScreenStyles.content.bio}>
+          <Text style={profileScreenStyles.content.bio.title}>{t('bio.title')}</Text>
+          {
+            authUser && authUser.profile && authUser.profile.bio ? (
+              <Text style={profileScreenStyles.content.bio.text}>{authUser.profile.bio}</Text>
+            ) : (
+              <Text style={profileScreenStyles.content.bio.text}>{t('bio.noBio')}</Text>
+            )
+          }
+        </View>
+
+        <InfoCard
+          icon={Notebook}
+          title={t('journal.title')}
+          description={t('journal.description')}
+          link={'profile/session'}
+          variant="light"
+        />
+      </View>
+    </View>
   );
 };

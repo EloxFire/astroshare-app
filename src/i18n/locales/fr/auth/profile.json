@@ -1,0 +1,15 @@
+{
+  "recap": {
+    "sessions": "sessions",
+    "hoursObserved": "observées",
+    "objectsObserved": "objets observés"
+  },
+  "bio": {
+    "title": "Bio",
+    "noBio": "Aucune bio disponible"
+  },
+  "journal": {
+    "title": "Ouvrir mon journal",
+    "noJournal": "Statistiques et sessions"
+  }
+}

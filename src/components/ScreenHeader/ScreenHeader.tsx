@@ -21,7 +21,7 @@ const IMAGE_SCRIM_END = 1;
 const IMAGE_SCRIM_STOPS = easedGradientStops(IMAGE_SCRIM_HOLD, IMAGE_SCRIM_END, IMAGE_SCRIM_OPACITY, 0);
 
 interface ScreenHeaderProps {
-  title: string;
+  title?: string;
   main?: boolean;
   subtitle?: string;
   disableBackButton?: boolean;
@@ -103,12 +103,16 @@ export const ScreenHeader = ({ title, main = true, disableBackButton = false, su
               <ChevronLeft color={!main && !withImage ? app_colors.primary.main : app_colors.white} size={24} />
             </TouchableOpacity>
           )}
-          <View >
-            <Text style={[screenHeaderStyles.container.titleContainer.title, !main && screenHeaderStyles.container.titleContainer.title.light, withImage && screenHeaderStyles.container.titleContainer.title.onImage]}>{title}</Text>
-            {subtitle && !main && (
-              <Text style={[screenHeaderStyles.container.titleContainer.subtitle, withImage && screenHeaderStyles.container.titleContainer.subtitle.onImage]}>{subtitle}</Text>
-            )}
-          </View>
+          {
+            title && (
+              <View >
+                <Text style={[screenHeaderStyles.container.titleContainer.title, !main && screenHeaderStyles.container.titleContainer.title.light, withImage && screenHeaderStyles.container.titleContainer.title.onImage]}>{title}</Text>
+                {subtitle && !main && (
+                  <Text style={[screenHeaderStyles.container.titleContainer.subtitle, withImage && screenHeaderStyles.container.titleContainer.subtitle.onImage]}>{subtitle}</Text>
+                )}
+              </View>
+            )
+          }
         </View>
       </SafeAreaView>
     );
