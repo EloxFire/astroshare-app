@@ -1,5 +1,5 @@
 import { globalStyles } from "../../helpers/globalStyles";
-import { app_colors, radius, spacing, gaps } from "../../helpers/variables";
+import { app_colors, radius, spacing, gaps, withOpacity } from "../../helpers/variables";
 
 export const settingsScreenStyles = {
   screen: globalStyles.screen,
@@ -10,7 +10,7 @@ export const settingsScreenStyles = {
   },
 
 
-  createAccountCard: {
+  accountCard: {
     display: "flex" as const,
     flexDirection: "row" as const,
     justifyContent: "space-between" as const,
@@ -19,6 +19,15 @@ export const settingsScreenStyles = {
     backgroundColor: app_colors.primary.main,
     borderRadius: radius.heroCard,
 
+    profilePicture: {
+      width: 60,
+      height: 60,
+      borderRadius: 50,
+      borderWidth: 1,
+      borderColor: app_colors.yellow.light,
+      marginRight: 10
+    },
+    
     textContainer: {
       display: "flex" as const,
       flexDirection: "column" as const,
@@ -36,6 +45,13 @@ export const settingsScreenStyles = {
         fontSize: 10,
         fontFamily: "DMMonoMedium",
       },
+
+      description: {
+        color: withOpacity(app_colors.white, 0.8),
+        textTransform: "uppercase" as const,
+        fontSize: 10,
+        fontFamily: "DMMonoMedium",
+      }
     },
 
 

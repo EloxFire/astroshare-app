@@ -12,5 +12,24 @@
     "title": "Ouvrir mon journal",
     "description": "Statistiques et sessions"
   },
+  "infos": {
+    "title": "Vos informations",
+    "username": "Nom d'utilisateur",
+    "email": "Email",
+    "password": "Mot de passe",
+    "changePassword": "Modifier",
+    "accountType": "Type de compte",
+    "noPseudonym": "Aucun pseudonyme",
+    "firstname": "Prénom",
+    "lastname": "Nom de famille",
+    "noFirstname": "Aucun prénom défini",
+    "noLastname": "Aucun nom de famille défini",
+    "timestamps": {
+      "title": "Compte",
+      "createdAt": "Compte créé le",
+      "updatedAt": "Dernière mise à jour le"
+    }
+  },
   "edit": "Modifier mon profil",
+  "logout": "Me déconnecter"
 }

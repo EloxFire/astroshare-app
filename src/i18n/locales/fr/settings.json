@@ -20,6 +20,9 @@
     "createAccountCard": {
       "title": "Pas encore de compte ?",
       "subtitle": "Personnalisez votre expérience et sauvegardez vos préférences !"
+    },
+    "accountCard": {
+      "subtitle": "Observateur depuis le {{accountCreationDate}}",
     }
   },
   "categories": {
@@ -39,7 +42,7 @@
     },
     "units": {
       "name": "Unités et formats",
-      "description": "Fuseau horaire, unités de distance et de température"
+      "description": "Heures, distances et températures"
     },
     "observatories": {
       "name": "Observatoires",

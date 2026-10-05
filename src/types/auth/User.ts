@@ -1,3 +1,4 @@
+import { FirestoreTimestampLike } from "../../helpers/api/firestoreTimestamp";
 import { Subscription } from "./Subscription";
 import { UserRoles } from "./UserRoles";
 
@@ -17,6 +18,6 @@ export type User = {
   subscription?: Subscription;
   subscriptionExpiresAt?: Date;
   subscriptionSource?: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: FirestoreTimestampLike;
+  updatedAt: FirestoreTimestampLike;
 }

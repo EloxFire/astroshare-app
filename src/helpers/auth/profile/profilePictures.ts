@@ -1,3 +1,5 @@
+import { User } from "../../../types/auth/User";
+
 export const availableUserProfilePictures = [
   {
     id: 'm104',
@@ -80,3 +82,9 @@ export const availableUserProfilePictures = [
     source: require('../../../../assets/images/profile_pictures/m57.jpeg'),
   }
 ]
+
+export const getUserProfilePicture = (authUser: User) => {
+  if(authUser && authUser.profile &&  authUser.profile?.profilePicture){
+    return availableUserProfilePictures.find(picture => picture.id === authUser?.profile?.profilePicture)?.source || require('../../../../assets/images/placeholders/no-picture.png');
+  }
+}

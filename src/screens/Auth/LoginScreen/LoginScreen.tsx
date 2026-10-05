@@ -1,4 +1,4 @@
-import { Image, Text, TouchableOpacity, View } from "react-native"
+import { ActivityIndicator, Image, Text, TouchableOpacity, View } from "react-native"
 import { loginScreenStyles } from "./LoginScreen.styles"
 import { SafeAreaView } from "react-native-safe-area-context"
 import { InputWithIcon } from "../../../components/InputWithIcon/InputWithIcon"
@@ -12,7 +12,7 @@ import { useAuth } from "../../../context/AuthContext"
 
 const LoginScreen = () => {
 
-  const { loginUser } = useAuth(); // Assuming you have a custom hook for authentication
+  const { loginUser, authLoading } = useAuth(); // Assuming you have a custom hook for authentication
   const { t } = useTranslation("auth/login");
 
   const [email, setEmail] = useState("");
@@ -74,13 +74,19 @@ const LoginScreen = () => {
         />
       </View>
       <View>
-        <TouchableOpacity onPress={() => router.push("/auth/forgot-password")}>
+        <TouchableOpacity onPress={() => router.push("/auth/forgot-password")} disabled={authLoading}>
           <Text style={loginScreenStyles.screen.forgotText}>{t("forgotPassword")}</Text>
         </TouchableOpacity>
       </View>
 
-      <TouchableOpacity style={loginScreenStyles.screen.formContainer.button} onPress={handleSubmit}>
-        <Text style={loginScreenStyles.screen.formContainer.button.text}>{t("submitButton")}</Text>
+      <TouchableOpacity style={loginScreenStyles.screen.formContainer.button} onPress={handleSubmit} disabled={authLoading}>
+        {
+          authLoading ? (
+            <ActivityIndicator size="small" color={app_colors.white} />
+          ) : (
+            <Text style={loginScreenStyles.screen.formContainer.button.text}>{t("submitButton")}</Text>
+          )
+        }
       </TouchableOpacity>
 
       <View style={loginScreenStyles.screen.bottomContainer}>

@@ -1,4 +1,4 @@
-import { StatusBar, Text, TouchableOpacity, View } from "react-native";
+import { Image, StatusBar, Text, TouchableOpacity, View } from "react-native";
 import { globalStyles } from "../../helpers/globalStyles";
 import { useRouter } from 'expo-router';
 import { settingsScreenStyles } from "./SettingsScreen.styles";
@@ -9,16 +9,26 @@ import { app_colors } from "../../helpers/variables";
 import { settingsCategories } from "../../helpers/settings/appSettingsCategories";
 import { settingsList } from "../../helpers/settings/appSetting";
 import { useTranslation } from "react-i18next";
+import { User } from "../../types/auth/User";
+import { useAuth } from "../../context/AuthContext";
+import { getUserProfilePicture } from "../../helpers/auth/profile/profilePictures";
+import { profileScreenStyles } from "../Profile/ProfileScreen.styles";
+import { firestoreTimestampToDate } from "../../helpers/api/firestoreTimestamp";
 
 export const SettingsScreen = () => {
   const router = useRouter();
   const { t } = useTranslation("settings");
+  const {authUser}: {authUser: User | null} = useAuth();
   useEffect(() => {
     StatusBar.setBarStyle("dark-content")
   }, [])
 
-  const handleCreateAccountPress = () => {
-    console.log("[SettingsScreen] Create Account button pressed. Navigate to account creation flow.");
+  const handleAccountCardPress = () => {
+    if(authUser){
+      router.push('/profile')
+    }else{
+      router.push('/auth/login')
+    }
   }
 
   const handleSettingPress = (route: string) => {
@@ -34,15 +44,33 @@ export const SettingsScreen = () => {
         {/* Carte de gestion du compte */}
         {/* Si utilisateur connecté affochage détails infos sinon affichage carte "Créer un compte pour plus de personalisation" */}
         {/* Carte "Créer un compte en dur pour l'instant" */}
-        <TouchableOpacity style={settingsScreenStyles.createAccountCard} onPress={handleCreateAccountPress}>
-          <View style={settingsScreenStyles.createAccountCard.textContainer}>
-            <Text style={settingsScreenStyles.createAccountCard.textContainer.title}>{t("screen.createAccountCard.title")}</Text>
-            <Text style={settingsScreenStyles.createAccountCard.textContainer.subtitle}>{t("screen.createAccountCard.subtitle")}</Text>
-          </View>
-          <View style={settingsScreenStyles.createAccountCard.button}>
-            <ChevronRightIcon color={app_colors.white} size={20} />
-          </View>
-        </TouchableOpacity>
+        {
+          authUser ? (
+            <TouchableOpacity style={settingsScreenStyles.accountCard} onPress={handleAccountCardPress}>
+              <Image
+                source={getUserProfilePicture(authUser!)}
+                style={settingsScreenStyles.accountCard.profilePicture}
+              />
+              <View style={settingsScreenStyles.accountCard.textContainer}>
+                <Text style={settingsScreenStyles.accountCard.textContainer.title}>{(authUser?.profile?.firstname && authUser?.profile?.lastname) ? `${authUser.profile.firstname} ${authUser.profile.lastname}` : authUser?.profile?.pseudonym ? authUser.profile.pseudonym : authUser?.email}</Text>
+                <Text style={settingsScreenStyles.accountCard.textContainer.description}>{t("screen.accountCard.subtitle", { accountCreationDate: firestoreTimestampToDate(authUser?.createdAt).toLocaleDateString() })}</Text>
+              </View>
+              <View style={settingsScreenStyles.accountCard.button}>
+                <ChevronRightIcon color={app_colors.white} size={20} />
+              </View>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity style={settingsScreenStyles.accountCard} onPress={handleAccountCardPress}>
+              <View style={settingsScreenStyles.accountCard.textContainer}>
+                <Text style={settingsScreenStyles.accountCard.textContainer.title}>{t("screen.createAccountCard.title")}</Text>
+                <Text style={settingsScreenStyles.accountCard.textContainer.subtitle}>{t("screen.createAccountCard.subtitle")}</Text>
+              </View>
+              <View style={settingsScreenStyles.accountCard.button}>
+                <ChevronRightIcon color={app_colors.white} size={20} />
+              </View>
+            </TouchableOpacity>
+          )
+        }
 
         <View style={settingsScreenStyles.settingsList}>
           {

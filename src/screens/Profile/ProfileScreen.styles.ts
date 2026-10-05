@@ -125,6 +125,34 @@ export const profileScreenStyles = {
         fontFamily: "DMMonoMedium",
         color: app_colors.white,
       }
+    },
+    changePasswordButton: {
+      display: "flex" as const,
+      flexDirection: "row" as const,
+      justifyContent: "center" as const,
+      alignItems: "center" as const,
+
+      text: {
+        fontSize: 14,
+        fontFamily: "DMMonoMedium",
+        color: app_colors.accent.main,
+      }
+    },
+    logoutButton: {
+      display: "flex" as const,
+      flexDirection: "row" as const,
+      justifyContent: "center" as const,
+      alignItems: "center" as const,
+      gap: 10,
+      backgroundColor: app_colors.red.main,
+      padding: 15,
+      borderRadius: radius.badge32,
+
+      text: {
+        fontSize: 14,
+        fontFamily: "DMMonoMedium",
+        color: app_colors.white,
+      }
     }
   },
 };

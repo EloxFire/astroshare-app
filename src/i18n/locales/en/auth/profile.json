@@ -1,5 +1,35 @@
 {
   "recap": {
-    "sessions": "Sessions"
-  }
+    "sessions": "sessions",
+    "hoursObserved": "observed",
+    "objectsObserved": "objects observed"
+  },
+  "bio": {
+    "title": "Bio",
+    "noBio": "No bio available"
+  },
+  "journal": {
+    "title": "Open my journal",
+    "description": "Statistics and sessions"
+  },
+  "infos": {
+    "title": "Your information",
+    "username": "Username",
+    "email": "Email",
+    "password": "Password",
+    "changePassword": "Edit",
+    "accountType": "Account type",
+    "noPseudonym": "No username set",
+    "firstname": "First name",
+    "lastname": "Last name",
+    "noFirstname": "No first name set",
+    "noLastname": "No last name set",
+    "timestamps": {
+      "title": "Account",
+      "createdAt": "Account created on",
+      "updatedAt": "Last updated on"
+    }
+  },
+  "edit": "Edit my profile",
+  "logout": "Log out"
 }

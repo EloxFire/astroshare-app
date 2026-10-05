@@ -63,7 +63,7 @@ const LanguageScreen = () => {
         </View>
 
         <Text style={globalStyles.categoryTitle}>{t("language.sections.completed")}</Text>
-        <View style={[globalStyles.defaultCard, {padding: 0}]}>
+        <View style={[globalStyles.defaultCard, {padding: 0, gap: 0}]}>
           {
             Object.entries(completeTranslations).map(([code, completeness], index) => {
               const lang = supportedLanguages.find(l => l.code === code);
@@ -86,7 +86,7 @@ const LanguageScreen = () => {
         </View>
 
         <Text style={globalStyles.categoryTitle}>{t("language.sections.inProgress")}</Text>
-        <View style={[globalStyles.defaultCard, {padding: 0}]}>
+        <View style={[globalStyles.defaultCard, {padding: 0, gap: 0}]}>
           {
             Object.entries(inProgressTranslations).map(([code, completeness], index) => {
               const lang = supportedLanguages.find(l => l.code === code);
