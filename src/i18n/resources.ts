@@ -9,6 +9,7 @@ import authLogin_fr from "./locales/fr/auth/login.json";
 import authRegister_fr from "./locales/fr/auth/register.json";
 import authForgotPassword_fr from "./locales/fr/auth/forgotPassword.json";
 import authProfile_fr from "./locales/fr/auth/profile.json";
+import apod_fr from "./locales/fr/tools/apod.json";
 import common_en from "./locales/en/common.json";
 import tools_en from "./locales/en/tools.json";
 import moon_en from "./locales/en/moon.json";
@@ -49,6 +50,7 @@ export const resources = {
     "auth/register": authRegister_fr,
     "auth/forgotPassword": authForgotPassword_fr,
     "auth/profile": authProfile_fr,
+    "tools/apod": apod_fr,
   },
   en: {
     common: common_en,

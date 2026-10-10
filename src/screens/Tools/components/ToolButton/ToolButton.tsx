@@ -13,8 +13,9 @@ interface ToolButtonProps {
 
 // Chaque outil n'a pas encore forcément sa propre page : tant qu'une route
 // n'est pas ajoutée ici, l'appui sur le bouton se contente de logger.
-const TOOL_ROUTES: Partial<Record<string, "/tools/MoonCalendar">> = {
-  "moon-phases-calendar": "/tools/MoonCalendar",
+const TOOL_ROUTES: Partial<Record<string, string>> = {
+  "moon-phases-calendar": "/tools/moon-calendar",
+  "apod": "/tools/apod",
 };
 
 export default function ToolButton({ icon: Icon, toolId, toolname, variant = "default" }: ToolButtonProps) {

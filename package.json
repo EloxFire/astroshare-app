@@ -46,6 +46,7 @@
     "expo-sharing": "~57.0.16",
     "expo-status-bar": "~57.0.1",
     "expo-system-ui": "~57.0.3",
+    "expo-video": "~57.0.5",
     "firebase": "^12.15.0",
     "i18n-js": "^4.4.3",
     "i18next": "^26.4.0",

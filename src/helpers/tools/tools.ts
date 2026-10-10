@@ -8,6 +8,7 @@ export const toolsList: AstroshareTool[] = [
     ToolIcon: MoonIcon, 
     category: "prepare",
     access: "free",
+    
   },
   // Alignement polaire / Viseur polaire numérique
   {

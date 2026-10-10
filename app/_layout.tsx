@@ -1,5 +1,5 @@
 import '../src/i18n';
-import { Tabs } from 'expo-router';
+import { Tabs, useSegments } from 'expo-router';
 import { View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { House, Settings, Search, Telescope, LayoutGrid } from 'lucide-react-native';
@@ -15,22 +15,29 @@ export default function RootLayout() {
   const [fontsLoaded] = useAppFonts();
   const i18nReady = useI18nReady();
   const { t } = useTranslation();
+  const segments = useSegments();
 
   if (!fontsLoaded || !i18nReady) {
     return null;
   }
+
+  // Chaque onglet principal est son propre Stack imbriqué (voir ex: app/settings/_layout.tsx) :
+  // segments ne contient que le nom de l'onglet (ex: ["settings"]) quand on est sur son écran
+  // racine (index.tsx) ; toute navigation dans son Stack ajoute un segment de plus (ex:
+  // ["settings", "observatories"]), peu importe la profondeur ensuite. useSegments() est
+  // réactif : ce composant se re-rend à chaque changement de route, recalculant tabBarStyle.
+  const isTabRootScreen = segments.length <= 1;
 
   return (
     <AuthContextProvider>
       <GpsLocationProvider>
         {/* <Toast /> */}
         <StatusBar style="light" />
-        <Tabs screenOptions={{
-          tabBarActiveTintColor: app_colors.accent.main,
-          headerShown: false,
-          tabBarStyle: {
-            height: 60,
-          },
+        <Tabs
+          screenOptions={{
+            tabBarActiveTintColor: app_colors.accent.main,
+            headerShown: false,
+            tabBarStyle: isTabRootScreen ? { height: 60 } : { display: 'none' },
           }}
           backBehavior='order'
         >

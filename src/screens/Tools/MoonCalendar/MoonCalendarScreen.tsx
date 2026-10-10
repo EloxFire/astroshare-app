@@ -2,21 +2,27 @@ import { ScrollView, View } from "react-native";
 import { ScreenHeader } from "../../../components/ScreenHeader/ScreenHeader";
 import { moonCalendarScreenStyles } from "./MoonCalendarScreen.styles";
 import { StatusBar } from "expo-status-bar";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import TabSwitch from "./components/TabSwitch/TabSwitch";
 import TonightView from "./components/Tonight/TonightView";
-import MonthView from "./components/Month/MonthView";
 import { useTranslation } from "react-i18next";
-const MoonCalendarScreen = () => {
-  const { t } = useTranslation("moon");
-  
+import { app_colors } from "../../../helpers/variables";
+import { useFocusEffect } from "expo-router";
 
+
+const MoonCalendarScreen = () => {
+  
+  const { t } = useTranslation("moon");
   const [currentView, setCurrentView] = useState<"tonight" | "month">("tonight");
   
 
-  useEffect(() => {
-    StatusBar.setStyle("dark");
-  }, []);
+
+  useFocusEffect(
+      useCallback(() => {
+        StatusBar.setStyle("dark");
+        return () => StatusBar.setStyle("dark");
+      }, [])
+    );
 
 
   const handleTabPress = (tabIndex: number) => {
@@ -32,16 +38,22 @@ const MoonCalendarScreen = () => {
       <ScreenHeader title={t("screen.title")} main={false} />
       <ScrollView  contentContainerStyle={moonCalendarScreenStyles.content}>
         <TabSwitch
-          tabs={[t("tabs.tonight"), t("tabs.month")]}
+          tabs={[
+            {
+              text: t("tabs.tonight"),
+            },
+            {
+              text: t("tabs.month"),
+            }
+          ]}
+          activeTabForegroundColor={app_colors.primary.main}
+          
           activeTab={currentView === "tonight" ? 0 : 1}
           onTabPress={handleTabPress}
         />
 
         <View style={currentView === "tonight" ? moonCalendarScreenStyles.tonightView : { display: "none" }}>
           <TonightView />
-          {/* <Text>{JSON.stringify(computedMoon, null, 2)}</Text> */}
-
-          
         </View>
         {/*
           Monté seulement après la première visite de "Mois", puis gardé en mémoire (display:
