@@ -11,6 +11,10 @@ export const screenHeaderStyles = {
     gap: 12,
     backgroundColor: app_colors.primary.main,
 
+    noBackground: {
+      backgroundColor: "transparent",
+    },
+
     light: {
       backgroundColor: app_colors.background,
       paddingBottom: 0,
@@ -78,6 +82,9 @@ export const screenHeaderStyles = {
 
         // Header avec image : seule la couleur change (taille/police de la variante d'origine).
         onImage: {
+          color: app_colors.white,
+        },
+        noBackground: {
           color: app_colors.white,
         }
       },

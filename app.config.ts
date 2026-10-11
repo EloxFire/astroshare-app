@@ -137,6 +137,16 @@ module.exports = {
         photosPermission:
           "Astroshare a besoin d'accéder à vos photos pour vous permettre d'illustrer vos observatoires."
       }
+    ],
+    [
+      "expo-media-library",
+      {
+        // false : on ne demande que l'ajout de photos (téléchargement APOD), jamais la lecture
+        // de la galerie existante — portée minimale de la permission.
+        photosPermission: false,
+        savePhotosPermission:
+          "Astroshare a besoin d'accéder à vos photos pour y enregistrer les images téléchargées."
+      }
     ]
   ]
 };

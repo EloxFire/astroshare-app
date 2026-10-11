@@ -29,9 +29,10 @@ interface ScreenHeaderProps {
   // Image de fond, uniquement pour un header secondaire (ignorée si `main`) : le header passe
   // alors à une hauteur fixe, avec le texte et le bouton retour en blanc.
   image?: ImageSourcePropType;
+  noBackground?: boolean;
 }
 
-export const ScreenHeader = ({ title, main = true, disableBackButton = false, subtitle, customElement, image }: ScreenHeaderProps) => {
+export const ScreenHeader = ({ title, main = true, disableBackButton = false, subtitle, customElement, image, noBackground = false }: ScreenHeaderProps) => {
   const canGoBack = router.canGoBack();
   const pathname = usePathname();
 
@@ -60,7 +61,7 @@ export const ScreenHeader = ({ title, main = true, disableBackButton = false, su
   }
 
   return (
-      <SafeAreaView style={[screenHeaderStyles.container, !main && screenHeaderStyles.container.light, withImage && screenHeaderStyles.container.withImage]}>
+      <SafeAreaView style={[screenHeaderStyles.container, !main && screenHeaderStyles.container.light, withImage && screenHeaderStyles.container.withImage, noBackground && screenHeaderStyles.container.noBackground]}>
         {
           withImage && (
             <>
@@ -100,13 +101,13 @@ export const ScreenHeader = ({ title, main = true, disableBackButton = false, su
         <View style={screenHeaderStyles.container.titleContainer}>
           {canGoBack && !disableBackButton && (
             <TouchableOpacity style={screenHeaderStyles.backButton} onPress={() => router.back()}>
-              <ChevronLeft color={!main && !withImage ? app_colors.primary.main : app_colors.white} size={24} />
+              <ChevronLeft color={!main && !withImage ? noBackground ? app_colors.white : app_colors.primary.main : app_colors.white} size={24} />
             </TouchableOpacity>
           )}
           {
             title && (
               <View >
-                <Text style={[screenHeaderStyles.container.titleContainer.title, !main && screenHeaderStyles.container.titleContainer.title.light, withImage && screenHeaderStyles.container.titleContainer.title.onImage]}>{title}</Text>
+                <Text style={[screenHeaderStyles.container.titleContainer.title, !main && screenHeaderStyles.container.titleContainer.title.light, withImage && screenHeaderStyles.container.titleContainer.title.onImage, noBackground && screenHeaderStyles.container.titleContainer.title.noBackground]}>{title}</Text>
                 {subtitle && !main && (
                   <Text style={[screenHeaderStyles.container.titleContainer.subtitle, withImage && screenHeaderStyles.container.titleContainer.subtitle.onImage]}>{subtitle}</Text>
                 )}

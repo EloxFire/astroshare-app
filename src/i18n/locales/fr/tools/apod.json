@@ -1,5 +1,29 @@
 {
   "screen": {
-    "title": "Image du jour de la NASA"
+    "title": "Image du jour de la NASA",
+    "content": {
+      "description": {
+        "title": "Explication",
+        "language": "(Anglais uniquement)",
+        "translate": "Traduire",
+        "loading": "Chargement de la traduction...",
+        "error": "Erreur lors de la traduction"
+      },
+      "nextImage": {
+        "title": "Prochaine image",
+        "loading": "Chargement..."
+      },
+      "buttons": {
+        "download": "HD",
+        "save": "Garder",
+        "article": "NASA",
+        "downloadSuccessTitle": "Image enregistrée",
+        "downloadSuccessMessage": "L'image a été ajoutée à votre galerie photo.",
+        "downloadPermissionDeniedTitle": "Permission refusée",
+        "downloadPermissionDeniedMessage": "Autorisez l'accès à vos photos dans les réglages pour pouvoir enregistrer l'image.",
+        "downloadErrorTitle": "Échec de l'enregistrement",
+        "downloadErrorMessage": "Une erreur est survenue, réessayez plus tard."
+      }
+    }
   }
 }
