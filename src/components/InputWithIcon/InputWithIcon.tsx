@@ -1,7 +1,7 @@
 import { Text, TextInput, TextInputProps, TextStyle, TouchableOpacity, View } from "react-native";
 import { useState } from "react";
 import { Eye, EyeOff, LucideIcon } from "lucide-react-native";
-import { app_colors, withOpacity } from "../../helpers/variables";
+import { app_colors, flattenOpacity } from "../../helpers/variables";
 import { inputWithIconStyles } from "./InputWithIcon.styles";
 
 interface InputWithIconProps extends TextInputProps {
@@ -51,7 +51,7 @@ export const InputWithIcon = ({ icon: Icon, style, action, suggestions, fill = f
       {props.label && <Text style={[inputWithIconStyles.label, props.labelStyle]}>{props.label}</Text>}
       <View style={{display: 'flex', flexDirection: 'row', width: '100%'}}>
         <View style={[inputWithIconStyles.container, hasSuggestions && isFocused && inputWithIconStyles.container.withSuggestions]}>
-          {Icon && <Icon color={withOpacity(app_colors.primary.main, 0.8)} size={16} />}
+          {Icon && <Icon color={flattenOpacity(app_colors.primary.main, 0.8, app_colors.white)} size={16} />}
           <TextInput
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
@@ -72,8 +72,8 @@ export const InputWithIcon = ({ icon: Icon, style, action, suggestions, fill = f
           {password && (
             <TouchableOpacity onPress={() => setIsPasswordVisible((visible) => !visible)} hitSlop={10}>
               {isPasswordVisible
-                ? <EyeOff color={withOpacity(app_colors.primary.main, 0.8)} size={16} />
-                : <Eye color={withOpacity(app_colors.primary.main, 0.8)} size={16} />
+                ? <EyeOff color={flattenOpacity(app_colors.primary.main, 0.8, app_colors.white)} size={16} />
+                : <Eye color={flattenOpacity(app_colors.primary.main, 0.8, app_colors.white)} size={16} />
               }
             </TouchableOpacity>
           )}

@@ -3,13 +3,17 @@ import { Tabs, useSegments } from 'expo-router';
 import { View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { House, Settings, Search, Telescope, LayoutGrid } from 'lucide-react-native';
-import { app_colors } from '../src/helpers/variables';
+import { app_colors, flattenOpacity } from '../src/helpers/variables';
 import { PlatformPressable } from 'expo-router/build/react-navigation';
 import { useAppFonts } from '../src/hooks/useAppFonts';
 import { useI18nReady } from '../src/i18n/useI18nReady';
 import { useTranslation } from 'react-i18next';
 import { GpsLocationProvider } from '../src/context/GpsContext';
 import { AuthContextProvider } from '../src/context/AuthContext';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import dayjs from 'dayjs';
+
+dayjs.extend(relativeTime);
 
 export default function RootLayout() {
   const [fontsLoaded] = useAppFonts();
@@ -36,6 +40,11 @@ export default function RootLayout() {
         <Tabs
           screenOptions={{
             tabBarActiveTintColor: app_colors.accent.main,
+            // Couleur solide (pas de canal alpha) plutôt que le gris par défaut de React
+            // Navigation (une vraie transparence) — même raison que pour les icônes isolées :
+            // une transparence réelle fait un effet "multiplicatif" là où les traits du SVG se
+            // croisent. La tabBar est blanche par défaut (aucun backgroundColor custom ici).
+            tabBarInactiveTintColor: flattenOpacity(app_colors.primary.main, 0.5, app_colors.white),
             headerShown: false,
             tabBarStyle: isTabRootScreen ? { height: 60 } : { display: 'none' },
           }}

@@ -12,6 +12,33 @@ export const withOpacity = (hexColor: string, opacity: number): string => {
   return `${hexColor}${alpha}`;
 };
 
+const hexToRgb = (hexColor: string): [number, number, number] => {
+  const sanitized = hexColor.replace("#", "");
+  return [
+    parseInt(sanitized.slice(0, 2), 16),
+    parseInt(sanitized.slice(2, 4), 16),
+    parseInt(sanitized.slice(4, 6), 16),
+  ];
+};
+
+const rgbToHex = (r: number, g: number, b: number): string =>
+  `#${[r, g, b].map((channel) => Math.round(channel).toString(16).padStart(2, "0")).join("")}`;
+
+// Pré-mélange foregroundHex à opacity sur backgroundHex et renvoie une couleur SOLIDE (sans canal
+// alpha) visuellement identique à withOpacity(foregroundHex, opacity) sur ce fond précis — mais
+// qui ne se recompose plus avec ce qu'il y a derrière au rendu. Nécessaire pour un SVG (icône
+// lucide-react-native) dont les traits se croisent : une vraie transparence (withOpacity) double
+// l'effet aux intersections, perceptible comme une transparence inégale/"multiplicative".
+export const flattenOpacity = (foregroundHex: string, opacity: number, backgroundHex: string): string => {
+  const [fr, fg, fb] = hexToRgb(foregroundHex);
+  const [br, bg, bb] = hexToRgb(backgroundHex);
+  return rgbToHex(
+    fr * opacity + br * (1 - opacity),
+    fg * opacity + bg * (1 - opacity),
+    fb * opacity + bb * (1 - opacity)
+  );
+};
+
 export const app_colors = {
   black: "#000000",
   white: "#FFFFFF",

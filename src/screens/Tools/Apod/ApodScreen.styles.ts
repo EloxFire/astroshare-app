@@ -4,13 +4,23 @@ export const apodScreenStyles = {
   screen: {
     backgroundColor: app_colors.primary.main,
 
+    // La hauteur n'est PAS gérée via aspectRatio ici : combiné à une largeur en "100%" et un
+    // maxHeight, aspectRatio devient une contrainte bidirectionnelle dans Yoga (le moteur de
+    // layout RN) — dès que maxHeight limite la hauteur, Yoga réduit la LARGEUR pour continuer à
+    // respecter le ratio, au lieu de garder width:100% fixe. La hauteur est donc calculée en
+    // pixels côté JS (voir ApodScreen.tsx, imageHeight) et passée directement en style inline.
     image: {
       width: "100%" as const,
-      // Ratio de secours tant que les dimensions réelles de l'image ne sont pas connues
-      // (Image.getSize est async) — remplacé dynamiquement par le vrai ratio une fois récupéré,
-      // voir ApodScreen.tsx. aspectRatio (plutôt qu'une hauteur en pixels calculée à la main)
-      // laisse React Native dériver la hauteur directement de la largeur dispo.
-      aspectRatio: 16 / 9,
+      resizeMode: "cover" as const,
+      borderRadius: radius.heroCard,
+    },
+
+    // Visuel de chargement uniquement (pas de vraie photo à ce stade) : taille fixe et compacte,
+    // volontairement indépendante du style `image` ci-dessus (lui pensé pour le ratio réel d'une
+    // vraie photo APOD) pour ne jamais hériter d'un calcul de ratio/hauteur qui lui est étranger.
+    placeholderImage: {
+      width: "100%" as const,
+      height: 200,
       resizeMode: "cover" as const,
       borderRadius: radius.heroCard,
     },

@@ -2,7 +2,7 @@ import { FlatList, KeyboardAvoidingView, Modal, Platform, Pressable, Text, Touch
 import { useState } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Check, ChevronDown, ChevronUp, LucideIcon, Search, X } from "lucide-react-native";
-import { app_colors, spacing, withOpacity } from "../../helpers/variables";
+import { app_colors, spacing, flattenOpacity } from "../../helpers/variables";
 import { InputWithIcon } from "../InputWithIcon/InputWithIcon";
 import { selectInputStyles } from "./SelectInput.styles";
 
@@ -132,14 +132,14 @@ export const SelectInput = <T extends string | number>(props: SelectInputProps<T
           accessibilityRole="button"
           accessibilityState={{ expanded: isOpen }}
         >
-          {Icon && <Icon color={withOpacity(app_colors.primary.main, 0.8)} size={16} />}
+          {Icon && <Icon color={flattenOpacity(app_colors.primary.main, 0.8, app_colors.white)} size={16} />}
           <Text
             style={[selectInputStyles.field.value, selectedLabels.length === 0 && selectInputStyles.field.value.placeholder]}
             numberOfLines={1}
           >
             {selectedLabels.length > 0 ? selectedLabels.join(", ") : placeholder}
           </Text>
-          <Chevron color={withOpacity(app_colors.primary.main, 0.8)} size={16} />
+          <Chevron color={flattenOpacity(app_colors.primary.main, 0.8, app_colors.white)} size={16} />
         </TouchableOpacity>
 
         {isDropdownOpen && (

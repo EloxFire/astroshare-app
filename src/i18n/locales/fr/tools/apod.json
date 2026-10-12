@@ -25,5 +25,15 @@
         "downloadErrorMessage": "Une erreur est survenue, réessayez plus tard."
       }
     }
+  },
+  "upcoming": {
+    "title": "Prochaine image",
+    "publish": "Publication dans",
+    "ping": "Me prévenir à la publication",
+    "pingSubtitle": "Une notification {{date}}",
+    "pingSuccessTitle": "Notification activée",
+    "pingSuccessMessage": "Vous serez notifié lorsque la prochaine image sera publiée.",
+    "pingErrorTitle": "Erreur",
+    "pingErrorMessage": "Une erreur est survenue, réessayez plus tard."
   }
 }

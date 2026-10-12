@@ -3,14 +3,14 @@ import RenderHTML from "@native-html/render";
 import { globalStyles } from "../../../helpers/globalStyles";
 import { ScreenHeader } from "../../../components/ScreenHeader/ScreenHeader";
 import { useTranslation } from "react-i18next";
-import { useFocusEffect } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useCallback, useEffect, useState } from "react";
 import { apodScreenStyles } from "./ApodScreen.styles";
 import { getCurrentApod, getFutureApod } from "../../../helpers/api/apod/apod";
 import { Apod } from "../../../types/apod/Apod";
 import dayjs from "dayjs";
-import { app_colors, spacing, withOpacity } from "../../../helpers/variables";
+import { app_colors, spacing, flattenOpacity } from "../../../helpers/variables";
 import { Bookmark, CalendarClockIcon, ChevronRightIcon, Download, ExternalLink, Languages } from "lucide-react-native";
 import { FutureApod } from "../../../types/apod/FutureApod";
 import * as Linking from "expo-linking";
@@ -26,6 +26,11 @@ const isDirectVideoFile = (url: string) => {
   const pathWithoutQuery = url.split("?")[0].toLowerCase();
   return DIRECT_VIDEO_FILE_EXTENSIONS.some((extension) => pathWithoutQuery.endsWith(extension));
 };
+
+// Couleur solide du fond derrière l'icône de nextImage.iconContainer : lui-même un fond
+// semi-transparent (accent.light à 20%) posé sur le fond de l'écran — il faut le fond RÉEL,
+// déjà aplati, pour que flattenOpacity de l'icône donne la bonne teinte.
+const NEXT_IMAGE_ICON_CONTAINER_BACKGROUND = flattenOpacity(app_colors.accent.light, 0.2, app_colors.primary.main);
 
 // Composant à part car useVideoPlayer est un hook : il ne doit être appelé que lorsque ce
 // lecteur est effectivement monté (cas "fichier vidéo direct"), pas à chaque rendu d'ApodScreen.
@@ -59,6 +64,14 @@ const ApodScreen = () => {
   // Largeur dispo pour le HTML rendu : largeur d'écran moins le padding du screen (des deux
   // côtés) et celui du container description (lui aussi des deux côtés).
   const descriptionContentWidth = width - spacing.screen.horizontal * 2 - apodScreenStyles.screen.content.description.padding * 2;
+
+  // Largeur réellement dispo pour l'image hero (juste le padding du screen, pas de container
+  // supplémentaire ici) — sert à calculer sa hauteur en pixels, voir imageHeight ci-dessous.
+  // Pas de plafond : l'objectif est d'afficher l'image dans ses vraies dimensions (ratio réel),
+  // pas de la recadrer.
+  const imageContentWidth = width - spacing.screen.horizontal * 2;
+  const FALLBACK_IMAGE_ASPECT_RATIO = 16 / 9; // tant que le vrai ratio n'est pas encore connu
+  const imageHeight = imageContentWidth / (imageAspectRatio ?? FALLBACK_IMAGE_ASPECT_RATIO);
 
   useEffect(() => {
     if (!asset || asset.media_type !== "image") {
@@ -123,10 +136,7 @@ const ApodScreen = () => {
                   asset.media_type === "image" && (
                     <Image
                       source={{ uri: asset.hdurl ?? asset.url }}
-                      style={[
-                        apodScreenStyles.screen.image,
-                        imageAspectRatio ? { aspectRatio: imageAspectRatio } : undefined,
-                      ]}
+                      style={[apodScreenStyles.screen.image, { height: imageHeight }]}
                     />
                   )
                 }
@@ -147,7 +157,7 @@ const ApodScreen = () => {
             ) : (
               <Image
                 source={require('../../../../assets/images/placeholders/apod-placeholder.png')}
-                style={apodScreenStyles.screen.image}
+                style={apodScreenStyles.screen.placeholderImage}
               />
             )
           }
@@ -199,15 +209,15 @@ const ApodScreen = () => {
                   )}
                 </View>
     
-                <TouchableOpacity style={apodScreenStyles.screen.content.nextImage}>
+                <TouchableOpacity style={apodScreenStyles.screen.content.nextImage} onPress={() => router.push({pathname: "/tools/apod/upcoming", params: {nextAsset: JSON.stringify(nextAsset)}})}>
                   <View style={apodScreenStyles.screen.content.nextImage.iconContainer}>
-                    <CalendarClockIcon size={25} color={withOpacity(app_colors.white, 0.5)} />
+                    <CalendarClockIcon size={25} color={flattenOpacity(app_colors.white, 0.5, NEXT_IMAGE_ICON_CONTAINER_BACKGROUND)} />
                   </View>
                   <View style={apodScreenStyles.screen.content.nextImage.textContainer}>
                     <Text style={apodScreenStyles.screen.content.nextImage.date}>{dayjs(nextAsset?.post_date).format("ddd D MMM YYYY")}</Text>
                     <Text style={apodScreenStyles.screen.content.nextImage.title}>{nextAsset ? nextAsset.title : t('screen.content.nextImage.loading')}</Text>
                   </View>
-                  <ChevronRightIcon size={25} color={withOpacity(app_colors.white, 0.5)} />
+                  <ChevronRightIcon size={25} color={flattenOpacity(app_colors.white, 0.5, app_colors.primary.main)} />
                 </TouchableOpacity>
               </>
             ) : (
