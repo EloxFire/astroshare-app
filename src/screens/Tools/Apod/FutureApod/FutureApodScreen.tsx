@@ -66,6 +66,7 @@ const FutureApodScreen = () => {
             )}
           </View>
 
+          {/* TODO : Implement push notification */}
           <SwitchInfoCard
             title={t('upcoming.ping')}
             description={t('upcoming.pingSubtitle', { date: dayjs(asset?.post_date).fromNow() })}
