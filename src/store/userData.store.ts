@@ -8,7 +8,7 @@ import { GpsLocation } from "../types/gpsLocation";
 const defaultUserData: UserSettingsState = {
   nightMode: false,
   locale: null,
-  pinnedTools: ["moon-phases-calendar", "polar-align"],
+  pinnedTools: ["moon-phases-calendar", "polar-scope"],
   observatories: [],
   lastKnownLocation: null,
   activeObservatoryId: null,

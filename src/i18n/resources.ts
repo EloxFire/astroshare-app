@@ -1,3 +1,4 @@
+// FRENCH IMPORTS
 import common_fr from "./locales/fr/common.json";
 import tools_fr from "./locales/fr/tools.json";
 import moon_fr from "./locales/fr/moon.json";
@@ -10,6 +11,8 @@ import authRegister_fr from "./locales/fr/auth/register.json";
 import authForgotPassword_fr from "./locales/fr/auth/forgotPassword.json";
 import authProfile_fr from "./locales/fr/auth/profile.json";
 import apod_fr from "./locales/fr/tools/apod.json";
+import polarScope_fr from "./locales/fr/tools/polarScope.json";
+// ENGLISH IMPORTS
 import common_en from "./locales/en/common.json";
 import tools_en from "./locales/en/tools.json";
 import moon_en from "./locales/en/moon.json";
@@ -20,6 +23,7 @@ import authLogin_en from "./locales/en/auth/login.json";
 import authRegister_en from "./locales/en/auth/register.json";
 import authForgotPassword_en from "./locales/en/auth/forgotPassword.json";
 import authProfile_en from "./locales/en/auth/profile.json";
+// ITALIAN IMPORTS
 import common_it from "./locales/it/common.json";
 import tools_it from "./locales/it/tools.json";
 import moon_it from "./locales/it/moon.json";
@@ -51,6 +55,7 @@ export const resources = {
     "auth/forgotPassword": authForgotPassword_fr,
     "auth/profile": authProfile_fr,
     "tools/apod": apod_fr,
+    "tools/polarScope": polarScope_fr,
   },
   en: {
     common: common_en,

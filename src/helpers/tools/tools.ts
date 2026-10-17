@@ -12,7 +12,7 @@ export const toolsList: AstroshareTool[] = [
   },
   // Alignement polaire / Viseur polaire numérique
   {
-    toolId: "polar-align",
+    toolId: "polar-scope",
     ToolIcon: CompassIcon, 
     category: "prepare",
     access: "free",

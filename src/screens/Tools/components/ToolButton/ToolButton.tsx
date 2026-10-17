@@ -16,6 +16,7 @@ interface ToolButtonProps {
 const TOOL_ROUTES: Partial<Record<string, string>> = {
   "moon-phases-calendar": "/tools/moon-calendar",
   "apod": "/tools/apod",
+  "polar-scope": "/tools/polar-scope",
 };
 
 export default function ToolButton({ icon: Icon, toolId, toolname, variant = "default" }: ToolButtonProps) {

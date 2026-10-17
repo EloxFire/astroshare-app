@@ -5,13 +5,17 @@ import { valueCardStyles } from "./ValueCard.styles";
 interface ValueCardProps {
   title: string;
   value: string;
+  small?: boolean;
+  valueStyle?: object;
+  titleStyle?: object;
+  containerStyle?: object;
 }
 
-const ValueCard = ({ title, value }: ValueCardProps) => {
+const ValueCard = ({ title, value, small, valueStyle, titleStyle, containerStyle }: ValueCardProps) => {
   return (
-    <View style={valueCardStyles.card}>
-      <Text style={valueCardStyles.card.title}>{title}</Text>
-      <Text style={valueCardStyles.card.value}>{value}</Text>
+    <View style={[valueCardStyles.card, containerStyle]}>
+      <Text style={[valueCardStyles.card.title, titleStyle]}>{title}</Text>
+      <Text style={[valueCardStyles.card.value, small && { fontSize: 16 }, valueStyle]}>{value}</Text>
     </View>
   )
 }

@@ -1,0 +1,29 @@
+{
+  "screen": {
+    "title": "Viseur polaire"
+  },
+  "content": {
+    "header": {
+      "latitude": "Latitude",
+      "localTime": "Heure locale",
+      "LST": "Temps sidéral local",
+      "hourAngle": "Angle horaire Polaris",
+      "hourAngleDegrees": "Angle horaire Polaris (°)"
+    },
+    "scopeContainer": {
+      "subtitle": "Placez polaris à"
+    },
+    "footer": {
+      "done": "Terminer",
+      "previous": "Précédent"
+    },
+    "hemisphere": {
+      "north": "Hémisphère nord",
+      "south": "Hémisphère sud"
+    },
+    "infoCard": {
+      "title": "Pourquoi viser la polaire ?",
+      "description": "Découvrez pourquoi il est important de viser la polaire pour l'alignement de votre monture."
+    }
+  }
+}
