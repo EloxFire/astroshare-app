@@ -32,7 +32,9 @@
   "altitudeChart": {
     "rise": "Lever",
     "set": "Coucher",
-    "culmination": "Culmination {{altitude}}°"
+    "culmination": "Culmination {{altitude}}°",
+    "visible": "Visible",
+    "belowHorizon": "Sous l'horizon"
   },
   "lightPollution": {
     "indicators": {

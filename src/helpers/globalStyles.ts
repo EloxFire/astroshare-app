@@ -61,6 +61,13 @@ export const globalStyles = {
     borderWidth: 1,
     borderColor: app_colors.accent.light,
 
+    header: {
+      display: "flex" as const,
+      flexDirection: "row" as const,
+      alignItems: "center" as const,
+      justifyContent: "space-between" as const,
+    },
+
     item: {
       display: "flex" as const,
       flexDirection: "row" as const,

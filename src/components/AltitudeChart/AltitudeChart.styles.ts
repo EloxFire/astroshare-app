@@ -6,22 +6,44 @@ export const altitudeChartStyles = {
     gap: 6,
   },
 
+  // Pas de alignSelf: "center" ici : tant que la largeur mesurée (onLayout) n'est pas connue, le
+  // LineChart n'est pas encore monté et ce conteneur n'a aucun contenu — avec alignSelf: "center"
+  // il se réduirait à une largeur de 0 et ne grandirait plus jamais (onLayout ne refirerait pas).
+  // Le stretch par défaut (hérité du parent flex column) lui donne sa largeur réelle dès le premier rendu.
   chart: {
-    alignSelf: "center" as const,
+    minHeight: 150, // = CHART_HEIGHT, évite un sursaut de layout le temps que le premier onLayout arrive
   },
 
-  dot: {
-    width: 7,
-    height: 7,
-    borderRadius: 4,
-    borderWidth: 1.5,
-    borderColor: app_colors.white,
-  },
+  legend: {
+    display: "flex" as const,
+    flexDirection: "row" as const,
+    justifyContent: "center" as const,
+    gap: 16,
 
-  dotCulmination: {
-    width: 9,
-    height: 9,
-    borderRadius: 5,
+    item: {
+      display: "flex" as const,
+      flexDirection: "row" as const,
+      alignItems: "center" as const,
+      gap: 5,
+
+      swatch: {
+        width: 14,
+        height: 2,
+        borderRadius: 1,
+      },
+
+      swatchDashed: {
+        height: 0,
+        borderTopWidth: 2,
+        borderStyle: "dashed" as const,
+      },
+
+      label: {
+        ...typography.dmMono.regular.rowMeta,
+        fontSize: 9,
+        color: app_colors.primary.medium,
+      },
+    },
   },
 
   labelsRow: {
@@ -51,6 +73,7 @@ export const altitudeChartStyles = {
       caption: {
         ...typography.dmMono.regular.rowMeta,
         color: app_colors.primary.medium,
+        fontSize: 12
       },
     },
 
@@ -69,6 +92,7 @@ export const altitudeChartStyles = {
       caption: {
         ...typography.dmMono.regular.rowMeta,
         color: app_colors.primary.medium,
+        fontSize: 12
       },
     },
   },

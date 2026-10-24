@@ -31,6 +31,8 @@
   "altitudeChart": {
     "rise": "Levata",
     "set": "Tramonto",
-    "culmination": "Culminazione {{altitude}}°"
+    "culmination": "Culminazione {{altitude}}°",
+    "visible": "Visibile",
+    "belowHorizon": "Sotto l'orizzonte"
   }
 }

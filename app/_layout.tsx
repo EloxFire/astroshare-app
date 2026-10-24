@@ -11,6 +11,7 @@ import { GpsLocationProvider } from '../src/context/GpsContext';
 import { AuthContextProvider } from '../src/context/AuthContext';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import dayjs from 'dayjs';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 dayjs.extend(relativeTime);
 
@@ -32,6 +33,10 @@ export default function RootLayout() {
   const isTabRootScreen = segments.length <= 1;
 
   return (
+    // Requis par react-native-gesture-handler (ex: pinch-to-zoom de l'image plein écran dans
+    // SpaceWeatherScreen) — doit englober tout arbre qui utilise ses gestes, placé ici une fois
+    // pour toutes plutôt que dans chaque écran.
+    <GestureHandlerRootView style={{ flex: 1 }}>
     <AuthContextProvider>
       <GpsLocationProvider>
         {/* <Toast /> */}
@@ -157,5 +162,6 @@ export default function RootLayout() {
         </Tabs>
       </GpsLocationProvider>
     </AuthContextProvider>
+    </GestureHandlerRootView>
   );
 }

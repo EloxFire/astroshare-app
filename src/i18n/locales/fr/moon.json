@@ -42,7 +42,8 @@
     "illumination": "Illumination",
     "age": "âge",
     "ageValue": "{{value}} j",
-    "diameter": "Diamètre"
+    "diameter": "Diamètre",
+    "altitude": "Altitude"
   },
   "ephemeris": {
     "rise": "Lever",

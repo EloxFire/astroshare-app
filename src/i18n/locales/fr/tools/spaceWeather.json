@@ -1,0 +1,57 @@
+{
+  "screen": {
+    "title": "Météo de l'espace"
+  },
+  "imagery": {
+    "title": "Notre étoile",
+    "caption": "Chargement de l'image...",
+    "otherWavelengths": "Autres longueurs d'onde"
+  },
+  "sumary": {
+    "title": "Informations détaillées",
+    "badge": "En direct",
+    "stats": {
+      "rise": {
+        "title": "Prochain lever"
+      },
+      "set": {
+        "title": "Prochain coucher"
+      },
+      "distance": {
+        "title": "Distance"
+      },
+      "angularDiameter": {
+        "title": "Diamètre angulaire"
+      },
+      "altitude": {
+        "title": "Altitude"
+      },
+      "azimuth": {
+        "title": "Azimut"
+      },
+      "daylightDuration": {
+        "title": "Durée du jour"
+      },
+      "astronomicalNight":{
+        "title": "Nuit astronomique"
+      }
+    }
+  },
+  "transit": {
+    "loading": "...",
+    "notApplicable": "N/A",
+    "neverSets": "Ne se couche pas",
+    "today": "Aujourd'hui, {{time}} | {{direction}}",
+    "tomorrow": "Demain, {{time}} | {{direction}}",
+    "yesterday": "Hier, {{time}} | {{direction}}"
+  },
+  "duration": "{{hours}}h {{minutes}}min",
+  "dayRelativeTime": {
+    "startsToday": "Aujourd'hui à {{time}}",
+    "startsTomorrow": "Demain à {{time}}",
+    "startsYesterday": "Hier à {{time}}",
+    "untilToday": "Jusqu'à aujourd'hui {{time}}",
+    "untilTomorrow": "Jusqu'à demain {{time}}",
+    "untilYesterday": "Jusqu'à hier {{time}}"
+  }
+}

@@ -18,7 +18,7 @@ import { StatusBar } from "expo-status-bar";
 import { Stars } from "lucide-react-native";
 import { getRandomMoonCalendarSuggestion } from "../../../../../helpers/suggestions/moon/moonCalendarSuggestions";
 import SuggestionCard from "../../../../../components/cards/SuggestionCard/SuggestionCard";
-import { getAltitudeCurve } from "../../../../../helpers/astrometry/altitude/altitudeCurve";
+import { findPreviousHorizonCrossing, getAltitudeCurve } from "../../../../../helpers/astrometry/altitude/altitudeCurve";
 import AltitudeChart from "../../../../../components/AltitudeChart/AltitudeChart";
 
 
@@ -28,7 +28,7 @@ const TonightView = () => {
   const user = useMemo(() => ({
     latitude: location?.latitude ?? 0,
     longitude: location?.longitude ?? 0,
-    altitude: location?.altitude ?? 0,
+    altitude: location?.elevation ?? 0,
   }), [location]);
   const { t, i18n } = useTranslation("moon");
   const { formatDate } = useAppUnits();
@@ -70,9 +70,27 @@ const TonightView = () => {
       // fois ici (au lieu de 3x dans l'ancien code) : c'est l'appel le plus coûteux du bloc.
       const nextNewMoon = getNextNewMoon(now);
       const points = getAltitudeCurve(now, user, getLunarEquatorialCoordinate);
+      const coords = convertEquatorialToHorizontal(now, user, eqCoords);
+      const nextRise = getBodyNextRise(today, user, eqCoords);
+      const nextSet = getBodyNextSet(today, user, eqCoords);
+
+      // getBodyNextRise/getBodyNextSet ne renvoient jamais que le PROCHAIN évènement — correct pour
+      // la ListCard ("Prochain lever/coucher"), mais pas pour le graphique de trajectoire : si la
+      // Lune est déjà levée, son prochain lever est potentiellement demain, alors qu'on veut montrer
+      // l'heure (déjà passée) à laquelle elle s'est levée aujourd'hui. On bascule donc sur l'évènement
+      // déjà passé (recherché en arrière) côté opposé à celui qui est encore à venir.
+      const currentlyAboveHorizon = coords.alt >= 0;
+      const chartRiseDate = currentlyAboveHorizon
+        ? findPreviousHorizonCrossing(now, user, getLunarEquatorialCoordinate, "rise")
+        : (nextRise ? nextRise.datetime : undefined);
+      const chartSetDate = currentlyAboveHorizon
+        ? (nextSet ? nextSet.datetime : undefined)
+        : findPreviousHorizonCrossing(now, user, getLunarEquatorialCoordinate, "set");
 
       setComputedMoon({
         altitudeCurve: points,
+        chartRiseDate,
+        chartSetDate,
         phase: getLunarPhaseLabel(getLunarPhase(now)),
         illumination: getLunarIllumination(now).toFixed(2),
         age,
@@ -83,9 +101,9 @@ const TonightView = () => {
         distance: getLunarDistance(now).toFixed(0),
         diameter: getLunarAngularDiameter(now),
         eqCoords,
-        coords: convertEquatorialToHorizontal(now, user, eqCoords),
-        rise: getBodyNextRise(today, user, eqCoords),
-        set: getBodyNextSet(today, user, eqCoords),
+        coords,
+        rise: nextRise,
+        set: nextSet,
         isNewMoonNext: nextNewMoon < nextFullMoon,
         daysUntilNextPhase: Math.round(Math.min(
           (nextNewMoon.getTime() - now.getTime()) / (1000 * 60 * 60 * 24),
@@ -161,7 +179,7 @@ const TonightView = () => {
       <View style={tonightViewStyles.mainInfoBlocs}>
         <ValueCard title={t("stats.age")} value={computedMoon?.age != null ? `${computedMoon?.age.toFixed(1)} j` : "--"} />
         <ValueCard title={t("stats.illumination")} value={computedMoon?.illumination != null ? `${computedMoon?.illumination} %` : "--"} />
-        <ValueCard title={t("stats.diameter")} value={computedMoon?.diameter != null ? `${computedMoon?.diameter.toFixed(2)} °` : "--"} />
+        <ValueCard title={t("stats.altitude")} value={computedMoon?.coords?.alt != null ? `${computedMoon?.coords?.alt.toFixed(2)} °` : "--"} />
       </View>
 
       <ListCard additionalContainerStyles={{marginTop: 20}} items={[
@@ -210,9 +228,13 @@ const TonightView = () => {
 
       {
         computedMoon?.altitudeCurve && (
-          <View style={tonightViewStyles.nextPhasesContainer}>
+          <View style={tonightViewStyles.altitudeCurveContainer}>
             <Text style={[globalStyles.categoryTitle, { fontSize: 12 }]}>{t("ephemeris.altitudeCurve")}</Text>
-            <AltitudeChart points={computedMoon.altitudeCurve} />
+            <AltitudeChart
+              points={computedMoon.altitudeCurve}
+              riseDate={computedMoon.chartRiseDate}
+              setDate={computedMoon.chartSetDate}
+            />
           </View>
         )
       }

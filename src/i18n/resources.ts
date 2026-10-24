@@ -12,6 +12,7 @@ import authForgotPassword_fr from "./locales/fr/auth/forgotPassword.json";
 import authProfile_fr from "./locales/fr/auth/profile.json";
 import apod_fr from "./locales/fr/tools/apod.json";
 import polarScope_fr from "./locales/fr/tools/polarScope.json";
+import spaceWeather_fr from "./locales/fr/tools/spaceWeather.json";
 // ENGLISH IMPORTS
 import common_en from "./locales/en/common.json";
 import tools_en from "./locales/en/tools.json";
@@ -56,6 +57,7 @@ export const resources = {
     "auth/profile": authProfile_fr,
     "tools/apod": apod_fr,
     "tools/polarScope": polarScope_fr,
+    "tools/spaceWeather": spaceWeather_fr,
   },
   en: {
     common: common_en,

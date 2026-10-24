@@ -57,3 +57,40 @@ export const formatTransit = (
   if (dayDiff === 1) return t("transit.tomorrow", { time, direction });
   return t("transit.today", { time, direction });
 };
+
+// Affiche l'heure de début (ou de fin, si `until` est vrai) d'une fenêtre temporelle (ex: nuit
+// astronomique) avec préfixe relatif au jour civil de `referenceDate`, même esprit que formatTransit
+// mais sans azimut — et avec une variante "jusqu'à" pour le cas où l'évènement est déjà en cours
+// (ex: on est déjà en nuit astronomique : on veut savoir jusqu'à quand, pas depuis quand).
+export const formatDayRelativeTime = (
+  date: Date | undefined,
+  until: boolean,
+  t: TFunction,
+  formatDate: FormatDate,
+  referenceDate: Date
+): string => {
+  if (!date) return t("transit.notApplicable");
+
+  const time = formatDate(date).format("HH:mm");
+  const dayDiff = formatDate(date).startOf("day").diff(formatDate(referenceDate).startOf("day"), "day");
+  const day = dayDiff === -1 ? "Yesterday" : dayDiff === 1 ? "Tomorrow" : "Today";
+
+  return t(`dayRelativeTime.${until ? "until" : "starts"}${day}`, { time });
+};
+
+// Formate une durée en secondes en "XXhYYmin" (ex: 45296 → "12h 34min"). `t` est injectée comme
+// pour formatTransit : chaque namespace appelant doit déclarer sa propre clé "duration" (même
+// convention que "transit" dans moon.json/tools/spaceWeather.json), pour permettre un libellé
+// différent par langue (ex: "min" vs "m").
+export const formatDuration = (seconds: number, t: TFunction): string => {
+  const totalMinutes = Math.round(seconds / 60);
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+  return t("duration", { hours, minutes });
+};
+
+export const formatDistanceInUA = (meters: number, language: string, decimals = 2): string => {
+  const AU_IN_METERS = 149_597_870_700; // 1 UA = 149 597 870,7 km
+  const distanceInAU = meters / AU_IN_METERS;
+  return `${formatLocaleNumber(distanceInAU, language, decimals)} UA`;
+}
