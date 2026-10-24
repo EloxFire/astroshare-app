@@ -29,6 +29,11 @@
       "moonIllumination": "Discrète"
     }
   },
+  "altitudeChart": {
+    "rise": "Lever",
+    "set": "Coucher",
+    "culmination": "Culmination {{altitude}}°"
+  },
   "lightPollution": {
     "indicators": {
       "1": "Excellent ciel noir",

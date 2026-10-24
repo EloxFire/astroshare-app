@@ -87,7 +87,7 @@ const NorthPolarScopeReticle = ({ size, polarisHourAngleDegrees }: NorthPolarSco
         cx={centerX + polarisX}
         cy={centerY - polarisY}
         r={5}
-        fill={app_colors.grey}
+        fill={app_colors.yellow.main}
         transform={`rotate(90, ${centerX}, ${centerY})`}
       />
     </Svg>

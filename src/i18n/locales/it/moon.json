@@ -51,7 +51,8 @@
     "distance": "Distanza",
     "distanceValue": "{{value}} km",
     "altitude": "Altitudine",
-    "altitudeValue": "{{value}}°"
+    "altitudeValue": "{{value}}°",
+    "altitudeCurve": "Percorso di stanotte"
   },
   "phasesOverview": {
     "title": "Prossime fasi"

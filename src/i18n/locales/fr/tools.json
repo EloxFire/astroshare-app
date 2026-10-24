@@ -5,10 +5,22 @@
     "pinnedSection": "Épinglés (5 max)"
   },
   "categories": {
+    "all": "Tous",
     "prepare": "Préparer",
     "observe": "Observer",
     "follow-up": "Suivi",
-    "learn": "Apprendre"
+    "learn": "Apprendre",
+    "decorative": {
+      "toolNumber_one": "{{count}} outil",
+      "toolNumber_other": "{{count}} outils"
+    },
+    "withCount": {
+      "all": "Tous ({{count}})",
+      "prepare": "Préparer ({{count}})",
+      "observe": "Observer ({{count}})",
+      "follow-up": "Suivi ({{count}})",
+      "learn": "Apprendre ({{count}})"
+    }
   },
   "names": {
     "moon-phases-calendar": "Lune",

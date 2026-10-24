@@ -16,13 +16,12 @@ const MoonCalendarScreen = () => {
   const [currentView, setCurrentView] = useState<"tonight" | "month">("tonight");
   
 
-
   useFocusEffect(
-      useCallback(() => {
-        StatusBar.setStyle("dark");
-        return () => StatusBar.setStyle("dark");
-      }, [])
-    );
+    useCallback(() => {
+      StatusBar.setStyle("dark");
+      return () => StatusBar.setStyle("light");
+    }, [])
+  );
 
 
   const handleTabPress = (tabIndex: number) => {
@@ -36,34 +35,36 @@ const MoonCalendarScreen = () => {
   return (
     <View style={moonCalendarScreenStyles.screen}>
       <ScreenHeader title={t("screen.title")} main={false} />
-      <ScrollView  contentContainerStyle={moonCalendarScreenStyles.content}>
-        <TabSwitch
-          tabs={[
-            {
-              text: t("tabs.tonight"),
-            },
-            {
-              text: t("tabs.month"),
-            }
-          ]}
-          activeTabForegroundColor={app_colors.primary.main}
-          
-          activeTab={currentView === "tonight" ? 0 : 1}
-          onTabPress={handleTabPress}
-        />
+      <ScrollView >
+        <View style={moonCalendarScreenStyles.content}>
+          <TabSwitch
+            tabs={[
+              {
+                text: t("tabs.tonight"),
+              },
+              {
+                text: t("tabs.month"),
+              }
+            ]}
+            activeTabForegroundColor={app_colors.primary.main}
+            
+            activeTab={currentView === "tonight" ? 0 : 1}
+            onTabPress={handleTabPress}
+          />
 
-        <View style={currentView === "tonight" ? moonCalendarScreenStyles.tonightView : { display: "none" }}>
-          <TonightView />
-        </View>
-        {/*
-          Monté seulement après la première visite de "Mois", puis gardé en mémoire (display:
-          none plutôt que démonté) pour les allers-retours suivants — voir hasVisitedMonth.
-        */}
-        {currentView === "month" && (
-          <View style={{ display: currentView === "month" ? "flex" : "none" }}>
-            {/* <MonthView /> */}
+          <View style={currentView === "tonight" ? moonCalendarScreenStyles.tonightView : { display: "none" }}>
+            <TonightView />
           </View>
-        )}
+          {/*
+            Monté seulement après la première visite de "Mois", puis gardé en mémoire (display:
+            none plutôt que démonté) pour les allers-retours suivants — voir hasVisitedMonth.
+          */}
+          {currentView === "month" && (
+            <View style={{ display: currentView === "month" ? "flex" : "none" }}>
+              {/* <MonthView /> */}
+            </View>
+          )}
+        </View>
       </ScrollView>
     </View>
   );

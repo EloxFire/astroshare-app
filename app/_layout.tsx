@@ -1,7 +1,6 @@
 import '../src/i18n';
 import { Tabs, useSegments } from 'expo-router';
 import { View } from 'react-native';
-import { StatusBar } from 'expo-status-bar';
 import { House, Settings, Search, Telescope, LayoutGrid } from 'lucide-react-native';
 import { app_colors, flattenOpacity } from '../src/helpers/variables';
 import { PlatformPressable } from 'expo-router/build/react-navigation';
@@ -36,7 +35,10 @@ export default function RootLayout() {
     <AuthContextProvider>
       <GpsLocationProvider>
         {/* <Toast /> */}
-        <StatusBar style="light" />
+        {/* Pas de <StatusBar> déclaratif ici : il entrerait en conflit avec les appels impératifs
+            StatusBar.setStyle(...) faits par les écrans (ScreenHeader, MoonCalendarScreen,
+            ApodScreen...) — expo-status-bar ne supporte pas de mélanger les deux approches, le
+            composant monté réaffirme son style à chaque render et écrase les appels impératifs. */}
         <Tabs
           screenOptions={{
             tabBarActiveTintColor: app_colors.accent.main,

@@ -53,7 +53,8 @@
     "distance": "Distance",
     "distanceValue": "{{value}} km",
     "altitude": "Altitude",
-    "altitudeValue": "{{value}}°"
+    "altitudeValue": "{{value}}°",
+    "altitudeCurve": "Trajectoire ce soir"
   },
   "phasesOverview": {
     "title": "Prochaines phases"

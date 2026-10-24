@@ -149,6 +149,7 @@ const ApodScreen = () => {
                         source={{ uri: asset.url }}
                         style={apodScreenStyles.screen.video}
                         allowsFullscreenVideo
+                        scrollEnabled
                       />
                     )
                   )

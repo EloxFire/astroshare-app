@@ -1,41 +1,31 @@
-import { app_colors, gaps, radius, typography } from "../../../../helpers/variables";
-
-export const TOOL_BUTTON_WIDTH = 54;
-
-export const getRowGap = (
-  containerWidth: number,
-  itemsPerRow: number
-): number => {
-  const totalItemsWidth = TOOL_BUTTON_WIDTH * itemsPerRow;
-  return (containerWidth - totalItemsWidth) / (itemsPerRow - 1);
-};
+import { Dimensions } from "react-native";
+import { app_colors, radius, spacing } from "../../../../helpers/variables";
 
 export const toolButtonStyles = {
   button: {
     display: "flex" as const,
     flexDirection: "column" as const,
-    alignItems: "center" as const,
-    gap: gaps.gridTile.columns,
+    justifyContent: "space-between" as const,
+    padding: 10,
+    borderRadius: radius.badge44,
+    width: Dimensions.get("window").width / 3 - 20,
+    height: (Dimensions.get("window").width / 3 - 20) * 0.8,
 
-    square: {
-      backgroundColor: app_colors.accent.light,
-      borderRadius: radius.badge44,
-      width: TOOL_BUTTON_WIDTH,
-      height: TOOL_BUTTON_WIDTH,
+    header: {
       display: "flex" as const,
-      justifyContent: "center" as const,
+      flexDirection: "row" as const,
       alignItems: "center" as const,
-    },
 
-    squarePinned: {
-      backgroundColor: app_colors.primary.main,
+      icon: {
+        width: 20,
+        height: 20,
+        color: app_colors.primary.main
+      }
     },
-
-    name: {
-      ...typography.dmMono.regular.cardBody,
-      fontSize: 9,
-      width: TOOL_BUTTON_WIDTH,
-      textAlign: "center" as const,
+    title: {
+      fontFamily: "ZTNatureBold",
+      color: app_colors.primary.main,
+      fontSize: 14,
     }
   }
 }

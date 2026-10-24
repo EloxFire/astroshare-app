@@ -4,150 +4,171 @@ import { AstroshareTool } from "../../types/tools/astroshareTool";
 export const toolsList: AstroshareTool[] = [
   // Moon phases calendar
   {
-    toolId: "moon-phases-calendar",
-    ToolIcon: MoonIcon, 
+    id: "moon-phases-calendar",
+    icon: MoonIcon,
     category: "prepare",
     access: "free",
+    route: "/tools/moon-calendar",
     
   },
   // Alignement polaire / Viseur polaire numérique
   {
-    toolId: "polar-scope",
-    ToolIcon: CompassIcon, 
+    id: "polar-scope",
+    icon: CompassIcon, 
     category: "prepare",
     access: "free",
+    route: "/tools/polar-scope",
   },
   {
-    toolId: "planetarium",
-    ToolIcon: Orbit, 
+    id: "planetarium",
+    icon: Orbit, 
     category: "observe",
     access: "free",
+    route: "/tools/planetarium",
   },
   // Météo générale
   {
-    toolId: "weather",
-    ToolIcon: CloudSun, 
+    id: "weather",
+    icon: CloudSun, 
     category: "prepare",
     access: "free",
+    route: "/tools/weather",
   },
   // Calculs astronomiques
   {
-    toolId: "astro-calculations",
-    ToolIcon: Calculator, 
+    id: "astro-calculations",
+    icon: Calculator, 
     category: "observe",
     access: "free",
+    route: "/tools/astro-calculations",
   },
   // Carte pollution lumineuse
   {
-    toolId: "light-pollution-map",
-    ToolIcon: LucideLightbulb, 
+    id: "light-pollution-map",
+    icon: LucideLightbulb, 
     category: "prepare",
     access: "premium",
+    route: "/tools/light-pollution-map",
   },
   // Statistiques d'observation
   {
-    toolId: "user-stats",
-    ToolIcon: TrendingUp, 
+    id: "user-stats",
+    icon: TrendingUp, 
     category: "follow-up",
     access: "free",
+    route: "/tools/user-stats",
   },
   // Glossaire / lexique astro
   {
-    toolId: "astro-glossary",
-    ToolIcon: SpellCheck, 
+    id: "astro-glossary",
+    icon: SpellCheck, 
     category: "learn",
     access: "free",
+    route: "/tools/astro-glossary",
   },
   // Satellite tracker
   {
-    toolId: "satellite-tracker",
-    ToolIcon: Satellite, 
+    id: "satellite-tracker",
+    icon: Satellite, 
     category: "observe",
     access: "freemium",
+    route: "/tools/satellite-tracker",
   },
   // Métée de l'espace / Soleil
   {
-    toolId: "space-weather",
-    ToolIcon: Sun, 
+    id: "space-weather",
+    icon: Sun, 
     category: "prepare",
     access: "freemium",
+    route: "/tools/space-weather",
   },
   // APOD
   {
-    toolId: "apod",
-    ToolIcon: CameraIcon, 
+    id: "apod",
+    icon: CameraIcon, 
     category: "follow-up",
     access: "free",
+    route: "/tools/apod",
   },
   // Calendrier des lancements spatiaux
   {
-    toolId: "space-launches",
-    ToolIcon: Rocket, 
+    id: "space-launches",
+    icon: Rocket, 
     category: "follow-up",
     access: "free",
+    route: "/tools/space-launches",
   },
   // Horloges
   {
-    toolId: "clocks",
-    ToolIcon: ClockIcon, 
+    id: "clocks",
+    icon: ClockIcon, 
     category: "prepare",
     access: "free",
+    route: "/tools/clocks",
   },
   // Eclipses lunaires et solaires
   {
-    toolId: "eclipses",
-    ToolIcon: EclipseIcon, 
+    id: "eclipses",
+    icon: EclipseIcon, 
     category: "observe",
     access: "premium",
+    route: "/tools/eclipses",
   },
   // Conjonctions planétaires / Conjonctions planètes-lune / Conjonctions entre deux astres donnés
   {
-    toolId: "conjunctions-calculator",
-    ToolIcon: Blend, 
+    id: "conjunctions-calculator",
+    icon: Blend, 
     category: "observe",
     access: "freemium",
+    route: "/tools/conjunctions-calculator",
   },
   // Transits ISS
   {
-    toolId: "iss-transits",
-    ToolIcon: BringToFront, 
+    id: "iss-transits",
+    icon: BringToFront, 
     category: "observe",
     access: "premium",
+    route: "/tools/iss-transits",
   },
   // Modèles 3D du système solaire / Lunes / Vaisseaux spatiaux / Astéroïdes / Comètes
   {
-    toolId: "3d-viewer",
-    ToolIcon: Rotate3d,
+    id: "3d-viewer",
+    icon: Rotate3d,
     category: "observe",
     access: "freemium",
+    route: "/tools/3d-viewer",
   },
   // Listes a points / Todo lists / Checklists / Listes de contrôle
   {
-    toolId: "checklists",
-    ToolIcon: NotepadTextIcon,
+    id: "checklists",
+    icon: NotepadTextIcon,
     category: "prepare",
     access: "free",
+    route: "/tools/checklists",
   },
   // Simlateur de champ occulaire / caméra
   {
-    toolId: "field-simulator",
-    ToolIcon: CircleDotDashed,
+    id: "field-simulator",
+    icon: CircleDotDashed,
     category: "observe",
     access: "free",
+    route: "/tools/field-simulator",
   },
   // Planificateur de nuit
   {
-    toolId: "night-planner",
-    ToolIcon: Waypoints,
+    id: "night-planner",
+    icon: Waypoints,
     category: "prepare",
     access: "freemium",
+    route: "/tools/night-planner",
   },
   // Fiches détaillées sur des objets notables / Messier / NGC / Planètes / Lunes / Astéroïdes / Comètes
   {
-    toolId: "memo-sheets",
-    ToolIcon: BookIcon,
+    id: "memo-sheets",
+    icon: BookIcon,
     category: "learn",
     access: "free",
+    route: "/tools/memo-sheets",
   },
   // 
 ]

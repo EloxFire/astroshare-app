@@ -1,41 +1,50 @@
 import { toolButtonStyles } from "./ToolButton.styles";
 import { Text, TouchableOpacity, View } from "react-native";
+import { useTranslation } from "react-i18next";
 import { LucideIcon } from "lucide-react-native";
 import { router } from "expo-router";
 import { app_colors } from "../../../../helpers/variables";
+import { AstroshareTool } from "../../../../types/tools/astroshareTool";
+import { toolCategories } from "../../../../helpers/tools/categories";
 
 interface ToolButtonProps {
-  icon: LucideIcon;
-  toolId: string;
-  toolname: string;
-  variant?: "default" | "pinned";
+  tool: AstroshareTool;
+  // Largeur exacte calculée par le conteneur parent (ToolsSection, via onLayout) — remplace la
+  // largeur approximative par défaut de toolButtonStyles.button, qui ne colle pas exactement à la
+  // largeur réelle du conteneur une fois le gap pris en compte.
+  width?: number;
+  isPro?: boolean;
 }
 
-// Chaque outil n'a pas encore forcément sa propre page : tant qu'une route
-// n'est pas ajoutée ici, l'appui sur le bouton se contente de logger.
-const TOOL_ROUTES: Partial<Record<string, string>> = {
-  "moon-phases-calendar": "/tools/moon-calendar",
-  "apod": "/tools/apod",
-  "polar-scope": "/tools/polar-scope",
-};
+export default function ToolButton({ tool, width }: ToolButtonProps) {
 
-export default function ToolButton({ icon: Icon, toolId, toolname, variant = "default" }: ToolButtonProps) {
+  const { t } = useTranslation("tools");
+
+  const { id: toolId, icon: Icon, route, access } = tool;
+  const toolname = t(`names.${toolId}`);
+  const categoryColor = toolCategories.find(category => category.id === tool.category)?.color || app_colors.primary.main;
 
   const handlePress = () => {
-    const route = TOOL_ROUTES[toolId];
     if (route) {
-      router.push(route);
+      router.push(tool.route);
     } else {
       console.log(`Tool button pressed: ${toolname}`);
     }
   }
 
   return (
-    <TouchableOpacity style={toolButtonStyles.button} onPress={handlePress}>
-      <View style={[toolButtonStyles.button.square, variant === "pinned" && toolButtonStyles.button.squarePinned]}>
-        <Icon color={variant === "pinned" ? app_colors.white : app_colors.primary.main} />
+    <TouchableOpacity
+      style={[
+        toolButtonStyles.button,
+        { backgroundColor: categoryColor },
+        width !== undefined && { width, height: width * 0.8 },
+      ]}
+      onPress={handlePress}
+    >
+      <View style={toolButtonStyles.button.header}>
+        <Icon style={toolButtonStyles.button.header.icon} />
       </View>
-      <Text style={toolButtonStyles.button.name}>{toolname}</Text>
+      <Text style={toolButtonStyles.button.title}>{toolname}</Text>
     </TouchableOpacity>
   )
 }

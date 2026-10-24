@@ -1,8 +1,9 @@
 import { LucideIcon } from "lucide-react-native";
 
 export type AstroshareTool = {
-  toolId: string;
-  ToolIcon: LucideIcon;
+  id: string;
+  icon: LucideIcon;
   access: "free" | "premium" | "partner" | "freemium";
+  route: string;
   category?: string;
 }

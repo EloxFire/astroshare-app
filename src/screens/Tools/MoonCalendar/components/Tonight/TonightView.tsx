@@ -18,6 +18,8 @@ import { StatusBar } from "expo-status-bar";
 import { Stars } from "lucide-react-native";
 import { getRandomMoonCalendarSuggestion } from "../../../../../helpers/suggestions/moon/moonCalendarSuggestions";
 import SuggestionCard from "../../../../../components/cards/SuggestionCard/SuggestionCard";
+import { getAltitudeCurve } from "../../../../../helpers/astrometry/altitude/altitudeCurve";
+import AltitudeChart from "../../../../../components/AltitudeChart/AltitudeChart";
 
 
 const TonightView = () => {
@@ -51,42 +53,49 @@ const TonightView = () => {
     ].sort((a, b) => a.date.getTime() - b.date.getTime());
   }, [computedMoon?.nextNewMoon, computedMoon?.nextFirstQuarter, computedMoon?.nextFullMoon, computedMoon?.nextLastQuarter]);
 
-  useEffect(() => {
-    const now = new Date();
-    const nextFullMoon = getNextFullMoon(now);
-    const computedMoon = {
-      phase: getLunarPhaseLabel(getLunarPhase(now)),
-      illumination: getLunarIllumination(now).toFixed(2),
-      age: getLunarAge(now).age,
-      nextFullMoon,
-      nextFirstQuarter: getNextFirstMoonQuarter(now),
-      nextLastQuarter: getNextLastMoonQuarter(now),
-      cycleProgress: getLunarAge(now).age / LUNAR_SYNODIC_MONTH, // LUNAR_SYNODIC_MONTH
-      distance: getLunarDistance(now).toFixed(0),
-      diameter: getLunarAngularDiameter(now),
-      eqCoords: getLunarEquatorialCoordinate(now),
-      coords: convertEquatorialToHorizontal(now, user, getLunarEquatorialCoordinate(now)),
-    }
-
-    setComputedMoon(computedMoon);
-  }, [])
-
+  // Tout le calcul (y compris ce qui était avant dans un useEffect séparé non différé) tourne
+  // après la fin des interactions en cours (InteractionManager) : l'animation de transition de
+  // navigation a donc le thread JS pour elle seule tant qu'elle n'est pas terminée, au lieu de le
+  // partager avec ce bloc de calculs — c'est ce qui causait le "saut" de mise en page visible à
+  // l'arrivée sur l'écran (le SafeAreaView du header se dessinait avant que la transition soit
+  // stabilisée).
   useEffect(() => {
     const task = InteractionManager.runAfterInteractions(() => {
-      setComputedMoon((prev: any) => ({
-        ...prev,
-        rise: getBodyNextRise(today, user, prev?.eqCoords),
-        set: getBodyNextSet(today, user, prev?.eqCoords),
-        isNewMoonNext: getNextNewMoon(new Date()) < getNextFullMoon(new Date()),
+      const now = new Date();
+      const age = getLunarAge(now).age;
+      const eqCoords = getLunarEquatorialCoordinate(now);
+      const nextFullMoon = getNextFullMoon(now);
+      // getNextNewMoon reste sur l'implémentation (plus lente) d'Observerly plutôt que notre
+      // recherche rapide par bissection — voir moonHelpers.ts pour le pourquoi. Calculé une seule
+      // fois ici (au lieu de 3x dans l'ancien code) : c'est l'appel le plus coûteux du bloc.
+      const nextNewMoon = getNextNewMoon(now);
+      const points = getAltitudeCurve(now, user, getLunarEquatorialCoordinate);
+
+      setComputedMoon({
+        altitudeCurve: points,
+        phase: getLunarPhaseLabel(getLunarPhase(now)),
+        illumination: getLunarIllumination(now).toFixed(2),
+        age,
+        nextFullMoon,
+        nextFirstQuarter: getNextFirstMoonQuarter(now),
+        nextLastQuarter: getNextLastMoonQuarter(now),
+        cycleProgress: age / LUNAR_SYNODIC_MONTH,
+        distance: getLunarDistance(now).toFixed(0),
+        diameter: getLunarAngularDiameter(now),
+        eqCoords,
+        coords: convertEquatorialToHorizontal(now, user, eqCoords),
+        rise: getBodyNextRise(today, user, eqCoords),
+        set: getBodyNextSet(today, user, eqCoords),
+        isNewMoonNext: nextNewMoon < nextFullMoon,
         daysUntilNextPhase: Math.round(Math.min(
-          (getNextNewMoon(new Date()).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24),
-          (getNextFullMoon(new Date()).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)
+          (nextNewMoon.getTime() - now.getTime()) / (1000 * 60 * 60 * 24),
+          (nextFullMoon.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
         )),
-        nextNewMoon: getNextNewMoon(new Date())
-      }));
+        nextNewMoon,
+      });
       setLoadingAdditionalData(false);
     });
-  
+
     return () => task.cancel(); // évite un setState après démontage si on quitte l'écran vite
   }, []);
 
@@ -198,6 +207,15 @@ const TonightView = () => {
       }
 
       {/* <Text>{JSON.stringify(computedMoon, null, 2)}</Text> */}
+
+      {
+        computedMoon?.altitudeCurve && (
+          <View style={tonightViewStyles.nextPhasesContainer}>
+            <Text style={[globalStyles.categoryTitle, { fontSize: 12 }]}>{t("ephemeris.altitudeCurve")}</Text>
+            <AltitudeChart points={computedMoon.altitudeCurve} />
+          </View>
+        )
+      }
     </View>
   );
 };

@@ -51,7 +51,8 @@
     "distance": "Distance",
     "distanceValue": "{{value}} km",
     "altitude": "Altitude",
-    "altitudeValue": "{{value}}°"
+    "altitudeValue": "{{value}}°",
+    "altitudeCurve": "Tonight's path"
   },
   "phasesOverview": {
     "title": "Upcoming phases"

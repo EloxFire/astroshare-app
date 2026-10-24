@@ -1,4 +1,4 @@
-import { ScrollView, Text, useWindowDimensions, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import { Search } from "lucide-react-native";
 import { toolsScreenStyles } from "./ToolsScreen.styles";
 import { ScreenHeader } from "../../components/ScreenHeader/ScreenHeader";
@@ -6,37 +6,24 @@ import { InputWithIcon } from "../../components/InputWithIcon/InputWithIcon";
 import { useUserDataStore } from "../../store/userData.store";
 import ToolButton from "./components/ToolButton/ToolButton";
 import AddPinnedToolButton from "./components/AddPinnedToolButton/AddPinnedToolButton";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { toolsList } from "../../helpers/tools/tools";
 import { toolCategories } from "../../helpers/tools/categories";
-import { getRowGap } from "./components/ToolButton/ToolButton.styles";
-import { spacing } from "../../helpers/variables";
 import { useDebounce } from "../../hooks/useDebounce";
 import { useTranslation } from "react-i18next";
-
-const TOOLS_PER_ROW = 5;
-
-const chunkIntoRows = <T,>(items: T[], size: number): T[][] => {
-  const rows: T[][] = [];
-  for (let i = 0; i < items.length; i += size) {
-    rows.push(items.slice(i, i + size));
-  }
-  return rows;
-};
+import Badge from "../../components/Badges/Badge/Badge";
+import { app_colors } from "../../helpers/variables";
+import PinnedToolsSection from "./components/PinnedToolsSection/PinnedToolsSection";
+import ToolsSection from "./components/ToolsSection/ToolsSection";
 
 const ToolsScreen = () => {
   const { t } = useTranslation("tools");
 
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredTools, setFilteredTools] = useState(toolsList);
+  const [activeFilter, setActiveFilter] = useState<string | null>(null);
 
   const userPinnedTools = useUserDataStore((state) => state.pinnedTools);
-
-  const { width: screenWidth } = useWindowDimensions();
-  const rowGap = useMemo(
-    () => getRowGap(screenWidth - spacing.screenMargin * 2, TOOLS_PER_ROW),
-    [screenWidth]
-  );
 
   useEffect(() => {
     console.log("User pinned tools:", userPinnedTools.length > 0 ? userPinnedTools : "Aucun outil épinglé.");
@@ -51,9 +38,9 @@ const ToolsScreen = () => {
 
   const handleSearch = useDebounce((query: string) => {
     const searched = toolsList.filter((tool) =>
-      t(`names.${tool.toolId}`).toLowerCase().includes(query.toLowerCase())
+      t(`names.${tool.id}`).toLowerCase().includes(query.toLowerCase())
     );
-    console.log(`Recherche pour "${query}":`, searched.length > 0 ? searched.map(tool => tool.toolId) : "Aucun outil trouvé.");
+    console.log(`Recherche pour "${query}":`, searched.length > 0 ? searched.map(tool => tool.id) : "Aucun outil trouvé.");
     setFilteredTools(searched);
   }, 300);
 
@@ -76,49 +63,43 @@ const ToolsScreen = () => {
           />
         </View>
 
-        <ScrollView showsVerticalScrollIndicator={false}>
-          <Text style={toolsScreenStyles.content.sectionTitle}>{t("screen.pinnedSection")}</Text>
-          <View style={toolsScreenStyles.content.pinnedTools}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          <View style={toolsScreenStyles.content.toolsFilters}>
+            <Badge
+              text={t(`categories.withCount.all`, { count: toolsList.length })}
+              active={activeFilter === null}
+              backgroundColor={activeFilter === null ? app_colors.accent.main : app_colors.white}
+              borderColor={activeFilter === null ? app_colors.accent.main : app_colors.accent.light}
+              foregroundColor={activeFilter === null ? app_colors.white : app_colors.primary.main}
+              action={() => {
+                setActiveFilter(null)
+              }}
+            />
             {
-              userPinnedTools.map((toolId) => {
-                const tool = toolsList.find((candidate) => candidate.toolId === toolId);
-                if (!tool) return null;
-                return <ToolButton key={toolId} icon={tool.ToolIcon} toolId={tool.toolId} toolname={t(`names.${tool.toolId}`)} variant="pinned" />;
+              toolCategories.map((category, _index) => {
+                return (
+                  <Badge
+                    key={category.id}
+                    text={t(`categories.withCount.${category.id}`, { count: toolsList.filter((tool) => tool.category === category.id).length })}
+                    active={activeFilter === category.id}
+                    backgroundColor={activeFilter === category.id ? app_colors.accent.main : app_colors.white}
+                    borderColor={activeFilter === category.id ? app_colors.accent.main : app_colors.accent.light}
+                    foregroundColor={activeFilter === category.id ? app_colors.white : app_colors.primary.main}
+                    action={() => {
+                      setActiveFilter(category.id)
+                    }}
+                  />
+                )
               })
             }
-            {
-              Array.from({ length: Math.max(0, 5 - userPinnedTools.length) }).map((_, index) => (
-                <AddPinnedToolButton key={`add-pinned-tool-${index}`} />
-              ))
-            }
           </View>
+        </ScrollView>
 
-          {
-            toolCategories.map((category) => {
-              const categoryTools = filteredTools.filter((tool) => tool.category === category.id);
-              const rows = chunkIntoRows(categoryTools, TOOLS_PER_ROW);
-
-              return (
-                <View key={category.id} style={toolsScreenStyles.content.toolSection}>
-                  <Text style={toolsScreenStyles.content.sectionTitle}>{t(`categories.${category.id}`)}</Text>
-
-                  <View style={toolsScreenStyles.content.toolSection.toolsList}>
-                    {
-                      rows.map((row, rowIndex) => (
-                        <View key={`${category.id}-row-${rowIndex}`} style={[toolsScreenStyles.content.toolSection.toolsList.row, { gap: rowGap }]}>
-                          {
-                            row.map((tool) => (
-                              <ToolButton key={tool.toolId} icon={tool.ToolIcon} toolId={tool.toolId} toolname={t(`names.${tool.toolId}`)} />
-                            ))
-                          }
-                        </View>
-                      ))
-                    }
-                  </View>
-                </View>
-              )
-            })
-          }
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <View style={{paddingBottom: 150}}>
+            {/* <PinnedToolsSection tools={userPinnedTools} /> */}
+            <ToolsSection/>
+          </View>
         </ScrollView>
       </View>
     </View>

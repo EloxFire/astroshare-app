@@ -27,5 +27,10 @@
       "cloudCover": "Nessuna nuvola",
       "moonIllumination": "Debole"
     }
+  },
+  "altitudeChart": {
+    "rise": "Levata",
+    "set": "Tramonto",
+    "culmination": "Culminazione {{altitude}}°"
   }
 }
