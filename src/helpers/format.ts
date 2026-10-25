@@ -94,3 +94,10 @@ export const formatDistanceInUA = (meters: number, language: string, decimals = 
   const distanceInAU = meters / AU_IN_METERS;
   return `${formatLocaleNumber(distanceInAU, language, decimals)} UA`;
 }
+
+export const formatHumidity = (percent: number): string => `${Math.round(percent)}%`;
+
+// OpenWeather renvoie wind_speed en m/s (c'est ce que l'API appelle "metric", malgré son nom —
+// elle ne convertit pas en km/h) : conversion ×3.6 nécessaire avant tout affichage en km/h, sans
+// quoi la valeur brute en m/s est affichée telle quelle sous une étiquette "km/h" trompeuse.
+export const formatWindSpeed = (metersPerSecond: number): string => `${Math.round(metersPerSecond * 3.6)} km/h`;

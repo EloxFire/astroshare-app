@@ -134,6 +134,7 @@ const ApodScreen = () => {
               <>
                 {
                   asset.media_type === "image" && (
+                    // TODO : implémenter le zoom sur l'image de la meme maniere que dans src/components/FullscreenImageModal/FullscreenImageModal.tsx
                     <Image
                       source={{ uri: asset.hdurl ?? asset.url }}
                       style={[apodScreenStyles.screen.image, { height: imageHeight }]}

@@ -62,6 +62,10 @@ export const app_colors = {
     light: "#FFD9D9",
     main: "#E5484D",
   },
+  green: {
+    light: "#D7F5E3",
+    main: "#1FAD5D",
+  },
   background: "#FCF4FF",
   bortleScale: {
     1: '#000000', // Black – Bortle 1
@@ -96,6 +100,33 @@ const noaaScaleSeverityColors: Record<number, string> = {
 export const getNoaaScaleColor = (scale: string | null | undefined): string => {
   const severity = Number(scale?.slice(1));
   return noaaScaleSeverityColors[severity] ?? app_colors.grey;
+};
+
+// Paliers du score d'observabilité (0-100, voir helpers/weather/observabilityScore.ts) : mauvais
+// sous le seuil bas (conditions nettement mauvaises), mitigé entre les deux, bon au-dessus — mêmes
+// paliers nets que getNoaaScaleColor ci-dessus, pas de dégradé continu. Même fonction de palier
+// réutilisée pour la couleur (cercle de score, barres de chaque donnée) ET le verdict textuel.
+const OBSERVABILITY_SCORE_LOW_THRESHOLD = 40;
+const OBSERVABILITY_SCORE_HIGH_THRESHOLD = 70;
+
+export type ObservabilityScoreBand = "bad" | "medium" | "good";
+
+export const getObservabilityScoreBand = (score: number | null | undefined): ObservabilityScoreBand | null => {
+  if (score == null) return null;
+  if (score < OBSERVABILITY_SCORE_LOW_THRESHOLD) return "bad";
+  if (score < OBSERVABILITY_SCORE_HIGH_THRESHOLD) return "medium";
+  return "good";
+};
+
+const observabilityScoreBandColors: Record<ObservabilityScoreBand, string> = {
+  bad: app_colors.red.main,
+  medium: app_colors.accent.main,
+  good: app_colors.green.main,
+};
+
+export const getObservabilityScoreColor = (score: number | null | undefined): string => {
+  const band = getObservabilityScoreBand(score);
+  return band ? observabilityScoreBandColors[band] : app_colors.primary.medium;
 };
 
 export const spacing = {
