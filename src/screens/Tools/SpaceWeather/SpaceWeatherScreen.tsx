@@ -337,6 +337,7 @@ const SpaceWeatherScreen = () => {
             />
           </View>
 
+          {/* TODO : Creer les cartes locker et l'écran locker Astroshare PRO */}
           <View style={[globalStyles.defaultCard, spaceWeatherScreenStyles.kpCard]}>
             <View style={globalStyles.defaultCard.header}>
               <Text style={[globalStyles.categoryTitle, {color: app_colors.white}]}>{t("kpIndex.title")}</Text>

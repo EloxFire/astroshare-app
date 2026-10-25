@@ -186,7 +186,7 @@ const TonightView = () => {
         { title: t("ephemeris.nextRise"), value: formatTransit(computedMoon?.rise, t, formatDate, today) ?? "--" },
         { title: t("ephemeris.nextSet"), value: formatTransit(computedMoon?.set, t, formatDate, today) ?? "--" },
         { title: t("ephemeris.distance"), value: computedMoon?.distance != null ? formatDistanceInKm(computedMoon?.distance, i18n.language) : "--" },
-         { title: t("ephemeris.altitude"), value: computedMoon?.coords?.alt != null ? `${computedMoon?.coords?.alt.toFixed(2)} °` : "--" },
+        { title: t("ephemeris.diameter"), value: computedMoon?.diameter != null ? `${computedMoon?.diameter.toFixed(2)}°` : "--" },
       ]} />
 
       <View style={tonightViewStyles.nextPhasesContainer}>

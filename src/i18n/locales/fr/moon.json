@@ -55,7 +55,8 @@
     "distanceValue": "{{value}} km",
     "altitude": "Altitude",
     "altitudeValue": "{{value}}°",
-    "altitudeCurve": "Trajectoire ce soir"
+    "altitudeCurve": "Trajectoire ce soir",
+    "diameter": "Diamètre angulaire",
   },
   "phasesOverview": {
     "title": "Prochaines phases"
