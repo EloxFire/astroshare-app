@@ -53,5 +53,144 @@
     "untilToday": "Jusqu'à aujourd'hui {{time}}",
     "untilTomorrow": "Jusqu'à demain {{time}}",
     "untilYesterday": "Jusqu'à hier {{time}}"
+  },
+  "magneticField": {
+    "title": "Champ magnétique - Bz",
+    "scale": {
+      "south": "Favorable",
+      "north": "Défavorable"
+    },
+    "auroraFavorable": {
+      "favorable": "Favorable aux aurores",
+      "unfavorable": "Défavorable aux aurores"
+    }
+  },
+  "solarWind": {
+    "title": "Vent solaire",
+    "speed": "Vitesse",
+    "density": "Densité",
+    "temperature": "Température",
+    "scale": {
+      "slow": "Lent",
+      "moderate": "Modéré",
+      "fast": "Rapide",
+      "very_fast": "Très rapide"
+    },
+    "descriptions": {
+      "slow": "Lent : vent calme, typique entre les évènements solaires. Peu d'effet sur la magnétosphère.",
+      "moderate": "Modéré : vitesse courante, conditions géomagnétiques généralement stables.",
+      "fast": "Rapide : souvent issu d'un trou coronal. Au-delà de 700 km/s, en général une CME.",
+      "very_fast": "Très rapide : généralement une éjection de masse coronale (CME). Risque de tempête géomagnétique accru."
+    }
+  },
+  "scales": {
+    "title": "Échelles NOAA",
+    "all": "Voir tout",
+    "geomagnetic": {
+      "title": "Tempêtes géomagnétiques",
+      "description": "L'échelle G décrit l'intensité des tempêtes géomagnétiques et leurs effets potentiels sur les systèmes technologiques.",
+      "levels": {
+        "G0": "Aucune tempête",
+        "G1": "Mineure",
+        "G2": "Modérée",
+        "G3": "Forte",
+        "G4": "Sévère",
+        "G5": "Extrême"
+      }
+    },
+    "radioBlackout": {
+      "title": "Pannes radio",
+      "description": "L'échelle R indique la gravité des pannes radio causées par les éruptions solaires, affectant les communications HF et GPS.",
+      "levels": {
+        "R0": "Aucun",
+        "R1": "Mineur",
+        "R2": "Modéré",
+        "R3": "Fort",
+        "R4": "Sévère",
+        "R5": "Extrême"
+      }
+    },
+    "solarRadiation": {
+      "title": "Radiation solaire",
+      "description": "L'échelle S mesure l'intensité des événements de radiation solaire, pouvant affecter les satellites et les astronautes.",
+      "levels": {
+        "S0": "Aucune",
+        "S1": "Mineure",
+        "S2": "Modérée",
+        "S3": "Forte",
+        "S4": "Sévère",
+        "S5": "Extrême"
+      }
+    }
+  },
+  "events": {
+    "title": "Évènements récents",
+    "all": "Tout voir",
+    "noEvents": "Aucun évènement récent",
+    "timestamp": {
+      "today": "Aujourd'hui {{time}}",
+      "yesterday": "Hier {{time}}",
+      "other": "{{date}} {{time}}"
+    },
+    "flare": {
+      "significant": "Éruption significative",
+      "impact": {
+        "M": "Coupures radio mineures côté jour",
+        "X": "Coupures radio majeures côté jour, risque de tempête"
+      }
+    },
+    "alert": {
+      "source": "NOAA",
+      "code": "code {{type}}",
+      "kIndexReached": "Alerte : indice K de {{level}} atteint",
+      "kIndexExpected": "Prévision : indice K de {{level}} attendu",
+      "electronFluxReached": "Alerte : flux d'électrons élevé détecté",
+      "electronFluxExpected": "Prévision : flux d'électrons élevé attendu"
+    }
+  },
+  "kpIndex": {
+    "title": "Indice Kp",
+    "trend": {
+      "rising": "En hausse",
+      "falling": "En baisse",
+      "stable": "Stable"
+    },
+    "scale": {
+      "quiet": "Calme",
+      "unsettled": "Instable",
+      "active": "Actif",
+      "minor_storm": "Tempête mineure",
+      "moderate_storm": "Tempête modérée",
+      "strong_storm": "Tempête forte",
+      "severe_storm": "Tempête sévère",
+      "extreme_storm": "Tempête extrême"
+    },
+    "descriptions": {
+      "quiet": "Calme : conditions géomagnétiques stables, faible activité aurorale.",
+      "unsettled": "Instable : conditions légèrement perturbées, activité aurorale modérée.",
+      "active": "Actif : conditions géomagnétiques perturbées, activité aurorale accrue.",
+      "minor_storm": "Tempête mineure (G1) : légères perturbations géomagnétiques, aurores visibles aux hautes latitudes.",
+      "moderate_storm": "Tempête modérée (G2) : perturbations modérées, aurores visibles plus au sud qu'à l'accoutumée.",
+      "strong_storm": "Tempête forte (G3) : perturbations marquées, aurores potentiellement visibles aux latitudes moyennes.",
+      "severe_storm": "Tempête sévère (G4) : fortes perturbations géomagnétiques, risques pour les réseaux électriques et satellites.",
+      "extreme_storm": "Tempête extrême (G5) : évènement rare et majeur, risques significatifs pour les infrastructures."
+    },
+    "chart": {
+      "legend": {
+        "observed": "Observé",
+        "current": "Maintenant",
+        "forecast": "Prévision"
+      }
+    }
+  },
+  "solarFlares": {
+    "title": "Éruptions solaires",
+    "category": {
+      "A": "Très faible",
+      "B": "Faible",
+      "C": "Modérée",
+      "M": "Forte",
+      "X": "Extrême"
+    }
   }
 }

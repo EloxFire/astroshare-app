@@ -123,7 +123,29 @@ const AltitudeChart = ({ points, color = app_colors.accent.main, riseDate: riseD
     for (let i = 1; i < points.length; i++) {
       if (points[i].altitude > points[culminationIndex].altitude) culminationIndex = i;
     }
-    const culminationAltitude = points[culminationIndex].altitude;
+
+    // Affinage parabolique autour de l'échantillon le plus haut, plutôt que de prendre sa date/
+    // altitude brutes : getAltitudeCurve échantillonne toutes les 15 min à partir de "maintenant"
+    // (fenêtre glissante, pas une grille fixe), donc la grille d'échantillons se décale d'un refresh
+    // à l'autre — sans affinage, la culmination "saute" d'un échantillon à l'autre (jusqu'à ±7-8 min)
+    // selon la phase de la grille au moment du calcul, pas une vraie variation de la position du ciel.
+    // Formule standard du sommet d'une parabole passant par 3 points également espacés.
+    let culminationDate = points[culminationIndex].date;
+    let culminationAltitude = points[culminationIndex].altitude;
+    const prevPoint = points[culminationIndex - 1];
+    const nextPoint = points[culminationIndex + 1];
+    if (prevPoint && nextPoint) {
+      const y0 = prevPoint.altitude;
+      const y1 = culminationAltitude;
+      const y2 = nextPoint.altitude;
+      const curvature = y0 - 2 * y1 + y2;
+      if (Math.abs(curvature) > 1e-6) {
+        const offset = (0.5 * (y0 - y2)) / curvature; // en unités d'indices d'échantillon, ~[-0.5, 0.5]
+        const stepMs = nextPoint.date.getTime() - culminationDate.getTime();
+        culminationDate = new Date(culminationDate.getTime() + offset * stepMs);
+        culminationAltitude = y1 - 0.25 * (y0 - y2) * offset;
+      }
+    }
 
     const maxValue = ALTITUDE_DOMAIN_MAX;
     const minValue = ALTITUDE_DOMAIN_MIN;
@@ -178,9 +200,9 @@ const AltitudeChart = ({ points, color = app_colors.accent.main, riseDate: riseD
       plotBottom,
       pathRuns: buildSmoothPath(vertices),
       horizonY: yFor(0),
-      culminationDot: { x: xFor(culminationIndex), y: yFor(culminationAltitude) },
+      culminationDot: { x: xForTime(culminationDate.getTime()), y: yFor(culminationAltitude) },
       culminationAltitude,
-      culminationDate: points[culminationIndex].date,
+      culminationDate,
       riseDot,
       setDot,
       // Les labels affichent l'heure "officielle" reçue en props quand elle existe (cohérence avec

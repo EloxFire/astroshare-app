@@ -43,38 +43,233 @@ export const spaceWeatherScreenStyles = {
     },
   },
 
-  fullscreenModal: {
-    flex: 1,
-    backgroundColor: app_colors.black,
+  scalesContainer: {
     display: "flex" as const,
-    alignItems: "center" as const,
-    justifyContent: "center" as const,
+    flexDirection: "column" as const,
+    gap: 10,
 
-    imageWrapper: {
-      flex: 1,
-      width: "100%" as const,
-      display: "flex" as const,
-      alignItems: "center" as const,
-      justifyContent: "center" as const,
-      overflow: "hidden" as const, // le contenu zoomé/déplacé ne doit pas déborder sur le bouton de fermeture
+    link: {
+      color: app_colors.accent.main,
+      fontFamily: "DMMonoRegular",
+      fontSize: 12,
     },
 
-    image: {
-      width: "100%" as const,
-      aspectRatio: 1,
+    scales: {
+      display: "flex" as const,
+      flexDirection: 'row' as const,
+      gap: 10
+    }
+  },
+
+  eventsContainer: {
+    display: "flex" as const,
+    flexDirection: "column" as const,
+    gap: 10,
+
+    link: {
+      color: app_colors.accent.main,
+      fontFamily: "DMMonoRegular",
+      fontSize: 12,
     },
 
-    close: {
-      position: "absolute" as const,
-      top: 56,
-      right: 20,
-      width: 40,
-      height: 40,
-      borderRadius: 20,
+    scales: {
       display: "flex" as const,
+      flexDirection: 'column' as const,
+      gap: 10
+    }
+  },
+
+  magneticFieldContainer: {
+    display: "flex" as const,
+    flexDirection: "column" as const,
+    gap: 20,
+
+    values: {
+      display: "flex" as const,
+      flexDirection: "row" as const,
+      justifyContent: "space-between" as const,
+      alignItems: "flex-end" as const,
+      gap: 20,
+
+      text: {
+        fontFamily: "ZTNatureRegular",
+        fontSize: 16,
+        color: app_colors.primary.main,
+      },
+      main: {
+        fontFamily: "ZTNatureBold",
+        fontSize: 30,
+        color: app_colors.primary.main,
+      },
+      secondary: {
+        fontFamily: "ZTNatureBold",
+        fontSize: 16,
+        color: app_colors.primary.main,
+      },
+      unit: {
+        fontFamily: "ZTNatureBold",
+        fontSize: 16,
+        color: app_colors.primary.medium,
+      },
+    }
+  },
+
+  solarWindContainer: {
+    marginTop: 20,
+    display: "flex" as const,
+    flexDirection: "column" as const,
+    gap: 16,
+
+    valueRow: {
+      display: "flex" as const,
+      flexDirection: "row" as const,
+      justifyContent: "space-between" as const,
       alignItems: "center" as const,
-      justifyContent: "center" as const,
-      backgroundColor: withOpacity(app_colors.white, 0.15),
+
+      value: {
+        display: "flex" as const,
+        flexDirection: "row" as const,
+        gap: 5,
+        alignItems: "baseline" as const,
+
+        main: {
+          fontFamily: "ZTNatureBold",
+          fontSize: 30,
+          color: app_colors.primary.main,
+        },
+        unit: {
+          fontFamily: "ZTNatureBold",
+          fontSize: 16,
+          color: app_colors.primary.medium,
+        },
+      },
+    },
+
+    // Échelle à 4 paliers discrets (Lent/Modéré/Rapide/Très rapide) — contrairement au Bz (valeur
+    // continue), le vent solaire n'est classé que par catégorie côté API (`level`), donc un
+    // positionnement précis du marqueur dans son palier n'est pas possible : il est centré sur le
+    // palier actif, comme un simple repère "vous êtes ici" plutôt qu'une position exacte.
+    scale: {
+      display: "flex" as const,
+      flexDirection: "column" as const,
+      gap: 8,
+
+      track: {
+        display: "flex" as const,
+        flexDirection: "row" as const,
+        gap: 3,
+
+        segment: {
+          flex: 1,
+          height: 10,
+          borderRadius: 5,
+          backgroundColor: app_colors.accent.light,
+
+          active: {
+            backgroundColor: app_colors.yellow.main,
+          },
+        },
+      },
+
+      marker: {
+        position: "absolute" as const,
+        top: -2,
+        bottom: -2,
+        width: 3,
+        marginLeft: -1.5,
+        borderRadius: 1.5,
+        backgroundColor: app_colors.primary.main,
+      },
+
+      labels: {
+        display: "flex" as const,
+        flexDirection: "row" as const,
+
+        label: {
+          flex: 1,
+          textAlign: "center" as const,
+          color: app_colors.primary.medium,
+          fontSize: 12,
+        },
+      },
+    },
+
+    divider: {
+      height: 1,
+      backgroundColor: app_colors.primary.medium,
+    },
+
+    details: {
+      display: "flex" as const,
+      flexDirection: "row" as const,
+      justifyContent: "space-between" as const,
+
+      column: {
+        display: "flex" as const,
+        flexDirection: "column" as const,
+        gap: 4,
+
+        label: {
+          color: app_colors.primary.medium,
+          fontSize: 12,
+        },
+        value: {
+          fontFamily: "ZTNatureBold",
+          fontSize: 16,
+          color: app_colors.primary.main,
+        },
+      },
+    },
+
+    description: {
+      ...typography.dmMono.regular.cardBody,
+      fontSize: 12,
+      lineHeight: 12 * 1.4,
+      color: app_colors.primary.medium,
+    },
+  },
+
+  // Jauge divergente centrée sur 0 (-30 à +30) : même esprit structurel que bortleScale dans
+  // ObservatoryDetails.styles.ts (piste + libellés d'extrêmes en dessous), mais une barre continue
+  // plutôt que des segments discrets — le Bz est une valeur continue, pas un palier.
+  bzScale: {
+    display: "flex" as const,
+    flexDirection: "column" as const,
+    gap: 8,
+
+    track: {
+      height: 10,
+      borderRadius: 5,
+      backgroundColor: app_colors.accent.light,
+      overflow: "hidden" as const,
+
+      fill: {
+        position: "absolute" as const,
+        top: 0,
+        bottom: 0,
+        backgroundColor: app_colors.yellow.main,
+      },
+
+      marker: {
+        position: "absolute" as const,
+        top: -2,
+        bottom: -2,
+        width: 3,
+        marginLeft: -1.5, // centre la barre sur sa position plutôt que de l'ancrer par son bord gauche
+        borderRadius: 1.5,
+        backgroundColor: app_colors.primary.main,
+      },
+    },
+
+    extremes: {
+      display: "flex" as const,
+      flexDirection: "row" as const,
+      justifyContent: "space-between" as const,
+
+      text: {
+        ...typography.dmMono.regular.rowMeta,
+        color: app_colors.primary.medium,
+      },
     },
   },
 
@@ -116,4 +311,49 @@ export const spaceWeatherScreenStyles = {
       },
     },
   },
+
+  kpCard: {
+    backgroundColor: app_colors.primary.main,
+    borderColor: app_colors.primary.main,
+
+    valueRow: {
+      display: "flex" as const,
+      flexDirection: "row" as const,
+      alignItems: "baseline" as const,
+      gap: 5,
+      borderBottomWidth: 1,
+      borderBottomColor: app_colors.grey,
+      paddingBottom: 4,
+
+      value: {
+        fontFamily: "ZTNatureBold",
+        fontSize: 30,
+        color: app_colors.yellow.main,
+      },
+
+      unit: {
+        fontFamily: "ZTNatureBold",
+        fontSize: 16,
+        color: app_colors.grey,
+      },
+
+      // alignSelf: "center" plutôt que de compter sur le alignItems:"baseline" du parent : ce
+      // dernier n'a de sens que pour du texte, pas pour cette View (icône + texte) — même leçon que
+      // pour Badge plus haut dans la session.
+      trend: {
+        display: "flex" as const,
+        flexDirection: "row" as const,
+        alignItems: "center" as const,
+        gap: 4,
+        marginLeft: "auto" as const,
+        alignSelf: "center" as const,
+
+        label: {
+          ...typography.dmMono.regular.rowMeta,
+          color: app_colors.yellow.main,
+          fontSize: 12,
+        },
+      },
+    }
+  }
 }

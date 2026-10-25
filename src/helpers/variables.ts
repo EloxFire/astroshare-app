@@ -76,6 +76,28 @@ export const app_colors = {
   }
 };
 
+// Dégradé officiel NOAA pour les échelles de météo spatiale (voir helpers/api/spaceWeather/scales.ts
+// et types/spaceWeather/NoaaScales.ts) : G (tempête géomagnétique), R (coupure radio), S (tempête de
+// radiations solaires) partagent le même dégradé jaune → rouge sombre, seul le chiffre de sévérité
+// (1 à 5) compte — voir getNoaaScaleColor ci-dessous plutôt que d'indexer ceci directement. Séparé
+// de app_colors (plutôt qu'imbriqué dedans) car 0 référence app_colors.accent.light, inaccessible
+// depuis l'intérieur du même objet littéral.
+const noaaScaleSeverityColors: Record<number, string> = {
+  0: app_colors.accent.light, // aucun évènement
+  1: '#FFFF00', // Jaune – mineur (G1/R1/S1)
+  2: '#FFCC00', // Ambre – modéré (G2/R2/S2)
+  3: '#FF9900', // Orange – fort (G3/R3/S3)
+  4: '#FF0000', // Rouge – sévère (G4/R4/S4)
+  5: '#C80000', // Rouge sombre – extrême (G5/R5/S5)
+};
+
+// Couleur officielle NOAA pour un code d'échelle de météo spatiale ("G0".."G5", "R0".."R5",
+// "S0".."S5") — seul le chiffre final (sévérité) détermine la couleur, la lettre n'a pas d'incidence.
+export const getNoaaScaleColor = (scale: string | null | undefined): string => {
+  const severity = Number(scale?.slice(1));
+  return noaaScaleSeverityColors[severity] ?? app_colors.grey;
+};
+
 export const spacing = {
   screenMargin: 16,
 

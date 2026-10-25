@@ -1,4 +1,4 @@
-import { Image, InteractionManager, Modal, ScrollView, Text, TouchableOpacity, View } from "react-native"
+import { Image, InteractionManager, ScrollView, Text, TouchableOpacity, View } from "react-native"
 import { globalStyles } from "../../../helpers/globalStyles"
 import { ScreenHeader } from "../../../components/ScreenHeader/ScreenHeader"
 import { useTranslation } from "react-i18next";
@@ -8,108 +8,43 @@ import { StatusBar } from "expo-status-bar";
 import { useLocation } from "../../../context/GpsContext";
 import { GpsLocation } from "../../../types/gpsLocation";
 import Badge from "../../../components/Badges/Badge/Badge";
-import { Maximize2, Pause, Play, Radio, X } from "lucide-react-native";
-import { app_colors } from "../../../helpers/variables";
-import { useVideoPlayer, VideoView } from "expo-video";
+import { Info, Magnet, Maximize2, Minus, Pause, Play, Radio, TrendingDown, TrendingUp, Wind } from "lucide-react-native";
+import { app_colors, getNoaaScaleColor } from "../../../helpers/variables";
 import ListCard from "../../../components/cards/ListCard/ListCard";
+import SunAnimationPlayer from "../../../components/SunAnimationPlayer/SunAnimationPlayer";
+import FullscreenImageModal from "../../../components/FullscreenImageModal/FullscreenImageModal";
 import { convertEquatorialToHorizontal, getBodyNextRise, getBodyNextSet, getSolarAngularDiameter, getSolarDistance, getSolarEquatorialCoordinate } from "@observerly/astrometry";
 import { findNextHorizonCrossing, findPreviousHorizonCrossing, getAltitudeCurve } from "../../../helpers/astrometry/altitude/altitudeCurve";
-import { formatDayRelativeTime, formatDistanceInKm, formatDistanceInUA, formatDuration, formatTransit } from "../../../helpers/format";
+import { formatDayRelativeTime, formatDistanceInKm, formatDistanceInUA, formatDuration, formatTransit, formatWithSpaces } from "../../../helpers/format";
 import { useAppUnits } from "../../../hooks/useAppUnits";
 import AltitudeChart from "../../../components/AltitudeChart/AltitudeChart";
+import KpIndexChart from "../../../components/KpIndexChart/KpIndexChart";
 import { spaceWeatherScreenStyles } from "./SpaceWeatherScreen.styles";
 import { getSunImagery } from "../../../helpers/api/spaceWeather/sunImagery";
 import type { SunImage, SunImagery } from "../../../types/spaceWeather/SunImagery";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
-import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
+import { getImf } from "../../../helpers/api/spaceWeather/imf";
+import type { ImfData } from "../../../types/spaceWeather/InterplanetaryMagneticField";
+import { getSolarWind } from "../../../helpers/api/spaceWeather/wind";
+import type { SolarWindData, SolarWindLevel } from "../../../types/spaceWeather/SolarWind";
+import { getKpIndex } from "../../../helpers/api/spaceWeather/kpIndex";
+import type { KpData } from "../../../types/spaceWeather/KpIndex";
+import { getSolarFlares } from "../../../helpers/api/spaceWeather/solarFlares";
+import type { SolarFlaresData } from "../../../types/spaceWeather/SolarFlares";
+import { getSpaceWeatherAlerts } from "../../../helpers/api/spaceWeather/alerts";
+import type { SpaceWeatherAlertsData } from "../../../types/spaceWeather/SpaceWeatherAlerts";
+import { getNoaaScales } from "../../../helpers/api/spaceWeather/scales";
+import type { NoaaScalesData } from "../../../types/spaceWeather/NoaaScales";
+import SpaceWeatherEvents from "../../../components/SpaceWeatherEvents/SpaceWeatherEvents";
+import NoaaScaleCard from "../../../components/cards/NoaaScaleCard/NoaaScaleCard";
 
-// Composant à part car useVideoPlayer est un hook : il ne doit être monté que lorsque l'animation
-// est effectivement affichée (voir isPlayingAnimation), pas à chaque rendu de l'écran — même
-// principe que ApodVideoPlayer dans ApodScreen.tsx. Boucle et muet (contrairement à Apod, qui a du
-// son) : ces animations sont pensées comme une version "vivante" de l'image statique, pas un média
-// à écouter.
-const SunAnimationPlayer = ({ uri, style }: { uri: string; style: object }) => {
-  const player = useVideoPlayer(uri, (player) => {
-    player.loop = true;
-    player.muted = true;
-    player.play();
-  });
+// Amplitude affichée de la jauge Bz : demandé jusqu'à ±30 nT (au-delà, valeur bornée visuellement
+// — un Bz hors de cette plage reste un évènement extrême, le marqueur sature au bord plutôt que de
+// sortir de la piste).
+const BZ_MIN = -30;
+const BZ_MAX = 30;
 
-  return <VideoView player={player} style={style} nativeControls={false} contentFit="cover" />;
-};
-
-const MIN_ZOOM = 1;
-const MAX_ZOOM = 5;
-
-// Pinch-to-zoom + pan de l'image plein écran. Monté/démonté à chaque ouverture/fermeture du modal
-// (voir son usage plus bas) plutôt que de persister : ça remet le zoom à 1x à chaque ouverture sans
-// logique de reset explicite. Double-tap pour revenir instantanément à 1x.
-const ZoomableImage = ({ uri }: { uri: string }) => {
-  const scale = useSharedValue(1);
-  const savedScale = useSharedValue(1);
-  const translateX = useSharedValue(0);
-  const translateY = useSharedValue(0);
-  const savedTranslateX = useSharedValue(0);
-  const savedTranslateY = useSharedValue(0);
-
-  const reset = () => {
-    "worklet";
-    scale.value = withSpring(MIN_ZOOM);
-    translateX.value = withSpring(0);
-    translateY.value = withSpring(0);
-    savedScale.value = MIN_ZOOM;
-    savedTranslateX.value = 0;
-    savedTranslateY.value = 0;
-  };
-
-  const pinchGesture = Gesture.Pinch()
-    .onUpdate((event) => {
-      scale.value = Math.min(Math.max(savedScale.value * event.scale, MIN_ZOOM), MAX_ZOOM);
-    })
-    .onEnd(() => {
-      savedScale.value = scale.value;
-      if (scale.value <= MIN_ZOOM) reset();
-    });
-
-  // N'autorise le déplacement que quand on est effectivement zoomé — sinon un simple glissement
-  // sur l'image à 1x la ferait traîner pour rien.
-  const panGesture = Gesture.Pan()
-    .onUpdate((event) => {
-      if (savedScale.value <= MIN_ZOOM) return;
-      translateX.value = savedTranslateX.value + event.translationX;
-      translateY.value = savedTranslateY.value + event.translationY;
-    })
-    .onEnd(() => {
-      savedTranslateX.value = translateX.value;
-      savedTranslateY.value = translateY.value;
-    });
-
-  const doubleTapGesture = Gesture.Tap()
-    .numberOfTaps(2)
-    .onEnd(() => reset());
-
-  const composedGesture = Gesture.Race(doubleTapGesture, Gesture.Simultaneous(pinchGesture, panGesture));
-
-  const animatedImageStyle = useAnimatedStyle(() => ({
-    transform: [
-      { translateX: translateX.value },
-      { translateY: translateY.value },
-      { scale: scale.value },
-    ],
-  }));
-
-  return (
-    <GestureDetector gesture={composedGesture}>
-      <View style={spaceWeatherScreenStyles.fullscreenModal.imageWrapper}>
-        <Animated.Image
-          source={{ uri }}
-          style={[spaceWeatherScreenStyles.fullscreenModal.image, animatedImageStyle]}
-          resizeMode="contain"
-        />
-      </View>
-    </GestureDetector>
-  );
-};
+// Ordre d'affichage des paliers du vent solaire (la piste a un segment par palier, dans cet ordre).
+const SOLAR_WIND_LEVELS: SolarWindLevel[] = ["slow", "moderate", "fast", "very_fast"];
 
 const SpaceWeatherScreen = () => {
 
@@ -124,6 +59,12 @@ const SpaceWeatherScreen = () => {
     altitude: location?.elevation ?? 0,
   }), [location]);
   const [computedSun, setComputedSun] = useState<any>(null);
+  const [imf, setImf] = useState<ImfData | null>(null);
+  const [solarWind, setSolarWind] = useState<SolarWindData | null>(null);
+  const [kpIndex, setKpIndex] = useState<KpData | null>(null);
+  const [solarFlares, setSolarFlares] = useState<SolarFlaresData | null>(null);
+  const [spaceWeatherAlerts, setSpaceWeatherAlerts] = useState<SpaceWeatherAlertsData | null>(null);
+  const [noaaScales, setNoaaScales] = useState<NoaaScalesData | null>(null);
   const [sunImagery, setSunImagery] = useState<SunImagery | null>(null);
   const [selectedImage, setSelectedImage] = useState<SunImage | null>(null);
   const [isPlayingAnimation, setIsPlayingAnimation] = useState(false);
@@ -148,6 +89,52 @@ const SpaceWeatherScreen = () => {
           return stillAvailable ?? imagery?.images.find((image) => image.wavelength === "HMIIC") ?? imagery?.images[0] ?? null;
         });
       })();
+    }, [])
+  );
+
+  // Kp/scales évoluent sur ~3h à 1 jour, et flares/alerts sont dans le même cas que sun/alerts
+  // (pas de polling continu nécessaire) — donc un simple refresh au focus de l'écran, comme pour les
+  // images solaires ci-dessus, pas de minuteur périodique comme pour wind/imf.
+  useFocusEffect(
+    useCallback(() => {
+      (async () => {
+        const [kp, flares, alerts, scales] = await Promise.all([
+          getKpIndex(),
+          getSolarFlares(),
+          getSpaceWeatherAlerts(),
+          getNoaaScales(),
+        ]);
+        setKpIndex(kp);
+        setSolarFlares(flares);
+        setSpaceWeatherAlerts(alerts);
+        setNoaaScales(scales);
+      })();
+    }, [])
+  );
+
+  // Le vent solaire et l'IMF évoluent minute par minute (contrairement aux images), mais la doc de
+  // l'API indique qu'un refresh toutes les 5-10 min suffit largement côté UI — pas la peine
+  // d'interroger en continu. Rafraîchis immédiatement à chaque focus de l'écran (en parallèle), puis
+  // toutes les 5 min tant que l'écran reste affiché. Même cadence pour les deux (regroupés dans la
+  // doc de l'API), donc un seul minuteur plutôt qu'un par endpoint.
+  useFocusEffect(
+    useCallback(() => {
+      let cancelled = false;
+
+      const refresh = async () => {
+        const [imfData, windData] = await Promise.all([getImf(), getSolarWind()]);
+        if (cancelled) return;
+        setImf(imfData);
+        setSolarWind(windData);
+      };
+
+      refresh();
+      const interval = setInterval(refresh, 5 * 60 * 1000);
+
+      return () => {
+        cancelled = true;
+        clearInterval(interval);
+      };
     }, [])
   );
 
@@ -349,25 +336,259 @@ const SpaceWeatherScreen = () => {
               ]}
             />
           </View>
+
+          <View style={[globalStyles.defaultCard, spaceWeatherScreenStyles.kpCard]}>
+            <View style={globalStyles.defaultCard.header}>
+              <Text style={[globalStyles.categoryTitle, {color: app_colors.white}]}>{t("kpIndex.title")}</Text>
+              <Badge
+                text={`${noaaScales?.current.geomagnetic.scale} - ${noaaScales?.current.geomagnetic.label}` || '--'}
+                backgroundColor={app_colors.yellow.main}
+                foregroundColor={app_colors.primary.main}
+              />
+            </View>
+
+            <View style={spaceWeatherScreenStyles.kpCard.valueRow}>
+              <Text style={spaceWeatherScreenStyles.kpCard.valueRow.value}>{kpIndex?.current.kp}</Text>
+              <Text style={spaceWeatherScreenStyles.kpCard.valueRow.unit}>/ 9</Text>
+              {
+                kpIndex?.current && (
+                  <View style={spaceWeatherScreenStyles.kpCard.valueRow.trend}>
+                    {
+                      kpIndex.current.trend === "rising" ? (
+                        <TrendingUp color={app_colors.yellow.main} size={14} />
+                      ) : kpIndex.current.trend === "falling" ? (
+                        <TrendingDown color={app_colors.yellow.main} size={14} />
+                      ) : (
+                        <Minus color={app_colors.yellow.main} size={14} />
+                      )
+                    }
+                    <Text style={spaceWeatherScreenStyles.kpCard.valueRow.trend.label}>
+                      {t(`kpIndex.trend.${kpIndex.current.trend}`)} · {t(`kpIndex.scale.${kpIndex.current.level}`)}
+                    </Text>
+                  </View>
+                )
+              }
+            </View>
+
+            <KpIndexChart data={kpIndex} />
+          </View>
+
+          <View style={spaceWeatherScreenStyles.scalesContainer}>
+            <View style={globalStyles.defaultCard.header}>
+              <Text style={globalStyles.categoryTitle}>{t("scales.title")}</Text>
+              {/* TODO : Implémenter l'écran "voir tout" */}
+              <TouchableOpacity onPress={() => {}}>
+                <Text style={spaceWeatherScreenStyles.scalesContainer.link}>{t("scales.all")}</Text>
+              </TouchableOpacity>
+            </View>
+
+            <View style={spaceWeatherScreenStyles.scalesContainer.scales}>
+              <NoaaScaleCard
+                value={noaaScales?.current.geomagnetic.scale ?? "--"}
+                title={noaaScales?.current.geomagnetic.label ?? "--"}
+                subtitle={t(`scales.geomagnetic.title`)}
+                containerStyle={{backgroundColor: getNoaaScaleColor(noaaScales?.current.geomagnetic.scale)}}
+              />
+
+              <NoaaScaleCard
+                value={noaaScales?.current.radioBlackout.scale ?? "--"}
+                title={noaaScales?.current.radioBlackout.label ?? "--"}
+                subtitle={t(`scales.radioBlackout.title`)}
+                containerStyle={{backgroundColor: getNoaaScaleColor(noaaScales?.current.radioBlackout.scale)}}
+              />
+
+              <NoaaScaleCard
+                value={noaaScales?.current.solarRadiation.scale ?? "--"}
+                title={noaaScales?.current.solarRadiation.label ?? "--"}
+                subtitle={t(`scales.solarRadiation.title`)}
+                containerStyle={{backgroundColor: getNoaaScaleColor(noaaScales?.current.solarRadiation.scale)}}
+              />
+            </View>
+          </View>
+
+          <View style={globalStyles.defaultCard}>
+            <View style={globalStyles.defaultCard.header}>
+              <View style={{display: "flex", flexDirection: "row", alignItems: "center", gap: 6}}>
+                <Magnet color={app_colors.primary.medium} size={20} />
+                <Text style={globalStyles.categoryTitle}>{t("magneticField.title")}</Text>
+              </View>
+              <TouchableOpacity onPress={() => {}}>
+                <Info color={app_colors.primary.medium} size={20} />
+              </TouchableOpacity>
+            </View>
+
+            <View style={spaceWeatherScreenStyles.magneticFieldContainer}>
+              <View style={spaceWeatherScreenStyles.magneticFieldContainer.values}>
+                <View style={{display: "flex", flexDirection: "row", gap: 5, alignItems: "baseline"}}>
+                  <Text style={spaceWeatherScreenStyles.magneticFieldContainer.values.main}>
+                    {imf?.current ? imf.current.bz.toFixed(1) : "--"}
+                  </Text>
+                  <Text style={spaceWeatherScreenStyles.magneticFieldContainer.values.unit}>nT</Text>
+                </View>
+
+                <View style={{display: "flex", flexDirection: "row", gap: 5, alignItems: "baseline"}}>
+                  <Text style={spaceWeatherScreenStyles.magneticFieldContainer.values.text}>Bt</Text>
+                  <Text style={spaceWeatherScreenStyles.magneticFieldContainer.values.secondary}>
+                    {imf?.current ? imf.current.bt.toFixed(1) : "--"}
+                  </Text>
+                  <Text style={spaceWeatherScreenStyles.magneticFieldContainer.values.text}>nT</Text>
+                </View>
+              </View>
+
+              <View style={spaceWeatherScreenStyles.bzScale}>
+                <View style={spaceWeatherScreenStyles.bzScale.track}>
+                  {
+                    imf?.current && (() => {
+                      const clamped = Math.min(Math.max(imf.current.bz, BZ_MIN), BZ_MAX);
+                      const valuePercent = ((clamped - BZ_MIN) / (BZ_MAX - BZ_MIN)) * 100; // 0..100, 50 = centre (0 nT)
+                      const fillLeft = Math.min(50, valuePercent);
+                      const fillWidth = Math.abs(valuePercent - 50);
+
+                      return (
+                        <View
+                          style={[
+                            spaceWeatherScreenStyles.bzScale.track.fill,
+                            { left: `${fillLeft}%`, width: `${fillWidth}%` },
+                          ]}
+                        />
+                      );
+                    })()
+                  }
+                  {/* Repère fixe du 0 — ne bouge jamais, seul le remplissage jaune indique la valeur. */}
+                  <View style={[spaceWeatherScreenStyles.bzScale.track.marker, { left: "50%" }]} />
+                </View>
+                <View style={[spaceWeatherScreenStyles.bzScale.extremes, { position: "relative" }]}>
+                  <Text style={spaceWeatherScreenStyles.bzScale.extremes.text}>
+                    {t("magneticField.scale.south")}
+                  </Text>
+                  {/* Position absolue sur toute la largeur de la rangée + textAlign:"center", plutôt
+                      que de compter sur flex pour équilibrer les deux côtés : ça centre le "0" sur le
+                      centre réel de la rangée (= centre de la piste au-dessus) indépendamment de la
+                      largeur des textes latéraux — flex:1 des deux côtés n'a pas suffi à l'obtenir. */}
+                  <Text style={[spaceWeatherScreenStyles.bzScale.extremes.text, { position: "absolute", left: 0, right: 0, textAlign: "center" }]}>
+                    0
+                  </Text>
+                  <Text style={spaceWeatherScreenStyles.bzScale.extremes.text}>
+                    {t("magneticField.scale.north")}
+                  </Text>
+                </View>
+              </View>
+            </View>
+          </View>
+
+
+          <View style={globalStyles.defaultCard}>
+            <View style={globalStyles.defaultCard.header}>
+              <View style={{display: "flex", flexDirection: "row", alignItems: "center", gap: 6}}>
+                <Wind color={app_colors.primary.medium} size={20} />
+                <Text style={globalStyles.categoryTitle}>{t("solarWind.title")}</Text>
+              </View>
+
+              <TouchableOpacity onPress={() => {}}>
+                <Info color={app_colors.primary.medium} size={20} />
+              </TouchableOpacity>
+            </View>
+
+            <View style={spaceWeatherScreenStyles.solarWindContainer}>
+              <View style={spaceWeatherScreenStyles.solarWindContainer.valueRow}>
+                <View style={spaceWeatherScreenStyles.solarWindContainer.valueRow.value}>
+                  <Text style={spaceWeatherScreenStyles.solarWindContainer.valueRow.value.main}>
+                    {solarWind?.current ? solarWind.current.speed.toFixed(0) : "--"}
+                  </Text>
+                  <Text style={spaceWeatherScreenStyles.solarWindContainer.valueRow.value.unit}>km/s</Text>
+                </View>
+                {
+                  solarWind?.current && (
+                    // Badge a alignSelf: "flex-start" en dur dans ses styles, qui écrase l'alignItems
+                    // du parent — contourné en l'enveloppant dans une View étirée sur toute la hauteur
+                    // de la rangée (voir le même contournement tenté plus haut pour le Bz).
+                    <View style={{alignSelf: "stretch", justifyContent: "center"}}>
+                      <Badge
+                        text={solarWind.current.label}
+                        backgroundColor={app_colors.yellow.main}
+                        foregroundColor={app_colors.primary.main}
+                      />
+                    </View>
+                  )
+                }
+              </View>
+
+              <View style={spaceWeatherScreenStyles.solarWindContainer.scale}>
+                <View style={{position: "relative"}}>
+                  <View style={spaceWeatherScreenStyles.solarWindContainer.scale.track}>
+                    {
+                      SOLAR_WIND_LEVELS.map((level) => (
+                        <View
+                          key={level}
+                          style={[
+                            spaceWeatherScreenStyles.solarWindContainer.scale.track.segment,
+                            solarWind?.current?.level === level && spaceWeatherScreenStyles.solarWindContainer.scale.track.segment.active,
+                          ]}
+                        />
+                      ))
+                    }
+                  </View>
+                </View>
+                <View style={spaceWeatherScreenStyles.solarWindContainer.scale.labels}>
+                  {
+                    SOLAR_WIND_LEVELS.map((level) => (
+                      <Text key={level} style={spaceWeatherScreenStyles.solarWindContainer.scale.labels.label}>
+                        {t(`solarWind.scale.${level}`)}
+                      </Text>
+                    ))
+                  }
+                </View>
+              </View>
+
+              <View style={spaceWeatherScreenStyles.solarWindContainer.divider} />
+
+              <View style={spaceWeatherScreenStyles.solarWindContainer.details}>
+                <View style={spaceWeatherScreenStyles.solarWindContainer.details.column}>
+                  <Text style={spaceWeatherScreenStyles.solarWindContainer.details.column.label}>{t("solarWind.density")}</Text>
+                  <Text style={spaceWeatherScreenStyles.solarWindContainer.details.column.value}>
+                    {solarWind?.current?.density != null ? `${solarWind.current.density.toFixed(1)} p/cm³` : "--"}
+                  </Text>
+                </View>
+                <View style={spaceWeatherScreenStyles.solarWindContainer.details.column}>
+                  <Text style={spaceWeatherScreenStyles.solarWindContainer.details.column.label}>{t("solarWind.temperature")}</Text>
+                  <Text style={spaceWeatherScreenStyles.solarWindContainer.details.column.value}>
+                    {solarWind?.current?.temperature != null ? `${formatWithSpaces(Math.round(solarWind.current.temperature))} K` : "--"}
+                  </Text>
+                </View>
+              </View>
+
+              {
+                solarWind?.current && (
+                  <Text style={spaceWeatherScreenStyles.solarWindContainer.description}>
+                    {t(`solarWind.descriptions.${solarWind.current.level}`)}
+                  </Text>
+                )
+              }
+            </View>
+          </View>
+
+          <View style={spaceWeatherScreenStyles.eventsContainer}>
+            <View style={globalStyles.defaultCard.header}>
+              <Text style={globalStyles.categoryTitle}>{t("events.title")}</Text>
+              {/* TODO : Implémenter l'écran "voir tout" */}
+              <TouchableOpacity onPress={() => {}}>
+                <Text style={spaceWeatherScreenStyles.eventsContainer.link}>{t("events.all")}</Text>
+              </TouchableOpacity>
+            </View>
+
+            <View style={spaceWeatherScreenStyles.eventsContainer.scales}>
+              <SpaceWeatherEvents alerts={spaceWeatherAlerts} flares={solarFlares} />
+            </View>
+          </View>
+
         </View>
       </ScrollView>
 
-      <Modal visible={isFullscreen} animationType="fade" transparent onRequestClose={() => setIsFullscreen(false)}>
-        <View style={spaceWeatherScreenStyles.fullscreenModal}>
-          <TouchableOpacity
-            activeOpacity={0.8}
-            style={spaceWeatherScreenStyles.fullscreenModal.close}
-            onPress={() => setIsFullscreen(false)}
-          >
-            <X color={app_colors.white} size={22} />
-          </TouchableOpacity>
-          {
-            // Démonté/remonté à chaque fermeture du modal — voir le commentaire de ZoomableImage :
-            // ça repart systématiquement de 1x plutôt que de garder le zoom de la dernière ouverture.
-            isFullscreen && selectedImage?.imageUrl && <ZoomableImage uri={selectedImage.imageUrl} />
-          }
-        </View>
-      </Modal>
+      <FullscreenImageModal
+        visible={isFullscreen}
+        imageUrl={selectedImage?.imageUrl}
+        onClose={() => setIsFullscreen(false)}
+      />
     </View>
   )
 }
