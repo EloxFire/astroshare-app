@@ -15,11 +15,11 @@ import TabSwitch from "../../../../Tools/MoonCalendar/components/TabSwitch/TabSw
 import { addNewObservatoryScreenStyles } from "../addNewObservatoryScreen.styles"
 import { useAddObservatoryForm } from "../AddObservatoryFormContext"
 import { useEffect, useRef, useState } from "react"
-import { useLocation } from "../../../../../context/GpsContext"
+import { useLocation } from "../../../../../context/LocationContext"
 import { SelectInput } from "../../../../../components/SelectInput/SelectInput"
 import { observatoriesAccessTypes, observatoriesEquipments, observatoriesTypes } from "../../../../../helpers/observatories/observatories"
 import SwitchButton from "../../../../../components/SwitchButton/SwitchButton"
-import { ObservatoryAccess, ObservatoryEquipment, ObservatoryType } from "../../../../../types/observatory"
+import { Observatory, ObservatoryAccess, ObservatoryEquipment, ObservatoryType } from "../../../../../types/observatory"
 import Badge from "../../../../../components/Badges/Badge/Badge"
 import { TagsInput } from "../../../../../components/TagsInput/TagsInput"
 import { ImagePickerPermissionDeniedError, pickAndCompressImage, PickedImage } from "../../../../../helpers/images/imagePicker"
@@ -31,7 +31,7 @@ import { generateCustomId } from "../../../../../helpers/ids"
 const StepOne = () => {
 
   const { t } = useTranslation("settings/addObservatory");
-  const { fetchGpsLocation, location, fetchLocation, gpsLoading, searchLoading } = useLocation();
+  const { fetchGpsLocation, gpsLocation, fetchLocation, gpsLoading, searchLoading } = useLocation();
   const { newObservatory, setNewObservatory, setCurrentFormStep } = useAddObservatoryForm();
   const addObservatory = useUserDataStore((state) => state.addObservatory);
   const mapRef = useRef<MapView>(null);
@@ -54,7 +54,9 @@ const StepOne = () => {
   const handleMapPress = async (event: any) => {
     const { latitude, longitude } = event.nativeEvent.coordinate;
     const locData = await fetchLocation(`${latitude}::${longitude}`);
-    setNewObservatory(locData);
+    // newObservatory n'est encore qu'une position GPS à ce stade (id/shared/... complétés plus tard
+    // dans handleAddObservatory) — cast assumé, cohérent avec le reste de ce fichier.
+    setNewObservatory(locData as Observatory | null);
 
     setSearchLatitude(latitude.toFixed(5).toString());
     setSearchLongitude(longitude.toFixed(5).toString());
@@ -64,7 +66,7 @@ const StepOne = () => {
     const loc = await fetchGpsLocation();
 
     if(loc){
-      setNewObservatory(loc);
+      setNewObservatory(loc as Observatory);
       mapRef.current?.animateToRegion({
         latitude: loc.latitude,
         longitude: loc.longitude,
@@ -111,7 +113,7 @@ const StepOne = () => {
 
     const locData = await fetchLocation(query);
     if(locData){
-      setNewObservatory(locData);
+      setNewObservatory(locData as Observatory);
       mapRef.current?.animateToRegion({
         latitude: locData.latitude,
         longitude: locData.longitude,
@@ -174,8 +176,8 @@ const StepOne = () => {
             provider={PROVIDER_GOOGLE}
 
             initialRegion={{
-              latitude: location?.latitude || 48.856724859667835,
-              longitude: location?.longitude || 2.349875271320343,
+              latitude: gpsLocation?.latitude || 48.856724859667835,
+              longitude: gpsLocation?.longitude || 2.349875271320343,
               latitudeDelta: 0.0922,
               longitudeDelta: 0.0421,
             }}

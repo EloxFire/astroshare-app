@@ -7,7 +7,8 @@ import { PlatformPressable } from 'expo-router/build/react-navigation';
 import { useAppFonts } from '../src/hooks/useAppFonts';
 import { useI18nReady } from '../src/i18n/useI18nReady';
 import { useTranslation } from 'react-i18next';
-import { GpsLocationProvider } from '../src/context/GpsContext';
+import { LocationProvider } from '../src/context/LocationContext';
+import { WeatherDataProvider } from '../src/context/WeatherDataContext';
 import { AuthContextProvider } from '../src/context/AuthContext';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import dayjs from 'dayjs';
@@ -38,7 +39,8 @@ export default function RootLayout() {
     // pour toutes plutôt que dans chaque écran.
     <GestureHandlerRootView style={{ flex: 1 }}>
     <AuthContextProvider>
-      <GpsLocationProvider>
+      <LocationProvider>
+      <WeatherDataProvider>
         {/* <Toast /> */}
         {/* Pas de <StatusBar> déclaratif ici : il entrerait en conflit avec les appels impératifs
             StatusBar.setStyle(...) faits par les écrans (ScreenHeader, MoonCalendarScreen,
@@ -160,7 +162,8 @@ export default function RootLayout() {
             tabBarStyle: { display: "none" },
           }} />
         </Tabs>
-      </GpsLocationProvider>
+      </WeatherDataProvider>
+      </LocationProvider>
     </AuthContextProvider>
     </GestureHandlerRootView>
   );

@@ -4,6 +4,7 @@
   },
   "astroConditions": {
     "title": "Score d'observation ce soir",
+    "metrics": "Conditions détaillées",
     "referenceTime": {
       "inProgress": "Nuit astronomique en cours",
       "upcoming": "Prévisions pour le début de la nuit astronomique · {{time}}"
@@ -19,7 +20,7 @@
       "good": "Profitez-en, la nuit s'annonce idéale."
     },
     "moon": {
-      "up": "{{phase}}, au-dessus de l'horizon ce soir.",
+      "up": "{{phase}} au-dessus de l'horizon ce soir.",
       "down": "Lune sous l'horizon ce soir : aucune gêne."
     }
   },
@@ -31,5 +32,8 @@
     "transparency": "Transparence",
     "humidity": "Humidité",
     "windSpeed": "Vent moyen"
+  },
+  "hourlyForecast": {
+    "title": "Prévisions horaires (24h)",
   }
 }

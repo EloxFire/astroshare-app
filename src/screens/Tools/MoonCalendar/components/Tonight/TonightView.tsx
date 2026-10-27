@@ -13,7 +13,7 @@ import { app_colors } from "../../../../../helpers/variables";
 import ListCard from "../../../../../components/cards/ListCard/ListCard";
 import ValueCard from "../../../../../components/cards/ValueCard/ValueCard";
 import { formatDistanceInKm, formatTransit } from "../../../../../helpers/format";
-import { useLocation } from "../../../../../context/GpsContext";
+import { useLocation } from "../../../../../context/LocationContext";
 import { StatusBar } from "expo-status-bar";
 import { Stars } from "lucide-react-native";
 import { getRandomMoonCalendarSuggestion } from "../../../../../helpers/suggestions/moon/moonCalendarSuggestions";
@@ -24,7 +24,7 @@ import AltitudeChart from "../../../../../components/AltitudeChart/AltitudeChart
 
 const TonightView = () => {
 
-  const { location, loading: loadingLocation } = useLocation();
+  const { location, gpsLoading: loadingLocation } = useLocation();
   const user = useMemo(() => ({
     latitude: location?.latitude ?? 0,
     longitude: location?.longitude ?? 0,

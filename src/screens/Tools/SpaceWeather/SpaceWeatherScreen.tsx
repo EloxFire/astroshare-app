@@ -5,8 +5,7 @@ import { useTranslation } from "react-i18next";
 import { useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { StatusBar } from "expo-status-bar";
-import { useLocation } from "../../../context/GpsContext";
-import { GpsLocation } from "../../../types/gpsLocation";
+import { useLocation } from "../../../context/LocationContext";
 import Badge from "../../../components/Badges/Badge/Badge";
 import { Info, Magnet, Maximize2, Minus, Pause, Play, Radio, TrendingDown, TrendingUp, Wind } from "lucide-react-native";
 import { app_colors, getNoaaScaleColor } from "../../../helpers/variables";
@@ -14,7 +13,8 @@ import ListCard from "../../../components/cards/ListCard/ListCard";
 import SunAnimationPlayer from "../../../components/SunAnimationPlayer/SunAnimationPlayer";
 import FullscreenImageModal from "../../../components/FullscreenImageModal/FullscreenImageModal";
 import { convertEquatorialToHorizontal, getBodyNextRise, getBodyNextSet, getSolarAngularDiameter, getSolarDistance, getSolarEquatorialCoordinate } from "@observerly/astrometry";
-import { findNextHorizonCrossing, findPreviousHorizonCrossing, getAltitudeCurve } from "../../../helpers/astrometry/altitude/altitudeCurve";
+import { findPreviousHorizonCrossing, getAltitudeCurve } from "../../../helpers/astrometry/altitude/altitudeCurve";
+import { getAstronomicalNightWindow } from "../../../helpers/astrometry/night/nightWindow";
 import { formatDayRelativeTime, formatDistanceInKm, formatDistanceInUA, formatDuration, formatTransit, formatWithSpaces } from "../../../helpers/format";
 import { useAppUnits } from "../../../hooks/useAppUnits";
 import AltitudeChart from "../../../components/AltitudeChart/AltitudeChart";
@@ -49,7 +49,7 @@ const SOLAR_WIND_LEVELS: SolarWindLevel[] = ["slow", "moderate", "fast", "very_f
 const SpaceWeatherScreen = () => {
 
   const { t, i18n } = useTranslation("tools/spaceWeather");
-  const { location }: { location: GpsLocation } = useLocation();
+  const { location } = useLocation();
   const { formatDate } = useAppUnits();
 
   const today = useMemo(() => new Date(), []);
@@ -166,19 +166,14 @@ const SpaceWeatherScreen = () => {
 
       const daylightDuration = nextRise && nextSet ? (nextSet.datetime.getTime() - nextRise.datetime.getTime()) / 1000 : undefined;
 
-      // getTwilightBandsForDay d'Observerly calcule sur une fenêtre minuit UTC → minuit UTC, pas
-      // alignée sur le jour civil de l'observateur — pour un fuseau à l'est de l'UTC (ex: France),
-      // ça peut renvoyer la nuit astronomique de la veille (tronquée au début de fenêtre) au lieu de
-      // celle de ce soir, ou tronquer sa fin avant l'aube réelle. On cherche donc directement le
-      // passage par -18° autour de `now`, comme pour le lever/coucher (seuil 0°) plus haut.
-      const ASTRONOMICAL_NIGHT_THRESHOLD = -18;
-      const currentlyInAstronomicalNight = coords.alt < ASTRONOMICAL_NIGHT_THRESHOLD;
-      // Si on y est déjà, on veut savoir jusqu'à quand (prochain passage au-dessus de -18°) —
-      // sinon, à partir de quand elle commencera ce soir (prochain passage en dessous). Absente si
-      // le Soleil ne descend jamais sous -18° (ex: été/haute latitude). Voir formatDayRelativeTime.
-      const astronomicalNightDate = currentlyInAstronomicalNight
-        ? findNextHorizonCrossing(now, user, getSolarEquatorialCoordinate, "rise", ASTRONOMICAL_NIGHT_THRESHOLD)
-        : findNextHorizonCrossing(now, user, getSolarEquatorialCoordinate, "set", ASTRONOMICAL_NIGHT_THRESHOLD);
+      // getAstronomicalNightWindow gère déjà le souci de fuseau (voir son propre commentaire) via
+      // les mêmes primitives findPreviousHorizonCrossing/findNextHorizonCrossing qu'avant ici.
+      const nightWindow = getAstronomicalNightWindow(now, user);
+      const currentlyInAstronomicalNight = nightWindow?.isCurrentlyNight ?? false;
+      // Si on y est déjà, on veut savoir jusqu'à quand (fin de la nuit) — sinon, à partir de quand
+      // elle commencera ce soir (début). Absente si le Soleil ne descend jamais sous -18° (ex: été/
+      // haute latitude). Voir formatDayRelativeTime.
+      const astronomicalNightDate = currentlyInAstronomicalNight ? nightWindow?.end : nightWindow?.start;
 
       setComputedSun({
         altitudeCurve: points,

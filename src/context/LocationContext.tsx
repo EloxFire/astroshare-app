@@ -1,19 +1,36 @@
 import { GpsLocation } from "../types/gpsLocation";
-import { createContext, useState, useEffect, useContext } from "react";
+import { Observatory } from "../types/observatory";
+import { createContext, useState, useEffect, useContext, useMemo } from "react";
 import * as Location from "expo-location";
 import { getLightPollutionDataFromCoords, getLocationCoordsFromName, getLocationNameFromCoords } from "../helpers/api/geocoding/geocoding";
 import { useUserDataStore } from "../store/userData.store";
 
-const GpsLocationContext = createContext<any| null>(null);
-
-export const useLocation = () => {
-  return useContext(GpsLocationContext);
+export interface LocationContextValue {
+  locationPermission: boolean | null;
+  gpsLocation: GpsLocation | null; // lecture GPS brute
+  location: GpsLocation | null; // position "effective" : observatoire actif si présent, sinon GPS
+  isUsingObservatory: boolean;
+  activeObservatory: Observatory | null;
+  gpsError: string | null;
+  gpsLoading: boolean;
+  searchLoading: boolean;
+  searchedLocation: GpsLocation | null;
+  fetchLocation: (query: string) => Promise<GpsLocation | null>;
+  fetchGpsLocation: () => Promise<GpsLocation | null>;
 }
 
-export function GpsLocationProvider({ children }: { children: React.ReactNode }) {
+const LocationContext = createContext<LocationContextValue | null>(null);
+
+export const useLocation = (): LocationContextValue => {
+  const context = useContext(LocationContext);
+  if (!context) throw new Error("useLocation doit être utilisé à l'intérieur d'un LocationProvider");
+  return context;
+}
+
+export function LocationProvider({ children }: { children: React.ReactNode }) {
 
   const [locationPermission, setLocationPermission] = useState<boolean | null>(null);
-  const [location, setLocation] = useState<GpsLocation | null>(null);
+  const [gpsLocation, setGpsLocation] = useState<GpsLocation | null>(null);
   const [gpsError, setGpsError] = useState<string | null>(null);
   const [gpsLoading, setGpsLoading] = useState<boolean>(true);
   const [searchLoading, setSearchLoading] = useState<boolean>(false);
@@ -22,6 +39,17 @@ export function GpsLocationProvider({ children }: { children: React.ReactNode })
   const [searchedLocation, setSearchedLocation] = useState<GpsLocation | null>(null);
 
   const setLastKnownLocation = useUserDataStore(state => state.setLastKnownLocation);
+  const observatories = useUserDataStore(state => state.observatories);
+  const activeObservatoryId = useUserDataStore(state => state.activeObservatoryId);
+
+  // Position effective : l'observatoire actif (s'il y en a un) prime sur le GPS. C'est cette
+  // valeur (`location`) que le reste de l'app doit utiliser — `gpsLocation` reste la lecture brute,
+  // réservée aux écrans qui en ont spécifiquement besoin (ex: création d'un nouvel observatoire).
+  const activeObservatory = useMemo(
+    () => activeObservatoryId ? observatories.find(obs => obs.id === activeObservatoryId) ?? null : null,
+    [activeObservatoryId, observatories]
+  );
+  const location = activeObservatory ?? gpsLocation;
 
   useEffect(() => {
     (async () => {
@@ -41,7 +69,7 @@ export function GpsLocationProvider({ children }: { children: React.ReactNode })
       if (locationPermission === true) {
         const fullLocation = await fetchGpsLocation();
 
-        setLocation(fullLocation);
+        setGpsLocation(fullLocation);
         setGpsLoading(false);
       }else{
         console.log("[useLocation] Impossible de récupérer la position GPS (permission refusée)");
@@ -53,7 +81,7 @@ export function GpsLocationProvider({ children }: { children: React.ReactNode })
 
   const getLocationPermission = async () => {
     console.log("[useLocation] Demande de permission d'accès à la localisation");
-    
+
     // Vérifie si l'application a la permission d'accéder à la localisation de l'utilisateur
     const { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== "granted") {
@@ -69,7 +97,7 @@ export function GpsLocationProvider({ children }: { children: React.ReactNode })
   const fetchGpsLocation = async () => {
     console.log("[useLocation] Récupération de la position GPS");
     setGpsLoading(true);
-    
+
     try{
       const userLocation = await Location.getCurrentPositionAsync({accuracy: Location.Accuracy.Highest});
       const geocoding = await getLocationNameFromCoords(userLocation.coords.latitude, userLocation.coords.longitude);
@@ -87,7 +115,7 @@ export function GpsLocationProvider({ children }: { children: React.ReactNode })
       }
 
       console.log("[useLocation] Position GPS récupérée :", fullLocation);
-      
+
 
       setLastKnownLocation(fullLocation);
       setGpsLoading(false);
@@ -120,7 +148,7 @@ export function GpsLocationProvider({ children }: { children: React.ReactNode })
         console.warn("[useLocation] Coordonnées invalides :", query);
         return null;
       }
-      
+
       locationResponse = await getLocationNameFromCoords(latitude, longitude);
       lightPollutionResponse = await getLightPollutionDataFromCoords(latitude, longitude);
 
@@ -179,8 +207,20 @@ export function GpsLocationProvider({ children }: { children: React.ReactNode })
   }
 
   return (
-    <GpsLocationContext.Provider value={{ locationPermission, location, gpsError, gpsLoading, searchedLocation, fetchLocation, fetchGpsLocation, searchLoading }}>
+    <LocationContext.Provider value={{
+      locationPermission,
+      gpsLocation,
+      location,
+      isUsingObservatory: activeObservatory !== null,
+      activeObservatory,
+      gpsError,
+      gpsLoading,
+      searchedLocation,
+      fetchLocation,
+      fetchGpsLocation,
+      searchLoading,
+    }}>
       {children}
-    </GpsLocationContext.Provider>
+    </LocationContext.Provider>
   );
 }

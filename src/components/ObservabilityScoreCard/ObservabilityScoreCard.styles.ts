@@ -75,6 +75,31 @@ export const observabilityScoreCardStyles = {
       },
     },
 
+    // Rangée de bascule repliée/dépliée : seulement les icônes colorées (aperçu au clin d'œil) +
+    // chevron, alignés à gauche / tout à droite. La grille est masquée par défaut (voir `expanded`
+    // dans le composant) et dépliée au tap.
+    collapseToggle: {
+      display: "flex" as const,
+      flexDirection: "row" as const,
+      alignItems: "center" as const,
+      justifyContent: "space-between" as const,
+      paddingVertical: 4,
+
+      title: {
+        fontFamily: "ZTNatureRegular",
+        fontSize: 14,
+        color: app_colors.primary.medium,
+        textTransform: "uppercase" as const,
+        flex: 1,
+      },
+
+      icons: {
+        display: "flex" as const,
+        flexDirection: "row" as const,
+        gap: 6,
+      },
+    },
+
     // Grille de tuiles (2 colonnes) plutôt qu'une liste de lignes empilées : chaque donnée a sa
     // propre carte teintée par sa couleur de "bonté" (voir getObservabilityScoreColor), avec une
     // pastille d'icône colorée — pour casser le côté plat d'une simple liste texte. Les styles des
@@ -94,6 +119,9 @@ export const observabilityScoreCardStyles = {
       borderRadius: radius.mediumCard,
       padding: 8,
       gap: 5,
+      // Sans ça, Android ne découpe pas ses enfants (ex: la barre de progression tout en bas) sur
+      // le coin arrondi du parent — la barre peut légèrement déborder et casser visuellement l'angle.
+      overflow: "hidden" as const,
     },
 
     tileValueRow: {
@@ -122,8 +150,8 @@ export const observabilityScoreCardStyles = {
       gap: 6,
 
       iconBadge: {
-        width: 25,
-        height: 25,
+        width: 30,
+        height: 30,
         borderRadius: 50,
         display: "flex" as const,
         alignItems: "center" as const,

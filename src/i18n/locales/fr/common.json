@@ -29,6 +29,14 @@
       "moonIllumination": "Discrète"
     }
   },
+  "usefulNightCard": {
+    "title": {
+      "upcoming": "Nuit utile ce soir",
+      "inProgress": "Nuit utile cette nuit"
+    },
+    "duration": "{{hours}}h {{minutes}}",
+    "unavailable": "Pas de nuit astronomique aujourd'hui"
+  },
   "altitudeChart": {
     "rise": "Lever",
     "set": "Coucher",

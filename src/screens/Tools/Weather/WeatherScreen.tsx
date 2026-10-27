@@ -1,96 +1,26 @@
-import { Image, ImageSourcePropType, InteractionManager, ScrollView, Text, TouchableOpacity, View } from "react-native"
+import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native"
 import { globalStyles } from "../../../helpers/globalStyles"
 import { ScreenHeader } from "../../../components/ScreenHeader/ScreenHeader"
 import { useTranslation } from "react-i18next"
 import { weatherScreenStyles } from "./WeatherScreen.styles"
-import { useLocation } from "../../../context/GpsContext"
+import { useLocation } from "../../../context/LocationContext"
+import { useWeatherData } from "../../../context/WeatherDataContext"
 import { Droplets, RepeatIcon, TrendingUp, TrendingDown, Wind, ThermometerSun, Compass } from "lucide-react-native"
-import { GpsLocation } from "../../../types/gpsLocation"
-import { useEffect, useState } from "react"
-import { getWeather } from "../../../helpers/api/weather/weather"
-import { getAstroConditions } from "../../../helpers/api/weather/astroConditions"
-import { HourlyWeather, WeatherData } from "../../../types/weather/Weather"
-import { AstroConditionsData } from "../../../types/weather/AstroConditions"
 import { getWeatherIcon } from "../../../helpers/weather/getWeatherIcon"
 import { app_colors } from "../../../helpers/variables"
 import { formatHumidity, formatWindSpeed } from "../../../helpers/format"
 import { convertAzimuthToCardinalDirection } from "../../../helpers/location/convert"
 import { useAppUnits } from "../../../hooks/useAppUnits"
-import { computeObservabilityScore, ObservabilityScore } from "../../../helpers/weather/observabilityScore"
-import ObservabilityScoreCard, { ObservabilityNightReference } from "../../../components/ObservabilityScoreCard/ObservabilityScoreCard"
-import { convertEquatorialToHorizontal, getSolarEquatorialCoordinate } from "@observerly/astrometry"
-import { findNextHorizonCrossing } from "../../../helpers/astrometry/altitude/altitudeCurve"
-
-// Seuil de la nuit astronomique (même seuil que SpaceWeatherScreen) : en dessous, le ciel est assez
-// sombre pour que l'observation ait un sens — une bonne observabilité en plein jour ne veut rien dire.
-const ASTRONOMICAL_NIGHT_THRESHOLD = -18;
-
-// Point le plus proche de `date` dans la série horaire OpenWeather (dt en secondes Unix), même
-// principe que findClosestAstroPoint côté 7Timer — utilisé pour afficher/scorer les conditions
-// prévues pour la nuit plutôt que l'instant présent.
-const findClosestHourlyWeather = (hourly: HourlyWeather[], date: Date): HourlyWeather | undefined => {
-  if (hourly.length === 0) return undefined;
-  const targetSeconds = Math.floor(date.getTime() / 1000);
-  return hourly.reduce((closest, point) =>
-    Math.abs(point.dt - targetSeconds) < Math.abs(closest.dt - targetSeconds) ? point : closest
-  );
-};
+import ObservabilityScoreCard from "../../../components/ObservabilityScoreCard/ObservabilityScoreCard"
+import UsefulNightCard from "../../../components/UsefulNightCard/UsefulNightCard"
+import HourlyForecastCard from "../../../components/weather/HourlyForecastCard/HourlyForecastCard"
 
 const WeatherScreen = () => {
 
-  const { location }: {location: GpsLocation} = useLocation()
+  const { location } = useLocation()
   const { t, i18n } = useTranslation("tools/weather")
   const { formatTemperatureCelsius } = useAppUnits()
-
-  const [weather, setWeather] = useState<WeatherData | null>(null)
-  const [astroConditions, setAstroConditions] = useState<AstroConditionsData | null>(null)
-  const [observationScore, setObservationScore] = useState<ObservabilityScore | null>(null)
-  const [nightConditions, setNightConditions] = useState<WeatherData | null>(null)
-  const [nightReference, setNightReference] = useState<ObservabilityNightReference | null>(null)
-
-  useEffect(() => {
-    const task = InteractionManager.runAfterInteractions(async () => {
-      const wd = await getWeather(location?.latitude, location?.longitude, i18n.language)
-      const ac = await getAstroConditions(location?.latitude, location?.longitude)
-
-      if(!wd) {
-        console.log(`[weatherScreen] Error fetching weather data`)
-        return
-      }
-
-      if(!ac) {
-        console.log(`[weatherScreen] Error fetching astro conditions data`)
-        return
-      }
-
-      const now = new Date()
-      const observer = {
-        latitude: location?.latitude ?? 0,
-        longitude: location?.longitude ?? 0,
-        altitude: location?.elevation ?? 0,
-      }
-      const sunEqCoords = getSolarEquatorialCoordinate(now)
-      const { alt: sunAltitude } = convertEquatorialToHorizontal(now, observer, sunEqCoords)
-      const isCurrentlyNight = sunAltitude < ASTRONOMICAL_NIGHT_THRESHOLD
-      // Si la nuit astronomique ne commence/ne finit jamais aujourd'hui (été/haute latitude),
-      // on retombe sur "maintenant" plutôt que de ne rien afficher.
-      const nightDate = isCurrentlyNight
-        ? now
-        : findNextHorizonCrossing(now, observer, getSolarEquatorialCoordinate, "set", ASTRONOMICAL_NIGHT_THRESHOLD) ?? now
-
-      const nightCurrent = isCurrentlyNight ? wd.current : (findClosestHourlyWeather(wd.hourly, nightDate) ?? wd.current)
-      const nd: WeatherData = { ...wd, current: nightCurrent }
-      const obsScore = computeObservabilityScore(nd, ac, nightDate)
-
-      setWeather(wd)
-      setAstroConditions(ac)
-      setNightConditions(nd)
-      setNightReference({ date: nightDate, isCurrentlyNight })
-      setObservationScore(obsScore)
-    });
-
-    return () => task.cancel();
-  }, [])
+  const { weather, astroConditions, nightConditions, nightReference, observationScore, refetch } = useWeatherData()
 
   return (
     <View style={globalStyles.screen}>
@@ -106,7 +36,7 @@ const WeatherScreen = () => {
                 <Text style={weatherScreenStyles.cardDark.header.subtitle}>{location?.state ? `${location.state}, ${location.country}` : location?.country}</Text>
               </View>
 
-              <TouchableOpacity style={weatherScreenStyles.cardDark.refreshButton}>
+              <TouchableOpacity style={weatherScreenStyles.cardDark.refreshButton} onPress={refetch}>
                 <RepeatIcon size={20} color={app_colors.white} />
               </TouchableOpacity>
             </View>
@@ -178,6 +108,9 @@ const WeatherScreen = () => {
             </View>
           </View>
 
+          {/* NUIT UTILE */}
+          <UsefulNightCard />
+
           {/* INFOS ASTRO ET SCORE D'OBSERVATION */}
           <ObservabilityScoreCard
             weather={nightConditions}
@@ -185,6 +118,26 @@ const WeatherScreen = () => {
             score={observationScore}
             nightReference={nightReference}
           />
+
+
+          {/* HOURLY FORECAST */}
+          <Text style={globalStyles.categoryTitle}>{t("hourlyForecast.title")}</Text>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            <View style={weatherScreenStyles.hourlyForecastContainer}>
+              {
+                weather?.hourly && weather.hourly.slice(0, 24).map((hour, index) => {
+                  return (
+                    <HourlyForecastCard
+                      hourly={hour}
+                      weather={weather}
+                      astro={astroConditions}
+                      key={index}
+                    />
+                  )
+                })
+              }
+            </View>
+          </ScrollView>
         </View>
       </ScrollView>
     </View>

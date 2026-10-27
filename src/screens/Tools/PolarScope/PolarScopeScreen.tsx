@@ -5,7 +5,7 @@ import { polarScopeScreenStyles } from "./PolarScopeScreen.styles";
 import { ScreenHeader } from "../../../components/ScreenHeader/ScreenHeader";
 import { useTranslation } from "react-i18next";
 import ValueCard from "../../../components/cards/ValueCard/ValueCard";
-import { useLocation } from "../../../context/GpsContext";
+import { useLocation } from "../../../context/LocationContext";
 import { convertDecimalLatitudeToDMS } from "../../../helpers/location/convert";
 import dayjs, { Dayjs } from "dayjs";
 import { getConstellation, getHourAngle, getLocalSiderealTime } from "@observerly/astrometry";
@@ -115,7 +115,7 @@ const PolarScopeScreen = () => {
               <ValueCard
                 small
                 title={t('content.header.latitude')}
-                value={convertDecimalLatitudeToDMS(location?.latitude) ?? ""}
+                value={location ? convertDecimalLatitudeToDMS(location.latitude) : ""}
                 containerStyle={{backgroundColor: withOpacity(app_colors.white, 0.08)}}
                 titleStyle={{color: app_colors.accent.light}}
                 valueStyle={{color: app_colors.accent.light}}

@@ -44,7 +44,12 @@ export const useUserDataStore = create<UserSettingsData>()(
       setLocale: (newLocale: string | null) => set({locale: newLocale}),
       setLastKnownLocation: (newLastKnownLocation: GpsLocation | null) => set({lastKnownLocation: newLastKnownLocation}),
       addObservatory: (newObservatory: Observatory) => set((state) => ({observatories: [...state.observatories, newObservatory]})),
-      removeObservatory: (observatoryIdToRemove: string) => set((state) => ({observatories: state.observatories.filter(obs => obs.id !== observatoryIdToRemove)})),
+      // Si l'observatoire supprimé était l'actif, on retombe sur le GPS (activeObservatoryId: null)
+      // plutôt que de laisser un id qui ne pointe plus vers rien.
+      removeObservatory: (observatoryIdToRemove: string) => set((state) => ({
+        observatories: state.observatories.filter(obs => obs.id !== observatoryIdToRemove),
+        activeObservatoryId: state.activeObservatoryId === observatoryIdToRemove ? null : state.activeObservatoryId,
+      })),
       setActiveObservatoryId: (newActiveObservatoryId: string | null) => set({activeObservatoryId: newActiveObservatoryId}),
       setPinnedTools: (newPinnedTools: [string?, string?, string?, string?, string?]) => set({pinnedTools: newPinnedTools}),
       setTimeUnit: (newTimeUnit: "utc" | "local") => set((state) => ({units: {...state.units, time: newTimeUnit}})),

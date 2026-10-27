@@ -12,12 +12,13 @@ import ObservatoryCard from "./ObservatoryCard/ObservatoryCard";
 import { globalStyles } from "../../../helpers/globalStyles";
 import { router } from "expo-router";
 import { useTranslation } from "react-i18next";
-import { useLocation } from "../../../context/GpsContext";
-import { GpsLocation } from "../../../types/gpsLocation";
+import { useLocation } from "../../../context/LocationContext";
 
 const ObservatoriesScreen = () => {
   const { t } = useTranslation("settings");
-  const { location }: { location: GpsLocation} = useLocation();
+  // Lecture GPS brute (pas la position effective) : cet écran centre la carte sur le GPS tant que
+  // l'utilisateur n'a aucun observatoire enregistré, indépendamment de activeObservatoryId.
+  const { gpsLocation } = useLocation();
 
   const userObservatories = useUserDataStore((state) => state.observatories);
   const activeObservatoryId = useUserDataStore((state) => state.activeObservatoryId);
@@ -83,17 +84,17 @@ const ObservatoriesScreen = () => {
           animated: true,
         }
       );
-    } else if (location) {
-      console.log("[ObservatoriesScreen] Centering map on GPS location: ", location);
+    } else if (gpsLocation) {
+      console.log("[ObservatoriesScreen] Centering map on GPS location: ", gpsLocation);
 
       mapRef.current?.animateToRegion({
-        latitude: location.latitude,
-        longitude: location.longitude,
+        latitude: gpsLocation.latitude,
+        longitude: gpsLocation.longitude,
         latitudeDelta: 0.0922,
         longitudeDelta: 0.0421,
       }, 1000);
     }
-  }, [isMapReady, location, userObservatories]);
+  }, [isMapReady, gpsLocation, userObservatories]);
 
   return (
     <View style={observatoriesScreenStyles.screen}>

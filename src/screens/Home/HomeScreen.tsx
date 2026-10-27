@@ -5,14 +5,14 @@ import CurrentConditions from "./components/CurrentConditions/CurrentConditions"
 import Tonight from "./components/Tonight/Tonight";
 import { useCallback, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { useLocation } from "../../context/GpsContext";
+import { useLocation } from "../../context/LocationContext";
 import { useFocusEffect } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 
 export const HomeScreen = () => {
   const { t } = useTranslation();
 
-  const {loading, error, location} = useLocation();
+  const { gpsLoading: loading, gpsError: error, location } = useLocation();
 
   useFocusEffect(
       useCallback(() => {

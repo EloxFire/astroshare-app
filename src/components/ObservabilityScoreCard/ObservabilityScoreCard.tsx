@@ -1,30 +1,21 @@
-import { useMemo } from "react";
-import { Text, View } from "react-native";
+import { useMemo, useState } from "react";
+import { Text, TouchableOpacity, View } from "react-native";
 import { useTranslation } from "react-i18next";
-import { Cloud, Droplet, Droplets, Eye, Gauge as GaugeIcon, Moon, Sparkles, Waves, Wind, type LucideIcon } from "lucide-react-native";
+import { ChevronDown, Cloud, Droplet, Droplets, Eye, Gauge as GaugeIcon, Moon, Sparkles, Waves, Wind, type LucideIcon } from "lucide-react-native";
+import Animated, { FadeIn, FadeOut, LinearTransition, useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import { getLunarPhase } from "@observerly/astrometry";
 import { observabilityScoreCardStyles } from "./ObservabilityScoreCard.styles";
 import CircularGauge from "../CircularGauge/CircularGauge";
 import Badge from "../Badges/Badge/Badge";
 import { globalStyles } from "../../helpers/globalStyles";
-import { getObservabilityScoreBand, getObservabilityScoreColor, withOpacity } from "../../helpers/variables";
+import { app_colors, getObservabilityScoreBand, getObservabilityScoreColor, withOpacity } from "../../helpers/variables";
 import { formatWindSpeed } from "../../helpers/format";
 import { computeMoonScore, findClosestAstroPoint, isMoonUp, type ObservabilityScore } from "../../helpers/weather/observabilityScore";
+import { type ObservabilityNightReference } from "../../helpers/weather/nightConditions";
 import { getLunarPhaseLabel } from "../../helpers/astrometry/moon/moonHelpers";
 import { useAppUnits } from "../../hooks/useAppUnits";
 import type { WeatherData } from "../../types/weather/Weather";
 import type { AstroConditionsData } from "../../types/weather/AstroConditions";
-
-// Date à laquelle les conditions affichées sur cette carte se rapportent (début de la nuit
-// astronomique à venir, ou maintenant si elle est déjà en cours) — calculée par l'écran parent
-// (seul endroit qui connaît la position de l'observateur), passée ici pour : 1) retrouver le même
-// point /astro que celui utilisé par computeObservabilityScore (voir findClosestAstroPoint), et
-// 2) l'afficher en sous-titre, pour que "current" affiché ici ne soit jamais pris pour l'instant
-// présent par erreur.
-export interface ObservabilityNightReference {
-  date: Date;
-  isCurrentlyNight: boolean;
-}
 
 interface ObservabilityScoreCardProps {
   weather: WeatherData | null;
@@ -70,6 +61,17 @@ const toConditionGoodnessPercent = (code: number): number =>
 const ObservabilityScoreCard = ({ weather, astro, score, nightReference }: ObservabilityScoreCardProps) => {
   const { t } = useTranslation("tools/weather");
   const { formatDate } = useAppUnits();
+
+  // Détail replié par défaut (juste les icônes colorées + chevron) — l'utilisateur déplie au besoin.
+  const [expanded, setExpanded] = useState(false);
+  const chevronRotation = useSharedValue(0);
+  const chevronStyle = useAnimatedStyle(() => ({ transform: [{ rotate: `${chevronRotation.value}deg` }] }));
+
+  const toggleExpanded = () => {
+    const next = !expanded;
+    setExpanded(next);
+    chevronRotation.value = withTiming(next ? 180 : 0, { duration: 220 });
+  };
 
   const astroPoint = useMemo(
     () => (astro ? findClosestAstroPoint(astro.data, nightReference?.date ?? new Date()) : undefined),
@@ -171,7 +173,7 @@ const ObservabilityScoreCard = ({ weather, astro, score, nightReference }: Obser
   const scoreColor = getObservabilityScoreColor(score?.total);
 
   return (
-    <View style={globalStyles.defaultCard}>
+    <Animated.View style={globalStyles.defaultCard} layout={LinearTransition.duration(220)}>
       <View>
         <Text style={observabilityScoreCardStyles.title}>{t("astroConditions.title")}</Text>
         {
@@ -225,56 +227,94 @@ const ObservabilityScoreCard = ({ weather, astro, score, nightReference }: Obser
           }
         </View>
 
-        <View style={observabilityScoreCardStyles.body.metricsGrid}>
+        <TouchableOpacity activeOpacity={0.7} onPress={toggleExpanded} style={observabilityScoreCardStyles.body.collapseToggle}>
           {
-            rows.map((row) => {
-              const color = getObservabilityScoreColor(row.goodnessPercent);
+            !expanded ? (
+              <Animated.View exiting={FadeOut.duration(120)} style={observabilityScoreCardStyles.body.collapseToggle.icons}>
+                {
+                  rows.map((row) => {
+                    const color = getObservabilityScoreColor(row.goodnessPercent);
+                    return (
+                      <View
+                        key={row.key}
+                        style={[observabilityScoreCardStyles.body.tileHeader.iconBadge, { backgroundColor: withOpacity(color, 0.18) }]}
+                      >
+                        <row.icon size={18} color={color} />
+                      </View>
+                    );
+                  })
+                }
+              </Animated.View>
+            ) : (
+              <Animated.Text exiting={FadeOut.duration(120)} style={observabilityScoreCardStyles.body.collapseToggle.title}>
+                {t("astroConditions.metrics")}
+              </Animated.Text>
+            )
+          }
 
-              return (
-                <View
-                  key={row.key}
-                  style={[observabilityScoreCardStyles.body.tile, { backgroundColor: withOpacity(color, 0.06), borderColor: withOpacity(color, 0.18), borderWidth: 1 }]}
-                >
-                  <View style={observabilityScoreCardStyles.body.tileValueRow}>
-                    <Text style={observabilityScoreCardStyles.body.tileValue}>{row.value}</Text>
-                    {
-                      row.secondaryValue && (
-                        <Text style={observabilityScoreCardStyles.body.tileValueRow.secondary}>{row.secondaryValue}</Text>
-                      )
-                    }
-                  </View>
+          <Animated.View style={[chevronStyle, { marginLeft: "auto" }]}>
+            <ChevronDown size={25} color={app_colors.primary.medium} />
+          </Animated.View>
+        </TouchableOpacity>
 
-                  <View style={observabilityScoreCardStyles.body.tileHeader}>
+        {
+          expanded && (
+            <Animated.View
+              entering={FadeIn.duration(180)}
+              exiting={FadeOut.duration(140)}
+              style={observabilityScoreCardStyles.body.metricsGrid}
+            >
+              {
+                rows.map((row) => {
+                  const color = getObservabilityScoreColor(row.goodnessPercent);
+
+                  return (
                     <View
-                      style={[
-                        observabilityScoreCardStyles.body.tileHeader.iconBadge,
-                        { backgroundColor: withOpacity(color, 0.18) },
-                      ]}
+                      key={row.key}
+                      style={[observabilityScoreCardStyles.body.tile, { backgroundColor: withOpacity(color, 0.06), borderColor: withOpacity(color, 0.18), borderWidth: 1 }]}
                     >
-                      <row.icon size={15} color={color} />
-                    </View>
-                    <Text style={observabilityScoreCardStyles.body.tileHeader.label}>{row.label}</Text>
-                  </View>
+                      <View style={observabilityScoreCardStyles.body.tileValueRow}>
+                        <Text style={observabilityScoreCardStyles.body.tileValue}>{row.value}</Text>
+                        {
+                          row.secondaryValue && (
+                            <Text style={observabilityScoreCardStyles.body.tileValueRow.secondary}>{row.secondaryValue}</Text>
+                          )
+                        }
+                      </View>
 
-                  {
-                    row.barPercent !== null && (
-                      <View style={observabilityScoreCardStyles.body.tileBarTrack}>
+                      <View style={observabilityScoreCardStyles.body.tileHeader}>
                         <View
                           style={[
-                            observabilityScoreCardStyles.body.tileBarTrack.fill,
-                            { width: `${row.barPercent}%`, backgroundColor: color },
+                            observabilityScoreCardStyles.body.tileHeader.iconBadge,
+                            { backgroundColor: withOpacity(color, 0.18) },
                           ]}
-                        />
+                        >
+                          <row.icon size={15} color={color} />
+                        </View>
+                        <Text style={observabilityScoreCardStyles.body.tileHeader.label}>{row.label}</Text>
                       </View>
-                    )
-                  }
-                </View>
-              );
-            })
-          }
-        </View>
+
+                      {
+                        row.barPercent !== null && (
+                          <View style={observabilityScoreCardStyles.body.tileBarTrack}>
+                            <View
+                              style={[
+                                observabilityScoreCardStyles.body.tileBarTrack.fill,
+                                { width: `${row.barPercent}%`, backgroundColor: color },
+                              ]}
+                            />
+                          </View>
+                        )
+                      }
+                    </View>
+                  );
+                })
+              }
+            </Animated.View>
+          )
+        }
       </View>
-    </View>
+    </Animated.View>
   );
 };
 
