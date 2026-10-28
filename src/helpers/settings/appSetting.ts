@@ -1,4 +1,4 @@
-import { Languages, MapPin, MoonStar, Ruler } from "lucide-react-native";
+import { DatabaseSearchIcon, Languages, MapPin, MoonStar, Ruler } from "lucide-react-native";
 import { AppSetting } from "../../types/settings/appSetting";
 
 export const settingsList: AppSetting[] = [
@@ -25,5 +25,11 @@ export const settingsList: AppSetting[] = [
     route: "/settings/observatories",
     category: "observation",
     icon: MapPin,
+  },
+  {
+    id: "data-sources",
+    route: "/settings/data-sources",
+    category: "application",
+    icon: DatabaseSearchIcon,
   }
 ];

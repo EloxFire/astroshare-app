@@ -9,9 +9,12 @@ import UsefulNightCard from "../../../components/UsefulNightCard/UsefulNightCard
 import HourlyForecastCard from "../../../components/weather/HourlyForecastCard/HourlyForecastCard"
 import HourlyDetailsCard from "../../../components/weather/HourlyDetailsCard/HourlyDetailsCard"
 import WeatherSummary from "../../../components/weather/WeatherSummary/WeatherSummary"
+import WeatherRadarMap from "../../../components/weather/WeatherRadarMap/WeatherRadarMap"
 import { useState } from "react"
 import dayjs from "dayjs"
 import { useAppUnits } from "../../../hooks/useAppUnits"
+import SuggestionCard from "../../../components/cards/SuggestionCard/SuggestionCard"
+import { BadgeQuestionMark } from "lucide-react-native"
 
 const WeatherScreen = () => {
 
@@ -29,6 +32,17 @@ const WeatherScreen = () => {
         <View style={globalStyles.content}>
           {/* SUMMARY CARD */}
           <WeatherSummary />
+
+          {/* RADAR PRÉCIPITATIONS */}
+          <WeatherRadarMap />
+
+          {/* TODO : AJOUTER DES RESSOURCES DE SUGGESTIONS METE */}
+          <SuggestionCard
+            icon={BadgeQuestionMark}
+            title="L'importance des conditions météo"
+            description="Découvrez quels sont les paramètres météo à surveiller pour vos soirées d'observation !"
+            link={"settings"}
+          />
 
           {/* HOURLY FORECAST */}
           <View style={weatherScreenStyles.hourlyForecastSection}>

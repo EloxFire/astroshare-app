@@ -80,8 +80,8 @@ export const weatherScreenStyles = {
           color: app_colors.white,
           fontSize: 12,
           fontFamily: "DMMonoMedium",
-          width: 120,
           textAlign: "center" as const,
+          backgroundColor: withOpacity(app_colors.white, 0.1),
         }
       }
     }

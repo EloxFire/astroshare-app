@@ -47,6 +47,10 @@
     "observatories": {
       "name": "Observatoires",
       "description": "Gérez vos lieux d'observation"
+    },
+    "data-sources": {
+      "name": "Sources et données",
+      "description": "D'où viennent les données d'Astroshare ?"
     }
   },
   "observatories": {

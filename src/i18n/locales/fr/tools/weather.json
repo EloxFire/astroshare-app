@@ -24,6 +24,23 @@
       "down": "Lune sous l'horizon ce soir : aucune gêne."
     }
   },
+  "radar": {
+    "title": "Radar précipitations",
+    "subtitle": "Nuages (OpenWeather) + précipitations (RainViewer)",
+    "loading": "Chargement du radar…",
+    "unavailable": "Radar indisponible pour le moment",
+    "layers": {
+      "clouds": "Nuages",
+      "precipitation": "Précipitations"
+    },
+    "legend": {
+      "title": "Légende",
+      "precipitation": "Précipitations",
+      "light": "Léger",
+      "heavy": "Fort",
+      "clouds": "Nuages : plus la teinte est opaque, plus la couverture est dense."
+    }
+  },
   "observability": {
     "clouds": "Nuages",
     "dewPointSpread": "Écart de rosée",
