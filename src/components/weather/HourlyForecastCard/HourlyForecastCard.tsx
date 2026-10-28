@@ -1,4 +1,4 @@
-import { Image, Text, View } from "react-native";
+import { Image, Text, TouchableOpacity, View } from "react-native";
 import { HourlyWeather, WeatherData } from "../../../types/weather/Weather";
 import { AstroConditionsData } from "../../../types/weather/AstroConditions";
 import { hourlyForecastCardStyles } from "./HourlyForecastCard.styles";
@@ -12,9 +12,11 @@ interface HourlyForecastCardProps {
   hourly: HourlyWeather;
   weather: WeatherData; // nécessaire pour `daily` (facteur lune, voir computeObservabilityScore)
   astro: AstroConditionsData | null;
+  active?: boolean; // true si c'est l'heure actuellement sélectionnée (voir selectedHourlyCard dans WeatherScreen.tsx)
+  onCardPress?: () => void; // fonction à appeler quand la carte est pressée (pour sélectionner l'heure)
 }
 
-const HourlyForecastCard = ({ hourly, weather, astro }: HourlyForecastCardProps) => {
+const HourlyForecastCard = ({ hourly, weather, astro, active, onCardPress }: HourlyForecastCardProps) => {
 
   const { formatDate } = useAppUnits();
 
@@ -28,7 +30,14 @@ const HourlyForecastCard = ({ hourly, weather, astro }: HourlyForecastCardProps)
   const scoreColor = getObservabilityScoreColor(hourScore?.total);
 
   return (
-    <View style={[hourlyForecastCardStyles.card, { borderColor: withOpacity(scoreColor, 0.4) }]}>
+    <TouchableOpacity
+      style={[
+        hourlyForecastCardStyles.card,
+        { borderColor: withOpacity(scoreColor, active ? 1 : 0.4), borderWidth: active ? 2 : 1 },
+        active && { backgroundColor: withOpacity(scoreColor, 0.1) },
+      ]}
+      onPress={onCardPress}
+    >
       <Text style={hourlyForecastCardStyles.card.time}>{formatDate(dayjs.unix(hourly.dt)).format("HH")}H</Text>
       <Image source={getWeatherIcon(hourly.weather[0].icon)} style={hourlyForecastCardStyles.card.weatherIcon} />
       <Text style={hourlyForecastCardStyles.card.temp}>{Math.round(hourly.temp)}°</Text>
@@ -42,7 +51,7 @@ const HourlyForecastCard = ({ hourly, weather, astro }: HourlyForecastCardProps)
           </>
         )
       }
-    </View>
+    </TouchableOpacity>
   )
 }
 

@@ -87,9 +87,21 @@ export const weatherScreenStyles = {
     }
   },
 
-  hourlyForecastContainer: {
+  hourlyForecastSection: {
     display: "flex" as const,
-    flexDirection: 'row' as const,
+    flexDirection: "column" as const,
+    gap: 10,
+    
+    hourlyForecastContainer: {
+      display: "flex" as const,
+      flexDirection: 'row' as const,
+      gap: 10,
+    },
+  },
+
+  selectedHourlyDetailsContainer: {
+    display: "flex" as const,
+    flexDirection: "column" as const,
     gap: 10,
   }
 }

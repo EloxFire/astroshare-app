@@ -34,6 +34,23 @@
     "windSpeed": "Vent moyen"
   },
   "hourlyForecast": {
-    "title": "Prévisions horaires (24h)",
+    "title": "Aperçu rapide horaire (24h)",
+    "subtitle": "Sélectionnez une heure pour plus de détails",
+    "details": {
+      "title": "Détails pour {{time}}",
+      "weatherSection": "Météo",
+      "astroSection": "Conditions astro (7Timer)",
+      "noAstroData": "Données astro indisponibles pour cette heure",
+      "feelsLike": "Ressenti",
+      "dewPoint": "Point de rosée",
+      "windDirection": "Direction du vent",
+      "instability": "Instabilité",
+      "pressure": "Pression",
+      "visibility": "Visibilité",
+      "uvIndex": "Indice UV",
+      "precipitationChance": "Probabilité de précip.",
+      "rain": "Pluie (1h)",
+      "snow": "Neige (1h)"
+    }
   }
 }

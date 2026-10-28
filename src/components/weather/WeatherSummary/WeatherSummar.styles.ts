@@ -39,33 +39,42 @@ export const weatherSummaryStyles = {
       display: "flex" as const,
       flexDirection: "row" as const,
       justifyContent: "space-between" as const,
-      alignItems: "flex-end" as const,
+      // "stretch" (plutôt que "flex-end") : les deux conteneurs prennent toute la hauteur de la
+      // ligne, pas seulement celle de leur propre contenu.
+      alignItems: "stretch" as const,
+      // backgroundColor: withOpacity(app_colors.yellow.light, 0.2),
 
       iconContainer: {
         display: "flex" as const,
         flexDirection: "column" as const,
         alignItems: "center" as const,
-        gap: 5,
-        flex: 1,
+        justifyContent: "center" as const,
+        gap: 15,
+        // Pas de flex:1 ici : une largeur fixe (un peu plus large que l'icône, pour laisser respirer
+        // la légende) plutôt qu'un partage 50/50 avec `conditions` — sinon le contenu (icône 100px +
+        // texte) peut dépasser de sa moitié de ligne et chevaucher `conditions` à côté.
+        width: 110,
         // backgroundColor: withOpacity(app_colors.red.main, 0.2),
 
         icon: {
-          width: 90,
-          height: 90,
+          width: 100,
+          height: 100,
         },
 
         description: {
           color: app_colors.white,
-          fontSize: 12,
+          fontSize: 14,
           fontFamily: "DMMonoRegular",
+          textAlign: "center" as const,
         }
       },
 
       conditions: {
         display: "flex" as const,
         flexDirection: "column" as const,
-        alignItems: "center" as const,
+        alignItems: "flex-end" as const,
         gap: 5,
+        // flex:1 : prend tout ce qu'il reste après la largeur fixe de iconContainer.
         flex: 1,
         // backgroundColor: withOpacity(app_colors.white, 0.2),
 
@@ -79,7 +88,7 @@ export const weatherSummaryStyles = {
             color: app_colors.yellow.main,
             fontSize: 35,
             fontFamily: "ZTNatureBold",
-          }
+          },
         },
 
         row: {
@@ -91,13 +100,16 @@ export const weatherSummaryStyles = {
         },
 
         item: {
-          flex:1,
+          // Largeur fixe plutôt que flex:1 (qui étirait chaque item sur la moitié de la ligne,
+          // écartant les deux icônes aux extrémités) : avec une largeur fixe, les deux items se
+          // regroupent — leurs icônes se rejoignent au centre (voir `reverse` plus bas), et comme
+          // `conditions` a alignItems:"flex-end", l'ensemble se cale tout seul sur le bord droit.
+          width: 90,
           display: "flex" as const,
           flexDirection: "row" as const,
           alignItems: "center" as const,
           justifyContent: "flex-start" as const,
           gap: 10,
-          // backgroundColor: withOpacity(app_colors.white, 0.2),
 
           reverse: {
             flexDirection: "row-reverse" as const,
@@ -107,6 +119,16 @@ export const weatherSummaryStyles = {
             color: app_colors.white,
             fontSize: 16,
             fontFamily: "DMMonoMedium",
+          },
+
+          icon: {
+            display: "flex" as const,
+            alignItems: "center" as const,
+            justifyContent: "center" as const,
+            backgroundColor: withOpacity(app_colors.white, 0.2),
+            borderRadius: 100,
+            width: 30,
+            height: 30,
           }
         }
       }

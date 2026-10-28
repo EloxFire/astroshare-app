@@ -59,34 +59,46 @@ const WeatherSummary = () => {
 
           <View style={weatherSummaryStyles.card.body.conditions.row}>
             <View style={[weatherSummaryStyles.card.body.conditions.item, weatherSummaryStyles.card.body.conditions.item.reverse]}>
-              <TrendingUp size={20} color={app_colors.white} />
+              <View style={weatherSummaryStyles.card.body.conditions.item.icon}>
+                <TrendingUp size={20} color={app_colors.white} />
+              </View>
               <Text style={weatherSummaryStyles.card.body.conditions.item.text}>{formatTemperatureCelsius(weather.daily[0].temp.max)}</Text>
             </View>
             <View style={weatherSummaryStyles.card.body.conditions.item}>
-              <TrendingDown size={20} color={app_colors.white} />
+              <View style={weatherSummaryStyles.card.body.conditions.item.icon}>
+                <TrendingDown size={20} color={app_colors.white} />
+              </View>
               <Text style={weatherSummaryStyles.card.body.conditions.item.text}>{formatTemperatureCelsius(weather.daily[0].temp.min)}</Text>
             </View>
           </View>
 
           <View style={weatherSummaryStyles.card.body.conditions.row}>
             <View style={[weatherSummaryStyles.card.body.conditions.item, weatherSummaryStyles.card.body.conditions.item.reverse]}>
-              <Droplets size={20} color={app_colors.white} />
+              <View style={weatherSummaryStyles.card.body.conditions.item.icon}>
+                <Droplets size={20} color={app_colors.white} />
+              </View>
               <Text style={weatherSummaryStyles.card.body.conditions.item.text}>{weather.current.humidity}%</Text>
             </View>
             <View style={weatherSummaryStyles.card.body.conditions.item}>
-              <ThermometerSnowflakeIcon size={20} color={app_colors.white} />
+              <View style={weatherSummaryStyles.card.body.conditions.item.icon}>
+                <ThermometerSnowflakeIcon size={20} color={app_colors.white} />
+              </View>
               <Text style={weatherSummaryStyles.card.body.conditions.item.text}>{formatTemperatureCelsius(weather.current.feels_like)}</Text>
             </View>
           </View>
 
           <View style={weatherSummaryStyles.card.body.conditions.row}>
             <View style={[weatherSummaryStyles.card.body.conditions.item, weatherSummaryStyles.card.body.conditions.item.reverse]}>
-              <Wind size={20} color={app_colors.white} />
+              <View style={weatherSummaryStyles.card.body.conditions.item.icon}>
+                <Wind size={20} color={app_colors.white} />
+              </View>
               <Text style={weatherSummaryStyles.card.body.conditions.item.text}>{formatWindSpeed(weather.current.wind_speed)}</Text>
             </View>
 
             <View style={weatherSummaryStyles.card.body.conditions.item}>
-              <Compass size={20} color={app_colors.white} />
+              <View style={weatherSummaryStyles.card.body.conditions.item.icon}>
+                <Compass size={20} color={app_colors.white} />
+              </View>
               <Text style={weatherSummaryStyles.card.body.conditions.item.text}>{convertAzimuthToCardinalDirection(weather.current.wind_deg)}</Text>
             </View>
           </View>

@@ -47,10 +47,16 @@ export const globalStyles = {
   },
 
   categoryTitle: {
+    color: app_colors.primary.main,
+    fontSize: 16,
+    fontFamily: "ZTNatureBold",
+    textTransform: "uppercase" as const,
+  },
+
+  categorySubtitle: {
     color: app_colors.primary.medium,
     fontSize: 14,
-    fontFamily: "DMMonoMedium",
-    textTransform: "uppercase" as const,
+    fontFamily: "ZTNatureRegular",
   },
 
   defaultCard: {
