@@ -101,3 +101,6 @@ export const formatHumidity = (percent: number): string => `${Math.round(percent
 // elle ne convertit pas en km/h) : conversion ×3.6 nécessaire avant tout affichage en km/h, sans
 // quoi la valeur brute en m/s est affichée telle quelle sous une étiquette "km/h" trompeuse.
 export const formatWindSpeed = (metersPerSecond: number): string => `${Math.round(metersPerSecond * 3.6)} km/h`;
+
+
+export const captitalizeFirstLetter = (str: string): string => str.charAt(0).toUpperCase() + str.slice(1);

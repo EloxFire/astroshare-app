@@ -14,6 +14,7 @@ import { useAppUnits } from "../../../hooks/useAppUnits"
 import ObservabilityScoreCard from "../../../components/ObservabilityScoreCard/ObservabilityScoreCard"
 import UsefulNightCard from "../../../components/UsefulNightCard/UsefulNightCard"
 import HourlyForecastCard from "../../../components/weather/HourlyForecastCard/HourlyForecastCard"
+import WeatherSummary from "../../../components/weather/WeatherSummary/WeatherSummary"
 
 const WeatherScreen = () => {
 
@@ -107,6 +108,10 @@ const WeatherScreen = () => {
               </View>
             </View>
           </View>
+
+          <WeatherSummary
+          
+          />
 
           {/* NUIT UTILE */}
           <UsefulNightCard />
