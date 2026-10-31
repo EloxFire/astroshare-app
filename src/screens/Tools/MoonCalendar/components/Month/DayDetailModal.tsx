@@ -1,28 +1,28 @@
 import { Modal, Pressable, Text, View } from "react-native";
-import { Image } from "expo-image";
 import { useTranslation } from "react-i18next";
 import type { TFunction } from "i18next";
 import { dayDetailModalStyles } from "./DayDetailModal.styles";
 import { useAppUnits, type FormatDate } from "../../../../../hooks/useAppUnits";
 import { useUpcomingMoonPhases } from "../../../../../hooks/useUpcomingMoonPhases";
 import {
+  getBodyNextRise,
+  getBodyNextSet,
   getLunarAge,
   getLunarDistance,
+  getLunarEquatorialCoordinate,
   getLunarIllumination,
-  getLunarNextRise,
-  getLunarNextSet,
   getLunarPhase,
-  getLunarPhaseLabel,
-  type Observer,
+  type GeographicCoordinate,
   type TransitInstance,
-} from "../../../../../helpers/astrometry/moon";
+} from "@observerly/astrometry";
+import { getLunarPhaseLabel } from "../../../../../helpers/astrometry/moon/moonHelpers";
 import { formatWithSpaces } from "../../../../../helpers/format";
 import { globalStyles } from "../../../../../helpers/globalStyles";
+import MoonPhase from "../../../../../components/MoonPhase/MoonPhase";
 
 type DayDetailModalProps = {
   date: Date;
-  observer: Observer | undefined;
-  illustrationUrl: string | undefined;
+  observer: GeographicCoordinate | undefined;
   onClose: () => void;
 };
 
@@ -35,7 +35,7 @@ const formatTransitTime = (transit: TransitInstance | boolean | undefined, t: TF
   return formatDate(transit.datetime).format("HH:mm");
 };
 
-const DayDetailModal = ({ date, observer, illustrationUrl, onClose }: DayDetailModalProps) => {
+const DayDetailModal = ({ date, observer, onClose }: DayDetailModalProps) => {
   const { t } = useTranslation("moon");
   const { formatDate } = useAppUnits();
 
@@ -43,8 +43,9 @@ const DayDetailModal = ({ date, observer, illustrationUrl, onClose }: DayDetailM
   const { age } = getLunarAge(date);
   const illumination = getLunarIllumination(date);
 
-  const rise = observer ? getLunarNextRise(date, observer) : undefined;
-  const set = observer ? getLunarNextSet(date, observer) : undefined;
+  const eqCoords = getLunarEquatorialCoordinate(date);
+  const rise = observer ? getBodyNextRise(date, observer, eqCoords) : undefined;
+  const set = observer ? getBodyNextSet(date, observer, eqCoords) : undefined;
 
   // Prochaine phase principale à partir de cette date (pas depuis aujourd'hui) — la première
   // des 4 renvoyées par useUpcomingMoonPhases, déjà triées chronologiquement.
@@ -55,7 +56,7 @@ const DayDetailModal = ({ date, observer, illustrationUrl, onClose }: DayDetailM
       <Pressable style={dayDetailModalStyles.backdrop} onPress={onClose}>
         <Pressable style={dayDetailModalStyles.sheet} onPress={(event) => event.stopPropagation()}>
           <View style={dayDetailModalStyles.header}>
-            <Image source={{ uri: illustrationUrl }} style={dayDetailModalStyles.header.image} cachePolicy="memory-disk" />
+            <MoonPhase date={date} size={72} />
             <View style={dayDetailModalStyles.header.infos}>
               <Text style={dayDetailModalStyles.header.infos.date}>{formatDate(date).format("dddd DD MMMM")}</Text>
               <Text style={dayDetailModalStyles.header.infos.phase}>{getLunarPhaseLabel(phase)}</Text>

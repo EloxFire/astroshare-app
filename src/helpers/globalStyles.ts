@@ -17,6 +17,44 @@ export const globalStyles = {
     padding: spacing.screenMargin,
     gap: gaps.sectionSeparator.after,
     paddingBottom: 100,
+
+    // Carte "liste de lignes clé/valeur" (ex: DayDetailModal, TimezoneScreen) — supprimée par erreur
+    // lors du refactor qui a introduit `defaultCard` (ils ne couvrent pas le même besoin : celui-ci
+    // a une structure de lignes internes, `defaultCard` est juste la coquille d'une carte simple).
+    heroCard: {
+      backgroundColor: app_colors.white,
+      borderRadius: radius.heroCard,
+      padding: 10,
+      gap: 10,
+      borderWidth: 1,
+      borderColor: app_colors.accent.light,
+
+      item: {
+        display: "flex" as const,
+        flexDirection: "row" as const,
+        justifyContent: "space-between" as const,
+        alignItems: "center" as const,
+        gap: 10,
+
+        title: {
+          color: app_colors.primary.medium,
+          fontFamily: "ZTNatureRegular",
+          fontSize: 14,
+        },
+
+        value: {
+          color: app_colors.primary.main,
+          fontFamily: "DMMonoMedium",
+          fontSize: 14,
+        },
+
+        withBorder: {
+          borderBottomWidth: 1,
+          borderBottomColor: app_colors.primary.light,
+          paddingBottom: 10,
+        }
+      }
+    }
   },
 
   input: {

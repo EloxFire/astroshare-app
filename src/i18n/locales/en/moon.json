@@ -78,5 +78,9 @@
     "riseSetValue": "{{rise}} · {{set}}",
     "nextPhase": "Next phase",
     "nextPhaseValue": "{{phase}} · {{date}}"
+  },
+  "monthlyChart": {
+    "title": "Illumination this month",
+    "bestWindow": "Best viewing nights around"
   }
 }

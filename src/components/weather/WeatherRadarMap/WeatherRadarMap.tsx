@@ -16,7 +16,7 @@ const FRAME_INTERVAL_MS = 500; // même cadence que l'exemple d'intégration fou
 
 // Repli si la position n'est pas encore connue — même valeur par défaut (Paris) que StepOne.tsx.
 const DEFAULT_REGION = { latitude: 48.856724859667835, longitude: 2.349875271320343 };
-const REGION_DELTA = { latitudeDelta: 0.5, longitudeDelta: 0.5 };
+const REGION_DELTA = { latitudeDelta: 2, longitudeDelta: 2 };
 // Les serveurs de tuiles météo (RainViewer/OpenWeather) n'ont pas de données utiles à très haut
 // niveau de zoom. Plafonné aussi sur la MapView elle-même (maxZoomLevel, pas juste sur les tuiles
 // météo) : au-delà, l'imagerie Google elle-même peut ne pas être disponible pour une zone rurale
@@ -239,6 +239,7 @@ const WeatherRadarMap = () => {
                 maxZoomLevel={MAX_MAP_ZOOM_LEVEL}
                 rotateEnabled={false}
                 pitchEnabled={false}
+                showsUserLocation
               >
                 {renderTileLayers()}
               </MapView>

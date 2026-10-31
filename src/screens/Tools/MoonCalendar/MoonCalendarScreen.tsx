@@ -8,6 +8,7 @@ import TonightView from "./components/Tonight/TonightView";
 import { useTranslation } from "react-i18next";
 import { app_colors } from "../../../helpers/variables";
 import { useFocusEffect } from "expo-router";
+import MonthView from "./components/Month/MonthView";
 
 
 const MoonCalendarScreen = () => {
@@ -55,13 +56,9 @@ const MoonCalendarScreen = () => {
           <View style={currentView === "tonight" ? moonCalendarScreenStyles.tonightView : { display: "none" }}>
             <TonightView />
           </View>
-          {/*
-            Monté seulement après la première visite de "Mois", puis gardé en mémoire (display:
-            none plutôt que démonté) pour les allers-retours suivants — voir hasVisitedMonth.
-          */}
           {currentView === "month" && (
             <View style={{ display: currentView === "month" ? "flex" : "none" }}>
-              {/* <MonthView /> */}
+              <MonthView />
             </View>
           )}
         </View>

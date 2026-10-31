@@ -67,7 +67,7 @@ export const weatherRadarMapStyles = {
 
     fullscreenToggle: {
       position: "absolute" as const,
-      top: 10,
+      bottom: 10,
       right: 10,
     },
 

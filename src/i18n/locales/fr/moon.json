@@ -83,6 +83,10 @@
     "nextPhase": "Prochaine phase",
     "nextPhaseValue": "{{phase}} · {{date}}"
   },
+  "monthlyChart": {
+    "title": "Illumination sur le mois",
+    "bestWindow": "Nuits les plus favorables autour du"
+  },
   "suggestions": {
     "formation": {
       "title": "Comment s'est formée la lune ?",

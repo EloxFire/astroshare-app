@@ -78,5 +78,9 @@
     "riseSetValue": "{{rise}} · {{set}}",
     "nextPhase": "Prossima fase",
     "nextPhaseValue": "{{phase}} · {{date}}"
+  },
+  "monthlyChart": {
+    "title": "Illuminazione del mese",
+    "bestWindow": "Le notti migliori intorno al"
   }
 }

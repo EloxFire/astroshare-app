@@ -82,12 +82,6 @@ export const monthViewStyles = {
     gap: 2,
     padding: 2,
 
-    image: {
-      width: 20,
-      height: 20,
-      borderRadius: 10,
-    },
-
     dayNumber: {
       color: app_colors.primary.main,
       fontFamily: "DMMonoMedium",

@@ -26,12 +26,6 @@ export const dayDetailModalStyles = {
     alignItems: "center" as const,
     gap: 12,
 
-    image: {
-      width: 72,
-      height: 72,
-      borderRadius: 36,
-    },
-
     infos: {
       flex: 1,
       display: "flex" as const,

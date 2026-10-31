@@ -1,146 +1,109 @@
-import { useCallback, useMemo, useState } from "react";
-import { Pressable, Text, View } from "react-native";
-import { useQuery } from "@tanstack/react-query";
+import { useMemo, useState } from "react";
+import { Text, TouchableOpacity, View } from "react-native";
 import { useTranslation } from "react-i18next";
-import { monthViewStyles } from "./MonthView.styles";
+import { getLunarIllumination, getLunarPhase, type Phase } from "@observerly/astrometry";
+import { useLocation } from "../../../../../context/LocationContext";
+import { useAppUnits } from "../../../../../hooks/useAppUnits";
+import { app_colors } from "../../../../../helpers/variables";
 import DayCell from "./DayCell";
 import DayDetailModal from "./DayDetailModal";
-import { useAppUnits } from "../../../../../hooks/useAppUnits";
-import { useObservatory } from "../../../../../hooks/useObservatory";
-import { useMonthlyMoonPhases } from "../../../../../hooks/useMonthlyMoonPhases";
-import type { PrincipalMoonPhase } from "../../../../../hooks/useUpcomingMoonPhases";
-import { getLunarIllumination, type Observer } from "../../../../../helpers/astrometry/moon";
-import { getMoonIllustrationsForMonth } from "../../../../../helpers/api/moon";
-import { app_colors } from "../../../../../helpers/variables";
+import MonthlyIlluminationChart from "./MonthlyIlluminationChart";
+import { monthViewStyles } from "./MonthView.styles";
 
-const MIN_MONTH = new Date(2011, 0, 1);
+const startOfMonth = (date: Date) => new Date(date.getFullYear(), date.getMonth(), 1);
+const addMonths = (date: Date, delta: number) => new Date(date.getFullYear(), date.getMonth() + delta, 1);
+const dateKey = (date: Date) => `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
 
-const startOfMonth = (date: Date): Date => new Date(date.getFullYear(), date.getMonth(), 1);
-const addMonths = (date: Date, count: number): Date => new Date(date.getFullYear(), date.getMonth() + count, 1);
-
-// Clé stable pour indexer les Map par jour calendaire, indépendante du réglage UTC/local de
-// l'utilisateur (contrairement à formatDate) : la grille du mois raisonne en jours civils, pas
-// en instants.
-const dateKey = (date: Date): string =>
-  `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
-
-// Grille en semaines complètes (lundi → dimanche), complétée par les jours des mois
-// voisins nécessaires pour ne jamais avoir de semaine tronquée.
-const buildMonthGrid = (monthStart: Date): Date[] => {
-  const firstWeekday = (monthStart.getDay() + 6) % 7; // 0 = lundi
-  const daysInMonth = new Date(monthStart.getFullYear(), monthStart.getMonth() + 1, 0).getDate();
-  const totalCells = Math.ceil((firstWeekday + daysInMonth) / 7) * 7;
-
-  return Array.from({ length: totalCells }, (_, index) => {
-    const dayOffset = index - firstWeekday;
-    return new Date(monthStart.getFullYear(), monthStart.getMonth(), 1 + dayOffset);
-  });
-};
-
-// Couleurs de badge par phase principale — voir helpers/variables.ts pour les tokens.
-const PHASE_COLORS: Record<PrincipalMoonPhase, { background: string; text: string }> = {
-  New: { background: app_colors.primary.main, text: app_colors.accent.light },
+// Couleurs de badge pour les 4 phases principales uniquement — les autres jours (croissant/
+// gibbeuse) gardent le fond blanc par défaut de DayCell, avec le % d'illumination en repli (voir
+// `label` dans `cells` ci-dessous).
+const PHASE_COLORS: Partial<Record<Phase, { background: string; text: string }>> = {
+  New: { background: app_colors.primary.main, text: app_colors.white },
   "First Quarter": { background: app_colors.accent.light, text: app_colors.primary.main },
   Full: { background: app_colors.yellow.light, text: app_colors.primary.main },
-  "Last Quarter": { background: app_colors.accent.main, text: app_colors.white },
+  "Last Quarter": { background: app_colors.accent.light, text: app_colors.primary.main },
 };
+
+// Grille Lundi→Dimanche couvrant le mois, complétée par les jours adjacents (hors mois, grisés
+// via `inCurrentMonth`) pour remplir des semaines entières.
+const buildMonthGrid = (monthStart: Date): { date: Date; inCurrentMonth: boolean }[] => {
+  const year = monthStart.getFullYear();
+  const month = monthStart.getMonth();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const firstWeekday = (monthStart.getDay() + 6) % 7; // Lundi = 0 (getDay() renvoie Dimanche = 0)
+  const lastWeekday = (new Date(year, month, daysInMonth).getDay() + 6) % 7;
+
+  const days: { date: Date; inCurrentMonth: boolean }[] = [];
+  for (let i = firstWeekday; i > 0; i--) days.push({ date: new Date(year, month, 1 - i), inCurrentMonth: false });
+  for (let d = 1; d <= daysInMonth; d++) days.push({ date: new Date(year, month, d), inCurrentMonth: true });
+  for (let i = 1; i <= 6 - lastWeekday; i++) days.push({ date: new Date(year, month, daysInMonth + i), inCurrentMonth: false });
+
+  return days;
+};
+
+const isSameDay = (a: Date, b: Date) => a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
 
 const MonthView = () => {
   const { t } = useTranslation("moon");
   const { formatDate } = useAppUnits();
-  const { position } = useObservatory();
+  const { location } = useLocation();
 
-  const today = useMemo(() => new Date(), []);
-  const maxMonth = useMemo(() => new Date(today.getFullYear(), 11, 1), [today]);
-  const todayKey = useMemo(() => dateKey(today), [today]);
-
-  const [monthStart, setMonthStart] = useState(() => startOfMonth(today));
+  const [monthStart, setMonthStart] = useState(() => startOfMonth(new Date()));
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 
-  const monthEnd = useMemo(() => new Date(monthStart.getFullYear(), monthStart.getMonth() + 1, 0), [monthStart]);
+  const observer = useMemo(
+    () =>
+      location
+        ? { latitude: location.latitude, longitude: location.longitude, altitude: location.elevation ?? 0 }
+        : undefined,
+    [location]
+  );
 
-  const monthlyPhases = useMonthlyMoonPhases(monthStart, monthEnd);
-  const phaseByDate = useMemo(() => {
-    const map = new Map<string, PrincipalMoonPhase>();
-    monthlyPhases.forEach((entry) => map.set(dateKey(entry.date), entry.phase));
-    return map;
-  }, [monthlyPhases]);
+  const today = new Date();
 
-  // Une seule requête pour les illustrations des ~30 jours du mois affiché, voir
-  // getMoonIllustrationsForMonth. staleTime: Infinity, comme pour l'illustration du jour dans
-  // TonightView — l'illustration d'une date donnée ne change jamais une fois publiée.
-  const { data: illustrations } = useQuery({
-    queryKey: ["moonIllustrationsMonth", monthStart.getFullYear(), monthStart.getMonth() + 1],
-    queryFn: () => getMoonIllustrationsForMonth(monthStart.getMonth() + 1, monthStart.getFullYear()),
-    staleTime: Infinity,
-  });
+  const cells = useMemo(
+    () =>
+      buildMonthGrid(monthStart).map(({ date, inCurrentMonth }) => {
+        if (!inCurrentMonth) return { date, inCurrentMonth, label: "", backgroundColor: undefined, textColor: undefined };
 
-  const illustrationByDate = useMemo(() => {
-    const map = new Map<string, string>();
-    illustrations?.forEach((illustration) => map.set(illustration.date, illustration.url));
-    return map;
-  }, [illustrations]);
+        const phase = getLunarPhase(date);
+        const illumination = getLunarIllumination(date);
+        const phaseColors = PHASE_COLORS[phase];
+        const principalAbbreviation = t(`month.phaseAbbreviations.${phase}`, { defaultValue: "" });
 
-  // Toutes les valeurs par cellule (phase, badge, couleurs) calculées une seule fois par mois
-  // affiché — pas à chaque rendu. Avant cette mémoïsation, ouvrir/fermer la modale de détail
-  // (setSelectedDate) redéclenchait ~30 appels à getLunarIllumination à chaque tap.
-  const cells = useMemo(() => {
-    return buildMonthGrid(monthStart).map((date) => {
-      const inCurrentMonth = date.getMonth() === monthStart.getMonth();
-      const key = dateKey(date);
-      const phase = inCurrentMonth ? phaseByDate.get(key) : undefined;
-      const phaseColors = phase ? PHASE_COLORS[phase] : undefined;
-      const label = inCurrentMonth ? (phase ? t(`month.phaseAbbreviations.${phase}`) : `${getLunarIllumination(date).toFixed(0)}%`) : "";
-
-      return {
-        key,
-        date,
-        dayNumber: date.getDate(),
-        label,
-        backgroundColor: phaseColors?.background,
-        textColor: phaseColors?.text,
-        isToday: inCurrentMonth && key === todayKey,
-        inCurrentMonth,
-        imageUrl: inCurrentMonth ? illustrationByDate.get(key) : undefined,
-      };
-    });
-  }, [monthStart, phaseByDate, illustrationByDate, todayKey, t]);
+        return {
+          date,
+          inCurrentMonth,
+          label: principalAbbreviation || `${Math.round(illumination)}%`,
+          backgroundColor: phaseColors?.background,
+          textColor: phaseColors?.text,
+        };
+      }),
+    [monthStart, t]
+  );
 
   const weeks = useMemo(() => {
-    return Array.from({ length: cells.length / 7 }, (_, index) => cells.slice(index * 7, index * 7 + 7));
+    const rows: typeof cells[] = [];
+    for (let i = 0; i < cells.length; i += 7) rows.push(cells.slice(i, i + 7));
+    return rows;
   }, [cells]);
 
-  const weekdayLabels = t("month.weekdays", { returnObjects: true }) as string[];
-
-  const canGoPrevious = monthStart.getTime() > MIN_MONTH.getTime();
-  const canGoNext = monthStart.getTime() < maxMonth.getTime();
-
-  const handleSelectDate = useCallback((date: Date) => setSelectedDate(date), []);
-
-  const selectedObserver: Observer | undefined = selectedDate && position ? { ...position, datetime: selectedDate } : undefined;
+  const weekdays = t("month.weekdays", { returnObjects: true }) as string[];
 
   return (
     <View style={monthViewStyles.container}>
       <View style={monthViewStyles.header}>
-        <Pressable
-          disabled={!canGoPrevious}
-          onPress={() => setMonthStart((current) => addMonths(current, -1))}
-          style={monthViewStyles.header.arrow}
-        >
-          <Text style={[monthViewStyles.header.arrowLabel, !canGoPrevious && monthViewStyles.header.arrowLabelDisabled]}>‹</Text>
-        </Pressable>
+        <TouchableOpacity style={monthViewStyles.header.arrow} onPress={() => setMonthStart((prev) => addMonths(prev, -1))}>
+          <Text style={monthViewStyles.header.arrowLabel}>‹</Text>
+        </TouchableOpacity>
         <Text style={monthViewStyles.header.title}>{formatDate(monthStart).format("MMMM YYYY")}</Text>
-        <Pressable
-          disabled={!canGoNext}
-          onPress={() => setMonthStart((current) => addMonths(current, 1))}
-          style={monthViewStyles.header.arrow}
-        >
-          <Text style={[monthViewStyles.header.arrowLabel, !canGoNext && monthViewStyles.header.arrowLabelDisabled]}>›</Text>
-        </Pressable>
+        <TouchableOpacity style={monthViewStyles.header.arrow} onPress={() => setMonthStart((prev) => addMonths(prev, 1))}>
+          <Text style={monthViewStyles.header.arrowLabel}>›</Text>
+        </TouchableOpacity>
       </View>
 
       <View style={monthViewStyles.weekdaysRow}>
-        {weekdayLabels.map((label, index) => (
+        {weekdays.map((label, index) => (
           <Text key={index} style={monthViewStyles.weekdaysRow.label}>
             {label}
           </Text>
@@ -150,20 +113,27 @@ const MonthView = () => {
       <View style={monthViewStyles.grid}>
         {weeks.map((week, weekIndex) => (
           <View key={weekIndex} style={monthViewStyles.weekRow}>
-            {week.map(({ key, ...cell }) => (
-              <DayCell key={key} {...cell} onPress={handleSelectDate} />
+            {week.map((cell) => (
+              <DayCell
+                key={dateKey(cell.date)}
+                date={cell.date}
+                dayNumber={cell.date.getDate()}
+                label={cell.label}
+                backgroundColor={cell.backgroundColor}
+                textColor={cell.textColor}
+                isToday={isSameDay(cell.date, today)}
+                inCurrentMonth={cell.inCurrentMonth}
+                onPress={setSelectedDate}
+              />
             ))}
           </View>
         ))}
       </View>
 
+      <MonthlyIlluminationChart monthStart={monthStart} />
+
       {selectedDate && (
-        <DayDetailModal
-          date={selectedDate}
-          observer={selectedObserver}
-          illustrationUrl={illustrationByDate.get(dateKey(selectedDate))}
-          onClose={() => setSelectedDate(null)}
-        />
+        <DayDetailModal date={selectedDate} observer={observer} onClose={() => setSelectedDate(null)} />
       )}
     </View>
   );
