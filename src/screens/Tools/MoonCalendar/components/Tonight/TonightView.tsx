@@ -125,7 +125,7 @@ const TonightView = () => {
   return (
     <View style={[globalStyles.screen.content, { padding: 0 }]}>
       <View style={tonightViewStyles.currentPhaseContainer}>
-        <MoonPhase date={today} size={150} />
+        <MoonPhase date={today} size={150} observer={location ? user : undefined} />
 
         <View style={tonightViewStyles.currentPhaseContainer.infos}>
           <Text style={tonightViewStyles.currentPhaseContainer.infos.subtitle}>{formatDate(today).format("dddd DD MMMM")}</Text>
@@ -162,7 +162,7 @@ const TonightView = () => {
           {
             upcomingPhases.map((event) => (
               <View key={event.phase} style={tonightViewStyles.mainPhasesContainer.card}>
-                <MoonPhase date={event.date} size={64} />
+                <MoonPhase date={event.date} size={64} observer={location ? user : undefined} skyOrientationTime="meridian" />
                 <Text style={tonightViewStyles.mainPhasesContainer.card.date}>
                   {formatDate(event.date).format("D MMM").toUpperCase()}
                 </Text>

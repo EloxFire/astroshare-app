@@ -56,7 +56,7 @@ const DayDetailModal = ({ date, observer, onClose }: DayDetailModalProps) => {
       <Pressable style={dayDetailModalStyles.backdrop} onPress={onClose}>
         <Pressable style={dayDetailModalStyles.sheet} onPress={(event) => event.stopPropagation()}>
           <View style={dayDetailModalStyles.header}>
-            <MoonPhase date={date} size={72} />
+            <MoonPhase date={date} size={72} observer={observer} skyOrientationTime="meridian" />
             <View style={dayDetailModalStyles.header.infos}>
               <Text style={dayDetailModalStyles.header.infos.date}>{formatDate(date).format("dddd DD MMMM")}</Text>
               <Text style={dayDetailModalStyles.header.infos.phase}>{getLunarPhaseLabel(phase)}</Text>
