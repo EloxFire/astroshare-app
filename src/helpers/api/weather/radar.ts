@@ -1,9 +1,10 @@
 import { auth } from "../../../../firebaseConfig";
 import { RadarData } from "../../../types/weather/Radar";
 
-// /v3/weather/radar : pas de query params. Protégée par checkCallFromApp car la tuile "clouds"
-// contient la clé OpenWeatherMap en clair (voulu — c'est comme ça qu'OWM attend qu'on utilise ses
-// tuiles côté client, d'où la protection de la route plutôt que de la clé elle-même).
+// /v3/weather/radar : pas de query params. Protégée (jeton Firebase en Bearer) car la tuile
+// "clouds" contient la clé OpenWeatherMap en clair (voulu — c'est comme ça qu'OWM attend qu'on
+// utilise ses tuiles côté client, d'où la protection de la route plutôt que de la clé elle-même).
+// Précipitations : LibreWXR (historique + prévision, voir RadarFrame.is_forecast).
 export const getWeatherRadar = async (): Promise<RadarData | null> => {
   try {
     console.log(`[getWeatherRadar] Fetching radar data`);

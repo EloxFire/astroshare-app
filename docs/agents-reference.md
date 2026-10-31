@@ -119,6 +119,38 @@ météo, APOD, viseur polaire, météo spatiale), observatoires de l'utilisateur
 - **`presentation` :** `"dropdown"` (liste sous le champ) ou `"sheet"` (panneau `Modal` avec `FlatList`, recherche facultative via `searchable`). Par défaut, le panneau s'ouvre au-delà de `SHEET_OPTIONS_THRESHOLD` (8) options.
 - **Options construites depuis une liste d'ids :** type les ids avec l'union attendue (exemple : `observatoriesTypes` typé `ObservatoryType`).
 
+### `WeatherRadarMap` (`src/components/weather/WeatherRadarMap/`)
+
+Carte radar de l'outil Météo (`react-native-maps`, fournisseur Google). Elle a deux couches de tuiles
+`UrlTile`, chargées directement depuis les fournisseurs : les précipitations, animées, et les nuages.
+Une version plein écran est affichée dans une `Modal`.
+
+- **Données :** `GET /v3/weather/radar` (`src/helpers/api/weather/radar.ts`, jeton Firebase en `Bearer`),
+  lu via `WeatherDataContext`. Le type est dans `src/types/weather/Radar.ts`.
+  - Précipitations : fournisseur **LibreWXR** (remplaçant compatible de l'API RainViewer v2). Une frame
+    toutes les 10 min, triées chronologiquement : environ 2 h d'historique observé
+    (`is_forecast: false`), puis environ 1 h de prévision (`is_forecast: true`). La prévision est
+    expérimentale, sans garantie de service, et **peut être vide**.
+  - Nuages : OpenWeatherMap, **vue instantanée uniquement**, ni historique ni prévision. Leur URL contient
+    une clé en clair, ce qui est voulu : c'est la raison pour laquelle la route est protégée.
+- **Règle :** ne suppose jamais un nombre fixe de frames. Seul `is_forecast` sépare l'observé de la prévision.
+- **« Maintenant » :** c'est la dernière frame observée. La carte s'ouvre et revient en pause sur elle
+  après chaque actualisation, et non sur la dernière frame de la liste, qui serait une prévision.
+- **Piste de lecture :** un repère « maintenant », une zone prévision teintée, et la mention
+  « Observé » ou « Prévision » sous l'heure. Ces éléments n'apparaissent que s'il y a des prévisions.
+  Le bloc de l'heure a une largeur fixe dans ce cas, pour que la piste ne change pas de largeur
+  pendant le glissé.
+- **Nuages suspendus** (`cloudsSuspended`) : ils sont masqués pendant toute l'animation, et à l'arrêt sur
+  une frame de prévision. Ils sont affichés seulement à l'arrêt sur une frame observée. Le bouton
+  nuages garde le choix de l'utilisateur et apparaît grisé (style `suspended`).
+- **Piège, l'opacité de `UrlTile` :** elle sert à masquer les nuages sans retélécharger les tuiles.
+  react-native-maps l'implémente sur Android, mais **pas pour Google Maps sur iOS**
+  (`AIRGoogleMapUrlTile`). Sur iOS, la couche est donc retirée, puis remontée.
+- **Piège, `key` d'une `UrlTile` :** un changement de `urlTemplate` sur une `UrlTile` déjà affichée n'est
+  pas toujours redessiné, à cause du cache natif. D'où le `key` égal à l'URL de la tuile.
+- **Zoom maximal :** plafonné à 12 (`MAX_MAP_ZOOM_LEVEL`), sur la carte comme sur les tuiles.
+- **Traductions :** `tools/weather`, en français seulement pour l'instant.
+
 ---
 
 ## 5. Rendu 3D de la Lune : `MoonPhase`
@@ -301,7 +333,11 @@ Le journal commence avec le commit `8527e2f`. Les changements antérieurs, comme
 i18n, `SelectInput` ou `ImageHeaderScrollView`, sont décrits dans les sections ci-dessus mais n'ont pas
 d'entrée datée.
 
-- **2026-10-31** — même commit — création de ce document et de `CLAUDE.md`. `docs/` est retiré de
+- **2026-10-31** — même commit — carte radar adaptée à la nouvelle API (LibreWXR, frames de prévision
+  `is_forecast`) : ouverture sur « maintenant » au lieu de la dernière frame, repère « maintenant », zone
+  prévision et mention observé/prévision, nuages (instantanés) suspendus pendant l'animation et sur
+  la prévision — §4 `WeatherRadarMap`.
+- **2026-10-31** — `30704d2` — création de ce document et de `CLAUDE.md`. `docs/` est retiré de
   `.gitignore` pour être versionné. Règle : documenter ici tout changement d'agent approuvé et commité —
   §8, `CLAUDE.md`.
 - **2026-10-31** — `8527e2f` — rendu 3D de la Lune :

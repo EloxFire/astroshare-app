@@ -29,6 +29,8 @@
     "subtitle": "Nuages + précipitations",
     "loading": "Chargement du radar…",
     "unavailable": "Radar indisponible pour le moment",
+    "observed": "Observé",
+    "forecast": "Prévision",
     "layers": {
       "clouds": "Nuages",
       "precipitation": "Précipitations"
@@ -38,7 +40,8 @@
       "precipitation": "Précipitations",
       "light": "Léger",
       "heavy": "Fort",
-      "clouds": "Nuages : plus la teinte est opaque, plus la couverture est dense."
+      "clouds": "Nuages : situation actuelle, masqués pendant l'animation et sur la prévision. Plus la teinte est opaque, plus la couverture est dense.",
+      "forecast": "Après le repère « maintenant » : prévision sur environ 1 h, extrapolée du mouvement des précipitations, à titre indicatif."
     }
   },
   "observability": {

@@ -63,6 +63,12 @@ export const weatherRadarMapStyles = {
       active: {
         backgroundColor: app_colors.accent.main,
       },
+
+      // Couche momentanément indisponible (nuages pendant l'animation ou sur une prévision) : le
+      // bouton garde son état actif/inactif, mais grisé.
+      suspended: {
+        opacity: 0.45,
+      },
     },
 
     fullscreenToggle: {
@@ -192,6 +198,28 @@ export const weatherRadarMapStyles = {
       minWidth: 36,
     },
 
+    // Heure + mention observé/prévision. Avec des prévisions, largeur minimale assez grande pour
+    // "PRÉVISION" comme pour "OBSERVÉ" : la piste voisine garde la même largeur quand la mention
+    // change pendant le glissé.
+    timeBlock: {
+      minWidth: 36,
+
+      withStatus: {
+        minWidth: 58,
+      },
+    },
+
+    status: {
+      color: app_colors.primary.medium,
+      fontSize: 9,
+      fontFamily: "DMMonoRegular",
+      textTransform: "uppercase" as const,
+
+      forecast: {
+        color: app_colors.accent.main,
+      },
+    },
+
     // Zone tactile plus grande que la piste visible (plus facile à attraper du doigt) — le padding
     // vertical agrandit la cible sans changer sa largeur (même largeur que `track`, pour que le
     // ratio touché/largeur utilisé par le composant reste cohérent avec le rendu visuel).
@@ -212,6 +240,28 @@ export const weatherRadarMapStyles = {
         height: "100%" as const,
         borderRadius: 2,
         backgroundColor: app_colors.accent.main,
+      },
+
+      // Partie prévision de la piste (après le repère "maintenant"), teintée — `left` posé par le
+      // composant. Enfant de `track` (découpée par son overflow:hidden, comme le remplissage).
+      forecastZone: {
+        position: "absolute" as const,
+        top: 0,
+        bottom: 0,
+        right: 0,
+        backgroundColor: withOpacity(app_colors.accent.main, 0.25),
+      },
+
+      // Repère "maintenant" (dernière frame observée) : sibling de `track` dans le JSX, comme la
+      // poignée, pour dépasser de la piste ; centré sur sa position via translateX.
+      nowMarker: {
+        position: "absolute" as const,
+        top: "50%" as const,
+        width: 2,
+        height: 12,
+        borderRadius: 1,
+        backgroundColor: app_colors.primary.main,
+        transform: [{ translateX: -1 }, { translateY: -6 }],
       },
 
       // Poignée : sibling de `fill` dans le JSX (pas un enfant de `track`, dont l'overflow:hidden

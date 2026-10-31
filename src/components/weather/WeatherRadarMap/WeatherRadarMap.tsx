@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { ActivityIndicator, Modal, PanResponder, Text, TouchableOpacity, View, type GestureResponderEvent, type PanResponderGestureState } from "react-native";
+import { ActivityIndicator, Modal, PanResponder, Platform, Text, TouchableOpacity, View, type GestureResponderEvent, type PanResponderGestureState } from "react-native";
 import MapView, { PROVIDER_GOOGLE, UrlTile } from "react-native-maps";
 import { useTranslation } from "react-i18next";
 import { Cloud, CloudRain, Info, Maximize2, Pause, Play, X } from "lucide-react-native";
@@ -17,7 +17,7 @@ const FRAME_INTERVAL_MS = 500; // même cadence que l'exemple d'intégration fou
 // Repli si la position n'est pas encore connue — même valeur par défaut (Paris) que StepOne.tsx.
 const DEFAULT_REGION = { latitude: 48.856724859667835, longitude: 2.349875271320343 };
 const REGION_DELTA = { latitudeDelta: 2, longitudeDelta: 2 };
-// Les serveurs de tuiles météo (RainViewer/OpenWeather) n'ont pas de données utiles à très haut
+// Les serveurs de tuiles météo (LibreWXR/OpenWeather) n'ont pas de données utiles à très haut
 // niveau de zoom. Plafonné aussi sur la MapView elle-même (maxZoomLevel, pas juste sur les tuiles
 // météo) : au-delà, l'imagerie Google elle-même peut ne pas être disponible pour une zone rurale
 // (watermark "Zoom level not supported" de Google, rendu plus visible par la couche précipitations
@@ -26,8 +26,8 @@ const REGION_DELTA = { latitudeDelta: 2, longitudeDelta: 2 };
 const MAX_MAP_ZOOM_LEVEL = 12;
 
 // Carte radar autonome : lit `radar` directement depuis WeatherDataContext (déjà récupéré pour
-// tout l'écran météo), anime les frames de précipitation de RainViewer par-dessus la couche
-// nuages instantanée d'OpenWeather.
+// tout l'écran météo), anime les frames de précipitation de LibreWXR (~2h d'historique observé
+// puis ~1h de prévision) par-dessus la couche nuages instantanée d'OpenWeather.
 const WeatherRadarMap = () => {
   const { t } = useTranslation("tools/weather");
   const { radar } = useWeatherData();
@@ -46,10 +46,19 @@ const WeatherRadarMap = () => {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showLegend, setShowLegend] = useState(false);
 
-  // Repart en pause sur la frame la plus récente à chaque nouveau radar (ex: après un refetch) —
-  // pas de lecture automatique.
+  // Dernière frame observée = "maintenant" : les suivantes sont des prévisions. Uniquement d'après
+  // `is_forecast`, jamais d'après un nombre fixe de frames — la prévision peut être vide si le
+  // nowcast du fournisseur est indisponible (pas de repère "maintenant" ni de zone prévision alors).
+  const lastObservedIndex = frames.findLastIndex((frame) => !frame.is_forecast);
+  const hasForecast = frames.some((frame) => frame.is_forecast);
+  // Position du repère "maintenant" sur la piste (0 → 1), même base que progressRatio.
+  const nowRatio = Math.max(lastObservedIndex, 0) / Math.max(frames.length - 1, 1);
+
+  // Repart en pause sur "maintenant" (la dernière frame observée, pas la dernière de la liste, qui
+  // serait une prévision à ~+1h) à chaque nouveau radar (ex: après un refetch) — pas de lecture
+  // automatique.
   useEffect(() => {
-    setFrameIndex(Math.max(frames.length - 1, 0));
+    setFrameIndex(lastObservedIndex >= 0 ? lastObservedIndex : Math.max(frames.length - 1, 0));
     setIsPlaying(false);
   }, [radar]);
 
@@ -63,6 +72,13 @@ const WeatherRadarMap = () => {
   }, [isPlaying, frames.length]);
 
   const currentFrame = frames[frameIndex];
+
+  // Les nuages d'OpenWeather sont une vue instantanée (ni historique ni prévision) : masqués pendant
+  // l'animation, qui parcourt des heures passées et futures, et à l'arrêt sur une frame de
+  // prévision. Affichés seulement à l'arrêt sur une frame observée (dont le glissé sur la piste, qui
+  // met la lecture en pause). Le bouton nuages garde le choix de l'utilisateur (showClouds) et
+  // apparaît grisé tant que la couche est ainsi suspendue.
+  const cloudsSuspended = isPlaying || Boolean(currentFrame?.is_forecast);
   // 0 → 1, position dans la séquence — base commune au remplissage de la piste ET à la poignée,
   // pour qu'ils restent alignés.
   const progressRatio = frameIndex / Math.max(frames.length - 1, 1);
@@ -104,9 +120,19 @@ const WeatherRadarMap = () => {
   // WeatherDataContext) ne faisait rien visuellement.
   const renderTileLayers = () => (
     <>
+      {/* Nuages suspendus (voir cloudsSuspended) : masqués par l'opacité plutôt que retirés, pour
+          garder les tuiles chargées (pas de nouveau téléchargement à chaque pause/reprise). Sauf sur
+          iOS, où react-native-maps n'implémente pas `opacity` pour les tuiles Google Maps
+          (AIRGoogleMapUrlTile) : la couche y est retirée. */}
       {
-        showClouds && radar && (
-          <UrlTile key={radar.clouds.tileUrlTemplate} urlTemplate={radar.clouds.tileUrlTemplate} zIndex={1} maximumNativeZ={MAX_MAP_ZOOM_LEVEL} />
+        showClouds && radar && !(cloudsSuspended && Platform.OS === "ios") && (
+          <UrlTile
+            key={radar.clouds.tileUrlTemplate}
+            urlTemplate={radar.clouds.tileUrlTemplate}
+            zIndex={1}
+            maximumNativeZ={MAX_MAP_ZOOM_LEVEL}
+            opacity={cloudsSuspended ? 0 : 1}
+          />
         )
       }
       {
@@ -127,6 +153,7 @@ const WeatherRadarMap = () => {
         style={[
           weatherRadarMapStyles.floatingControls.buttonBase,
           showClouds && weatherRadarMapStyles.floatingControls.buttonBase.active,
+          cloudsSuspended && weatherRadarMapStyles.floatingControls.buttonBase.suspended,
         ]}
         onPress={() => setShowClouds((current) => !current)}
       >
@@ -153,8 +180,9 @@ const WeatherRadarMap = () => {
     </View>
   );
 
-  // Légende approximative des couleurs RainViewer (pas de donnée fournie par l'API pour ça) + une
-  // note pour les nuages (simple opacité, pas d'échelle de couleur).
+  // Légende approximative des couleurs du radar (pas de donnée fournie par l'API pour ça — LibreWXR
+  // reprend le format de tuiles de RainViewer, schéma de couleurs n° 2 dans l'URL) + une note pour
+  // les nuages (simple opacité, pas d'échelle de couleur) et, s'il y en a, pour la prévision.
   const renderLegend = (topOffset: number = 0) => (
     showLegend && (
       <View style={[weatherRadarMapStyles.legend, { top: 56 + topOffset }]}>
@@ -173,17 +201,26 @@ const WeatherRadarMap = () => {
         </View>
 
         <Text style={weatherRadarMapStyles.legend.note}>{t("radar.legend.clouds")}</Text>
+        {hasForecast && <Text style={weatherRadarMapStyles.legend.note}>{t("radar.legend.forecast")}</Text>}
       </View>
     )
   );
 
-  // Lecture/pause + heure de la frame affichée + position dans la séquence. Réutilisée pour la
-  // carte normale (couleurs par défaut, sur fond clair) et la carte plein écran (texte/piste
-  // éclaircis, sur fond noir — voir `options`).
+  // Lecture/pause + heure de la frame affichée (et, s'il y a des prévisions, si elle est observée ou
+  // prévue) + position dans la séquence, avec le repère "maintenant" et la zone prévision teintée.
+  // Réutilisée pour la carte normale (couleurs par défaut, sur fond clair) et la carte plein écran
+  // (texte/piste/repère éclaircis, sur fond noir — voir `options`).
   const renderControls = (
     onTrackLayoutWidth: (width: number) => void,
     panResponder: ReturnType<typeof makePanResponder>,
-    options?: { containerStyle?: object; timeColor?: string; trackColor?: string }
+    options?: {
+      containerStyle?: object;
+      timeColor?: string;
+      trackColor?: string;
+      observedColor?: string;
+      forecastColor?: string;
+      nowMarkerColor?: string;
+    }
   ) => (
     currentFrame && (
       <View style={[weatherRadarMapStyles.controls, options?.containerStyle]}>
@@ -195,9 +232,28 @@ const WeatherRadarMap = () => {
           }
         </TouchableOpacity>
 
-        <Text style={[weatherRadarMapStyles.controls.time, options?.timeColor ? { color: options.timeColor } : null]}>
-          {formatDate(currentFrame.time_tag).format("HH:mm")}
-        </Text>
+        {/* Largeur fixe quand il y a des prévisions (voir timeBlock.withStatus) : la mention
+            observé/prévision change pendant le glissé, et la piste à côté ne doit pas changer de
+            largeur sous le doigt — le PanResponder convertit la position avec la largeur mesurée. */}
+        <View style={[weatherRadarMapStyles.controls.timeBlock, hasForecast && weatherRadarMapStyles.controls.timeBlock.withStatus]}>
+          <Text style={[weatherRadarMapStyles.controls.time, options?.timeColor ? { color: options.timeColor } : null]}>
+            {formatDate(currentFrame.time_tag).format("HH:mm")}
+          </Text>
+          {
+            hasForecast && (
+              <Text
+                style={[
+                  weatherRadarMapStyles.controls.status,
+                  currentFrame.is_forecast && weatherRadarMapStyles.controls.status.forecast,
+                  !currentFrame.is_forecast && options?.observedColor ? { color: options.observedColor } : null,
+                  currentFrame.is_forecast && options?.forecastColor ? { color: options.forecastColor } : null,
+                ]}
+              >
+                {currentFrame.is_forecast ? t("radar.forecast") : t("radar.observed")}
+              </Text>
+            )
+          }
+        </View>
 
         {/* Zone de toucher plus grande que la piste visible (plus facile à attraper du doigt) */}
         <View
@@ -206,8 +262,21 @@ const WeatherRadarMap = () => {
           {...panResponder.panHandlers}
         >
           <View style={[weatherRadarMapStyles.controls.track, options?.trackColor ? { backgroundColor: options.trackColor } : null]}>
+            {/* Avant le remplissage dans le JSX : dessinée dessous, le remplissage la recouvre en avançant. */}
+            {hasForecast && <View style={[weatherRadarMapStyles.controls.track.forecastZone, { left: `${nowRatio * 100}%` }]} />}
             <View style={[weatherRadarMapStyles.controls.track.fill, { width: `${progressRatio * 100}%` }]} />
           </View>
+          {
+            hasForecast && (
+              <View
+                style={[
+                  weatherRadarMapStyles.controls.track.nowMarker,
+                  { left: `${nowRatio * 100}%` },
+                  options?.nowMarkerColor ? { backgroundColor: options.nowMarkerColor } : null,
+                ]}
+              />
+            )
+          }
           <View style={[weatherRadarMapStyles.controls.track.thumb, { left: `${progressRatio * 100}%` }]} />
         </View>
       </View>
@@ -302,6 +371,9 @@ const WeatherRadarMap = () => {
               containerStyle: [weatherRadarMapStyles.fullscreen.controls, { bottom: 20 + insets.bottom }],
               timeColor: app_colors.white,
               trackColor: withOpacity(app_colors.white, 0.2),
+              observedColor: withOpacity(app_colors.white, 0.7),
+              forecastColor: app_colors.accent.light,
+              nowMarkerColor: app_colors.white,
             })
           }
         </View>
