@@ -1,6 +1,5 @@
-import { ActivityIndicator, InteractionManager, Text, View } from "react-native";
+import { InteractionManager, Text, View } from "react-native";
 import type { SuggestionCard as SuggestionCardType } from "../../../../../types/suggestions/suggestionCard";
-import { Image } from "expo-image";
 import { useEffect, useMemo, useState } from "react";
 import { tonightViewStyles } from "./TonightView.styles";
 import { useAppUnits, type FormatDate } from "../../../../../hooks/useAppUnits";
@@ -8,8 +7,7 @@ import { useTranslation } from "react-i18next";
 import { globalStyles } from "../../../../../helpers/globalStyles";
 import { getLunarPhaseLabel, getNextFirstMoonQuarter, getNextFullMoon, getNextLastMoonQuarter } from "../../../../../helpers/astrometry/moon/moonHelpers";
 import { convertEquatorialToHorizontal, getBodyNextRise, getBodyNextSet, getLunarAge, getLunarAngularDiameter, getLunarDistance, getLunarEclipticCoordinate, getLunarEquatorialCoordinate, getLunarIllumination, getLunarPhase, getNextNewMoon, LUNAR_SYNODIC_MONTH } from "@observerly/astrometry";
-import { getMoonIllustration } from "../../../../../helpers/api/moon/moonIllustration";
-import { app_colors } from "../../../../../helpers/variables";
+import MoonPhase from "../../../../../components/MoonPhase/MoonPhase";
 import ListCard from "../../../../../components/cards/ListCard/ListCard";
 import ValueCard from "../../../../../components/cards/ValueCard/ValueCard";
 import { formatDistanceInKm, formatTransit } from "../../../../../helpers/format";
@@ -34,8 +32,6 @@ const TonightView = () => {
   const { formatDate } = useAppUnits();
   const [computedMoon, setComputedMoon] = useState<any>(null);
   const [loadingAdditionalData, setLoadingAdditionalData] = useState<boolean>(true);
-  const [illustrationUrl, setIllustrationUrl] = useState<string | null>(null);
-  const [upcomingIllustrations, setUpcomingIllustrations] = useState<(string | null)[]>([]);
   const [displayedSuggestion, setDisplayedSuggestion] = useState<SuggestionCardType | null>(null);
 
   const today = useMemo(() => new Date(), []);
@@ -118,26 +114,9 @@ const TonightView = () => {
   }, []);
 
   useEffect(() => {
-    (async () => {
-      const url = await getMoonIllustration(today);
-      setIllustrationUrl(url);
-    })();
-  }, []);
-
-  useEffect(() => {
     const suggestion = getRandomMoonCalendarSuggestion();
     setDisplayedSuggestion(suggestion);
   }, [])
-
-  // Une illustration par phase à venir, une fois la liste triée disponible (voir upcomingPhases
-  // ci-dessus — dépend de nextNewMoon, calculé après le montage).
-  useEffect(() => {
-    if (upcomingPhases.length === 0) return;
-    (async () => {
-      const urls = await Promise.all(upcomingPhases.map((event) => getMoonIllustration(event.date)));
-      setUpcomingIllustrations(urls);
-    })();
-  }, [upcomingPhases]);
 
   useEffect(() => {
     StatusBar.setStyle("dark");
@@ -146,20 +125,8 @@ const TonightView = () => {
   return (
     <View style={[globalStyles.screen.content, { padding: 0 }]}>
       <View style={tonightViewStyles.currentPhaseContainer}>
-        {
-          illustrationUrl ? (
-            <Image
-              source={{ uri: illustrationUrl ?? undefined }}
-              style={{ width: 150, height: 150, borderRadius: 75 }}
-              cachePolicy="memory-disk"
-            />
-          ) : (
-            <View style={{width: 150, height: 150, display: "flex", alignItems: "center", justifyContent: "center"}}>
-              <ActivityIndicator color={app_colors.yellow.light}/>
-            </View>
-          )
-        }
-        
+        <MoonPhase date={today} size={150} />
+
         <View style={tonightViewStyles.currentPhaseContainer.infos}>
           <Text style={tonightViewStyles.currentPhaseContainer.infos.subtitle}>{formatDate(today).format("dddd DD MMMM")}</Text>
           <Text style={tonightViewStyles.currentPhaseContainer.infos.phase}>{computedMoon?.phase}</Text>
@@ -193,13 +160,9 @@ const TonightView = () => {
         <Text style={[globalStyles.categoryTitle, { fontSize: 12 }]}>{t("phasesOverview.title")}</Text>
         <View style={tonightViewStyles.mainPhasesContainer}>
           {
-            upcomingPhases.map((event, index) => (
+            upcomingPhases.map((event) => (
               <View key={event.phase} style={tonightViewStyles.mainPhasesContainer.card}>
-                <Image
-                  source={{ uri: upcomingIllustrations[index] ?? undefined }}
-                  style={tonightViewStyles.mainPhasesContainer.card.image}
-                  cachePolicy="memory-disk"
-                />
+                <MoonPhase date={event.date} size={64} />
                 <Text style={tonightViewStyles.mainPhasesContainer.card.date}>
                   {formatDate(event.date).format("D MMM").toUpperCase()}
                 </Text>

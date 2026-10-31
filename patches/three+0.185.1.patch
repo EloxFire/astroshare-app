@@ -1,0 +1,56 @@
+diff --git a/node_modules/three/build/three.cjs b/node_modules/three/build/three.cjs
+index 8939a67..2272973 100644
+--- a/node_modules/three/build/three.cjs
++++ b/node_modules/three/build/three.cjs
+@@ -67072,7 +67072,7 @@ function WebGLProgram( renderer, cacheKey, parameters, bindingStates ) {
+ 	function onFirstUse( self ) {
+ 
+ 		// check for link errors
+-		if ( renderer.debug.checkShaderErrors ) {
++		if ( renderer.debug.checkShaderErrors && program ) {
+ 
+ 			const programInfoLog = gl.getProgramInfoLog( program ) || '';
+ 			const vertexShaderInfoLog = gl.getShaderInfoLog( glVertexShader ) || '';
+@@ -76069,7 +76069,11 @@ class WebGLRenderer {
+ 
+ 		if ( context !== null ) {
+ 
+-			if ( typeof WebGLRenderingContext !== 'undefined' && context instanceof WebGLRenderingContext ) {
++			// Patched for expo-gl: its native context prototype-chains through a legacy WebGL1-like
++			// base class even when the context is actually WebGL2-capable (unlike real browsers,
++			// where WebGLRenderingContext/WebGL2RenderingContext are siblings, not a subclass
++			// relationship) — this check is a false positive on expo-gl, never on a real browser.
++			if ( false && typeof WebGLRenderingContext !== 'undefined' && context instanceof WebGLRenderingContext ) {
+ 
+ 				throw new Error( 'THREE.WebGLRenderer: WebGL 1 is not supported since r163.' );
+ 
+diff --git a/node_modules/three/src/renderers/WebGLRenderer.js b/node_modules/three/src/renderers/WebGLRenderer.js
+index cc2f156..27fe6ba 100644
+--- a/node_modules/three/src/renderers/WebGLRenderer.js
++++ b/node_modules/three/src/renderers/WebGLRenderer.js
+@@ -97,7 +97,11 @@ class WebGLRenderer {
+ 
+ 		if ( context !== null ) {
+ 
+-			if ( typeof WebGLRenderingContext !== 'undefined' && context instanceof WebGLRenderingContext ) {
++			// Patched for expo-gl: its native context prototype-chains through a legacy WebGL1-like
++			// base class even when the context is actually WebGL2-capable (unlike real browsers,
++			// where WebGLRenderingContext/WebGL2RenderingContext are siblings, not a subclass
++			// relationship) — this check is a false positive on expo-gl, never on a real browser.
++			if ( false && typeof WebGLRenderingContext !== 'undefined' && context instanceof WebGLRenderingContext ) {
+ 
+ 				throw new Error( 'THREE.WebGLRenderer: WebGL 1 is not supported since r163.' );
+ 
+diff --git a/node_modules/three/src/renderers/webgl/WebGLProgram.js b/node_modules/three/src/renderers/webgl/WebGLProgram.js
+index 5c361f1..53d1905 100644
+--- a/node_modules/three/src/renderers/webgl/WebGLProgram.js
++++ b/node_modules/three/src/renderers/webgl/WebGLProgram.js
+@@ -860,7 +860,7 @@ function WebGLProgram( renderer, cacheKey, parameters, bindingStates ) {
+ 	function onFirstUse( self ) {
+ 
+ 		// check for link errors
+-		if ( renderer.debug.checkShaderErrors ) {
++		if ( renderer.debug.checkShaderErrors && program ) {
+ 
+ 			const programInfoLog = gl.getProgramInfoLog( program ) || '';
+ 			const vertexShaderInfoLog = gl.getShaderInfoLog( glVertexShader ) || '';
