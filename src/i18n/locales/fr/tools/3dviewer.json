@@ -1,0 +1,23 @@
+{
+  "title": "Modèles 3D",
+  "modelCount_one": "{{count}} modèle",
+  "modelCount_other": "{{count}} modèles",
+  "modelCategories": {
+    "solarsystem": "Système solaire",
+    "space-probes": "Sondes spatiales",
+    "launchers": "Lanceurs spatiaux",
+    "satellites": "Satellites"
+  },
+  "modelNames": {
+    "moon": "Lune",
+    "sun": "Soleil",
+    "ariane-6": "Ariane 6",
+    "voyager-1": "Voyager 1",
+    "earth:": "La Terre",
+    "starlink": "Starlink",
+  },
+  "modelDescriptions": {
+    "moon": "Notre satellite naturel, en 3D.",
+    "sun": "Notre étoile, comme vous ne l'avez jamais vue !"
+  }
+}

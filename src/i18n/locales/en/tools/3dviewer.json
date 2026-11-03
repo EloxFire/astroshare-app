@@ -1,0 +1,14 @@
+{
+  "title": "3D models",
+  "modelCount_one": "{{count}} model",
+  "modelCount_other": "{{count}} models",
+  "modelCategories": {
+    "solarsystem": "Solar System"
+  },
+  "modelNames": {
+    "moon": "Moon"
+  },
+  "modelDescriptions": {
+    "moon": "Our natural satellite, in 3D."
+  }
+}

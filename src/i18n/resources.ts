@@ -14,6 +14,7 @@ import apod_fr from "./locales/fr/tools/apod.json";
 import polarScope_fr from "./locales/fr/tools/polarScope.json";
 import spaceWeather_fr from "./locales/fr/tools/spaceWeather.json";
 import weather_fr from "./locales/fr/tools/weather.json";
+import threeDViewer_fr from "./locales/fr/tools/3dviewer.json";
 // ENGLISH IMPORTS
 import common_en from "./locales/en/common.json";
 import tools_en from "./locales/en/tools.json";
@@ -25,6 +26,7 @@ import authLogin_en from "./locales/en/auth/login.json";
 import authRegister_en from "./locales/en/auth/register.json";
 import authForgotPassword_en from "./locales/en/auth/forgotPassword.json";
 import authProfile_en from "./locales/en/auth/profile.json";
+import threeDViewer_en from "./locales/en/tools/3dviewer.json";
 // ITALIAN IMPORTS
 import common_it from "./locales/it/common.json";
 import tools_it from "./locales/it/tools.json";
@@ -36,6 +38,7 @@ import authLogin_it from "./locales/it/auth/login.json";
 import authRegister_it from "./locales/it/auth/register.json";
 import authForgotPassword_it from "./locales/it/auth/forgotPassword.json";
 import authProfile_it from "./locales/it/auth/profile.json";
+import threeDViewer_it from "./locales/it/tools/3dviewer.json";
 
 // Source unique des traductions, partagée par l'init i18next (index.ts) et le calcul de
 // complétude (translationCompleteness.ts) : un namespace ajouté ici est pris en compte partout.
@@ -60,6 +63,7 @@ export const resources = {
     "tools/polarScope": polarScope_fr,
     "tools/spaceWeather": spaceWeather_fr,
     "tools/weather": weather_fr,
+    "tools/3dviewer": threeDViewer_fr,
   },
   en: {
     common: common_en,
@@ -72,6 +76,7 @@ export const resources = {
     "auth/register": authRegister_en,
     "auth/forgotPassword": authForgotPassword_en,
     "auth/profile": authProfile_en,
+    "tools/3dviewer": threeDViewer_en,
   },
   it: {
     common: common_it,
@@ -84,6 +89,7 @@ export const resources = {
     "auth/register": authRegister_it,
     "auth/forgotPassword": authForgotPassword_it,
     "auth/profile": authProfile_it,
+    "tools/3dviewer": threeDViewer_it,
   },
 };
 
