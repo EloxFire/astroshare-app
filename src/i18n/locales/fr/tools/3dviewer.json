@@ -11,13 +11,29 @@
   "modelNames": {
     "moon": "Lune",
     "sun": "Soleil",
+    "mars": "Mars",
     "ariane-6": "Ariane 6",
     "voyager-1": "Voyager 1",
-    "earth:": "La Terre",
+    "earth": "La Terre",
     "starlink": "Starlink",
+    "hubble": "Hubble",
+    "iss": "ISS",
+    "tiangong": "Tiangong",
   },
   "modelDescriptions": {
-    "moon": "Notre satellite naturel, en 3D.",
-    "sun": "Notre étoile, comme vous ne l'avez jamais vue !"
+    "moon": "Notre satellite naturel.",
+    "sun": "Notre étoile, comme vous ne l'avez jamais vue !",
+    "mars": "La fameuse planète rouge.",
+    "ariane-6": "Le nouveau lanceur européen.",
+    "voyager-1": "L'objet artificiel le plus éloigné de la Terre.",
+    "earth": "La planète bleue, notre foyer.",
+    "starlink": "Satellite internet de SpaceX.",
+    "hubble": "Le célèbre télescope spatial.",
+    "iss": "La station spatiale internationale.",
+    "tiangong": "La station spatiale chinoise."
+  },
+  "featured": {
+    "headline": "À la une",
+    "view3d": "Ouvrir en 3D"
   }
 }

@@ -1,22 +1,73 @@
-import { app_colors, radius } from "../../../helpers/variables";
+import { app_colors, radius, withOpacity } from "../../../helpers/variables";
 
 export const threeDViewerScreenStyles = {
+  featuredCard: {
+    backgroundColor: app_colors.primary.main,
+    borderRadius: radius.heroCard,
+    padding: 20,
+    marginBottom: 10,
+
+    display: "flex" as const,
+    flexDirection: "row" as const,
+    alignItems: "center" as const,
+    gap: 20,
+
+    content: {
+      display: "flex" as const,
+      flexDirection: "column" as const,
+      flex: 1,
+
+      headline: {
+        fontSize: 12,
+        marginBottom: 5,
+        fontFamily: "DMMonoRegular",
+        color: app_colors.accent.light,
+        textTransform: "uppercase" as const,
+      },
+
+      title: {
+        fontSize: 25,
+        fontFamily: "ZTNatureBold",
+        color: app_colors.white,
+      },
+
+      description: {
+        fontSize: 12,
+        fontFamily: "DMMonoRegular",
+        color: withOpacity(app_colors.white, 0.5),
+      },
+
+      button: {
+        display: "flex" as const,
+        flexDirection: "row" as const,
+        alignItems: "center" as const,
+        gap: 5,
+        marginTop: 20,
+        paddingHorizontal: 20,
+        paddingVertical: 10,
+        backgroundColor: app_colors.accent.main,
+        borderRadius: radius.badge44,
+        alignSelf: "flex-start" as const,
+
+        text: {
+          fontSize: 12,
+          fontFamily: "DMMonoRegular",
+          color: app_colors.white,
+        }
+      }
+    },
+    image: {
+      width: 120,
+      height: 120,
+      borderRadius: radius.heroCard,
+      backgroundColor: withOpacity(app_colors.white, 0.2),
+    }
+  },
+
   modelsList: {
     display: "flex" as const,
     flexDirection: "row" as const,
+    flexWrap: "wrap" as const,
     gap: 10,
-
-    modelCard: {
-      borderRadius: radius.badge44,
-      width: 100,
-      height: 100,
-      backgroundColor: app_colors.accent.light,
-      padding: 10,
-  
-      title: {
-        fontFamily: "ZTNatureBold",
-        fontSize: 16
-      }
-    }
   }
 }
