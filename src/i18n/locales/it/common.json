@@ -12,7 +12,17 @@
   },
   "units": {
     "meters": "{{value}} m",
-    "kilometers": "{{value}} km"
+    "kilometers": "{{value}} km",
+    "kilometersPerHour": "{{value}} km/h",
+    "minutes": "{{value}} min",
+    "days": "{{value}} giorni",
+    "gravity": "{{value}} m/s²"
+  },
+  "downloadButton": {
+    "download": "Scarica",
+    "retry": "Riprova",
+    "sizeKb": "{{size}} KB",
+    "sizeMb": "{{size}} MB"
   },
   "errors": {
     "locationPermissionDenied": "Permesso di localizzazione negato",

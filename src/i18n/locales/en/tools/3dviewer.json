@@ -3,12 +3,69 @@
   "modelCount_one": "{{count}} model",
   "modelCount_other": "{{count}} models",
   "modelCategories": {
-    "solarsystem": "Solar System"
+    "solarsystem": "Solar System",
+    "satellites": "Satellites"
   },
   "modelNames": {
-    "moon": "Moon"
+    "moon": "Moon",
+    "iss": "ISS"
   },
   "modelDescriptions": {
-    "moon": "Our natural satellite, in 3D."
-  }
+    "moon": "Our natural satellite, in 3D.",
+    "iss": "The International Space Station."
+  },
+  "tags": {
+    "solarSystem": "Solar System",
+    "nakedEyeVisible": "Visible to the naked eye",
+    "lowEarthOrbit": "Low Earth orbit",
+    "permanentlyInhabited": "Permanently inhabited"
+  },
+  "stats": {
+    "diameter": "Diameter",
+    "diameterComparison": "⅓ of Earth's",
+    "distance": "Average distance",
+    "rotation": "Orbit around Earth",
+    "gravity": "Gravity",
+    "gravityComparison": "⅙ of Earth's",
+    "length": "Length",
+    "altitude": "Orbital altitude",
+    "speed": "Orbital speed",
+    "speedComparison": "Paris-New York in 13 min",
+    "orbitalPeriod": "Orbital period"
+  },
+  "longDescriptions": {
+    "moon": "Earth's only natural satellite, the Moon most likely formed about 4.5 billion years ago, after the young Earth collided with a Mars-sized body. Its dark patches, the \"maria\", are ancient lava flows. The lighter areas are highlands covered in craters.",
+    "iss": "In orbit since 1998, the ISS is the largest artificial object ever assembled in space. Built through a partnership between the US, Russian, European, Japanese and Canadian space agencies, it serves as a microgravity research lab and has hosted a continuous international crew since November 2000."
+  },
+  "funFacts": {
+    "moon": "The Moon rotates on its axis in the same time it takes to orbit Earth, so it always shows us the same face.",
+    "iss": "The ISS travels the equivalent of more than 15 times around Earth every day."
+  },
+  "pointsOfInterest": {
+    "tranquility": { "title": "Sea of Tranquility", "description": "Apollo 11 landing site, 1969" },
+    "tycho": { "title": "Tycho crater", "description": "Bright rays visible with binoculars" },
+    "imbrium": { "title": "Sea of Rains", "description": "1,100 km wide impact basin" }
+  },
+  "sections": {
+    "inNumbers": "In numbers",
+    "description": "Description",
+    "funFact": "Did you know?",
+    "pointsOfInterest": "Spot on the model",
+    "seeAlso": "See also"
+  },
+  "readMore": "Read more",
+  "readLess": "Read less",
+  "pointsOfInterestCount_one": "{{count}} landmark",
+  "pointsOfInterestCount_other": "{{count}} landmarks",
+  "today": {
+    "label": "Tonight",
+    "value": "{{percent}} % · {{phase}}",
+    "phasesLink": "Phases"
+  },
+  "viewer": {
+    "comingSoon": "3D view coming soon",
+    "viewReady": "View in 3D"
+  },
+  "source": "3D model: {{name}}",
+  "shareMessage": "Check out {{name}} in 3D on Astroshare!"
 }

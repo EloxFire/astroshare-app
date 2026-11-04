@@ -3,12 +3,69 @@
   "modelCount_one": "{{count}} modello",
   "modelCount_other": "{{count}} modelli",
   "modelCategories": {
-    "solarsystem": "Sistema solare"
+    "solarsystem": "Sistema solare",
+    "satellites": "Satelliti"
   },
   "modelNames": {
-    "moon": "Luna"
+    "moon": "Luna",
+    "iss": "ISS"
   },
   "modelDescriptions": {
-    "moon": "Il nostro satellite naturale, in 3D."
-  }
+    "moon": "Il nostro satellite naturale, in 3D.",
+    "iss": "La Stazione Spaziale Internazionale."
+  },
+  "tags": {
+    "solarSystem": "Sistema solare",
+    "nakedEyeVisible": "Visibile a occhio nudo",
+    "lowEarthOrbit": "Orbita bassa",
+    "permanentlyInhabited": "Abitata permanentemente"
+  },
+  "stats": {
+    "diameter": "Diametro",
+    "diameterComparison": "⅓ della Terra",
+    "distance": "Distanza media",
+    "rotation": "Giro attorno alla Terra",
+    "gravity": "Gravità",
+    "gravityComparison": "⅙ della Terra",
+    "length": "Lunghezza",
+    "altitude": "Altitudine orbitale",
+    "speed": "Velocità orbitale",
+    "speedComparison": "Parigi-New York in 13 min",
+    "orbitalPeriod": "Durata di un'orbita"
+  },
+  "longDescriptions": {
+    "moon": "Unico satellite naturale della Terra, la Luna si è probabilmente formata circa 4,5 miliardi di anni fa, dopo la collisione tra la giovane Terra e un corpo delle dimensioni di Marte. Le sue macchie scure, i \"mari\", sono antiche colate laviche. Le zone chiare sono altopiani ricoperti di crateri.",
+    "iss": "In orbita dal 1998, la ISS è il più grande oggetto artificiale mai assemblato nello spazio. Frutto di una collaborazione tra le agenzie spaziali americana, russa, europea, giapponese e canadese, funge da laboratorio di ricerca in microgravità e ospita in permanenza un equipaggio internazionale dal novembre 2000."
+  },
+  "funFacts": {
+    "moon": "La Luna ruota su se stessa nello stesso tempo che impiega a girare attorno alla Terra, mostrandoci quindi sempre la stessa faccia.",
+    "iss": "La ISS percorre ogni giorno l'equivalente di oltre 15 giri attorno alla Terra."
+  },
+  "pointsOfInterest": {
+    "tranquility": { "title": "Mare della Tranquillità", "description": "Allunaggio di Apollo 11, 1969" },
+    "tycho": { "title": "Cratere Tycho", "description": "Raggi chiari visibili con il binocolo" },
+    "imbrium": { "title": "Mare delle Piogge", "description": "Bacino d'impatto di 1.100 km" }
+  },
+  "sections": {
+    "inNumbers": "In cifre",
+    "description": "Descrizione",
+    "funFact": "Lo sapevi?",
+    "pointsOfInterest": "Da individuare sul modello",
+    "seeAlso": "Vedi anche"
+  },
+  "readMore": "Leggi di più",
+  "readLess": "Riduci",
+  "pointsOfInterestCount_one": "{{count}} punto",
+  "pointsOfInterestCount_other": "{{count}} punti",
+  "today": {
+    "label": "Stasera",
+    "value": "{{percent}} % · {{phase}}",
+    "phasesLink": "Fasi"
+  },
+  "viewer": {
+    "comingSoon": "Visualizzazione 3D in arrivo",
+    "viewReady": "Vedi in 3D"
+  },
+  "source": "Modello 3D: {{name}}",
+  "shareMessage": "Scopri {{name}} in 3D su Astroshare!"
 }

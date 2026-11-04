@@ -17,6 +17,27 @@ export const illustratedButtonCardStyles = {
       aspectRatio: 1,
       borderRadius: radius.badge44,
       overflow: "hidden" as const,
+
+      // Pastille de statut de téléchargement (icône ou pourcentage) — position:"absolute" se cale
+      // sur ce conteneur, position:"relative" par défaut des View RN, pas besoin de le préciser.
+      downloadBadge: {
+        position: "absolute" as const,
+        top: 6,
+        right: 6,
+        minWidth: 20,
+        height: 20,
+        paddingHorizontal: 4,
+        borderRadius: 10,
+        backgroundColor: app_colors.accent.main,
+        alignItems: "center" as const,
+        justifyContent: "center" as const,
+
+        text: {
+          fontFamily: "DMMonoMedium",
+          fontSize: 9,
+          color: app_colors.white,
+        },
+      },
     },
 
     image: {

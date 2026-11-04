@@ -1,15 +1,16 @@
-import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native"
+import { Image, ScrollView, Text, View } from "react-native"
 import { globalStyles } from "../../../helpers/globalStyles"
 import { ScreenHeader } from "../../../components/ScreenHeader/ScreenHeader"
 import { useTranslation } from "react-i18next"
-import { useFocusEffect } from "expo-router"
+import { router, useFocusEffect } from "expo-router"
 import { useCallback, useEffect, useState } from "react"
 import { StatusBar } from "expo-status-bar"
 import { toolsSectionStyles } from "../components/ToolsSection/ToolsSection.styles"
 import { threeDModelsCategories, threeDModelsList } from "../../../helpers/tools/3dviewer"
 import { threeDViewerScreenStyles } from "./3dViewer.styles"
-import IllustratedButtonCard from "../../../components/cards/IllustratedButtonCard/IllustratedButtonCard"
-import { ThreeDModel } from "../../../types/tools/3dViewer"
+import ModelGridCard from "./components/ModelGridCard/ModelGridCard"
+import ModelDownloadButton from "./components/ModelDownloadButton/ModelDownloadButton"
+import { DownloadableThreeDModel, isDownloadableModel } from "../../../types/tools/3dViewer"
 import { Rotate3D } from "lucide-react-native"
 
 // 3 tuiles par ligne, gap:10 (voir modelsList ci-dessus) — même principe que ToolsSection : la
@@ -23,7 +24,7 @@ const ThreeDViewer = () => {
   const { t } = useTranslation("tools/3dviewer")
 
   const [modelsContainerWidth, setModelsContainerWidth] = useState(0);
-  const [featuredModel, setFeaturedModel] = useState<ThreeDModel | null>(null);
+  const [featuredModel, setFeaturedModel] = useState<DownloadableThreeDModel | null>(null);
 
   const modelWidth = modelsContainerWidth > 0
     ? (modelsContainerWidth - ITEMS_GAP * (ITEMS_PER_ROW - 1)) / ITEMS_PER_ROW
@@ -37,7 +38,11 @@ const ThreeDViewer = () => {
   );
 
   useEffect(() => {
-    setFeaturedModel(threeDModelsList[Math.floor(Math.random() * threeDModelsList.length)]);
+    // Le modèle "à la une" ne peut être qu'un modèle déjà disponible au téléchargement.
+    const downloadableModels = threeDModelsList.filter(isDownloadableModel);
+    if (downloadableModels.length > 0) {
+      setFeaturedModel(downloadableModels[Math.floor(Math.random() * downloadableModels.length)]);
+    }
   }, [])
 
   return (
@@ -52,11 +57,17 @@ const ThreeDViewer = () => {
               <Text style={threeDViewerScreenStyles.featuredCard.content.headline}>{t('featured.headline')}</Text>
               <Text style={threeDViewerScreenStyles.featuredCard.content.title}>{featuredModel ? t(`modelNames.${featuredModel.id}`) : ""}</Text>
               <Text style={threeDViewerScreenStyles.featuredCard.content.description}>{featuredModel ? t(`modelDescriptions.${featuredModel.id}`) : ""}</Text>
-            
-              <TouchableOpacity style={threeDViewerScreenStyles.featuredCard.content.button} onPress={() => { /* TODO: open 3D model */ }}>
-                <Rotate3D size={20} color="white" />
-                <Text style={threeDViewerScreenStyles.featuredCard.content.button.text}>{t('featured.view3d')}</Text>
-              </TouchableOpacity>
+
+              {featuredModel && (
+                <View style={{ marginTop: 20 }}>
+                  <ModelDownloadButton
+                    model={featuredModel}
+                    readyLabel={t('featured.view3d')}
+                    readyIcon={Rotate3D}
+                    onReady={() => router.push(`/tools/3d-viewer/models/${featuredModel.id}`)}
+                  />
+                </View>
+              )}
             </View>
             <Image
               source={featuredModel?.illustration || require("../../../../assets/images/placeholders/3d-viewer.png")}
@@ -86,12 +97,14 @@ const ThreeDViewer = () => {
                     {
                       modelsInCategory.map((model) => {
                         return (
-                          <IllustratedButtonCard
+                          <ModelGridCard
                             key={model.id}
+                            model={model}
                             imageSource={model.illustration || require("../../../../assets/images/placeholders/3d-viewer.png")}
                             title={t(`modelNames.${model.id}`)}
                             color={category.color}
                             width={modelWidth}
+                            onPress={() => router.push(`/tools/3d-viewer/models/${model.id}`)}
                           />
                         )
                       })

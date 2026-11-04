@@ -36,25 +36,6 @@ export const threeDViewerScreenStyles = {
         fontFamily: "DMMonoRegular",
         color: withOpacity(app_colors.white, 0.5),
       },
-
-      button: {
-        display: "flex" as const,
-        flexDirection: "row" as const,
-        alignItems: "center" as const,
-        gap: 5,
-        marginTop: 20,
-        paddingHorizontal: 20,
-        paddingVertical: 10,
-        backgroundColor: app_colors.accent.main,
-        borderRadius: radius.badge44,
-        alignSelf: "flex-start" as const,
-
-        text: {
-          fontSize: 12,
-          fontFamily: "DMMonoRegular",
-          color: app_colors.white,
-        }
-      }
     },
     image: {
       width: 120,

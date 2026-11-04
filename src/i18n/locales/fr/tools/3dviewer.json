@@ -9,8 +9,8 @@
     "satellites": "Satellites"
   },
   "modelNames": {
-    "moon": "Lune",
-    "sun": "Soleil",
+    "moon": "La Lune",
+    "sun": "Le Soleil",
     "mars": "Mars",
     "ariane-6": "Ariane 6",
     "voyager-1": "Voyager 1",
@@ -35,5 +35,58 @@
   "featured": {
     "headline": "À la une",
     "view3d": "Ouvrir en 3D"
-  }
+  },
+  "tags": {
+    "solarSystem": "Système solaire",
+    "nakedEyeVisible": "Visible à l'œil nu",
+    "lowEarthOrbit": "Orbite basse",
+    "permanentlyInhabited": "Habitée en permanence"
+  },
+  "stats": {
+    "diameter": "Diamètre",
+    "distance": "Distance actuelle",
+    "rotation": "Révolution",
+    "gravity": "Gravité",
+    "gravityComparison": "⅙ de la Terre",
+    "length": "Longueur",
+    "altitude": "Altitude orbitale",
+    "speed": "Vitesse orbitale",
+    "speedComparison": "Paris-New York en 13 min",
+    "orbitalPeriod": "Durée d'une orbite"
+  },
+  "longDescriptions": {
+    "moon": "Seul satellite naturel de la Terre, la Lune s'est probablement formée il y a environ 4,5 milliards d'années, après la collision de la jeune Terre avec un corps de la taille de Mars. Ses taches sombres, les « mers », sont d'anciennes coulées de lave. Les zones claires sont des hauts plateaux couverts de cratères.",
+    "iss": "En orbite depuis 1998, l'ISS est le plus grand objet artificiel jamais assemblé dans l'espace. Fruit d'une collaboration entre les agences spatiales américaine, russe, européenne, japonaise et canadienne, elle sert de laboratoire de recherche en microgravité et accueille en permanence un équipage international depuis novembre 2000."
+  },
+  "funFacts": {
+    "moon": "La Lune tourne sur elle-même dans le temps qu'elle met à faire le tour de la Terre. Elle nous montre donc toujours la même face.",
+    "iss": "L'ISS parcourt l'équivalent de plus de 15 tours de la Terre chaque jour."
+  },
+  "pointsOfInterest": {
+    "tranquility": { "title": "Mer de la Tranquillité", "description": "Alunissage d'Apollo 11, 1969" },
+    "tycho": { "title": "Cratère Tycho", "description": "Rayons clairs visibles aux jumelles" },
+    "imbrium": { "title": "Mer des Pluies", "description": "Bassin d'impact de 1 100 km" }
+  },
+  "sections": {
+    "inNumbers": "En chiffres",
+    "description": "Description",
+    "funFact": "Le saviez-vous ?",
+    "pointsOfInterest": "À repérer sur le modèle",
+    "seeAlso": "Voir aussi"
+  },
+  "readMore": "Lire la suite",
+  "readLess": "Réduire",
+  "pointsOfInterestCount_one": "{{count}} repère",
+  "pointsOfInterestCount_other": "{{count}} repères",
+  "today": {
+    "label": "Ce soir",
+    "value": "{{percent}} % · {{phase}}",
+    "phasesLink": "Phases"
+  },
+  "viewer": {
+    "comingSoon": "Visualisation 3D bientôt disponible",
+    "viewReady": "Voir en 3D"
+  },
+  "source": "Modèle 3D : {{name}}",
+  "shareMessage": "Découvre {{name}} en 3D dans Astroshare !"
 }
