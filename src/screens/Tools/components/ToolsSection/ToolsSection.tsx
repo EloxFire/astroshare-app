@@ -1,10 +1,11 @@
-import { Text, View } from "react-native"
+import { View } from "react-native"
 import { useState } from "react";
 import { toolsSectionStyles } from "./ToolsSection.styles"
 import { toolCategories } from "../../../../helpers/tools/categories"
 import { useTranslation } from "react-i18next";
 import { toolsList } from "../../../../helpers/tools/tools";
 import ToolButton from "../ToolButton/ToolButton";
+import SectionHeader from "../../../../components/SectionHeader/SectionHeader";
 
 // 3 tuiles par ligne, gap:10 (voir ToolsSection.styles.ts/tools) — répétés ici pour calculer la
 // largeur exacte de chaque tuile à partir de la largeur réellement mesurée du conteneur
@@ -29,11 +30,10 @@ const ToolsSection = () => {
           const toolsInCategory = toolsList.filter((tool) => tool.category === category.id);
           return (
             <View key={category.id} style={toolsSectionStyles.list.category}>
-              <View style={toolsSectionStyles.list.category.header}>
-                <Text style={toolsSectionStyles.list.category.header.title}>{t(`categories.${category.id}`)}</Text>
-                <View style={toolsSectionStyles.list.category.header.separator} />
-                <Text style={toolsSectionStyles.list.category.header.subtitle}>{t(`categories.decorative.toolNumber`, { count: toolsInCategory.length })}</Text>
-              </View>
+              <SectionHeader
+                title={t(`categories.${category.id}`)}
+                count={t(`categories.decorative.toolNumber`, { count: toolsInCategory.length })}
+              />
 
               <View
                 style={toolsSectionStyles.list.category.tools}

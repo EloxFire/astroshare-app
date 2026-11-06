@@ -50,13 +50,13 @@ export const toolsList: AstroshareTool[] = [
     access: "premium",
     route: "/tools/light-pollution-map",
   },
-  // Statistiques d'observation
+  // Journal d'observation (sessions, statistiques, matériel)
   {
-    id: "user-stats",
-    icon: TrendingUp, 
+    id: "journal",
+    icon: TrendingUp,
     category: "follow-up",
     access: "free",
-    route: "/tools/user-stats",
+    route: "/tools/journal",
   },
   // Glossaire / lexique astro
   {

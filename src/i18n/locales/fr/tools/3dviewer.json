@@ -47,11 +47,9 @@
     "distance": "Distance actuelle",
     "rotation": "Révolution",
     "gravity": "Gravité",
-    "gravityComparison": "⅙ de la Terre",
     "length": "Longueur",
     "altitude": "Altitude orbitale",
     "speed": "Vitesse orbitale",
-    "speedComparison": "Paris-New York en 13 min",
     "orbitalPeriod": "Durée d'une orbite"
   },
   "longDescriptions": {

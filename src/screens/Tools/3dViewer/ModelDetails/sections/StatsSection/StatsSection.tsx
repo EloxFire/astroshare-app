@@ -2,7 +2,7 @@ import { View } from "react-native"
 import { useTranslation } from "react-i18next"
 import { ModelStat } from "../../../../../../helpers/tools/3dviewer"
 import ValueCard from "../../../../../../components/cards/ValueCard/ValueCard"
-import SectionHeader from "../SectionHeader/SectionHeader"
+import SectionHeader from "../../../../../../components/SectionHeader/SectionHeader"
 import { statsSectionStyles } from "./StatsSection.styles"
 
 interface StatsSectionProps {

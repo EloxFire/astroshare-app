@@ -15,6 +15,7 @@ import polarScope_fr from "./locales/fr/tools/polarScope.json";
 import spaceWeather_fr from "./locales/fr/tools/spaceWeather.json";
 import weather_fr from "./locales/fr/tools/weather.json";
 import threeDViewer_fr from "./locales/fr/tools/3dviewer.json";
+import journal_fr from "./locales/fr/tools/journal.json";
 // ENGLISH IMPORTS
 import common_en from "./locales/en/common.json";
 import tools_en from "./locales/en/tools.json";
@@ -64,6 +65,7 @@ export const resources = {
     "tools/spaceWeather": spaceWeather_fr,
     "tools/weather": weather_fr,
     "tools/3dviewer": threeDViewer_fr,
+    "tools/journal": journal_fr,
   },
   en: {
     common: common_en,

@@ -328,7 +328,7 @@ const Model3DViewer = ({ uri, style, rotationY = 0 }: Model3DViewerProps) => {
         )}
         {!isModelReady && (
           <View style={model3DViewerStyles.loaderOverlay}>
-            <ActivityIndicator color={app_colors.primary.main} />
+            <ActivityIndicator color={app_colors.white} />
           </View>
         )}
       </View>

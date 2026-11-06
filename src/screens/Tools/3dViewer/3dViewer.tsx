@@ -5,10 +5,10 @@ import { useTranslation } from "react-i18next"
 import { router, useFocusEffect } from "expo-router"
 import { useCallback, useEffect, useState } from "react"
 import { StatusBar } from "expo-status-bar"
-import { toolsSectionStyles } from "../components/ToolsSection/ToolsSection.styles"
 import { threeDModelsCategories, threeDModelsList } from "../../../helpers/tools/3dviewer"
 import { threeDViewerScreenStyles } from "./3dViewer.styles"
 import ModelGridCard from "./components/ModelGridCard/ModelGridCard"
+import SectionHeader from "../../../components/SectionHeader/SectionHeader"
 import ModelDownloadButton from "./components/ModelDownloadButton/ModelDownloadButton"
 import { DownloadableThreeDModel, isDownloadableModel } from "../../../types/tools/3dViewer"
 import { Rotate3D } from "lucide-react-native"
@@ -84,11 +84,10 @@ const ThreeDViewer = () => {
 
               return (
                 <View style={{marginBottom: 10}} key={category.id}>
-                  <View style={toolsSectionStyles.list.category.header}>
-                    <Text style={toolsSectionStyles.list.category.header.title}>{t(`modelCategories.${category.id}`)}</Text>
-                    <View style={toolsSectionStyles.list.category.header.separator} />
-                    <Text style={toolsSectionStyles.list.category.header.subtitle}>{t(`modelCount_${modelsInCategory.length === 1 ? 'one' : 'other'}`, { count: modelsInCategory.length })}</Text>
-                  </View>
+                  <SectionHeader
+                    title={t(`modelCategories.${category.id}`)}
+                    count={t(`modelCount_${modelsInCategory.length === 1 ? 'one' : 'other'}`, { count: modelsInCategory.length })}
+                  />
 
                   <View
                     style={threeDViewerScreenStyles.modelsList}

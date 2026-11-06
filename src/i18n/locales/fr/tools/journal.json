@@ -1,0 +1,20 @@
+{
+  "title": "Carnet d'observation",
+  "sessions": {
+    "add": { "title": "Nouvelle session" },
+    "list": { "title": "Toutes vos sessions" },
+    "details": { "title": "Session" }
+  },
+  "statistics": { "title": "Statistiques" },
+  "gear": {
+    "title": "Mon matériel",
+    "telescopes": { "add": { "title": "Ajouter un télescope" }, "details": { "title": "Télescope" } },
+    "mounts": { "add": { "title": "Ajouter une monture" }, "details": { "title": "Monture" } },
+    "eyepieces": { "add": { "title": "Ajouter un oculaire" }, "details": { "title": "Oculaire" } },
+    "filters": { "add": { "title": "Ajouter un filtre" }, "details": { "title": "Filtre" } },
+    "cameras": { "add": { "title": "Ajouter une caméra" }, "details": { "title": "Caméra" } },
+    "guideScopes": { "add": { "title": "Ajouter une lunette guide" }, "details": { "title": "Lunette guide" } },
+    "focusers": { "add": { "title": "Ajouter un focuseur" }, "details": { "title": "Focuseur" } },
+    "setups": { "add": { "title": "Ajouter une configuration" }, "details": { "title": "Configuration" } }
+  }
+}

@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next"
 import { ChevronRight } from "lucide-react-native"
 import { app_colors } from "../../../../../../helpers/variables"
 import { PointOfInterest } from "../../../../../../helpers/tools/3dviewer"
-import SectionHeader from "../SectionHeader/SectionHeader"
+import SectionHeader from "../../../../../../components/SectionHeader/SectionHeader"
 import { pointsOfInterestSectionStyles } from "./PointsOfInterestSection.styles"
 
 interface PointsOfInterestSectionProps {

@@ -14,7 +14,7 @@ export function getModelLocalPath(model: DownloadableThreeDModel): string {
   return `3d-models/${model.id}-v${model.version}.glb`;
 }
 
-
+// TODO : IMPORTANT - Populer cette liste avec les modèles et les informations détaillées
 export const threeDModelsCategories: ThreeDModelCategory[] = [
   {
     id: "solarsystem",
@@ -121,12 +121,13 @@ export const threeDModelsDetails: Record<string, ModelDetails> = {
   moon: {
     tagKeys: ["solarSystem", "nakedEyeVisible"],
     stats: [
-      { id: "diameter", value: 3474, unit: "km", labelKey: "stats.diameter", comparisonKey: "stats.diameterComparison" },
+      // { id: "diameter", value: 3474, unit: "km", labelKey: "stats.diameter", comparisonKey: "stats.diameterComparison" },
+      { id: "diameter", value: 3474, unit: "km", labelKey: "stats.diameter" },
       // Pas de value : la distance Terre-Lune varie au jour le jour (orbite elliptique), calculée
       // en direct dans ModelDetails.tsx plutôt que figée ici sur sa moyenne.
       { id: "distance", unit: "km", labelKey: "stats.distance" },
       { id: "rotation", value: 27.3, unit: "days", labelKey: "stats.rotation" },
-      { id: "gravity", value: 1.62, unit: "mps2", labelKey: "stats.gravity", comparisonKey: "stats.gravityComparison" },
+      { id: "gravity", value: 1.62, unit: "mps2", labelKey: "stats.gravity" },
     ],
     hasFunFact: true,
     pointsOfInterest: [
@@ -139,9 +140,10 @@ export const threeDModelsDetails: Record<string, ModelDetails> = {
   iss: {
     tagKeys: ["lowEarthOrbit", "permanentlyInhabited"],
     stats: [
+      // TODO : implémenter les valeurs calculées une fois les fonctionnalités de suivi de satellites en place dans l'application
       { id: "length", value: 109, unit: "m", labelKey: "stats.length" },
       { id: "altitude", value: 400, unit: "km", labelKey: "stats.altitude" },
-      { id: "speed", value: 27600, unit: "kmh", labelKey: "stats.speed", comparisonKey: "stats.speedComparison" },
+      { id: "speed", value: 27600, unit: "kmh", labelKey: "stats.speed" },
       { id: "orbitalPeriod", value: 93, unit: "min", labelKey: "stats.orbitalPeriod" },
     ],
     hasFunFact: true,

@@ -7,7 +7,7 @@ interface SectionHeaderProps {
 }
 
 // Titre de section + ligne séparatrice, avec un compte optionnel à droite (ex: "3 repères").
-// Partagé par toutes les sections de ModelDetails qui en ont besoin.
+// Partagé par toutes les sections/listes de l'app qui en ont besoin.
 const SectionHeader = ({ title, count }: SectionHeaderProps) => {
   return (
     <View style={sectionHeaderStyles.header}>

@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { Text, TouchableOpacity, View } from "react-native"
 import { useTranslation } from "react-i18next"
-import SectionHeader from "../SectionHeader/SectionHeader"
+import SectionHeader from "../../../../../../components/SectionHeader/SectionHeader"
 import { descriptionSectionStyles } from "./DescriptionSection.styles"
 
 const COLLAPSED_LINES = 4;
