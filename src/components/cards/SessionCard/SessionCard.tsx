@@ -26,7 +26,7 @@ interface SessionCardProps {
   onPress?: () => void;
 }
 
-/**
+/**:10 - 00:45 | 3h
  * <SessionCard label="Dernière session" date={session.date} title="La Sinne" details="21:10 - 00:45 | 3h35"
  *   grades={[{ label: "Seeing", value: 2 }, { label: "Transparence", value: 5 }]} onPress={…} />
  *

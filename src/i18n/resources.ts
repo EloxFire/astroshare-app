@@ -16,6 +16,7 @@ import spaceWeather_fr from "./locales/fr/tools/spaceWeather.json";
 import weather_fr from "./locales/fr/tools/weather.json";
 import threeDViewer_fr from "./locales/fr/tools/3dviewer.json";
 import journal_fr from "./locales/fr/tools/journal.json";
+import journalSessionsAdd_fr from "./locales/fr/tools/journal/sessions/add.json";
 // ENGLISH IMPORTS
 import common_en from "./locales/en/common.json";
 import tools_en from "./locales/en/tools.json";
@@ -28,6 +29,7 @@ import authRegister_en from "./locales/en/auth/register.json";
 import authForgotPassword_en from "./locales/en/auth/forgotPassword.json";
 import authProfile_en from "./locales/en/auth/profile.json";
 import threeDViewer_en from "./locales/en/tools/3dviewer.json";
+import journalSessionsAdd_en from "./locales/en/tools/journal/sessions/add.json";
 // ITALIAN IMPORTS
 import common_it from "./locales/it/common.json";
 import tools_it from "./locales/it/tools.json";
@@ -40,6 +42,7 @@ import authRegister_it from "./locales/it/auth/register.json";
 import authForgotPassword_it from "./locales/it/auth/forgotPassword.json";
 import authProfile_it from "./locales/it/auth/profile.json";
 import threeDViewer_it from "./locales/it/tools/3dviewer.json";
+import journalSessionsAdd_it from "./locales/it/tools/journal/sessions/add.json";
 
 // Source unique des traductions, partagée par l'init i18next (index.ts) et le calcul de
 // complétude (translationCompleteness.ts) : un namespace ajouté ici est pris en compte partout.
@@ -66,6 +69,7 @@ export const resources = {
     "tools/weather": weather_fr,
     "tools/3dviewer": threeDViewer_fr,
     "tools/journal": journal_fr,
+    "tools/journal/sessions/add": journalSessionsAdd_fr,
   },
   en: {
     common: common_en,
@@ -79,6 +83,7 @@ export const resources = {
     "auth/forgotPassword": authForgotPassword_en,
     "auth/profile": authProfile_en,
     "tools/3dviewer": threeDViewer_en,
+    "tools/journal/sessions/add": journalSessionsAdd_en,
   },
   it: {
     common: common_it,
@@ -92,6 +97,7 @@ export const resources = {
     "auth/forgotPassword": authForgotPassword_it,
     "auth/profile": authProfile_it,
     "tools/3dviewer": threeDViewer_it,
+    "tools/journal/sessions/add": journalSessionsAdd_it,
   },
 };
 
