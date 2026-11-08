@@ -1,7 +1,14 @@
 import type { TransitInstance } from "@observerly/astrometry";
 import type { TFunction } from "i18next";
+import type { Dayjs } from "dayjs";
 import { convertAzimuthToCardinalDirection } from "./location/convert";
 import type { FormatDate } from "../hooks/useAppUnits";
+
+// Mois abrégé de la langue de l'app, sans le point final, pour les pastilles de date (jour au-dessus
+// du mois, affiché en majuscules) : "janv" en français, "jan" en anglais, "gen" en italien. Reçoit
+// une date déjà passée par `formatDate` (useAppUnits) pour respecter le fuseau de l'utilisateur.
+// Pas tronqué à 3 lettres : "juin" et "juillet" donneraient tous deux "jui".
+export const formatShortMonth = (date: Dayjs): string => date.format("MMM").replace(/\.$/, "");
 
 // Insère une espace tous les 3 chiffres (ex: 384 400 → "384 400") — utilisé pour l'affichage
 // de grandes distances (ex: distance Terre-Lune en km).

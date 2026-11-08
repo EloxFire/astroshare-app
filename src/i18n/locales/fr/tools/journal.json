@@ -16,5 +16,21 @@
     "guideScopes": { "add": { "title": "Ajouter une lunette guide" }, "details": { "title": "Lunette guide" } },
     "focusers": { "add": { "title": "Ajouter un focuseur" }, "details": { "title": "Focuseur" } },
     "setups": { "add": { "title": "Ajouter une configuration" }, "details": { "title": "Configuration" } }
+  },
+  "observations": {
+    "title": "Journal d'observations"
+  },
+  "shortcuts": {
+    "statistics": {
+      "title": "Statistiques",
+      "subtitle": "Mois, lieux, ciel"
+    },
+    "gear": {
+      "title": "Matériel",
+      "sheets_one": "{{count}} fiche",
+      "sheets_other": "{{count}} fiches",
+      "setups_one": "{{count}} setup",
+      "setups_other": "{{count}} setups"
+    }
   }
 }
