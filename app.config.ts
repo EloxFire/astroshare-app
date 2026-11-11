@@ -147,6 +147,7 @@ module.exports = {
         savePhotosPermission:
           "Astroshare a besoin d'accéder à vos photos pour y enregistrer les images téléchargées."
       }
-    ]
+    ],
+    "@react-native-community/datetimepicker"
   ]
 };

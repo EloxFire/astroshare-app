@@ -86,7 +86,7 @@ const ThreeDViewer = () => {
                 <View style={{marginBottom: 10}} key={category.id}>
                   <SectionHeader
                     title={t(`modelCategories.${category.id}`)}
-                    count={t(`modelCount_${modelsInCategory.length === 1 ? 'one' : 'other'}`, { count: modelsInCategory.length })}
+                    subtitle={t(`modelCount_${modelsInCategory.length === 1 ? 'one' : 'other'}`, { count: modelsInCategory.length })}
                   />
 
                   <View

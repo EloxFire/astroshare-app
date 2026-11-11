@@ -19,7 +19,7 @@ const PointsOfInterestSection = ({ pointsOfInterest }: PointsOfInterestSectionPr
     <View>
       <SectionHeader
         title={t("sections.pointsOfInterest")}
-        count={t("pointsOfInterestCount", { count: pointsOfInterest.length })}
+        subtitle={t("pointsOfInterestCount", { count: pointsOfInterest.length })}
       />
 
       <View style={pointsOfInterestSectionStyles.list}>

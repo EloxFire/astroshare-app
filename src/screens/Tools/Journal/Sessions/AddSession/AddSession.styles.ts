@@ -1,4 +1,5 @@
-import { app_colors, radius, withOpacity } from "../../../../../helpers/variables";
+import { globalStyles } from "../../../../../helpers/globalStyles";
+import { app_colors, gaps, radius, spacing, withOpacity } from "../../../../../helpers/variables";
 
 export const addSessionStyles = {
   dateSection: {
@@ -51,6 +52,61 @@ export const addSessionStyles = {
             color: app_colors.grey,
           }
         },
+      }
+    },
+
+    // iOS uniquement : Android affiche directement ses boîtes de dialogue natives (date puis
+    // heure), déjà modales par nature — seul iOS a besoin de ce panneau pour héberger son picker,
+    // qui s'affiche sinon en ligne dans la page (voir AddSession.tsx).
+    pickerSheet: {
+      backdrop: {
+        flex: 1,
+        justifyContent: "flex-end" as const,
+        backgroundColor: withOpacity(app_colors.black, 0.4),
+      },
+
+      dismissArea: {
+        position: "absolute" as const,
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+      },
+
+      container: {
+        backgroundColor: app_colors.white,
+        borderTopLeftRadius: radius.modalSheetTop,
+        borderTopRightRadius: radius.modalSheetTop,
+        paddingTop: spacing.modalSheet.top,
+        paddingHorizontal: spacing.modalSheet.horizontal,
+        gap: 12,
+
+        header: {
+          display: "flex" as const,
+          flexDirection: "row" as const,
+          alignItems: "center" as const,
+          gap: gaps.iconToText,
+
+          title: {
+            ...globalStyles.categoryTitle,
+            flex: 1,
+          },
+        },
+
+        doneButton: {
+          display: "flex" as const,
+          alignItems: "center" as const,
+          justifyContent: "center" as const,
+          backgroundColor: app_colors.accent.main,
+          paddingVertical: spacing.pillButtonPrimary.vertical,
+          borderRadius: radius.badge32,
+
+          text: {
+            fontFamily: "DMMonoMedium",
+            fontSize: 14,
+            color: app_colors.white,
+          }
+        }
       }
     }
   },
@@ -108,11 +164,20 @@ export const addSessionStyles = {
       backgroundColor: app_colors.yellow.light,
       padding: 20,
       borderRadius: radius.heroCard,
+      display: "flex" as const,
+      flexDirection: "column" as const,
+      gap: 10,
 
       formRow: {
         display: "flex" as const,
         flexDirection: "row" as const,
         justifyContent: "space-between" as const,
+
+        withBorder: {
+          borderBottomWidth: 1,
+          borderBottomColor: app_colors.primary.light,
+          paddingBottom: 10,
+        },
 
         leftColumn: {
           display: "flex" as const,
@@ -136,7 +201,7 @@ export const addSessionStyles = {
           display: "flex" as const,
           flexDirection: "row" as const,
           alignItems: "center" as const,
-          gap: 5,
+          gap: 10,
 
           gradeButton: {
             borderRadius: radius.heroCard,
@@ -144,5 +209,54 @@ export const addSessionStyles = {
         }
       }
     }
+  },
+
+  observationLogSection: {
+    display: "flex" as const,
+    flexDirection: "column" as const,
+    marginBottom: 20,
+  },
+
+  usedGearSection: {
+    display: "flex" as const,
+    flexDirection: "column" as const,
+    marginBottom: 20,
+
+    noSetups: {
+      display: "flex" as const,
+      flexDirection: "column" as const,
+      alignItems: "center" as const,
+      gap: 10,
+
+      text: {
+        fontFamily: "DMMonoRegular",
+        fontSize: 12,
+        color: app_colors.primary.medium,
+      },
+
+      button: {
+        display: "flex" as const,
+        flexDirection: "row" as const,
+        alignItems: "center" as const,
+        justifyContent: "center" as const,
+        backgroundColor: app_colors.accent.main,
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: radius.badge32,
+
+        text: {
+          fontFamily: "DMMonoMedium",
+          fontSize: 12,
+          color: app_colors.white,
+          marginLeft: 5,
+        }
+      }
+    }
+  },
+
+  notesSection: {
+    display: "flex" as const,
+    flexDirection: "column" as const,
+    marginBottom: 20,
   }
 }

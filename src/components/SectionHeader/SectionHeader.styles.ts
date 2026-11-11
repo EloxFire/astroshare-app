@@ -21,10 +21,23 @@ export const sectionHeaderStyles = {
       backgroundColor: app_colors.grey,
     },
 
-    count: {
+    subtitle: {
       fontFamily: "ZTNatureRegular",
       color: app_colors.primary.main,
       fontSize: 10,
     },
+
+    button: {
+      display: "flex" as const,
+      flexDirection: "row" as const,
+      alignItems: "center" as const,
+      gap: 5,
+
+      text: {
+        fontFamily: "DMMonoMedium",
+        fontSize: 12,
+        color: app_colors.accent.main,
+      }
+    }
   },
 };

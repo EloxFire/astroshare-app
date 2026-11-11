@@ -32,7 +32,7 @@ const ToolsSection = () => {
             <View key={category.id} style={toolsSectionStyles.list.category}>
               <SectionHeader
                 title={t(`categories.${category.id}`)}
-                count={t(`categories.decorative.toolNumber`, { count: toolsInCategory.length })}
+                subtitle={t(`categories.decorative.toolNumber`, { count: toolsInCategory.length })}
               />
 
               <View
