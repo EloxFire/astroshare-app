@@ -14,10 +14,12 @@ export const HomeScreen = () => {
 
   const { gpsLoading: loading, gpsError: error, location } = useLocation();
 
+  // Pas de reset au blur : chaque écran fixe déjà sa propre couleur à son propre focus, et un reset
+  // ici entrerait en course avec l'effet de focus de l'écran suivant (sur stack navigator, le blur
+  // de cet écran peut se déclencher après la fin de la transition, donc après coup).
   useFocusEffect(
       useCallback(() => {
         StatusBar.setStyle("light");
-        return () => StatusBar.setStyle("light");
       }, [])
     );
 

@@ -10,10 +10,11 @@ const ObservationsScreen = () => {
 
   const { t } = useTranslation('tools/journal');
 
+  // Pas de reset au blur : voir le commentaire équivalent dans HomeScreen.tsx (course avec le
+  // focus de l'écran suivant).
   useFocusEffect(
     useCallback(() => {
       StatusBar.setStyle("dark");
-      return () => StatusBar.setStyle("light");
     }, [])
   );
 

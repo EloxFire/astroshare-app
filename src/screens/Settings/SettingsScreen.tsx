@@ -1,5 +1,5 @@
 import { Image, StatusBar, Text, TouchableOpacity, View } from "react-native";
-import { globalStyles } from "../../helpers/globalStyles";
+import { useUserDataStore } from "../../store/userData.store";
 import { useRouter } from 'expo-router';
 import { settingsScreenStyles } from "./SettingsScreen.styles";
 import { ScreenHeader } from "../../components/ScreenHeader/ScreenHeader";
@@ -14,6 +14,7 @@ import { useAuth } from "../../context/AuthContext";
 import { getUserProfilePicture } from "../../helpers/auth/profile/profilePictures";
 import { profileScreenStyles } from "../Profile/ProfileScreen.styles";
 import { firestoreTimestampToDate } from "../../helpers/api/firestoreTimestamp";
+import { globalStyles } from "../../helpers/globalStyles";
 
 export const SettingsScreen = () => {
   const router = useRouter();
@@ -71,6 +72,11 @@ export const SettingsScreen = () => {
             </TouchableOpacity>
           )
         }
+
+        {/* TODO : TEMPORARY BUTTON */}
+        <TouchableOpacity onPress={() => useUserDataStore.getState().resetUserData()}>
+          <Text>Reset user data store</Text>
+        </TouchableOpacity>
 
         <View style={settingsScreenStyles.settingsList}>
           {

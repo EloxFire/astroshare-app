@@ -27,10 +27,11 @@ const AddSession = () => {
   const userObservatories = useUserDataStore(state => state.observatories)
   const userSetups = useUserDataStore(state => state.gear.setups)
 
+  // Pas de reset au blur : voir le commentaire équivalent dans HomeScreen.tsx (course avec le
+  // focus de l'écran suivant).
   useFocusEffect(
     useCallback(() => {
       StatusBar.setStyle("dark");
-      return () => StatusBar.setStyle("dark");
     }, [])
   );
 

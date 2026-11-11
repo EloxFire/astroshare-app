@@ -5,4 +5,5 @@ export type Eyepiece = {
   type: "plossl" | "super-wide-angle" | "ultra-wide-angle" | "extreme-wide-angle" | "zoom" | "reticle" | "other";
   focalLength: number; // in millimeters
   afov: number; // in degrees
+  barrelSize: 1.25 | 2; // in inches
 }

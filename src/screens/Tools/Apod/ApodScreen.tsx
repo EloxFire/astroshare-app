@@ -87,10 +87,11 @@ const ApodScreen = () => {
     );
   }, [asset]);
 
+  // Pas de reset au blur : voir le commentaire équivalent dans HomeScreen.tsx (course avec le
+  // focus de l'écran suivant).
   useFocusEffect(
       useCallback(() => {
         StatusBar.setStyle("light");
-        return () => StatusBar.setStyle("light");
       }, [])
     );
 

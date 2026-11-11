@@ -41,14 +41,14 @@ export const ScreenHeader = ({ title, main = true, disableBackButton = false, su
   const isHomeScreen = pathname === "/";
   const withImage = !main && image !== undefined;
 
-  // Icônes de la barre de statut en clair sur le dégradé sombre, tant que l'écran a le focus. En
-  // le quittant, retour à "dark" : un header secondaire vit sur un fond clair (c'est aussi le
-  // statusBarStyle du Stack des réglages), comme les écrans où l'on revient.
+  // Icônes de la barre de statut en clair sur le dégradé sombre, tant que l'écran a le focus. Pas
+  // de reset au blur : l'écran suivant fixe déjà sa propre couleur à son propre focus, et un reset
+  // ici entrerait en course avec cet effet (sur stack navigator, notre blur peut se déclencher
+  // après la fin de la transition, donc après coup — voir le même correctif dans les écrans).
   useFocusEffect(
     useCallback(() => {
       if (!withImage) return;
       StatusBar.setStyle("light");
-      return () => StatusBar.setStyle("dark");
     }, [withImage])
   );
 

@@ -25,11 +25,64 @@ const defaultUserData: UserSettingsState = {
     }
   },
   gear: {
-    telescopes: [],
-    mounts: [],
-    eyepieces: [],
+    telescopes: [
+      {
+        id: "telescope-1",
+        aperture: 150,
+        focalLength: 750,
+        eyepieceConnection: [1.25],
+        type: "refractor" as const,
+        model: "PDS",
+        brand: "SkyWatcher",
+      },
+      {
+        id: "telescope-2",
+        aperture: 200,
+        focalLength: 1000,
+        eyepieceConnection: [1.25, 2],
+        type: "reflector" as const,
+        model: "Skymax-200",
+        brand: "SkyWatcher",
+      }
+    ],
+    mounts: [
+      {
+        id: "mount-1",
+        type: "equatorial",
+        brand: "SkyWatcher",
+        model: "NEQ5 Pro Goto",
+        motorized: true,
+      }
+    ],
+    eyepieces: [
+      {
+        id: "eyepiece-1",
+        brand: "Omegon",
+        model: "Cronus",
+        focalLength: 6,
+        afov: 68,
+        barrelSize: 1.25,
+        type: "plossl"
+      }
+    ],
     filters: [],
-    cameras: [],
+    cameras: [
+      {
+        id: "camera-1",
+        type: "cmos",
+        brand: "ZWO",
+        model: "ASI178 MC",
+        pixelSize: 2.4,
+        sensorSize: {
+          width:7.37,
+          height: 4.92
+        },
+        resolution: {
+          width: 3096,
+          height: 2080
+        }
+      }
+    ],
     guideScopes: [],
     focusers: [],
     setups: []

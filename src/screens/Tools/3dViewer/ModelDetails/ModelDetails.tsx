@@ -23,10 +23,11 @@ import SourceFooter from "./sections/SourceFooter/SourceFooter"
 // d'un if/else ici : ajouter un modèle spécial = ajouter un adaptateur, pas modifier ce fichier.
 const ModelDetails = () => {
 
+  // Pas de reset au blur : voir le commentaire équivalent dans HomeScreen.tsx (course avec le
+  // focus de l'écran suivant).
   useFocusEffect(
     useCallback(() => {
       StatusBar.setStyle("dark");
-      return () => StatusBar.setStyle("light");
     }, [])
   );
 

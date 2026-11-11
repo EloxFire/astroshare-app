@@ -8,4 +8,8 @@ export type Camera = {
     height: number; // in millimeters
   };
   pixelSize: number; // in micrometers
+  resolution?: {
+    width: number; // in pixels
+    height: number; // in pixels
+  }
 }

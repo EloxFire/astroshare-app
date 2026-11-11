@@ -17,10 +17,13 @@ import { app_colors } from "../../../../helpers/variables"
 const Journal = () => {
   const { t } = useTranslation("tools/journal")
 
+  // Pas de reset au blur : chaque écran fixe déjà sa propre couleur à son propre focus (y compris
+  // au retour sur celui-ci). Un reset ici entrerait en course avec l'effet de focus de l'écran
+  // suivant — sur stack navigator, le blur de cet écran ne se déclenche qu'après la fin de
+  // l'animation de transition, donc après coup il écraserait la couleur déjà posée par le suivant.
   useFocusEffect(
     useCallback(() => {
       StatusBar.setStyle("dark");
-      return () => StatusBar.setStyle("light");
     }, [])
   );
 
