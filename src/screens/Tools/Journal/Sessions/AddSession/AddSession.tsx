@@ -10,17 +10,56 @@ import { StatusBar } from "expo-status-bar"
 import dayjs from "dayjs"
 import TabSwitch from "../../../MoonCalendar/components/TabSwitch/TabSwitch"
 import { useUserDataStore } from "../../../../../store/userData.store"
-import { MapPin, Plus, Star, X } from "lucide-react-native"
+import { Camera, Clock, Eye, MapPin, Pencil, Plus, Search, Star, X } from "lucide-react-native"
 import { app_colors, spacing } from "../../../../../helpers/variables"
 import IconButtonCard from "../../../../../components/cards/IconButtonCard/IconButtonCard"
 import { InputWithIcon } from "../../../../../components/InputWithIcon/InputWithIcon"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import DateTimePicker, { DateTimePickerChangeEvent } from "@react-native-community/datetimepicker"
+import { useObjectSearch } from "../../../../../hooks/useObjectSearch"
+import { CatalogObjectSummary } from "../../../../../types/catalog/CatalogObject"
+import ObjectCardLite, { ObjectCardLiteToggle } from "../../../../../components/cards/ObjectCardLite/ObjectCardLite"
 
 type SessionDateTarget = "start" | "end"
 // Android n'a pas de mode "datetime" : on enchaîne sa boîte de dialogue date puis sa boîte de
 // dialogue heure. iOS gère les deux d'un coup (mode "datetime"), affiché dans un panneau maison.
 type AndroidPickerStep = "date" | "time"
+
+// Les bascules (oculaire/photo/dessin) sont propres à la session, pas au catalogue : on les porte
+// à côté de l'objet plutôt que de les mélanger à CatalogObjectSummary (qui ne décrit que l'objet).
+type SessionObservedObject = {
+  object: CatalogObjectSummary;
+  observedAtEyepiece: boolean;
+  photographed: boolean;
+  sketched: boolean;
+}
+
+type SessionObservedObjectFlag = "observedAtEyepiece" | "photographed" | "sketched"
+
+// "Galaxie" plutôt que "galaxy" : les catégories de l'API /v3/objects ne sont pas traduites par
+// t(), vu leur petit nombre fixe — pas la peine d'un namespace i18n pour ça pour l'instant.
+const CATALOG_OBJECT_CATEGORY_LABELS: Record<string, string> = {
+  galaxy: "Galaxie",
+  cluster: "Amas",
+  nebula: "Nébuleuse",
+  star: "Étoile",
+  other: "Autre",
+}
+
+const getCatalogObjectTitle = (catalogObject: CatalogObjectSummary) =>
+  catalogObject.name === catalogObject.primary ? catalogObject.primary : `${catalogObject.primary} · ${catalogObject.name}`
+
+// "Galaxie · Messier" (catégorie + catalogue, déduit du préfixe de la désignation principale) —
+// pas de catalogue déduit pour une désignation qui ne vient d'aucun des trois (ex: une étoile nommée).
+const getCatalogObjectSubtitle = (catalogObject: CatalogObjectSummary) => {
+  const categoryLabel = CATALOG_OBJECT_CATEGORY_LABELS[catalogObject.category] ?? catalogObject.category
+  const catalogLabel = /^M\s?\d/.test(catalogObject.primary) ? "Messier"
+    : /^NGC/i.test(catalogObject.primary) ? "NGC"
+    : /^IC/i.test(catalogObject.primary) ? "IC"
+    : null
+
+  return [categoryLabel, catalogLabel].filter(Boolean).join(" · ")
+}
 
 const AddSession = () => {
   const { t } = useTranslation("tools/journal/sessions/add")
@@ -49,7 +88,8 @@ const AddSession = () => {
   const [selectedDarknessGrade, setSelectedDarknessGrade] = useState<number>(0)
 
   const [searchQuery, setSearchQuery] = useState<string>("")
-  const [observedObjects, setObservedObjects] = useState<Array<any>>([])
+  const [observedObjects, setObservedObjects] = useState<SessionObservedObject[]>([])
+  const { results: objectSearchResults, search: searchObjects } = useObjectSearch()
 
   const [sessionNotes, setSessionNotes] = useState<string>("")
 
@@ -79,6 +119,37 @@ const AddSession = () => {
       withBorder: false,
     }
   ]
+
+  const handleSearchQueryChange = (text: string) => {
+    setSearchQuery(text)
+    searchObjects(text)
+  }
+
+  // Les suggestions de InputWithIcon ne portent qu'un libellé (string) : on retrouve l'objet
+  // complet correspondant dans les résultats de recherche, par position (même ordre, même source).
+  const handleObjectSuggestionPress = (suggestion: string) => {
+    const pickedObject = objectSearchResults[objectSearchResults.map(result => result.name).indexOf(suggestion)]
+    if (!pickedObject) return
+
+    setObservedObjects(previousObjects => {
+      if (previousObjects.some(entry => entry.object.id === pickedObject.id)) return previousObjects
+      // Ajouter l'objet à la liste vaut en soi pour une observation à l'oculaire ; photo/dessin
+      // restent à cocher explicitement.
+      return [...previousObjects, { object: pickedObject, observedAtEyepiece: true, photographed: false, sketched: false }]
+    })
+    setSearchQuery("")
+    searchObjects("")
+  }
+
+  const toggleObservedObjectFlag = (objectId: string, flag: SessionObservedObjectFlag) => {
+    setObservedObjects(previousObjects => previousObjects.map(entry =>
+      entry.object.id === objectId ? { ...entry, [flag]: !entry[flag] } : entry
+    ))
+  }
+
+  const removeObservedObject = (objectId: string) => {
+    setObservedObjects(previousObjects => previousObjects.filter(entry => entry.object.id !== objectId))
+  }
 
   const openDateTimePicker = (target: SessionDateTarget) => setActivePicker({ target, step: "date" })
   const closeIosPicker = () => setActivePicker(null)
@@ -141,6 +212,11 @@ const AddSession = () => {
                   <Text style={addSessionStyles.dateSection.datePickerCard.datePickerContainer.picker.time}>{dayjs(endDate).format("HH:mm")}</Text>
                   <Text style={addSessionStyles.dateSection.datePickerCard.datePickerContainer.picker.date}>{dayjs(endDate).format("ddd D MMM")}</Text>
                 </TouchableOpacity>
+              </View>
+
+              <View style={addSessionStyles.dateSection.datePickerCard.timespanContainer}>
+                <Clock color={app_colors.yellow.main} size={20} />
+                <Text></Text>
               </View>
             </View>
 
@@ -274,13 +350,50 @@ const AddSession = () => {
           <View style={addSessionStyles.observationLogSection}>
             <SectionHeader title="Objets observés" subtitle={`${observedObjects.length} observés`} />
 
+            {/* TODO : Fix problème sur la recherche, plus de suggestions apres un certain nombre de recherches, probleme de CSS sur le bas de l'input */}
+            {/* TODO : Revoir le systeme d'affichage de suggestions */}
             <InputWithIcon
-              placeholder={"Ajouter un objet : M13, JUpiter, NGC7000..."}
-              value={sessionNotes}
-              onChangeText={setSearchQuery}
+              placeholder={"Ajouter un objet : M13, Jupiter, NGC7000..."}
+              value={searchQuery}
+              onChangeText={handleSearchQueryChange}
+              suggestions={objectSearchResults.map(result => result.name)}
+              onSuggestionPress={handleObjectSuggestionPress}
               fill
-              action={() => {/* TODO : ADD ACTION HERE*/}}
+              action={() => {}}
+              icon={Search}
             />
+
+            {
+              observedObjects.length === 0 ? (
+                <View style={addSessionStyles.observationLogSection.noItems}>
+                  <Text style={addSessionStyles.observationLogSection.noItems.text}>Aucun objet ajouté</Text>
+                </View>
+              ) : (
+                <View style={addSessionStyles.observationLogSection.objectsList}>
+                  {
+                    observedObjects.map((entry, index) => {
+                      const toggles: ObjectCardLiteToggle[] = [
+                        { icon: Eye, active: entry.observedAtEyepiece, onPress: () => toggleObservedObjectFlag(entry.object.id, "observedAtEyepiece"), accessibilityLabel: "Observé à l'oculaire" },
+                        { icon: Camera, active: entry.photographed, onPress: () => toggleObservedObjectFlag(entry.object.id, "photographed"), accessibilityLabel: "Photographié" },
+                        { icon: Pencil, active: entry.sketched, onPress: () => toggleObservedObjectFlag(entry.object.id, "sketched"), accessibilityLabel: "Dessiné" },
+                      ]
+
+                      return (
+                        <ObjectCardLite
+                          key={entry.object.id}
+                          title={getCatalogObjectTitle(entry.object)}
+                          subtitle={getCatalogObjectSubtitle(entry.object)}
+                          withBorder={index !== observedObjects.length - 1}
+                          toggles={toggles}
+                          onPress={() => {/* TODO : navigation vers la fiche détaillée de l'objet, une fois l'écran construit */}}
+                          onRemove={() => removeObservedObject(entry.object.id)}
+                        />
+                      )
+                    })
+                  }
+                </View>
+              )
+            }
           </View>
 
           {/* MATÉRIEL ET SETUPS UTILISÉS PENDANT LA SESSION */}

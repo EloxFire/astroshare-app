@@ -33,12 +33,19 @@ export const inputWithIconStyles = {
     ...typography.dmMono.regular.searchPlaceholder,
   },
 
+  // Superposé au reste de l'écran (position absolute, ancré au bas du champ) plutôt qu'en flux
+  // normal : sinon, dans un formulaire, son apparition pousserait tout le contenu en dessous.
   suggestionsContainer: {
+    position: "absolute" as const,
+    top: "100%" as const,
+    left: 0,
+    right: 0,
+    backgroundColor: app_colors.white,
     borderWidth: 1,
     borderColor: app_colors.accent.light,
     borderBottomLeftRadius: radius.searchField,
     borderBottomRightRadius: radius.searchField,
-    zIndex: 1,
+    zIndex: 10,
   },
 
   suggestionText: {

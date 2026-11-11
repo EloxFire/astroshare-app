@@ -49,7 +49,8 @@ export const InputWithIcon = ({ icon: Icon, style, action, suggestions, fill = f
     // wrapper en colonne au-dessus.
     <View style={{display: 'flex', flexDirection: 'column', gap: 5, ...(fill ? { flex: 1 } : { width: '100%' })}}>
       {props.label && <Text style={[inputWithIconStyles.label, props.labelStyle]}>{props.label}</Text>}
-      <View style={{display: 'flex', flexDirection: 'row', width: '100%'}}>
+      {/* position relative : ancre `suggestionsContainer`, posé en absolute juste en dessous. */}
+      <View style={{display: 'flex', flexDirection: 'row', width: '100%', position: 'relative'}}>
         <View style={[inputWithIconStyles.container, hasSuggestions && isFocused && inputWithIconStyles.container.withSuggestions]}>
           {Icon && <Icon color={flattenOpacity(app_colors.primary.main, 0.8, app_colors.white)} size={16} />}
           <TextInput

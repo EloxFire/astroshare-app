@@ -52,6 +52,13 @@ export const addSessionStyles = {
             color: app_colors.grey,
           }
         },
+      },
+
+      timespanContainer: {
+        display: "flex" as const,
+        flexDirection: 'row' as const,
+        alignItems: 'center' as const,
+        gap: 10,
       }
     },
 
@@ -215,6 +222,32 @@ export const addSessionStyles = {
     display: "flex" as const,
     flexDirection: "column" as const,
     marginBottom: 20,
+    // Le panneau de suggestions de InputWithIcon flotte en position absolute par-dessus la suite
+    // de l'écran (voir InputWithIcon.styles.ts) : zIndex ne s'applique qu'entre enfants d'un même
+    // parent, donc il faut aussi élever cette section au-dessus de celles qui la suivent (sinon
+    // leur contenu continue de s'afficher par-dessus le panneau, dans l'ordre normal du flux).
+    zIndex: 10,
+
+    // Coquille carte-liste identique à globalStyles.defaultCard (bordée, blanche, coins arrondis) :
+    // les lignes (ObjectCardLite) gèrent elles-mêmes leur séparateur interne (prop withBorder).
+    objectsList: {
+      ...globalStyles.defaultCard,
+      marginTop: 10,
+    },
+
+    noItems: {
+      display: "flex" as const,
+      flexDirection: "column" as const,
+      alignItems: "center" as const,
+      justifyContent: "center" as const,
+      marginTop: 10,
+
+      text: {
+        fontFamily: "DMMonoRegular",
+        fontSize: 12,
+        color: app_colors.primary.medium,
+      }
+    },
   },
 
   usedGearSection: {
