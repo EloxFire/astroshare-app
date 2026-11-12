@@ -1,3 +1,64 @@
 {
-  "title": "Nouvelle session"
+  "title": "Nouvelle session",
+  "date": {
+    "title": "Quand ?",
+    "start": "Début",
+    "end": "Fin",
+    "duration": "Durée : {{duration}}",
+    "picker": {
+      "startTitle": "Début de la session",
+      "endTitle": "Fin de la session",
+      "done": "Valider"
+    }
+  },
+  "venue": {
+    "title": "Quel lieu ?",
+    "tabs": {
+      "observatory": "Observatoire",
+      "gps": "Position GPS"
+    },
+    "noObservatories": "Aucun observatoire disponible",
+    "addObservatory": "Ajouter un observatoire",
+    "savedObservatory": "Observatoire enregistré",
+    "savedObservatoryWithBortle": "Observatoire enregistré - Bortle {{bortle}}",
+    "currentPosition": "Position actuelle",
+    "positionUnavailable": "Position GPS indisponible pour le moment"
+  },
+  "skyQuality": {
+    "title": "Qualité du ciel",
+    "seeing": { "label": "Seeing", "description": "Stabilité de l'air" },
+    "transparency": { "label": "Transparence", "description": "Nuages, humidité" },
+    "darkness": { "label": "Noirceur", "description": "Pollution lumineuse" }
+  },
+  "observedObjects": {
+    "title": "Objets observés",
+    "count_one": "{{count}} observé",
+    "count_other": "{{count}} observés",
+    "searchPlaceholder": "Ajouter un objet : M13, Jupiter, NGC7000...",
+    "empty": "Aucun objet ajouté",
+    "toggles": {
+      "observedAtEyepiece": "Observé à l'oculaire",
+      "photographed": "Photographié",
+      "sketched": "Dessiné"
+    },
+    "categories": {
+      "galaxy": "Galaxie",
+      "cluster": "Amas",
+      "nebula": "Nébuleuse",
+      "star": "Étoile",
+      "other": "Autre"
+    }
+  },
+  "gear": {
+    "title": "Matériel utilisé",
+    "newSetup": "Nouveau setup",
+    "noSetups": "Aucun setup disponible",
+    "addSetup": "Ajouter un setup"
+  },
+  "notes": {
+    "title": "Notes additionnelles",
+    "placeholder": "Ajouter des notes sur la session, le ciel, le matériel, etc."
+  },
+  "save": "Enregistrer la session",
+  "missingVenue": "Choisissez un lieu pour enregistrer la session"
 }

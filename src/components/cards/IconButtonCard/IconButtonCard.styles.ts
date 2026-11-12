@@ -12,6 +12,12 @@ export const iconButtonCardStyles = {
     padding: 14,
     gap: 12,
 
+    // Bordure gardée à 1 px (seule sa couleur change) : l'épaissir décalerait le contenu.
+    selected: {
+      backgroundColor: app_colors.accent.light,
+      borderColor: app_colors.accent.main,
+    },
+
     // Pastille carrée 44 px : radius.badge44 est le rayon prévu pour cette taille de pastille. Même
     // taille avec une icône ou une date, pour que des cartes côte à côte restent alignées.
     badge: {

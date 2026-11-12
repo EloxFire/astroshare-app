@@ -59,6 +59,12 @@ export const addSessionStyles = {
         flexDirection: 'row' as const,
         alignItems: 'center' as const,
         gap: 10,
+
+        text: {
+          fontFamily: "DMMonoRegular",
+          fontSize: 12,
+          color: app_colors.yellow.main,
+        }
       }
     },
 
@@ -222,11 +228,6 @@ export const addSessionStyles = {
     display: "flex" as const,
     flexDirection: "column" as const,
     marginBottom: 20,
-    // Le panneau de suggestions de InputWithIcon flotte en position absolute par-dessus la suite
-    // de l'écran (voir InputWithIcon.styles.ts) : zIndex ne s'applique qu'entre enfants d'un même
-    // parent, donc il faut aussi élever cette section au-dessus de celles qui la suivent (sinon
-    // leur contenu continue de s'afficher par-dessus le panneau, dans l'ordre normal du flux).
-    zIndex: 10,
 
     // Coquille carte-liste identique à globalStyles.defaultCard (bordée, blanche, coins arrondis) :
     // les lignes (ObjectCardLite) gèrent elles-mêmes leur séparateur interne (prop withBorder).
@@ -284,6 +285,12 @@ export const addSessionStyles = {
           marginLeft: 5,
         }
       }
+    },
+
+    setupsList: {
+      display: "flex" as const,
+      flexDirection: "column" as const,
+      gap: 10,
     }
   },
 
@@ -291,5 +298,44 @@ export const addSessionStyles = {
     display: "flex" as const,
     flexDirection: "column" as const,
     marginBottom: 20,
-  }
+  },
+
+  // Bouton d'enregistrement en bas du formulaire, avec un rappel de ce qui manque quand il est
+  // désactivé (aucun lieu disponible).
+  saveSection: {
+    display: "flex" as const,
+    flexDirection: "column" as const,
+    alignItems: "center" as const,
+    gap: 8,
+    marginBottom: 20,
+
+    button: {
+      display: "flex" as const,
+      flexDirection: "row" as const,
+      alignItems: "center" as const,
+      justifyContent: "center" as const,
+      gap: 8,
+      alignSelf: "stretch" as const,
+      backgroundColor: app_colors.accent.main,
+      borderRadius: radius.badge44,
+      paddingVertical: 14,
+
+      disabled: {
+        opacity: 0.4,
+      },
+
+      text: {
+        fontFamily: "ZTNatureBold",
+        fontSize: 16,
+        color: app_colors.white,
+      },
+    },
+
+    hint: {
+      fontFamily: "DMMonoRegular",
+      fontSize: 11,
+      color: app_colors.primary.medium,
+      textAlign: "center" as const,
+    },
+  },
 }

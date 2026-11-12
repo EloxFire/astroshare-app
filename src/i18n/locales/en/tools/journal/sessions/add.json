@@ -1,3 +1,64 @@
 {
-  "title": "New session"
+  "title": "New session",
+  "date": {
+    "title": "When?",
+    "start": "Start",
+    "end": "End",
+    "duration": "Duration: {{duration}}",
+    "picker": {
+      "startTitle": "Session start",
+      "endTitle": "Session end",
+      "done": "Done"
+    }
+  },
+  "venue": {
+    "title": "Where?",
+    "tabs": {
+      "observatory": "Observatory",
+      "gps": "GPS position"
+    },
+    "noObservatories": "No observatory available",
+    "addObservatory": "Add an observatory",
+    "savedObservatory": "Saved observatory",
+    "savedObservatoryWithBortle": "Saved observatory - Bortle {{bortle}}",
+    "currentPosition": "Current position",
+    "positionUnavailable": "GPS position unavailable for now"
+  },
+  "skyQuality": {
+    "title": "Sky quality",
+    "seeing": { "label": "Seeing", "description": "Air steadiness" },
+    "transparency": { "label": "Transparency", "description": "Clouds, humidity" },
+    "darkness": { "label": "Darkness", "description": "Light pollution" }
+  },
+  "observedObjects": {
+    "title": "Observed objects",
+    "count_one": "{{count}} observed",
+    "count_other": "{{count}} observed",
+    "searchPlaceholder": "Add an object: M13, Jupiter, NGC7000...",
+    "empty": "No object added",
+    "toggles": {
+      "observedAtEyepiece": "Observed at the eyepiece",
+      "photographed": "Photographed",
+      "sketched": "Sketched"
+    },
+    "categories": {
+      "galaxy": "Galaxy",
+      "cluster": "Cluster",
+      "nebula": "Nebula",
+      "star": "Star",
+      "other": "Other"
+    }
+  },
+  "gear": {
+    "title": "Gear used",
+    "newSetup": "New setup",
+    "noSetups": "No setup available",
+    "addSetup": "Add a setup"
+  },
+  "notes": {
+    "title": "Additional notes",
+    "placeholder": "Add notes about the session, the sky, the gear, etc."
+  },
+  "save": "Save session",
+  "missingVenue": "Choose a location to save the session"
 }

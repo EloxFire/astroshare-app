@@ -31,17 +31,36 @@ interface InputWithIconProps extends TextInputProps {
   password?: boolean;
 }
 
-export const InputWithIcon = ({ icon: Icon, style, action, suggestions, fill = false, password = false, required = false, ...props }: InputWithIconProps) => {
+export const InputWithIcon = ({
+  icon: Icon,
+  style,
+  action,
+  suggestions,
+  onSuggestionPress,
+  label,
+  labelStyle,
+  additionnalInputStyles,
+  onFocus,
+  onBlur,
+  onChangeText,
+  fill = false,
+  password = false,
+  required = false,
+  ...props
+}: InputWithIconProps) => {
 
   const [isFocused, setIsFocused] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  // Liste masquée après un choix, jusqu'à la prochaine frappe. Un état à part plutôt que de forcer
+  // isFocused à false : le champ garde le focus (clavier ouvert), et isFocused doit rester le reflet
+  // exact du vrai focus, sinon les suggestions ne réapparaissaient plus en retapant.
+  const [suggestionsDismissed, setSuggestionsDismissed] = useState(false);
 
-  const hasSuggestions = suggestions && suggestions.length > 0;
+  const showSuggestions = Boolean(suggestions && suggestions.length > 0) && isFocused && !suggestionsDismissed;
 
   const handleSuggestionPress = (suggestion: string) => {
-    if(!props.onSuggestionPress) return;
-    props.onSuggestionPress(suggestion);
-    setIsFocused(false);
+    onSuggestionPress?.(suggestion);
+    setSuggestionsDismissed(true);
   }
 
   return (
@@ -50,46 +69,57 @@ export const InputWithIcon = ({ icon: Icon, style, action, suggestions, fill = f
     // ligne icône+input, ne servait plus à rien depuis l'ajout du label, qui a introduit ce
     // wrapper en colonne au-dessus.
     <View style={{display: 'flex', flexDirection: 'column', gap: 5, ...(fill ? { flex: 1 } : { width: '100%' })}}>
-      {props.label && (
-        <Text style={[inputWithIconStyles.label, props.labelStyle]}>
-          {props.label}{required && <Text style={inputWithIconStyles.label.required}> *</Text>}
+      {label && (
+        <Text style={[inputWithIconStyles.label, labelStyle]}>
+          {label}{required && <Text style={inputWithIconStyles.label.required}> *</Text>}
         </Text>
       )}
-      {/* position relative : ancre `suggestionsContainer`, posé en absolute juste en dessous. */}
-      <View style={{display: 'flex', flexDirection: 'row', width: '100%', position: 'relative'}}>
-        <View style={[inputWithIconStyles.container, hasSuggestions && isFocused && inputWithIconStyles.container.withSuggestions]}>
-          {Icon && <Icon color={flattenOpacity(app_colors.primary.main, 0.8, app_colors.white)} size={16} />}
-          <TextInput
-            onFocus={() => setIsFocused(true)}
-            onBlur={() => setIsFocused(false)}
-            style={[inputWithIconStyles.input, style, props.additionnalInputStyles]}
-            placeholderTextColor={app_colors.primary.medium}
-            returnKeyType={props.multiline ? "default" : "done"}
-            submitBehavior={props.multiline ? "newline" : "submit"}
-            onSubmitEditing={action}
-            keyboardType={props.keyboardType || "default"}
-            multiline={props.multiline || false}
-            // "sentences" (comportement par défaut de TextInput) n'a de sens que pour du texte
-            // libre multiligne — sur un champ simple (email, tag, coordonnées...), ça majuscule
-            // la première lettre sans que ce soit voulu.
-            autoCapitalize={props.multiline ? "sentences" : "none"}
-            secureTextEntry={password && !isPasswordVisible}
-            {...props}
-          />
-          {password && (
-            <TouchableOpacity onPress={() => setIsPasswordVisible((visible) => !visible)} hitSlop={10}>
-              {isPasswordVisible
-                ? <EyeOff color={flattenOpacity(app_colors.primary.main, 0.8, app_colors.white)} size={16} />
-                : <Eye color={flattenOpacity(app_colors.primary.main, 0.8, app_colors.white)} size={16} />
-              }
-            </TouchableOpacity>
-          )}
+      {/* Champ + suggestions collées dessous (dans leur propre View, sans le gap du wrapper). */}
+      <View>
+        <View style={{display: 'flex', flexDirection: 'row', width: '100%'}}>
+          <View style={[inputWithIconStyles.container, showSuggestions && inputWithIconStyles.container.withSuggestions]}>
+            {Icon && <Icon color={flattenOpacity(app_colors.primary.main, 0.8, app_colors.white)} size={16} />}
+            <TextInput
+              // Handlers de l'appelant appelés en plus des nôtres (et non à leur place via le spread
+              // de props) : isFocused doit toujours suivre le vrai focus.
+              onFocus={(event) => { setIsFocused(true); onFocus?.(event); }}
+              onBlur={(event) => { setIsFocused(false); onBlur?.(event); }}
+              onChangeText={(text) => { setSuggestionsDismissed(false); onChangeText?.(text); }}
+              style={[inputWithIconStyles.input, style, additionnalInputStyles]}
+              placeholderTextColor={app_colors.primary.medium}
+              returnKeyType={props.multiline ? "default" : "done"}
+              submitBehavior={props.multiline ? "newline" : "submit"}
+              onSubmitEditing={action}
+              keyboardType={props.keyboardType || "default"}
+              multiline={props.multiline || false}
+              // "sentences" (comportement par défaut de TextInput) n'a de sens que pour du texte
+              // libre multiligne — sur un champ simple (email, tag, coordonnées...), ça majuscule
+              // la première lettre sans que ce soit voulu.
+              autoCapitalize={props.multiline ? "sentences" : "none"}
+              secureTextEntry={password && !isPasswordVisible}
+              {...props}
+            />
+            {password && (
+              <TouchableOpacity onPress={() => setIsPasswordVisible((visible) => !visible)} hitSlop={10}>
+                {isPasswordVisible
+                  ? <EyeOff color={flattenOpacity(app_colors.primary.main, 0.8, app_colors.white)} size={16} />
+                  : <Eye color={flattenOpacity(app_colors.primary.main, 0.8, app_colors.white)} size={16} />
+                }
+              </TouchableOpacity>
+            )}
+          </View>
         </View>
-        {hasSuggestions && isFocused && (
+        {/* Dans le flux, sous le champ, et non en position absolute par-dessus la suite de l'écran :
+            les éléments affichés après le champ passaient au-dessus de la liste (son zIndex ne joue
+            qu'entre éléments voisins) et recevaient les appuis à sa place. Le contenu en dessous est
+            poussé le temps que la liste est ouverte.
+            Si le champ est dans un ScrollView, celui-ci doit avoir keyboardShouldPersistTaps="handled" :
+            sinon, clavier ouvert, le premier appui sur une suggestion ne fait que fermer le clavier. */}
+        {showSuggestions && suggestions && (
           <View style={inputWithIconStyles.suggestionsContainer}>
             {suggestions.map((suggestion, index) => (
-              <TouchableOpacity onPress={() => handleSuggestionPress(suggestion)} key={index} style={[inputWithIconStyles.suggestionText, index < suggestions.length - 1 && inputWithIconStyles.suggestionText.withBorder]}>
-                <Text>{suggestion}</Text>
+              <TouchableOpacity onPress={() => handleSuggestionPress(suggestion)} key={`${index}-${suggestion}`} style={[inputWithIconStyles.suggestion, index < suggestions.length - 1 && inputWithIconStyles.suggestion.withBorder]}>
+                <Text style={inputWithIconStyles.suggestion.text}>{suggestion}</Text>
               </TouchableOpacity>
             ))}
           </View>

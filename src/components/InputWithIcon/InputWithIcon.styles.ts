@@ -37,31 +37,31 @@ export const inputWithIconStyles = {
     ...typography.dmMono.regular.searchPlaceholder,
   },
 
-  // Superposé au reste de l'écran (position absolute, ancré au bas du champ) plutôt qu'en flux
-  // normal : sinon, dans un formulaire, son apparition pousserait tout le contenu en dessous.
+  // Liste dans le flux, collée sous le champ (qui perd alors ses coins et sa bordure du bas, voir
+  // container.withSuggestions). Pas en position absolute par-dessus l'écran : voir le composant.
   suggestionsContainer: {
-    position: "absolute" as const,
-    top: "100%" as const,
-    left: 0,
-    right: 0,
     backgroundColor: app_colors.white,
     borderWidth: 1,
     borderColor: app_colors.accent.light,
     borderBottomLeftRadius: radius.searchField,
     borderBottomRightRadius: radius.searchField,
-    zIndex: 10,
+    overflow: "hidden" as const,
   },
 
-  suggestionText: {
+  suggestion: {
     paddingVertical: spacing.banner.vertical,
     paddingHorizontal: spacing.banner.horizontal,
-    color: app_colors.black,
-    ...typography.dmMono.regular.searchPlaceholder,
-    
+
     withBorder: {
       borderBottomWidth: 1,
       borderBottomColor: app_colors.primary.light,
+    },
 
-    }
+    // Sur le <Text> lui-même : posé sur le bouton qui l'entoure, ce style ne s'appliquait pas
+    // (police système au lieu de DM Mono).
+    text: {
+      color: app_colors.black,
+      ...typography.dmMono.regular.searchPlaceholder,
+    },
   },
 };

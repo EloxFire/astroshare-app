@@ -96,6 +96,22 @@ export const formatDuration = (seconds: number, t: TFunction): string => {
   return t("duration", { hours, minutes });
 };
 
+// Durée compacte à partir d'un nombre de minutes : "50 min" sous l'heure, puis "1h10", "1h05" (minutes
+// sur deux chiffres) ou "2h" pile. Arrondie à la minute ; une durée négative (ex: fin avant le
+// début dans un formulaire) garde son signe : "-30 min". Sans traduction, comme formatHumidity ou
+// formatWindSpeed — pour un libellé traduit par namespace, voir formatDuration ci-dessus.
+export const formatCompactDuration = (minutes: number): string => {
+  const sign = minutes < 0 ? "-" : "";
+  const totalMinutes = Math.round(Math.abs(minutes));
+  if (totalMinutes < 60) return `${sign}${totalMinutes} min`;
+
+  const hours = Math.floor(totalMinutes / 60);
+  const remainingMinutes = totalMinutes % 60;
+  return remainingMinutes === 0
+    ? `${sign}${hours}h`
+    : `${sign}${hours}h${String(remainingMinutes).padStart(2, "0")}`;
+};
+
 export const formatDistanceInUA = (meters: number, language: string, decimals = 2): string => {
   const AU_IN_METERS = 149_597_870_700; // 1 UA = 149 597 870,7 km
   const distanceInAU = meters / AU_IN_METERS;

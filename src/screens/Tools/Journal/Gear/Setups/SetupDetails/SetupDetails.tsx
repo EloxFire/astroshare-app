@@ -59,7 +59,7 @@ const SetupDetails = () => {
 
             <View style={setupDetailsStyles.heroCard.pieceCount}>
               <Text style={setupDetailsStyles.heroCard.pieceCount.value}>{pieceCount}</Text>
-              <Text style={setupDetailsStyles.heroCard.pieceCount.label}>{t("pieceCount", { count: pieceCount })}</Text>
+              <Text style={setupDetailsStyles.heroCard.pieceCount.label}>{pieceCount > 1 ? t("pieceCount_other") : t("pieceCount_one")}</Text>
             </View>
           </View>
 

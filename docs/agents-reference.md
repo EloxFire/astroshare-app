@@ -82,6 +82,15 @@ météo, APOD, viseur polaire, météo spatiale), observatoires de l'utilisateur
 - **`<Image>` chargée par `require()` :** elle reçoit d'office la taille du fichier en `width`/`height`, qui l'emporte sur les bords à 0. Mets-la à `100%` dans un conteneur absolu sans padding. Voir `imageContainer` dans `src/components/ScreenHeader/ScreenHeader.styles.ts`.
 - **Bord d'un dessin SVG :** il est lissé (anti-aliasing). Si un dégradé SVG doit se raccorder à un aplat de même couleur, fais recouvrir sa dernière rangée de pixels par une vue opaque. Voir `FADE_SEAM_COVER` dans `ImageHeaderScrollView.styles.ts`.
 - **Dégradés :** ne fais jamais varier un dégradé vers `"transparent"`, qui est du noir à 0 % d'opacité et salit le milieu du dégradé. Garde une seule couleur et ne fais varier que l'opacité. Pour une transition douce, utilise `easedGradientStops` (`src/helpers/gradients.ts`, courbe smoothstep), avec `<LinearGradient>` de `react-native-svg`.
+- **Liste posée par-dessus la suite de l'écran (`position: "absolute"`) :** son `zIndex` ne joue qu'entre éléments voisins. Les éléments affichés après elle dans l'écran passent donc au-dessus et reçoivent les appuis à sa place. Mets la liste dans le flux, sous le champ (c'est le cas d'`InputWithIcon` et de `SelectInput`), ou dans une `Modal`.
+- **Bouton dans un `ScrollView` avec le clavier ouvert :** sans `keyboardShouldPersistTaps="handled"` sur le `ScrollView`, le premier appui ne fait que fermer le clavier et n'atteint pas le bouton. C'est indispensable pour les suggestions d'un champ.
+
+### Formatage (`src/helpers/format.ts`)
+
+- **Passer par `formatDate`** (`useAppUnits`) pour toute date affichée : il respecte le fuseau et le réglage UTC de l'utilisateur.
+- **`formatShortMonth(date)`** : mois abrégé de la langue, sans point final (« janv », « jan », « gen »), pour les pastilles de date. Il n'est pas coupé à 3 lettres, sinon juin et juillet donneraient tous deux « jui ».
+- **`formatCompactDuration(minutes)`** : durée compacte, sans traduction (« 50 min », « 1h05 », « 2h », « -30 min »).
+- **`formatDuration(seconds, t)`** : durée traduite, via une clé `duration` propre à chaque namespace.
 
 ---
 
@@ -92,7 +101,8 @@ météo, APOD, viseur polaire, météo spatiale), observatoires de l'utilisateur
 - **Ajouter un namespace :** crée le JSON dans chaque langue, puis ajoute l'import et l'entrée dans les trois blocs de `resources.ts`.
 - **Clés :** une clé ne répète pas le nom de son namespace (`t("recap.sessions")`, pas `t("profile.recap.sessions")`).
 - **Langues :** `fr` est la langue de référence et de repli. `en` et `it` peuvent être partielles : les clés absentes retombent sur le français.
-- **Ne pas traduire au chargement d'un module :** un `i18next.t()` exécuté à l'import, comme les `label` de `src/helpers/observatories/observatories.ts`, est figé dans la langue du démarrage. Traduis dans le composant avec `t()`. Exemple : les options de type de lieu dans `StepTwo.tsx`.
+- **Ne pas traduire au chargement d'un module :** un `i18next.t()` exécuté à l'import, comme les `label` de `src/helpers/observatories/observatories.ts`, est figé dans la langue du démarrage. Traduis dans le composant avec `t()`. Exemple : les options de type de lieu dans `StepTwo.tsx`. Pour une fonction déclarée hors du composant, passe-lui `t` en paramètre (exemple : `getCatalogObjectSubtitle` dans `AddSession.tsx`).
+- **Namespaces imbriqués :** un écran peut avoir son propre fichier sous celui de sa section. Par exemple, `tools/journal/sessions/add` (formulaire d'ajout de session) se trouve dans `locales/<langue>/tools/journal/sessions/add.json`, à côté de `tools/journal.json`. Le fichier `journal.json` et le dossier `journal/` coexistent sans problème.
 
 ---
 
@@ -118,6 +128,32 @@ météo, APOD, viseur polaire, météo spatiale), observatoires de l'utilisateur
 - **`NoInfer` sur `value`/`onChange` :** sans lui, l'inférence du type échoue en choix multiple. Il demande TypeScript 5.4 ou plus.
 - **`presentation` :** `"dropdown"` (liste sous le champ) ou `"sheet"` (panneau `Modal` avec `FlatList`, recherche facultative via `searchable`). Par défaut, le panneau s'ouvre au-delà de `SHEET_OPTIONS_THRESHOLD` (8) options.
 - **Options construites depuis une liste d'ids :** type les ids avec l'union attendue (exemple : `observatoriesTypes` typé `ObservatoryType`).
+
+### `InputWithIcon` : suggestions (`src/components/InputWithIcon/`)
+
+- **Liste :** dans le flux, collée sous le champ. Elle pousse le contenu en dessous tant qu'elle est ouverte. Elle ne passe plus par-dessus, à cause du piège de la §2.
+- **Dans un `ScrollView` :** il faut `keyboardShouldPersistTaps="handled"` (§2), sinon le premier appui sur une suggestion est perdu.
+- **Après un choix :** la liste est masquée par un état à part (`suggestionsDismissed`), remis à zéro à la frappe suivante. Le champ garde le focus. Ne force jamais `isFocused` à `false` à la main : le champ resterait actif et les suggestions ne réapparaîtraient plus.
+- **`onFocus`, `onBlur` et `onChangeText` de l'appelant :** ils sont appelés en plus de ceux du composant, pas à leur place.
+
+### Cartes du Journal (`src/components/cards/`)
+
+- **`IconButtonCard` :** carte-bouton avec une pastille de 44 px à gauche, un titre et un sous-titre.
+  - La pastille contient une icône (`icon`) ou une date (`date` : jour et mois abrégé, qui l'emporte sur l'icône). Il faut au moins l'un des deux, le type l'impose.
+  - Autres props : `badgeBackgroundColor`/`badgeContentColor`, `fill` pour partager une ligne, et `selected` pour un choix unique (fond violet clair, bordure violette).
+- **`ObservationCard` :** une observation, avec une illustration ronde (disque sombre sans `image`), la désignation, le nom et les détails. Le chevron est toujours affiché.
+- **`SessionCard` :** une session, sur carte sombre. Elle montre une pastille de date, le lieu, les horaires, et une colonne par note (`grades: { label, value }[]`, note sur `MAX_GRADE` = 5).
+- **`CheckboxCard` :** carte cochable qui contient la `Checkbox`. Toute la carte coche ou décoche. La `Checkbox` n'y est qu'un indicateur (`pointerEvents="none"`, masquée pour l'accessibilité), pour éviter un double déclenchement et une case annoncée deux fois.
+- **Toutes ces cartes :** sans `onPress`, elles ne réagissent pas au toucher. Les textes arrivent déjà formatés et traduits par l'appelant.
+
+### Journal d'observation : enregistrement d'une session (`AddSession`)
+
+- **Store :** `addAstronomySession(session)` ajoute la session à `statistics.astronomySessions` (`src/store/userData.store.ts`). Type : `AstronomySession` (`src/types/statistics/AstronomySession.ts`).
+- **Objets observés :** `observedObjects: SessionObservedObject[]`, c'est-à-dire l'objet du catalogue (`/v3/objects`) et trois bascules : oculaire, photo, dessin. `astrophotos` et `drawings` en sont déduits.
+- **Lieu :** un observatoire choisi dans la liste (l'observatoire actif est présélectionné) ou la position GPS lue par `LocationContext`. C'est la seule condition pour enregistrer.
+  - Pour un observatoire, la session garde une **copie sans l'image** (`location`), plus `observatoryId`. La copie reste lisible si l'observatoire change ou disparaît, et la photo en base64 n'est pas recopiée dans chaque session.
+- **Setups :** seuls leurs ids sont gardés pendant la saisie. Les vrais `Setup` sont retrouvés dans le store au moment d'enregistrer, donc à jour.
+- **Notes de ciel :** 0 (aucune étoile touchée) est enregistré comme `null`. Les champs `observations` (météores, comètes, etc.) ne sont pas encore saisis : ils valent `false`.
 
 ### `WeatherRadarMap` (`src/components/weather/WeatherRadarMap/`)
 
@@ -333,6 +369,13 @@ Le journal commence avec le commit `8527e2f`. Les changements antérieurs, comme
 i18n, `SelectInput` ou `ImageHeaderScrollView`, sont décrits dans les sections ci-dessus mais n'ont pas
 d'entrée datée.
 
+- **2026-11-12** — même commit — Journal :
+  - enregistrement des sessions dans le store (`addAstronomySession`, objets observés, lieu sélectionnable, bouton d'enregistrement) ;
+  - nouvelle `CheckboxCard`, avec la sélection multiple des setups ;
+  - suggestions d'`InputWithIcon` corrigées ;
+  - `formatCompactDuration` et traductions du formulaire en fr, en et it ;
+  - sections §2, §3 et §4.
+- **2026-11-08** — `5440321` et `26d2ed4` (documentés après coup, le 2026-11-12) — cartes `IconButtonCard`, `ObservationCard` et `SessionCard`, helper `formatShortMonth`, namespace `tools/journal/sessions/add` — §2, §3, §4. Le namespace `tools/3dviewer` (`70d2ebf`, 2026-11-03) suit la convention de la §3.
 - **2026-10-31** — même commit — carte radar adaptée à la nouvelle API (LibreWXR, frames de prévision
   `is_forecast`) : ouverture sur « maintenant » au lieu de la dernière frame, repère « maintenant », zone
   prévision et mention observé/prévision, nuages (instantanés) suspendus pendant l'animation et sur

@@ -1,8 +1,8 @@
 {
   "title": "Setup",
   "editButton": "Modifier",
-  "pieceCount_one": "{{count}} pièce de matériel",
-  "pieceCount_other": "{{count}} pièces de matériel",
+  "pieceCount_one": "pièce de matériel",
+  "pieceCount_other": "pièces de matériel",
   "sections": {
     "composition": { "title": "Composition" }
   },

@@ -58,6 +58,8 @@ export type UserSettingsActions = {
   setDistanceUnit: (newDistanceUnit: "km" | "mi") => void;
   setTemperatureUnit: (newTemperatureUnit: "celsius" | "fahrenheit") => void;
   resetUserData: () => void;
+  // Statistics actions
+  addAstronomySession: (newSession: AstronomySession) => void;
   // Gear management actions
   addTelescope: (newTelescope: Telescope) => void;
   updateTelescope: (telescopeId: string, updatedTelescope: Telescope) => void;

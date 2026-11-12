@@ -23,6 +23,9 @@ type IconButtonCardProps = IconButtonCardBadgeProps & {
   // (pleine largeur dans une colonne) ; true : flex:1, pour partager une View flexDirection:"row"
   // avec d'autres cartes (ex: deux raccourcis côte à côte).
   fill?: boolean;
+  // Carte choisie dans une liste à choix unique (ex: le lieu d'une session) : fond violet clair
+  // bordé de violet, comme une CheckboxCard cochée.
+  selected?: boolean;
 };
 
 /**
@@ -42,6 +45,7 @@ const IconButtonCard = ({
   badgeContentColor = app_colors.primary.main,
   onPress,
   fill = false,
+  selected = false,
 }: IconButtonCardProps) => {
   // Via useAppUnits (fuseau / UTC choisis par l'utilisateur) plutôt que dayjs() directement : le
   // jour affiché doit être celui de l'heure affichée partout ailleurs dans l'app.
@@ -62,10 +66,11 @@ const IconButtonCard = ({
 
   return (
     <TouchableOpacity
-      style={[iconButtonCardStyles.card, fill && { flex: 1 }]}
+      style={[iconButtonCardStyles.card, selected && iconButtonCardStyles.card.selected, fill && { flex: 1 }]}
       onPress={onPress}
       disabled={!onPress}
       accessibilityRole={onPress ? "button" : undefined}
+      accessibilityState={{ selected }}
     >
       <View style={[iconButtonCardStyles.card.badge, { backgroundColor: badgeBackgroundColor }]}>
         {renderBadgeContent()}

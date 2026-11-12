@@ -1,3 +1,64 @@
 {
-  "title": "Nuova sessione"
+  "title": "Nuova sessione",
+  "date": {
+    "title": "Quando?",
+    "start": "Inizio",
+    "end": "Fine",
+    "duration": "Durata: {{duration}}",
+    "picker": {
+      "startTitle": "Inizio della sessione",
+      "endTitle": "Fine della sessione",
+      "done": "Conferma"
+    }
+  },
+  "venue": {
+    "title": "Dove?",
+    "tabs": {
+      "observatory": "Osservatorio",
+      "gps": "Posizione GPS"
+    },
+    "noObservatories": "Nessun osservatorio disponibile",
+    "addObservatory": "Aggiungi un osservatorio",
+    "savedObservatory": "Osservatorio salvato",
+    "savedObservatoryWithBortle": "Osservatorio salvato - Bortle {{bortle}}",
+    "currentPosition": "Posizione attuale",
+    "positionUnavailable": "Posizione GPS non disponibile al momento"
+  },
+  "skyQuality": {
+    "title": "Qualità del cielo",
+    "seeing": { "label": "Seeing", "description": "Stabilità dell'aria" },
+    "transparency": { "label": "Trasparenza", "description": "Nuvole, umidità" },
+    "darkness": { "label": "Oscurità", "description": "Inquinamento luminoso" }
+  },
+  "observedObjects": {
+    "title": "Oggetti osservati",
+    "count_one": "{{count}} osservato",
+    "count_other": "{{count}} osservati",
+    "searchPlaceholder": "Aggiungi un oggetto: M13, Giove, NGC7000...",
+    "empty": "Nessun oggetto aggiunto",
+    "toggles": {
+      "observedAtEyepiece": "Osservato all'oculare",
+      "photographed": "Fotografato",
+      "sketched": "Disegnato"
+    },
+    "categories": {
+      "galaxy": "Galassia",
+      "cluster": "Ammasso",
+      "nebula": "Nebulosa",
+      "star": "Stella",
+      "other": "Altro"
+    }
+  },
+  "gear": {
+    "title": "Attrezzatura utilizzata",
+    "newSetup": "Nuovo setup",
+    "noSetups": "Nessun setup disponibile",
+    "addSetup": "Aggiungi un setup"
+  },
+  "notes": {
+    "title": "Note aggiuntive",
+    "placeholder": "Aggiungi note sulla sessione, il cielo, l'attrezzatura, ecc."
+  },
+  "save": "Salva la sessione",
+  "missingVenue": "Scegli un luogo per salvare la sessione"
 }
