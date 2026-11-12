@@ -1,0 +1,28 @@
+{
+  "title": "Filter",
+  "kindLabel": "Filter",
+  "editButton": "Edit",
+  "characteristics": {
+    "title": "Characteristics",
+    "size": { "label": "Size" },
+    "wavelengthRange": { "label": "Wavelength" }
+  },
+  "types": {
+    "uv": "UV",
+    "ir": "IR",
+    "polarizing": "Polarizing",
+    "nebula": "Nebula",
+    "color": "Color",
+    "other": "Other"
+  },
+  "unit": { "nanometers": "nm" },
+  "usedIn": {
+    "title": "Used in",
+    "sessionsCount_one": "{{count}} session",
+    "sessionsCount_other": "{{count}} sessions",
+    "lastSession": "last on {{date}}",
+    "noSetups": "Not used in any setup yet"
+  },
+  "deleteButton": "Delete this filter",
+  "deleteWarning": "It will be removed from the setups using it. Your past sessions stay intact."
+}

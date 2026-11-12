@@ -1,0 +1,33 @@
+{
+  "title": "La mia attrezzatura",
+  "infoCard": {
+    "title": "Gestisci la tua attrezzatura",
+    "subtitle": "Aggiungi la tua attrezzatura all'app per ottenere dati adatti al tuo utilizzo e una maggiore personalizzazione!"
+  },
+  "telescopes": { "title": "Telescopi" },
+  "mounts": { "title": "Montature" },
+  "eyepieces": { "title": "Oculari" },
+  "filters": { "title": "Filtri" },
+  "cameras": { "title": "Camere" },
+  "guideScopes": { "title": "Cannocchiali guida" },
+  "focusers": { "title": "Focheggiatori" },
+  "setups": {
+    "title": "Setup",
+    "add": { "title": "Aggiungi una configurazione" },
+    "pieceCount_one": "{{count}} pezzo di attrezzatura",
+    "pieceCount_other": "{{count}} pezzi di attrezzatura"
+  },
+  "detailed": {
+    "title": "Attrezzatura dettagliata",
+    "noItems": {
+      "telescopes": "Nessun telescopio registrato",
+      "mounts": "Nessuna montatura registrata",
+      "eyepieces": "Nessun oculare registrato",
+      "filters": "Nessun filtro registrato",
+      "cameras": "Nessuna camera registrata",
+      "guideScopes": "Nessun cannocchiale guida registrato",
+      "focusers": "Nessun focheggiatore registrato",
+      "setups": "Usa l'attrezzatura registrata per creare i tuoi setup e riutilizzarli nelle tue sessioni di osservazione."
+    }
+  }
+}

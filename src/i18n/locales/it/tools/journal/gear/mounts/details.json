@@ -1,0 +1,31 @@
+{
+  "title": "Montatura",
+  "kindLabel": "Montatura",
+  "editButton": "Modifica",
+  "characteristics": {
+    "title": "Caratteristiche",
+    "motorized": { "label": "Motorizzazione" },
+    "maxPayload": { "label": "Carico massimo" }
+  },
+  "types": {
+    "altazimuth": "Altazimutale",
+    "equatorial": "Equatoriale",
+    "altAzEquatorial": "Alt-Az / Equatoriale",
+    "dobsonian": "Dobson",
+    "other": "Altro"
+  },
+  "unit": { "kilograms": "kg" },
+  "motorizedValue": {
+    "true": "Motorizzata",
+    "false": "Manuale"
+  },
+  "usedIn": {
+    "title": "Usata in",
+    "sessionsCount_one": "{{count}} sessione",
+    "sessionsCount_other": "{{count}} sessioni",
+    "lastSession": "ultima il {{date}}",
+    "noSetups": "Non ancora usata in nessun setup"
+  },
+  "deleteButton": "Elimina questa montatura",
+  "deleteWarning": "Verrà rimossa dai setup che la usano. Le tue sessioni passate restano intatte."
+}

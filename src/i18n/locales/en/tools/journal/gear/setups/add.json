@@ -1,0 +1,42 @@
+{
+  "title": "Add a setup",
+  "editTitle": "Edit setup",
+  "fields": {
+    "name": { "label": "Setup name", "placeholder": "Name your setup", "error": "Give your setup a name before saving" },
+    "description": { "placeholder": "Describe your setup: use, constraints..." }
+  },
+  "pieceCount_one": "{{count}} piece of gear",
+  "pieceCount_other": "{{count}} pieces of gear",
+  "sections": {
+    "composition": { "title": "Composition" }
+  },
+  "categories": {
+    "telescope": { "title": "Telescope" },
+    "mount": { "title": "Mount" },
+    "eyepieces": { "title": "Eyepieces" },
+    "filters": { "title": "Filters" },
+    "cameras": { "title": "Cameras" },
+    "guideScope": { "title": "Guide scope" },
+    "guideCamera": { "title": "Guide camera" },
+    "focusers": { "title": "Focusers" }
+  },
+  "badges": {
+    "single": "one only",
+    "multiple": "several possible"
+  },
+  "emptyState": {
+    "telescope": "Add a telescope",
+    "mount": "Add a mount",
+    "eyepieces": "Add an eyepiece",
+    "filters": "Add a filter",
+    "cameras": "Add a camera",
+    "guideScope": "Add a guide scope",
+    "guideCamera": "Add a camera",
+    "focusers": "Add a focuser"
+  },
+  "actions": {
+    "save": "Save setup",
+    "update": "Save changes",
+    "delete": "Delete this setup"
+  }
+}

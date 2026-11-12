@@ -1,0 +1,27 @@
+{
+  "title": "Add a focuser",
+  "editTitle": "Edit focuser",
+  "sections": {
+    "identity": { "title": "Your focuser" },
+    "characteristics": { "title": "Characteristics" }
+  },
+  "fields": {
+    "name": { "label": "Name", "placeholder": "Name your focuser" },
+    "brand": { "label": "Brand" },
+    "model": { "label": "Model" },
+    "optionalPlaceholder": "Optional",
+    "type": { "label": "Type" },
+    "travel": { "label": "Travel" }
+  },
+  "types": {
+    "manual": "Manual",
+    "motorized": "Motorized",
+    "other": "Other"
+  },
+  "unit": { "millimeters": "mm" },
+  "actions": {
+    "save": "Save",
+    "update": "Save changes",
+    "delete": "Delete this sheet"
+  }
+}

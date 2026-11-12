@@ -1,4 +1,5 @@
 import { app_colors, radius } from "../../../../helpers/variables";
+import { globalStyles } from "../../../../helpers/globalStyles";
 
 export const gearScreenStyles = {
   setupsSection: {
@@ -36,7 +37,45 @@ export const gearScreenStyles = {
           marginLeft: 5,
         }
       }
-    }
+    },
+
+    list: {
+      display: "flex" as const,
+      flexDirection: "column" as const,
+      gap: 10,
+    },
+
+    row: {
+      ...globalStyles.defaultCard,
+      flexDirection: "row" as const,
+      alignItems: "center" as const,
+      gap: 10,
+
+      iconBadge: {
+        backgroundColor: app_colors.yellow.light,
+        borderRadius: radius.badge32,
+        padding: 10,
+      },
+
+      textBlock: {
+        display: "flex" as const,
+        flexDirection: "column" as const,
+        flex: 1,
+        gap: 2,
+
+        title: {
+          fontFamily: "ZTNatureBold",
+          fontSize: 14,
+          color: app_colors.primary.main,
+        },
+
+        subtitle: {
+          fontFamily: "DMMonoRegular",
+          fontSize: 10,
+          color: app_colors.primary.medium,
+        },
+      },
+    },
   },
 
   detailedGearSection: {
@@ -69,6 +108,12 @@ export const gearScreenStyles = {
             padding: 10,
             borderRadius: radius.badge32,
             backgroundColor: app_colors.accent.light,
+          },
+
+          title: {
+            fontFamily: "ZTNatureBold",
+            fontSize: 16,
+            color: app_colors.primary.main,
           }
         }
       },

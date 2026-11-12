@@ -1,0 +1,23 @@
+{
+  "title": "Focuseur",
+  "kindLabel": "Focuseur",
+  "editButton": "Modifier",
+  "characteristics": {
+    "title": "Caractéristiques",
+    "travel": { "label": "Course" }
+  },
+  "types": {
+    "manual": "Manuel",
+    "motorized": "Motorisé",
+    "other": "Autre"
+  },
+  "usedIn": {
+    "title": "Utilisé dans",
+    "sessionsCount_one": "{{count}} session",
+    "sessionsCount_other": "{{count}} sessions",
+    "lastSession": "dernière le {{date}}",
+    "noSetups": "N'est utilisé dans aucun setup pour le moment"
+  },
+  "deleteButton": "Supprimer ce focuseur",
+  "deleteWarning": "Il sera retiré des setups qui l'utilisent. Vos sessions passées restent intactes."
+}

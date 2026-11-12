@@ -1,0 +1,30 @@
+{
+  "title": "Add a mount",
+  "editTitle": "Edit mount",
+  "sections": {
+    "identity": { "title": "Your mount" },
+    "characteristics": { "title": "Characteristics" }
+  },
+  "fields": {
+    "name": { "label": "Name", "placeholder": "Name your mount" },
+    "brand": { "label": "Brand" },
+    "model": { "label": "Model" },
+    "optionalPlaceholder": "Optional",
+    "type": { "label": "Type" },
+    "motorized": { "label": "Motorized" },
+    "maxPayload": { "label": "Max payload" }
+  },
+  "types": {
+    "altazimuth": "Alt-azimuth",
+    "equatorial": "Equatorial",
+    "altAzEquatorial": "Alt-Az / Equatorial",
+    "dobsonian": "Dobsonian",
+    "other": "Other"
+  },
+  "unit": { "kilograms": "kg" },
+  "actions": {
+    "save": "Save",
+    "update": "Save changes",
+    "delete": "Delete this sheet"
+  }
+}

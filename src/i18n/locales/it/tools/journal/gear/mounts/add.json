@@ -1,0 +1,30 @@
+{
+  "title": "Aggiungi una montatura",
+  "editTitle": "Modifica la montatura",
+  "sections": {
+    "identity": { "title": "La tua montatura" },
+    "characteristics": { "title": "Caratteristiche" }
+  },
+  "fields": {
+    "name": { "label": "Nome", "placeholder": "Nome della tua montatura" },
+    "brand": { "label": "Marca" },
+    "model": { "label": "Modello" },
+    "optionalPlaceholder": "Facoltativo",
+    "type": { "label": "Tipo" },
+    "motorized": { "label": "Motorizzata" },
+    "maxPayload": { "label": "Carico massimo" }
+  },
+  "types": {
+    "altazimuth": "Altazimutale",
+    "equatorial": "Equatoriale",
+    "altAzEquatorial": "Alt-Az / Equatoriale",
+    "dobsonian": "Dobson",
+    "other": "Altro"
+  },
+  "unit": { "kilograms": "kg" },
+  "actions": {
+    "save": "Salva",
+    "update": "Salva le modifiche",
+    "delete": "Elimina la scheda"
+  }
+}

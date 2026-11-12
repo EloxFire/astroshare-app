@@ -1,0 +1,45 @@
+{
+  "title": "Telescopio",
+  "kindLabel": "Telescopio",
+  "editButton": "Modifica",
+  "characteristics": {
+    "title": "Caratteristiche",
+    "aperture": { "label": "Diametro" },
+    "focalLength": { "label": "Focale" },
+    "focalRatio": {
+      "label": "Rapporto F/D",
+      "profiles": {
+        "fast": "veloce",
+        "versatile": "versatile",
+        "planetary": "planetario"
+      }
+    },
+    "usefulMagnification": { "label": "Ingrandimenti utili", "range": "da {{min}}× a {{max}}×" }
+  },
+  "types": {
+    "refractor": "Rifrattore",
+    "reflector": "Riflettore",
+    "catadioptric": "Catadiottrico",
+    "dobsonian": "Dobson",
+    "other": "Altro"
+  },
+  "usages": {
+    "visual": "Visuale",
+    "planetary": "Planetario",
+    "deepSky": "Cielo profondo",
+    "photo": "Foto"
+  },
+  "usedIn": {
+    "title": "Usato in",
+    "sessionsCount_one": "{{count}} sessione",
+    "sessionsCount_other": "{{count}} sessioni",
+    "lastSession": "ultima il {{date}}",
+    "noSetups": "Non ancora usato in nessun setup"
+  },
+  "notes": {
+    "title": "Note",
+    "empty": "Nessuna nota per questo telescopio"
+  },
+  "deleteButton": "Elimina questo telescopio",
+  "deleteWarning": "Verrà rimosso dai setup che lo usano. Le tue sessioni passate restano intatte."
+}

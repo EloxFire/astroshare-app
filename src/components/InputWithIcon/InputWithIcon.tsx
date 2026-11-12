@@ -10,6 +10,8 @@ interface InputWithIconProps extends TextInputProps {
   suggestions?: string[];
   onSuggestionPress?: (suggestion: string) => void;
   label?: string;
+  // Astérisque rouge accolée au label (ex: "Nom *") — purement visuel, ne bloque pas la saisie.
+  required?: boolean;
   // Pour surcharger la couleur/le style du label au cas par cas (ex: fond sombre) — le style par
   // défaut (globalStyles.categoryTitle, voir InputWithIcon.styles.ts) n'est lisible que sur fond
   // clair, car primary.medium n'est qu'une version à 50% d'opacité de primary.main : posé sur un
@@ -29,7 +31,7 @@ interface InputWithIconProps extends TextInputProps {
   password?: boolean;
 }
 
-export const InputWithIcon = ({ icon: Icon, style, action, suggestions, fill = false, password = false, ...props }: InputWithIconProps) => {
+export const InputWithIcon = ({ icon: Icon, style, action, suggestions, fill = false, password = false, required = false, ...props }: InputWithIconProps) => {
 
   const [isFocused, setIsFocused] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
@@ -48,7 +50,11 @@ export const InputWithIcon = ({ icon: Icon, style, action, suggestions, fill = f
     // ligne icône+input, ne servait plus à rien depuis l'ajout du label, qui a introduit ce
     // wrapper en colonne au-dessus.
     <View style={{display: 'flex', flexDirection: 'column', gap: 5, ...(fill ? { flex: 1 } : { width: '100%' })}}>
-      {props.label && <Text style={[inputWithIconStyles.label, props.labelStyle]}>{props.label}</Text>}
+      {props.label && (
+        <Text style={[inputWithIconStyles.label, props.labelStyle]}>
+          {props.label}{required && <Text style={inputWithIconStyles.label.required}> *</Text>}
+        </Text>
+      )}
       {/* position relative : ancre `suggestionsContainer`, posé en absolute juste en dessous. */}
       <View style={{display: 'flex', flexDirection: 'row', width: '100%', position: 'relative'}}>
         <View style={[inputWithIconStyles.container, hasSuggestions && isFocused && inputWithIconStyles.container.withSuggestions]}>

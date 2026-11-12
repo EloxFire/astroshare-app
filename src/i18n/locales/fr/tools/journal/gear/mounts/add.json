@@ -1,0 +1,30 @@
+{
+  "title": "Ajouter une monture",
+  "editTitle": "Modifier la monture",
+  "sections": {
+    "identity": { "title": "Votre monture" },
+    "characteristics": { "title": "Caractéristiques" }
+  },
+  "fields": {
+    "name": { "label": "Nom", "placeholder": "Nom de votre monture" },
+    "brand": { "label": "Marque" },
+    "model": { "label": "Modèle" },
+    "optionalPlaceholder": "Facultatif",
+    "type": { "label": "Type" },
+    "motorized": { "label": "Motorisée" },
+    "maxPayload": { "label": "Charge maximale" }
+  },
+  "types": {
+    "altazimuth": "Azimutale",
+    "equatorial": "Équatoriale",
+    "altAzEquatorial": "Alt-Az / Équatoriale",
+    "dobsonian": "Dobson",
+    "other": "Autre"
+  },
+  "unit": { "kilograms": "kg" },
+  "actions": {
+    "save": "Enregistrer",
+    "update": "Enregistrer les modifications",
+    "delete": "Supprimer la fiche"
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "title": "Aggiungi un oculare",
+  "editTitle": "Modifica l'oculare",
+  "sections": {
+    "identity": { "title": "Il tuo oculare" },
+    "characteristics": { "title": "Caratteristiche" }
+  },
+  "fields": {
+    "name": { "label": "Nome", "placeholder": "Nome del tuo oculare" },
+    "brand": { "label": "Marca" },
+    "model": { "label": "Modello" },
+    "optionalPlaceholder": "Facoltativo",
+    "type": { "label": "Tipo" },
+    "barrelSize": { "label": "Diametro barilotto" },
+    "focalLength": { "label": "Focale" },
+    "afov": { "label": "Campo apparente" }
+  },
+  "types": {
+    "plossl": "Plössl",
+    "super-wide-angle": "Super grandangolo",
+    "ultra-wide-angle": "Ultra grandangolo",
+    "extreme-wide-angle": "Grandangolo estremo",
+    "zoom": "Zoom",
+    "reticle": "Reticolato",
+    "other": "Altro"
+  },
+  "unit": {
+    "millimeters": "mm",
+    "degrees": "°"
+  },
+  "actions": {
+    "save": "Salva",
+    "update": "Salva le modifiche",
+    "delete": "Elimina la scheda"
+  }
+}

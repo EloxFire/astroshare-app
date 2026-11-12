@@ -24,6 +24,10 @@ export const inputWithIconStyles = {
   label: {
     ...globalStyles.categoryTitle,
     fontSize: 12,
+
+    required: {
+      color: app_colors.red.main,
+    },
   },
 
   input: {

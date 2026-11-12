@@ -1,0 +1,36 @@
+{
+  "title": "Add an eyepiece",
+  "editTitle": "Edit eyepiece",
+  "sections": {
+    "identity": { "title": "Your eyepiece" },
+    "characteristics": { "title": "Characteristics" }
+  },
+  "fields": {
+    "name": { "label": "Name", "placeholder": "Name your eyepiece" },
+    "brand": { "label": "Brand" },
+    "model": { "label": "Model" },
+    "optionalPlaceholder": "Optional",
+    "type": { "label": "Type" },
+    "barrelSize": { "label": "Barrel size" },
+    "focalLength": { "label": "Focal length" },
+    "afov": { "label": "Apparent field of view" }
+  },
+  "types": {
+    "plossl": "Plössl",
+    "super-wide-angle": "Super wide angle",
+    "ultra-wide-angle": "Ultra wide angle",
+    "extreme-wide-angle": "Extreme wide angle",
+    "zoom": "Zoom",
+    "reticle": "Reticle",
+    "other": "Other"
+  },
+  "unit": {
+    "millimeters": "mm",
+    "degrees": "°"
+  },
+  "actions": {
+    "save": "Save",
+    "update": "Save changes",
+    "delete": "Delete this sheet"
+  }
+}

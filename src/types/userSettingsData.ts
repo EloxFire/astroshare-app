@@ -60,20 +60,28 @@ export type UserSettingsActions = {
   resetUserData: () => void;
   // Gear management actions
   addTelescope: (newTelescope: Telescope) => void;
+  updateTelescope: (telescopeId: string, updatedTelescope: Telescope) => void;
   removeTelescope: (telescopeIdToRemove: string) => void;
   addMount: (newMount: Mount) => void;
+  updateMount: (mountId: string, updatedMount: Mount) => void;
   removeMount: (mountIdToRemove: string) => void;
   addEyepiece: (newEyepiece: Eyepiece) => void;
+  updateEyepiece: (eyepieceId: string, updatedEyepiece: Eyepiece) => void;
   removeEyepiece: (eyepieceIdToRemove: string) => void;
   addFilter: (newFilter: Filter) => void;
+  updateFilter: (filterId: string, updatedFilter: Filter) => void;
   removeFilter: (filterIdToRemove: string) => void;
   addCamera: (newCamera: Camera) => void;
+  updateCamera: (cameraId: string, updatedCamera: Camera) => void;
   removeCamera: (cameraIdToRemove: string) => void;
   addGuideScope: (newGuideScope: GuideScope) => void;
+  updateGuideScope: (guideScopeId: string, updatedGuideScope: GuideScope) => void;
   removeGuideScope: (guideScopeIdToRemove: string) => void;
   addFocuser: (newFocuser: Focuser) => void;
+  updateFocuser: (focuserId: string, updatedFocuser: Focuser) => void;
   removeFocuser: (focuserIdToRemove: string) => void;
   addSetup: (newSetup: Setup) => void;
+  updateSetup: (setupId: string, updatedSetup: Setup) => void;
   removeSetup: (setupIdToRemove: string) => void;
 }
 

@@ -1,0 +1,45 @@
+{
+  "title": "Telescope",
+  "kindLabel": "Telescope",
+  "editButton": "Edit",
+  "characteristics": {
+    "title": "Characteristics",
+    "aperture": { "label": "Aperture" },
+    "focalLength": { "label": "Focal length" },
+    "focalRatio": {
+      "label": "F/D ratio",
+      "profiles": {
+        "fast": "fast",
+        "versatile": "all-purpose",
+        "planetary": "planetary"
+      }
+    },
+    "usefulMagnification": { "label": "Useful magnification", "range": "{{min}}× to {{max}}×" }
+  },
+  "types": {
+    "refractor": "Refractor",
+    "reflector": "Reflector",
+    "catadioptric": "Catadioptric",
+    "dobsonian": "Dobsonian",
+    "other": "Other"
+  },
+  "usages": {
+    "visual": "Visual",
+    "planetary": "Planetary",
+    "deepSky": "Deep sky",
+    "photo": "Photo"
+  },
+  "usedIn": {
+    "title": "Used in",
+    "sessionsCount_one": "{{count}} session",
+    "sessionsCount_other": "{{count}} sessions",
+    "lastSession": "last on {{date}}",
+    "noSetups": "Not used in any setup yet"
+  },
+  "notes": {
+    "title": "Notes",
+    "empty": "No notes for this telescope"
+  },
+  "deleteButton": "Delete this telescope",
+  "deleteWarning": "It will be removed from the setups using it. Your past sessions stay intact."
+}

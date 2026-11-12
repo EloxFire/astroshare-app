@@ -1,0 +1,42 @@
+{
+  "title": "Aggiungi un setup",
+  "editTitle": "Modifica il setup",
+  "fields": {
+    "name": { "label": "Nome del setup", "placeholder": "Nome del tuo setup", "error": "Dai un nome al tuo setup prima di salvare" },
+    "description": { "placeholder": "Descrivi il tuo setup: utilizzo, vincoli..." }
+  },
+  "pieceCount_one": "{{count}} pezzo di attrezzatura",
+  "pieceCount_other": "{{count}} pezzi di attrezzatura",
+  "sections": {
+    "composition": { "title": "Composizione" }
+  },
+  "categories": {
+    "telescope": { "title": "Telescopio" },
+    "mount": { "title": "Montatura" },
+    "eyepieces": { "title": "Oculari" },
+    "filters": { "title": "Filtri" },
+    "cameras": { "title": "Camere" },
+    "guideScope": { "title": "Cannocchiale guida" },
+    "guideCamera": { "title": "Camera di guida" },
+    "focusers": { "title": "Focheggiatori" }
+  },
+  "badges": {
+    "single": "uno solo",
+    "multiple": "più possibili"
+  },
+  "emptyState": {
+    "telescope": "Crea un telescopio",
+    "mount": "Crea una montatura",
+    "eyepieces": "Crea un oculare",
+    "filters": "Crea un filtro",
+    "cameras": "Crea una camera",
+    "guideScope": "Crea un cannocchiale guida",
+    "guideCamera": "Crea una camera",
+    "focusers": "Crea un focheggiatore"
+  },
+  "actions": {
+    "save": "Salva il setup",
+    "update": "Salva le modifiche",
+    "delete": "Elimina questo setup"
+  }
+}

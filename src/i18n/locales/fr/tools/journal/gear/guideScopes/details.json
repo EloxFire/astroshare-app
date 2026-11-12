@@ -1,0 +1,26 @@
+{
+  "title": "Lunette guide",
+  "kindLabel": "Lunette guide",
+  "editButton": "Modifier",
+  "characteristics": {
+    "title": "Caractéristiques",
+    "aperture": { "label": "Diamètre" },
+    "focalLength": { "label": "Focale" }
+  },
+  "types": {
+    "refractor": "Réfracteur",
+    "reflector": "Réflecteur",
+    "catadioptric": "Catadioptrique",
+    "dobsonian": "Dobson",
+    "other": "Autre"
+  },
+  "usedIn": {
+    "title": "Utilisée dans",
+    "sessionsCount_one": "{{count}} session",
+    "sessionsCount_other": "{{count}} sessions",
+    "lastSession": "dernière le {{date}}",
+    "noSetups": "N'est utilisée dans aucun setup pour le moment"
+  },
+  "deleteButton": "Supprimer cette lunette guide",
+  "deleteWarning": "Elle sera retirée des setups qui l'utilisent. Vos sessions passées restent intactes."
+}

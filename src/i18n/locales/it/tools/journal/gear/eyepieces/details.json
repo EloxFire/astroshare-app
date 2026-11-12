@@ -1,0 +1,29 @@
+{
+  "title": "Oculare",
+  "kindLabel": "Oculare",
+  "editButton": "Modifica",
+  "characteristics": {
+    "title": "Caratteristiche",
+    "focalLength": { "label": "Focale" },
+    "afov": { "label": "Campo apparente" },
+    "barrelSize": { "label": "Diametro barilotto" }
+  },
+  "types": {
+    "plossl": "Plössl",
+    "super-wide-angle": "Super grandangolo",
+    "ultra-wide-angle": "Ultra grandangolo",
+    "extreme-wide-angle": "Grandangolo estremo",
+    "zoom": "Zoom",
+    "reticle": "Reticolato",
+    "other": "Altro"
+  },
+  "usedIn": {
+    "title": "Usato in",
+    "sessionsCount_one": "{{count}} sessione",
+    "sessionsCount_other": "{{count}} sessioni",
+    "lastSession": "ultima il {{date}}",
+    "noSetups": "Non ancora usato in nessun setup"
+  },
+  "deleteButton": "Elimina questo oculare",
+  "deleteWarning": "Verrà rimosso dai setup che lo usano. Le tue sessioni passate restano intatte."
+}

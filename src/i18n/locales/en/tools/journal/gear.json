@@ -1,0 +1,33 @@
+{
+  "title": "My gear",
+  "infoCard": {
+    "title": "Manage your gear",
+    "subtitle": "Add your gear to the app to get data tailored to your setup, plus more personalization!"
+  },
+  "telescopes": { "title": "Telescopes" },
+  "mounts": { "title": "Mounts" },
+  "eyepieces": { "title": "Eyepieces" },
+  "filters": { "title": "Filters" },
+  "cameras": { "title": "Cameras" },
+  "guideScopes": { "title": "Guide scopes" },
+  "focusers": { "title": "Focusers" },
+  "setups": {
+    "title": "Setups",
+    "add": { "title": "Add a setup" },
+    "pieceCount_one": "{{count}} piece of gear",
+    "pieceCount_other": "{{count}} pieces of gear"
+  },
+  "detailed": {
+    "title": "Detailed gear",
+    "noItems": {
+      "telescopes": "No telescope saved yet",
+      "mounts": "No mount saved yet",
+      "eyepieces": "No eyepiece saved yet",
+      "filters": "No filter saved yet",
+      "cameras": "No camera saved yet",
+      "guideScopes": "No guide scope saved yet",
+      "focusers": "No focuser saved yet",
+      "setups": "Use your saved gear to build setups and reuse them in your observation sessions."
+    }
+  }
+}

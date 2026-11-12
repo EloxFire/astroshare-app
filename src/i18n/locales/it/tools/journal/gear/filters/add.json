@@ -1,0 +1,32 @@
+{
+  "title": "Aggiungi un filtro",
+  "editTitle": "Modifica il filtro",
+  "sections": {
+    "identity": { "title": "Il tuo filtro" },
+    "characteristics": { "title": "Caratteristiche" }
+  },
+  "fields": {
+    "name": { "label": "Nome", "placeholder": "Nome del tuo filtro" },
+    "brand": { "label": "Marca" },
+    "model": { "label": "Modello" },
+    "optionalPlaceholder": "Facoltativo",
+    "type": { "label": "Tipo" },
+    "size": { "label": "Diametro" },
+    "wavelengthMin": { "label": "Lunghezza d'onda min" },
+    "wavelengthMax": { "label": "Lunghezza d'onda max" }
+  },
+  "types": {
+    "uv": "UV",
+    "ir": "IR",
+    "polarizing": "Polarizzante",
+    "nebula": "Nebulosa",
+    "color": "Colore",
+    "other": "Altro"
+  },
+  "unit": { "nanometers": "nm" },
+  "actions": {
+    "save": "Salva",
+    "update": "Salva le modifiche",
+    "delete": "Elimina la scheda"
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "title": "Mount",
+  "kindLabel": "Mount",
+  "editButton": "Edit",
+  "characteristics": {
+    "title": "Characteristics",
+    "motorized": { "label": "Motorization" },
+    "maxPayload": { "label": "Max payload" }
+  },
+  "types": {
+    "altazimuth": "Alt-azimuth",
+    "equatorial": "Equatorial",
+    "altAzEquatorial": "Alt-Az / Equatorial",
+    "dobsonian": "Dobsonian",
+    "other": "Other"
+  },
+  "unit": { "kilograms": "kg" },
+  "motorizedValue": {
+    "true": "Motorized",
+    "false": "Manual"
+  },
+  "usedIn": {
+    "title": "Used in",
+    "sessionsCount_one": "{{count}} session",
+    "sessionsCount_other": "{{count}} sessions",
+    "lastSession": "last on {{date}}",
+    "noSetups": "Not used in any setup yet"
+  },
+  "deleteButton": "Delete this mount",
+  "deleteWarning": "It will be removed from the setups using it. Your past sessions stay intact."
+}

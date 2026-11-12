@@ -1,0 +1,30 @@
+{
+  "title": "Add a guide scope",
+  "editTitle": "Edit guide scope",
+  "sections": {
+    "identity": { "title": "Your guide scope" },
+    "characteristics": { "title": "Characteristics" }
+  },
+  "fields": {
+    "name": { "label": "Name", "placeholder": "Name your guide scope" },
+    "brand": { "label": "Brand" },
+    "model": { "label": "Model" },
+    "optionalPlaceholder": "Optional",
+    "type": { "label": "Type" },
+    "aperture": { "label": "Aperture" },
+    "focalLength": { "label": "Focal length" }
+  },
+  "types": {
+    "refractor": "Refractor",
+    "reflector": "Reflector",
+    "catadioptric": "Catadioptric",
+    "dobsonian": "Dobsonian",
+    "other": "Other"
+  },
+  "unit": { "millimeters": "mm" },
+  "actions": {
+    "save": "Save",
+    "update": "Save changes",
+    "delete": "Delete this sheet"
+  }
+}

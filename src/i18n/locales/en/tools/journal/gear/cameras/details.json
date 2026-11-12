@@ -1,0 +1,27 @@
+{
+  "title": "Camera",
+  "kindLabel": "Camera",
+  "editButton": "Edit",
+  "characteristics": {
+    "title": "Characteristics",
+    "sensorSize": { "label": "Sensor" },
+    "pixelSize": { "label": "Pixel size" },
+    "resolution": { "label": "Resolution" }
+  },
+  "types": {
+    "dslr": "DSLR",
+    "mirrorless": "Mirrorless",
+    "ccd": "CCD",
+    "cmos": "CMOS",
+    "other": "Other"
+  },
+  "usedIn": {
+    "title": "Used in",
+    "sessionsCount_one": "{{count}} session",
+    "sessionsCount_other": "{{count}} sessions",
+    "lastSession": "last on {{date}}",
+    "noSetups": "Not used in any setup yet"
+  },
+  "deleteButton": "Delete this camera",
+  "deleteWarning": "It will be removed from the setups using it. Your past sessions stay intact."
+}

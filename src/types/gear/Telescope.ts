@@ -7,4 +7,8 @@ export type Telescope = {
   aperture: number; // in millimeters
   focalLength: number; // in millimeters
   eyepieceConnection: (1.25 | 2)[];
+  notes?: string | null;
+  usages: TelescopeUsage[];
 }
+
+export type TelescopeUsage = "visual" | "planetary" | "deepSky" | "photo"

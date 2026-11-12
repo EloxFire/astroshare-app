@@ -1,0 +1,37 @@
+{
+  "title": "Add a telescope",
+  "editTitle": "Edit telescope",
+  "sections": {
+    "identity": { "title": "Your telescope" },
+    "characteristics": { "title": "Characteristics" }
+  },
+  "fields": {
+    "name": { "label": "Name", "placeholder": "Name your telescope" },
+    "brand": { "label": "Brand" },
+    "model": { "label": "Model" },
+    "optionalPlaceholder": "Optional",
+    "notes": { "label": "Notes", "placeholder": "Purchase, adjustments, known flaws..." },
+    "type": { "label": "Type" },
+    "aperture": { "label": "Aperture" },
+    "focalLength": { "label": "Focal length" },
+    "usages": { "label": "Uses" }
+  },
+  "types": {
+    "refractor": "Refractor",
+    "reflector": "Reflector",
+    "catadioptric": "Catadioptric",
+    "other": "Other"
+  },
+  "usages": {
+    "visual": "Visual",
+    "planetary": "Planetary",
+    "deepSky": "Deep sky",
+    "photo": "Photo"
+  },
+  "unit": { "millimeters": "mm" },
+  "actions": {
+    "save": "Save",
+    "update": "Save changes",
+    "delete": "Delete this sheet"
+  }
+}

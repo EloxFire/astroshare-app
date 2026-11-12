@@ -15,7 +15,7 @@ export type Setup = {
   eyepieces: Eyepiece[];
   filters: Filter[];
   cameras: Camera[];
-  guideScope: GuideScope;
+  guideScope: GuideScope | null;
   guideCamera: Camera | null;
   focusers: Focuser[];
 }

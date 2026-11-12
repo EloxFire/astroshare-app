@@ -1,0 +1,23 @@
+{
+  "title": "Focuser",
+  "kindLabel": "Focuser",
+  "editButton": "Edit",
+  "characteristics": {
+    "title": "Characteristics",
+    "travel": { "label": "Travel" }
+  },
+  "types": {
+    "manual": "Manual",
+    "motorized": "Motorized",
+    "other": "Other"
+  },
+  "usedIn": {
+    "title": "Used in",
+    "sessionsCount_one": "{{count}} session",
+    "sessionsCount_other": "{{count}} sessions",
+    "lastSession": "last on {{date}}",
+    "noSetups": "Not used in any setup yet"
+  },
+  "deleteButton": "Delete this focuser",
+  "deleteWarning": "It will be removed from the setups using it. Your past sessions stay intact."
+}

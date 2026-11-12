@@ -1,0 +1,27 @@
+{
+  "title": "Caméra",
+  "kindLabel": "Caméra",
+  "editButton": "Modifier",
+  "characteristics": {
+    "title": "Caractéristiques",
+    "sensorSize": { "label": "Capteur" },
+    "pixelSize": { "label": "Taille des pixels" },
+    "resolution": { "label": "Résolution" }
+  },
+  "types": {
+    "dslr": "Reflex",
+    "mirrorless": "Hybride",
+    "ccd": "CCD",
+    "cmos": "CMOS",
+    "other": "Autre"
+  },
+  "usedIn": {
+    "title": "Utilisée dans",
+    "sessionsCount_one": "{{count}} session",
+    "sessionsCount_other": "{{count}} sessions",
+    "lastSession": "dernière le {{date}}",
+    "noSetups": "N'est utilisée dans aucun setup pour le moment"
+  },
+  "deleteButton": "Supprimer cette caméra",
+  "deleteWarning": "Elle sera retirée des setups qui l'utilisent. Vos sessions passées restent intactes."
+}

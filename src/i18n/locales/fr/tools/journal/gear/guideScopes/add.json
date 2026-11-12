@@ -1,0 +1,30 @@
+{
+  "title": "Ajouter une lunette guide",
+  "editTitle": "Modifier la lunette guide",
+  "sections": {
+    "identity": { "title": "Votre lunette guide" },
+    "characteristics": { "title": "Caractéristiques" }
+  },
+  "fields": {
+    "name": { "label": "Nom", "placeholder": "Nom de votre lunette guide" },
+    "brand": { "label": "Marque" },
+    "model": { "label": "Modèle" },
+    "optionalPlaceholder": "Facultatif",
+    "type": { "label": "Type" },
+    "aperture": { "label": "Diamètre" },
+    "focalLength": { "label": "Focale" }
+  },
+  "types": {
+    "refractor": "Réfracteur",
+    "reflector": "Réflecteur",
+    "catadioptric": "Catadioptrique",
+    "dobsonian": "Dobson",
+    "other": "Autre"
+  },
+  "unit": { "millimeters": "mm" },
+  "actions": {
+    "save": "Enregistrer",
+    "update": "Enregistrer les modifications",
+    "delete": "Supprimer la fiche"
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "title": "Mon matériel",
+  "infoCard": {
+    "title": "Gérez votre matériel",
+    "subtitle": "Ajoutez votre matériel dans l'application pour profiter de données adaptées à votre utilisation ainsi que de plus de personalisation !"
+  },
+  "telescopes": { "title": "Télescopes" },
+  "mounts": { "title": "Montures" },
+  "eyepieces": { "title": "Oculaires" },
+  "filters": { "title": "Filtres" },
+  "cameras": { "title": "Caméras" },
+  "guideScopes": { "title": "Lunettes guide" },
+  "focusers": { "title": "Focuseurs" },
+  "setups": {
+    "title": "Setups",
+    "add": { "title": "Ajouter une configuration" },
+    "pieceCount_one": "{{count}} pièce de matériel",
+    "pieceCount_other": "{{count}} pièces de matériel"
+  },
+  "detailed": {
+    "title": "Matériel détaillé",
+    "noItems": {
+      "telescopes": "Aucun télescope enregistré",
+      "mounts": "Aucune monture enregistrée",
+      "eyepieces": "Aucun oculaire enregistré",
+      "filters": "Aucun filtre enregistré",
+      "cameras": "Aucune caméra enregistrée",
+      "guideScopes": "Aucune lunette guide enregistrée",
+      "focusers": "Aucun focuseur enregistré",
+      "setups": "Utilisez le matériel enregistré pour créer vos setups et les réutiliser dans vos sessions d'observation."
+    }
+  }
+}

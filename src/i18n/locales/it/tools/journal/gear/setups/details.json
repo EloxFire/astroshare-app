@@ -1,0 +1,32 @@
+{
+  "title": "Setup",
+  "editButton": "Modifica",
+  "pieceCount_one": "{{count}} pezzo di attrezzatura",
+  "pieceCount_other": "{{count}} pezzi di attrezzatura",
+  "sections": {
+    "composition": { "title": "Composizione" }
+  },
+  "categories": {
+    "telescope": { "title": "Telescopio" },
+    "mount": { "title": "Montatura" },
+    "eyepieces": { "title": "Oculari" },
+    "filters": { "title": "Filtri" },
+    "cameras": { "title": "Camere" },
+    "guideScope": { "title": "Cannocchiale guida" },
+    "guideCamera": { "title": "Camera di guida" },
+    "focusers": { "title": "Focheggiatori" }
+  },
+  "badges": {
+    "single": "uno solo",
+    "multiple": "più possibili"
+  },
+  "emptyCategory": "Nessuno",
+  "sessions": {
+    "title": "Sessioni",
+    "noSessions": "Questo setup non è ancora stato usato in una sessione",
+    "unknownLocation": "Luogo sconosciuto"
+  },
+  "duration": "{{hours}}h{{minutes}}",
+  "deleteButton": "Elimina questo setup",
+  "deleteWarning": "Le tue sessioni passate restano intatte."
+}

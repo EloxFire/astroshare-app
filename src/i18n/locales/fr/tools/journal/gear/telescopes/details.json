@@ -1,0 +1,45 @@
+{
+  "title": "Télescope",
+  "kindLabel": "Télescope",
+  "editButton": "Modifier",
+  "characteristics": {
+    "title": "Caractéristiques",
+    "aperture": { "label": "Diamètre" },
+    "focalLength": { "label": "Focale" },
+    "focalRatio": {
+      "label": "Rapport F/D",
+      "profiles": {
+        "fast": "rapide",
+        "versatile": "polyvalent",
+        "planetary": "planétaire"
+      }
+    },
+    "usefulMagnification": { "label": "Grossissements utiles", "range": "{{min}}× à {{max}}×" }
+  },
+  "types": {
+    "refractor": "Réfracteur",
+    "reflector": "Réflecteur",
+    "catadioptric": "Catadioptrique",
+    "dobsonian": "Dobson",
+    "other": "Autre"
+  },
+  "usages": {
+    "visual": "Visuel",
+    "planetary": "Planétaire",
+    "deepSky": "Ciel profond",
+    "photo": "Photo"
+  },
+  "usedIn": {
+    "title": "Utilisée dans",
+    "sessionsCount_one": "{{count}} session",
+    "sessionsCount_other": "{{count}} sessions",
+    "lastSession": "dernière le {{date}}",
+    "noSetups": "N'est utilisée dans aucun setup pour le moment"
+  },
+  "notes": {
+    "title": "Notes",
+    "empty": "Aucune note pour ce télescope"
+  },
+  "deleteButton": "Supprimer ce télescope",
+  "deleteWarning": "Il sera retiré des setups qui l'utilisent. Vos sessions passées restent intactes."
+}

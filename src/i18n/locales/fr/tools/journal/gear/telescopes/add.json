@@ -1,0 +1,37 @@
+{
+  "title": "Ajouter un télescope",
+  "editTitle": "Modifier le télescope",
+  "sections": {
+    "identity": { "title": "Votre télescope" },
+    "characteristics": { "title": "Caractéristiques" }
+  },
+  "fields": {
+    "name": { "label": "Nom", "placeholder": "Nom de votre télescope" },
+    "brand": { "label": "Marque" },
+    "model": { "label": "Modèle" },
+    "optionalPlaceholder": "Facultatif",
+    "notes": { "label": "Notes", "placeholder": "Achat, réglages, défauts à connaître..." },
+    "type": { "label": "Type" },
+    "aperture": { "label": "Diamètre" },
+    "focalLength": { "label": "Focale" },
+    "usages": { "label": "Usages" }
+  },
+  "types": {
+    "refractor": "Réfracteur",
+    "reflector": "Réflecteur",
+    "catadioptric": "Catadioptrique",
+    "other": "Autre"
+  },
+  "usages": {
+    "visual": "Visuel",
+    "planetary": "Planétaire",
+    "deepSky": "Ciel profond",
+    "photo": "Photo"
+  },
+  "unit": { "millimeters": "mm" },
+  "actions": {
+    "save": "Enregistrer",
+    "update": "Enregistrer les modifications",
+    "delete": "Supprimer la fiche"
+  }
+}

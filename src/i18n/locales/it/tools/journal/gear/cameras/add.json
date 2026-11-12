@@ -1,0 +1,37 @@
+{
+  "title": "Aggiungi una camera",
+  "editTitle": "Modifica la camera",
+  "sections": {
+    "identity": { "title": "La tua camera" },
+    "characteristics": { "title": "Caratteristiche" }
+  },
+  "fields": {
+    "name": { "label": "Nome", "placeholder": "Nome della tua camera" },
+    "brand": { "label": "Marca" },
+    "model": { "label": "Modello" },
+    "optionalPlaceholder": "Facoltativo",
+    "type": { "label": "Tipo" },
+    "sensorWidth": { "label": "Sensore (larghezza)" },
+    "sensorHeight": { "label": "Sensore (altezza)" },
+    "pixelSize": { "label": "Dimensione pixel" },
+    "resolutionWidth": { "label": "Risoluzione (larghezza)" },
+    "resolutionHeight": { "label": "Risoluzione (altezza)" }
+  },
+  "types": {
+    "dslr": "Reflex",
+    "mirrorless": "Mirrorless",
+    "ccd": "CCD",
+    "cmos": "CMOS",
+    "other": "Altro"
+  },
+  "unit": {
+    "millimeters": "mm",
+    "micrometers": "µm",
+    "pixels": "px"
+  },
+  "actions": {
+    "save": "Salva",
+    "update": "Salva le modifiche",
+    "delete": "Elimina la scheda"
+  }
+}

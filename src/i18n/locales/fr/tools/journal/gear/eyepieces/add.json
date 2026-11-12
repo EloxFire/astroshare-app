@@ -1,0 +1,36 @@
+{
+  "title": "Ajouter un oculaire",
+  "editTitle": "Modifier l'oculaire",
+  "sections": {
+    "identity": { "title": "Votre oculaire" },
+    "characteristics": { "title": "Caractéristiques" }
+  },
+  "fields": {
+    "name": { "label": "Nom", "placeholder": "Nom de votre oculaire" },
+    "brand": { "label": "Marque" },
+    "model": { "label": "Modèle" },
+    "optionalPlaceholder": "Facultatif",
+    "type": { "label": "Type" },
+    "barrelSize": { "label": "Coulant" },
+    "focalLength": { "label": "Focale" },
+    "afov": { "label": "Champ apparent" }
+  },
+  "types": {
+    "plossl": "Plössl",
+    "super-wide-angle": "Super grand champ",
+    "ultra-wide-angle": "Ultra grand champ",
+    "extreme-wide-angle": "Grand champ extrême",
+    "zoom": "Zoom",
+    "reticle": "Réticulé",
+    "other": "Autre"
+  },
+  "unit": {
+    "millimeters": "mm",
+    "degrees": "°"
+  },
+  "actions": {
+    "save": "Enregistrer",
+    "update": "Enregistrer les modifications",
+    "delete": "Supprimer la fiche"
+  }
+}

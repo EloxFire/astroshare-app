@@ -1,0 +1,26 @@
+{
+  "title": "Cannocchiale guida",
+  "kindLabel": "Cannocchiale guida",
+  "editButton": "Modifica",
+  "characteristics": {
+    "title": "Caratteristiche",
+    "aperture": { "label": "Diametro" },
+    "focalLength": { "label": "Focale" }
+  },
+  "types": {
+    "refractor": "Rifrattore",
+    "reflector": "Riflettore",
+    "catadioptric": "Catadiottrico",
+    "dobsonian": "Dobson",
+    "other": "Altro"
+  },
+  "usedIn": {
+    "title": "Usato in",
+    "sessionsCount_one": "{{count}} sessione",
+    "sessionsCount_other": "{{count}} sessioni",
+    "lastSession": "ultima il {{date}}",
+    "noSetups": "Non ancora usato in nessun setup"
+  },
+  "deleteButton": "Elimina questo cannocchiale guida",
+  "deleteWarning": "Verrà rimosso dai setup che lo usano. Le tue sessioni passate restano intatte."
+}

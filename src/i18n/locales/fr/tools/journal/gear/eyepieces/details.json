@@ -1,0 +1,29 @@
+{
+  "title": "Oculaire",
+  "kindLabel": "Oculaire",
+  "editButton": "Modifier",
+  "characteristics": {
+    "title": "Caractéristiques",
+    "focalLength": { "label": "Focale" },
+    "afov": { "label": "Champ apparent" },
+    "barrelSize": { "label": "Coulant" }
+  },
+  "types": {
+    "plossl": "Plössl",
+    "super-wide-angle": "Super grand champ",
+    "ultra-wide-angle": "Ultra grand champ",
+    "extreme-wide-angle": "Grand champ extrême",
+    "zoom": "Zoom",
+    "reticle": "Réticulé",
+    "other": "Autre"
+  },
+  "usedIn": {
+    "title": "Utilisé dans",
+    "sessionsCount_one": "{{count}} session",
+    "sessionsCount_other": "{{count}} sessions",
+    "lastSession": "dernière le {{date}}",
+    "noSetups": "N'est utilisé dans aucun setup pour le moment"
+  },
+  "deleteButton": "Supprimer cet oculaire",
+  "deleteWarning": "Il sera retiré des setups qui l'utilisent. Vos sessions passées restent intactes."
+}

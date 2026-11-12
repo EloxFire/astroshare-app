@@ -1,0 +1,32 @@
+{
+  "title": "Add a filter",
+  "editTitle": "Edit filter",
+  "sections": {
+    "identity": { "title": "Your filter" },
+    "characteristics": { "title": "Characteristics" }
+  },
+  "fields": {
+    "name": { "label": "Name", "placeholder": "Name your filter" },
+    "brand": { "label": "Brand" },
+    "model": { "label": "Model" },
+    "optionalPlaceholder": "Optional",
+    "type": { "label": "Type" },
+    "size": { "label": "Size" },
+    "wavelengthMin": { "label": "Min wavelength" },
+    "wavelengthMax": { "label": "Max wavelength" }
+  },
+  "types": {
+    "uv": "UV",
+    "ir": "IR",
+    "polarizing": "Polarizing",
+    "nebula": "Nebula",
+    "color": "Color",
+    "other": "Other"
+  },
+  "unit": { "nanometers": "nm" },
+  "actions": {
+    "save": "Save",
+    "update": "Save changes",
+    "delete": "Delete this sheet"
+  }
+}

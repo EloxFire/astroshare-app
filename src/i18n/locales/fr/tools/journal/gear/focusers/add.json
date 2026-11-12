@@ -1,0 +1,27 @@
+{
+  "title": "Ajouter un focuseur",
+  "editTitle": "Modifier le focuseur",
+  "sections": {
+    "identity": { "title": "Votre focuseur" },
+    "characteristics": { "title": "Caractéristiques" }
+  },
+  "fields": {
+    "name": { "label": "Nom", "placeholder": "Nom de votre focuseur" },
+    "brand": { "label": "Marque" },
+    "model": { "label": "Modèle" },
+    "optionalPlaceholder": "Facultatif",
+    "type": { "label": "Type" },
+    "travel": { "label": "Course" }
+  },
+  "types": {
+    "manual": "Manuel",
+    "motorized": "Motorisé",
+    "other": "Autre"
+  },
+  "unit": { "millimeters": "mm" },
+  "actions": {
+    "save": "Enregistrer",
+    "update": "Enregistrer les modifications",
+    "delete": "Supprimer la fiche"
+  }
+}

@@ -1,5 +1,6 @@
 export type Filter = {
   id: string; // uuid
+  name?: string | null; // nom personnalisé facultatif, pour mieux identifier la fiche
   brand: string | null;
   model: string | null;
   type: "uv" | "ir" | "polarizing" | "nebula" | "color" | "other";

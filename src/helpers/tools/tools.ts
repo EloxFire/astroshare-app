@@ -1,4 +1,4 @@
-import { Blend, BookIcon, BringToFront, Calculator, CameraIcon, CircleDotDashed, ClockIcon, CloudSun, CompassIcon, EclipseIcon, LucideLightbulb, MoonIcon, NotepadTextIcon, Orbit, Rocket, Rotate3d, Satellite, SpellCheck, Sun, TrendingUp, Waypoints } from "lucide-react-native";
+import { Blend, BookIcon, BringToFront, Calculator, CameraIcon, CircleDotDashed, ClockIcon, CloudSun, CompassIcon, EclipseIcon, LucideLightbulb, MoonIcon, NotepadTextIcon, Orbit, Rocket, Rotate3d, Satellite, SpellCheck, Sun, Telescope, TrendingUp, Waypoints } from "lucide-react-native";
 import { AstroshareTool } from "../../types/tools/astroshareTool";
 
 export const toolsList: AstroshareTool[] = [
@@ -57,6 +57,13 @@ export const toolsList: AstroshareTool[] = [
     category: "follow-up",
     access: "free",
     route: "/tools/journal",
+  },
+  {
+    id: "gear-manager",
+    icon: Telescope, 
+    category: "follow-up",
+    access: "free",
+    route: "/tools/journal/gear",
   },
   // Glossaire / lexique astro
   {

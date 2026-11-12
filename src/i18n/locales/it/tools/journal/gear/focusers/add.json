@@ -1,0 +1,27 @@
+{
+  "title": "Aggiungi un focheggiatore",
+  "editTitle": "Modifica il focheggiatore",
+  "sections": {
+    "identity": { "title": "Il tuo focheggiatore" },
+    "characteristics": { "title": "Caratteristiche" }
+  },
+  "fields": {
+    "name": { "label": "Nome", "placeholder": "Nome del tuo focheggiatore" },
+    "brand": { "label": "Marca" },
+    "model": { "label": "Modello" },
+    "optionalPlaceholder": "Facoltativo",
+    "type": { "label": "Tipo" },
+    "travel": { "label": "Corsa" }
+  },
+  "types": {
+    "manual": "Manuale",
+    "motorized": "Motorizzato",
+    "other": "Altro"
+  },
+  "unit": { "millimeters": "mm" },
+  "actions": {
+    "save": "Salva",
+    "update": "Salva le modifiche",
+    "delete": "Elimina la scheda"
+  }
+}

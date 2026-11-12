@@ -1,0 +1,29 @@
+{
+  "title": "Eyepiece",
+  "kindLabel": "Eyepiece",
+  "editButton": "Edit",
+  "characteristics": {
+    "title": "Characteristics",
+    "focalLength": { "label": "Focal length" },
+    "afov": { "label": "Apparent field of view" },
+    "barrelSize": { "label": "Barrel size" }
+  },
+  "types": {
+    "plossl": "Plössl",
+    "super-wide-angle": "Super wide angle",
+    "ultra-wide-angle": "Ultra wide angle",
+    "extreme-wide-angle": "Extreme wide angle",
+    "zoom": "Zoom",
+    "reticle": "Reticle",
+    "other": "Other"
+  },
+  "usedIn": {
+    "title": "Used in",
+    "sessionsCount_one": "{{count}} session",
+    "sessionsCount_other": "{{count}} sessions",
+    "lastSession": "last on {{date}}",
+    "noSetups": "Not used in any setup yet"
+  },
+  "deleteButton": "Delete this eyepiece",
+  "deleteWarning": "It will be removed from the setups using it. Your past sessions stay intact."
+}

@@ -1,0 +1,31 @@
+{
+  "title": "Monture",
+  "kindLabel": "Monture",
+  "editButton": "Modifier",
+  "characteristics": {
+    "title": "Caractéristiques",
+    "motorized": { "label": "Motorisation" },
+    "maxPayload": { "label": "Charge maximale" }
+  },
+  "types": {
+    "altazimuth": "Azimutale",
+    "equatorial": "Équatoriale",
+    "altAzEquatorial": "Alt-Az / Équatoriale",
+    "dobsonian": "Dobson",
+    "other": "Autre"
+  },
+  "unit": { "kilograms": "kg" },
+  "motorizedValue": {
+    "true": "Motorisée",
+    "false": "Manuelle"
+  },
+  "usedIn": {
+    "title": "Utilisée dans",
+    "sessionsCount_one": "{{count}} session",
+    "sessionsCount_other": "{{count}} sessions",
+    "lastSession": "dernière le {{date}}",
+    "noSetups": "N'est utilisée dans aucun setup pour le moment"
+  },
+  "deleteButton": "Supprimer cette monture",
+  "deleteWarning": "Elle sera retirée des setups qui l'utilisent. Vos sessions passées restent intactes."
+}

@@ -1,5 +1,6 @@
 export type Camera = {
   id: string; // uuid
+  name?: string | null; // nom personnalisé facultatif, pour mieux identifier la fiche
   brand: string | null;
   model: string | null;
   type: "dslr" | "mirrorless" | "ccd" | "cmos" | "other";

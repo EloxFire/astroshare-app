@@ -1,0 +1,26 @@
+{
+  "title": "Guide scope",
+  "kindLabel": "Guide scope",
+  "editButton": "Edit",
+  "characteristics": {
+    "title": "Characteristics",
+    "aperture": { "label": "Aperture" },
+    "focalLength": { "label": "Focal length" }
+  },
+  "types": {
+    "refractor": "Refractor",
+    "reflector": "Reflector",
+    "catadioptric": "Catadioptric",
+    "dobsonian": "Dobsonian",
+    "other": "Other"
+  },
+  "usedIn": {
+    "title": "Used in",
+    "sessionsCount_one": "{{count}} session",
+    "sessionsCount_other": "{{count}} sessions",
+    "lastSession": "last on {{date}}",
+    "noSetups": "Not used in any setup yet"
+  },
+  "deleteButton": "Delete this guide scope",
+  "deleteWarning": "It will be removed from the setups using it. Your past sessions stay intact."
+}

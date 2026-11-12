@@ -1,0 +1,30 @@
+{
+  "title": "Aggiungi un cannocchiale guida",
+  "editTitle": "Modifica il cannocchiale guida",
+  "sections": {
+    "identity": { "title": "Il tuo cannocchiale guida" },
+    "characteristics": { "title": "Caratteristiche" }
+  },
+  "fields": {
+    "name": { "label": "Nome", "placeholder": "Nome del tuo cannocchiale guida" },
+    "brand": { "label": "Marca" },
+    "model": { "label": "Modello" },
+    "optionalPlaceholder": "Facoltativo",
+    "type": { "label": "Tipo" },
+    "aperture": { "label": "Diametro" },
+    "focalLength": { "label": "Focale" }
+  },
+  "types": {
+    "refractor": "Rifrattore",
+    "reflector": "Riflettore",
+    "catadioptric": "Catadiottrico",
+    "dobsonian": "Dobson",
+    "other": "Altro"
+  },
+  "unit": { "millimeters": "mm" },
+  "actions": {
+    "save": "Salva",
+    "update": "Salva le modifiche",
+    "delete": "Elimina la scheda"
+  }
+}
