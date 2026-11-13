@@ -5,7 +5,7 @@ import { router, useLocalSearchParams } from "expo-router"
 import { Calendar, ChevronRight, Pencil, Trash2 } from "lucide-react-native"
 import { globalStyles } from "../../../../../../helpers/globalStyles"
 import { app_colors } from "../../../../../../helpers/variables"
-import { formatDuration } from "../../../../../../helpers/format"
+import { formatCompactDuration, formatLocationLabel } from "../../../../../../helpers/format"
 import { gearName } from "../../../../../../helpers/gear/gearName"
 import { getSetupPieceCount } from "../../../../../../helpers/gear/setups"
 import { useAppUnits } from "../../../../../../hooks/useAppUnits"
@@ -13,11 +13,6 @@ import { ScreenHeader } from "../../../../../../components/ScreenHeader/ScreenHe
 import SectionHeader from "../../../../../../components/SectionHeader/SectionHeader"
 import { useUserDataStore } from "../../../../../../store/userData.store"
 import { setupDetailsStyles } from "./SetupDetails.styles"
-
-// Les deux formes possibles de `AstronomySession.location` : un Observatory enregistré (toujours
-// un display_name) ou une simple position GPS ponctuelle (name facultatif).
-const getLocationLabel = (location: { display_name?: string; name?: string }, fallback: string): string =>
-  location.display_name || location.name || fallback
 
 const SetupDetails = () => {
   const { t } = useTranslation("tools/journal/gear/setups/details")
@@ -133,10 +128,10 @@ const SetupDetails = () => {
                     </View>
                     <View style={setupDetailsStyles.sessionsSection.row.textBlock}>
                       <Text style={setupDetailsStyles.sessionsSection.row.textBlock.title}>
-                        {getLocationLabel(session.location, t("sessions.unknownLocation"))}
+                        {formatLocationLabel(session.location, t("sessions.unknownLocation"))}
                       </Text>
                       <Text style={setupDetailsStyles.sessionsSection.row.textBlock.subtitle}>
-                        {formatDate(session.startTime).format("D MMM")} · {formatDuration((session.endTime - session.startTime) / 1000, t)}
+                        {formatDate(session.startTime).format("D MMM")} · {formatCompactDuration((session.endTime - session.startTime) / 60_000)}
                       </Text>
                     </View>
                     <ChevronRight size={20} color={app_colors.accent.main} />

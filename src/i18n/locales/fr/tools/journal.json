@@ -8,6 +8,37 @@
   "observations": {
     "title": "Journal d'observations"
   },
+  "sessionsSummary": {
+    "title": "Résumé de vos sessions",
+    "lastSession": "Dernière session",
+    "unknownLocation": "Lieu inconnu",
+    "grades": {
+      "seeing": "Seeing",
+      "transparency": "Transparence",
+      "darkness": "Noirceur"
+    },
+    "stats": {
+      "sessions": "Sessions",
+      "observedHours": "Heures observées",
+      "averageSeeing": "Seeing moyen",
+      "visitedPlaces": "Lieux visités"
+    },
+    "addSession": "Ajouter une session"
+  },
+  "observationsSummary": {
+    "title": "Vos observations & succès",
+    "lastObservedObject": "Dernier objet observé",
+    "stats": {
+      "observedObjects": "Objets observés",
+      "messierObserved": "Messier observés",
+      "mostObservedObject": "Objet le plus observé"
+    },
+    "lastAchievement": "Dernier succès - {{date}}",
+    "nextTier": "Prochain palier : {{name}}"
+  },
+  "recentSessions": {
+    "title": "Sessions récentes"
+  },
   "shortcuts": {
     "statistics": {
       "title": "Statistiques",

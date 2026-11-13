@@ -1,0 +1,55 @@
+{
+  "title": "Observation log",
+  "sessions": {
+    "list": { "title": "All your sessions" },
+    "details": { "title": "Session" }
+  },
+  "statistics": { "title": "Statistics" },
+  "observations": {
+    "title": "Observations log"
+  },
+  "sessionsSummary": {
+    "title": "Your sessions at a glance",
+    "lastSession": "Last session",
+    "unknownLocation": "Unknown location",
+    "grades": {
+      "seeing": "Seeing",
+      "transparency": "Transparency",
+      "darkness": "Darkness"
+    },
+    "stats": {
+      "sessions": "Sessions",
+      "observedHours": "Hours observed",
+      "averageSeeing": "Average seeing",
+      "visitedPlaces": "Places visited"
+    },
+    "addSession": "Add a session"
+  },
+  "observationsSummary": {
+    "title": "Your observations & achievements",
+    "lastObservedObject": "Last object observed",
+    "stats": {
+      "observedObjects": "Objects observed",
+      "messierObserved": "Messier observed",
+      "mostObservedObject": "Most observed object"
+    },
+    "lastAchievement": "Last achievement - {{date}}",
+    "nextTier": "Next tier: {{name}}"
+  },
+  "recentSessions": {
+    "title": "Recent sessions"
+  },
+  "shortcuts": {
+    "statistics": {
+      "title": "Statistics",
+      "subtitle": "Months, places, sky"
+    },
+    "gear": {
+      "title": "Gear",
+      "sheets_one": "{{count}} item",
+      "sheets_other": "{{count}} items",
+      "setups_one": "{{count}} setup",
+      "setups_other": "{{count}} setups"
+    }
+  }
+}

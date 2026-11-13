@@ -46,6 +46,7 @@ import authRegister_en from "./locales/en/auth/register.json";
 import authForgotPassword_en from "./locales/en/auth/forgotPassword.json";
 import authProfile_en from "./locales/en/auth/profile.json";
 import threeDViewer_en from "./locales/en/tools/3dviewer.json";
+import journal_en from "./locales/en/tools/journal.json";
 import journalSessionsAdd_en from "./locales/en/tools/journal/sessions/add.json";
 import journalGear_en from "./locales/en/tools/journal/gear.json";
 import journalGearTelescopesAdd_en from "./locales/en/tools/journal/gear/telescopes/add.json";
@@ -76,6 +77,7 @@ import authRegister_it from "./locales/it/auth/register.json";
 import authForgotPassword_it from "./locales/it/auth/forgotPassword.json";
 import authProfile_it from "./locales/it/auth/profile.json";
 import threeDViewer_it from "./locales/it/tools/3dviewer.json";
+import journal_it from "./locales/it/tools/journal.json";
 import journalSessionsAdd_it from "./locales/it/tools/journal/sessions/add.json";
 import journalGear_it from "./locales/it/tools/journal/gear.json";
 import journalGearTelescopesAdd_it from "./locales/it/tools/journal/gear/telescopes/add.json";
@@ -151,6 +153,7 @@ export const resources = {
     "auth/forgotPassword": authForgotPassword_en,
     "auth/profile": authProfile_en,
     "tools/3dviewer": threeDViewer_en,
+    "tools/journal": journal_en,
     "tools/journal/sessions/add": journalSessionsAdd_en,
     "tools/journal/gear": journalGear_en,
     "tools/journal/gear/telescopes/add": journalGearTelescopesAdd_en,
@@ -182,6 +185,7 @@ export const resources = {
     "auth/forgotPassword": authForgotPassword_it,
     "auth/profile": authProfile_it,
     "tools/3dviewer": threeDViewer_it,
+    "tools/journal": journal_it,
     "tools/journal/sessions/add": journalSessionsAdd_it,
     "tools/journal/gear": journalGear_it,
     "tools/journal/gear/telescopes/add": journalGearTelescopesAdd_it,

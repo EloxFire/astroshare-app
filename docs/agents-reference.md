@@ -89,8 +89,9 @@ météo, APOD, viseur polaire, météo spatiale), observatoires de l'utilisateur
 
 - **Passer par `formatDate`** (`useAppUnits`) pour toute date affichée : il respecte le fuseau et le réglage UTC de l'utilisateur.
 - **`formatShortMonth(date)`** : mois abrégé de la langue, sans point final (« janv », « jan », « gen »), pour les pastilles de date. Il n'est pas coupé à 3 lettres, sinon juin et juillet donneraient tous deux « jui ».
-- **`formatCompactDuration(minutes)`** : durée compacte, sans traduction (« 50 min », « 1h05 », « 2h », « -30 min »).
-- **`formatDuration(seconds, t)`** : durée traduite, via une clé `duration` propre à chaque namespace.
+- **`formatCompactDuration(minutes)`** : durée compacte, sans traduction (« 50 min », « 1h05 », « 2h », « -30 min »). C'est le format des durées de session du Journal.
+- **`formatDuration(seconds, t)`** : durée traduite, via une clé `duration` propre à chaque namespace. Elle attend des **secondes**, alors que les `startTime`/`endTime` d'une session sont en **millisecondes** : leur passer l'écart brut multiplie la durée par 1000.
+- **`formatLocationLabel(location, fallback)`** : nom affiché du lieu d'une session. Il prend `display_name` (le nom choisi pour un observatoire) avant `name`, car un `Observatory` hérite aussi de `name` via `GpsLocation`, qui n'est que le nom géocodé du lieu.
 
 ---
 
@@ -100,7 +101,7 @@ météo, APOD, viseur polaire, météo spatiale), observatoires de l'utilisateur
 - **Nom d'un namespace :** c'est le chemin du fichier depuis `locales/<langue>/`, sans extension. Exemple : `useTranslation("settings/addObservatory")` correspond à `locales/<langue>/settings/addObservatory.json`. Le `/` dans un nom de namespace fonctionne avec i18next, et la syntaxe `ns:clé` aussi (`t("settings/addObservatory:stepTwo.title")`).
 - **Ajouter un namespace :** crée le JSON dans chaque langue, puis ajoute l'import et l'entrée dans les trois blocs de `resources.ts`.
 - **Clés :** une clé ne répète pas le nom de son namespace (`t("recap.sessions")`, pas `t("profile.recap.sessions")`).
-- **Langues :** `fr` est la langue de référence et de repli. `en` et `it` peuvent être partielles : les clés absentes retombent sur le français.
+- **Langues :** `fr` est la langue de référence et de repli. `en` et `it` peuvent être partielles : les clés absentes retombent sur le français. Namespaces sans fichier `en` ni `it` pour l'instant : `suggestionsCards`, `tools/apod`, `tools/polarScope`, `tools/spaceWeather` et `tools/weather`.
 - **Ne pas traduire au chargement d'un module :** un `i18next.t()` exécuté à l'import, comme les `label` de `src/helpers/observatories/observatories.ts`, est figé dans la langue du démarrage. Traduis dans le composant avec `t()`. Exemple : les options de type de lieu dans `StepTwo.tsx`. Pour une fonction déclarée hors du composant, passe-lui `t` en paramètre (exemple : `getCatalogObjectSubtitle` dans `AddSession.tsx`).
 - **Namespaces imbriqués :** un écran peut avoir son propre fichier sous celui de sa section. Par exemple, `tools/journal/sessions/add` (formulaire d'ajout de session) se trouve dans `locales/<langue>/tools/journal/sessions/add.json`, à côté de `tools/journal.json`. Le fichier `journal.json` et le dossier `journal/` coexistent sans problème.
 
@@ -154,6 +155,8 @@ météo, APOD, viseur polaire, météo spatiale), observatoires de l'utilisateur
   - Pour un observatoire, la session garde une **copie sans l'image** (`location`), plus `observatoryId`. La copie reste lisible si l'observatoire change ou disparaît, et la photo en base64 n'est pas recopiée dans chaque session.
 - **Setups :** seuls leurs ids sont gardés pendant la saisie. Les vrais `Setup` sont retrouvés dans le store au moment d'enregistrer, donc à jour.
 - **Notes de ciel :** 0 (aucune étoile touchée) est enregistré comme `null`. Les champs `observations` (météores, comètes, etc.) ne sont pas encore saisis : ils valent `false`.
+- **Affichage d'une session enregistrée** (écran Journal, `SetupDetails`) : horaires avec `formatDate(...).format("HH:mm")`, durée avec `formatCompactDuration((endTime - startTime) / 60_000)`, lieu avec `formatLocationLabel` (§2). Une note `null` s'affiche comme 0.
+- **Écran Journal :** ses libellés sont traduits (`tools/journal`, fr, en, it). Les valeurs factices (dernier objet observé, succès, sessions récentes, statistiques autres que le nombre de sessions et les heures observées) restent en dur, en attendant d'être branchées sur le store.
 
 ### `WeatherRadarMap` (`src/components/weather/WeatherRadarMap/`)
 
@@ -369,6 +372,7 @@ Le journal commence avec le commit `8527e2f`. Les changements antérieurs, comme
 i18n, `SelectInput` ou `ImageHeaderScrollView`, sont décrits dans les sections ci-dessus mais n'ont pas
 d'entrée datée.
 
+- **2026-11-13** — même commit — durées des sessions corrigées sur l'écran Journal (millisecondes passées à `formatDuration`, qui attend des secondes) et passées sur `formatCompactDuration`, comme `SetupDetails` ; lieu d'un observatoire affiché par son nom (`formatLocationLabel`) ; namespace `tools/journal` traduit en en et it, avec les libellés de l'écran Journal — §2, §3, §4.
 - **2026-11-12** — même commit — Journal :
   - enregistrement des sessions dans le store (`addAstronomySession`, objets observés, lieu sélectionnable, bouton d'enregistrement) ;
   - nouvelle `CheckboxCard`, avec la sélection multiple des setups ;

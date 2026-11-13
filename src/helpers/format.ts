@@ -10,6 +10,14 @@ import type { FormatDate } from "../hooks/useAppUnits";
 // Pas tronqué à 3 lettres : "juin" et "juillet" donneraient tous deux "jui".
 export const formatShortMonth = (date: Dayjs): string => date.format("MMM").replace(/\.$/, "");
 
+// Nom affiché du lieu d'une session (`AstronomySession.location`, Observatory ou GpsLocation) : le
+// nom donné par l'utilisateur à son observatoire (display_name), sinon le nom géocodé d'une position
+// GPS (name, facultatif), sinon `fallback` (déjà traduit par l'appelant, ex: "Lieu inconnu").
+// display_name passe en premier : un Observatory a aussi un `name`, hérité de GpsLocation, qui
+// n'est que le nom géocodé du lieu et pas celui choisi par l'utilisateur.
+export const formatLocationLabel = (location: { display_name?: string; name?: string }, fallback: string): string =>
+  location.display_name || location.name || fallback;
+
 // Insère une espace tous les 3 chiffres (ex: 384 400 → "384 400") — utilisé pour l'affichage
 // de grandes distances (ex: distance Terre-Lune en km).
 export const formatWithSpaces = (value: number): string => value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");

@@ -13,9 +13,29 @@ import IconButtonCard from "../../../../components/cards/IconButtonCard/IconButt
 import ObservationCard from "../../../../components/cards/ObservationCard/ObservationCard"
 import SessionCard from "../../../../components/cards/SessionCard/SessionCard"
 import { app_colors } from "../../../../helpers/variables"
+import { useUserDataStore } from "../../../../store/userData.store"
+import { formatCompactDuration, formatLocationLabel } from "../../../../helpers/format"
+import { useAppUnits } from "../../../../hooks/useAppUnits"
+import { AstronomySession } from "../../../../types/statistics/AstronomySession"
+
+// Les timestamps d'une session sont en millisecondes (voir AstronomySession), alors que
+// formatCompactDuration attend des minutes. formatDuration, lui, attend des secondes : lui passer
+// directement l'écart en ms gonflait chaque durée d'un facteur 1000.
+const getSessionMinutes = (session: AstronomySession): number => (session.endTime - session.startTime) / 60_000
 
 const Journal = () => {
   const { t } = useTranslation("tools/journal")
+  // Horaires via useAppUnits plutôt que Date.getHours() : respecte le réglage UTC / fuseau de
+  // l'utilisateur, et "HH:mm" garde les zéros (21:05, pas 21:5).
+  const { formatDate } = useAppUnits()
+
+  const userSessions = useUserDataStore((state) => state.statistics.astronomySessions)
+  const lastSession = userSessions.length > 0 ? userSessions[userSessions.length - 1] : null
+  const lastSessionDetails = lastSession
+    ? `${formatDate(lastSession.startTime).format("HH:mm")} - ${formatDate(lastSession.endTime).format("HH:mm")} | ${formatCompactDuration(getSessionMinutes(lastSession))}`
+    : "21:10 - 00:45 | 3h35"
+  // Somme des minutes exactes, arrondie une seule fois à l'affichage (pas d'erreur d'arrondi cumulée).
+  const totalObservedMinutes = userSessions.reduce((acc, session) => acc + getSessionMinutes(session), 0)
 
   // Pas de reset au blur : chaque écran fixe déjà sa propre couleur à son propre focus (y compris
   // au retour sur celui-ci). Un reset ici entrerait en course avec l'effet de focus de l'écran
@@ -36,56 +56,59 @@ const Journal = () => {
 
           <View style={journalScreenStyles.sessionsContainer}>
             <SectionHeader
-              title="Résumé de vos sessions"
+              title={t("sessionsSummary.title")}
             />
             {/* CARTE DE LA DERNIERE SESSION AJOUTÉE - CARTE POUR INCITER A AJOUTER UNE SESSION SI AUCUNE TROUVÉE */}
             <SessionCard
-              label="Dernière session"
-              date={new Date(2026, 0, 12)}
-              title="La Sinne"
-              details="21:10 - 00:45 | 3h35"
+              label={t("sessionsSummary.lastSession")}
+              date={lastSession ? new Date(lastSession.startTime) : new Date(2026, 0, 12)}
+              // formatLocationLabel plutôt que location.name : pour un observatoire, name n'est que le
+              // nom géocodé du lieu (hérité de GpsLocation), le nom choisi par l'utilisateur est display_name.
+              title={lastSession ? formatLocationLabel(lastSession.location, t("sessionsSummary.unknownLocation")) : "La Sinne"}
+              details={lastSessionDetails}
+              // Une note absente (null : non renseignée dans le formulaire) s'affiche comme 0.
               grades={[
-                { label: "Seeing", value: 2 },
-                { label: "Transparence", value: 5 },
-                { label: "Noirceur", value: 3 },
+                { label: t("sessionsSummary.grades.seeing"), value: lastSession?.grades.seeing ?? 0 },
+                { label: t("sessionsSummary.grades.transparency"), value: lastSession?.grades.transparency ?? 0 },
+                { label: t("sessionsSummary.grades.darkness"), value: lastSession?.grades.darkness ?? 0 },
               ]}
             />
 
 
             <View style={journalScreenStyles.sessionsContainer.stats}>
-              <ValueCard reverse title="Sessions" value="12"/>
-              <ValueCard reverse title="Heures observées" value="31" containerStyle={{backgroundColor: app_colors.yellow.light}}/>
+              <ValueCard reverse title={t("sessionsSummary.stats.sessions")} value={userSessions.length.toString()}/>
+              <ValueCard reverse title={t("sessionsSummary.stats.observedHours")} value={formatCompactDuration(totalObservedMinutes)} containerStyle={{backgroundColor: app_colors.yellow.light}}/>
             </View>
 
             <View style={journalScreenStyles.sessionsContainer.stats}>
-              <ValueCard reverse title="Seeing moyen" value="3.2/5" containerStyle={{backgroundColor: app_colors.yellow.light}}/>
-              <ValueCard reverse title="Lieux visités" value="3"/>
+              <ValueCard reverse title={t("sessionsSummary.stats.averageSeeing")} value="3.2/5" containerStyle={{backgroundColor: app_colors.yellow.light}}/>
+              <ValueCard reverse title={t("sessionsSummary.stats.visitedPlaces")} value="3"/>
             </View>
 
             <TouchableOpacity style={journalScreenStyles.sessionsContainer.button} onPress={() => router.push("/tools/journal/sessions/add")}>
               <PlusIcon size={20} color={app_colors.accent.main} />
-              <Text style={journalScreenStyles.sessionsContainer.button.text}>Ajouter une session</Text>
+              <Text style={journalScreenStyles.sessionsContainer.button.text}>{t("sessionsSummary.addSession")}</Text>
             </TouchableOpacity>
           </View>
-          
-    
+
+
           {/* SECTION DÉDIÉE AUX OBSERVATIONS */}
           <View style={journalScreenStyles.observationsContainer}>
             <SectionHeader
-              title="Vos observations & succès"
+              title={t("observationsSummary.title")}
             />
 
             <ObservationCard
-              label="Dernier objet observé"
+              label={t("observationsSummary.lastObservedObject")}
               title="M31"
               name="Galaxie d'Andromède"
               details="12 jan. - Plateau de Valensole"
             />
 
             <View style={journalScreenStyles.observationsContainer.stats}>
-              <ValueCard square reverse title="Objets observés" value="42" valueStyle={{fontSize: 30, color: app_colors.yellow.main}} titleStyle={{color: app_colors.grey}} containerStyle={{backgroundColor: app_colors.primary.main}}/>
-              <ValueCard square reverse title="Messier observés" value="31" valueStyle={{fontSize: 30}}/>
-              <ValueCard square reverse title="Objet le plus observé" value="Saturne" valueStyle={{fontSize: 25}} containerStyle={{backgroundColor: app_colors.yellow.light}}/>
+              <ValueCard square reverse title={t("observationsSummary.stats.observedObjects")} value="42" valueStyle={{fontSize: 30, color: app_colors.yellow.main}} titleStyle={{color: app_colors.grey}} containerStyle={{backgroundColor: app_colors.primary.main}}/>
+              <ValueCard square reverse title={t("observationsSummary.stats.messierObserved")} value="31" valueStyle={{fontSize: 30}}/>
+              <ValueCard square reverse title={t("observationsSummary.stats.mostObservedObject")} value="Saturne" valueStyle={{fontSize: 25}} containerStyle={{backgroundColor: app_colors.yellow.light}}/>
             </View>
 
             <View style={journalScreenStyles.recentSessionsList.lastAchievementCard}>
@@ -95,7 +118,7 @@ const Journal = () => {
                     <Award size={30} color={app_colors.ambre.main}/>
                   </View>
                   <View>
-                    <Text style={journalScreenStyles.recentSessionsList.lastAchievementCard.header.infos.subtitle}>Dernier succès - 19 dec.</Text>
+                    <Text style={journalScreenStyles.recentSessionsList.lastAchievementCard.header.infos.subtitle}>{t("observationsSummary.lastAchievement", { date: "19 déc." })}</Text>
                     <Text style={journalScreenStyles.recentSessionsList.lastAchievementCard.header.infos.title}>Observer 10 Messier</Text>
                   </View>
                 </View>
@@ -104,7 +127,7 @@ const Journal = () => {
               <View style={journalScreenStyles.recentSessionsList.lastAchievementCard.content}>
                 <View style={journalScreenStyles.recentSessionsList.lastAchievementCard.content.progressContainer}>
 
-                  <Text style={journalScreenStyles.recentSessionsList.lastAchievementCard.content.progressContainer.text}>Prochain palier : Observer 30 Messier</Text>
+                  <Text style={journalScreenStyles.recentSessionsList.lastAchievementCard.content.progressContainer.text}>{t("observationsSummary.nextTier", { name: "Observer 30 Messier" })}</Text>
                   <View style={journalScreenStyles.recentSessionsList.lastAchievementCard.content.progressContainer.bar}>
                     <View style={journalScreenStyles.recentSessionsList.lastAchievementCard.content.progressContainer.bar.fill}/>
                   </View>
@@ -135,7 +158,7 @@ const Journal = () => {
           {/* SECTION DÉDIÉE AUX SUCCÈS ET BADGES */}
           <View style={journalScreenStyles.recentSessionsList}>
             <SectionHeader
-              title="Sessions récentes"
+              title={t("recentSessions.title")}
             />
 
             <View style={journalScreenStyles.recentSessionsList.list}>

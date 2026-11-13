@@ -26,7 +26,6 @@
     "noSessions": "This setup hasn't been used in a session yet",
     "unknownLocation": "Unknown location"
   },
-  "duration": "{{hours}}h{{minutes}}",
   "deleteButton": "Delete this setup",
   "deleteWarning": "Your past sessions stay intact."
 }

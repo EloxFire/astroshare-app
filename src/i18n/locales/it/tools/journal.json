@@ -1,0 +1,55 @@
+{
+  "title": "Diario di osservazione",
+  "sessions": {
+    "list": { "title": "Tutte le tue sessioni" },
+    "details": { "title": "Sessione" }
+  },
+  "statistics": { "title": "Statistiche" },
+  "observations": {
+    "title": "Registro delle osservazioni"
+  },
+  "sessionsSummary": {
+    "title": "Riepilogo delle tue sessioni",
+    "lastSession": "Ultima sessione",
+    "unknownLocation": "Luogo sconosciuto",
+    "grades": {
+      "seeing": "Seeing",
+      "transparency": "Trasparenza",
+      "darkness": "Oscurità"
+    },
+    "stats": {
+      "sessions": "Sessioni",
+      "observedHours": "Ore osservate",
+      "averageSeeing": "Seeing medio",
+      "visitedPlaces": "Luoghi visitati"
+    },
+    "addSession": "Aggiungi una sessione"
+  },
+  "observationsSummary": {
+    "title": "Le tue osservazioni e traguardi",
+    "lastObservedObject": "Ultimo oggetto osservato",
+    "stats": {
+      "observedObjects": "Oggetti osservati",
+      "messierObserved": "Messier osservati",
+      "mostObservedObject": "Oggetto più osservato"
+    },
+    "lastAchievement": "Ultimo traguardo - {{date}}",
+    "nextTier": "Prossimo livello: {{name}}"
+  },
+  "recentSessions": {
+    "title": "Sessioni recenti"
+  },
+  "shortcuts": {
+    "statistics": {
+      "title": "Statistiche",
+      "subtitle": "Mesi, luoghi, cielo"
+    },
+    "gear": {
+      "title": "Attrezzatura",
+      "sheets_one": "{{count}} scheda",
+      "sheets_other": "{{count}} schede",
+      "setups_one": "{{count}} setup",
+      "setups_other": "{{count}} setup"
+    }
+  }
+}
