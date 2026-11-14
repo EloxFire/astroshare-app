@@ -14,25 +14,6 @@ export const journalScreenStyles = {
       marginTop: 10,
     },
 
-    button: {
-      backgroundColor: app_colors.white,
-      borderRadius: radius.badge44,
-      padding: 10,
-      display: "flex" as const,
-      flexDirection: "row" as const,
-      justifyContent: "center" as const,
-      alignItems: "center" as const,
-      marginTop: 10,
-      borderWidth: 1,
-      borderColor: app_colors.accent.light,
-
-      text: {
-        fontSize: 14,
-        fontFamily: "ZTNatureBold" as const,
-        color: app_colors.accent.main,
-        marginLeft: 5,
-      }
-    },
   },
 
   observationsContainer: {
@@ -84,7 +65,7 @@ export const journalScreenStyles = {
     marginTop: 20,
 
     lastAchievementCard: {
-      backgroundColor: app_colors.ambre.main,
+      backgroundColor: app_colors.yellow.light,
       borderRadius: radius.heroCard,
       padding: 10,
       display: "flex" as const,

@@ -23,7 +23,8 @@
       "averageSeeing": "Seeing moyen",
       "visitedPlaces": "Lieux visités"
     },
-    "addSession": "Ajouter une session"
+    "addSession": "Ajouter une session",
+    "unknownSetup": "Setup inconnu"
   },
   "observationsSummary": {
     "title": "Vos observations & succès",

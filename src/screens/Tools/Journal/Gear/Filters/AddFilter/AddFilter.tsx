@@ -14,6 +14,7 @@ import { Filter } from "../../../../../../types/gear/Filter"
 import { useUserDataStore } from "../../../../../../store/userData.store"
 import { FILTER_SIZES, FILTER_TYPES } from "../../../../../../helpers/gear/filters"
 import { parseOptionalFloat } from "../../../../../../helpers/parseNumberInput"
+import Button from "../../../../../../components/Button/Button"
 
 const AddFilter = () => {
   const { t } = useTranslation("tools/journal/gear/filters/add")
@@ -192,15 +193,10 @@ const AddFilter = () => {
             </View>
 
             <View style={addFilterStyles.form.actions}>
-              <TouchableOpacity style={addFilterStyles.form.actions.saveButton} onPress={handleSave} disabled={!isFormValid}>
-                <Text style={addFilterStyles.form.actions.saveButton.text}>{editedFilter ? t("actions.update") : t("actions.save")}</Text>
-              </TouchableOpacity>
+              <Button label={editedFilter ? t("actions.update") : t("actions.save")} onPress={handleSave} disabled={!isFormValid} />
               {
                 editedFilter && (
-                  <TouchableOpacity style={addFilterStyles.form.actions.deleteButton} onPress={handleDelete}>
-                    <Trash2 color={app_colors.red.main} size={18} />
-                    <Text style={addFilterStyles.form.actions.deleteButton.text}>{t("actions.delete")}</Text>
-                  </TouchableOpacity>
+                  <Button label={t("actions.delete")} icon={Trash2} variant="danger" onPress={handleDelete} />
                 )
               }
             </View>

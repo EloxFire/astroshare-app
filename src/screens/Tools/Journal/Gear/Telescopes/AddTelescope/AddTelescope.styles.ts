@@ -109,31 +109,6 @@ export const addTelescopeStyles = {
       display: "flex" as const,
       flexDirection: "column" as const,
       gap: 10,
-
-      saveButton: {
-        ...globalStyles.button,
-      },
-
-      // Pas de précédent "outline" dans l'app (seuls des boutons danger pleins existent, ex:
-      // déconnexion du profil) — variante plus douce par analogie avec accent.light/accent.main,
-      // déjà utilisé partout ailleurs pour une version atténuée d'une couleur pleine.
-      deleteButton: {
-        backgroundColor: app_colors.red.light,
-        padding: 10,
-        borderRadius: radius.badge32,
-        display: "flex" as const,
-        flexDirection: "row" as const,
-        gap: 10,
-        alignItems: "center" as const,
-        justifyContent: "center" as const,
-
-        text: {
-          fontFamily: "DMMonoMedium",
-          fontSize: 14,
-          lineHeight: 16,
-          color: app_colors.red.main,
-        },
-      },
     },
   }
 }

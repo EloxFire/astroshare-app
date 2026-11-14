@@ -11,6 +11,7 @@ import SectionHeader from "../../../../../../components/SectionHeader/SectionHea
 import ValueCard from "../../../../../../components/cards/ValueCard/ValueCard"
 import { useUserDataStore } from "../../../../../../store/userData.store"
 import { filterDetailsStyles } from "./FilterDetails.styles"
+import Button from "../../../../../../components/Button/Button"
 
 const FilterDetails = () => {
   const { t } = useTranslation("tools/journal/gear/filters/details")
@@ -131,10 +132,7 @@ const FilterDetails = () => {
           </View>
 
           <View style={filterDetailsStyles.actions}>
-            <TouchableOpacity style={filterDetailsStyles.actions.deleteButton} onPress={handleDelete}>
-              <Trash2 color={app_colors.red.main} size={18} />
-              <Text style={filterDetailsStyles.actions.deleteButton.text}>{t("deleteButton")}</Text>
-            </TouchableOpacity>
+            <Button label={t("deleteButton")} icon={Trash2} variant="danger" onPress={handleDelete} />
             <Text style={filterDetailsStyles.actions.deleteWarning}>{t("deleteWarning")}</Text>
           </View>
 

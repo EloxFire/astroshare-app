@@ -14,6 +14,7 @@ import { Camera } from "../../../../../../types/gear/Camera"
 import { useUserDataStore } from "../../../../../../store/userData.store"
 import { CAMERA_TYPES } from "../../../../../../helpers/gear/cameras"
 import { parseOptionalFloat } from "../../../../../../helpers/parseNumberInput"
+import Button from "../../../../../../components/Button/Button"
 
 const AddCamera = () => {
   const { t } = useTranslation("tools/journal/gear/cameras/add")
@@ -212,15 +213,10 @@ const AddCamera = () => {
             </View>
 
             <View style={addCameraStyles.form.actions}>
-              <TouchableOpacity style={addCameraStyles.form.actions.saveButton} onPress={handleSave} disabled={!isFormValid}>
-                <Text style={addCameraStyles.form.actions.saveButton.text}>{editedCamera ? t("actions.update") : t("actions.save")}</Text>
-              </TouchableOpacity>
+              <Button label={editedCamera ? t("actions.update") : t("actions.save")} onPress={handleSave} disabled={!isFormValid} />
               {
                 editedCamera && (
-                  <TouchableOpacity style={addCameraStyles.form.actions.deleteButton} onPress={handleDelete}>
-                    <Trash2 color={app_colors.red.main} size={18} />
-                    <Text style={addCameraStyles.form.actions.deleteButton.text}>{t("actions.delete")}</Text>
-                  </TouchableOpacity>
+                  <Button label={t("actions.delete")} icon={Trash2} variant="danger" onPress={handleDelete} />
                 )
               }
             </View>

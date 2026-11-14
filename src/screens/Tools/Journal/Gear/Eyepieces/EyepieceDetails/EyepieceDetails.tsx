@@ -11,6 +11,7 @@ import SectionHeader from "../../../../../../components/SectionHeader/SectionHea
 import ValueCard from "../../../../../../components/cards/ValueCard/ValueCard"
 import { useUserDataStore } from "../../../../../../store/userData.store"
 import { eyepieceDetailsStyles } from "./EyepieceDetails.styles"
+import Button from "../../../../../../components/Button/Button"
 
 const EyepieceDetails = () => {
   const { t } = useTranslation("tools/journal/gear/eyepieces/details")
@@ -142,10 +143,7 @@ const EyepieceDetails = () => {
           </View>
 
           <View style={eyepieceDetailsStyles.actions}>
-            <TouchableOpacity style={eyepieceDetailsStyles.actions.deleteButton} onPress={handleDelete}>
-              <Trash2 color={app_colors.red.main} size={18} />
-              <Text style={eyepieceDetailsStyles.actions.deleteButton.text}>{t("deleteButton")}</Text>
-            </TouchableOpacity>
+            <Button label={t("deleteButton")} icon={Trash2} variant="danger" onPress={handleDelete} />
             <Text style={eyepieceDetailsStyles.actions.deleteWarning}>{t("deleteWarning")}</Text>
           </View>
 

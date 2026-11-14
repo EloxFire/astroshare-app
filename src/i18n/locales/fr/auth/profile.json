@@ -9,8 +9,12 @@
     "noBio": "Aucune bio disponible"
   },
   "journal": {
-    "title": "Ouvrir mon journal",
+    "title": "Journal d'observations",
     "description": "Statistiques et sessions"
+  },
+  "observations": {
+    "title": "Gestionnaire de matériel",
+    "description": "Ajouter, modifier votre matériel"
   },
   "infos": {
     "title": "Vos informations",

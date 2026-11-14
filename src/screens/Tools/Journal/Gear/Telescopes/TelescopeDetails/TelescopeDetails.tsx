@@ -12,6 +12,7 @@ import SectionHeader from "../../../../../../components/SectionHeader/SectionHea
 import ValueCard from "../../../../../../components/cards/ValueCard/ValueCard"
 import { useUserDataStore } from "../../../../../../store/userData.store"
 import { telescopeDetailsStyles } from "./TelescopeDetails.styles"
+import Button from "../../../../../../components/Button/Button"
 
 const TelescopeDetails = () => {
   const { t } = useTranslation("tools/journal/gear/telescopes/details")
@@ -181,10 +182,7 @@ const TelescopeDetails = () => {
           </View>
 
           <View style={telescopeDetailsStyles.actions}>
-            <TouchableOpacity style={telescopeDetailsStyles.actions.deleteButton} onPress={handleDelete}>
-              <Trash2 color={app_colors.red.main} size={18} />
-              <Text style={telescopeDetailsStyles.actions.deleteButton.text}>{t("deleteButton")}</Text>
-            </TouchableOpacity>
+            <Button label={t("deleteButton")} icon={Trash2} variant="danger" onPress={handleDelete} />
             <Text style={telescopeDetailsStyles.actions.deleteWarning}>{t("deleteWarning")}</Text>
           </View>
 

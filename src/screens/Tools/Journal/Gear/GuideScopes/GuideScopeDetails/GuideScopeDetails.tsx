@@ -11,6 +11,7 @@ import SectionHeader from "../../../../../../components/SectionHeader/SectionHea
 import ValueCard from "../../../../../../components/cards/ValueCard/ValueCard"
 import { useUserDataStore } from "../../../../../../store/userData.store"
 import { guideScopeDetailsStyles } from "./GuideScopeDetails.styles"
+import Button from "../../../../../../components/Button/Button"
 
 const GuideScopeDetails = () => {
   const { t } = useTranslation("tools/journal/gear/guideScopes/details")
@@ -129,10 +130,7 @@ const GuideScopeDetails = () => {
           </View>
 
           <View style={guideScopeDetailsStyles.actions}>
-            <TouchableOpacity style={guideScopeDetailsStyles.actions.deleteButton} onPress={handleDelete}>
-              <Trash2 color={app_colors.red.main} size={18} />
-              <Text style={guideScopeDetailsStyles.actions.deleteButton.text}>{t("deleteButton")}</Text>
-            </TouchableOpacity>
+            <Button label={t("deleteButton")} icon={Trash2} variant="danger" onPress={handleDelete} />
             <Text style={guideScopeDetailsStyles.actions.deleteWarning}>{t("deleteWarning")}</Text>
           </View>
 

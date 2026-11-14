@@ -19,24 +19,6 @@ export const gearScreenStyles = {
         color: app_colors.primary.medium,
         textAlign: "center" as const,
       },
-
-      button: {
-        display: "flex" as const,
-        flexDirection: "row" as const,
-        alignItems: "center" as const,
-        justifyContent: "center" as const,
-        backgroundColor: app_colors.accent.main,
-        paddingVertical: 10,
-        paddingHorizontal: 20,
-        borderRadius: radius.badge32,
-
-        text: {
-          fontFamily: "DMMonoMedium",
-          fontSize: 12,
-          color: app_colors.white,
-          marginLeft: 5,
-        }
-      }
     },
 
     list: {

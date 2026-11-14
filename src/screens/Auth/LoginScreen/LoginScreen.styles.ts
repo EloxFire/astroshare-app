@@ -1,4 +1,4 @@
-import { app_colors, radius, spacing, withOpacity } from "../../../helpers/variables";
+import { app_colors, spacing, withOpacity } from "../../../helpers/variables";
 
 export const loginScreenStyles = {
   screen: {
@@ -38,20 +38,6 @@ export const loginScreenStyles = {
       gap: 10,
       marginTop: 50,
 
-      button: {
-        marginTop: 20,
-        padding: 10,
-        backgroundColor: app_colors.accent.main,
-        borderRadius: radius.badge32,
-        paddingVertical: 15,
-
-        text: {
-          color: app_colors.white,
-          fontSize: 16,
-          fontFamily: "ZTNatureBold",
-          textAlign: "center" as const,
-        }
-      },
     },
 
     forgotText: {

@@ -14,6 +14,7 @@ import { Eyepiece } from "../../../../../../types/gear/Eyepiece"
 import { useUserDataStore } from "../../../../../../store/userData.store"
 import { EYEPIECE_BARREL_SIZES, EYEPIECE_TYPES } from "../../../../../../helpers/gear/eyepieces"
 import { parseOptionalFloat } from "../../../../../../helpers/parseNumberInput"
+import Button from "../../../../../../components/Button/Button"
 
 const AddEyepiece = () => {
   const { t } = useTranslation("tools/journal/gear/eyepieces/add")
@@ -177,15 +178,10 @@ const AddEyepiece = () => {
             </View>
 
             <View style={addEyepieceStyles.form.actions}>
-              <TouchableOpacity style={addEyepieceStyles.form.actions.saveButton} onPress={handleSave} disabled={!isFormValid}>
-                <Text style={addEyepieceStyles.form.actions.saveButton.text}>{editedEyepiece ? t("actions.update") : t("actions.save")}</Text>
-              </TouchableOpacity>
+              <Button label={editedEyepiece ? t("actions.update") : t("actions.save")} onPress={handleSave} disabled={!isFormValid} />
               {
                 editedEyepiece && (
-                  <TouchableOpacity style={addEyepieceStyles.form.actions.deleteButton} onPress={handleDelete}>
-                    <Trash2 color={app_colors.red.main} size={18} />
-                    <Text style={addEyepieceStyles.form.actions.deleteButton.text}>{t("actions.delete")}</Text>
-                  </TouchableOpacity>
+                  <Button label={t("actions.delete")} icon={Trash2} variant="danger" onPress={handleDelete} />
                 )
               }
             </View>

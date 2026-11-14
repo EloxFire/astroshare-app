@@ -15,6 +15,7 @@ import { getUserProfilePicture } from "../../helpers/auth/profile/profilePicture
 import { profileScreenStyles } from "../Profile/ProfileScreen.styles";
 import { firestoreTimestampToDate } from "../../helpers/api/firestoreTimestamp";
 import { globalStyles } from "../../helpers/globalStyles";
+import SectionHeader from "../../components/SectionHeader/SectionHeader";
 
 export const SettingsScreen = () => {
   const router = useRouter();
@@ -83,14 +84,15 @@ export const SettingsScreen = () => {
             settingsCategories.map((category) => {
               return (
                 <View key={category.id} style={{marginBottom: 20}}>
-                  <Text style={globalStyles.categoryTitle}>{t(`categories.${category.id}`)}</Text>
+                  <SectionHeader title={t(`categories.${category.id}`)} />
+                  {/* <Text style={globalStyles.categoryTitle}>{t(`categories.${category.id}`)}</Text> */}
                   {
                     settingsList.map((setting) => {
                       if (setting.category === category.id) {
                         return (
                           <TouchableOpacity key={setting.id} style={settingsScreenStyles.settingsList.settingItem} onPress={() => handleSettingPress(setting.route)}>
                             <View style={settingsScreenStyles.settingsList.settingItem.content}>
-                              {setting.icon && <setting.icon color={app_colors.primary.main} size={20} style={{marginBottom: 5}} />}
+                              {setting.icon && <setting.icon color={app_colors.primary.main} size={20} />}
                               <View>
                                 <Text style={settingsScreenStyles.settingsList.settingItem.content.title}>{t(`items.${setting.id}.name`)}</Text>
                                 <Text style={settingsScreenStyles.settingsList.settingItem.content.subtitle}>{t(`items.${setting.id}.description`)}</Text>

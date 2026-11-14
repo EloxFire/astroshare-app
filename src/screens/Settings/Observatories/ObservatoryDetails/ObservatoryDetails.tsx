@@ -16,6 +16,7 @@ import * as Clipboard from 'expo-clipboard';
 import ListBadge from "../../../../components/Badges/ListBadge/ListBadge"
 import Badge from "../../../../components/Badges/Badge/Badge"
 import MapTargetMarker from "../../../../components/MapTargetMarker/MapTargetMarker"
+import Button from "../../../../components/Button/Button"
 
 const ObservatoryDetails = () => {
 
@@ -234,14 +235,9 @@ const ObservatoryDetails = () => {
 
       <View style={globalStyles.screen.content}>
         <View style={observatoryDetailsStyles.actions}>
-          <TouchableOpacity style={[globalStyles.button, {flex: 1, height: '100%'}]} onPress={() => router.push("/settings/observatories")}>
-            <Pencil color="white" size={14} />
-            <Text style={globalStyles.button.text}>{t('editButton')}</Text>
-          </TouchableOpacity>
+          <Button label={t('editButton')} icon={Pencil} iconSize={14} onPress={() => router.push("/settings/observatories")} style={{ flex: 1, height: '100%' }} />
 
-          <TouchableOpacity style={[globalStyles.button, {backgroundColor: app_colors.red.main}]} onPress={() => handleDeleteObservatory()}>
-            <Trash2 color="white" size={22} />
-          </TouchableOpacity>
+          <Button icon={Trash2} iconSize={22} variant="danger" onPress={() => handleDeleteObservatory()} />
         </View>
       </View>
 

@@ -1,4 +1,4 @@
-import { ScrollView, Text, TouchableOpacity, View } from "react-native"
+import { ScrollView, Text, View } from "react-native"
 import { useTranslation } from "react-i18next"
 import { globalStyles } from "../../../../helpers/globalStyles"
 import { ScreenHeader } from "../../../../components/ScreenHeader/ScreenHeader"
@@ -17,11 +17,13 @@ import { useUserDataStore } from "../../../../store/userData.store"
 import { formatCompactDuration, formatLocationLabel } from "../../../../helpers/format"
 import { useAppUnits } from "../../../../hooks/useAppUnits"
 import { AstronomySession } from "../../../../types/statistics/AstronomySession"
+import { getSessionMinutes } from "../../../../helpers/journal/sessions"
+import Button from "../../../../components/Button/Button"
 
 // Les timestamps d'une session sont en millisecondes (voir AstronomySession), alors que
 // formatCompactDuration attend des minutes. formatDuration, lui, attend des secondes : lui passer
 // directement l'écart en ms gonflait chaque durée d'un facteur 1000.
-const getSessionMinutes = (session: AstronomySession): number => (session.endTime - session.startTime) / 60_000
+
 
 const Journal = () => {
   const { t } = useTranslation("tools/journal")
@@ -85,10 +87,7 @@ const Journal = () => {
               <ValueCard reverse title={t("sessionsSummary.stats.visitedPlaces")} value="3"/>
             </View>
 
-            <TouchableOpacity style={journalScreenStyles.sessionsContainer.button} onPress={() => router.push("/tools/journal/sessions/add")}>
-              <PlusIcon size={20} color={app_colors.accent.main} />
-              <Text style={journalScreenStyles.sessionsContainer.button.text}>{t("sessionsSummary.addSession")}</Text>
-            </TouchableOpacity>
+            <Button label={t("sessionsSummary.addSession")} icon={PlusIcon} variant="info" onPress={() => router.push("/tools/journal/sessions/add")} style={{ marginTop: 10 }} />
           </View>
 
 
@@ -163,27 +162,20 @@ const Journal = () => {
 
             <View style={journalScreenStyles.recentSessionsList.list}>
               {/* TODO : List last 3 sessions from user store */}
-              <IconButtonCard
-                fill
-                date={new Date("2024-01-12")}
-                title={"La Sinne"}
-                subtitle={"3h 35 - EQ5 Goto"}
-                onPress={() => router.push("/tools/journal/statistics")}
-              />
-              <IconButtonCard
-                fill
-                date={new Date("2024-01-10")}
-                title={"Plateau de Valensole"}
-                subtitle={"2h 15 - Dobson 300"}
-                onPress={() => router.push("/tools/journal/statistics")}
-              />
-              <IconButtonCard
-                fill
-                date={new Date("2024-01-08")}
-                title={"Col de la Cayolle"}
-                subtitle={"4h 05 - EQ6 Goto"}
-                onPress={() => router.push("/tools/journal/statistics")}
-              />
+              {
+                userSessions.slice(-3).reverse().map((session, index) => {
+                  return (
+                    <IconButtonCard
+                      key={index}
+                      fill
+                      date={new Date(session.startTime)}
+                      title={formatLocationLabel(session.location, t("sessionsSummary.unknownLocation"))}
+                      subtitle={`${formatCompactDuration(getSessionMinutes(session))} - ${session.setups ? session.setups[0]?.name : t("sessionsSummary.unknownSetup")}`}
+                      onPress={() => router.push("/tools/journal/session/details")}
+                    />
+                  )
+                })
+              }
             </View>
           </View>
         </View>

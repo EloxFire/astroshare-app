@@ -2,8 +2,7 @@ import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { profileScreenStyles } from "./ProfileScreen.styles";
 import { useTranslation } from "react-i18next";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { ChevronLeft, Edit, LogOut, Notebook, UserCog } from "lucide-react-native";
-import { app_colors } from "../../helpers/variables";
+import { ChevronLeft, Edit, LogOut, Notebook, Telescope, UserCog } from "lucide-react-native";
 import { router } from "expo-router";
 import { useAuth } from "../../context/AuthContext";
 import { User } from "../../types/auth/User";
@@ -13,6 +12,11 @@ import { globalStyles } from "../../helpers/globalStyles";
 import InfoCard from "../../components/cards/InfoCard/InfoCard";
 import ListCard from "../../components/cards/ListCard/ListCard";
 import { firestoreTimestampToDate } from "../../helpers/api/firestoreTimestamp";
+import { formatCompactDuration } from "../../helpers/format";
+import { getTotalObservationDuration, getTotalObservedObjects } from "../../helpers/journal/sessions";
+import { useUserDataStore } from "../../store/userData.store";
+import IconButtonCard from "../../components/cards/IconButtonCard/IconButtonCard";
+import Button from "../../components/Button/Button";
 
 
 const ChangePasswordButton = ({ t }: { t: any }) => {
@@ -24,9 +28,10 @@ const ChangePasswordButton = ({ t }: { t: any }) => {
 }
 
 export const ProfileScreen = () => {
+  const { t } = useTranslation("auth/profile");
 
   const { authUser, logoutUser }: { authUser: User | null, logoutUser: () => void } = useAuth();
-  const { t } = useTranslation("auth/profile");
+  const userSessions = useUserDataStore(state => state.statistics.astronomySessions);
 
   const getNameToDisplay = () => {
     if(authUser){
@@ -76,21 +81,21 @@ export const ProfileScreen = () => {
         <View style={globalStyles.content}>
           <View style={profileScreenStyles.content.recap}>
             <View style={profileScreenStyles.content.recap.item}>
-              <Text style={profileScreenStyles.content.recap.item.value}>0</Text>
+              <Text style={profileScreenStyles.content.recap.item.value}>{userSessions.length}</Text>
               <Text style={profileScreenStyles.content.recap.item.label}>{t("recap.sessions")}</Text>
             </View>
 
             <View style={profileScreenStyles.content.recap.separator}/>
 
             <View style={profileScreenStyles.content.recap.item}>
-              <Text style={profileScreenStyles.content.recap.item.value}>0 h</Text>
+              <Text style={profileScreenStyles.content.recap.item.value}>{formatCompactDuration(getTotalObservationDuration(userSessions))}</Text>
               <Text style={profileScreenStyles.content.recap.item.label}>{t("recap.hoursObserved")}</Text>
             </View>
             
             <View style={profileScreenStyles.content.recap.separator}/>
 
             <View style={profileScreenStyles.content.recap.item}>
-              <Text style={profileScreenStyles.content.recap.item.value}>0</Text>
+              <Text style={profileScreenStyles.content.recap.item.value}>{getTotalObservedObjects(userSessions)}</Text>
               <Text style={profileScreenStyles.content.recap.item.label}>{t("recap.objectsObserved")}</Text>
             </View>
           </View>
@@ -153,23 +158,23 @@ export const ProfileScreen = () => {
 
           {/* <Text>{JSON.stringify(authUser, null, 2)}</Text> */}
 
-          <InfoCard
+          <IconButtonCard
             icon={Notebook}
             title={t('journal.title')}
-            description={t('journal.description')}
-            link={'profile/session'}
-            variant="light"
+            subtitle={t('journal.description')}
+            onPress={() => router.push('/tools/journal')}
           />
 
-          <TouchableOpacity style={profileScreenStyles.content.editButton}>
-            <UserCog size={20} color={app_colors.white} />
-            <Text style={profileScreenStyles.content.editButton.text}>{t('edit')}</Text>
-          </TouchableOpacity>
+          <IconButtonCard
+            icon={Telescope}
+            title={t('observations.title')}
+            subtitle={t('observations.description')}
+            onPress={() => router.push('/tools/observations')}
+          />
 
-          <TouchableOpacity style={profileScreenStyles.content.logoutButton} onPress={() => handleLogout()}>
-            <LogOut size={20} color={app_colors.white} />
-            <Text style={profileScreenStyles.content.logoutButton.text}>{t('logout')}</Text>
-          </TouchableOpacity>
+          <Button label={t('edit')} icon={UserCog} />
+
+          <Button label={t('logout')} icon={LogOut} variant="danger" onPress={() => handleLogout()} />
         </View>
       </ScrollView>
     </View>

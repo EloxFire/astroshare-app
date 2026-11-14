@@ -86,6 +86,10 @@ export const settingsScreenStyles = {
       justifyContent: "space-between" as const,
       gap: 10,
       paddingVertical: 10,
+      // backgroundColor: app_colors.accent.light,
+      // borderRadius: radius.badge44,
+      // padding: 10,
+      // marginVertical: 1,
       borderBottomWidth: 1,
       borderBottomColor: app_colors.primary.light,
 

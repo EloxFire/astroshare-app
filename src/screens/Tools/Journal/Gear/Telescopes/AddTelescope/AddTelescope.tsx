@@ -2,6 +2,7 @@ import { ScrollView, View, Text, TouchableOpacity, TextInput } from "react-nativ
 import { useTranslation } from "react-i18next"
 import { useState } from "react"
 import { Trash2 } from "lucide-react-native"
+import Button from "../../../../../../components/Button/Button"
 import { router, useLocalSearchParams } from "expo-router"
 import { globalStyles } from "../../../../../../helpers/globalStyles"
 import { app_colors } from "../../../../../../helpers/variables"
@@ -203,15 +204,10 @@ const AddTelescope = () => {
             </View>
 
             <View style={addTelescopeStyles.form.actions}>
-              <TouchableOpacity style={addTelescopeStyles.form.actions.saveButton} onPress={handleSave} disabled={!isFormValid}>
-                <Text style={addTelescopeStyles.form.actions.saveButton.text}>{editedTelescope ? t("actions.update") : t("actions.save")}</Text>
-              </TouchableOpacity>
+              <Button label={editedTelescope ? t("actions.update") : t("actions.save")} onPress={handleSave} disabled={!isFormValid} />
               {
                 editedTelescope && (
-                  <TouchableOpacity style={addTelescopeStyles.form.actions.deleteButton} onPress={handleDelete}>
-                    <Trash2 color={app_colors.red.main} size={18} />
-                    <Text style={addTelescopeStyles.form.actions.deleteButton.text}>{t("actions.delete")}</Text>
-                  </TouchableOpacity>
+                  <Button label={t("actions.delete")} icon={Trash2} variant="danger" onPress={handleDelete} />
                 )
               }
             </View>

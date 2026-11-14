@@ -11,6 +11,7 @@ import SectionHeader from "../../../../../../components/SectionHeader/SectionHea
 import ValueCard from "../../../../../../components/cards/ValueCard/ValueCard"
 import { useUserDataStore } from "../../../../../../store/userData.store"
 import { cameraDetailsStyles } from "./CameraDetails.styles"
+import Button from "../../../../../../components/Button/Button"
 
 const CameraDetails = () => {
   const { t } = useTranslation("tools/journal/gear/cameras/details")
@@ -148,10 +149,7 @@ const CameraDetails = () => {
           </View>
 
           <View style={cameraDetailsStyles.actions}>
-            <TouchableOpacity style={cameraDetailsStyles.actions.deleteButton} onPress={handleDelete}>
-              <Trash2 color={app_colors.red.main} size={18} />
-              <Text style={cameraDetailsStyles.actions.deleteButton.text}>{t("deleteButton")}</Text>
-            </TouchableOpacity>
+            <Button label={t("deleteButton")} icon={Trash2} variant="danger" onPress={handleDelete} />
             <Text style={cameraDetailsStyles.actions.deleteWarning}>{t("deleteWarning")}</Text>
           </View>
 

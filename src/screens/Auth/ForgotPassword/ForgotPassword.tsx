@@ -9,6 +9,7 @@ import { useTranslation } from "react-i18next"
 import { router } from "expo-router"
 import { app_colors } from "../../../helpers/variables"
 import InfoCard from "../../../components/cards/InfoCard/InfoCard"
+import Button from "../../../components/Button/Button"
 
 const ForgotPasswordScreen = () => {
 
@@ -51,9 +52,7 @@ const ForgotPasswordScreen = () => {
         />
       </View>
 
-      <TouchableOpacity style={forgotPasswordScreenStyles.screen.formContainer.button}>
-        <Text style={forgotPasswordScreenStyles.screen.formContainer.button.text}>{t("submitButton")}</Text>
-      </TouchableOpacity>
+      <Button label={t("submitButton")} style={{ marginTop: 20 }} />
 
       <View style={{marginTop: 20}}>
         <InfoCard

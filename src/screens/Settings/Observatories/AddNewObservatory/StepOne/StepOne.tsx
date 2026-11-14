@@ -27,6 +27,7 @@ import { addNewObservatoryStepTwoStyles } from "../StepTwo/StepTwo.styles"
 import { useUserDataStore } from "../../../../../store/userData.store"
 import { router } from "expo-router"
 import { generateCustomId } from "../../../../../helpers/ids"
+import Button from "../../../../../components/Button/Button"
 
 const StepOne = () => {
 
@@ -384,10 +385,7 @@ const StepOne = () => {
           />
         </View>
 
-        <TouchableOpacity style={addNewObservatoryScreenStyles.nextButton} onPress={() => handleAddObservatory()}>
-          <Text style={{color: app_colors.white, fontFamily: 'DMMonoMedium', fontSize: 16}}>{t("nextButton")}</Text>
-          <ArrowRight color={app_colors.white} size={20} />
-        </TouchableOpacity>
+        <Button label={t("nextButton")} icon={ArrowRight} iconPosition="right" onPress={() => handleAddObservatory()} />
       </View>
     </ScrollView>
   )

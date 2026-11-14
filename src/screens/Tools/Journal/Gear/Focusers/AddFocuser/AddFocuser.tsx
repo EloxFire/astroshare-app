@@ -14,6 +14,7 @@ import { Focuser } from "../../../../../../types/gear/Focuser"
 import { useUserDataStore } from "../../../../../../store/userData.store"
 import { FOCUSER_TYPES } from "../../../../../../helpers/gear/focusers"
 import { parseOptionalFloat } from "../../../../../../helpers/parseNumberInput"
+import Button from "../../../../../../components/Button/Button"
 
 const AddFocuser = () => {
   const { t } = useTranslation("tools/journal/gear/focusers/add")
@@ -138,15 +139,10 @@ const AddFocuser = () => {
             </View>
 
             <View style={addFocuserStyles.form.actions}>
-              <TouchableOpacity style={addFocuserStyles.form.actions.saveButton} onPress={handleSave} disabled={!isFormValid}>
-                <Text style={addFocuserStyles.form.actions.saveButton.text}>{editedFocuser ? t("actions.update") : t("actions.save")}</Text>
-              </TouchableOpacity>
+              <Button label={editedFocuser ? t("actions.update") : t("actions.save")} onPress={handleSave} disabled={!isFormValid} />
               {
                 editedFocuser && (
-                  <TouchableOpacity style={addFocuserStyles.form.actions.deleteButton} onPress={handleDelete}>
-                    <Trash2 color={app_colors.red.main} size={18} />
-                    <Text style={addFocuserStyles.form.actions.deleteButton.text}>{t("actions.delete")}</Text>
-                  </TouchableOpacity>
+                  <Button label={t("actions.delete")} icon={Trash2} variant="danger" onPress={handleDelete} />
                 )
               }
             </View>

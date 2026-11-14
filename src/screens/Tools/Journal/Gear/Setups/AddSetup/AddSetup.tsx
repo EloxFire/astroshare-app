@@ -12,6 +12,7 @@ import SectionHeader from "../../../../../../components/SectionHeader/SectionHea
 import { addSetupStyles } from "./AddSetup.styles"
 import { Setup } from "../../../../../../types/gear/Setup"
 import { useUserDataStore } from "../../../../../../store/userData.store"
+import Button from "../../../../../../components/Button/Button"
 
 interface CompositionCategoryProps {
   title: string
@@ -278,15 +279,10 @@ const AddSetup = () => {
           </View>
 
           <View style={addSetupStyles.actions}>
-            <TouchableOpacity style={addSetupStyles.actions.saveButton} onPress={handleSave}>
-              <Text style={addSetupStyles.actions.saveButton.text}>{editedSetup ? t("actions.update") : t("actions.save")}</Text>
-            </TouchableOpacity>
+            <Button label={editedSetup ? t("actions.update") : t("actions.save")} onPress={handleSave} />
             {
               editedSetup && (
-                <TouchableOpacity style={addSetupStyles.actions.deleteButton} onPress={handleDelete}>
-                  <Trash2 color={app_colors.red.main} size={18} />
-                  <Text style={addSetupStyles.actions.deleteButton.text}>{t("actions.delete")}</Text>
-                </TouchableOpacity>
+                <Button label={t("actions.delete")} icon={Trash2} variant="danger" onPress={handleDelete} />
               )
             }
           </View>

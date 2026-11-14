@@ -114,6 +114,15 @@ météo, APOD, viseur polaire, météo spatiale), observatoires de l'utilisateur
 - **Variantes :** `main` (fond foncé, titre blanc) ou secondaire (`main={false}`, fond clair).
 - **Prop `image` :** elle n'agit que sur un header secondaire. Le header passe à `IMAGE_HEADER_HEIGHT` (250), affiche l'image en fond avec un dégradé sombre léger, passe le texte et le chevron en blanc, et met la barre de statut en icônes claires tant que l'écran a le focus. L'utilisateur a demandé de ne pas modifier la mise en page du texte dans cette variante : seules les couleurs changent.
 
+### `Button` (`src/components/Button/`)
+
+- **Composant de base pour toute action bouton** (icône + libellé) : remplace les boutons écrits à la main dans la quasi-totalité de l'app (Profile, Auth, Observatories, Journal, tout l'écran Matériel).
+- **Variantes (`variant`)** : `color` (accent.main, action principale, défaut), `danger` (rouge plein, action destructive — pas la version atténuée red.light/red.main), `info` (habillage `defaultCard` de `globalStyles.ts`, texte/icône en accent.main, action secondaire qui doit se fondre dans une liste de cartes).
+- **`label` facultatif :** un bouton icône seule reste possible (ex : supprimer sans texte, `ObservatoryDetails`).
+- **`loading` :** remplace icône + texte par un `ActivityIndicator`, sans changer la taille ni le style du bouton (ex : soumission de `LoginScreen`).
+- **`iconPosition` :** `"left"` (défaut) ou `"right"` (ex : boutons « suivant » d'`AddNewObservatory`, où la flèche suit le texte).
+- **`disabled` :** comme avant cette migration, ne donne aucun retour visuel ni message — voir §7.
+
 ### `ImageHeaderScrollView` (`src/components/ImageHeaderScrollView/`)
 
 - **Rôle :** un écran dont le header à image défile avec le contenu. Utilisé dans `ObservatoryDetails`.
@@ -350,6 +359,7 @@ On ne peut pas lancer l'app depuis un agent. Méthodes utilisées jusqu'ici :
 | `src/screens/Settings/Observatories/ObservatoryDetails/ObservatoryDetails.tsx` | `t('common.errors.unknown')` : la clé n'existe nulle part |
 | `src/helpers/observatories/observatories.ts` | Libellés traduits à l'import, donc figés dans la langue du démarrage (§3) |
 | `src/types/observatory.ts` | `ObservatoryEquipment` (`wifi`, `toilet`, `bedding`) ne correspond pas aux `id` de `observatoriesEquipments` (`internet`, `bathroom`, `kitchen`). Les données enregistrées utilisent les `id` de la liste |
+| Formulaires d'ajout de matériel (`src/screens/Tools/Journal/Gear/**/Add*`), sauf `AddMount` et `AddSetup` | Le bouton `Button` d'enregistrement est `disabled` quand un champ requis manque, sans aucun message : rien ne se passe au clic, sans explication. `AddSetup` affiche une erreur sur le champ nom à la place de `disabled` (voir §4 `Button`) ; les autres formulaires de matériel ne le sont pas encore |
 
 Quand l'un de ces problèmes est corrigé, retire sa ligne et note la correction au journal (§8).
 
@@ -372,6 +382,7 @@ Le journal commence avec le commit `8527e2f`. Les changements antérieurs, comme
 i18n, `SelectInput` ou `ImageHeaderScrollView`, sont décrits dans les sections ci-dessus mais n'ont pas
 d'entrée datée.
 
+- **2026-11-15** — même commit — composant `Button` (`src/components/Button/`), variantes `color`/`danger`/`info`, props `loading` et `iconPosition` ; remplace les boutons écrits à la main dans Profile, Auth (Login/Register/ForgotPassword), Observatories (`ObservatoryDetails`, `AddNewObservatory`), Journal et tout l'écran Matériel (7 formulaires d'ajout + 8 écrans de détail). Les boutons « Supprimer » du Matériel, en rouge atténué (red.light/red.main), repassent au rouge plein déjà utilisé ailleurs (déconnexion du profil) — §4, §7.
 - **2026-11-13** — même commit — durées des sessions corrigées sur l'écran Journal (millisecondes passées à `formatDuration`, qui attend des secondes) et passées sur `formatCompactDuration`, comme `SetupDetails` ; lieu d'un observatoire affiché par son nom (`formatLocationLabel`) ; namespace `tools/journal` traduit en en et it, avec les libellés de l'écran Journal — §2, §3, §4.
 - **2026-11-12** — même commit — Journal :
   - enregistrement des sessions dans le store (`addAstronomySession`, objets observés, lieu sélectionnable, bouton d'enregistrement) ;

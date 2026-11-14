@@ -13,6 +13,7 @@ import { ScreenHeader } from "../../../../../../components/ScreenHeader/ScreenHe
 import SectionHeader from "../../../../../../components/SectionHeader/SectionHeader"
 import { useUserDataStore } from "../../../../../../store/userData.store"
 import { setupDetailsStyles } from "./SetupDetails.styles"
+import Button from "../../../../../../components/Button/Button"
 
 const SetupDetails = () => {
   const { t } = useTranslation("tools/journal/gear/setups/details")
@@ -142,10 +143,7 @@ const SetupDetails = () => {
           </View>
 
           <View style={setupDetailsStyles.actions}>
-            <TouchableOpacity style={setupDetailsStyles.actions.deleteButton} onPress={handleDelete}>
-              <Trash2 color={app_colors.red.main} size={18} />
-              <Text style={setupDetailsStyles.actions.deleteButton.text}>{t("deleteButton")}</Text>
-            </TouchableOpacity>
+            <Button label={t("deleteButton")} icon={Trash2} variant="danger" onPress={handleDelete} />
             <Text style={setupDetailsStyles.actions.deleteWarning}>{t("deleteWarning")}</Text>
           </View>
 

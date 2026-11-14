@@ -9,6 +9,7 @@ import { StatusBar } from "expo-status-bar"
 import { Trans, useTranslation } from "react-i18next"
 import { PasswordRequirementsChecklist } from "../../../components/PasswordRequirementsChecklist/PasswordRequirementsChecklist"
 import Checkbox from "../../../components/Checkbox/Checkbox"
+import Button from "../../../components/Button/Button"
 
 const RegisterScreen = () => {
   const { t } = useTranslation("auth/register");
@@ -97,9 +98,7 @@ const RegisterScreen = () => {
         </Text>
       </View>
 
-      <TouchableOpacity style={registerScreenStyles.screen.formContainer.button} disabled={!acceptedTerms}>
-        <Text style={registerScreenStyles.screen.formContainer.button.text}>{t("submitButton")}</Text>
-      </TouchableOpacity>
+      <Button label={t("submitButton")} disabled={!acceptedTerms} style={{ marginTop: 20 }} />
 
       <View style={registerScreenStyles.screen.bottomContainer}>
         <Text style={registerScreenStyles.screen.bottomContainer.noAccountText}>

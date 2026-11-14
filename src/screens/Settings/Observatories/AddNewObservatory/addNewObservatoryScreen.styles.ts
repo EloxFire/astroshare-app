@@ -42,34 +42,6 @@ export const addNewObservatoryScreenStyles = {
     }
   },
 
-  nextButton: {
-    backgroundColor: app_colors.accent.main,
-    padding: 10,
-    borderRadius: radius.badge32,
-    display: "flex" as const,
-    flexDirection: "row" as const,
-    gap: 10,
-    alignItems: "center" as const,
-    justifyContent: "center" as const,
-  },
-
-  validateButton: {
-    backgroundColor: app_colors.accent.main,
-    padding: 10,
-    borderRadius: radius.badge32,
-    display: "flex" as const,
-    flexDirection: "row" as const,
-    gap: 10,
-    alignItems: "center" as const,
-    justifyContent: "center" as const,
-
-    text: {
-      color: app_colors.white,
-      fontFamily: "DMMonoMedium",
-      fontSize: 16,
-    }
-  },
-
   editButton: {
     color: app_colors.accent.main,
     fontFamily: "DMMonoMedium",

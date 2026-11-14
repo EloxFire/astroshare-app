@@ -20,6 +20,7 @@ import { useUserDataStore } from "../../../../../store/userData.store";
 import { router } from "expo-router";
 import { generateCustomId } from "../../../../../helpers/ids";
 import { pickAndCompressImage, ImagePickerPermissionDeniedError } from "../../../../../helpers/images/imagePicker";
+import Button from "../../../../../components/Button/Button";
 
 
 
@@ -326,10 +327,7 @@ const StepTwo = () => {
           </View>
         </View>
 
-        <TouchableOpacity style={addNewObservatoryScreenStyles.nextButton} onPress={() => handleSubmitObservatory()}>
-          <Text style={{color: app_colors.white, fontFamily: 'DMMonoMedium', fontSize: 16}}>{t("saveButton")}</Text>
-          <ArrowRight color={app_colors.white} size={20} />
-        </TouchableOpacity>
+        <Button label={t("saveButton")} icon={ArrowRight} iconPosition="right" onPress={() => handleSubmitObservatory()} />
       </View>
     </ScrollView>
   )

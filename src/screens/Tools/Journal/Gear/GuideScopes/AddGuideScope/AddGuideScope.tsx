@@ -14,6 +14,7 @@ import { GuideScope } from "../../../../../../types/gear/GuideScope"
 import { useUserDataStore } from "../../../../../../store/userData.store"
 import { GUIDE_SCOPE_TYPES } from "../../../../../../helpers/gear/guideScopes"
 import { parseOptionalFloat } from "../../../../../../helpers/parseNumberInput"
+import Button from "../../../../../../components/Button/Button"
 
 const AddGuideScope = () => {
   const { t } = useTranslation("tools/journal/gear/guideScopes/add")
@@ -158,15 +159,10 @@ const AddGuideScope = () => {
             </View>
 
             <View style={addGuideScopeStyles.form.actions}>
-              <TouchableOpacity style={addGuideScopeStyles.form.actions.saveButton} onPress={handleSave} disabled={!isFormValid}>
-                <Text style={addGuideScopeStyles.form.actions.saveButton.text}>{editedGuideScope ? t("actions.update") : t("actions.save")}</Text>
-              </TouchableOpacity>
+              <Button label={editedGuideScope ? t("actions.update") : t("actions.save")} onPress={handleSave} disabled={!isFormValid} />
               {
                 editedGuideScope && (
-                  <TouchableOpacity style={addGuideScopeStyles.form.actions.deleteButton} onPress={handleDelete}>
-                    <Trash2 color={app_colors.red.main} size={18} />
-                    <Text style={addGuideScopeStyles.form.actions.deleteButton.text}>{t("actions.delete")}</Text>
-                  </TouchableOpacity>
+                  <Button label={t("actions.delete")} icon={Trash2} variant="danger" onPress={handleDelete} />
                 )
               }
             </View>

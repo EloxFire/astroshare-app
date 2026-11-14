@@ -15,6 +15,7 @@ import { Mount } from "../../../../../../types/gear/Mount"
 import { useUserDataStore } from "../../../../../../store/userData.store"
 import { MOUNT_TYPES } from "../../../../../../helpers/gear/mounts"
 import { parseOptionalFloat } from "../../../../../../helpers/parseNumberInput"
+import Button from "../../../../../../components/Button/Button"
 
 const AddMount = () => {
   const { t } = useTranslation("tools/journal/gear/mounts/add")
@@ -140,15 +141,10 @@ const AddMount = () => {
             </View>
 
             <View style={addMountStyles.form.actions}>
-              <TouchableOpacity style={addMountStyles.form.actions.saveButton} onPress={handleSave}>
-                <Text style={addMountStyles.form.actions.saveButton.text}>{editedMount ? t("actions.update") : t("actions.save")}</Text>
-              </TouchableOpacity>
+              <Button label={editedMount ? t("actions.update") : t("actions.save")} onPress={handleSave} />
               {
                 editedMount && (
-                  <TouchableOpacity style={addMountStyles.form.actions.deleteButton} onPress={handleDelete}>
-                    <Trash2 color={app_colors.red.main} size={18} />
-                    <Text style={addMountStyles.form.actions.deleteButton.text}>{t("actions.delete")}</Text>
-                  </TouchableOpacity>
+                  <Button label={t("actions.delete")} icon={Trash2} variant="danger" onPress={handleDelete} />
                 )
               }
             </View>

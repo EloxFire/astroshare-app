@@ -102,28 +102,6 @@ export const addCameraStyles = {
       display: "flex" as const,
       flexDirection: "column" as const,
       gap: 10,
-
-      saveButton: {
-        ...globalStyles.button,
-      },
-
-      deleteButton: {
-        backgroundColor: app_colors.red.light,
-        padding: 10,
-        borderRadius: radius.badge32,
-        display: "flex" as const,
-        flexDirection: "row" as const,
-        gap: 10,
-        alignItems: "center" as const,
-        justifyContent: "center" as const,
-
-        text: {
-          fontFamily: "DMMonoMedium",
-          fontSize: 14,
-          lineHeight: 16,
-          color: app_colors.red.main,
-        },
-      },
     },
   }
 }

@@ -14,6 +14,7 @@ import InfoCard from "../../../../components/cards/InfoCard/InfoCard"
 import ValueCard from "../../../../components/cards/ValueCard/ValueCard"
 import { gearName } from "../../../../helpers/gear/gearName"
 import { getSetupPieceCount } from "../../../../helpers/gear/setups"
+import Button from "../../../../components/Button/Button"
 
 // `items` et `renderCard` partagent le même T, propre à chaque catégorie d'équipement (Telescope,
 // Mount, ...) — renderCard a donc accès à ses champs spécifiques sans union ni cast. Le mapping se
@@ -173,10 +174,7 @@ const Gear = () => {
               userSetups.length === 0 ? (
                 <View style={gearScreenStyles.setupsSection.noSetups}>
                   <Text style={gearScreenStyles.setupsSection.noSetups.text}>{t("detailed.noItems.setups")}</Text>
-                  <TouchableOpacity style={gearScreenStyles.setupsSection.noSetups.button} onPress={() => router.push("/tools/journal/gear/setups/add")}>
-                    <Plus size={20} color={app_colors.white} />
-                    <Text style={gearScreenStyles.setupsSection.noSetups.button.text}>{t("setups.add.title")}</Text>
-                  </TouchableOpacity>
+                  <Button label={t("setups.add.title")} icon={Plus} onPress={() => router.push("/tools/journal/gear/setups/add")} />
                 </View>
               ) : (
                 <View style={gearScreenStyles.setupsSection.list}>

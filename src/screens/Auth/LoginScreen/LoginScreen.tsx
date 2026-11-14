@@ -1,4 +1,4 @@
-import { ActivityIndicator, Image, Text, TouchableOpacity, View } from "react-native"
+import { Image, Text, TouchableOpacity, View } from "react-native"
 import { loginScreenStyles } from "./LoginScreen.styles"
 import { SafeAreaView } from "react-native-safe-area-context"
 import { InputWithIcon } from "../../../components/InputWithIcon/InputWithIcon"
@@ -9,6 +9,7 @@ import { StatusBar } from "expo-status-bar"
 import { useTranslation } from "react-i18next"
 import { ChevronLeft } from "lucide-react-native"
 import { useAuth } from "../../../context/AuthContext"
+import Button from "../../../components/Button/Button"
 
 const LoginScreen = () => {
 
@@ -79,15 +80,7 @@ const LoginScreen = () => {
         </TouchableOpacity>
       </View>
 
-      <TouchableOpacity style={loginScreenStyles.screen.formContainer.button} onPress={handleSubmit} disabled={authLoading}>
-        {
-          authLoading ? (
-            <ActivityIndicator size="small" color={app_colors.white} />
-          ) : (
-            <Text style={loginScreenStyles.screen.formContainer.button.text}>{t("submitButton")}</Text>
-          )
-        }
-      </TouchableOpacity>
+      <Button label={t("submitButton")} onPress={handleSubmit} loading={authLoading} style={{ marginTop: 20 }} />
 
       <View style={loginScreenStyles.screen.bottomContainer}>
         <Text style={loginScreenStyles.screen.bottomContainer.noAccountText}>
