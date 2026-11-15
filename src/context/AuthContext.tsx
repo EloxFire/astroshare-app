@@ -17,12 +17,17 @@ export function AuthContextProvider({ children }: AuthProviderProps) {
 
   const [authUser, setAuthUser] = useState<User  | null>(null);
   const [authLoading, setAuthLoading] = useState<boolean>(false);
+  // Vrai dès que onAuthStateChanged a répondu une première fois (connecté ou pas) : tant que c'est
+  // faux, auth.currentUser n'est pas fiable (Firebase restaure encore la session persistée). Les
+  // consommateurs qui appellent une API authentifiée dès le montage (ex: WeatherDataProvider) doivent
+  // attendre ce signal pour éviter un premier appel sans token qui part en 401.
+  const [authReady, setAuthReady] = useState<boolean>(false);
 
   // Auth Persistance | Grader l'utilisateur connexté entre les sessions
   useEffect(() => {
     const unSub = onAuthStateChanged(auth, async(firebaseUser) => {
       console.log(`[AuthContext] onAuthStateChanged: `, firebaseUser);
-      
+
       try{
         if(!firebaseUser){
           setAuthUser(null);
@@ -51,6 +56,7 @@ export function AuthContextProvider({ children }: AuthProviderProps) {
         setAuthUser(null);
       } finally {
         console.log(`[AuthContext] onAuthStateChanged: Finished fetching user data. Auth user: `, authUser);
+        setAuthReady(true);
       }
     });
 
@@ -128,6 +134,7 @@ export function AuthContextProvider({ children }: AuthProviderProps) {
   const value = {
     authUser,
     authLoading,
+    authReady,
     registerUser,
     loginUser,
     logoutUser,

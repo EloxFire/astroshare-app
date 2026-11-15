@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "./LocationContext";
+import { useAuth } from "./AuthContext";
 import { getWeather } from "../helpers/api/weather/weather";
 import { getAstroConditions } from "../helpers/api/weather/astroConditions";
 import { getWeatherRadar } from "../helpers/api/weather/radar";
@@ -39,6 +40,7 @@ export const useWeatherData = (): WeatherDataContextValue => {
 // LocationContext : doit être monté à l'intérieur de LocationProvider.
 export function WeatherDataProvider({ children }: { children: React.ReactNode }) {
   const { location } = useLocation();
+  const { authReady } = useAuth();
   const { i18n } = useTranslation();
 
   const [weather, setWeather] = useState<WeatherData | null>(null);
@@ -47,7 +49,10 @@ export function WeatherDataProvider({ children }: { children: React.ReactNode })
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const fetchData = async () => {
-    if (!location) return;
+    // Attend que Firebase ait fini de restaurer la session persistée : sinon auth.currentUser
+    // est encore null au moment de l'appel (getIdToken manquant), l'API répond 401, et comme cet
+    // effet ne redéclenche que sur un changement de position, ce premier échec n'est jamais rejoué.
+    if (!location || !authReady) return;
     setIsLoading(true);
 
     // En parallèle : les trois API échouent déjà indépendamment les unes des autres (voir
@@ -71,7 +76,7 @@ export function WeatherDataProvider({ children }: { children: React.ReactNode })
     fetchData();
     const interval = setInterval(fetchData, REFRESH_INTERVAL_MS);
     return () => clearInterval(interval);
-  }, [location?.latitude, location?.longitude]);
+  }, [location?.latitude, location?.longitude, authReady]);
 
   const { nightConditions, nightReference, observationScore } = computeNightDerivedData(weather, astroConditions, location);
 

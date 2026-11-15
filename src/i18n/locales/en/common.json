@@ -33,9 +33,21 @@
     "greeting": "Beautiful night\nfor stargazing",
     "tonightSection": "Tonight",
     "conditions": {
-      "temperature": "Mild",
-      "cloudCover": "No clouds",
-      "moonIllumination": "Faint"
+      "loading": "Loading...",
+      "temperature": {
+        "cold": "Freezing",
+        "cool": "Cool",
+        "mild": "Mild",
+        "warm": "Warm",
+        "hot": "Scorching"
+      },
+      "moonIllumination": {
+        "new": "Faint",
+        "crescent": "Low",
+        "quarter": "Moderate",
+        "gibbous": "Strong",
+        "full": "Bright"
+      }
     }
   },
   "altitudeChart": {

@@ -34,9 +34,21 @@
     "greeting": "Belle nuit\npour observer",
     "tonightSection": "À voir ce soir",
     "conditions": {
-      "temperature": "Doux",
-      "cloudCover": "Aucun nuage",
-      "moonIllumination": "Discrète"
+      "loading": "En cours...",
+      "temperature": {
+        "cold": "Glacial",
+        "cool": "Frais",
+        "mild": "Doux",
+        "warm": "Chaud",
+        "hot": "Caniculaire"
+      },
+      "moonIllumination": {
+        "new": "Discrète",
+        "crescent": "Faible",
+        "quarter": "Modérée",
+        "gibbous": "Marquée",
+        "full": "Éclatante"
+      }
     }
   },
   "usefulNightCard": {

@@ -33,9 +33,21 @@
     "greeting": "Bella notte\nper osservare",
     "tonightSection": "Da vedere stasera",
     "conditions": {
-      "temperature": "Mite",
-      "cloudCover": "Nessuna nuvola",
-      "moonIllumination": "Debole"
+      "loading": "Caricamento...",
+      "temperature": {
+        "cold": "Gelido",
+        "cool": "Fresco",
+        "mild": "Mite",
+        "warm": "Caldo",
+        "hot": "Torrido"
+      },
+      "moonIllumination": {
+        "new": "Debole",
+        "crescent": "Bassa",
+        "quarter": "Moderata",
+        "gibbous": "Marcata",
+        "full": "Intensa"
+      }
     }
   },
   "altitudeChart": {

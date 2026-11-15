@@ -14,6 +14,13 @@ export const currentConditionsStyles = {
       gap: spacing.banner.horizontal,
 
       bloc: {
+        iconContainer: {
+          icon: {
+            width: 35,
+            height: 35,
+            resizeMode: "contain" as const,
+          }
+        },
         flex: 1,
         display: "flex" as const,
         flexDirection: "row" as const,
