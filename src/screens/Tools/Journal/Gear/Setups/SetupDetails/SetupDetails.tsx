@@ -9,11 +9,11 @@ import { formatCompactDuration, formatLocationLabel } from "../../../../../../he
 import { gearName } from "../../../../../../helpers/gear/gearName"
 import { getSetupPieceCount } from "../../../../../../helpers/gear/setups"
 import { useAppUnits } from "../../../../../../hooks/useAppUnits"
-import { ScreenHeader } from "../../../../../../components/ScreenHeader/ScreenHeader"
-import SectionHeader from "../../../../../../components/SectionHeader/SectionHeader"
+import { ScreenHeader } from "../../../../../../components/layout/ScreenHeader/ScreenHeader"
+import SectionHeader from "../../../../../../components/layout/SectionHeader/SectionHeader"
 import { useUserDataStore } from "../../../../../../store/userData.store"
 import { setupDetailsStyles } from "./SetupDetails.styles"
-import Button from "../../../../../../components/Button/Button"
+import Button from "../../../../../../components/buttons/Button/Button"
 
 const SetupDetails = () => {
   const { t } = useTranslation("tools/journal/gear/setups/details")

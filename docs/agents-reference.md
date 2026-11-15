@@ -42,7 +42,7 @@ météo, APOD, viseur polaire, météo spatiale), observatoires de l'utilisateur
 |---|---|
 | `app/` | Routes `expo-router`, fichiers fins qui rendent un écran de `src/screens/` |
 | `src/screens/` | Écrans, avec leurs sous-composants propres (`components/`) |
-| `src/components/` | Composants réutilisables, un dossier par composant (`X.tsx` + `X.styles.ts`) |
+| `src/components/` | Composants réutilisables, un dossier par composant (`X.tsx` + `X.styles.ts`), regroupés par type : `buttons/`, `inputs/`, `overlays/`, `layout/`, `charts/`, `rendering/`, `media/`, `cards/`, `weather/`. `Badges/`, `MapTargetMarker/` et `ChipsContainer/` restent à la racine (seuls de leur genre) |
 | `src/helpers/` | Logique pure : `api/`, `astrometry/`, `observatories/`, `variables.ts` (tokens), `globalStyles.ts`, `gradients.ts`… |
 | `src/hooks/` | `useAppFonts`, `useAppUnits` (formatage des unités et dates), `useUpcomingMoonPhases`… |
 | `src/i18n/` | Init i18next, `resources.ts`, fichiers `locales/<langue>/…json` |
@@ -79,7 +79,7 @@ météo, APOD, viseur polaire, météo spatiale), observatoires de l'utilisateur
 ### Pièges React Native déjà rencontrés
 
 - **Enfant en `position: "absolute"` :** ses `width`/`height` en `%` se calculent sur la zone de contenu du parent, paddings déduits. Ses `top`/`left`/`right`/`bottom` se calculent sur la boîte entière. Pour couvrir un parent qui a un padding : les quatre bords à 0, sans `%`.
-- **`<Image>` chargée par `require()` :** elle reçoit d'office la taille du fichier en `width`/`height`, qui l'emporte sur les bords à 0. Mets-la à `100%` dans un conteneur absolu sans padding. Voir `imageContainer` dans `src/components/ScreenHeader/ScreenHeader.styles.ts`.
+- **`<Image>` chargée par `require()` :** elle reçoit d'office la taille du fichier en `width`/`height`, qui l'emporte sur les bords à 0. Mets-la à `100%` dans un conteneur absolu sans padding. Voir `imageContainer` dans `src/components/layout/ScreenHeader/ScreenHeader.styles.ts`.
 - **Bord d'un dessin SVG :** il est lissé (anti-aliasing). Si un dégradé SVG doit se raccorder à un aplat de même couleur, fais recouvrir sa dernière rangée de pixels par une vue opaque. Voir `FADE_SEAM_COVER` dans `ImageHeaderScrollView.styles.ts`.
 - **Dégradés :** ne fais jamais varier un dégradé vers `"transparent"`, qui est du noir à 0 % d'opacité et salit le milieu du dégradé. Garde une seule couleur et ne fais varier que l'opacité. Pour une transition douce, utilise `easedGradientStops` (`src/helpers/gradients.ts`, courbe smoothstep), avec `<LinearGradient>` de `react-native-svg`.
 - **Liste posée par-dessus la suite de l'écran (`position: "absolute"`) :** son `zIndex` ne joue qu'entre éléments voisins. Les éléments affichés après elle dans l'écran passent donc au-dessus et reçoivent les appuis à sa place. Mets la liste dans le flux, sous le champ (c'est le cas d'`InputWithIcon` et de `SelectInput`), ou dans une `Modal`.
@@ -101,7 +101,7 @@ météo, APOD, viseur polaire, météo spatiale), observatoires de l'utilisateur
 - **Nom d'un namespace :** c'est le chemin du fichier depuis `locales/<langue>/`, sans extension. Exemple : `useTranslation("settings/addObservatory")` correspond à `locales/<langue>/settings/addObservatory.json`. Le `/` dans un nom de namespace fonctionne avec i18next, et la syntaxe `ns:clé` aussi (`t("settings/addObservatory:stepTwo.title")`).
 - **Ajouter un namespace :** crée le JSON dans chaque langue, puis ajoute l'import et l'entrée dans les trois blocs de `resources.ts`.
 - **Clés :** une clé ne répète pas le nom de son namespace (`t("recap.sessions")`, pas `t("profile.recap.sessions")`).
-- **Langues :** `fr` est la langue de référence et de repli. `en` et `it` peuvent être partielles : les clés absentes retombent sur le français. Namespaces sans fichier `en` ni `it` pour l'instant : `suggestionsCards`, `tools/apod`, `tools/polarScope`, `tools/spaceWeather` et `tools/weather`.
+- **Langues :** `fr` est la langue de référence et de repli. `en` et `it` peuvent être partielles : les clés absentes retombent sur le français. Tous les namespaces ont désormais un fichier dans les trois langues.
 - **Ne pas traduire au chargement d'un module :** un `i18next.t()` exécuté à l'import, comme les `label` de `src/helpers/observatories/observatories.ts`, est figé dans la langue du démarrage. Traduis dans le composant avec `t()`. Exemple : les options de type de lieu dans `StepTwo.tsx`. Pour une fonction déclarée hors du composant, passe-lui `t` en paramètre (exemple : `getCatalogObjectSubtitle` dans `AddSession.tsx`).
 - **Namespaces imbriqués :** un écran peut avoir son propre fichier sous celui de sa section. Par exemple, `tools/journal/sessions/add` (formulaire d'ajout de session) se trouve dans `locales/<langue>/tools/journal/sessions/add.json`, à côté de `tools/journal.json`. Le fichier `journal.json` et le dossier `journal/` coexistent sans problème.
 
@@ -109,12 +109,12 @@ météo, APOD, viseur polaire, météo spatiale), observatoires de l'utilisateur
 
 ## 4. Composants d'interface notables
 
-### `ScreenHeader` (`src/components/ScreenHeader/`)
+### `ScreenHeader` (`src/components/layout/ScreenHeader/`)
 
 - **Variantes :** `main` (fond foncé, titre blanc) ou secondaire (`main={false}`, fond clair).
 - **Prop `image` :** elle n'agit que sur un header secondaire. Le header passe à `IMAGE_HEADER_HEIGHT` (250), affiche l'image en fond avec un dégradé sombre léger, passe le texte et le chevron en blanc, et met la barre de statut en icônes claires tant que l'écran a le focus. L'utilisateur a demandé de ne pas modifier la mise en page du texte dans cette variante : seules les couleurs changent.
 
-### `Button` (`src/components/Button/`)
+### `Button` (`src/components/buttons/Button/`)
 
 - **Composant de base pour toute action bouton** (icône + libellé) : remplace les boutons écrits à la main dans la quasi-totalité de l'app (Profile, Auth, Observatories, Journal, tout l'écran Matériel).
 - **Variantes (`variant`)** : `color` (accent.main, action principale, défaut), `danger` (rouge plein, action destructive — pas la version atténuée red.light/red.main), `info` (habillage `defaultCard` de `globalStyles.ts`, texte/icône en accent.main, action secondaire qui doit se fondre dans une liste de cartes).
@@ -123,7 +123,14 @@ météo, APOD, viseur polaire, météo spatiale), observatoires de l'utilisateur
 - **`iconPosition` :** `"left"` (défaut) ou `"right"` (ex : boutons « suivant » d'`AddNewObservatory`, où la flèche suit le texte).
 - **`disabled` :** comme avant cette migration, ne donne aucun retour visuel ni message — voir §7.
 
-### `ImageHeaderScrollView` (`src/components/ImageHeaderScrollView/`)
+### `InfoTooltip` (`src/components/overlays/InfoTooltip/`)
+
+- **Rôle :** icône « i » qui ouvre une modale flottante **centrée** (titre + description), pour expliquer une carte sans occuper de place dedans en permanence. Généralise les icônes `Info` posées sans action dans `SpaceWeatherScreen.tsx` (champ magnétique, vent solaire).
+- **Différence avec `DayDetailModal`** (`MoonCalendar`) : celle-ci est un panneau du bas (`animationType="slide"`, radius en haut seulement). `InfoTooltip` est centrée (`animationType="fade"`, radius sur les quatre coins), pour un contenu court.
+- **Props :** `title`, `description` (déjà traduits par l'appelant), `iconSize`/`iconColor` facultatifs.
+- **Fermeture :** tap sur le fond, ou sur la croix dans l'en-tête de la carte.
+
+### `ImageHeaderScrollView` (`src/components/layout/ImageHeaderScrollView/`)
 
 - **Rôle :** un écran dont le header à image défile avec le contenu. Utilisé dans `ObservatoryDetails`.
 - **Défilement :** l'image défile en parallaxe, deux fois moins vite que le contenu (`IMAGE_PARALLAX_SPEED`). Le contenu, opaque, glisse par-dessus.
@@ -132,14 +139,14 @@ météo, APOD, viseur polaire, météo spatiale), observatoires de l'utilisateur
 - **Chevauchement :** le contenu remonte de `CONTENT_OVERLAP` (40 px) sur la fin du fondu.
 - **Pas de `FlatList` dans le contenu :** c'est un `ScrollView`. L'utilisateur s'engage à ne pas y mettre de `FlatList`.
 
-### `SelectInput` (`src/components/SelectInput/`)
+### `SelectInput` (`src/components/inputs/SelectInput/`)
 
 - **Composant contrôlé :** `options: { label, value }[]`, avec `value` et `onChange`. `multiple` sert de discriminant de type : `T | null` en choix simple, `T[]` en choix multiple. Les valeurs y restent dans l'ordre des options.
 - **`NoInfer` sur `value`/`onChange` :** sans lui, l'inférence du type échoue en choix multiple. Il demande TypeScript 5.4 ou plus.
 - **`presentation` :** `"dropdown"` (liste sous le champ) ou `"sheet"` (panneau `Modal` avec `FlatList`, recherche facultative via `searchable`). Par défaut, le panneau s'ouvre au-delà de `SHEET_OPTIONS_THRESHOLD` (8) options.
 - **Options construites depuis une liste d'ids :** type les ids avec l'union attendue (exemple : `observatoriesTypes` typé `ObservatoryType`).
 
-### `InputWithIcon` : suggestions (`src/components/InputWithIcon/`)
+### `InputWithIcon` : suggestions (`src/components/inputs/InputWithIcon/`)
 
 - **Liste :** dans le flux, collée sous le champ. Elle pousse le contenu en dessous tant qu'elle est ouverte. Elle ne passe plus par-dessus, à cause du piège de la §2.
 - **Dans un `ScrollView` :** il faut `keyboardShouldPersistTaps="handled"` (§2), sinon le premier appui sur une suggestion est perdu.
@@ -166,6 +173,13 @@ météo, APOD, viseur polaire, météo spatiale), observatoires de l'utilisateur
 - **Notes de ciel :** 0 (aucune étoile touchée) est enregistré comme `null`. Les champs `observations` (météores, comètes, etc.) ne sont pas encore saisis : ils valent `false`.
 - **Affichage d'une session enregistrée** (écran Journal, `SetupDetails`) : horaires avec `formatDate(...).format("HH:mm")`, durée avec `formatCompactDuration((endTime - startTime) / 60_000)`, lieu avec `formatLocationLabel` (§2). Une note `null` s'affiche comme 0.
 - **Écran Journal :** ses libellés sont traduits (`tools/journal`, fr, en, it). Les valeurs factices (dernier objet observé, succès, sessions récentes, statistiques autres que le nombre de sessions et les heures observées) restent en dur, en attendant d'être branchées sur le store.
+
+### Observatoires : ajout et modification (`AddNewObservatoryScreen` / `StepOne`)
+
+- **Un seul écran pour les deux :** malgré son nom et `StepTwo.tsx` encore présent, le flux à deux étapes n'est pas actif (`currentFormStep` est commenté dans `AddNewObservatoryScreen.tsx`) — `StepOne.tsx` porte tout le formulaire (lieu, type, équipements, tags, notes, image). `StepTwo.tsx` ne sert plus qu'à fournir ses styles (`addNewObservatoryStepTwoStyles`, image picker) à `StepOne`.
+- **Modification :** même principe que les formulaires de matériel (Gear) — `?id=` en query param (lu dans `AddNewObservatoryScreen.tsx` pour le titre, dans `StepOne.tsx` pour le reste). `StepOne` préremplit tous ses champs locaux par lazy `useState`, et initialise `newObservatory` (le `Context`) par un `useEffect` au montage, qui recentre aussi la carte (`animateToRegion`) — `initialRegion` de `MapView` n'agit qu'au tout premier rendu, insuffisant si le store se réhydrate après coup.
+- **Enregistrement :** `id`/`createdAt`/`shared` sont conservés en modification (`updateObservatory`), régénérés en création (`addObservatory`). Retour à l'écran précédent (`router.back()`) en modification, vers la liste (`router.replace`) en création.
+- **Bouton Modifier** (`ObservatoryDetails.tsx`) : pousse vers `/settings/observatories/addNewObservatory?id=...`. Il pointait vers la liste des observatoires avant correction.
 
 ### `WeatherRadarMap` (`src/components/weather/WeatherRadarMap/`)
 
@@ -203,7 +217,7 @@ Une version plein écran est affichée dans une `Modal`.
 
 ## 5. Rendu 3D de la Lune : `MoonPhase`
 
-Fichier : `src/components/MoonPhase/MoonPhase.tsx`. Calculs : `src/helpers/astrometry/moon/orientation.ts`.
+Fichier : `src/components/rendering/MoonPhase/MoonPhase.tsx`. Calculs : `src/helpers/astrometry/moon/orientation.ts`.
 
 ### 5.1 Rôle et utilisation
 
@@ -382,7 +396,15 @@ Le journal commence avec le commit `8527e2f`. Les changements antérieurs, comme
 i18n, `SelectInput` ou `ImageHeaderScrollView`, sont décrits dans les sections ci-dessus mais n'ont pas
 d'entrée datée.
 
-- **2026-11-15** — même commit — composant `Button` (`src/components/Button/`), variantes `color`/`danger`/`info`, props `loading` et `iconPosition` ; remplace les boutons écrits à la main dans Profile, Auth (Login/Register/ForgotPassword), Observatories (`ObservatoryDetails`, `AddNewObservatory`), Journal et tout l'écran Matériel (7 formulaires d'ajout + 8 écrans de détail). Les boutons « Supprimer » du Matériel, en rouge atténué (red.light/red.main), repassent au rouge plein déjà utilisé ailleurs (déconnexion du profil) — §4, §7.
+- **2026-11-15** — même commit —
+  - modification d'un observatoire (même principe que le matériel, `?id=`), bouton Modifier d'`ObservatoryDetails` corrigé — §4 « Observatoires : ajout et modification » ;
+  - `updateObservatory` ajouté au store ;
+  - namespaces `en`/`it` manquants créés en entier : `suggestionsCards`, `tools/apod`, `tools/polarScope`, `tools/spaceWeather`, `tools/weather` — §3 ;
+  - 4 fichiers JSON `fr` invalides (virgule finale illégale avant `}`) corrigés : `moon.json`, `settings.json`, `tools/3dviewer.json`, `settings/addObservatory.json` ;
+  - composant `InfoTooltip`, branché sur les icônes Info sans action de `SpaceWeatherScreen` (champ magnétique, vent solaire) — §4 ;
+  - `ToolsScreen` : recherche et filtre de catégorie câblés sur `ToolsSection` (ils ne l'étaient pas), qui accepte maintenant la liste déjà filtrée en prop ; `Badge` : texte rogné en bas corrigé (`lineHeight` manquant à cette taille de police) ;
+  - `src/components/` réorganisé en sous-dossiers par type (`buttons/`, `inputs/`, `overlays/`, `layout/`, `charts/`, `rendering/`, `media/`), `ObservabilityScoreCard` et `UsefulNightCard` déplacés dans `cards/` (déjà la convention pour tout composant `*Card`) — §1.
+- **2026-11-15** — même commit — composant `Button` (`src/components/buttons/Button/`), variantes `color`/`danger`/`info`, props `loading` et `iconPosition` ; remplace les boutons écrits à la main dans Profile, Auth (Login/Register/ForgotPassword), Observatories (`ObservatoryDetails`, `AddNewObservatory`), Journal et tout l'écran Matériel (7 formulaires d'ajout + 8 écrans de détail). Les boutons « Supprimer » du Matériel, en rouge atténué (red.light/red.main), repassent au rouge plein déjà utilisé ailleurs (déconnexion du profil) — §4, §7.
 - **2026-11-13** — même commit — durées des sessions corrigées sur l'écran Journal (millisecondes passées à `formatDuration`, qui attend des secondes) et passées sur `formatCompactDuration`, comme `SetupDetails` ; lieu d'un observatoire affiché par son nom (`formatLocationLabel`) ; namespace `tools/journal` traduit en en et it, avec les libellés de l'écran Journal — §2, §3, §4.
 - **2026-11-12** — même commit — Journal :
   - enregistrement des sessions dans le store (`addAstronomySession`, objets observés, lieu sélectionnable, bouton d'enregistrement) ;

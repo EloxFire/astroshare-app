@@ -2,11 +2,11 @@ import { ScrollView, Text, TouchableOpacity, View } from "react-native"
 import { useEffect, useRef, useState } from "react";
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { observatoriesScreenStyles } from "./ObservatoriesScreen.styles";
-import { ScreenHeader } from "../../../components/ScreenHeader/ScreenHeader";
+import { ScreenHeader } from "../../../components/layout/ScreenHeader/ScreenHeader";
 import ChipsContainer from "../../../components/ChipsContainer/ChipsContainer";
 import { LocateFixed, MapPinPlusIcon } from "lucide-react-native";
 import { app_colors } from "../../../helpers/variables";
-import SwitchButton from "../../../components/SwitchButton/SwitchButton";
+import SwitchButton from "../../../components/inputs/SwitchButton/SwitchButton";
 import { useUserDataStore } from "../../../store/userData.store";
 import ObservatoryCard from "./ObservatoryCard/ObservatoryCard";
 import { globalStyles } from "../../../helpers/globalStyles";

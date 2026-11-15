@@ -2,7 +2,7 @@ import { Image, StatusBar, Text, TouchableOpacity, View } from "react-native";
 import { useUserDataStore } from "../../store/userData.store";
 import { useRouter } from 'expo-router';
 import { settingsScreenStyles } from "./SettingsScreen.styles";
-import { ScreenHeader } from "../../components/ScreenHeader/ScreenHeader";
+import { ScreenHeader } from "../../components/layout/ScreenHeader/ScreenHeader";
 import { useEffect } from "react";
 import { ChevronRightIcon } from "lucide-react-native";
 import { app_colors } from "../../helpers/variables";
@@ -15,7 +15,7 @@ import { getUserProfilePicture } from "../../helpers/auth/profile/profilePicture
 import { profileScreenStyles } from "../Profile/ProfileScreen.styles";
 import { firestoreTimestampToDate } from "../../helpers/api/firestoreTimestamp";
 import { globalStyles } from "../../helpers/globalStyles";
-import SectionHeader from "../../components/SectionHeader/SectionHeader";
+import SectionHeader from "../../components/layout/SectionHeader/SectionHeader";
 
 export const SettingsScreen = () => {
   const router = useRouter();

@@ -1,12 +1,12 @@
 import { ScrollView, Text, View } from "react-native"
 import { useTranslation } from "react-i18next"
 import { globalStyles } from "../../../../helpers/globalStyles"
-import { ScreenHeader } from "../../../../components/ScreenHeader/ScreenHeader"
+import { ScreenHeader } from "../../../../components/layout/ScreenHeader/ScreenHeader"
 import { router, useFocusEffect } from "expo-router"
 import { useCallback } from "react"
 import { StatusBar } from "expo-status-bar"
 import { journalScreenStyles } from "./Journal.styles"
-import SectionHeader from "../../../../components/SectionHeader/SectionHeader"
+import SectionHeader from "../../../../components/layout/SectionHeader/SectionHeader"
 import ValueCard from "../../../../components/cards/ValueCard/ValueCard"
 import { ArrowRight, Award, ChartColumn, CircleStar, Medal, MedalIcon, PlusIcon, Telescope } from "lucide-react-native"
 import IconButtonCard from "../../../../components/cards/IconButtonCard/IconButtonCard"
@@ -18,7 +18,7 @@ import { formatCompactDuration, formatLocationLabel } from "../../../../helpers/
 import { useAppUnits } from "../../../../hooks/useAppUnits"
 import { AstronomySession } from "../../../../types/statistics/AstronomySession"
 import { getSessionMinutes } from "../../../../helpers/journal/sessions"
-import Button from "../../../../components/Button/Button"
+import Button from "../../../../components/buttons/Button/Button"
 
 // Les timestamps d'une session sont en millisecondes (voir AstronomySession), alors que
 // formatCompactDuration attend des minutes. formatDuration, lui, attend des secondes : lui passer

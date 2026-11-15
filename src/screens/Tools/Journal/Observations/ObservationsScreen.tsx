@@ -1,6 +1,6 @@
 import { View } from "react-native"
 import { globalStyles } from "../../../../helpers/globalStyles";
-import { ScreenHeader } from "../../../../components/ScreenHeader/ScreenHeader";
+import { ScreenHeader } from "../../../../components/layout/ScreenHeader/ScreenHeader";
 import { useTranslation } from "react-i18next";
 import { useFocusEffect } from "expo-router";
 import { useCallback } from "react";

@@ -1,6 +1,6 @@
 import { StatusBar, Text, View } from "react-native";
 import { exploreScreenStyles } from "./ExploreScreen.styles";
-import { ScreenHeader } from "../../components/ScreenHeader/ScreenHeader";
+import { ScreenHeader } from "../../components/layout/ScreenHeader/ScreenHeader";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 

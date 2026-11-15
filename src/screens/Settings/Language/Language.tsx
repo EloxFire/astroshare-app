@@ -1,6 +1,6 @@
 import { Text, View, TouchableOpacity } from "react-native"
 import { globalStyles } from "../../../helpers/globalStyles"
-import { ScreenHeader } from "../../../components/ScreenHeader/ScreenHeader";
+import { ScreenHeader } from "../../../components/layout/ScreenHeader/ScreenHeader";
 import { getTranslationCompleteness } from "../../../i18n/translationCompleteness";
 import { supportedLanguages } from "../../../helpers/langs";
 import { useEffect, useState } from "react";
@@ -10,7 +10,7 @@ import { languageScreenStyles } from "./Language.styles";
 import { useUserDataStore } from "../../../store/userData.store";
 import { Check, Languages, Smartphone } from "lucide-react-native";
 import { app_colors } from "../../../helpers/variables";
-import SwitchButton from "../../../components/SwitchButton/SwitchButton";
+import SwitchButton from "../../../components/inputs/SwitchButton/SwitchButton";
 import * as Localization from "expo-localization";
 import getUnicodeFlagIcon from 'country-flag-icons/unicode'
 import InfoCard from "../../../components/cards/InfoCard/InfoCard";

@@ -50,6 +50,7 @@ export type UserSettingsActions = {
   setLocale: (newLocale: string | null) => void;
   setLastKnownLocation: (newLastKnownLocation: GpsLocation | null) => void;
   addObservatory: (newObservatory: Observatory) => void;
+  updateObservatory: (observatoryId: string, updatedObservatory: Observatory) => void;
   removeObservatory: (observatoryIdToRemove: string) => void;
   setActiveObservatoryId: (newActiveObservatoryId: string | null) => void;
   setPinnedTools: (newPinnedTools: [string?, string?, string?, string?, string?]) => void;

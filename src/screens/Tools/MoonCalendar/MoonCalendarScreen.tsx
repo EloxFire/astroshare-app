@@ -1,5 +1,5 @@
 import { ScrollView, View } from "react-native";
-import { ScreenHeader } from "../../../components/ScreenHeader/ScreenHeader";
+import { ScreenHeader } from "../../../components/layout/ScreenHeader/ScreenHeader";
 import { moonCalendarScreenStyles } from "./MoonCalendarScreen.styles";
 import { StatusBar } from "expo-status-bar";
 import { useCallback, useEffect, useState } from "react";

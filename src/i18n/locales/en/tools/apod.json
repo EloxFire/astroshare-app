@@ -1,0 +1,39 @@
+{
+  "screen": {
+    "title": "NASA Astronomy Picture of the Day",
+    "content": {
+      "description": {
+        "title": "Explanation",
+        "language": "(English only)",
+        "translate": "Translate",
+        "loading": "Translating...",
+        "error": "Translation failed"
+      },
+      "nextImage": {
+        "title": "Next image",
+        "loading": "Loading..."
+      },
+      "buttons": {
+        "download": "HD",
+        "save": "Save",
+        "article": "NASA",
+        "downloadSuccessTitle": "Image saved",
+        "downloadSuccessMessage": "The image was added to your photo gallery.",
+        "downloadPermissionDeniedTitle": "Permission denied",
+        "downloadPermissionDeniedMessage": "Allow access to your photos in Settings to save the image.",
+        "downloadErrorTitle": "Couldn't save the image",
+        "downloadErrorMessage": "Something went wrong, please try again later."
+      }
+    }
+  },
+  "upcoming": {
+    "title": "Next image",
+    "publish": "Publishing in",
+    "ping": "Notify me on publication",
+    "pingSubtitle": "A notification {{date}}",
+    "pingSuccessTitle": "Notification enabled",
+    "pingSuccessMessage": "You'll be notified when the next image is published.",
+    "pingErrorTitle": "Error",
+    "pingErrorMessage": "Something went wrong, please try again later."
+  }
+}

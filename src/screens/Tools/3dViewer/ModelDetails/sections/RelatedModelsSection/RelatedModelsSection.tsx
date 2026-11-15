@@ -3,7 +3,7 @@ import { router } from "expo-router"
 import { useTranslation } from "react-i18next"
 import { DEFAULT_MODEL_ILLUSTRATION } from "../../../../../../helpers/tools/3dviewer"
 import { ThreeDModel } from "../../../../../../types/tools/3dViewer"
-import SectionHeader from "../../../../../../components/SectionHeader/SectionHeader"
+import SectionHeader from "../../../../../../components/layout/SectionHeader/SectionHeader"
 import { relatedModelsSectionStyles } from "./RelatedModelsSection.styles"
 
 interface RelatedModelsSectionProps {

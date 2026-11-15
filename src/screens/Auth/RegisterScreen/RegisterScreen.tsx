@@ -1,15 +1,15 @@
 import { Image, Text, TouchableOpacity, View } from "react-native"
 import { registerScreenStyles } from "./RegisterScreen.styles"
 import { SafeAreaView } from "react-native-safe-area-context"
-import { InputWithIcon } from "../../../components/InputWithIcon/InputWithIcon"
+import { InputWithIcon } from "../../../components/inputs/InputWithIcon/InputWithIcon"
 import { app_colors } from "../../../helpers/variables"
 import { useEffect, useState } from "react"
 import { router } from "expo-router"
 import { StatusBar } from "expo-status-bar"
 import { Trans, useTranslation } from "react-i18next"
-import { PasswordRequirementsChecklist } from "../../../components/PasswordRequirementsChecklist/PasswordRequirementsChecklist"
-import Checkbox from "../../../components/Checkbox/Checkbox"
-import Button from "../../../components/Button/Button"
+import { PasswordRequirementsChecklist } from "../../../components/inputs/PasswordRequirementsChecklist/PasswordRequirementsChecklist"
+import Checkbox from "../../../components/inputs/Checkbox/Checkbox"
+import Button from "../../../components/buttons/Button/Button"
 
 const RegisterScreen = () => {
   const { t } = useTranslation("auth/register");

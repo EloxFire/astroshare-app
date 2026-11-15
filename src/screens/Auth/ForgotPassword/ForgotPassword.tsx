@@ -4,12 +4,12 @@ import { SafeAreaView } from "react-native-safe-area-context"
 import { useEffect, useState } from "react"
 import { StatusBar } from "expo-status-bar"
 import { KeyRoundIcon, MailCheck } from "lucide-react-native"
-import { InputWithIcon } from "../../../components/InputWithIcon/InputWithIcon"
+import { InputWithIcon } from "../../../components/inputs/InputWithIcon/InputWithIcon"
 import { useTranslation } from "react-i18next"
 import { router } from "expo-router"
 import { app_colors } from "../../../helpers/variables"
 import InfoCard from "../../../components/cards/InfoCard/InfoCard"
-import Button from "../../../components/Button/Button"
+import Button from "../../../components/buttons/Button/Button"
 
 const ForgotPasswordScreen = () => {
 

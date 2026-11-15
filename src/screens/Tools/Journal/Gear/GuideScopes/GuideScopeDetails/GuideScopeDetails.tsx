@@ -6,12 +6,12 @@ import { ChevronRight, Crosshair, Layers, Pencil, Trash2 } from "lucide-react-na
 import { globalStyles } from "../../../../../../helpers/globalStyles"
 import { app_colors } from "../../../../../../helpers/variables"
 import { useAppUnits } from "../../../../../../hooks/useAppUnits"
-import { ScreenHeader } from "../../../../../../components/ScreenHeader/ScreenHeader"
-import SectionHeader from "../../../../../../components/SectionHeader/SectionHeader"
+import { ScreenHeader } from "../../../../../../components/layout/ScreenHeader/ScreenHeader"
+import SectionHeader from "../../../../../../components/layout/SectionHeader/SectionHeader"
 import ValueCard from "../../../../../../components/cards/ValueCard/ValueCard"
 import { useUserDataStore } from "../../../../../../store/userData.store"
 import { guideScopeDetailsStyles } from "./GuideScopeDetails.styles"
-import Button from "../../../../../../components/Button/Button"
+import Button from "../../../../../../components/buttons/Button/Button"
 
 const GuideScopeDetails = () => {
   const { t } = useTranslation("tools/journal/gear/guideScopes/details")

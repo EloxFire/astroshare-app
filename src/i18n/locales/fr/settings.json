@@ -22,7 +22,7 @@
       "subtitle": "Personnalisez votre expérience et sauvegardez vos préférences !"
     },
     "accountCard": {
-      "subtitle": "Observateur depuis le {{accountCreationDate}}",
+      "subtitle": "Observateur depuis le {{accountCreationDate}}"
     }
   },
   "categories": {

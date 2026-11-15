@@ -2,7 +2,7 @@ import { ScrollView, Text, useWindowDimensions, View } from "react-native"
 import { globalStyles } from "../../../../helpers/globalStyles";
 import { spacing, withOpacity } from "../../../../helpers/variables";
 import { futureApodScreenStyles } from "./FutureApodScreen.styles";
-import { ScreenHeader } from "../../../../components/ScreenHeader/ScreenHeader";
+import { ScreenHeader } from "../../../../components/layout/ScreenHeader/ScreenHeader";
 import { useTranslation } from "react-i18next";
 import { useLocalSearchParams } from "expo-router";
 import { Bell, Hourglass } from "lucide-react-native";

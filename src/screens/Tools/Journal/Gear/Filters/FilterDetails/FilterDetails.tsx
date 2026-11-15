@@ -6,12 +6,12 @@ import { Aperture, ChevronRight, Layers, Pencil, Trash2 } from "lucide-react-nat
 import { globalStyles } from "../../../../../../helpers/globalStyles"
 import { app_colors } from "../../../../../../helpers/variables"
 import { useAppUnits } from "../../../../../../hooks/useAppUnits"
-import { ScreenHeader } from "../../../../../../components/ScreenHeader/ScreenHeader"
-import SectionHeader from "../../../../../../components/SectionHeader/SectionHeader"
+import { ScreenHeader } from "../../../../../../components/layout/ScreenHeader/ScreenHeader"
+import SectionHeader from "../../../../../../components/layout/SectionHeader/SectionHeader"
 import ValueCard from "../../../../../../components/cards/ValueCard/ValueCard"
 import { useUserDataStore } from "../../../../../../store/userData.store"
 import { filterDetailsStyles } from "./FilterDetails.styles"
-import Button from "../../../../../../components/Button/Button"
+import Button from "../../../../../../components/buttons/Button/Button"
 
 const FilterDetails = () => {
   const { t } = useTranslation("tools/journal/gear/filters/details")

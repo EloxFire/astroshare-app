@@ -2,7 +2,8 @@
   "screen": {
     "title": "Strumenti",
     "searchPlaceholder": "Cerca uno strumento, un oggetto, un calcolo...",
-    "pinnedSection": "Bloccati (5 max)"
+    "pinnedSection": "Bloccati (5 max)",
+    "noResults": "Nessuno strumento trovato"
   },
   "categories": {
     "prepare": "Preparare",

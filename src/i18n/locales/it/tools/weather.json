@@ -1,0 +1,76 @@
+{
+  "screen": {
+    "title": "Meteo in diretta"
+  },
+  "astroConditions": {
+    "title": "Punteggio di osservazione stasera",
+    "metrics": "Condizioni dettagliate",
+    "referenceTime": {
+      "inProgress": "Notte astronomica in corso",
+      "upcoming": "Previsioni per l'inizio della notte astronomica · {{time}}"
+    },
+    "verdict": {
+      "bad": "Condizioni sfavorevoli",
+      "medium": "Condizioni medie",
+      "good": "Buone condizioni"
+    },
+    "advice": {
+      "bad": "Meglio rimandare l'uscita a un'altra sera.",
+      "medium": "Osservazione possibile, ma non ottimale.",
+      "good": "Approfittane, la notte si preannuncia ideale."
+    },
+    "moon": {
+      "up": "{{phase}} sopra l'orizzonte stasera.",
+      "down": "Luna sotto l'orizzonte stasera: nessun disturbo."
+    }
+  },
+  "radar": {
+    "title": "Radar precipitazioni",
+    "subtitle": "Nuvole + precipitazioni",
+    "loading": "Caricamento del radar…",
+    "unavailable": "Radar non disponibile al momento",
+    "observed": "Osservato",
+    "forecast": "Previsione",
+    "layers": {
+      "clouds": "Nuvole",
+      "precipitation": "Precipitazioni"
+    },
+    "legend": {
+      "title": "Legenda",
+      "precipitation": "Precipitazioni",
+      "light": "Leggere",
+      "heavy": "Forti",
+      "clouds": "Nuvole: situazione attuale, nascoste durante l'animazione e sulla previsione. Più la tinta è opaca, più la copertura è densa.",
+      "forecast": "Dopo il punto « ora »: previsione su circa 1 ora, estrapolata dal movimento delle precipitazioni, a titolo indicativo."
+    }
+  },
+  "observability": {
+    "clouds": "Nuvole",
+    "dewPointSpread": "Scarto del punto di rugiada",
+    "gusts": "Raffiche",
+    "seeing": "Seeing",
+    "transparency": "Trasparenza",
+    "humidity": "Umidità",
+    "windSpeed": "Vento medio"
+  },
+  "hourlyForecast": {
+    "title": "Panoramica oraria rapida (24h)",
+    "subtitle": "Seleziona un'ora per maggiori dettagli",
+    "details": {
+      "title": "Dettagli per le {{time}}",
+      "weatherSection": "Meteo",
+      "astroSection": "Condizioni astro (7Timer)",
+      "noAstroData": "Dati astro non disponibili per quest'ora",
+      "feelsLike": "Percepita",
+      "dewPoint": "Punto di rugiada",
+      "windDirection": "Direzione del vento",
+      "instability": "Instabilità",
+      "pressure": "Pressione",
+      "visibility": "Visibilità",
+      "uvIndex": "Indice UV",
+      "precipitationChance": "Probabilità di precipitazioni",
+      "rain": "Pioggia (1h)",
+      "snow": "Neve (1h)"
+    }
+  }
+}

@@ -23,7 +23,7 @@
           "placeholder": "Ex: Aix-en-Provence"
         },
         "buttons": {
-          "search": "Rechercher",
+          "search": "Rechercher"
         }
       },
       "type": {
@@ -38,7 +38,7 @@
         "label": "Accès"
       },
       "equipments": {
-        "label": "Équipements disponibles",
+        "label": "Équipements disponibles"
       },
       "tags": {
         "label": "Tags",
@@ -55,6 +55,7 @@
       }
     },
     "screenTitle": "Ajouter un nouveau lieu",
+    "editScreenTitle": "Modifier le lieu",
     "screenSubtitle": "Étape 1/2 - Emplacement",
     "searchPrompt": "Recherchez ou appuyez sur la carte",
     "searchCoordsPrompt": "Entrez les coordonnées GPS",

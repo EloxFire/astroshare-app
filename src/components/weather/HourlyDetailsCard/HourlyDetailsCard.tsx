@@ -23,7 +23,7 @@ import { computeObservabilityScore, findClosestAstroPoint } from "../../../helpe
 import { captitalizeFirstLetter, formatDistanceInKm, formatHumidity, formatWindSpeed } from "../../../helpers/format";
 import { convertAzimuthToCardinalDirection } from "../../../helpers/location/convert";
 import { useAppUnits } from "../../../hooks/useAppUnits";
-import CircularGauge from "../../CircularGauge/CircularGauge";
+import CircularGauge from "../../charts/CircularGauge/CircularGauge";
 import type { HourlyWeather, WeatherData } from "../../../types/weather/Weather";
 import type { AstroConditionsData } from "../../../types/weather/AstroConditions";
 

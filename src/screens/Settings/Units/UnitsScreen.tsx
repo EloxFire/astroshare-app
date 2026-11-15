@@ -1,10 +1,10 @@
 import { Text, TouchableOpacity, View } from "react-native";
 import { globalStyles } from "../../../helpers/globalStyles";
-import { ScreenHeader } from "../../../components/ScreenHeader/ScreenHeader";
+import { ScreenHeader } from "../../../components/layout/ScreenHeader/ScreenHeader";
 import { useTranslation } from "react-i18next";
 import { useRouter } from "expo-router";
 import { useUserDataStore } from "../../../store/userData.store";
-import SwitchButton from "../../../components/SwitchButton/SwitchButton";
+import SwitchButton from "../../../components/inputs/SwitchButton/SwitchButton";
 import { ChevronRight, Clock, Ruler, Thermometer } from "lucide-react-native";
 import { app_colors } from "../../../helpers/variables";
 import { unitsScreenStyles } from "./UnitsScreen.styles";

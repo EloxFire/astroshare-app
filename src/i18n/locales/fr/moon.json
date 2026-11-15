@@ -56,7 +56,7 @@
     "altitude": "Altitude",
     "altitudeValue": "{{value}}°",
     "altitudeCurve": "Trajectoire ce soir",
-    "diameter": "Diamètre angulaire",
+    "diameter": "Diamètre angulaire"
   },
   "phasesOverview": {
     "title": "Prochaines phases"

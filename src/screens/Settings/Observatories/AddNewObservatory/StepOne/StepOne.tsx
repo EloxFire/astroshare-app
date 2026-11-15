@@ -6,7 +6,7 @@ import MapTargetMarker from "../../../../../components/MapTargetMarker/MapTarget
 import InfoCard from "../../../../../components/cards/InfoCard/InfoCard"
 import { infoCardStyles } from "../../../../../components/cards/InfoCard/InfoCard.styles"
 import ListCard from "../../../../../components/cards/ListCard/ListCard"
-import { InputWithIcon } from "../../../../../components/InputWithIcon/InputWithIcon"
+import { InputWithIcon } from "../../../../../components/inputs/InputWithIcon/InputWithIcon"
 import { getLightPollutionIndicatorLabel } from "../../../../../helpers/api/geocoding/geocoding"
 import { globalStyles } from "../../../../../helpers/globalStyles"
 import { convertDecimalLatitudeToDMS, convertDecimalLongitudeToDMS } from "../../../../../helpers/location/convert"
@@ -16,40 +16,65 @@ import { addNewObservatoryScreenStyles } from "../addNewObservatoryScreen.styles
 import { useAddObservatoryForm } from "../AddObservatoryFormContext"
 import { useEffect, useRef, useState } from "react"
 import { useLocation } from "../../../../../context/LocationContext"
-import { SelectInput } from "../../../../../components/SelectInput/SelectInput"
+import { SelectInput } from "../../../../../components/inputs/SelectInput/SelectInput"
 import { observatoriesAccessTypes, observatoriesEquipments, observatoriesTypes } from "../../../../../helpers/observatories/observatories"
-import SwitchButton from "../../../../../components/SwitchButton/SwitchButton"
+import SwitchButton from "../../../../../components/inputs/SwitchButton/SwitchButton"
 import { Observatory, ObservatoryAccess, ObservatoryEquipment, ObservatoryType } from "../../../../../types/observatory"
 import Badge from "../../../../../components/Badges/Badge/Badge"
-import { TagsInput } from "../../../../../components/TagsInput/TagsInput"
+import { TagsInput } from "../../../../../components/inputs/TagsInput/TagsInput"
 import { ImagePickerPermissionDeniedError, pickAndCompressImage, PickedImage } from "../../../../../helpers/images/imagePicker"
 import { addNewObservatoryStepTwoStyles } from "../StepTwo/StepTwo.styles"
 import { useUserDataStore } from "../../../../../store/userData.store"
-import { router } from "expo-router"
+import { router, useLocalSearchParams } from "expo-router"
 import { generateCustomId } from "../../../../../helpers/ids"
-import Button from "../../../../../components/Button/Button"
+import Button from "../../../../../components/buttons/Button/Button"
 
 const StepOne = () => {
 
   const { t } = useTranslation("settings/addObservatory");
   const { fetchGpsLocation, gpsLocation, fetchLocation, gpsLoading, searchLoading } = useLocation();
   const { newObservatory, setNewObservatory, setCurrentFormStep } = useAddObservatoryForm();
+  const { id: editedObservatoryId } = useLocalSearchParams<{ id?: string }>();
+  const observatories = useUserDataStore((state) => state.observatories);
   const addObservatory = useUserDataStore((state) => state.addObservatory);
+  const updateObservatory = useUserDataStore((state) => state.updateObservatory);
   const mapRef = useRef<MapView>(null);
 
+  // Présent seulement en modification (voir AddNewObservatoryScreen.tsx) : sert à la fois à
+  // préremplir les champs ci-dessous et à décider, dans handleAddObservatory, si on crée une
+  // nouvelle fiche ou si on met à jour celle-ci (id/createdAt/shared conservés).
+  const editedObservatory = editedObservatoryId ? observatories.find(obs => obs.id === editedObservatoryId) : undefined;
 
-  const [observatoryName, setObservatoryName] = useState<string>("");
-  const [observatoryElevation, setObservatoryElevation] = useState<string>("");
-  const [observatoryType, setObservatoryType] = useState<ObservatoryType | null>(null);
-  const [observatoryAccessType, setObservatoryAccessType] = useState<ObservatoryAccess>("car");
-  const [observatoryEquipments, setObservatoryEquipments] = useState<ObservatoryEquipment[]>([]);
-  const [observatoryTags, setObservatoryTags] = useState<string[]>([]);
-  const [observatoryNotes, setObservatoryNotes] = useState<string>("");
-  const [observatoryImage, setObservatoryImage] = useState<string | null>(null);
+  const [observatoryName, setObservatoryName] = useState<string>(editedObservatory?.display_name ?? "");
+  const [observatoryElevation, setObservatoryElevation] = useState<string>(editedObservatory?.elevation != null ? editedObservatory.elevation.toString() : "");
+  const [observatoryType, setObservatoryType] = useState<ObservatoryType | null>(editedObservatory?.type ?? null);
+  const [observatoryAccessType, setObservatoryAccessType] = useState<ObservatoryAccess>(editedObservatory?.access ?? "car");
+  const [observatoryEquipments, setObservatoryEquipments] = useState<ObservatoryEquipment[]>(editedObservatory?.equipment ?? []);
+  const [observatoryTags, setObservatoryTags] = useState<string[]>(editedObservatory?.tags ?? []);
+  const [observatoryNotes, setObservatoryNotes] = useState<string>(editedObservatory?.notes ?? "");
+  const [observatoryImage, setObservatoryImage] = useState<string | null>(editedObservatory?.image ?? null);
 
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [searchLatitude, setSearchLatitude] = useState<string>("");
-  const [searchLongitude, setSearchLongitude] = useState<string>("");
+  const [searchLatitude, setSearchLatitude] = useState<string>(editedObservatory ? editedObservatory.latitude.toFixed(5).toString() : "");
+  const [searchLongitude, setSearchLongitude] = useState<string>(editedObservatory ? editedObservatory.longitude.toFixed(5).toString() : "");
+
+  // `newObservatory` vit dans le Provider (partagé avec le reste du flux), donc pas initialisable
+  // en lazy useState comme les champs ci-dessus : il faut un effet, déclenché une seule fois dès
+  // que la fiche éditée est disponible (elle peut arriver après le premier rendu, le store se
+  // réhydrate de façon asynchrone).
+  useEffect(() => {
+    if (editedObservatory && !newObservatory) {
+      setNewObservatory(editedObservatory);
+      // `initialRegion` de MapView n'agit qu'au tout premier rendu : si le store se réhydrate
+      // après coup (AsyncStorage), la carte resterait centrée sur le point par défaut sans ça.
+      mapRef.current?.animateToRegion({
+        latitude: editedObservatory.latitude,
+        longitude: editedObservatory.longitude,
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.0421,
+      }, 1000);
+    }
+  }, [editedObservatory]);
 
 
   const handleMapPress = async (event: any) => {
@@ -131,9 +156,17 @@ const StepOne = () => {
 
     if(!newObservatory) return;
 
-    newObservatory.id = generateCustomId();
-    newObservatory.shared = false; // Par défaut, un nouvel observatoire est privé
-    newObservatory.createdAt = new Date().toISOString();
+    if (editedObservatory) {
+      // id/createdAt/shared conservés : seule une vraie suppression+recréation changerait ces
+      // identités, pas une modification.
+      newObservatory.id = editedObservatory.id;
+      newObservatory.createdAt = editedObservatory.createdAt;
+      newObservatory.shared = editedObservatory.shared;
+    } else {
+      newObservatory.id = generateCustomId();
+      newObservatory.shared = false; // Par défaut, un nouvel observatoire est privé
+      newObservatory.createdAt = new Date().toISOString();
+    }
     newObservatory.updatedAt = new Date().toISOString();
     newObservatory.elevation = observatoryElevation ? parseFloat(observatoryElevation) : null;
     newObservatory.type = observatoryType || undefined;
@@ -144,7 +177,13 @@ const StepOne = () => {
     newObservatory.image = observatoryImage || undefined;
     newObservatory.display_name = observatoryName.trim() !== "" ? observatoryName : newObservatory.name!;
 
-    console.log("Soumission du nouvel observatoire :", JSON.stringify(newObservatory, null, 2));
+    if (editedObservatory) {
+      updateObservatory(editedObservatory.id, newObservatory);
+      // back (et non replace) : on revient à la fiche qu'on vient de modifier, comme pour le
+      // matériel (AddTelescope, AddMount, ...) plutôt que de retomber sur la liste.
+      router.back();
+      return;
+    }
 
     addObservatory(newObservatory);
     // replace (et non push) : le formulaire d'ajout est retiré de l'historique de navigation,
@@ -177,8 +216,8 @@ const StepOne = () => {
             provider={PROVIDER_GOOGLE}
 
             initialRegion={{
-              latitude: gpsLocation?.latitude || 48.856724859667835,
-              longitude: gpsLocation?.longitude || 2.349875271320343,
+              latitude: editedObservatory?.latitude ?? gpsLocation?.latitude ?? 48.856724859667835,
+              longitude: editedObservatory?.longitude ?? gpsLocation?.longitude ?? 2.349875271320343,
               latitudeDelta: 0.0922,
               longitudeDelta: 0.0421,
             }}
@@ -385,7 +424,7 @@ const StepOne = () => {
           />
         </View>
 
-        <Button label={t("nextButton")} icon={ArrowRight} iconPosition="right" onPress={() => handleAddObservatory()} />
+        <Button label={editedObservatory ? t("saveButton") : t("nextButton")} icon={ArrowRight} iconPosition="right" onPress={() => handleAddObservatory()} />
       </View>
     </ScrollView>
   )

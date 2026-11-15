@@ -1,9 +1,9 @@
 import { ScrollView, Text, TouchableOpacity, View } from "react-native"
 import { useTranslation } from "react-i18next"
 import { globalStyles } from "../../../../helpers/globalStyles"
-import { ScreenHeader } from "../../../../components/ScreenHeader/ScreenHeader"
+import { ScreenHeader } from "../../../../components/layout/ScreenHeader/ScreenHeader"
 import { gearScreenStyles } from "./Gear.styles"
-import SectionHeader from "../../../../components/SectionHeader/SectionHeader"
+import SectionHeader from "../../../../components/layout/SectionHeader/SectionHeader"
 import { useUserDataStore } from "../../../../store/userData.store"
 import { app_colors } from "../../../../helpers/variables"
 import { Aperture, Camera, ChevronRight, CircleDot, Crosshair, Focus, Layers, LucideIcon, Plus, Rotate3D, Telescope } from "lucide-react-native"
@@ -14,7 +14,7 @@ import InfoCard from "../../../../components/cards/InfoCard/InfoCard"
 import ValueCard from "../../../../components/cards/ValueCard/ValueCard"
 import { gearName } from "../../../../helpers/gear/gearName"
 import { getSetupPieceCount } from "../../../../helpers/gear/setups"
-import Button from "../../../../components/Button/Button"
+import Button from "../../../../components/buttons/Button/Button"
 
 // `items` et `renderCard` partagent le même T, propre à chaque catégorie d'équipement (Telescope,
 // Mount, ...) — renderCard a donc accès à ses champs spécifiques sans union ni cast. Le mapping se

@@ -1,8 +1,8 @@
 import { FlatList, Text, TouchableOpacity, View } from "react-native";
 import { useMemo, useState } from "react";
 import { useRouter } from "expo-router";
-import { ScreenHeader } from "../../../../components/ScreenHeader/ScreenHeader";
-import { InputWithIcon } from "../../../../components/InputWithIcon/InputWithIcon";
+import { ScreenHeader } from "../../../../components/layout/ScreenHeader/ScreenHeader";
+import { InputWithIcon } from "../../../../components/inputs/InputWithIcon/InputWithIcon";
 import { globalStyles } from "../../../../helpers/globalStyles";
 import { useUserDataStore } from "../../../../store/userData.store";
 import { useTranslation } from "react-i18next";

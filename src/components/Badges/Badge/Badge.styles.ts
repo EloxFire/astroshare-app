@@ -23,6 +23,9 @@ export const badgeStyles = {
       color: app_colors.white,
       fontFamily: "DMMonoMedium",
       fontSize: 10,
+      // Sans lineHeight explicite, les jambages (ex: "p" de "Préparer") sont rognés en bas avec
+      // cette police custom à cette taille — RN ne laisse pas assez de place sous la ligne de base.
+      lineHeight: 14,
 
       active: {
         color: app_colors.white,

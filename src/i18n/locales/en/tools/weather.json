@@ -1,0 +1,76 @@
+{
+  "screen": {
+    "title": "Live Weather"
+  },
+  "astroConditions": {
+    "title": "Tonight's observing score",
+    "metrics": "Detailed conditions",
+    "referenceTime": {
+      "inProgress": "Astronomical night in progress",
+      "upcoming": "Forecast for the start of astronomical night · {{time}}"
+    },
+    "verdict": {
+      "bad": "Poor conditions",
+      "medium": "Average conditions",
+      "good": "Good conditions"
+    },
+    "advice": {
+      "bad": "Better to push the session to another night.",
+      "medium": "Observing is possible, but not ideal.",
+      "good": "Make the most of it, the night looks great."
+    },
+    "moon": {
+      "up": "{{phase}} above the horizon tonight.",
+      "down": "Moon below the horizon tonight: no interference."
+    }
+  },
+  "radar": {
+    "title": "Precipitation radar",
+    "subtitle": "Clouds + precipitation",
+    "loading": "Loading radar…",
+    "unavailable": "Radar unavailable right now",
+    "observed": "Observed",
+    "forecast": "Forecast",
+    "layers": {
+      "clouds": "Clouds",
+      "precipitation": "Precipitation"
+    },
+    "legend": {
+      "title": "Legend",
+      "precipitation": "Precipitation",
+      "light": "Light",
+      "heavy": "Heavy",
+      "clouds": "Clouds: current state, hidden during the animation and on the forecast. The more opaque the shade, the denser the cover.",
+      "forecast": "After the \"now\" marker: roughly 1h forecast, extrapolated from precipitation movement, for guidance only."
+    }
+  },
+  "observability": {
+    "clouds": "Clouds",
+    "dewPointSpread": "Dew point spread",
+    "gusts": "Gusts",
+    "seeing": "Seeing",
+    "transparency": "Transparency",
+    "humidity": "Humidity",
+    "windSpeed": "Average wind"
+  },
+  "hourlyForecast": {
+    "title": "Hourly quick look (24h)",
+    "subtitle": "Select an hour for more details",
+    "details": {
+      "title": "Details for {{time}}",
+      "weatherSection": "Weather",
+      "astroSection": "Astro conditions (7Timer)",
+      "noAstroData": "Astro data unavailable for this hour",
+      "feelsLike": "Feels like",
+      "dewPoint": "Dew point",
+      "windDirection": "Wind direction",
+      "instability": "Instability",
+      "pressure": "Pressure",
+      "visibility": "Visibility",
+      "uvIndex": "UV index",
+      "precipitationChance": "Precipitation chance",
+      "rain": "Rain (1h)",
+      "snow": "Snow (1h)"
+    }
+  }
+}

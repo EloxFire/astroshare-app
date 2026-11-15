@@ -7,12 +7,12 @@ import { globalStyles } from "../../../../../../helpers/globalStyles"
 import { app_colors, withOpacity } from "../../../../../../helpers/variables"
 import { getFocalRatioProfile, getUsefulMagnificationRange } from "../../../../../../helpers/gear/telescopes"
 import { useAppUnits } from "../../../../../../hooks/useAppUnits"
-import { ScreenHeader } from "../../../../../../components/ScreenHeader/ScreenHeader"
-import SectionHeader from "../../../../../../components/SectionHeader/SectionHeader"
+import { ScreenHeader } from "../../../../../../components/layout/ScreenHeader/ScreenHeader"
+import SectionHeader from "../../../../../../components/layout/SectionHeader/SectionHeader"
 import ValueCard from "../../../../../../components/cards/ValueCard/ValueCard"
 import { useUserDataStore } from "../../../../../../store/userData.store"
 import { telescopeDetailsStyles } from "./TelescopeDetails.styles"
-import Button from "../../../../../../components/Button/Button"
+import Button from "../../../../../../components/buttons/Button/Button"
 
 const TelescopeDetails = () => {
   const { t } = useTranslation("tools/journal/gear/telescopes/details")

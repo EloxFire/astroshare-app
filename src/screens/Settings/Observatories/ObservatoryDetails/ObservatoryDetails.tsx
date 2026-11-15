@@ -2,7 +2,7 @@ import { Image, Linking, Platform, Text, TouchableOpacity, View } from "react-na
 import { router, useLocalSearchParams } from "expo-router"
 import { useUserDataStore } from "../../../../store/userData.store"
 import { globalStyles } from "../../../../helpers/globalStyles"
-import { ImageHeaderScrollView } from "../../../../components/ImageHeaderScrollView/ImageHeaderScrollView"
+import { ImageHeaderScrollView } from "../../../../components/layout/ImageHeaderScrollView/ImageHeaderScrollView"
 import { useTranslation } from "react-i18next"
 import { Copy, Navigation, Pencil, Share2, Trash2 } from "lucide-react-native"
 import { observatoryDetailsStyles } from "./ObservatoryDetails.styles"
@@ -16,7 +16,7 @@ import * as Clipboard from 'expo-clipboard';
 import ListBadge from "../../../../components/Badges/ListBadge/ListBadge"
 import Badge from "../../../../components/Badges/Badge/Badge"
 import MapTargetMarker from "../../../../components/MapTargetMarker/MapTargetMarker"
-import Button from "../../../../components/Button/Button"
+import Button from "../../../../components/buttons/Button/Button"
 
 const ObservatoryDetails = () => {
 
@@ -235,7 +235,7 @@ const ObservatoryDetails = () => {
 
       <View style={globalStyles.screen.content}>
         <View style={observatoryDetailsStyles.actions}>
-          <Button label={t('editButton')} icon={Pencil} iconSize={14} onPress={() => router.push("/settings/observatories")} style={{ flex: 1, height: '100%' }} />
+          <Button label={t('editButton')} icon={Pencil} iconSize={14} onPress={() => router.push(`/settings/observatories/addNewObservatory?id=${observatory.id}`)} style={{ flex: 1, height: '100%' }} />
 
           <Button icon={Trash2} iconSize={22} variant="danger" onPress={() => handleDeleteObservatory()} />
         </View>

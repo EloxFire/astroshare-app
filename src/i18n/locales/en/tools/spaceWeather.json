@@ -1,0 +1,204 @@
+{
+  "screen": {
+    "title": "Space Weather"
+  },
+  "imagery": {
+    "title": "Our star",
+    "caption": "Loading image...",
+    "otherWavelengths": "Other wavelengths"
+  },
+  "sumary": {
+    "title": "Detailed information",
+    "badge": "Live",
+    "stats": {
+      "rise": {
+        "title": "Next rise"
+      },
+      "set": {
+        "title": "Next set"
+      },
+      "distance": {
+        "title": "Distance"
+      },
+      "angularDiameter": {
+        "title": "Angular diameter"
+      },
+      "altitude": {
+        "title": "Altitude"
+      },
+      "azimuth": {
+        "title": "Azimuth"
+      },
+      "daylightDuration": {
+        "title": "Daylight duration"
+      },
+      "astronomicalNight":{
+        "title": "Astronomical night"
+      }
+    }
+  },
+  "transit": {
+    "loading": "...",
+    "notApplicable": "N/A",
+    "neverSets": "Never sets",
+    "today": "Today, {{time}} | {{direction}}",
+    "tomorrow": "Tomorrow, {{time}} | {{direction}}",
+    "yesterday": "Yesterday, {{time}} | {{direction}}"
+  },
+  "duration": "{{hours}}h {{minutes}}min",
+  "dayRelativeTime": {
+    "startsToday": "Today at {{time}}",
+    "startsTomorrow": "Tomorrow at {{time}}",
+    "startsYesterday": "Yesterday at {{time}}",
+    "untilToday": "Until today {{time}}",
+    "untilTomorrow": "Until tomorrow {{time}}",
+    "untilYesterday": "Until yesterday {{time}}"
+  },
+  "magneticField": {
+    "title": "Magnetic field - Bz",
+    "tooltip": {
+      "title": "Interplanetary magnetic field (Bz)",
+      "description": "Bz measures the north-south orientation of the magnetic field carried by the solar wind. Pointing south (negative values), it connects to Earth's magnetic field and favors auroras. Pointing north (positive values), it shields the magnetosphere and limits geomagnetic activity. Bt is the field's total strength, regardless of direction."
+    },
+    "scale": {
+      "south": "Favorable",
+      "north": "Unfavorable"
+    },
+    "auroraFavorable": {
+      "favorable": "Favorable for auroras",
+      "unfavorable": "Unfavorable for auroras"
+    }
+  },
+  "solarWind": {
+    "title": "Solar wind",
+    "tooltip": {
+      "title": "Solar wind",
+      "description": "A continuous stream of charged particles ejected by the Sun. Its speed and density drive Earth's geomagnetic activity: the faster and denser it is, the more it can disturb the magnetosphere and trigger auroras."
+    },
+    "speed": "Speed",
+    "density": "Density",
+    "temperature": "Temperature",
+    "scale": {
+      "slow": "Slow",
+      "moderate": "Moderate",
+      "fast": "Fast",
+      "very_fast": "Very fast"
+    },
+    "descriptions": {
+      "slow": "Slow: calm wind, typical between solar events. Little effect on the magnetosphere.",
+      "moderate": "Moderate: common speed, geomagnetic conditions generally stable.",
+      "fast": "Fast: often from a coronal hole. Above 700 km/s, usually a CME.",
+      "very_fast": "Very fast: usually a coronal mass ejection (CME). Increased risk of a geomagnetic storm."
+    }
+  },
+  "scales": {
+    "title": "NOAA scales",
+    "all": "See all",
+    "geomagnetic": {
+      "title": "Geomagnetic storms",
+      "description": "The G scale describes the intensity of geomagnetic storms and their potential effects on technological systems.",
+      "levels": {
+        "G0": "No storm",
+        "G1": "Minor",
+        "G2": "Moderate",
+        "G3": "Strong",
+        "G4": "Severe",
+        "G5": "Extreme"
+      }
+    },
+    "radioBlackout": {
+      "title": "Radio blackouts",
+      "description": "The R scale indicates the severity of radio blackouts caused by solar flares, affecting HF communications and GPS.",
+      "levels": {
+        "R0": "None",
+        "R1": "Minor",
+        "R2": "Moderate",
+        "R3": "Strong",
+        "R4": "Severe",
+        "R5": "Extreme"
+      }
+    },
+    "solarRadiation": {
+      "title": "Solar radiation",
+      "description": "The S scale measures the intensity of solar radiation events, which can affect satellites and astronauts.",
+      "levels": {
+        "S0": "None",
+        "S1": "Minor",
+        "S2": "Moderate",
+        "S3": "Strong",
+        "S4": "Severe",
+        "S5": "Extreme"
+      }
+    }
+  },
+  "events": {
+    "title": "Recent events",
+    "all": "See all",
+    "noEvents": "No recent events",
+    "timestamp": {
+      "today": "Today {{time}}",
+      "yesterday": "Yesterday {{time}}",
+      "other": "{{date}} {{time}}"
+    },
+    "flare": {
+      "significant": "Significant flare",
+      "impact": {
+        "M": "Minor radio blackouts on the sunlit side",
+        "X": "Major radio blackouts on the sunlit side, storm risk"
+      }
+    },
+    "alert": {
+      "source": "NOAA",
+      "code": "code {{type}}",
+      "kIndexReached": "Alert: K-index of {{level}} reached",
+      "kIndexExpected": "Forecast: K-index of {{level}} expected",
+      "electronFluxReached": "Alert: elevated electron flux detected",
+      "electronFluxExpected": "Forecast: elevated electron flux expected"
+    }
+  },
+  "kpIndex": {
+    "title": "Kp index",
+    "trend": {
+      "rising": "Rising",
+      "falling": "Falling",
+      "stable": "Stable"
+    },
+    "scale": {
+      "quiet": "Quiet",
+      "unsettled": "Unsettled",
+      "active": "Active",
+      "minor_storm": "Minor storm",
+      "moderate_storm": "Moderate storm",
+      "strong_storm": "Strong storm",
+      "severe_storm": "Severe storm",
+      "extreme_storm": "Extreme storm"
+    },
+    "descriptions": {
+      "quiet": "Quiet: stable geomagnetic conditions, low auroral activity.",
+      "unsettled": "Unsettled: slightly disturbed conditions, moderate auroral activity.",
+      "active": "Active: disturbed geomagnetic conditions, increased auroral activity.",
+      "minor_storm": "Minor storm (G1): slight geomagnetic disturbances, auroras visible at high latitudes.",
+      "moderate_storm": "Moderate storm (G2): moderate disturbances, auroras visible further south than usual.",
+      "strong_storm": "Strong storm (G3): marked disturbances, auroras potentially visible at mid latitudes.",
+      "severe_storm": "Severe storm (G4): strong geomagnetic disturbances, risks to power grids and satellites.",
+      "extreme_storm": "Extreme storm (G5): rare and major event, significant risks to infrastructure."
+    },
+    "chart": {
+      "legend": {
+        "observed": "Observed",
+        "current": "Now",
+        "forecast": "Forecast"
+      }
+    }
+  },
+  "solarFlares": {
+    "title": "Solar flares",
+    "category": {
+      "A": "Very low",
+      "B": "Low",
+      "C": "Moderate",
+      "M": "Strong",
+      "X": "Extreme"
+    }
+  }
+}

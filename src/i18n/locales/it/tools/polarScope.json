@@ -1,0 +1,29 @@
+{
+  "screen": {
+    "title": "Mirino polare"
+  },
+  "content": {
+    "header": {
+      "latitude": "Latitudine",
+      "localTime": "Ora locale",
+      "LST": "Tempo siderale locale",
+      "hourAngle": "Angolo orario di Polaris",
+      "hourAngleDegrees": "Angolo orario di Polaris (°)"
+    },
+    "scopeContainer": {
+      "subtitle": "Posiziona Polaris a"
+    },
+    "footer": {
+      "done": "Termina",
+      "previous": "Precedente"
+    },
+    "hemisphere": {
+      "north": "Emisfero nord",
+      "south": "Emisfero sud"
+    },
+    "infoCard": {
+      "title": "Perché puntare la Polare?",
+      "description": "Scopri perché è importante puntare la Polare per l'allineamento della tua montatura."
+    }
+  }
+}

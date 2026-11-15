@@ -7,7 +7,7 @@ import { useTranslation } from "react-i18next";
 import { globalStyles } from "../../../../../helpers/globalStyles";
 import { getLunarPhaseLabel, getNextFirstMoonQuarter, getNextFullMoon, getNextLastMoonQuarter } from "../../../../../helpers/astrometry/moon/moonHelpers";
 import { convertEquatorialToHorizontal, getBodyNextRise, getBodyNextSet, getLunarAge, getLunarAngularDiameter, getLunarDistance, getLunarEclipticCoordinate, getLunarEquatorialCoordinate, getLunarIllumination, getLunarPhase, getNextNewMoon, LUNAR_SYNODIC_MONTH } from "@observerly/astrometry";
-import MoonPhase from "../../../../../components/MoonPhase/MoonPhase";
+import MoonPhase from "../../../../../components/rendering/MoonPhase/MoonPhase";
 import ListCard from "../../../../../components/cards/ListCard/ListCard";
 import ValueCard from "../../../../../components/cards/ValueCard/ValueCard";
 import { formatDistanceInKm, formatTransit } from "../../../../../helpers/format";
@@ -17,7 +17,7 @@ import { Stars } from "lucide-react-native";
 import { getRandomMoonCalendarSuggestion } from "../../../../../helpers/suggestions/moon/moonCalendarSuggestions";
 import SuggestionCard from "../../../../../components/cards/SuggestionCard/SuggestionCard";
 import { findPreviousHorizonCrossing, getAltitudeCurve } from "../../../../../helpers/astrometry/altitude/altitudeCurve";
-import AltitudeChart from "../../../../../components/AltitudeChart/AltitudeChart";
+import AltitudeChart from "../../../../../components/charts/AltitudeChart/AltitudeChart";
 
 
 const TonightView = () => {

@@ -1,0 +1,204 @@
+{
+  "screen": {
+    "title": "Meteo spaziale"
+  },
+  "imagery": {
+    "title": "La nostra stella",
+    "caption": "Caricamento dell'immagine...",
+    "otherWavelengths": "Altre lunghezze d'onda"
+  },
+  "sumary": {
+    "title": "Informazioni dettagliate",
+    "badge": "In diretta",
+    "stats": {
+      "rise": {
+        "title": "Prossima levata"
+      },
+      "set": {
+        "title": "Prossimo tramonto"
+      },
+      "distance": {
+        "title": "Distanza"
+      },
+      "angularDiameter": {
+        "title": "Diametro angolare"
+      },
+      "altitude": {
+        "title": "Altitudine"
+      },
+      "azimuth": {
+        "title": "Azimut"
+      },
+      "daylightDuration": {
+        "title": "Durata del giorno"
+      },
+      "astronomicalNight":{
+        "title": "Notte astronomica"
+      }
+    }
+  },
+  "transit": {
+    "loading": "...",
+    "notApplicable": "N/D",
+    "neverSets": "Non tramonta",
+    "today": "Oggi, {{time}} | {{direction}}",
+    "tomorrow": "Domani, {{time}} | {{direction}}",
+    "yesterday": "Ieri, {{time}} | {{direction}}"
+  },
+  "duration": "{{hours}}h {{minutes}}min",
+  "dayRelativeTime": {
+    "startsToday": "Oggi alle {{time}}",
+    "startsTomorrow": "Domani alle {{time}}",
+    "startsYesterday": "Ieri alle {{time}}",
+    "untilToday": "Fino a oggi {{time}}",
+    "untilTomorrow": "Fino a domani {{time}}",
+    "untilYesterday": "Fino a ieri {{time}}"
+  },
+  "magneticField": {
+    "title": "Campo magnetico - Bz",
+    "tooltip": {
+      "title": "Campo magnetico interplanetario (Bz)",
+      "description": "Bz misura l'orientamento nord-sud del campo magnetico trasportato dal vento solare. Orientato verso sud (valori negativi), si connette al campo magnetico terrestre e favorisce le aurore. Orientato verso nord (valori positivi), protegge la magnetosfera e limita l'attività geomagnetica. Bt è l'intensità totale del campo, indipendentemente dalla direzione."
+    },
+    "scale": {
+      "south": "Favorevole",
+      "north": "Sfavorevole"
+    },
+    "auroraFavorable": {
+      "favorable": "Favorevole alle aurore",
+      "unfavorable": "Sfavorevole alle aurore"
+    }
+  },
+  "solarWind": {
+    "title": "Vento solare",
+    "tooltip": {
+      "title": "Vento solare",
+      "description": "Flusso continuo di particelle cariche espulse dal Sole. La sua velocità e densità influenzano l'attività geomagnetica terrestre: più è veloce e denso, più può perturbare la magnetosfera e favorire la comparsa di aurore."
+    },
+    "speed": "Velocità",
+    "density": "Densità",
+    "temperature": "Temperatura",
+    "scale": {
+      "slow": "Lento",
+      "moderate": "Moderato",
+      "fast": "Veloce",
+      "very_fast": "Molto veloce"
+    },
+    "descriptions": {
+      "slow": "Lento: vento calmo, tipico tra gli eventi solari. Poco effetto sulla magnetosfera.",
+      "moderate": "Moderato: velocità comune, condizioni geomagnetiche generalmente stabili.",
+      "fast": "Veloce: spesso proveniente da un buco coronale. Oltre i 700 km/s, di solito una CME.",
+      "very_fast": "Molto veloce: generalmente un'espulsione di massa coronale (CME). Rischio aumentato di tempesta geomagnetica."
+    }
+  },
+  "scales": {
+    "title": "Scale NOAA",
+    "all": "Vedi tutto",
+    "geomagnetic": {
+      "title": "Tempeste geomagnetiche",
+      "description": "La scala G descrive l'intensità delle tempeste geomagnetiche e i loro possibili effetti sui sistemi tecnologici.",
+      "levels": {
+        "G0": "Nessuna tempesta",
+        "G1": "Minore",
+        "G2": "Moderata",
+        "G3": "Forte",
+        "G4": "Severa",
+        "G5": "Estrema"
+      }
+    },
+    "radioBlackout": {
+      "title": "Interruzioni radio",
+      "description": "La scala R indica la gravità delle interruzioni radio causate dalle eruzioni solari, che colpiscono le comunicazioni HF e il GPS.",
+      "levels": {
+        "R0": "Nessuna",
+        "R1": "Minore",
+        "R2": "Moderata",
+        "R3": "Forte",
+        "R4": "Severa",
+        "R5": "Estrema"
+      }
+    },
+    "solarRadiation": {
+      "title": "Radiazione solare",
+      "description": "La scala S misura l'intensità degli eventi di radiazione solare, che possono colpire satelliti e astronauti.",
+      "levels": {
+        "S0": "Nessuna",
+        "S1": "Minore",
+        "S2": "Moderata",
+        "S3": "Forte",
+        "S4": "Severa",
+        "S5": "Estrema"
+      }
+    }
+  },
+  "events": {
+    "title": "Eventi recenti",
+    "all": "Vedi tutto",
+    "noEvents": "Nessun evento recente",
+    "timestamp": {
+      "today": "Oggi {{time}}",
+      "yesterday": "Ieri {{time}}",
+      "other": "{{date}} {{time}}"
+    },
+    "flare": {
+      "significant": "Eruzione significativa",
+      "impact": {
+        "M": "Interruzioni radio minori sul lato diurno",
+        "X": "Interruzioni radio gravi sul lato diurno, rischio di tempesta"
+      }
+    },
+    "alert": {
+      "source": "NOAA",
+      "code": "codice {{type}}",
+      "kIndexReached": "Allerta: indice K di {{level}} raggiunto",
+      "kIndexExpected": "Previsione: indice K di {{level}} atteso",
+      "electronFluxReached": "Allerta: flusso di elettroni elevato rilevato",
+      "electronFluxExpected": "Previsione: flusso di elettroni elevato atteso"
+    }
+  },
+  "kpIndex": {
+    "title": "Indice Kp",
+    "trend": {
+      "rising": "In aumento",
+      "falling": "In diminuzione",
+      "stable": "Stabile"
+    },
+    "scale": {
+      "quiet": "Calmo",
+      "unsettled": "Instabile",
+      "active": "Attivo",
+      "minor_storm": "Tempesta minore",
+      "moderate_storm": "Tempesta moderata",
+      "strong_storm": "Tempesta forte",
+      "severe_storm": "Tempesta severa",
+      "extreme_storm": "Tempesta estrema"
+    },
+    "descriptions": {
+      "quiet": "Calmo: condizioni geomagnetiche stabili, bassa attività aurorale.",
+      "unsettled": "Instabile: condizioni leggermente perturbate, attività aurorale moderata.",
+      "active": "Attivo: condizioni geomagnetiche perturbate, attività aurorale accresciuta.",
+      "minor_storm": "Tempesta minore (G1): lievi perturbazioni geomagnetiche, aurore visibili alle alte latitudini.",
+      "moderate_storm": "Tempesta moderata (G2): perturbazioni moderate, aurore visibili più a sud del solito.",
+      "strong_storm": "Tempesta forte (G3): perturbazioni marcate, aurore potenzialmente visibili alle medie latitudini.",
+      "severe_storm": "Tempesta severa (G4): forti perturbazioni geomagnetiche, rischi per le reti elettriche e i satelliti.",
+      "extreme_storm": "Tempesta estrema (G5): evento raro e importante, rischi significativi per le infrastrutture."
+    },
+    "chart": {
+      "legend": {
+        "observed": "Osservato",
+        "current": "Ora",
+        "forecast": "Previsione"
+      }
+    }
+  },
+  "solarFlares": {
+    "title": "Eruzioni solari",
+    "category": {
+      "A": "Molto debole",
+      "B": "Debole",
+      "C": "Moderata",
+      "M": "Forte",
+      "X": "Estrema"
+    }
+  }
+}

@@ -1,8 +1,8 @@
 import { ScrollView, Text, View } from "react-native";
 import { Search } from "lucide-react-native";
 import { toolsScreenStyles } from "./ToolsScreen.styles";
-import { ScreenHeader } from "../../components/ScreenHeader/ScreenHeader";
-import { InputWithIcon } from "../../components/InputWithIcon/InputWithIcon";
+import { ScreenHeader } from "../../components/layout/ScreenHeader/ScreenHeader";
+import { InputWithIcon } from "../../components/inputs/InputWithIcon/InputWithIcon";
 import { useUserDataStore } from "../../store/userData.store";
 import ToolButton from "./components/ToolButton/ToolButton";
 import AddPinnedToolButton from "./components/AddPinnedToolButton/AddPinnedToolButton";
@@ -20,33 +20,26 @@ const ToolsScreen = () => {
   const { t } = useTranslation("tools");
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [filteredTools, setFilteredTools] = useState(toolsList);
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
 
   const userPinnedTools = useUserDataStore((state) => state.pinnedTools);
 
-  useEffect(() => {
-    console.log("User pinned tools:", userPinnedTools.length > 0 ? userPinnedTools : "Aucun outil épinglé.");
-
-    const emptySlots = Math.max(0, 5 - userPinnedTools.length);
-    if (emptySlots > 0) {
-      console.log(`Il y a ${emptySlots} emplacement(s) vide(s) pour épingler des outils.`);
-    } else {
-      console.log("Tous les emplacements pour épingler des outils sont occupés.");
-    }
-  }, [userPinnedTools]);
-
   const handleSearch = useDebounce((query: string) => {
-    const searched = toolsList.filter((tool) =>
-      t(`names.${tool.id}`).toLowerCase().includes(query.toLowerCase())
-    );
-    console.log(`Recherche pour "${query}":`, searched.length > 0 ? searched.map(tool => tool.id) : "Aucun outil trouvé.");
-    setFilteredTools(searched);
+    setDebouncedSearchQuery(query);
   }, 300);
 
   useEffect(() => {
     handleSearch(searchQuery);
   }, [searchQuery, handleSearch]);
+
+  // Catégorie ET recherche se combinent : les deux filtres s'appliquent ensemble, pas l'un OU
+  // l'autre. Le nom affiché (et donc cherché) dépend de la langue (`t()`), pas de l'id brut.
+  const filteredTools = toolsList.filter((tool) => {
+    const matchesCategory = activeFilter === null || tool.category === activeFilter;
+    const matchesSearch = t(`names.${tool.id}`).toLowerCase().includes(debouncedSearchQuery.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
 
 
   return (
@@ -98,7 +91,7 @@ const ToolsScreen = () => {
         <ScrollView showsVerticalScrollIndicator={false}>
           <View style={{paddingBottom: 150}}>
             {/* <PinnedToolsSection tools={userPinnedTools} /> */}
-            <ToolsSection/>
+            <ToolsSection tools={filteredTools} />
           </View>
         </ScrollView>
       </View>

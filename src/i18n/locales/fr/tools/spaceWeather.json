@@ -56,6 +56,10 @@
   },
   "magneticField": {
     "title": "Champ magnétique - Bz",
+    "tooltip": {
+      "title": "Champ magnétique interplanétaire (Bz)",
+      "description": "Bz mesure l'orientation nord-sud du champ magnétique porté par le vent solaire. Orienté vers le sud (valeurs négatives), il se connecte au champ magnétique terrestre et favorise les aurores. Orienté vers le nord (valeurs positives), il protège la magnétosphère et limite l'activité géomagnétique. Bt est l'intensité totale du champ, sans tenir compte de sa direction."
+    },
     "scale": {
       "south": "Favorable",
       "north": "Défavorable"
@@ -67,6 +71,10 @@
   },
   "solarWind": {
     "title": "Vent solaire",
+    "tooltip": {
+      "title": "Vent solaire",
+      "description": "Flux continu de particules chargées éjectées par le Soleil. Sa vitesse et sa densité influencent l'activité géomagnétique terrestre : plus il est rapide et dense, plus il peut perturber la magnétosphère et favoriser l'apparition d'aurores."
+    },
     "speed": "Vitesse",
     "density": "Densité",
     "temperature": "Température",

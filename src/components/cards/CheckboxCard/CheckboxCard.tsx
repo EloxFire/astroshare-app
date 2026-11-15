@@ -1,5 +1,5 @@
 import { Text, TouchableOpacity, View } from "react-native";
-import Checkbox from "../../Checkbox/Checkbox";
+import Checkbox from "../../inputs/Checkbox/Checkbox";
 import { checkboxCardStyles } from "./CheckboxCard.styles";
 
 interface CheckboxCardProps {

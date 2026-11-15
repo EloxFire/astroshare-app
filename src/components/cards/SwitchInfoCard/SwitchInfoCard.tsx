@@ -3,7 +3,7 @@ import { Text, View, ViewStyle } from "react-native";
 import { switchInfoCardStyles } from "./SwitchInfoCard.styles";
 import { LucideIcon } from "lucide-react-native";
 import { app_colors } from "../../../helpers/variables";
-import SwitchButton from "../../SwitchButton/SwitchButton";
+import SwitchButton from "../../inputs/SwitchButton/SwitchButton";
 
 interface SwitchInfoCardProps {
   title: string | ReactNode;

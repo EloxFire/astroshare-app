@@ -1,0 +1,39 @@
+{
+  "screen": {
+    "title": "Immagine astronomica del giorno della NASA",
+    "content": {
+      "description": {
+        "title": "Spiegazione",
+        "language": "(Solo in inglese)",
+        "translate": "Traduci",
+        "loading": "Traduzione in corso...",
+        "error": "Errore durante la traduzione"
+      },
+      "nextImage": {
+        "title": "Prossima immagine",
+        "loading": "Caricamento..."
+      },
+      "buttons": {
+        "download": "HD",
+        "save": "Salva",
+        "article": "NASA",
+        "downloadSuccessTitle": "Immagine salvata",
+        "downloadSuccessMessage": "L'immagine è stata aggiunta alla tua galleria foto.",
+        "downloadPermissionDeniedTitle": "Permesso negato",
+        "downloadPermissionDeniedMessage": "Autorizza l'accesso alle tue foto nelle impostazioni per salvare l'immagine.",
+        "downloadErrorTitle": "Salvataggio non riuscito",
+        "downloadErrorMessage": "Si è verificato un errore, riprova più tardi."
+      }
+    }
+  },
+  "upcoming": {
+    "title": "Prossima immagine",
+    "publish": "Pubblicazione tra",
+    "ping": "Avvisami alla pubblicazione",
+    "pingSubtitle": "Una notifica {{date}}",
+    "pingSuccessTitle": "Notifica attivata",
+    "pingSuccessMessage": "Sarai avvisato quando la prossima immagine sarà pubblicata.",
+    "pingErrorTitle": "Errore",
+    "pingErrorMessage": "Si è verificato un errore, riprova più tardi."
+  }
+}

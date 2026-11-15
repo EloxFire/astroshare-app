@@ -1,6 +1,6 @@
 import { LucideIcon } from "lucide-react-native"
 import { useRemoteFile } from "../../../../../hooks/useRemoteFile"
-import DownloadButton from "../../../../../components/DownloadButton/DownloadButton"
+import DownloadButton from "../../../../../components/buttons/DownloadButton/DownloadButton"
 import { getModelLocalPath } from "../../../../../helpers/tools/3dviewer"
 import { DownloadableThreeDModel } from "../../../../../types/tools/3dViewer"
 

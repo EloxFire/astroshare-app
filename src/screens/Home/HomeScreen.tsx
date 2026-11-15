@@ -1,5 +1,5 @@
 import { ActivityIndicator, Text, View } from "react-native";
-import { ScreenHeader } from "../../components/ScreenHeader/ScreenHeader";
+import { ScreenHeader } from "../../components/layout/ScreenHeader/ScreenHeader";
 import { globalStyles } from "../../helpers/globalStyles";
 import CurrentConditions from "./components/CurrentConditions/CurrentConditions";
 import Tonight from "./components/Tonight/Tonight";

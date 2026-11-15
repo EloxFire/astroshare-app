@@ -6,12 +6,12 @@ import { ChevronRight, CircleDot, Layers, Pencil, Trash2 } from "lucide-react-na
 import { globalStyles } from "../../../../../../helpers/globalStyles"
 import { app_colors } from "../../../../../../helpers/variables"
 import { useAppUnits } from "../../../../../../hooks/useAppUnits"
-import { ScreenHeader } from "../../../../../../components/ScreenHeader/ScreenHeader"
-import SectionHeader from "../../../../../../components/SectionHeader/SectionHeader"
+import { ScreenHeader } from "../../../../../../components/layout/ScreenHeader/ScreenHeader"
+import SectionHeader from "../../../../../../components/layout/SectionHeader/SectionHeader"
 import ValueCard from "../../../../../../components/cards/ValueCard/ValueCard"
 import { useUserDataStore } from "../../../../../../store/userData.store"
 import { eyepieceDetailsStyles } from "./EyepieceDetails.styles"
-import Button from "../../../../../../components/Button/Button"
+import Button from "../../../../../../components/buttons/Button/Button"
 
 const EyepieceDetails = () => {
   const { t } = useTranslation("tools/journal/gear/eyepieces/details")

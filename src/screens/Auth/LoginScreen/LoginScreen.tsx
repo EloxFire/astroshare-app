@@ -1,7 +1,7 @@
 import { Image, Text, TouchableOpacity, View } from "react-native"
 import { loginScreenStyles } from "./LoginScreen.styles"
 import { SafeAreaView } from "react-native-safe-area-context"
-import { InputWithIcon } from "../../../components/InputWithIcon/InputWithIcon"
+import { InputWithIcon } from "../../../components/inputs/InputWithIcon/InputWithIcon"
 import { app_colors, withOpacity } from "../../../helpers/variables"
 import { router } from "expo-router"
 import { useEffect, useState } from "react"
@@ -9,7 +9,7 @@ import { StatusBar } from "expo-status-bar"
 import { useTranslation } from "react-i18next"
 import { ChevronLeft } from "lucide-react-native"
 import { useAuth } from "../../../context/AuthContext"
-import Button from "../../../components/Button/Button"
+import Button from "../../../components/buttons/Button/Button"
 
 const LoginScreen = () => {
 

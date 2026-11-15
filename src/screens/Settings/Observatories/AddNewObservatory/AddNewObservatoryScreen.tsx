@@ -1,7 +1,8 @@
-import { ScreenHeader } from "../../../../components/ScreenHeader/ScreenHeader"
+import { ScreenHeader } from "../../../../components/layout/ScreenHeader/ScreenHeader"
 import { globalStyles } from "../../../../helpers/globalStyles"
 import { View } from "react-native"
 import { useTranslation } from "react-i18next"
+import { useLocalSearchParams } from "expo-router"
 import { AddObservatoryFormProvider, useAddObservatoryForm } from "./AddObservatoryFormContext";
 import StepOne from "./StepOne/StepOne";
 import StepTwo from "./StepTwo/StepTwo";
@@ -12,9 +13,13 @@ const AddNewObservatoryScreenContent = () => {
   const { t } = useTranslation("settings/addObservatory");
   // const { currentFormStep } = useAddObservatoryForm();
 
+  // Présent (query param ?id=) depuis ObservatoryDetails "Modifier" : StepOne préremplit alors ses
+  // champs et sauvegarde par mise à jour plutôt que par création — voir StepOne.tsx.
+  const { id: editedObservatoryId } = useLocalSearchParams<{ id?: string }>();
+
   return (
     <View style={globalStyles.screen}>
-      <ScreenHeader title={t("stepOne.screenTitle")} main={false} />
+      <ScreenHeader title={editedObservatoryId ? t("stepOne.editScreenTitle") : t("stepOne.screenTitle")} main={false} />
       <StepOne />
       {/* {
         currentFormStep === 1 && (

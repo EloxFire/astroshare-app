@@ -2,7 +2,8 @@
   "screen": {
     "title": "Outils",
     "searchPlaceholder": "Chercher un outil, un objet, un calcul...",
-    "pinnedSection": "Épinglés (5 max)"
+    "pinnedSection": "Épinglés (5 max)",
+    "noResults": "Aucun outil trouvé"
   },
   "categories": {
     "all": "Tous",

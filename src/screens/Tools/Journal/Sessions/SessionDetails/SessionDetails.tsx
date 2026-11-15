@@ -1,7 +1,7 @@
 import { View } from "react-native"
 import { useTranslation } from "react-i18next"
 import { globalStyles } from "../../../../../helpers/globalStyles"
-import { ScreenHeader } from "../../../../../components/ScreenHeader/ScreenHeader"
+import { ScreenHeader } from "../../../../../components/layout/ScreenHeader/ScreenHeader"
 
 const SessionDetails = () => {
   const { t } = useTranslation("tools/journal")

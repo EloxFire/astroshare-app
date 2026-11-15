@@ -2,7 +2,8 @@
   "screen": {
     "title": "Tools",
     "searchPlaceholder": "Search a tool, an object, a calculation...",
-    "pinnedSection": "Pinned (5 max)"
+    "pinnedSection": "Pinned (5 max)",
+    "noResults": "No tool found"
   },
   "categories": {
     "prepare": "Prepare",

@@ -41,10 +41,15 @@ import moon_en from "./locales/en/moon.json";
 import settings_en from "./locales/en/settings.json";
 import settingsAddObservatory_en from "./locales/en/settings/addObservatory.json";
 import settingsObservatoryDetails_en from "./locales/en/settings/observatoryDetails.json";
+import suggestionsCards_en from "./locales/en/suggestionsCards.json";
 import authLogin_en from "./locales/en/auth/login.json";
 import authRegister_en from "./locales/en/auth/register.json";
 import authForgotPassword_en from "./locales/en/auth/forgotPassword.json";
 import authProfile_en from "./locales/en/auth/profile.json";
+import apod_en from "./locales/en/tools/apod.json";
+import polarScope_en from "./locales/en/tools/polarScope.json";
+import spaceWeather_en from "./locales/en/tools/spaceWeather.json";
+import weather_en from "./locales/en/tools/weather.json";
 import threeDViewer_en from "./locales/en/tools/3dviewer.json";
 import journal_en from "./locales/en/tools/journal.json";
 import journalSessionsAdd_en from "./locales/en/tools/journal/sessions/add.json";
@@ -72,10 +77,15 @@ import moon_it from "./locales/it/moon.json";
 import settings_it from "./locales/it/settings.json";
 import settingsAddObservatory_it from "./locales/it/settings/addObservatory.json";
 import settingsObservatoryDetails_it from "./locales/it/settings/observatoryDetails.json";
+import suggestionsCards_it from "./locales/it/suggestionsCards.json";
 import authLogin_it from "./locales/it/auth/login.json";
 import authRegister_it from "./locales/it/auth/register.json";
 import authForgotPassword_it from "./locales/it/auth/forgotPassword.json";
 import authProfile_it from "./locales/it/auth/profile.json";
+import apod_it from "./locales/it/tools/apod.json";
+import polarScope_it from "./locales/it/tools/polarScope.json";
+import spaceWeather_it from "./locales/it/tools/spaceWeather.json";
+import weather_it from "./locales/it/tools/weather.json";
 import threeDViewer_it from "./locales/it/tools/3dviewer.json";
 import journal_it from "./locales/it/tools/journal.json";
 import journalSessionsAdd_it from "./locales/it/tools/journal/sessions/add.json";
@@ -148,10 +158,15 @@ export const resources = {
     settings: settings_en,
     "settings/addObservatory": settingsAddObservatory_en,
     "settings/observatoryDetails": settingsObservatoryDetails_en,
+    suggestionsCards: suggestionsCards_en,
     "auth/login": authLogin_en,
     "auth/register": authRegister_en,
     "auth/forgotPassword": authForgotPassword_en,
     "auth/profile": authProfile_en,
+    "tools/apod": apod_en,
+    "tools/polarScope": polarScope_en,
+    "tools/spaceWeather": spaceWeather_en,
+    "tools/weather": weather_en,
     "tools/3dviewer": threeDViewer_en,
     "tools/journal": journal_en,
     "tools/journal/sessions/add": journalSessionsAdd_en,
@@ -180,10 +195,15 @@ export const resources = {
     settings: settings_it,
     "settings/addObservatory": settingsAddObservatory_it,
     "settings/observatoryDetails": settingsObservatoryDetails_it,
+    suggestionsCards: suggestionsCards_it,
     "auth/login": authLogin_it,
     "auth/register": authRegister_it,
     "auth/forgotPassword": authForgotPassword_it,
     "auth/profile": authProfile_it,
+    "tools/apod": apod_it,
+    "tools/polarScope": polarScope_it,
+    "tools/spaceWeather": spaceWeather_it,
+    "tools/weather": weather_it,
     "tools/3dviewer": threeDViewer_it,
     "tools/journal": journal_it,
     "tools/journal/sessions/add": journalSessionsAdd_it,

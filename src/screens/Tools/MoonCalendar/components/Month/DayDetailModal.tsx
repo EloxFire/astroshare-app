@@ -18,7 +18,7 @@ import {
 import { getLunarPhaseLabel } from "../../../../../helpers/astrometry/moon/moonHelpers";
 import { formatWithSpaces } from "../../../../../helpers/format";
 import { globalStyles } from "../../../../../helpers/globalStyles";
-import MoonPhase from "../../../../../components/MoonPhase/MoonPhase";
+import MoonPhase from "../../../../../components/rendering/MoonPhase/MoonPhase";
 
 type DayDetailModalProps = {
   date: Date;

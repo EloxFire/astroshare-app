@@ -1,24 +1,25 @@
 import { Image, InteractionManager, ScrollView, Text, TouchableOpacity, View } from "react-native"
 import { globalStyles } from "../../../helpers/globalStyles"
-import { ScreenHeader } from "../../../components/ScreenHeader/ScreenHeader"
+import { ScreenHeader } from "../../../components/layout/ScreenHeader/ScreenHeader"
 import { useTranslation } from "react-i18next";
 import { useFocusEffect } from "expo-router";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import { useLocation } from "../../../context/LocationContext";
 import Badge from "../../../components/Badges/Badge/Badge";
-import { Info, Magnet, Maximize2, Minus, Pause, Play, Radio, TrendingDown, TrendingUp, Wind } from "lucide-react-native";
+import { Magnet, Maximize2, Minus, Pause, Play, Radio, TrendingDown, TrendingUp, Wind } from "lucide-react-native";
+import InfoTooltip from "../../../components/overlays/InfoTooltip/InfoTooltip";
 import { app_colors, getNoaaScaleColor } from "../../../helpers/variables";
 import ListCard from "../../../components/cards/ListCard/ListCard";
-import SunAnimationPlayer from "../../../components/SunAnimationPlayer/SunAnimationPlayer";
-import FullscreenImageModal from "../../../components/FullscreenImageModal/FullscreenImageModal";
+import SunAnimationPlayer from "../../../components/media/SunAnimationPlayer/SunAnimationPlayer";
+import FullscreenImageModal from "../../../components/overlays/FullscreenImageModal/FullscreenImageModal";
 import { convertEquatorialToHorizontal, getBodyNextRise, getBodyNextSet, getSolarAngularDiameter, getSolarDistance, getSolarEquatorialCoordinate } from "@observerly/astrometry";
 import { findPreviousHorizonCrossing, getAltitudeCurve } from "../../../helpers/astrometry/altitude/altitudeCurve";
 import { getAstronomicalNightWindow } from "../../../helpers/astrometry/night/nightWindow";
 import { formatDayRelativeTime, formatDistanceInKm, formatDistanceInUA, formatDuration, formatTransit, formatWithSpaces } from "../../../helpers/format";
 import { useAppUnits } from "../../../hooks/useAppUnits";
-import AltitudeChart from "../../../components/AltitudeChart/AltitudeChart";
-import KpIndexChart from "../../../components/KpIndexChart/KpIndexChart";
+import AltitudeChart from "../../../components/charts/AltitudeChart/AltitudeChart";
+import KpIndexChart from "../../../components/charts/KpIndexChart/KpIndexChart";
 import { spaceWeatherScreenStyles } from "./SpaceWeatherScreen.styles";
 import { getSunImagery } from "../../../helpers/api/spaceWeather/sunImagery";
 import type { SunImage, SunImagery } from "../../../types/spaceWeather/SunImagery";
@@ -34,7 +35,7 @@ import { getSpaceWeatherAlerts } from "../../../helpers/api/spaceWeather/alerts"
 import type { SpaceWeatherAlertsData } from "../../../types/spaceWeather/SpaceWeatherAlerts";
 import { getNoaaScales } from "../../../helpers/api/spaceWeather/scales";
 import type { NoaaScalesData } from "../../../types/spaceWeather/NoaaScales";
-import SpaceWeatherEvents from "../../../components/SpaceWeatherEvents/SpaceWeatherEvents";
+import SpaceWeatherEvents from "../../../components/charts/SpaceWeatherEvents/SpaceWeatherEvents";
 import NoaaScaleCard from "../../../components/cards/NoaaScaleCard/NoaaScaleCard";
 
 // Amplitude affichée de la jauge Bz : demandé jusqu'à ±30 nT (au-delà, valeur bornée visuellement
@@ -409,9 +410,7 @@ const SpaceWeatherScreen = () => {
                 <Magnet color={app_colors.primary.medium} size={20} />
                 <Text style={globalStyles.categoryTitle}>{t("magneticField.title")}</Text>
               </View>
-              <TouchableOpacity onPress={() => {}}>
-                <Info color={app_colors.primary.medium} size={20} />
-              </TouchableOpacity>
+              <InfoTooltip title={t("magneticField.tooltip.title")} description={t("magneticField.tooltip.description")} />
             </View>
 
             <View style={spaceWeatherScreenStyles.magneticFieldContainer}>
@@ -481,9 +480,7 @@ const SpaceWeatherScreen = () => {
                 <Text style={globalStyles.categoryTitle}>{t("solarWind.title")}</Text>
               </View>
 
-              <TouchableOpacity onPress={() => {}}>
-                <Info color={app_colors.primary.medium} size={20} />
-              </TouchableOpacity>
+              <InfoTooltip title={t("solarWind.tooltip.title")} description={t("solarWind.tooltip.description")} />
             </View>
 
             <View style={spaceWeatherScreenStyles.solarWindContainer}>

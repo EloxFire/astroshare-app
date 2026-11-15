@@ -6,8 +6,8 @@ import { DEFAULT_MODEL_ILLUSTRATION, getModelLocalPath } from "../../../../../..
 import { isDownloadableModel, ThreeDModel } from "../../../../../../types/tools/3dViewer"
 import { useRemoteFile } from "../../../../../../hooks/useRemoteFile"
 import Badge from "../../../../../../components/Badges/Badge/Badge"
-import DownloadButton from "../../../../../../components/DownloadButton/DownloadButton"
-import Model3DViewer from "../../../../../../components/Model3DViewer/Model3DViewer"
+import DownloadButton from "../../../../../../components/buttons/DownloadButton/DownloadButton"
+import Model3DViewer from "../../../../../../components/rendering/Model3DViewer/Model3DViewer"
 import { viewerSectionStyles } from "./ViewerSection.styles"
 
 interface ViewerSectionProps {

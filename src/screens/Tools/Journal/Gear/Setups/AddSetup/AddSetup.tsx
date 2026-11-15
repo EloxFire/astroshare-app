@@ -7,12 +7,12 @@ import { globalStyles } from "../../../../../../helpers/globalStyles"
 import { app_colors, withOpacity } from "../../../../../../helpers/variables"
 import { generateCustomId } from "../../../../../../helpers/ids"
 import { gearName } from "../../../../../../helpers/gear/gearName"
-import { ScreenHeader } from "../../../../../../components/ScreenHeader/ScreenHeader"
-import SectionHeader from "../../../../../../components/SectionHeader/SectionHeader"
+import { ScreenHeader } from "../../../../../../components/layout/ScreenHeader/ScreenHeader"
+import SectionHeader from "../../../../../../components/layout/SectionHeader/SectionHeader"
 import { addSetupStyles } from "./AddSetup.styles"
 import { Setup } from "../../../../../../types/gear/Setup"
 import { useUserDataStore } from "../../../../../../store/userData.store"
-import Button from "../../../../../../components/Button/Button"
+import Button from "../../../../../../components/buttons/Button/Button"
 
 interface CompositionCategoryProps {
   title: string

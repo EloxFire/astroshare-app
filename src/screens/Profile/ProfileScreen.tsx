@@ -7,7 +7,7 @@ import { router } from "expo-router";
 import { useAuth } from "../../context/AuthContext";
 import { User } from "../../types/auth/User";
 import { availableUserProfilePictures, getUserProfilePicture } from "../../helpers/auth/profile/profilePictures";
-import { ScreenHeader } from "../../components/ScreenHeader/ScreenHeader";
+import { ScreenHeader } from "../../components/layout/ScreenHeader/ScreenHeader";
 import { globalStyles } from "../../helpers/globalStyles";
 import InfoCard from "../../components/cards/InfoCard/InfoCard";
 import ListCard from "../../components/cards/ListCard/ListCard";
@@ -16,7 +16,7 @@ import { formatCompactDuration } from "../../helpers/format";
 import { getTotalObservationDuration, getTotalObservedObjects } from "../../helpers/journal/sessions";
 import { useUserDataStore } from "../../store/userData.store";
 import IconButtonCard from "../../components/cards/IconButtonCard/IconButtonCard";
-import Button from "../../components/Button/Button";
+import Button from "../../components/buttons/Button/Button";
 
 
 const ChangePasswordButton = ({ t }: { t: any }) => {

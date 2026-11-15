@@ -1,0 +1,29 @@
+{
+  "screen": {
+    "title": "Polar Scope"
+  },
+  "content": {
+    "header": {
+      "latitude": "Latitude",
+      "localTime": "Local time",
+      "LST": "Local sidereal time",
+      "hourAngle": "Polaris hour angle",
+      "hourAngleDegrees": "Polaris hour angle (°)"
+    },
+    "scopeContainer": {
+      "subtitle": "Place Polaris at"
+    },
+    "footer": {
+      "done": "Done",
+      "previous": "Previous"
+    },
+    "hemisphere": {
+      "north": "Northern hemisphere",
+      "south": "Southern hemisphere"
+    },
+    "infoCard": {
+      "title": "Why aim at Polaris?",
+      "description": "Find out why aiming at Polaris matters for aligning your mount."
+    }
+  }
+}

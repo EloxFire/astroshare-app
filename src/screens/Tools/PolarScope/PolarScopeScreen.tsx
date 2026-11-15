@@ -2,14 +2,14 @@ import { ScrollView, Text, TouchableOpacity, useWindowDimensions, View } from "r
 import { useEffect, useState } from "react";
 import { globalStyles } from "../../../helpers/globalStyles";
 import { polarScopeScreenStyles } from "./PolarScopeScreen.styles";
-import { ScreenHeader } from "../../../components/ScreenHeader/ScreenHeader";
+import { ScreenHeader } from "../../../components/layout/ScreenHeader/ScreenHeader";
 import { useTranslation } from "react-i18next";
 import ValueCard from "../../../components/cards/ValueCard/ValueCard";
 import { useLocation } from "../../../context/LocationContext";
 import { convertDecimalLatitudeToDMS } from "../../../helpers/location/convert";
 import dayjs, { Dayjs } from "dayjs";
 import { getConstellation, getHourAngle, getLocalSiderealTime } from "@observerly/astrometry";
-import PolarScopeReticle from "../../../components/PolarScopeReticle/PolarScopeReticle";
+import PolarScopeReticle from "../../../components/rendering/PolarScopeReticle/PolarScopeReticle";
 import { app_colors, spacing, withOpacity } from "../../../helpers/variables";
 import TabSwitch from "../MoonCalendar/components/TabSwitch/TabSwitch";
 import { router } from "expo-router";

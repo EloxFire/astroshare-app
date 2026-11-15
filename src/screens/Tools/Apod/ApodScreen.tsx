@@ -1,7 +1,7 @@
 import { ActivityIndicator, Alert, Image, InteractionManager, ScrollView, Text, TouchableOpacity, View, useWindowDimensions } from "react-native";
 import RenderHTML from "@native-html/render";
 import { globalStyles } from "../../../helpers/globalStyles";
-import { ScreenHeader } from "../../../components/ScreenHeader/ScreenHeader";
+import { ScreenHeader } from "../../../components/layout/ScreenHeader/ScreenHeader";
 import { useTranslation } from "react-i18next";
 import { router, useFocusEffect } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -135,7 +135,7 @@ const ApodScreen = () => {
               <>
                 {
                   asset.media_type === "image" && (
-                    // TODO : implémenter le zoom sur l'image de la meme maniere que dans src/components/FullscreenImageModal/FullscreenImageModal.tsx
+                    // TODO : implémenter le zoom sur l'image de la meme maniere que dans src/components/overlays/FullscreenImageModal/FullscreenImageModal.tsx
                     <Image
                       source={{ uri: asset.hdurl ?? asset.url }}
                       style={[apodScreenStyles.screen.image, { height: imageHeight }]}

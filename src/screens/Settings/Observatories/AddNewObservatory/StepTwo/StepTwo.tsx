@@ -7,8 +7,8 @@ import { app_colors, radius } from "../../../../../helpers/variables"
 import { addNewObservatoryScreenStyles } from "../addNewObservatoryScreen.styles"
 import { infoCardStyles } from "../../../../../components/cards/InfoCard/InfoCard.styles";
 import { convertDecimalLatitudeToDMS } from "../../../../../helpers/location/convert";
-import { InputWithIcon } from "../../../../../components/InputWithIcon/InputWithIcon";
-import { SelectInput } from "../../../../../components/SelectInput/SelectInput";
+import { InputWithIcon } from "../../../../../components/inputs/InputWithIcon/InputWithIcon";
+import { SelectInput } from "../../../../../components/inputs/SelectInput/SelectInput";
 import { useState } from "react";
 import { addNewObservatoryStepTwoStyles } from "./StepTwo.styles";
 import { getLightPollutionIndicatorDescription, getLightPollutionIndicatorLabel } from "../../../../../helpers/api/geocoding/geocoding";
@@ -20,7 +20,7 @@ import { useUserDataStore } from "../../../../../store/userData.store";
 import { router } from "expo-router";
 import { generateCustomId } from "../../../../../helpers/ids";
 import { pickAndCompressImage, ImagePickerPermissionDeniedError } from "../../../../../helpers/images/imagePicker";
-import Button from "../../../../../components/Button/Button";
+import Button from "../../../../../components/buttons/Button/Button";
 
 
 
