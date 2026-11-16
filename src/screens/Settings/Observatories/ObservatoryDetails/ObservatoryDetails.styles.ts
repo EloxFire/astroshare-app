@@ -114,14 +114,6 @@ export const observatoryDetailsStyles = {
     }
   },
 
-  mapContainer: {
-    borderTopLeftRadius: radius.heroCard,
-    borderTopRightRadius: radius.heroCard,
-    overflow: "hidden" as const,
-    height: 120,
-    width: "100%" as const,
-  },
-
   equipmentsContainer: {
     ...globalStyles.defaultCard,
 

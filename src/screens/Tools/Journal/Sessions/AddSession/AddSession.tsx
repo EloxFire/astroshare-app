@@ -1,6 +1,5 @@
 import { View, ScrollView, TouchableOpacity, Text, Platform, Modal, Pressable } from "react-native"
 import { useTranslation } from "react-i18next"
-import type { TFunction } from "i18next"
 import { globalStyles } from "../../../../../helpers/globalStyles"
 import { ScreenHeader } from "../../../../../components/layout/ScreenHeader/ScreenHeader"
 import SectionHeader from "../../../../../components/layout/SectionHeader/SectionHeader"
@@ -18,13 +17,13 @@ import { InputWithIcon } from "../../../../../components/inputs/InputWithIcon/In
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import DateTimePicker, { DateTimePickerChangeEvent } from "@react-native-community/datetimepicker"
 import { useObjectSearch } from "../../../../../hooks/useObjectSearch"
-import { CatalogObjectSummary } from "../../../../../types/catalog/CatalogObject"
 import ObjectCardLite, { ObjectCardLiteToggle } from "../../../../../components/cards/ObjectCardLite/ObjectCardLite"
 import CheckboxCard from "../../../../../components/cards/CheckboxCard/CheckboxCard"
 import { formatCompactDuration } from "../../../../../helpers/format"
 import { useLocation } from "../../../../../context/LocationContext"
 import { generateCustomId } from "../../../../../helpers/ids"
 import { AstronomySession, SessionObservedObject } from "../../../../../types/statistics/AstronomySession"
+import { getCatalogObjectSubtitle, getCatalogObjectTitle } from "../../../../../helpers/journal/sessions"
 
 type SessionDateTarget = "start" | "end"
 // Android n'a pas de mode "datetime" : on enchaîne sa boîte de dialogue date puis sa boîte de
@@ -32,24 +31,6 @@ type SessionDateTarget = "start" | "end"
 type AndroidPickerStep = "date" | "time"
 
 type SessionObservedObjectFlag = "observedAtEyepiece" | "photographed" | "sketched"
-
-const getCatalogObjectTitle = (catalogObject: CatalogObjectSummary) =>
-  catalogObject.name === catalogObject.primary ? catalogObject.primary : `${catalogObject.primary} · ${catalogObject.name}`
-
-// "Galaxie · Messier" (catégorie + catalogue, déduit du préfixe de la désignation principale) —
-// pas de catalogue déduit pour une désignation qui ne vient d'aucun des trois (ex: une étoile nommée).
-// Catégories de l'API /v3/objects traduites via observedObjects.categories ; une catégorie inconnue
-// s'affiche telle quelle (defaultValue). `t` est passée par le composant plutôt que de traduire au
-// chargement du module : le libellé suit ainsi un changement de langue.
-const getCatalogObjectSubtitle = (catalogObject: CatalogObjectSummary, t: TFunction) => {
-  const categoryLabel = t(`observedObjects.categories.${catalogObject.category}`, { defaultValue: catalogObject.category })
-  const catalogLabel = /^M\s?\d/.test(catalogObject.primary) ? "Messier"
-    : /^NGC/i.test(catalogObject.primary) ? "NGC"
-    : /^IC/i.test(catalogObject.primary) ? "IC"
-    : null
-
-  return [categoryLabel, catalogLabel].filter(Boolean).join(" · ")
-}
 
 const AddSession = () => {
   const { t, i18n } = useTranslation("tools/journal/sessions/add")

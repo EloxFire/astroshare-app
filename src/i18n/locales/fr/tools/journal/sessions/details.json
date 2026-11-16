@@ -1,0 +1,39 @@
+{
+  "title": "Session",
+  "unknownLocation": "Lieu inconnu",
+  "grades": {
+    "seeing": "Seeing",
+    "transparency": "Transparence",
+    "darkness": "Noirceur"
+  },
+  "stats": {
+    "observedObjects": "Objets observés",
+    "photographed": "Photographiés",
+    "sketched": "Dessinés"
+  },
+  "venue": {
+    "title": "Lieu",
+    "seeObservatory": "Voir l'observatoire"
+  },
+  "observedObjects": {
+    "title": "Objets observés",
+    "empty": "Aucun objet noté pour cette session",
+    "toggles": {
+      "observedAtEyepiece": "Observé à l'oculaire",
+      "photographed": "Photographié",
+      "sketched": "Dessiné"
+    }
+  },
+  "gear": {
+    "title": "Matériel utilisé",
+    "empty": "Aucun setup noté pour cette session",
+    "pieceCount_one": "{{count}} pièce de matériel",
+    "pieceCount_other": "{{count}} pièces de matériel"
+  },
+  "notes": {
+    "title": "Notes",
+    "empty": "Aucune note pour cette session"
+  },
+  "deleteButton": "Supprimer cette session",
+  "deleteWarning": "La session sera définitivement retirée de votre carnet."
+}

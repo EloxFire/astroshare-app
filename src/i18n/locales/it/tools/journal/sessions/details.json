@@ -1,0 +1,39 @@
+{
+  "title": "Sessione",
+  "unknownLocation": "Luogo sconosciuto",
+  "grades": {
+    "seeing": "Seeing",
+    "transparency": "Trasparenza",
+    "darkness": "Oscurità"
+  },
+  "stats": {
+    "observedObjects": "Oggetti osservati",
+    "photographed": "Fotografati",
+    "sketched": "Disegnati"
+  },
+  "venue": {
+    "title": "Luogo",
+    "seeObservatory": "Vedi osservatorio"
+  },
+  "observedObjects": {
+    "title": "Oggetti osservati",
+    "empty": "Nessun oggetto registrato per questa sessione",
+    "toggles": {
+      "observedAtEyepiece": "Osservato all'oculare",
+      "photographed": "Fotografato",
+      "sketched": "Disegnato"
+    }
+  },
+  "gear": {
+    "title": "Attrezzatura utilizzata",
+    "empty": "Nessun setup registrato per questa sessione",
+    "pieceCount_one": "{{count}} pezzo di attrezzatura",
+    "pieceCount_other": "{{count}} pezzi di attrezzatura"
+  },
+  "notes": {
+    "title": "Note",
+    "empty": "Nessuna nota per questa sessione"
+  },
+  "deleteButton": "Elimina questa sessione",
+  "deleteWarning": "La sessione verrà rimossa definitivamente dal tuo diario."
+}

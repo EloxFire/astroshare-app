@@ -1,8 +1,7 @@
 {
   "title": "Observation log",
   "sessions": {
-    "list": { "title": "All your sessions" },
-    "details": { "title": "Session" }
+    "list": { "title": "All your sessions" }
   },
   "statistics": { "title": "Statistics" },
   "observations": {
@@ -23,7 +22,8 @@
       "averageSeeing": "Average seeing",
       "visitedPlaces": "Places visited"
     },
-    "addSession": "Add a session"
+    "addSession": "Add a session",
+    "unknownSetup": "Unknown setup"
   },
   "observationsSummary": {
     "title": "Your observations & achievements",

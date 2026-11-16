@@ -1,15 +1,6 @@
 {
   "screenTitle": "Détails de l'observatoire",
   "editButton": "Modifier l'observatoire",
-  "location": {
-    "latitude": "Latitude",
-    "longitude": "Longitude",
-    "elevation": "Altitude",
-    "buttons": {
-      "copy": "Copier",
-      "navigate": "Itinéraire"
-    }
-  },
   "equipments": {
     "title": "Équipements disponibles",
     "noEquipments": "Aucun équipement disponible pour cet observatoire."

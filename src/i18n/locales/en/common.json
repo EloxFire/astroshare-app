@@ -24,6 +24,16 @@
     "sizeKb": "{{size}} KB",
     "sizeMb": "{{size}} MB"
   },
+  "locationMapCard": {
+    "latitude": "Latitude",
+    "longitude": "Longitude",
+    "elevation": "Elevation",
+    "unknown": "Unknown",
+    "buttons": {
+      "copy": "Copy",
+      "navigate": "Directions"
+    }
+  },
   "errors": {
     "locationPermissionDenied": "Location permission denied",
     "locationError": "Location error",

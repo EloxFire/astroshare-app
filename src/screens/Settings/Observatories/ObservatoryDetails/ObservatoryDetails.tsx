@@ -1,21 +1,18 @@
-import { Image, Linking, Platform, Text, TouchableOpacity, View } from "react-native"
+import { Image, Text, TouchableOpacity, View } from "react-native"
 import { router, useLocalSearchParams } from "expo-router"
 import { useUserDataStore } from "../../../../store/userData.store"
 import { globalStyles } from "../../../../helpers/globalStyles"
 import { ImageHeaderScrollView } from "../../../../components/layout/ImageHeaderScrollView/ImageHeaderScrollView"
 import { useTranslation } from "react-i18next"
-import { Copy, Navigation, Pencil, Share2, Trash2 } from "lucide-react-native"
+import { Pencil, Share2, Trash2 } from "lucide-react-native"
 import { observatoryDetailsStyles } from "./ObservatoryDetails.styles"
-import MapView, { Marker } from "react-native-maps"
-import { useEffect, useRef } from "react"
+import { useEffect } from "react"
 import { observatoriesAccessTypes, observatoriesEquipments } from "../../../../helpers/observatories/observatories"
 import { app_colors } from "../../../../helpers/variables"
 import ListCard from "../../../../components/cards/ListCard/ListCard"
-import { convertDecimalLatitudeToDMS, convertDecimalLongitudeToDMS } from "../../../../helpers/location/convert"
-import * as Clipboard from 'expo-clipboard';
+import LocationMapCard from "../../../../components/cards/LocationMapCard/LocationMapCard"
 import ListBadge from "../../../../components/Badges/ListBadge/ListBadge"
 import Badge from "../../../../components/Badges/Badge/Badge"
-import MapTargetMarker from "../../../../components/MapTargetMarker/MapTargetMarker"
 import Button from "../../../../components/buttons/Button/Button"
 
 const ObservatoryDetails = () => {
@@ -25,7 +22,6 @@ const ObservatoryDetails = () => {
   const removeObservatory = useUserDataStore((state) => state.removeObservatory)
   const observatoryId = useLocalSearchParams().observatory as string
   const observatory = userObservatories.find((observatory) => observatory.id === observatoryId)
-  const mapRef = useRef<MapView>(null)
 
   const handleDeleteObservatory = () => {
     if (!observatory) return;
@@ -33,23 +29,6 @@ const ObservatoryDetails = () => {
     // ObservatoryDetails se re-rend avec observatory === undefined juste après, et c'est le
     // useEffect ci-dessous qui se charge de la redirection.
     removeObservatory(observatory.id)
-  }
-
-  const handleCopyCoordinates = () => {
-    if(!observatory) return;
-    Clipboard.setStringAsync(`${observatory.latitude}, ${observatory.longitude}`)
-  }
-
-  const handleGetDirections = () => {
-    if(!observatory) return;
-
-    // Open the default maps app with the observatory's coordinates: on iOS, a maps.apple.com
-    // link opens Apple Maps directly (no Info.plist declaration needed); Google Maps elsewhere.
-    const destination = `${observatory.latitude},${observatory.longitude}`;
-    const url = Platform.OS === "ios"
-      ? `https://maps.apple.com/?daddr=${destination}`
-      : `https://www.google.com/maps/dir/?api=1&destination=${destination}`;
-    Linking.openURL(url);
   }
 
   // La redirection ne peut pas se faire directement dans le corps du rendu : ça déclencherait
@@ -127,63 +106,11 @@ const ObservatoryDetails = () => {
             </View>
           </View>
 
-          <View>
-            <View style={observatoryDetailsStyles.mapContainer}>
-              <MapView
-                ref={mapRef}
-                style={{flex: 1}}
-                initialRegion={{
-                  latitude: observatory.latitude,
-                  longitude: observatory.longitude,
-                  latitudeDelta: 0.01,
-                  longitudeDelta: 0.01,
-                }}
-              >
-                <MapTargetMarker
-                  coordinate={{
-                    latitude: observatory.latitude,
-                    longitude: observatory.longitude,
-                  }}
-                />
-              </MapView>
-            </View>
-            
-            <ListCard
-              items={[
-                {
-                  title: t('location.latitude'),
-                  value: convertDecimalLatitudeToDMS(observatory.latitude)
-                },
-                {
-                  title: t('location.longitude'),
-                  value: convertDecimalLongitudeToDMS(observatory.longitude)
-                },
-                {
-                  title: t('location.elevation'),
-                  value: observatory.elevation ? `${observatory.elevation} m` : t('errors.unknown', {ns: 'common'})
-                }
-              ]}
-
-              additionalContainerStyles={{
-                borderTopLeftRadius: 0,
-                borderTopRightRadius: 0,
-                borderTopWidth: 0
-              }}
-
-              buttons={[
-                {
-                  title: t('location.buttons.copy'),
-                  onPress: () => handleCopyCoordinates(),
-                  icon: Copy
-                },
-                {
-                  title: t('location.buttons.navigate'),
-                  onPress: () => handleGetDirections(),
-                  icon: Navigation
-                }
-              ]}
-            />
-          </View>
+          <LocationMapCard
+            latitude={observatory.latitude}
+            longitude={observatory.longitude}
+            elevation={observatory.elevation}
+          />
 
           <View style={observatoryDetailsStyles.equipmentsContainer}>
             <Text style={observatoryDetailsStyles.equipmentsContainer.title}>{t('equipments.title')}</Text>

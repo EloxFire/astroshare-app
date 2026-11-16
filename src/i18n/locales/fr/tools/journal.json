@@ -1,8 +1,7 @@
 {
   "title": "Carnet d'observation",
   "sessions": {
-    "list": { "title": "Toutes vos sessions" },
-    "details": { "title": "Session" }
+    "list": { "title": "Toutes vos sessions" }
   },
   "statistics": { "title": "Statistiques" },
   "observations": {

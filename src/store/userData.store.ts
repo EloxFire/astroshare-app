@@ -116,6 +116,7 @@ export const useUserDataStore = create<UserSettingsData>()(
       setTemperatureUnit: (newTemperatureUnit: "celsius" | "fahrenheit") => set((state) => ({units: {...state.units, temperature: newTemperatureUnit}})),
       resetUserData: () => set(defaultUserData),
       addAstronomySession: (newSession) => set((state) => ({statistics: {...state.statistics, astronomySessions: [...state.statistics.astronomySessions, newSession]}})),
+      removeAstronomySession: (sessionIdToRemove) => set((state) => ({statistics: {...state.statistics, astronomySessions: state.statistics.astronomySessions.filter(session => session.id !== sessionIdToRemove)}})),
       // Gear and statistics related data
       addTelescope: (newTelescope) => set((state) => ({gear: {...state.gear, telescopes: [...state.gear.telescopes, newTelescope]}})),
       addMount: (newMount) => set((state) => ({gear: {...state.gear, mounts: [...state.gear.mounts, newMount]}})),

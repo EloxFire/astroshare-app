@@ -61,6 +61,7 @@ export type UserSettingsActions = {
   resetUserData: () => void;
   // Statistics actions
   addAstronomySession: (newSession: AstronomySession) => void;
+  removeAstronomySession: (sessionIdToRemove: string) => void;
   // Gear management actions
   addTelescope: (newTelescope: Telescope) => void;
   updateTelescope: (telescopeId: string, updatedTelescope: Telescope) => void;

@@ -1,0 +1,39 @@
+{
+  "title": "Session",
+  "unknownLocation": "Unknown location",
+  "grades": {
+    "seeing": "Seeing",
+    "transparency": "Transparency",
+    "darkness": "Darkness"
+  },
+  "stats": {
+    "observedObjects": "Objects observed",
+    "photographed": "Photographed",
+    "sketched": "Sketched"
+  },
+  "venue": {
+    "title": "Location",
+    "seeObservatory": "View observatory"
+  },
+  "observedObjects": {
+    "title": "Objects observed",
+    "empty": "No objects logged for this session",
+    "toggles": {
+      "observedAtEyepiece": "Observed at the eyepiece",
+      "photographed": "Photographed",
+      "sketched": "Sketched"
+    }
+  },
+  "gear": {
+    "title": "Gear used",
+    "empty": "No setup logged for this session",
+    "pieceCount_one": "{{count}} piece of gear",
+    "pieceCount_other": "{{count}} pieces of gear"
+  },
+  "notes": {
+    "title": "Notes",
+    "empty": "No notes for this session"
+  },
+  "deleteButton": "Delete this session",
+  "deleteWarning": "The session will be permanently removed from your log."
+}

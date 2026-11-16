@@ -1,8 +1,7 @@
 {
   "title": "Diario di osservazione",
   "sessions": {
-    "list": { "title": "Tutte le tue sessioni" },
-    "details": { "title": "Sessione" }
+    "list": { "title": "Tutte le tue sessioni" }
   },
   "statistics": { "title": "Statistiche" },
   "observations": {
@@ -23,7 +22,8 @@
       "averageSeeing": "Seeing medio",
       "visitedPlaces": "Luoghi visitati"
     },
-    "addSession": "Aggiungi una sessione"
+    "addSession": "Aggiungi una sessione",
+    "unknownSetup": "Setup sconosciuto"
   },
   "observationsSummary": {
     "title": "Le tue osservazioni e traguardi",

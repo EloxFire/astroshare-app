@@ -17,6 +17,7 @@ import weather_fr from "./locales/fr/tools/weather.json";
 import threeDViewer_fr from "./locales/fr/tools/3dviewer.json";
 import journal_fr from "./locales/fr/tools/journal.json";
 import journalSessionsAdd_fr from "./locales/fr/tools/journal/sessions/add.json";
+import journalSessionsDetails_fr from "./locales/fr/tools/journal/sessions/details.json";
 import journalGear_fr from "./locales/fr/tools/journal/gear.json";
 import journalGearTelescopesAdd_fr from "./locales/fr/tools/journal/gear/telescopes/add.json";
 import journalGearTelescopesDetails_fr from "./locales/fr/tools/journal/gear/telescopes/details.json";
@@ -53,6 +54,7 @@ import weather_en from "./locales/en/tools/weather.json";
 import threeDViewer_en from "./locales/en/tools/3dviewer.json";
 import journal_en from "./locales/en/tools/journal.json";
 import journalSessionsAdd_en from "./locales/en/tools/journal/sessions/add.json";
+import journalSessionsDetails_en from "./locales/en/tools/journal/sessions/details.json";
 import journalGear_en from "./locales/en/tools/journal/gear.json";
 import journalGearTelescopesAdd_en from "./locales/en/tools/journal/gear/telescopes/add.json";
 import journalGearTelescopesDetails_en from "./locales/en/tools/journal/gear/telescopes/details.json";
@@ -89,6 +91,7 @@ import weather_it from "./locales/it/tools/weather.json";
 import threeDViewer_it from "./locales/it/tools/3dviewer.json";
 import journal_it from "./locales/it/tools/journal.json";
 import journalSessionsAdd_it from "./locales/it/tools/journal/sessions/add.json";
+import journalSessionsDetails_it from "./locales/it/tools/journal/sessions/details.json";
 import journalGear_it from "./locales/it/tools/journal/gear.json";
 import journalGearTelescopesAdd_it from "./locales/it/tools/journal/gear/telescopes/add.json";
 import journalGearTelescopesDetails_it from "./locales/it/tools/journal/gear/telescopes/details.json";
@@ -133,6 +136,7 @@ export const resources = {
     "tools/3dviewer": threeDViewer_fr,
     "tools/journal": journal_fr,
     "tools/journal/sessions/add": journalSessionsAdd_fr,
+    "tools/journal/sessions/details": journalSessionsDetails_fr,
     "tools/journal/gear": journalGear_fr,
     "tools/journal/gear/telescopes/add": journalGearTelescopesAdd_fr,
     "tools/journal/gear/telescopes/details": journalGearTelescopesDetails_fr,
@@ -170,6 +174,7 @@ export const resources = {
     "tools/3dviewer": threeDViewer_en,
     "tools/journal": journal_en,
     "tools/journal/sessions/add": journalSessionsAdd_en,
+    "tools/journal/sessions/details": journalSessionsDetails_en,
     "tools/journal/gear": journalGear_en,
     "tools/journal/gear/telescopes/add": journalGearTelescopesAdd_en,
     "tools/journal/gear/telescopes/details": journalGearTelescopesDetails_en,
@@ -207,6 +212,7 @@ export const resources = {
     "tools/3dviewer": threeDViewer_it,
     "tools/journal": journal_it,
     "tools/journal/sessions/add": journalSessionsAdd_it,
+    "tools/journal/sessions/details": journalSessionsDetails_it,
     "tools/journal/gear": journalGear_it,
     "tools/journal/gear/telescopes/add": journalGearTelescopesAdd_it,
     "tools/journal/gear/telescopes/details": journalGearTelescopesDetails_it,

@@ -74,6 +74,8 @@ const Journal = () => {
                 { label: t("sessionsSummary.grades.transparency"), value: lastSession?.grades.transparency ?? 0 },
                 { label: t("sessionsSummary.grades.darkness"), value: lastSession?.grades.darkness ?? 0 },
               ]}
+              // Sans session enregistrée, la carte d'exemple ne mène nulle part.
+              onPress={lastSession ? () => router.push(`/tools/journal/sessions/${lastSession.id}`) : undefined}
             />
 
 
@@ -163,15 +165,15 @@ const Journal = () => {
             <View style={journalScreenStyles.recentSessionsList.list}>
               {/* TODO : List last 3 sessions from user store */}
               {
-                userSessions.slice(-3).reverse().map((session, index) => {
+                userSessions.slice(-3).reverse().map((session) => {
                   return (
                     <IconButtonCard
-                      key={index}
+                      key={session.id}
                       fill
                       date={new Date(session.startTime)}
                       title={formatLocationLabel(session.location, t("sessionsSummary.unknownLocation"))}
                       subtitle={`${formatCompactDuration(getSessionMinutes(session))} - ${session.setups ? session.setups[0]?.name : t("sessionsSummary.unknownSetup")}`}
-                      onPress={() => router.push("/tools/journal/session/details")}
+                      onPress={() => router.push(`/tools/journal/sessions/${session.id}`)}
                     />
                   )
                 })
