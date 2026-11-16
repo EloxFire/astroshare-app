@@ -11,7 +11,7 @@ import dayjs, { Dayjs } from "dayjs";
 import { getConstellation, getHourAngle, getLocalSiderealTime } from "@observerly/astrometry";
 import PolarScopeReticle from "../../../components/rendering/PolarScopeReticle/PolarScopeReticle";
 import { app_colors, spacing, withOpacity } from "../../../helpers/variables";
-import TabSwitch from "../MoonCalendar/components/TabSwitch/TabSwitch";
+import TabSwitch from "../../../components/inputs/TabSwitch/TabSwitch";
 import { router } from "expo-router";
 import InfoCard from "../../../components/cards/InfoCard/InfoCard";
 import { Stars } from "lucide-react-native";

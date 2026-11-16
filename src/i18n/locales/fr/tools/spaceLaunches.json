@@ -1,0 +1,139 @@
+{
+  "screen": {
+    "title": "Lancements",
+    "subtitle_one": "{{count}} prochain lancement",
+    "subtitle_other": "{{count}} prochains lancements",
+    "searchPlaceholder": "Rechercher un lancement, une mission..."
+  },
+  "tabs": {
+    "list": "Liste",
+    "calendar": "Calendrier"
+  },
+  "status": {
+    "Go": "Confirmé",
+    "TBD": "À confirmer",
+    "Success": "Réussi",
+    "Failure": "Échec",
+    "Partial Failure": "Échec partiel",
+    "Hold": "En attente",
+    "In Flight": "En vol"
+  },
+  "countdown": {
+    "days": "jours",
+    "hours": "heures",
+    "minutes": "min",
+    "seconds": "s",
+    "outcome": "Résultat",
+    "until": "Décollage dans",
+    "elapsed": "En vol depuis",
+    "daysBefore": "J-{{days}}",
+    "daysAfter": "J+{{days}}",
+    "liftoff": "T-0"
+  },
+  "nextLaunch": {
+    "heading": "Prochain décollage",
+    "none": "Aucun lancement à venir"
+  },
+  "list": {
+    "groups": {
+      "thisWeek": "Cette semaine",
+      "laterThisMonth": "Plus tard en {{month}}"
+    },
+    "empty": "Aucun lancement prévu pour le moment",
+    "noSearchResults": "Aucun lancement ne correspond à ta recherche"
+  },
+  "calendar": {
+    "weekdays": ["L", "M", "M", "J", "V", "S", "D"],
+    "selectedDay": {
+      "count_one": "{{count}} lancement",
+      "count_other": "{{count}} lancements"
+    },
+    "noLaunchThisDay": "Aucun lancement ce jour-là"
+  },
+  "details": {
+    "launchWindow": {
+      "title": "Fenêtre de tir",
+      "liftoffBadge": "Décollage {{time}}",
+      "closesBadge": "Fermeture {{time}}",
+      "durationShort": "{{minutes}} min",
+      "durationLong": "{{hours}}h{{minutes}}",
+      "note": "Le décollage est visé à l'ouverture de la fenêtre. En cas de retard, il peut encore partir jusqu'à {{closeTime}} — au-delà, il sera reporté.",
+      "noWindowNote": "Heure de décollage précise, sans fenêtre de tir élargie."
+    },
+    "precision": {
+      "Minute": "Exacte à la minute",
+      "Hour": "Exacte à l'heure",
+      "Day": "Exacte au jour",
+      "Month": "Exacte au mois",
+      "Quarter": "Exacte au trimestre",
+      "Half Year": "Exacte au semestre",
+      "Year": "Exacte à l'année"
+    },
+    "probability": {
+      "title": "Chances de décollage",
+      "noConcerns": "Aucun risque météo identifié"
+    },
+    "mission": {
+      "title": "La mission",
+      "noDescription": "Aucune description disponible pour cette mission."
+    },
+    "rocket": {
+      "title": "Le lanceur",
+      "variant": "Variante {{variant}}",
+      "orbitalRank": "{{rank}}ᵉ lancement orbital en {{year}}"
+    },
+    "agency": {
+      "viewAgency": "Voir l'agence"
+    },
+    "pad": {
+      "title": "Le pas de tir",
+      "noLocation": "Localisation du pas de tir non disponible"
+    },
+    "webcastPlanned": "Direct vidéo prévu",
+    "follow": {
+      "title": "Vous suivez ce lancement",
+      "subtitle": "Reçois une alerte avant le décollage",
+      "timing24h": "24 h avant",
+      "timing1h": "1 h avant",
+      "timing10min": "10 min avant"
+    }
+  },
+  "errors": {
+    "notFound": "Impossible de charger cette fiche."
+  },
+  "agency": {
+    "screenTitle": "Agence",
+    "featuredBadge": "Agence majeure",
+    "country": "Pays",
+    "administrator": "Administrateur",
+    "foundingYear": "Année de création",
+    "launchers": "Lanceurs opérés",
+    "spacecraft": "Vaisseaux opérés",
+    "parentAgency": "Agence mère",
+    "noDescription": "Aucune description disponible."
+  },
+  "pad": {
+    "screenTitle": "Pas de tir",
+    "status": {
+      "active": "En service",
+      "inactive": "Retiré"
+    },
+    "stats": {
+      "title": "Statistiques",
+      "total": "Lancements au total",
+      "successful": "Réussis",
+      "failed": "Échoués",
+      "pending": "En attente",
+      "consecutiveSuccess": "Série de succès en cours"
+    },
+    "foundingYear": "Année de création",
+    "launchers": "Lanceurs opérés",
+    "spacecraft": "Vaisseaux opérés",
+    "agencies": "Agences",
+    "noLocation": "Localisation non disponible",
+    "links": {
+      "info": "En savoir plus",
+      "wiki": "Wikipédia"
+    }
+  }
+}

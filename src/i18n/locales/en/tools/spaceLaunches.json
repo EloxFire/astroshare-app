@@ -1,0 +1,139 @@
+{
+  "screen": {
+    "title": "Launches",
+    "subtitle_one": "{{count}} upcoming launch",
+    "subtitle_other": "{{count}} upcoming launches",
+    "searchPlaceholder": "Search a launch, a mission..."
+  },
+  "tabs": {
+    "list": "List",
+    "calendar": "Calendar"
+  },
+  "status": {
+    "Go": "Confirmed",
+    "TBD": "To be confirmed",
+    "Success": "Success",
+    "Failure": "Failure",
+    "Partial Failure": "Partial failure",
+    "Hold": "On hold",
+    "In Flight": "In flight"
+  },
+  "countdown": {
+    "days": "days",
+    "hours": "hours",
+    "minutes": "min",
+    "seconds": "s",
+    "outcome": "Outcome",
+    "until": "Liftoff in",
+    "elapsed": "In flight for",
+    "daysBefore": "D-{{days}}",
+    "daysAfter": "D+{{days}}",
+    "liftoff": "Liftoff"
+  },
+  "nextLaunch": {
+    "heading": "Next liftoff",
+    "none": "No upcoming launch"
+  },
+  "list": {
+    "groups": {
+      "thisWeek": "This week",
+      "laterThisMonth": "Later in {{month}}"
+    },
+    "empty": "No launch scheduled right now",
+    "noSearchResults": "No launch matches your search"
+  },
+  "calendar": {
+    "weekdays": ["M", "T", "W", "T", "F", "S", "S"],
+    "selectedDay": {
+      "count_one": "{{count}} launch",
+      "count_other": "{{count}} launches"
+    },
+    "noLaunchThisDay": "No launch that day"
+  },
+  "details": {
+    "launchWindow": {
+      "title": "Launch window",
+      "liftoffBadge": "Liftoff {{time}}",
+      "closesBadge": "Closes {{time}}",
+      "durationShort": "{{minutes}} min",
+      "durationLong": "{{hours}}h{{minutes}}",
+      "note": "Liftoff is targeted at window opening. If delayed, it can still launch up to {{closeTime}} — beyond that, it will be postponed.",
+      "noWindowNote": "Precise liftoff time, no extended launch window."
+    },
+    "precision": {
+      "Minute": "Accurate to the minute",
+      "Hour": "Accurate to the hour",
+      "Day": "Accurate to the day",
+      "Month": "Accurate to the month",
+      "Quarter": "Accurate to the quarter",
+      "Half Year": "Accurate to the half-year",
+      "Year": "Accurate to the year"
+    },
+    "probability": {
+      "title": "Launch probability",
+      "noConcerns": "No weather risk identified"
+    },
+    "mission": {
+      "title": "The mission",
+      "noDescription": "No description available for this mission."
+    },
+    "rocket": {
+      "title": "The rocket",
+      "variant": "{{variant}} variant",
+      "orbitalRank": "Orbital launch #{{rank}} of {{year}}"
+    },
+    "agency": {
+      "viewAgency": "View agency"
+    },
+    "pad": {
+      "title": "The launch pad",
+      "noLocation": "Launch pad location not available"
+    },
+    "webcastPlanned": "Live stream planned",
+    "follow": {
+      "title": "You're following this launch",
+      "subtitle": "Get an alert before liftoff",
+      "timing24h": "24 h before",
+      "timing1h": "1 h before",
+      "timing10min": "10 min before"
+    }
+  },
+  "errors": {
+    "notFound": "Couldn't load this page."
+  },
+  "agency": {
+    "screenTitle": "Agency",
+    "featuredBadge": "Major agency",
+    "country": "Country",
+    "administrator": "Administrator",
+    "foundingYear": "Founding year",
+    "launchers": "Launchers operated",
+    "spacecraft": "Spacecraft operated",
+    "parentAgency": "Parent agency",
+    "noDescription": "No description available."
+  },
+  "pad": {
+    "screenTitle": "Launch pad",
+    "status": {
+      "active": "Active",
+      "inactive": "Retired"
+    },
+    "stats": {
+      "title": "Statistics",
+      "total": "Total launches",
+      "successful": "Successful",
+      "failed": "Failed",
+      "pending": "Pending",
+      "consecutiveSuccess": "Current success streak"
+    },
+    "foundingYear": "Founding year",
+    "launchers": "Launchers operated",
+    "spacecraft": "Spacecraft operated",
+    "agencies": "Agencies",
+    "noLocation": "Location not available",
+    "links": {
+      "info": "Learn more",
+      "wiki": "Wikipedia"
+    }
+  }
+}

@@ -31,7 +31,8 @@
     "unknown": "Sconosciuta",
     "buttons": {
       "copy": "Copia",
-      "navigate": "Indicazioni"
+      "navigate": "Indicazioni",
+      "view": "Vedi sulla mappa"
     }
   },
   "errors": {

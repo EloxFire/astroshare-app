@@ -11,7 +11,7 @@ import { getLightPollutionIndicatorLabel } from "../../../../../helpers/api/geoc
 import { globalStyles } from "../../../../../helpers/globalStyles"
 import { convertDecimalLatitudeToDMS, convertDecimalLongitudeToDMS } from "../../../../../helpers/location/convert"
 import { app_colors } from "../../../../../helpers/variables"
-import TabSwitch from "../../../../Tools/MoonCalendar/components/TabSwitch/TabSwitch"
+import TabSwitch from "../../../../../components/inputs/TabSwitch/TabSwitch"
 import { addNewObservatoryScreenStyles } from "../addNewObservatoryScreen.styles"
 import { useAddObservatoryForm } from "../AddObservatoryFormContext"
 import { useEffect, useRef, useState } from "react"

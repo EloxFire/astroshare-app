@@ -9,10 +9,7 @@ import DayCell from "./DayCell";
 import DayDetailModal from "./DayDetailModal";
 import MonthlyIlluminationChart from "./MonthlyIlluminationChart";
 import { monthViewStyles } from "./MonthView.styles";
-
-const startOfMonth = (date: Date) => new Date(date.getFullYear(), date.getMonth(), 1);
-const addMonths = (date: Date, delta: number) => new Date(date.getFullYear(), date.getMonth() + delta, 1);
-const dateKey = (date: Date) => `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+import { buildMonthGrid, dateKey, isSameDay, startOfMonth, addMonths } from "../../../../../helpers/date/monthGrid";
 
 // Couleurs de badge pour les 4 phases principales uniquement — les autres jours (croissant/
 // gibbeuse) gardent le fond blanc par défaut de DayCell, avec le % d'illumination en repli (voir
@@ -23,25 +20,6 @@ const PHASE_COLORS: Partial<Record<Phase, { background: string; text: string }>>
   Full: { background: app_colors.yellow.light, text: app_colors.primary.main },
   "Last Quarter": { background: app_colors.accent.light, text: app_colors.primary.main },
 };
-
-// Grille Lundi→Dimanche couvrant le mois, complétée par les jours adjacents (hors mois, grisés
-// via `inCurrentMonth`) pour remplir des semaines entières.
-const buildMonthGrid = (monthStart: Date): { date: Date; inCurrentMonth: boolean }[] => {
-  const year = monthStart.getFullYear();
-  const month = monthStart.getMonth();
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
-  const firstWeekday = (monthStart.getDay() + 6) % 7; // Lundi = 0 (getDay() renvoie Dimanche = 0)
-  const lastWeekday = (new Date(year, month, daysInMonth).getDay() + 6) % 7;
-
-  const days: { date: Date; inCurrentMonth: boolean }[] = [];
-  for (let i = firstWeekday; i > 0; i--) days.push({ date: new Date(year, month, 1 - i), inCurrentMonth: false });
-  for (let d = 1; d <= daysInMonth; d++) days.push({ date: new Date(year, month, d), inCurrentMonth: true });
-  for (let i = 1; i <= 6 - lastWeekday; i++) days.push({ date: new Date(year, month, daysInMonth + i), inCurrentMonth: false });
-
-  return days;
-};
-
-const isSameDay = (a: Date, b: Date) => a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
 
 const MonthView = () => {
   const { t } = useTranslation("moon");

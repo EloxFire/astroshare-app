@@ -1,0 +1,139 @@
+{
+  "screen": {
+    "title": "Lanci",
+    "subtitle_one": "{{count}} prossimo lancio",
+    "subtitle_other": "{{count}} prossimi lanci",
+    "searchPlaceholder": "Cerca un lancio, una missione..."
+  },
+  "tabs": {
+    "list": "Lista",
+    "calendar": "Calendario"
+  },
+  "status": {
+    "Go": "Confermato",
+    "TBD": "Da confermare",
+    "Success": "Riuscito",
+    "Failure": "Fallito",
+    "Partial Failure": "Fallimento parziale",
+    "Hold": "In attesa",
+    "In Flight": "In volo"
+  },
+  "countdown": {
+    "days": "giorni",
+    "hours": "ore",
+    "minutes": "min",
+    "seconds": "s",
+    "outcome": "Esito",
+    "until": "Decollo tra",
+    "elapsed": "In volo da",
+    "daysBefore": "G-{{days}}",
+    "daysAfter": "G+{{days}}",
+    "liftoff": "Decollo"
+  },
+  "nextLaunch": {
+    "heading": "Prossimo decollo",
+    "none": "Nessun lancio in programma"
+  },
+  "list": {
+    "groups": {
+      "thisWeek": "Questa settimana",
+      "laterThisMonth": "Più avanti a {{month}}"
+    },
+    "empty": "Nessun lancio programmato al momento",
+    "noSearchResults": "Nessun lancio corrisponde alla tua ricerca"
+  },
+  "calendar": {
+    "weekdays": ["L", "M", "M", "G", "V", "S", "D"],
+    "selectedDay": {
+      "count_one": "{{count}} lancio",
+      "count_other": "{{count}} lanci"
+    },
+    "noLaunchThisDay": "Nessun lancio quel giorno"
+  },
+  "details": {
+    "launchWindow": {
+      "title": "Finestra di lancio",
+      "liftoffBadge": "Decollo {{time}}",
+      "closesBadge": "Chiusura {{time}}",
+      "durationShort": "{{minutes}} min",
+      "durationLong": "{{hours}}h{{minutes}}",
+      "note": "Il decollo è previsto all'apertura della finestra. In caso di ritardo, può ancora partire fino alle {{closeTime}} — oltre, sarà rinviato.",
+      "noWindowNote": "Orario di decollo preciso, senza finestra di lancio estesa."
+    },
+    "precision": {
+      "Minute": "Precisa al minuto",
+      "Hour": "Precisa all'ora",
+      "Day": "Precisa al giorno",
+      "Month": "Precisa al mese",
+      "Quarter": "Precisa al trimestre",
+      "Half Year": "Precisa al semestre",
+      "Year": "Precisa all'anno"
+    },
+    "probability": {
+      "title": "Probabilità di decollo",
+      "noConcerns": "Nessun rischio meteo identificato"
+    },
+    "mission": {
+      "title": "La missione",
+      "noDescription": "Nessuna descrizione disponibile per questa missione."
+    },
+    "rocket": {
+      "title": "Il lanciatore",
+      "variant": "Variante {{variant}}",
+      "orbitalRank": "{{rank}}° lancio orbitale del {{year}}"
+    },
+    "agency": {
+      "viewAgency": "Vedi l'agenzia"
+    },
+    "pad": {
+      "title": "La rampa di lancio",
+      "noLocation": "Posizione della rampa di lancio non disponibile"
+    },
+    "webcastPlanned": "Diretta video prevista",
+    "follow": {
+      "title": "Stai seguendo questo lancio",
+      "subtitle": "Ricevi un avviso prima del decollo",
+      "timing24h": "24 h prima",
+      "timing1h": "1 h prima",
+      "timing10min": "10 min prima"
+    }
+  },
+  "errors": {
+    "notFound": "Impossibile caricare questa scheda."
+  },
+  "agency": {
+    "screenTitle": "Agenzia",
+    "featuredBadge": "Agenzia principale",
+    "country": "Paese",
+    "administrator": "Amministratore",
+    "foundingYear": "Anno di fondazione",
+    "launchers": "Lanciatori operati",
+    "spacecraft": "Veicoli spaziali operati",
+    "parentAgency": "Agenzia madre",
+    "noDescription": "Nessuna descrizione disponibile."
+  },
+  "pad": {
+    "screenTitle": "Rampa di lancio",
+    "status": {
+      "active": "In servizio",
+      "inactive": "Ritirata"
+    },
+    "stats": {
+      "title": "Statistiche",
+      "total": "Lanci totali",
+      "successful": "Riusciti",
+      "failed": "Falliti",
+      "pending": "In attesa",
+      "consecutiveSuccess": "Serie di successi in corso"
+    },
+    "foundingYear": "Anno di fondazione",
+    "launchers": "Lanciatori operati",
+    "spacecraft": "Veicoli spaziali operati",
+    "agencies": "Agenzie",
+    "noLocation": "Posizione non disponibile",
+    "links": {
+      "info": "Scopri di più",
+      "wiki": "Wikipedia"
+    }
+  }
+}

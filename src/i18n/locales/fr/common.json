@@ -31,7 +31,8 @@
     "unknown": "Inconnue",
     "buttons": {
       "copy": "Copier",
-      "navigate": "Itinéraire"
+      "navigate": "Itinéraire",
+      "view": "Voir sur la carte"
     }
   },
   "errors": {

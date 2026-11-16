@@ -3,7 +3,7 @@ import { Linking, Platform, View } from "react-native";
 import MapView from "react-native-maps";
 import * as Clipboard from "expo-clipboard";
 import { useTranslation } from "react-i18next";
-import { Copy, Navigation } from "lucide-react-native";
+import { Copy, MapPinned, Navigation } from "lucide-react-native";
 import ListCard from "../ListCard/ListCard";
 import MapTargetMarker from "../../MapTargetMarker/MapTargetMarker";
 import { convertDecimalLatitudeToDMS, convertDecimalLongitudeToDMS } from "../../../helpers/location/convert";
@@ -18,6 +18,8 @@ interface LocationMapCardProps {
   longitude: number;
   // Altitude en mètres. null ou absente : affichée comme inconnue.
   elevation?: number | null;
+  terrain?: 'satellite' | 'terrain' | 'standard';
+  type?: 'directions' | 'view'
 }
 
 /**
@@ -27,7 +29,7 @@ interface LocationMapCardProps {
  * avec deux actions : copier les coordonnées, ouvrir l'itinéraire dans l'app de cartes du téléphone.
  * Utilisée par la fiche d'un observatoire et par celle d'une session du Journal.
  */
-const LocationMapCard = ({ latitude, longitude, elevation }: LocationMapCardProps) => {
+const LocationMapCard = ({ latitude, longitude, elevation, terrain = 'standard', type = 'directions' }: LocationMapCardProps) => {
   const { t } = useTranslation("common");
   const mapRef = useRef<MapView>(null);
   const shownCoordinatesRef = useRef({ latitude, longitude });
@@ -48,13 +50,25 @@ const LocationMapCard = ({ latitude, longitude, elevation }: LocationMapCardProp
     Clipboard.setStringAsync(`${latitude}, ${longitude}`);
   };
 
-  const handleGetDirections = () => {
+  const handleOpenMap = () => {
     // Ouvre l'app de cartes par défaut sur le lieu : sur iOS, un lien maps.apple.com ouvre
     // directement Plans (aucune déclaration Info.plist nécessaire) ; Google Maps ailleurs.
-    const destination = `${latitude},${longitude}`;
+    const coordinates = `${latitude},${longitude}`;
+
+    // type="view" (ex: un pas de tir) : on ne demande pas d'itinéraire depuis la position de
+    // l'utilisateur, juste centrer la carte sur le point — "daddr"/"dir" lanceraient un calcul
+    // de trajet qui n'a pas de sens ici.
+    if (type === "view") {
+      const url = Platform.OS === "ios"
+        ? `https://maps.apple.com/?ll=${coordinates}&q=${coordinates}`
+        : `https://www.google.com/maps/search/?api=1&query=${coordinates}`;
+      Linking.openURL(url);
+      return;
+    }
+
     const url = Platform.OS === "ios"
-      ? `https://maps.apple.com/?daddr=${destination}`
-      : `https://www.google.com/maps/dir/?api=1&destination=${destination}`;
+      ? `https://maps.apple.com/?daddr=${coordinates}`
+      : `https://www.google.com/maps/dir/?api=1&destination=${coordinates}`;
     Linking.openURL(url);
   };
 
@@ -70,6 +84,7 @@ const LocationMapCard = ({ latitude, longitude, elevation }: LocationMapCardProp
             latitudeDelta: MAP_REGION_DELTA,
             longitudeDelta: MAP_REGION_DELTA,
           }}
+          mapType={terrain}
         >
           <MapTargetMarker coordinate={{ latitude, longitude }} />
         </MapView>
@@ -88,7 +103,9 @@ const LocationMapCard = ({ latitude, longitude, elevation }: LocationMapCardProp
         additionalContainerStyles={locationMapCardStyles.list}
         buttons={[
           { title: t("locationMapCard.buttons.copy"), onPress: handleCopyCoordinates, icon: Copy },
-          { title: t("locationMapCard.buttons.navigate"), onPress: handleGetDirections, icon: Navigation },
+          type === "view"
+            ? { title: t("locationMapCard.buttons.view"), onPress: handleOpenMap, icon: MapPinned }
+            : { title: t("locationMapCard.buttons.navigate"), onPress: handleOpenMap, icon: Navigation },
         ]}
       />
     </View>

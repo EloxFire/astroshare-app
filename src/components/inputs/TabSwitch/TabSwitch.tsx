@@ -1,7 +1,7 @@
 import { Text, TouchableOpacity, View } from "react-native"
 import { tabSwitchStyles } from "./TabSwitch.styles";
 import { LucideIcon } from "lucide-react-native";
-import { app_colors } from "../../../../../helpers/variables";
+import { app_colors } from "../../../helpers/variables";
 
 
 interface TabSwitchProps {

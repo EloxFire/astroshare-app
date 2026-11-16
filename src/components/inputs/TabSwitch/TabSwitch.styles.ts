@@ -1,4 +1,4 @@
-import { app_colors, radius, typography } from "../../../../../helpers/variables";
+import { app_colors, radius, typography } from "../../../helpers/variables";
 
 export const tabSwitchStyles = {
   container: {

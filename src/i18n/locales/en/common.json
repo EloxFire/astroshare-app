@@ -31,7 +31,8 @@
     "unknown": "Unknown",
     "buttons": {
       "copy": "Copy",
-      "navigate": "Directions"
+      "navigate": "Directions",
+      "view": "View on map"
     }
   },
   "errors": {

@@ -11,8 +11,8 @@ interface InfoCardProps {
   // pouvoir mettre en valeur une partie du texte — voir stepOne.lightPollution.title et
   // .description dans settings/addObservatory.
   title: string | ReactNode;
-  description: string | ReactNode;
   icon: LucideIcon
+  description?: string | ReactNode;
   link?: string; // Optional link prop
   internalLink?: string; // Optional internal link prop
   additionnalDescriptionStyle?: object; // Optional style for the description text
@@ -23,13 +23,11 @@ const InfoCard = ({ title, description, icon: Icon, link, internalLink, addition
 
   const handlePress = () => {
     if (link) {
-      // Handle navigation to the link if provided
       Linking.openURL(link);
     } else if (internalLink) {
-      // Handle internal navigation if provided
-      // Replace this with your internal navigation logic, e.g., using React Navigation
-      console.log(`Navigate to internal link: ${internalLink}`);
-      router.replace(internalLink);
+      // push (pas replace) : la carte mène vers un contenu lié, pas vers une destination qui
+      // remplace l'écran courant — le bouton retour doit pouvoir y revenir.
+      router.push(internalLink);
     }
   }
 
@@ -82,7 +80,7 @@ const InfoCard = ({ title, description, icon: Icon, link, internalLink, addition
       <Icon size={24} color={variantStyles?.icon.color} />
       <View style={variantStyles?.container.infos}>
         <Text style={[variantStyles?.title, additionnalDescriptionStyle]}>{title}</Text>
-        <Text style={[variantStyles?.description, additionnalDescriptionStyle]}>{description}</Text>
+        {description && <Text style={[variantStyles?.description, additionnalDescriptionStyle]}>{description}</Text>}
       </View>
       {
         (link || internalLink) && (

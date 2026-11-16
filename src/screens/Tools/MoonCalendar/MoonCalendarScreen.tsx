@@ -3,7 +3,7 @@ import { ScreenHeader } from "../../../components/layout/ScreenHeader/ScreenHead
 import { moonCalendarScreenStyles } from "./MoonCalendarScreen.styles";
 import { StatusBar } from "expo-status-bar";
 import { useCallback, useEffect, useState } from "react";
-import TabSwitch from "./components/TabSwitch/TabSwitch";
+import TabSwitch from "../../../components/inputs/TabSwitch/TabSwitch";
 import TonightView from "./components/Tonight/TonightView";
 import { useTranslation } from "react-i18next";
 import { app_colors } from "../../../helpers/variables";
