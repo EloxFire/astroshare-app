@@ -69,6 +69,7 @@
     "react-native-gifted-charts": "^1.4.81",
     "react-native-keyboard-controller": "1.21.9",
     "react-native-maps": "1.27.2",
+    "react-native-mathjax": "^2.1.2",
     "react-native-reanimated": "4.5.1",
     "react-native-safe-area-context": "~5.7.0",
     "react-native-screens": "~4.26.0",

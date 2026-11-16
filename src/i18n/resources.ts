@@ -11,6 +11,7 @@ import authRegister_fr from "./locales/fr/auth/register.json";
 import authForgotPassword_fr from "./locales/fr/auth/forgotPassword.json";
 import authProfile_fr from "./locales/fr/auth/profile.json";
 import apod_fr from "./locales/fr/tools/apod.json";
+import astroCalculations_fr from "./locales/fr/tools/astroCalculations.json";
 import polarScope_fr from "./locales/fr/tools/polarScope.json";
 import spaceLaunches_fr from "./locales/fr/tools/spaceLaunches.json";
 import spaceWeather_fr from "./locales/fr/tools/spaceWeather.json";
@@ -49,6 +50,7 @@ import authRegister_en from "./locales/en/auth/register.json";
 import authForgotPassword_en from "./locales/en/auth/forgotPassword.json";
 import authProfile_en from "./locales/en/auth/profile.json";
 import apod_en from "./locales/en/tools/apod.json";
+import astroCalculations_en from "./locales/en/tools/astroCalculations.json";
 import polarScope_en from "./locales/en/tools/polarScope.json";
 import spaceLaunches_en from "./locales/en/tools/spaceLaunches.json";
 import spaceWeather_en from "./locales/en/tools/spaceWeather.json";
@@ -87,6 +89,7 @@ import authRegister_it from "./locales/it/auth/register.json";
 import authForgotPassword_it from "./locales/it/auth/forgotPassword.json";
 import authProfile_it from "./locales/it/auth/profile.json";
 import apod_it from "./locales/it/tools/apod.json";
+import astroCalculations_it from "./locales/it/tools/astroCalculations.json";
 import polarScope_it from "./locales/it/tools/polarScope.json";
 import spaceLaunches_it from "./locales/it/tools/spaceLaunches.json";
 import spaceWeather_it from "./locales/it/tools/spaceWeather.json";
@@ -133,6 +136,7 @@ export const resources = {
     "auth/forgotPassword": authForgotPassword_fr,
     "auth/profile": authProfile_fr,
     "tools/apod": apod_fr,
+    "tools/astroCalculations": astroCalculations_fr,
     "tools/polarScope": polarScope_fr,
     "tools/spaceLaunches": spaceLaunches_fr,
     "tools/spaceWeather": spaceWeather_fr,
@@ -172,6 +176,7 @@ export const resources = {
     "auth/forgotPassword": authForgotPassword_en,
     "auth/profile": authProfile_en,
     "tools/apod": apod_en,
+    "tools/astroCalculations": astroCalculations_en,
     "tools/polarScope": polarScope_en,
     "tools/spaceLaunches": spaceLaunches_en,
     "tools/spaceWeather": spaceWeather_en,
@@ -211,6 +216,7 @@ export const resources = {
     "auth/forgotPassword": authForgotPassword_it,
     "auth/profile": authProfile_it,
     "tools/apod": apod_it,
+    "tools/astroCalculations": astroCalculations_it,
     "tools/polarScope": polarScope_it,
     "tools/spaceLaunches": spaceLaunches_it,
     "tools/spaceWeather": spaceWeather_it,

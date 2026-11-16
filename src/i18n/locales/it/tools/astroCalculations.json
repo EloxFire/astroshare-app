@@ -1,0 +1,141 @@
+{
+  "screen": {
+    "title": "Calcoli",
+    "subtitle_one": "{{count}} formula per adattare la tua attrezzatura",
+    "subtitle_other": "{{count}} formule per adattare la tua attrezzatura",
+    "calculatedWith": "Calcolato con",
+    "changeGear": "Cambia",
+    "noGearSelected": "Scegli la tua attrezzatura per precompilare i calcoli",
+    "breadcrumb": "Calcoli · {{category}}",
+    "yourValues": "I tuoi valori",
+    "useMyGear": "La mia attrezzatura",
+    "result": "Risultato"
+  },
+  "gearPicker": {
+    "telescope": "Telescopio",
+    "eyepiece": "Oculare",
+    "camera": "Fotocamera",
+    "none": "Nessuno",
+    "pixels": "pixel {{size}}µm",
+    "setup": "Setup",
+    "chooseSetup": "Scegli un setup",
+    "individualHeading": "Oppure pezzo per pezzo"
+  },
+  "categories": {
+    "instrument": "Lo strumento",
+    "eyepiece": "L'oculare",
+    "photo": "La foto",
+    "general": "Altro"
+  },
+  "variables": {
+    "aperture": { "label": "Diametro", "description": "Apertura dell'obiettivo o dello specchio" },
+    "instrumentFocalLength": { "label": "Focale dello strumento", "description": "Lunghezza focale del tubo" },
+    "eyepieceFocalLength": { "label": "Focale dell'oculare", "description": "Incisa sull'oculare" },
+    "apparentField": { "label": "Campo apparente", "description": "Indicato dal produttore dell'oculare" },
+    "pixelSize": { "label": "Dimensione dei pixel", "description": "Scheda tecnica della fotocamera" },
+    "sensorWidth": { "label": "Larghezza del sensore", "description": "Scheda tecnica della fotocamera" },
+    "sensorHeight": { "label": "Altezza del sensore", "description": "Scheda tecnica della fotocamera" },
+    "barlowFactor": { "label": "Fattore", "description": "× per una barlow, < 1 per una riduttrice di focale" },
+    "magnitudeDifference": { "label": "Differenza di magnitudine", "description": "Differenza tra le due magnitudini (può essere negativa)" }
+  },
+  "visualizations": {
+    "sliderHint": "Trascina il cursore per vedere l'attrezzatura necessaria",
+    "moonField": {
+      "scaleCaption": "La Luna in scala",
+      "moonWidthCount": "La Luna piena ci sta {{times}} volte in larghezza."
+    },
+    "cameraField": {
+      "fieldCaption": "Campo: {{width}}° × {{height}}°",
+      "widthOnlyCaption": "Campo (larghezza): {{width}}°"
+    }
+  },
+  "calculations": {
+    "focalRatio": {
+      "title": "Rapporto F/D",
+      "shortFormula": "F ÷ D",
+      "formulaDescription": "Indica la luminosità dello strumento: più è basso, più l'immagine è luminosa e il campo ampio.",
+      "resultNote": "Sotto f/6: strumento veloce, adatto al cielo profondo. Sopra f/9: più adatto a pianeti/Luna."
+    },
+    "resolvingPower": {
+      "title": "Potere separatore",
+      "shortFormula": "116 ÷ D",
+      "formulaDescription": "Scarto angolare minimo (limite di Dawes) tra due punti distinguibili dallo strumento.",
+      "resultNote": "Limite teorico: la turbolenza atmosferica può degradarlo nella pratica."
+    },
+    "minMagnification": {
+      "title": "Ingrandimento minimo",
+      "shortFormula": "D ÷ pupilla dell'occhio",
+      "formulaDescription": "Ingrandimento al di sotto del quale la pupilla d'uscita supera i 7 mm, la pupilla massima dell'occhio adattato al buio: l'immagine non si schiarisce oltre.",
+      "resultNote": "Al di sotto, parte della luce raccolta dallo strumento non entra più nell'occhio."
+    },
+    "maxMagnification": {
+      "title": "Ingrandimento massimo",
+      "shortFormula": "D × 2",
+      "formulaDescription": "Ingrandimento teorico oltre il quale la turbolenza atmosferica e la diffrazione impediscono di vedere più dettagli.",
+      "resultNote": "Limite ottico assoluto: la turbolenza del momento lo abbassa spesso molto nella pratica."
+    },
+    "barlowFocalLength": {
+      "title": "Focale con barlow/riduttrice",
+      "shortFormula": "F × k",
+      "formulaDescription": "Focale realmente ottenuta aggiungendo una barlow (k > 1, es. 2×) o una riduttrice di focale (k < 1, es. 0,8×) sul percorso ottico."
+    },
+    "limitingMagnitude": {
+      "title": "Magnitudine limite",
+      "shortFormula": "2,7 + 5 × log(D)",
+      "formulaDescription": "Magnitudine della stella più debole teoricamente visibile all'oculare, sotto un cielo perfettamente buio.",
+      "resultNote": "Stima ottimistica: inquinamento luminoso, turbolenza, ingrandimento usato e adattamento dell'occhio la riducono molto nella pratica."
+    },
+    "magnification": {
+      "title": "Ingrandimento",
+      "shortFormula": "F ÷ f",
+      "formulaDescription": "Quante volte l'oggetto appare più grande rispetto a occhio nudo.",
+      "usefulRange": "Intervallo utile del tuo strumento: {{min}}× – {{max}}×",
+      "bands": {
+        "low": { "label": "Troppo basso", "note": "Sotto l'intervallo utile: l'immagine resta scura senza guadagnare dettaglio." },
+        "ideal": { "label": "Utile", "note": "Ingrandimento nell'intervallo utile dello strumento." },
+        "high": { "label": "Troppo alto", "note": "Sopra l'intervallo utile: l'immagine perde nitidezza e luminosità." }
+      }
+    },
+    "trueField": {
+      "title": "Campo reale",
+      "shortFormula": "campo apparente ÷ G",
+      "formulaDescription": "La porzione di cielo visibile nell'oculare."
+    },
+    "exitPupil": {
+      "title": "Pupilla d'uscita",
+      "shortFormula": "D ÷ G",
+      "formulaDescription": "Diametro del fascio di luce che esce dall'oculare, da confrontare con la pupilla dell'occhio (fino a 7 mm al buio).",
+      "resultNote": "Oltre i 7 mm, parte della luce non entra più nell'occhio: ingrandimento troppo basso per lo strumento."
+    },
+    "sampling": {
+      "title": "Campionamento",
+      "shortFormula": "206 × p ÷ (F × k)",
+      "formulaDescription": "La porzione di cielo coperta da un pixel della fotocamera, in secondi d'arco. Indica un fattore di barlow/riduttrice solo se ne usi una: lasciato vuoto, conta solo la focale dello strumento.",
+      "bands": {
+        "fine": { "label": "Fine", "note": "Sovracampionato: conviene solo con un cielo molto stabile e un ottimo inseguimento." },
+        "ideal": { "label": "Equilibrato", "note": "Buon compromesso per la maggior parte degli oggetti del cielo profondo." },
+        "wide": { "label": "Grandangolo", "note": "Sottocampionato: privilegia il campo inquadrato rispetto al dettaglio fine." }
+      }
+    },
+    "cameraField": {
+      "title": "Campo della fotocamera",
+      "shortFormula": "2 × arctan(l ÷ 2F)",
+      "formulaDescription": "La porzione di cielo coperta dal sensore, un rettangolo, non un quadrato: il risultato principale riguarda la larghezza, l'altezza serve per il riquadro della visualizzazione."
+    },
+    "maxExposureTime": {
+      "title": "Tempo di posa massimo",
+      "shortFormula": "(35×N + 30×p) ÷ F",
+      "formulaDescription": "Tempo di posa massimo prima che la rotazione del cielo produca una scia visibile su un pixel (regola NPF).",
+      "resultNote": "Approssimazione: la scia reale dipende anche dalla declinazione del soggetto e dalla sua distanza dal polo celeste."
+    },
+    "magnitudeConversion": {
+      "title": "Conversione di magnitudine",
+      "shortFormula": "10^(Δm ÷ 2,5)",
+      "formulaDescription": "Quante volte un astro è più luminoso (o più debole) di un altro, a partire dalla differenza tra le loro magnitudini.",
+      "resultNote": "Uno scarto positivo indica quante volte il secondo astro è più debole; negativo, quante volte è più luminoso."
+    }
+  },
+  "errors": {
+    "notFound": "Calcolo non trovato"
+  }
+}

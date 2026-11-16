@@ -1,0 +1,141 @@
+{
+  "screen": {
+    "title": "Calculations",
+    "subtitle_one": "{{count}} formula to match your gear",
+    "subtitle_other": "{{count}} formulas to match your gear",
+    "calculatedWith": "Calculated with",
+    "changeGear": "Change",
+    "noGearSelected": "Pick your gear to prefill the calculations",
+    "breadcrumb": "Calculations · {{category}}",
+    "yourValues": "Your values",
+    "useMyGear": "My gear",
+    "result": "Result"
+  },
+  "gearPicker": {
+    "telescope": "Telescope",
+    "eyepiece": "Eyepiece",
+    "camera": "Camera",
+    "none": "None",
+    "pixels": "{{size}}µm pixels",
+    "setup": "Setup",
+    "chooseSetup": "Choose a setup",
+    "individualHeading": "Or piece by piece"
+  },
+  "categories": {
+    "instrument": "The instrument",
+    "eyepiece": "The eyepiece",
+    "photo": "Astrophotography",
+    "general": "Other"
+  },
+  "variables": {
+    "aperture": { "label": "Aperture", "description": "Diameter of the lens or mirror" },
+    "instrumentFocalLength": { "label": "Instrument focal length", "description": "Focal length of the tube" },
+    "eyepieceFocalLength": { "label": "Eyepiece focal length", "description": "Engraved on the eyepiece" },
+    "apparentField": { "label": "Apparent field", "description": "Given by the eyepiece manufacturer" },
+    "pixelSize": { "label": "Pixel size", "description": "Camera datasheet" },
+    "sensorWidth": { "label": "Sensor width", "description": "Camera datasheet" },
+    "sensorHeight": { "label": "Sensor height", "description": "Camera datasheet" },
+    "barlowFactor": { "label": "Factor", "description": "× for a Barlow, < 1 for a focal reducer" },
+    "magnitudeDifference": { "label": "Magnitude difference", "description": "Difference between the two magnitudes (can be negative)" }
+  },
+  "visualizations": {
+    "sliderHint": "Drag the marker to see the gear you'd need",
+    "moonField": {
+      "scaleCaption": "The Moon to scale",
+      "moonWidthCount": "The full Moon fits {{times}} times across it."
+    },
+    "cameraField": {
+      "fieldCaption": "Field: {{width}}° × {{height}}°",
+      "widthOnlyCaption": "Field (width): {{width}}°"
+    }
+  },
+  "calculations": {
+    "focalRatio": {
+      "title": "Focal ratio",
+      "shortFormula": "F ÷ D",
+      "formulaDescription": "Describes how bright the instrument is: the smaller it is, the brighter the image and the wider the field.",
+      "resultNote": "Below f/6: fast instrument, best for deep sky. Above f/9: better suited to planets/the Moon."
+    },
+    "resolvingPower": {
+      "title": "Resolving power",
+      "shortFormula": "116 ÷ D",
+      "formulaDescription": "Minimum angular gap (Dawes limit) between two points the instrument can distinguish.",
+      "resultNote": "Theoretical limit: atmospheric turbulence can degrade it in practice."
+    },
+    "minMagnification": {
+      "title": "Minimum magnification",
+      "shortFormula": "D ÷ eye pupil",
+      "formulaDescription": "Magnification below which the exit pupil exceeds 7 mm, the eye's maximum pupil size once dark-adapted: the image doesn't get any brighter beyond that.",
+      "resultNote": "Below it, part of the light gathered by the instrument no longer enters the eye."
+    },
+    "maxMagnification": {
+      "title": "Maximum magnification",
+      "shortFormula": "D × 2",
+      "formulaDescription": "Theoretical magnification beyond which atmospheric turbulence and diffraction prevent seeing more detail.",
+      "resultNote": "An absolute optical limit: actual seeing conditions often lower it well below this in practice."
+    },
+    "barlowFocalLength": {
+      "title": "Focal length with Barlow/reducer",
+      "shortFormula": "F × k",
+      "formulaDescription": "Focal length actually obtained by adding a Barlow (k > 1, e.g. 2×) or a focal reducer (k < 1, e.g. 0.8×) to the optical path."
+    },
+    "limitingMagnitude": {
+      "title": "Limiting magnitude",
+      "shortFormula": "2.7 + 5 × log(D)",
+      "formulaDescription": "Magnitude of the faintest star theoretically visible at the eyepiece, under a perfectly dark sky.",
+      "resultNote": "An optimistic estimate: light pollution, turbulence, the magnification used, and eye adaptation reduce it significantly in practice."
+    },
+    "magnification": {
+      "title": "Magnification",
+      "shortFormula": "F ÷ f",
+      "formulaDescription": "How many times larger the object appears compared to the naked eye.",
+      "usefulRange": "Useful range of your instrument: {{min}}× to {{max}}×",
+      "bands": {
+        "low": { "label": "Too low", "note": "Below the useful range: the image stays dim without showing more detail." },
+        "ideal": { "label": "Useful", "note": "Magnification within the instrument's useful range." },
+        "high": { "label": "Too high", "note": "Above the useful range: the image loses sharpness and brightness." }
+      }
+    },
+    "trueField": {
+      "title": "True field of view",
+      "shortFormula": "apparent field ÷ G",
+      "formulaDescription": "The portion of sky visible in the eyepiece."
+    },
+    "exitPupil": {
+      "title": "Exit pupil",
+      "shortFormula": "D ÷ G",
+      "formulaDescription": "Diameter of the light beam leaving the eyepiece, to compare with the eye's pupil (up to 7 mm in the dark).",
+      "resultNote": "Above 7 mm, part of the light no longer enters the eye: the magnification is too low for the instrument."
+    },
+    "sampling": {
+      "title": "Sampling",
+      "shortFormula": "206 × p ÷ (F × k)",
+      "formulaDescription": "The portion of sky covered by one camera pixel, in arcseconds. Only fill in a Barlow/reducer factor if you're using one: left blank, only the instrument's focal length counts.",
+      "bands": {
+        "fine": { "label": "Fine", "note": "Oversampled: only pays off with very stable skies and excellent tracking." },
+        "ideal": { "label": "Balanced", "note": "Good compromise for most deep-sky targets." },
+        "wide": { "label": "Wide field", "note": "Undersampled: favours field of view over fine detail." }
+      }
+    },
+    "cameraField": {
+      "title": "Camera field of view",
+      "shortFormula": "2 × arctan(l ÷ 2F)",
+      "formulaDescription": "The portion of sky covered by the sensor, a rectangle, not a square: the headline result is the width, the height is used for the visualization's frame."
+    },
+    "maxExposureTime": {
+      "title": "Max exposure time",
+      "shortFormula": "(35×N + 30×p) ÷ F",
+      "formulaDescription": "Maximum exposure time before star trailing from the sky's rotation becomes visible on a pixel (NPF rule).",
+      "resultNote": "An approximation: actual trailing also depends on the target's declination and its distance from the celestial pole."
+    },
+    "magnitudeConversion": {
+      "title": "Magnitude conversion",
+      "shortFormula": "10^(Δm ÷ 2.5)",
+      "formulaDescription": "How many times brighter (or fainter) one object is than another, from the difference between their magnitudes.",
+      "resultNote": "A positive difference gives how many times fainter the second object is; negative, how many times brighter."
+    }
+  },
+  "errors": {
+    "notFound": "Calculation not found"
+  }
+}

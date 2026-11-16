@@ -46,6 +46,9 @@ const LaunchWindowChart = ({ net, windowStart, windowEnd, precisionName }: Launc
     ? t("details.launchWindow.durationLong", { hours: Math.floor(durationMinutes / 60), minutes: durationMinutes % 60 })
     : t("details.launchWindow.durationShort", { minutes: durationMinutes });
 
+
+  // TODO : Si la fenetre n'est pas présice a la seconde, afficher un avertissement indiquant que la date et la fenetre sont approximatives et estimées seulement
+
   return (
     <View style={launchWindowChartStyles.card}>
       <View style={launchWindowChartStyles.card.header}>
