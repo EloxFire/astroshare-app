@@ -93,6 +93,18 @@ météo, APOD, viseur polaire, météo spatiale), observatoires de l'utilisateur
 - **`formatDuration(seconds, t)`** : durée traduite, via une clé `duration` propre à chaque namespace. Elle attend des **secondes**, alors que les `startTime`/`endTime` d'une session sont en **millisecondes** : leur passer l'écart brut multiplie la durée par 1000.
 - **`formatLocationLabel(location, fallback)`** : nom affiché du lieu d'une session. Il prend `display_name` (le nom choisi pour un observatoire) avant `name`, car un `Observatory` hérite aussi de `name` via `GpsLocation`, qui n'est que le nom géocodé du lieu.
 
+### Catalogue d'objets (`src/types/catalog/CatalogObject.ts`, `src/helpers/api/catalog/objects.ts`)
+
+- **Routes :** `/v3/objects` (liste paginée et filtrable), `/v3/objects/search` (recherche, déjà triée par le serveur : ne pas retrier) et `/v3/objects/:id` (fiche complète). Elles sont publiques, sans jeton.
+- **Identifiant :** référence toujours un objet par son `id` stable (`NGC1976`, `HIP69673`, `SS-MARS`), jamais par un index.
+- **Unions ouvertes :** `kind`, `category`, l'unité de distance et `ephemeris.provider` peuvent recevoir des valeurs que l'app ne connaît pas encore. Traite-les toujours avec un cas par défaut.
+- **Objets du système solaire** (`kind: "solar_system"` : Soleil, Lune, planètes) :
+  - `position`, `magnitude` et `distance` valent `null`, car ces objets bougent. Leur position se calcule à la date voulue d'après `solar_system.ephemeris`. Les filtres `maxMag` et `bbox` de la liste les excluent d'office.
+  - `ephemeris.provider` vaut aujourd'hui `"observerly"` (calcul local avec `@observerly/astrometry`). Les comètes et astéroïdes arriveront avec `"orbit"` et des éléments orbitaux dans `solar_system.orbit`, pas encore typés.
+  - `solar_system.facts` est un dictionnaire libre (masse, diamètre, période orbitale…) : vérifie le type de chaque valeur à l'usage.
+  - À confirmer côté API : sa doc annonce `"ly" | "yr"` pour l'unité de distance, et `"yr"` ressemble à une coquille. Les blocs `photometry`, `physical`, `discovery`, `content` et `custom` de la fiche complète sont typés non nuls ; à vérifier sur une vraie réponse d'objet du système solaire.
+- **Affichage dans une liste :** `getCatalogObjectTitle` et `getCatalogObjectSubtitle` (`src/helpers/journal/sessions.ts`). Le sous-titre traduit la catégorie via `tools/journal/sessions/add` (`observedObjects.categories`) : toute nouvelle catégorie de l'API doit y être ajoutée dans les trois langues, sinon sa valeur brute s'affiche. Le libellé de catalogue (Messier, NGC, IC) n'est déduit que d'un préfixe suivi d'un numéro, pour ne pas étiqueter « IC » un nom comme « Icarus ».
+
 ---
 
 ## 3. Internationalisation
@@ -102,7 +114,9 @@ météo, APOD, viseur polaire, météo spatiale), observatoires de l'utilisateur
 - **Ajouter un namespace :** crée le JSON dans chaque langue, puis ajoute l'import et l'entrée dans les trois blocs de `resources.ts`.
 - **Clés :** une clé ne répète pas le nom de son namespace (`t("recap.sessions")`, pas `t("profile.recap.sessions")`).
 - **Langues :** `fr` est la langue de référence et de repli. `en` et `it` peuvent être partielles : les clés absentes retombent sur le français. Tous les namespaces ont désormais un fichier dans les trois langues.
-- **Ne pas traduire au chargement d'un module :** un `i18next.t()` exécuté à l'import, comme les `label` de `src/helpers/observatories/observatories.ts`, est figé dans la langue du démarrage. Traduis dans le composant avec `t()`. Exemple : les options de type de lieu dans `StepTwo.tsx`. Pour une fonction déclarée hors du composant, passe-lui `t` en paramètre (exemple : `getCatalogObjectSubtitle` dans `AddSession.tsx`).
+- **Ne pas traduire au chargement d'un module :** un `i18next.t()` exécuté à l'import, comme les `label` de `src/helpers/observatories/observatories.ts`, est figé dans la langue du démarrage. Traduis dans le composant avec `t()`. Exemple : les options de type de lieu dans `StepTwo.tsx`. Pour une fonction déclarée hors du composant, passe-lui `t` en paramètre (exemple : `getCatalogObjectSubtitle` dans `src/helpers/journal/sessions.ts`).
+- **Clé d'un autre namespace :** une fonction partagée par des écrans de namespaces différents peut viser une clé précise avec `ns:clé`, quel que soit le namespace du `t` reçu. Exemple : `getCatalogObjectSubtitle` lit `tools/journal/sessions/add:observedObjects.categories.…`, depuis `AddSession` comme depuis `SessionDetails`.
+- **Composants partagés :** un composant réutilisable traduit lui-même ses libellés fixes dans `common`, sous une clé à son nom (`locationMapCard`, `usefulNightCard`, `downloadButton`). Les textes qui dépendent de l'écran restent passés en props, déjà traduits.
 - **Namespaces imbriqués :** un écran peut avoir son propre fichier sous celui de sa section. Par exemple, `tools/journal/sessions/add` (formulaire d'ajout de session) se trouve dans `locales/<langue>/tools/journal/sessions/add.json`, à côté de `tools/journal.json`. Le fichier `journal.json` et le dossier `journal/` coexistent sans problème.
 
 ---
@@ -161,7 +175,15 @@ météo, APOD, viseur polaire, météo spatiale), observatoires de l'utilisateur
 - **`ObservationCard` :** une observation, avec une illustration ronde (disque sombre sans `image`), la désignation, le nom et les détails. Le chevron est toujours affiché.
 - **`SessionCard` :** une session, sur carte sombre. Elle montre une pastille de date, le lieu, les horaires, et une colonne par note (`grades: { label, value }[]`, note sur `MAX_GRADE` = 5).
 - **`CheckboxCard` :** carte cochable qui contient la `Checkbox`. Toute la carte coche ou décoche. La `Checkbox` n'y est qu'un indicateur (`pointerEvents="none"`, masquée pour l'accessibilité), pour éviter un double déclenchement et une case annoncée deux fois.
+- **`ObjectCardLite` :** ligne d'objet observé, avec trois pastilles (oculaire, photo, dessin) et un bouton de suppression. `onPress`, `onRemove` et l'action de chaque pastille sont facultatifs : sans eux, la ligne est en lecture seule, avec des pastilles qui ne servent que d'indicateurs et sans bouton de suppression (exemple : `SessionDetails`).
 - **Toutes ces cartes :** sans `onPress`, elles ne réagissent pas au toucher. Les textes arrivent déjà formatés et traduits par l'appelant.
+
+### `LocationMapCard` (`src/components/cards/LocationMapCard/`)
+
+- **Rôle :** carte d'un lieu. Elle montre une mini-carte centrée sur le point (`MapTargetMarker`), la latitude et la longitude en DMS, l'altitude, et deux boutons : « Copier » (les coordonnées) et « Itinéraire » (Plans sur iOS, Google Maps ailleurs). Elle sert dans `ObservatoryDetails` et `SessionDetails`.
+- **Props :** `latitude`, `longitude` et `elevation`. Une altitude nulle ou absente s'affiche « Inconnue » ; 0 m reste une vraie valeur.
+- **Recentrage :** `initialRegion` de `MapView` n'agit qu'au premier rendu. Le composant recentre donc la carte (`animateToRegion`) quand les coordonnées changent, par exemple au retour sur la fiche d'un observatoire qu'on vient de modifier.
+- **Traductions :** `common`, clé `locationMapCard`.
 
 ### Journal d'observation : enregistrement d'une session (`AddSession`)
 
@@ -171,8 +193,17 @@ météo, APOD, viseur polaire, météo spatiale), observatoires de l'utilisateur
   - Pour un observatoire, la session garde une **copie sans l'image** (`location`), plus `observatoryId`. La copie reste lisible si l'observatoire change ou disparaît, et la photo en base64 n'est pas recopiée dans chaque session.
 - **Setups :** seuls leurs ids sont gardés pendant la saisie. Les vrais `Setup` sont retrouvés dans le store au moment d'enregistrer, donc à jour.
 - **Notes de ciel :** 0 (aucune étoile touchée) est enregistré comme `null`. Les champs `observations` (météores, comètes, etc.) ne sont pas encore saisis : ils valent `false`.
-- **Affichage d'une session enregistrée** (écran Journal, `SetupDetails`) : horaires avec `formatDate(...).format("HH:mm")`, durée avec `formatCompactDuration((endTime - startTime) / 60_000)`, lieu avec `formatLocationLabel` (§2). Une note `null` s'affiche comme 0.
-- **Écran Journal :** ses libellés sont traduits (`tools/journal`, fr, en, it). Les valeurs factices (dernier objet observé, succès, sessions récentes, statistiques autres que le nombre de sessions et les heures observées) restent en dur, en attendant d'être branchées sur le store.
+- **Affichage d'une session enregistrée** (écran Journal, `SetupDetails`, `SessionDetails`) : horaires avec `formatDate(...).format("HH:mm")`, durée avec `formatCompactDuration(getSessionMinutes(session))` (`src/helpers/journal/sessions.ts`), lieu avec `formatLocationLabel` (§2). Une note `null` s'affiche comme 0.
+- **Écran Journal :** ses libellés sont traduits (`tools/journal`, fr, en, it). La carte « Dernière session » et les trois sessions récentes viennent du store et mènent à la fiche de la session. Les autres valeurs restent factices, en dur, en attendant d'être branchées sur le store : seeing moyen, lieux visités, dernier objet observé, statistiques d'objets, succès, nombres du raccourci Matériel.
+
+### Journal d'observation : fiche d'une session (`SessionDetails`)
+
+- **Route :** `/tools/journal/sessions/[id]`. On y arrive depuis l'écran Journal (dernière session, sessions récentes) et depuis la fiche d'un setup.
+- **Contenu :** `SessionCard` en résumé (date complète en surtitre), compteurs d'objets (observés, photographiés, dessinés), `LocationMapCard`, objets observés en lecture seule (`ObjectCardLite`), setups utilisés, notes, bouton de suppression.
+- **Données d'origine :** le lieu et les setups affichés sont les copies enregistrées avec la session. Le lien « Voir l'observatoire » (en-tête de la section Lieu) et le lien de chaque setup n'apparaissent que si l'élément existe encore dans le store.
+- **Suppression :** `removeAstronomySession(id)`, sans confirmation, comme les fiches du matériel. La sortie de l'écran se fait dans un `useEffect`, quand la session a disparu : `router.back()`, ou `router.replace("/tools/journal")` s'il n'y a pas d'historique.
+- **Pas de bouton Modifier :** `AddSession` ne sait pas encore se préremplir à partir d'une session existante (§6).
+- **Traductions :** `tools/journal/sessions/details`.
 
 ### Observatoires : ajout et modification (`AddNewObservatoryScreen` / `StepOne`)
 
@@ -362,6 +393,9 @@ On ne peut pas lancer l'app depuis un agent. Méthodes utilisées jusqu'ici :
 - **Images fixes pour les 4 petites phases de `TonightView`** (5 contextes GL ramenés à 1) : jugé inutile pour l'instant, les performances suffisent.
 - **`SelectInput` :** un message « aucun résultat » dans le panneau de recherche, qui demande une prop de texte traduit.
 - **Fond de modale :** le fond assombri de `SelectInput` et de `DayDetailModal` monte avec le panneau (`animationType="slide"`). Un fondu séparé serait plus soigné.
+- **Modifier une session :** `AddSession` en mode modification (`?id=`, comme les formulaires de matériel), puis un bouton Modifier dans `SessionDetails`.
+- **Confirmation avant suppression** d'une session ou d'un matériel : aujourd'hui, la suppression est immédiate.
+- **Objets du système solaire** (types prêts, §2) : icônes par `kind`, positions et levers/couchers des planètes. `@observerly/astrometry` 0.67 fournit déjà `getPlanetaryPositions`, `getBodyNextRise` et `getBodyNextSet`, encore inutilisés : l'app ne calcule aujourd'hui que le Soleil et la Lune, donc le rendu des planètes reste à construire.
 
 ---
 
@@ -374,6 +408,8 @@ On ne peut pas lancer l'app depuis un agent. Méthodes utilisées jusqu'ici :
 | `src/helpers/observatories/observatories.ts` | Libellés traduits à l'import, donc figés dans la langue du démarrage (§3) |
 | `src/types/observatory.ts` | `ObservatoryEquipment` (`wifi`, `toilet`, `bedding`) ne correspond pas aux `id` de `observatoriesEquipments` (`internet`, `bathroom`, `kitchen`). Les données enregistrées utilisent les `id` de la liste |
 | Formulaires d'ajout de matériel (`src/screens/Tools/Journal/Gear/**/Add*`), sauf `AddMount` et `AddSetup` | Le bouton `Button` d'enregistrement est `disabled` quand un champ requis manque, sans aucun message : rien ne se passe au clic, sans explication. `AddSetup` affiche une erreur sur le champ nom à la place de `disabled` (voir §4 `Button`) ; les autres formulaires de matériel ne le sont pas encore |
+| `src/i18n/locales/{en,it}/tools/journal/gear/setups/details.json` | `pieceCount_one`/`pieceCount_other` contiennent encore `{{count}}`, alors que `SetupDetails` les appelle sans `count` (le nombre est affiché à part, comme dans le fichier `fr`) : « {{count}} pieces of gear » s'affiche tel quel en anglais et en italien |
+| `src/components/cards/ObjectCardLite/ObjectCardLite.tsx` | Libellé d'accessibilité du bouton de suppression écrit en dur en français (« Retirer de la liste ») |
 
 Quand l'un de ces problèmes est corrigé, retire sa ligne et note la correction au journal (§8).
 
@@ -396,6 +432,8 @@ Le journal commence avec le commit `8527e2f`. Les changements antérieurs, comme
 i18n, `SelectInput` ou `ImageHeaderScrollView`, sont décrits dans les sections ci-dessus mais n'ont pas
 d'entrée datée.
 
+- **2026-11-16** — même commit — catalogue d'objets préparé pour le système solaire : `kind`/`category` `"solar_system"`, `position` nullable, bloc `solar_system` de la fiche (éphémérides, faits), catégorie traduite en fr, en et it, libellés NGC/IC réservés aux désignations numérotées — §2, §3, §6.
+- **2026-11-16** — `5c33f04` (documenté après coup, le même jour) — fiche d'une session (`SessionDetails`), action `removeAstronomySession`, composant `LocationMapCard` extrait d'`ObservatoryDetails` (avec recentrage de la carte et altitude 0 m affichée), `ObjectCardLite` utilisable en lecture seule, Journal relié à la fiche — §3, §4, §6, §7.
 - **2026-11-15** — même commit —
   - modification d'un observatoire (même principe que le matériel, `?id=`), bouton Modifier d'`ObservatoryDetails` corrigé — §4 « Observatoires : ajout et modification » ;
   - `updateObservatory` ajouté au store ;

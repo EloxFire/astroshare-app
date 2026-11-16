@@ -46,7 +46,8 @@
       "cluster": "Cluster",
       "nebula": "Nebula",
       "star": "Star",
-      "other": "Other"
+      "other": "Other",
+      "solar_system": "Solar system"
     }
   },
   "gear": {

@@ -46,7 +46,8 @@
       "cluster": "Ammasso",
       "nebula": "Nebulosa",
       "star": "Stella",
-      "other": "Altro"
+      "other": "Altro",
+      "solar_system": "Sistema solare"
     }
   },
   "gear": {

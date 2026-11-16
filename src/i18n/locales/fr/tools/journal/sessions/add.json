@@ -46,7 +46,8 @@
       "cluster": "Amas",
       "nebula": "Nébuleuse",
       "star": "Étoile",
-      "other": "Autre"
+      "other": "Autre",
+      "solar_system": "Système solaire"
     }
   },
   "gear": {

@@ -1,14 +1,16 @@
-import { CatalogObjectDetail, CatalogObjectKind, CatalogObjectListResponse, CatalogObjectSummary } from "../../../types/catalog/CatalogObject";
+import { CatalogObjectCategory, CatalogObjectDetail, CatalogObjectKind, CatalogObjectListResponse, CatalogObjectSummary } from "../../../types/catalog/CatalogObject";
 
 // /v3/objects (public, pas d'auth) — remplace entièrement /v3/messier, /v3/ngc, /v3/ic, /v3/dso,
 // /v3/stars, /v3/search, qui n'existent plus sous /v3.
 
 export type ListObjectsParams = {
-  kind?: CatalogObjectKind;
-  category?: string;
-  type?: string;
+  kind?: CatalogObjectKind; // ex: "solar_system" pour ne lister que Soleil, Lune et planètes
+  category?: CatalogObjectCategory;
+  type?: string; // libre, pas de validation côté serveur
+  // Magnitude visuelle maximale. Exclut d'office les objets du système solaire (magnitude null).
   maxMag?: number;
   // Boîte du ciel en degrés ; raMin > raMax = boîte qui traverse 0°/360°, géré côté serveur.
+  // Exclut d'office les objets du système solaire (position null).
   bbox?: { raMin: number; raMax: number; decMin: number; decMax: number };
   page?: number; // défaut serveur : 1
   limit?: number; // défaut serveur : 200, max 2000
@@ -42,8 +44,10 @@ export const listObjects = async (params: ListObjectsParams = {}): Promise<Catal
 }
 
 // Recherche par nom/désignation ("m42", "ngc 1976", "betelgeuse", "hip 69673"...). Le serveur ne
-// throttle rien : debouncer côté appelant (voir useObjectSearch). Tri déjà fait côté serveur
-// (exact > préfixe > dso avant star > magnitude croissante) — ne pas retrier côté front.
+// throttle rien : debouncer côté appelant (voir useObjectSearch). Tri déjà fait côté serveur, ne pas
+// retrier côté front : correspondance exacte avant préfixe, puis par kind (solar_system, dso, star,
+// small_body), puis magnitude croissante (magnitudes null en fin de groupe). `limit` : 20 par défaut
+// côté serveur, 50 au maximum.
 export const searchObjects = async (query: string, limit?: number): Promise<CatalogObjectSummary[] | null> => {
   const trimmedQuery = query.trim();
   if (!trimmedQuery) return [];
@@ -66,8 +70,9 @@ export const searchObjects = async (query: string, limit?: number): Promise<Cata
   }
 }
 
-// Fiche complète. `id` doit être l'identifiant stable exact (ex: "NGC1976"), sensible à la casse —
-// pas de recherche floue ici, passer par searchObjects pour ça. null si l'id n'existe pas (404).
+// Fiche complète. `id` doit être l'identifiant stable exact (ex: "NGC1976", "HIP69673", "SS-MARS"),
+// sensible à la casse — pas de recherche floue ici, passer par searchObjects pour ça. null si l'id
+// n'existe pas (404). Le bloc propre au kind (dso, star, solar_system) n'est présent que pour ce kind.
 export const getObjectById = async (id: string): Promise<CatalogObjectDetail | null> => {
   try {
     const response = await fetch(`${process.env.EXPO_PUBLIC_ASTROSHARE_API_URL}/objects/${encodeURIComponent(id)}`);

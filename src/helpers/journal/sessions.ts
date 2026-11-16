@@ -30,9 +30,11 @@ export const getCatalogObjectTitle = (catalogObject: CatalogObjectSummary): stri
 // traduire au chargement du module : le libellé suit ainsi un changement de langue.
 export const getCatalogObjectSubtitle = (catalogObject: CatalogObjectSummary, t: TFunction): string => {
   const categoryLabel = t(`tools/journal/sessions/add:observedObjects.categories.${catalogObject.category}`, { defaultValue: catalogObject.category })
+  // Préfixe suivi d'un numéro : sans le chiffre, /^IC/i reconnaîtrait aussi un nom propre comme
+  // « Icarus » (petit corps, kind small_body) et lui collerait le libellé "IC".
   const catalogLabel = /^M\s?\d/.test(catalogObject.primary) ? "Messier"
-    : /^NGC/i.test(catalogObject.primary) ? "NGC"
-    : /^IC/i.test(catalogObject.primary) ? "IC"
+    : /^NGC\s?\d/i.test(catalogObject.primary) ? "NGC"
+    : /^IC\s?\d/i.test(catalogObject.primary) ? "IC"
     : null
 
   return [categoryLabel, catalogLabel].filter(Boolean).join(" · ")
