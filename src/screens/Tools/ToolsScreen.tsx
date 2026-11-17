@@ -47,6 +47,7 @@ const ToolsScreen = () => {
       <ScreenHeader title={t("screen.title")} disableBackButton />
       <View style={toolsScreenStyles.content}>
         <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
+          {/* TODO : Ne pas tenir compte des accents pour la recherche. "meteo" soit pouvoir retourner les outils météo sans avoir a taper "météo" avec l'accent*/}
           <InputWithIcon
             icon={Search}
             placeholder={t("screen.searchPlaceholder")}

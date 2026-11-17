@@ -80,7 +80,8 @@
     "rocket": {
       "title": "Il lanciatore",
       "variant": "Variante {{variant}}",
-      "orbitalRank": "{{rank}}° lancio orbitale del {{year}}"
+      "orbitalRank": "{{rank}}° lancio orbitale del {{year}}",
+      "viewLauncher": "Vedi il lanciatore"
     },
     "agency": {
       "viewAgency": "Vedi l'agenzia"
@@ -131,6 +132,48 @@
     "spacecraft": "Veicoli spaziali operati",
     "agencies": "Agenzie",
     "noLocation": "Posizione non disponibile",
+    "links": {
+      "info": "Scopri di più",
+      "wiki": "Wikipedia"
+    }
+  },
+  "launcher": {
+    "screenTitle": "Lanciatore",
+    "status": {
+      "active": "In servizio",
+      "inactive": "Ritirato"
+    },
+    "reusable": "Riutilizzabile",
+    "noDescription": "Nessuna descrizione disponibile.",
+    "specs": {
+      "title": "Caratteristiche",
+      "length": "Lunghezza",
+      "diameter": "Diametro",
+      "launchMass": "Massa al decollo",
+      "leoCapacity": "Capacità in orbita bassa",
+      "gtoCapacity": "Capacità in orbita di trasferimento geostazionaria",
+      "geoCapacity": "Capacità in orbita geostazionaria",
+      "ssoCapacity": "Capacità in orbita eliosincrona",
+      "thrust": "Spinta al decollo",
+      "apogee": "Apogeo",
+      "stages": "Stadi",
+      "maidenFlight": "Primo volo"
+    },
+    "stats": {
+      "title": "Statistiche di lancio",
+      "total": "Lanci totali",
+      "successful": "Riusciti",
+      "failed": "Falliti",
+      "pending": "In attesa",
+      "consecutiveSuccess": "Serie di successi in corso"
+    },
+    "landingStats": {
+      "title": "Statistiche di atterraggio",
+      "attempted": "Tentativi",
+      "successful": "Riusciti",
+      "failed": "Falliti",
+      "consecutiveSuccess": "Serie di successi in corso"
+    },
     "links": {
       "info": "Scopri di più",
       "wiki": "Wikipedia"

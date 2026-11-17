@@ -80,7 +80,8 @@
     "rocket": {
       "title": "Le lanceur",
       "variant": "Variante {{variant}}",
-      "orbitalRank": "{{rank}}ᵉ lancement orbital en {{year}}"
+      "orbitalRank": "{{rank}}ᵉ lancement orbital en {{year}}",
+      "viewLauncher": "Voir le lanceur"
     },
     "agency": {
       "viewAgency": "Voir l'agence"
@@ -131,6 +132,48 @@
     "spacecraft": "Vaisseaux opérés",
     "agencies": "Agences",
     "noLocation": "Localisation non disponible",
+    "links": {
+      "info": "En savoir plus",
+      "wiki": "Wikipédia"
+    }
+  },
+  "launcher": {
+    "screenTitle": "Lanceur",
+    "status": {
+      "active": "En service",
+      "inactive": "Retiré"
+    },
+    "reusable": "Réutilisable",
+    "noDescription": "Aucune description disponible.",
+    "specs": {
+      "title": "Caractéristiques",
+      "length": "Longueur",
+      "diameter": "Diamètre",
+      "launchMass": "Masse au décollage",
+      "leoCapacity": "Capacité en orbite basse",
+      "gtoCapacity": "Capacité en orbite de transfert géostationnaire",
+      "geoCapacity": "Capacité en orbite géostationnaire",
+      "ssoCapacity": "Capacité en orbite héliosynchrone",
+      "thrust": "Poussée au décollage",
+      "apogee": "Apogée",
+      "stages": "Étages",
+      "maidenFlight": "Premier vol"
+    },
+    "stats": {
+      "title": "Statistiques de lancement",
+      "total": "Lancements au total",
+      "successful": "Réussis",
+      "failed": "Échoués",
+      "pending": "En attente",
+      "consecutiveSuccess": "Série de succès en cours"
+    },
+    "landingStats": {
+      "title": "Statistiques d'atterrissage",
+      "attempted": "Tentatives",
+      "successful": "Réussis",
+      "failed": "Échoués",
+      "consecutiveSuccess": "Série de succès en cours"
+    },
     "links": {
       "info": "En savoir plus",
       "wiki": "Wikipédia"

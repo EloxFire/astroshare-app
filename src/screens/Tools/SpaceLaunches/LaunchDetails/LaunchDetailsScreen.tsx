@@ -27,7 +27,6 @@ import SectionHeader from "../../../../components/layout/SectionHeader/SectionHe
 const LaunchDetailsScreen = () => {
   const launchId = useLocalSearchParams().id as string;
   const { t } = useTranslation("tools/spaceLaunches");
-  const { formatDate } = useAppUnits();
   const { getLaunchById } = useSpaceLaunches();
   const launch = getLaunchById(launchId);
 
@@ -127,28 +126,7 @@ const LaunchDetailsScreen = () => {
           <View style={launchDetailsScreenStyles.section}>
             <SectionHeader title={t("details.rocket.title")} />
             <View style={launchDetailsScreenStyles.rocketRow}>
-              <View style={launchDetailsScreenStyles.rocketCard}>
-                <View>
-                  <Text style={launchDetailsScreenStyles.rocketCard.name}>{launch.rocket.configuration.name}</Text>
-                  <Text style={launchDetailsScreenStyles.rocketCard.subtitle}>
-                    {launch.rocket.configuration.variant
-                      ? t("details.rocket.variant", { variant: launch.rocket.configuration.variant })
-                      : launch.rocket.configuration.full_name}
-                  </Text>
-                </View>
-                {/* orbital_launch_attempt_count_year compte tous les lancements orbitaux (toutes
-                    agences confondues), pas seulement ceux de ce lanceur — pas de compteur par
-                    fusée côté API, on affiche donc ce repère-là plutôt qu'un chiffre inventé. */}
-                {launch.orbital_launch_attempt_count_year != null && (
-                  <Text style={launchDetailsScreenStyles.rocketCard.highlight}>
-                    {t("details.rocket.orbitalRank", {
-                      rank: launch.orbital_launch_attempt_count_year,
-                      year: formatDate(launch.net).format("YYYY"),
-                    })}
-                  </Text>
-                )}
-              </View>
-
+              <RocketCard launch={launch} />
               <AgencyCard launch={launch} />
             </View>
           </View>
@@ -173,6 +151,53 @@ const LaunchDetailsScreen = () => {
         </View>
       </ImageHeaderScrollView>
     </View>
+  );
+}
+
+// Carte lanceur de la section "Le lanceur" : lien vers la fiche dédiée uniquement si
+// rocket.configuration.id est présent (pas garanti par la doc pour l'objet embarqué, voir
+// RocketConfiguration dans Launch.ts) — sinon la carte reste affichée mais non cliquable.
+const RocketCard = ({ launch }: { launch: Launch }) => {
+  const { t } = useTranslation("tools/spaceLaunches");
+  const { formatDate } = useAppUnits();
+  const launcherId = launch.rocket.configuration.id;
+
+  const content = (
+    <>
+      <View>
+        <Text style={launchDetailsScreenStyles.rocketCard.name}>{launch.rocket.configuration.name}</Text>
+        <Text style={launchDetailsScreenStyles.rocketCard.subtitle}>
+          {launch.rocket.configuration.variant
+            ? t("details.rocket.variant", { variant: launch.rocket.configuration.variant })
+            : launch.rocket.configuration.full_name}
+        </Text>
+      </View>
+
+      <View style={launchDetailsScreenStyles.rocketCard.footer}>
+        {/* orbital_launch_attempt_count_year compte tous les lancements orbitaux (toutes agences
+            confondues), pas seulement ceux de ce lanceur — pas de compteur par fusée côté API, on
+            affiche donc ce repère-là plutôt qu'un chiffre inventé. */}
+        {launch.orbital_launch_attempt_count_year != null && (
+          <Text style={launchDetailsScreenStyles.rocketCard.highlight}>
+            {t("details.rocket.orbitalRank", {
+              rank: launch.orbital_launch_attempt_count_year,
+              year: formatDate(launch.net).format("YYYY"),
+            })}
+          </Text>
+        )}
+        {launcherId != null && <Text style={launchDetailsScreenStyles.rocketCard.link}>{t("details.rocket.viewLauncher")}</Text>}
+      </View>
+    </>
+  );
+
+  if (launcherId == null) {
+    return <View style={launchDetailsScreenStyles.rocketCard}>{content}</View>;
+  }
+
+  return (
+    <TouchableOpacity style={launchDetailsScreenStyles.rocketCard} onPress={() => router.push(`/tools/space-launches/launcher/${launcherId}`)}>
+      {content}
+    </TouchableOpacity>
   );
 }
 

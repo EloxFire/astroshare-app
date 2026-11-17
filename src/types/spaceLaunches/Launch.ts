@@ -26,6 +26,10 @@ export type LaunchServiceProvider = {
 }
 
 export type RocketConfiguration = {
+  // Pas documenté pour l'objet embarqué dans un lancement (même remarque que LaunchPad.id
+  // ci-dessous), mais nécessaire pour lier vers la fiche dédiée (/v3/launchers/:id) — absent :
+  // pas de lien affiché.
+  id?: number;
   name: string;
   full_name: string;
   variant?: string | null;

@@ -113,10 +113,22 @@ export const launchDetailsScreenStyles = {
       marginTop: 2,
     },
 
+    footer: {
+      display: "flex" as const,
+      flexDirection: "column" as const,
+      gap: 4,
+    },
+
     highlight: {
       fontFamily: "ZTNatureBold",
       fontSize: 13,
       color: app_colors.ambre.main,
+    },
+
+    link: {
+      fontFamily: "ZTNatureBold",
+      fontSize: 13,
+      color: app_colors.white,
     },
   },
 

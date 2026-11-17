@@ -80,7 +80,8 @@
     "rocket": {
       "title": "The rocket",
       "variant": "{{variant}} variant",
-      "orbitalRank": "Orbital launch #{{rank}} of {{year}}"
+      "orbitalRank": "Orbital launch #{{rank}} of {{year}}",
+      "viewLauncher": "View launcher"
     },
     "agency": {
       "viewAgency": "View agency"
@@ -131,6 +132,48 @@
     "spacecraft": "Spacecraft operated",
     "agencies": "Agencies",
     "noLocation": "Location not available",
+    "links": {
+      "info": "Learn more",
+      "wiki": "Wikipedia"
+    }
+  },
+  "launcher": {
+    "screenTitle": "Launcher",
+    "status": {
+      "active": "Active",
+      "inactive": "Retired"
+    },
+    "reusable": "Reusable",
+    "noDescription": "No description available.",
+    "specs": {
+      "title": "Specifications",
+      "length": "Length",
+      "diameter": "Diameter",
+      "launchMass": "Launch mass",
+      "leoCapacity": "LEO capacity",
+      "gtoCapacity": "GTO capacity",
+      "geoCapacity": "GEO capacity",
+      "ssoCapacity": "SSO capacity",
+      "thrust": "Liftoff thrust",
+      "apogee": "Apogee",
+      "stages": "Stages",
+      "maidenFlight": "Maiden flight"
+    },
+    "stats": {
+      "title": "Launch statistics",
+      "total": "Total launches",
+      "successful": "Successful",
+      "failed": "Failed",
+      "pending": "Pending",
+      "consecutiveSuccess": "Current success streak"
+    },
+    "landingStats": {
+      "title": "Landing statistics",
+      "attempted": "Attempted",
+      "successful": "Successful",
+      "failed": "Failed",
+      "consecutiveSuccess": "Current success streak"
+    },
     "links": {
       "info": "Learn more",
       "wiki": "Wikipedia"
