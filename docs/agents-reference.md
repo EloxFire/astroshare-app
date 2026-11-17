@@ -128,7 +128,11 @@ météo, APOD, viseur polaire, météo spatiale), observatoires de l'utilisateur
 - **Carte du monde (`SatelliteGroundTrackMap`) :** tracé SVG maison en pointillés (`<Pattern>` +
   `<Circle>` de `react-native-svg`), projection équirectangulaire simple, données terrestres Natural
   Earth 1:110m (domaine public). Pas de `react-native-maps` : rendu 2D stylisé choisi plutôt qu'une
-  vraie carte, pour rester fidèle à la maquette sans dépendance supplémentaire.
+  vraie carte, pour rester fidèle à la maquette sans dépendance supplémentaire. Le point de position
+  actuelle a un halo animé en boucle (`Animated.Circle` de `react-native-svg`, rayon/opacité
+  interpolés, `useNativeDriver: false` — pas de pilotage natif possible sur des props SVG). Prop
+  `embedded` : désactive le fond/arrondi/padding propres au composant quand il est posé dans un bloc
+  déjà sombre (voir le header fusionné de `SatelliteDetailsScreen`, §4 `ScreenHeader`).
 - **Accès PRO :** `isProUser(authUser)` (`src/helpers/auth/subscription.ts`) teste `role` parmi
   `SUBSCRIBER`/`PARTNER`/`ADMIN`. Premier usage de ce genre de garde dans l'app ; généralisé en
   `LockedFeatureCard` (§4) plutôt que construit en carte unique pour cet écran, puisqu'un même besoin
@@ -159,6 +163,11 @@ météo, APOD, viseur polaire, météo spatiale), observatoires de l'utilisateur
 
 - **Variantes :** `main` (fond foncé, titre blanc) ou secondaire (`main={false}`, fond clair).
 - **Prop `image` :** elle n'agit que sur un header secondaire. Le header passe à `IMAGE_HEADER_HEIGHT` (250), affiche l'image en fond avec un dégradé sombre léger, passe le texte et le chevron en blanc, et met la barre de statut en icônes claires tant que l'écran a le focus. L'utilisateur a demandé de ne pas modifier la mise en page du texte dans cette variante : seules les couleurs changent.
+- **Sous-titre en `main` :** longtemps réservé au header secondaire (`!main`), il s'affiche désormais aussi en `main` (texte blanc atténué, style `subtitle.onDark`).
+- **Prop `compact` :** en `main`, ramène le titre à la taille de la variante secondaire (20px) tout en gardant le blanc — pour un header fusionné avec un bloc attenant qui reprend déjà le titre en grand (voir `SatelliteDetailsScreen` ci-dessous). Sans effet si `!main`.
+- **Prop `backgroundColor` :** remplace la couleur de fond par défaut (celle de `main`/secondaire), sans toucher à la couleur du texte/bouton retour ni à l'affichage du sous-titre, qui restent pilotés par `main` seul.
+- **Prop `customElement` :** rendu juste sous le titre/sous-titre (déclarée de longue date dans l'interface, jamais câblée avant — maintenant branchée).
+- **Fusionner le header avec un bloc attenant (même fond, un seul bord arrondi en bas)** : header en `main` sans `title`, puis un `View` juste en dessous avec le même `backgroundColor: app_colors.primary.main` et l'arrondi (`radius.heroCard`) uniquement sur les coins du bas — aucun des deux blocs n'a de gap ni de radius en haut, donc ils se lisent comme une seule pièce. Pattern déjà utilisé par `ProfileScreen` (photo de profil), repris par `SatelliteDetailsScreen` (titre en `compact` directement dans le header, puis badges + carte de trace au sol dans le bloc attenant).
 
 ### `Button` (`src/components/buttons/Button/`)
 
@@ -501,6 +510,13 @@ Le journal commence avec le commit `8527e2f`. Les changements antérieurs, comme
 i18n, `SelectInput` ou `ImageHeaderScrollView`, sont décrits dans les sections ci-dessus mais n'ont pas
 d'entrée datée.
 
+- **2026-11-18** — même commit — fiche satellite (`SatelliteDetailsScreen`) retouchée après retour
+  utilisateur sur les maquettes : header fusionné avec le bloc titre/carte (même fond `primary.main`,
+  un seul arrondi en bas), valeurs lat/long/altitude/vitesse déplacées sous la carte, point de
+  position agrandi avec un halo animé en boucle. `ScreenHeader` gagne au passage un sous-titre
+  utilisable en `main`, une prop `compact` (titre réduit sur fond sombre) et une prop
+  `backgroundColor`, et câble enfin sa prop `customElement` (déclarée depuis longtemps, jamais
+  utilisée) — §2, §4.
 - **2026-11-18** — même commit — nouvel outil Suivi de satellites : écrans liste et fiche détaillée
   (position live et trace au sol calculées localement en SGP4 via `satellite.js`, carte du monde en
   pointillés dessinée en SVG à partir de données Natural Earth, passages visibles, orbite, fiche

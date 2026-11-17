@@ -13,6 +13,21 @@ export const satelliteDetailsScreenStyles = {
     color: app_colors.primary.medium,
   },
 
+  // Bloc fusionné avec ScreenHeader (même fond primary.main, posé juste en dessous sans espace ni
+  // arrondi en haut) : badges et carte de trace au sol forment une seule pièce visuelle avec le
+  // titre/sous-titre du header jusqu'à l'arrondi du bas — même méthode que ProfileScreen (header +
+  // bloc attenant). Le titre/sous-titre restent dans ScreenHeader (prop `compact`), pas ici.
+  heroHeader: {
+    backgroundColor: app_colors.primary.main,
+    paddingHorizontal: spacing.screen.horizontal,
+    paddingBottom: 14,
+    borderBottomLeftRadius: radius.heroCard,
+    borderBottomRightRadius: radius.heroCard,
+    display: "flex" as const,
+    flexDirection: "column" as const,
+    gap: 10,
+  },
+
   tags: {
     display: "flex" as const,
     flexDirection: "row" as const,

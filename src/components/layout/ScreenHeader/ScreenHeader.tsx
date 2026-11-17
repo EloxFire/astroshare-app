@@ -30,9 +30,17 @@ interface ScreenHeaderProps {
   // alors à une hauteur fixe, avec le texte et le bouton retour en blanc.
   image?: ImageSourcePropType;
   noBackground?: boolean;
+  // Remplace le fond par défaut (primary.main en `main`, background clair sinon), sans toucher au
+  // reste : `main` continue de piloter la couleur du texte/bouton retour et l'affichage du
+  // sous-titre, indépendamment de cette couleur.
+  backgroundColor?: string;
+  // Titre à la taille de la variante secondaire (20px) mais en blanc, pour un header `main` fusionné
+  // avec un bloc attenant qui porte déjà la mise en avant visuelle (voir SatelliteDetailsScreen).
+  // Ignoré si `!main` (la variante secondaire a déjà sa propre petite taille).
+  compact?: boolean;
 }
 
-export const ScreenHeader = ({ title, main = true, disableBackButton = false, subtitle, customElement, image, noBackground = false }: ScreenHeaderProps) => {
+export const ScreenHeader = ({ title, main = true, disableBackButton = false, subtitle, customElement, image, noBackground = false, backgroundColor, compact = false }: ScreenHeaderProps) => {
   const canGoBack = router.canGoBack();
   const pathname = usePathname();
 
@@ -61,7 +69,7 @@ export const ScreenHeader = ({ title, main = true, disableBackButton = false, su
   }
 
   return (
-      <SafeAreaView style={[screenHeaderStyles.container, !main && screenHeaderStyles.container.light, withImage && screenHeaderStyles.container.withImage, noBackground && screenHeaderStyles.container.noBackground]}>
+      <SafeAreaView style={[screenHeaderStyles.container, !main && screenHeaderStyles.container.light, withImage && screenHeaderStyles.container.withImage, noBackground && screenHeaderStyles.container.noBackground, backgroundColor !== undefined && { backgroundColor }]}>
         {
           withImage && (
             <>
@@ -107,10 +115,11 @@ export const ScreenHeader = ({ title, main = true, disableBackButton = false, su
           {
             title && (
               <View >
-                <Text style={[screenHeaderStyles.container.titleContainer.title, !main && screenHeaderStyles.container.titleContainer.title.light, withImage && screenHeaderStyles.container.titleContainer.title.onImage, noBackground && screenHeaderStyles.container.titleContainer.title.noBackground]}>{title}</Text>
-                {subtitle && !main && (
-                  <Text style={[screenHeaderStyles.container.titleContainer.subtitle, withImage && screenHeaderStyles.container.titleContainer.subtitle.onImage]}>{subtitle}</Text>
+                <Text style={[screenHeaderStyles.container.titleContainer.title, !main && screenHeaderStyles.container.titleContainer.title.light, withImage && screenHeaderStyles.container.titleContainer.title.onImage, noBackground && screenHeaderStyles.container.titleContainer.title.noBackground, main && compact && screenHeaderStyles.container.titleContainer.title.compact]}>{title}</Text>
+                {subtitle && (
+                  <Text style={[screenHeaderStyles.container.titleContainer.subtitle, withImage && screenHeaderStyles.container.titleContainer.subtitle.onImage, main && screenHeaderStyles.container.titleContainer.subtitle.onDark]}>{subtitle}</Text>
                 )}
+                {customElement}
               </View>
             )
           }

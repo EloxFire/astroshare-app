@@ -58,7 +58,7 @@
   "details": {
     "screenTitle": "Satellite",
     "notFound": "Couldn't load this page.",
-    "subtitle": "{{catalogName}} · NORAD {{noradId}}",
+    "subtitle": "NORAD {{noradId}}",
     "stats": {
       "latitude": "latitude",
       "longitude": "longitude",

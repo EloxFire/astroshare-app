@@ -5,9 +5,20 @@ export const satelliteGroundTrackMapStyles = {
   // continents et les traces de couleur n'ont de contraste que sur ce fond précis.
   container: {
     backgroundColor: app_colors.primary.main,
-    borderRadius: radius.mediumCard,
+    borderRadius: radius.heroCard,
     overflow: "hidden" as const,
     padding: 10,
+    borderWidth: 1,
+    borderColor: withOpacity(app_colors.white, 0.2),
+
+    // Intégré dans un bloc déjà sombre (ex: en-tête fusionné) : le parent fournit déjà le fond,
+    // l'arrondi et la respiration horizontale, sinon ils se cumuleraient.
+    embedded: {
+      backgroundColor: "transparent",
+      borderRadius: radius.heroCard,
+      padding: 0,
+      paddingTop: 10,
+    },
   },
 
   map: {
@@ -17,6 +28,7 @@ export const satelliteGroundTrackMapStyles = {
   legend: {
     display: "flex" as const,
     flexDirection: "row" as const,
+    justifyContent: "center" as const,
     gap: 14,
     paddingTop: 8,
 

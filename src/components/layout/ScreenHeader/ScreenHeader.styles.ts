@@ -86,6 +86,13 @@ export const screenHeaderStyles = {
         },
         noBackground: {
           color: app_colors.white,
+        },
+
+        // `main` + `compact` : même taille que la variante secondaire (`light`), mais en blanc —
+        // pour un header fusionné avec un bloc attenant qui porte déjà la mise en avant visuelle
+        // (ex: SatelliteDetailsScreen, où le titre est repris en grand juste en dessous).
+        compact: {
+          fontSize: 20,
         }
       },
 
@@ -104,6 +111,12 @@ export const screenHeaderStyles = {
         // Même logique que title.onImage ; blanc atténué pour garder la hiérarchie titre/sous-titre
         // (équivalent de primary.medium sur fond clair).
         onImage: {
+          color: withOpacity(app_colors.white, 0.8),
+        },
+
+        // Header principal (fond primary.main, pas d'image) : même teinte que onImage, le fond est
+        // le même violet sombre dans les deux cas.
+        onDark: {
           color: withOpacity(app_colors.white, 0.8),
         }
       }

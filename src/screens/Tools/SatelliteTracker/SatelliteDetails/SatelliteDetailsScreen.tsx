@@ -136,14 +136,10 @@ const SatelliteDetailsScreen = () => {
 
   return (
     <View style={globalStyles.screen}>
-      <ScreenHeader
-        title={catalog.object_name}
-        main={false}
-        subtitle={t("details.subtitle", { catalogName: catalog.object_name, noradId: catalog.norad_id })}
-      />
+      <ScreenHeader title={catalog.object_name} subtitle={t("details.subtitle", { noradId: catalog.norad_id })} compact />
 
       <ScrollView>
-        <View style={globalStyles.content}>
+        <View style={satelliteDetailsScreenStyles.heroHeader}>
           <View style={satelliteDetailsScreenStyles.tags}>
             <Badge
               text={t(`opsStatus.${resolveOpsStatusKey(catalog.ops_status.label)}`)}
@@ -154,6 +150,15 @@ const SatelliteDetailsScreen = () => {
               <Badge text={t("screen.live")} backgroundColor="transparent" borderColor={app_colors.red.main} foregroundColor={app_colors.red.main} />
             )}
           </View>
+
+          {groundTrack.length > 0 && (
+            <SatelliteGroundTrackMap
+              trackPoints={groundTrack}
+              currentPosition={livePosition}
+              observer={observer}
+              embedded
+            />
+          )}
 
           <View style={satelliteDetailsScreenStyles.statsGrid}>
             <View style={satelliteDetailsScreenStyles.statsGrid.tile}>
@@ -181,17 +186,12 @@ const SatelliteDetailsScreen = () => {
               <Text style={satelliteDetailsScreenStyles.statsGrid.tile.label}>{t("details.stats.speed")}</Text>
             </View>
           </View>
+        </View>
 
-          {groundTrack.length > 0 && (
-            <SatelliteGroundTrackMap
-              trackPoints={groundTrack}
-              currentPosition={livePosition}
-              observer={observer}
-            />
-          )}
+        <View style={globalStyles.content}>
 
           <View style={satelliteDetailsScreenStyles.section}>
-            <SectionHeader title={t("details.passes.title")} />
+            <SectionHeader title={t("details.passes.title")} subtitle={location?.name} />
 
             {passes === null && <ActivityIndicator color={app_colors.accent.main} />}
 

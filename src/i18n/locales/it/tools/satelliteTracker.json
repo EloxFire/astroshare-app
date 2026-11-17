@@ -58,7 +58,7 @@
   "details": {
     "screenTitle": "Satellite",
     "notFound": "Impossibile caricare questa scheda.",
-    "subtitle": "{{catalogName}} · NORAD {{noradId}}",
+    "subtitle": "NORAD {{noradId}}",
     "stats": {
       "latitude": "latitudine",
       "longitude": "longitudine",

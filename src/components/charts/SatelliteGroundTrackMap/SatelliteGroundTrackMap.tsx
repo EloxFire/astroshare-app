@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { View, Text } from "react-native";
+import { useEffect, useRef, useState } from "react";
+import { Animated, Easing, View, Text } from "react-native";
 import { useTranslation } from "react-i18next";
 import Svg, { Circle, Defs, Path, Pattern } from "react-native-svg";
 import { satelliteGroundTrackMapStyles } from "./SatelliteGroundTrackMap.styles";
@@ -11,6 +11,9 @@ interface SatelliteGroundTrackMapProps {
   trackPoints: GroundTrackPoint[];
   currentPosition?: { latitude: number; longitude: number } | null;
   observer?: { latitude: number; longitude: number; label?: string } | null;
+  // Pour l'intégrer dans un bloc déjà sombre (ex: l'en-tête fusionné de SatelliteDetailsScreen) :
+  // le composant perd alors son propre fond/arrondi/padding, pour ne pas dédoubler ceux du parent.
+  embedded?: boolean;
 }
 
 const { width: VB_WIDTH, height: VB_HEIGHT } = WORLD_LAND_PATH_VIEWBOX;
@@ -48,7 +51,14 @@ const buildRuns = (points: GroundTrackPoint[]): { x: number; y: number }[][] => 
 const pathFromRun = (run: { x: number; y: number }[]): string =>
   "M" + run.map(({ x, y }, i) => (i === 0 ? `${x},${y}` : `L${x},${y}`)).join(" ");
 
-const DOT_PATTERN_SIZE = 7;
+const DOT_PATTERN_SIZE = 9;
+
+// Halo de pulsation autour du point de position actuelle : un cercle animé en boucle, qui grandit
+// et s'estompe (rayon et opacité interpolés sur la même valeur), par-dessus le point fixe.
+const AnimatedCircle = Animated.createAnimatedComponent(Circle);
+const PULSE_DURATION_MS = 1500;
+const PULSE_MIN_RADIUS = 20;
+const PULSE_MAX_RADIUS = 40;
 
 /**
  * <SatelliteGroundTrackMap trackPoints={points} currentPosition={{latitude, longitude}} observer={location} />
@@ -57,10 +67,28 @@ const DOT_PATTERN_SIZE = 7;
  * sol d'un satellite : tronçon passé en pointillés, tronçon à venir en trait plein, repère de
  * l'observateur et position actuelle. Fond sombre dédié — voir SatelliteGroundTrackMap.styles.ts.
  */
-const SatelliteGroundTrackMap = ({ trackPoints, currentPosition, observer }: SatelliteGroundTrackMapProps) => {
+const SatelliteGroundTrackMap = ({ trackPoints, currentPosition, observer, embedded = false }: SatelliteGroundTrackMapProps) => {
   const { t } = useTranslation("tools/satelliteTracker");
   const [width, setWidth] = useState(0);
   const height = width / (VB_WIDTH / VB_HEIGHT);
+
+  // Boucle indépendante du rafraîchissement de la position (toutes les secondes, voir l'écran
+  // appelant) : l'animation tourne en continu, pas de reset à chaque nouvelle position reçue.
+  const pulse = useRef(new Animated.Value(0)).current;
+  useEffect(() => {
+    const loop = Animated.loop(
+      Animated.timing(pulse, {
+        toValue: 1,
+        duration: PULSE_DURATION_MS,
+        easing: Easing.out(Easing.ease),
+        useNativeDriver: false, // rayon/opacité SVG : pas de pilotage natif possible
+      })
+    );
+    loop.start();
+    return () => loop.stop();
+  }, [pulse]);
+  const pulseRadius = pulse.interpolate({ inputRange: [0, 1], outputRange: [PULSE_MIN_RADIUS, PULSE_MAX_RADIUS] });
+  const pulseOpacity = pulse.interpolate({ inputRange: [0, 1], outputRange: [0.45, 0] });
 
   const pastRuns = buildRuns(trackPoints.filter((p) => p.relative === "past"));
   // Le dernier point "passé" est repris en tête du futur, pour que les deux tronçons se rejoignent
@@ -72,13 +100,13 @@ const SatelliteGroundTrackMap = ({ trackPoints, currentPosition, observer }: Sat
   const observerPoint = observer ? project(observer.latitude, observer.longitude) : null;
 
   return (
-    <View style={satelliteGroundTrackMapStyles.container}>
+    <View style={[satelliteGroundTrackMapStyles.container, embedded && satelliteGroundTrackMapStyles.container.embedded]}>
       <View style={satelliteGroundTrackMapStyles.map} onLayout={(e) => setWidth(e.nativeEvent.layout.width)}>
         {width > 0 && (
           <Svg width={width} height={height} viewBox={`0 0 ${VB_WIDTH} ${VB_HEIGHT}`}>
             <Defs>
               <Pattern id="landDots" width={DOT_PATTERN_SIZE} height={DOT_PATTERN_SIZE} patternUnits="userSpaceOnUse">
-                <Circle cx={1.1} cy={1.1} r={1.1} fill={withOpacity(app_colors.white, 0.35)} />
+                <Circle cx={1.5} cy={1.5} r={1.5} fill={withOpacity(app_colors.white, 0.5)} />
               </Pattern>
             </Defs>
 
@@ -113,8 +141,8 @@ const SatelliteGroundTrackMap = ({ trackPoints, currentPosition, observer }: Sat
 
             {current && (
               <>
-                <Circle cx={current.x} cy={current.y} r={9} fill={withOpacity(app_colors.yellow.main, 0.25)} />
-                <Circle cx={current.x} cy={current.y} r={4.5} fill={app_colors.yellow.main} stroke={app_colors.primary.main} strokeWidth={1.5} />
+                <AnimatedCircle cx={current.x} cy={current.y} r={pulseRadius} fill={app_colors.yellow.main} fillOpacity={pulseOpacity} />
+                <Circle cx={current.x} cy={current.y} r={15} fill={app_colors.yellow.main} stroke={app_colors.primary.main} strokeWidth={2} />
               </>
             )}
           </Svg>

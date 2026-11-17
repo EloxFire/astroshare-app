@@ -1,4 +1,7 @@
 {
+  "screen": {
+    "title": "Mon profil"
+  },
   "recap": {
     "sessions": "sessions",
     "hoursObserved": "observées",

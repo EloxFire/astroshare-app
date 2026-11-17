@@ -9,7 +9,10 @@ export const profileScreenStyles = {
     alignItems: "center" as const,
     backgroundColor: app_colors.primary.main,
     paddingBottom: 10,
-
+    borderBottomLeftRadius: radius.heroCard,
+    borderBottomRightRadius: radius.heroCard,
+    gap: 10,
+    
     profilePicture: {
       width: 80,
       height: 80,
