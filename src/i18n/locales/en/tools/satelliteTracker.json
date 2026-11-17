@@ -1,0 +1,104 @@
+{
+  "screen": {
+    "title": "Satellites",
+    "locationBanner": "Passes seen from {{location}}",
+    "locationBannerUnknown": "Passes seen from your position",
+    "changeLocation": "Change",
+    "stations": "Space stations",
+    "live": "Live",
+    "others": "Also worth following",
+    "mine": "My satellites",
+    "locked": {
+      "title": "Track any object",
+      "description": "Over 71,000 satellites, rocket stages and debris, added with their NORAD ID.",
+      "cta": "Discover Astroshare PRO"
+    },
+    "addByNoradId": "Add by NORAD ID"
+  },
+  "featured": {
+    "iss": "ISS",
+    "tiangong": "Tiangong"
+  },
+  "passDay": {
+    "today": "Today",
+    "tomorrow": "Tomorrow"
+  },
+  "objectType": {
+    "payload": "Payload",
+    "rocket_body": "Rocket body",
+    "debris": "Debris",
+    "unknown": "Unknown type"
+  },
+  "opsStatus": {
+    "operational": "Operational",
+    "nonoperational": "Non-operational",
+    "partially_operational": "Partially operational",
+    "backup_standby": "Backup/standby",
+    "spare": "Spare",
+    "extended_mission": "Extended mission",
+    "decayed": "Decayed",
+    "unknown": "Unknown status"
+  },
+  "passQuality": {
+    "excellent": "Excellent",
+    "good": "Visible",
+    "faint": "Faint"
+  },
+  "coordinates": {
+    "north": "N",
+    "south": "S",
+    "east": "E",
+    "west": "W"
+  },
+  "groundTrack": {
+    "past": "Last 45 minutes",
+    "future": "Next 90 minutes"
+  },
+  "duration": "{{hours}}h{{minutes}}",
+  "details": {
+    "screenTitle": "Satellite",
+    "notFound": "Couldn't load this page.",
+    "subtitle": "{{catalogName}} · NORAD {{noradId}}",
+    "stats": {
+      "latitude": "latitude",
+      "longitude": "longitude",
+      "altitude": "altitude",
+      "speed": "speed"
+    },
+    "passes": {
+      "title": "Upcoming passes",
+      "none": "No visible pass expected in the coming days from your position.",
+      "nextVisible": "Next visible pass"
+    },
+    "orbit": {
+      "title": "Orbit",
+      "periodValue": "{{value}} min",
+      "period": "period",
+      "revsPerDay": "period · {{value}} revs/day",
+      "inclination": "inclination",
+      "perigee": "Perigee",
+      "apogee": "Apogee",
+      "rcs": "Radar size (RCS)",
+      "rcsUnavailable": "data not available",
+      "spreadNote": "Near-circular orbit: {{value}} km gap between the lowest and highest point."
+    },
+    "identity": {
+      "title": "Identity card",
+      "type": "Type",
+      "launch": "Launch",
+      "designator": "Designator",
+      "owner": "Owner",
+      "decayDate": "Decay date",
+      "catalogUpdate": "Catalog data"
+    }
+  },
+  "addModal": {
+    "title": "Add a satellite",
+    "label": "NORAD ID",
+    "placeholder": "E.g. 25544",
+    "helper": "The NORAD catalog number, found on CelesTrak or Heavens-Above.",
+    "notFound": "No satellite matches this ID.",
+    "confirm": "Add to my satellites",
+    "alreadyTracked": "Already in my satellites"
+  }
+}

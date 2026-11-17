@@ -17,6 +17,7 @@ export type UserSettingsState = {
   observatories: Observatory[];
   activeObservatoryId: string | null; //uuid d'un observatoire - null = position gps actuelle
   lastKnownLocation: GpsLocation | null; // null = pas encore de position gps connue
+  trackedSatellites: number[]; // IDs NORAD suivis (outil Satellites, "Mes satellites")
   units: {
     time: "utc" | "local";
     // Ne compte que si time === "local" : null = fuseau horaire de l'appareil (défaut),
@@ -53,6 +54,8 @@ export type UserSettingsActions = {
   updateObservatory: (observatoryId: string, updatedObservatory: Observatory) => void;
   removeObservatory: (observatoryIdToRemove: string) => void;
   setActiveObservatoryId: (newActiveObservatoryId: string | null) => void;
+  addTrackedSatellite: (noradId: number) => void;
+  removeTrackedSatellite: (noradId: number) => void;
   setPinnedTools: (newPinnedTools: [string?, string?, string?, string?, string?]) => void;
   setTimeUnit: (newTimeUnit: "utc" | "local") => void;
   setTimezone: (newTimezone: string | null) => void;

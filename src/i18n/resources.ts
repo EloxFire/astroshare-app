@@ -14,6 +14,7 @@ import apod_fr from "./locales/fr/tools/apod.json";
 import astroCalculations_fr from "./locales/fr/tools/astroCalculations.json";
 import polarScope_fr from "./locales/fr/tools/polarScope.json";
 import spaceLaunches_fr from "./locales/fr/tools/spaceLaunches.json";
+import satelliteTracker_fr from "./locales/fr/tools/satelliteTracker.json";
 import spaceWeather_fr from "./locales/fr/tools/spaceWeather.json";
 import weather_fr from "./locales/fr/tools/weather.json";
 import threeDViewer_fr from "./locales/fr/tools/3dviewer.json";
@@ -53,6 +54,7 @@ import apod_en from "./locales/en/tools/apod.json";
 import astroCalculations_en from "./locales/en/tools/astroCalculations.json";
 import polarScope_en from "./locales/en/tools/polarScope.json";
 import spaceLaunches_en from "./locales/en/tools/spaceLaunches.json";
+import satelliteTracker_en from "./locales/en/tools/satelliteTracker.json";
 import spaceWeather_en from "./locales/en/tools/spaceWeather.json";
 import weather_en from "./locales/en/tools/weather.json";
 import threeDViewer_en from "./locales/en/tools/3dviewer.json";
@@ -92,6 +94,7 @@ import apod_it from "./locales/it/tools/apod.json";
 import astroCalculations_it from "./locales/it/tools/astroCalculations.json";
 import polarScope_it from "./locales/it/tools/polarScope.json";
 import spaceLaunches_it from "./locales/it/tools/spaceLaunches.json";
+import satelliteTracker_it from "./locales/it/tools/satelliteTracker.json";
 import spaceWeather_it from "./locales/it/tools/spaceWeather.json";
 import weather_it from "./locales/it/tools/weather.json";
 import threeDViewer_it from "./locales/it/tools/3dviewer.json";
@@ -139,6 +142,7 @@ export const resources = {
     "tools/astroCalculations": astroCalculations_fr,
     "tools/polarScope": polarScope_fr,
     "tools/spaceLaunches": spaceLaunches_fr,
+    "tools/satelliteTracker": satelliteTracker_fr,
     "tools/spaceWeather": spaceWeather_fr,
     "tools/weather": weather_fr,
     "tools/3dviewer": threeDViewer_fr,
@@ -179,6 +183,7 @@ export const resources = {
     "tools/astroCalculations": astroCalculations_en,
     "tools/polarScope": polarScope_en,
     "tools/spaceLaunches": spaceLaunches_en,
+    "tools/satelliteTracker": satelliteTracker_en,
     "tools/spaceWeather": spaceWeather_en,
     "tools/weather": weather_en,
     "tools/3dviewer": threeDViewer_en,
@@ -219,6 +224,7 @@ export const resources = {
     "tools/astroCalculations": astroCalculations_it,
     "tools/polarScope": polarScope_it,
     "tools/spaceLaunches": spaceLaunches_it,
+    "tools/satelliteTracker": satelliteTracker_it,
     "tools/spaceWeather": spaceWeather_it,
     "tools/weather": weather_it,
     "tools/3dviewer": threeDViewer_it,

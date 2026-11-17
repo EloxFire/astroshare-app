@@ -1,0 +1,104 @@
+{
+  "screen": {
+    "title": "Satelliti",
+    "locationBanner": "Passaggi visti da {{location}}",
+    "locationBannerUnknown": "Passaggi visti dalla tua posizione",
+    "changeLocation": "Cambia",
+    "stations": "Stazioni spaziali",
+    "live": "In diretta",
+    "others": "Da seguire anche",
+    "mine": "I miei satelliti",
+    "locked": {
+      "title": "Segui qualsiasi oggetto",
+      "description": "Oltre 71.000 satelliti, stadi di razzi e detriti, da aggiungere con il loro ID NORAD.",
+      "cta": "Scopri Astroshare PRO"
+    },
+    "addByNoradId": "Aggiungi per ID NORAD"
+  },
+  "featured": {
+    "iss": "ISS",
+    "tiangong": "Tiangong"
+  },
+  "passDay": {
+    "today": "Oggi",
+    "tomorrow": "Domani"
+  },
+  "objectType": {
+    "payload": "Carico utile",
+    "rocket_body": "Stadio di razzo",
+    "debris": "Detriti",
+    "unknown": "Tipo sconosciuto"
+  },
+  "opsStatus": {
+    "operational": "Operativo",
+    "nonoperational": "Non operativo",
+    "partially_operational": "Parzialmente operativo",
+    "backup_standby": "Di riserva",
+    "spare": "Di scorta",
+    "extended_mission": "Missione prolungata",
+    "decayed": "Rientrato",
+    "unknown": "Stato sconosciuto"
+  },
+  "passQuality": {
+    "excellent": "Eccellente",
+    "good": "Visibile",
+    "faint": "Debole"
+  },
+  "coordinates": {
+    "north": "N",
+    "south": "S",
+    "east": "E",
+    "west": "O"
+  },
+  "groundTrack": {
+    "past": "Ultimi 45 minuti",
+    "future": "Prossimi 90 minuti"
+  },
+  "duration": "{{hours}}h{{minutes}}",
+  "details": {
+    "screenTitle": "Satellite",
+    "notFound": "Impossibile caricare questa scheda.",
+    "subtitle": "{{catalogName}} · NORAD {{noradId}}",
+    "stats": {
+      "latitude": "latitudine",
+      "longitude": "longitudine",
+      "altitude": "altitudine",
+      "speed": "velocità"
+    },
+    "passes": {
+      "title": "Prossimi passaggi",
+      "none": "Nessun passaggio visibile previsto nei prossimi giorni dalla tua posizione.",
+      "nextVisible": "Il prossimo visibile"
+    },
+    "orbit": {
+      "title": "Orbita",
+      "periodValue": "{{value}} min",
+      "period": "periodo",
+      "revsPerDay": "periodo · {{value}} orbite al giorno",
+      "inclination": "inclinazione",
+      "perigee": "Perigeo",
+      "apogee": "Apogeo",
+      "rcs": "Dimensione radar (RCS)",
+      "rcsUnavailable": "dato non disponibile",
+      "spreadNote": "Orbita quasi circolare: {{value}} km di differenza tra il punto più basso e quello più alto."
+    },
+    "identity": {
+      "title": "Scheda identificativa",
+      "type": "Tipo",
+      "launch": "Lancio",
+      "designator": "Designatore",
+      "owner": "Proprietario",
+      "decayDate": "Data di rientro",
+      "catalogUpdate": "Dati del catalogo"
+    }
+  },
+  "addModal": {
+    "title": "Aggiungi un satellite",
+    "label": "ID NORAD",
+    "placeholder": "Es: 25544",
+    "helper": "Il numero di catalogo NORAD, visibile su CelesTrak o Heavens-Above.",
+    "notFound": "Nessun satellite corrisponde a questo ID.",
+    "confirm": "Aggiungi ai miei satelliti",
+    "alreadyTracked": "Già nei miei satelliti"
+  }
+}

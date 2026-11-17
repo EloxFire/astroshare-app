@@ -12,6 +12,9 @@ const defaultUserData: UserSettingsState = {
   observatories: [],
   lastKnownLocation: null,
   activeObservatoryId: null,
+  // IDs NORAD suivis par l'utilisateur (outil Satellites, "Mes satellites") — purement local,
+  // l'API n'a pas de route pour une liste de suivi côté serveur. Réservé aux comptes PRO côté UI.
+  trackedSatellites: [],
   units: {
     time: "local",
     timezone: null,
@@ -109,6 +112,10 @@ export const useUserDataStore = create<UserSettingsData>()(
         activeObservatoryId: state.activeObservatoryId === observatoryIdToRemove ? null : state.activeObservatoryId,
       })),
       setActiveObservatoryId: (newActiveObservatoryId: string | null) => set({activeObservatoryId: newActiveObservatoryId}),
+      addTrackedSatellite: (noradId: number) => set((state) => (
+        state.trackedSatellites.includes(noradId) ? state : {trackedSatellites: [...state.trackedSatellites, noradId]}
+      )),
+      removeTrackedSatellite: (noradId: number) => set((state) => ({trackedSatellites: state.trackedSatellites.filter(id => id !== noradId)})),
       setPinnedTools: (newPinnedTools: [string?, string?, string?, string?, string?]) => set({pinnedTools: newPinnedTools}),
       setTimeUnit: (newTimeUnit: "utc" | "local") => set((state) => ({units: {...state.units, time: newTimeUnit}})),
       setTimezone: (newTimezone: string | null) => set((state) => ({units: {...state.units, timezone: newTimezone}})),

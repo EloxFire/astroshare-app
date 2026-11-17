@@ -3,7 +3,7 @@
 Point d'entrée pour un agent qui intervient sur ce dépôt : état du projet, conventions, pièges connus
 et, en détail, le rendu 3D de la Lune (`MoonPhase`) et les calculs astronomiques associés.
 
-- **État décrit** : fin octobre 2026, branche `ASTROSHARE_V3`, commit `8527e2f`. Vérifie toujours le code
+- **État décrit** : 18 novembre 2026, branche `ASTROSHARE_V3`. Vérifie toujours le code
   avant de te fier à un détail d'ici : ce document peut avoir pris du retard.
 - **Langue** : le code est commenté en français, et l'utilisateur échange en français. Garde ces deux usages.
 - **Contenu versionné** : ce fichier est commité. N'y ajoute jamais de secret, de valeur du `.env`, d'URL
@@ -32,6 +32,7 @@ météo, APOD, viseur polaire, météo spatiale), observatoires de l'utilisateur
 | i18n | `i18next` + `react-i18next` (voir §3) |
 | Dates | `dayjs` (plugins `utc` et `timezone` étendus une fois dans `src/i18n/index.ts`) |
 | Astronomie | `@observerly/astrometry` 0.67 + helpers maison dans `src/helpers/astrometry/` |
+| Satellites | `satellite.js` 7.2 (propagation SGP4 locale, pur JS) + helpers maison dans `src/helpers/satellites/` |
 | 3D | `three` r185 + `expo-three` 8 + `expo-gl` (voir §5) |
 | Graphismes | `react-native-svg` (aussi pour les dégradés), `lucide-react-native` pour les icônes |
 | Auth | Firebase |
@@ -104,6 +105,37 @@ météo, APOD, viseur polaire, météo spatiale), observatoires de l'utilisateur
   - `solar_system.facts` est un dictionnaire libre (masse, diamètre, période orbitale…) : vérifie le type de chaque valeur à l'usage.
   - À confirmer côté API : sa doc annonce `"ly" | "yr"` pour l'unité de distance, et `"yr"` ressemble à une coquille. Les blocs `photometry`, `physical`, `discovery`, `content` et `custom` de la fiche complète sont typés non nuls ; à vérifier sur une vraie réponse d'objet du système solaire.
 - **Affichage dans une liste :** `getCatalogObjectTitle` et `getCatalogObjectSubtitle` (`src/helpers/journal/sessions.ts`). Le sous-titre traduit la catégorie via `tools/journal/sessions/add` (`observedObjects.categories`) : toute nouvelle catégorie de l'API doit y être ajoutée dans les trois langues, sinon sa valeur brute s'affiche. Le libellé de catalogue (Messier, NGC, IC) n'est déduit que d'un préfixe suivi d'un numéro, pour ne pas étiqueter « IC » un nom comme « Icarus ».
+
+### Suivi de satellites (`src/types/satellites/`, `src/helpers/api/satellites/`, `src/helpers/satellites/`)
+
+- **Routes :** `/v3/norad` (catalogue CelesTrak — liste paginée, recherche par id ou par nom partiel
+  insensible à la casse, lot par liste d'ids) et `/v3/satellite` (relais N2YO — TLE, position
+  instantanée, passages visibles). Helpers : `src/helpers/api/satellites/norad.ts` et `tracking.ts`,
+  même principe try/catch/`console.log`/`null` que `getLauncherById`.
+- **Unions ouvertes :** `object_type.label`, `ops_status.label` (catalogue) et `quality` d'un passage
+  (suivi) sont des identifiants à traduire, pas du texte à afficher tel quel — toujours un cas par
+  défaut (`src/helpers/satellites/labels.ts`).
+- **Position et trace au sol calculées localement (SGP4, `satellite.js`), pas via l'API en boucle :**
+  `/v3/satellite/position` plafonne à 300 s par appel, insuffisant pour la fenêtre de trace (45 min
+  passées + 90 min à venir) de la fiche satellite. Un seul TLE récupéré à l'ouverture de l'écran
+  suffit ensuite à tout calculer côté app (`src/helpers/satellites/propagation.ts`), même principe que
+  les calculs Soleil/Lune (§5). Position live rafraîchie toutes les secondes, trace au sol toutes les
+  60 s, chacune dans son propre `useFocusEffect`/`setInterval`, actif seulement tant que l'écran a le
+  focus.
+- **Satellites mis en avant (`src/helpers/satellites/featured.ts`) résolus par recherche de nom**, pas
+  par id NORAD codé en dur : la route catalogue accepte un nom partiel, ce qui évite de fabriquer un id
+  non vérifié.
+- **Carte du monde (`SatelliteGroundTrackMap`) :** tracé SVG maison en pointillés (`<Pattern>` +
+  `<Circle>` de `react-native-svg`), projection équirectangulaire simple, données terrestres Natural
+  Earth 1:110m (domaine public). Pas de `react-native-maps` : rendu 2D stylisé choisi plutôt qu'une
+  vraie carte, pour rester fidèle à la maquette sans dépendance supplémentaire.
+- **Accès PRO :** `isProUser(authUser)` (`src/helpers/auth/subscription.ts`) teste `role` parmi
+  `SUBSCRIBER`/`PARTNER`/`ADMIN`. Premier usage de ce genre de garde dans l'app ; généralisé en
+  `LockedFeatureCard` (§4) plutôt que construit en carte unique pour cet écran, puisqu'un même besoin
+  (TODO déjà présent dans `SpaceWeatherScreen`) existait déjà ailleurs.
+- **« Mes satellites » :** liste purement locale (`trackedSatellites: number[]` dans
+  `userData.store.ts`), l'API n'a pas de liste de suivi côté serveur — même principe que
+  `observatories`/`pinnedTools`.
 
 ---
 
@@ -243,6 +275,35 @@ Une version plein écran est affichée dans une `Modal`.
   pas toujours redessiné, à cause du cache natif. D'où le `key` égal à l'URL de la tuile.
 - **Zoom maximal :** plafonné à 12 (`MAX_MAP_ZOOM_LEVEL`), sur la carte comme sur les tuiles.
 - **Traductions :** `tools/weather`, en français seulement pour l'instant.
+
+### `LockedFeatureCard` (`src/components/cards/LockedFeatureCard/`)
+
+- **Rôle :** carte générique pour une fonctionnalité réservée aux comptes PRO (icône, titre,
+  description, bouton d'action). Généralisée depuis le TODO laissé dans `SpaceWeatherScreen.tsx` à
+  l'occasion de la section « Mes satellites » de l'écran Satellites — à réutiliser pour toute future
+  zone verrouillée, plutôt que d'en refaire une par écran.
+- **Condition d'affichage :** toujours testée côté appelant via `isProUser(authUser)`, jamais dans le
+  composant lui-même.
+- **CTA :** le bouton n'a pour l'instant aucune action câblée (pas d'écran PRO/abonnement dans l'app) —
+  voir §6.
+
+### `SatelliteGroundTrackMap` (`src/components/charts/SatelliteGroundTrackMap/`)
+
+- **Rôle :** carte du monde en pointillés (continents en `<Pattern>` de points SVG, projection
+  équirectangulaire), avec la trace au sol d'un satellite (passé en trait blanc pointillé, futur en
+  trait jaune plein), la position de l'observateur et la position courante du satellite.
+- **Antiméridien :** la trace est coupée en plusieurs `<Path>` dès qu'un saut de longitude dépasse
+  180° entre deux points consécutifs, pour éviter un trait horizontal parasite traversant toute la
+  carte.
+- **Données terrestres :** `src/helpers/satellites/worldLandPath.ts`, généré une fois depuis Natural
+  Earth 1:110m (domaine public) — voir le commentaire du fichier pour régénérer si besoin.
+
+### `PassArcChart` (`src/components/charts/PassArcChart/`)
+
+- **Rôle :** arc d'élévation d'un passage de satellite (début → pic → fin), dessiné avec deux courbes
+  de Bézier quadratiques se rejoignant exactement au point de pic connu — pas de bibliothèque de
+  lissage, dans le même esprit que `AltitudeChart`/`CircularGauge` (mesure de largeur par `onLayout`,
+  `Svg`/`Path`/`SvgText` à la main).
 
 ---
 
@@ -396,6 +457,13 @@ On ne peut pas lancer l'app depuis un agent. Méthodes utilisées jusqu'ici :
 - **Modifier une session :** `AddSession` en mode modification (`?id=`, comme les formulaires de matériel), puis un bouton Modifier dans `SessionDetails`.
 - **Confirmation avant suppression** d'une session ou d'un matériel : aujourd'hui, la suppression est immédiate.
 - **Objets du système solaire** (types prêts, §2) : icônes par `kind`, positions et levers/couchers des planètes. `@observerly/astrometry` 0.67 fournit déjà `getPlanetaryPositions`, `getBodyNextRise` et `getBodyNextSet`, encore inutilisés : l'app ne calcule aujourd'hui que le Soleil et la Lune, donc le rendu des planètes reste à construire.
+- **Écran Astroshare PRO :** le CTA de `LockedFeatureCard` (section « Mes satellites ») ne mène nulle
+  part encore, faute d'écran d'abonnement dans l'app.
+- **Diagramme périgée/apogée illustré :** la fiche satellite affiche aujourd'hui ces deux valeurs en
+  tuiles chiffrées + une phrase d'écart, pas l'ellipse schématique de la maquette.
+- **États d'éclipse d'un passage** (« entre dans l'ombre », etc., visibles sur la maquette) : pas dans
+  la réponse documentée de `/v3/satellite/passes`, remplacés par le champ réel `quality`
+  (excellent/visible/faible) plutôt que fabriqués.
 
 ---
 
@@ -410,6 +478,7 @@ On ne peut pas lancer l'app depuis un agent. Méthodes utilisées jusqu'ici :
 | Formulaires d'ajout de matériel (`src/screens/Tools/Journal/Gear/**/Add*`), sauf `AddMount` et `AddSetup` | Le bouton `Button` d'enregistrement est `disabled` quand un champ requis manque, sans aucun message : rien ne se passe au clic, sans explication. `AddSetup` affiche une erreur sur le champ nom à la place de `disabled` (voir §4 `Button`) ; les autres formulaires de matériel ne le sont pas encore |
 | `src/i18n/locales/{en,it}/tools/journal/gear/setups/details.json` | `pieceCount_one`/`pieceCount_other` contiennent encore `{{count}}`, alors que `SetupDetails` les appelle sans `count` (le nombre est affiché à part, comme dans le fichier `fr`) : « {{count}} pieces of gear » s'affiche tel quel en anglais et en italien |
 | `src/components/cards/ObjectCardLite/ObjectCardLite.tsx` | Libellé d'accessibilité du bouton de suppression écrit en dur en français (« Retirer de la liste ») |
+| `src/types/auth/UserRoles.ts` | `UserRoles` est typé comme un objet (`{ADMIN: "ADMIN", ...}`), pas comme une union de chaînes : `User.role` ne se compare pas directement sous TypeScript strict. Contourné dans `isProUser` (`src/helpers/auth/subscription.ts`) en typant son paramètre `{role?: string} \| null \| undefined` plutôt qu'en important `User` |
 
 Quand l'un de ces problèmes est corrigé, retire sa ligne et note la correction au journal (§8).
 
@@ -432,6 +501,12 @@ Le journal commence avec le commit `8527e2f`. Les changements antérieurs, comme
 i18n, `SelectInput` ou `ImageHeaderScrollView`, sont décrits dans les sections ci-dessus mais n'ont pas
 d'entrée datée.
 
+- **2026-11-18** — même commit — nouvel outil Suivi de satellites : écrans liste et fiche détaillée
+  (position live et trace au sol calculées localement en SGP4 via `satellite.js`, carte du monde en
+  pointillés dessinée en SVG à partir de données Natural Earth, passages visibles, orbite, fiche
+  d'identité), section « Mes satellites » réservée aux comptes PRO (`isProUser`, `LockedFeatureCard`
+  généralisé depuis le TODO de `SpaceWeatherScreen`), satellites mis en avant résolus par recherche de
+  nom plutôt que par id codé en dur — §1, §2 (nouvelle sous-section), §4, §6, §7.
 - **2026-11-16** — même commit — catalogue d'objets préparé pour le système solaire : `kind`/`category` `"solar_system"`, `position` nullable, bloc `solar_system` de la fiche (éphémérides, faits), catégorie traduite en fr, en et it, libellés NGC/IC réservés aux désignations numérotées — §2, §3, §6.
 - **2026-11-16** — `5c33f04` (documenté après coup, le même jour) — fiche d'une session (`SessionDetails`), action `removeAstronomySession`, composant `LocationMapCard` extrait d'`ObservatoryDetails` (avec recentrage de la carte et altitude 0 m affichée), `ObjectCardLite` utilisable en lecture seule, Journal relié à la fiche — §3, §4, §6, §7.
 - **2026-11-15** — même commit —
