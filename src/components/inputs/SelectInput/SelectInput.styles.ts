@@ -69,6 +69,7 @@ export const selectInputStyles = {
         flex: 1,
         color: app_colors.black,
         ...typography.dmMono.regular.searchPlaceholder,
+        fontSize: 14,
 
         selected: {
           color: app_colors.accent.main,
