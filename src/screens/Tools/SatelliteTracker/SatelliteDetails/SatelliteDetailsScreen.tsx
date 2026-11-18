@@ -3,7 +3,7 @@ import { ActivityIndicator, ScrollView, Text, View } from "react-native";
 import { useLocalSearchParams, useFocusEffect } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { globalStyles } from "../../../../helpers/globalStyles";
-import { app_colors } from "../../../../helpers/variables";
+import { app_colors, withOpacity } from "../../../../helpers/variables";
 import { useLocation } from "../../../../context/LocationContext";
 import { useAppUnits } from "../../../../hooks/useAppUnits";
 import { formatLocaleNumber } from "../../../../helpers/format";
@@ -23,6 +23,9 @@ import SatellitePassRow from "../../../../components/Satellites/SatellitePassRow
 import type { NoradSatellite } from "../../../../types/satellites/NoradSatellite";
 import type { SatellitePass } from "../../../../types/satellites/SatelliteTracking";
 import { satelliteDetailsScreenStyles } from "./SatelliteDetailsScreen.styles";
+import ValueCard from "../../../../components/cards/ValueCard/ValueCard";
+import { Orbit, Radio } from "lucide-react-native";
+import InfoCard from "../../../../components/cards/InfoCard/InfoCard";
 
 // Fenêtre de la trace au sol (voir SatelliteGroundTrackMap) et cadence de ses rafraîchissements —
 // pas besoin de la recalculer chaque seconde comme la position live, sa forme ne bouge
@@ -143,11 +146,11 @@ const SatelliteDetailsScreen = () => {
           <View style={satelliteDetailsScreenStyles.tags}>
             <Badge
               text={t(`opsStatus.${resolveOpsStatusKey(catalog.ops_status.label)}`)}
-              backgroundColor={isOperationalStatus(catalog.ops_status.label) ? app_colors.green.light : app_colors.red.light}
-              foregroundColor={isOperationalStatus(catalog.ops_status.label) ? app_colors.green.main : app_colors.red.main}
+              backgroundColor={isOperationalStatus(catalog.ops_status.label) ? app_colors.yellow.main : app_colors.red.light}
+              foregroundColor={isOperationalStatus(catalog.ops_status.label) ? app_colors.primary.main : app_colors.red.main}
             />
             {livePosition && (
-              <Badge text={t("screen.live")} backgroundColor="transparent" borderColor={app_colors.red.main} foregroundColor={app_colors.red.main} />
+              <Badge icon={Radio} text={t("screen.live")} backgroundColor="transparent" borderColor={app_colors.red.main} foregroundColor={app_colors.red.main} />
             )}
           </View>
 
@@ -161,29 +164,41 @@ const SatelliteDetailsScreen = () => {
           )}
 
           <View style={satelliteDetailsScreenStyles.statsGrid}>
-            <View style={satelliteDetailsScreenStyles.statsGrid.tile}>
-              <Text style={satelliteDetailsScreenStyles.statsGrid.tile.value}>
-                {livePosition ? formatLatitude(livePosition.latitude, i18n.language, t) : "--"}
-              </Text>
-              <Text style={satelliteDetailsScreenStyles.statsGrid.tile.label}>{t("details.stats.latitude")}</Text>
+            <View style={satelliteDetailsScreenStyles.statsGrid.statsRow}>
+              <ValueCard
+                reverse
+                title={t("details.stats.latitude")}
+                value={livePosition ? formatLatitude(livePosition.latitude, i18n.language, t) : "--"}
+                valueStyle={{color: app_colors.yellow.main}}
+                titleStyle={{color: app_colors.white}}
+                containerStyle={{backgroundColor: withOpacity(app_colors.white, 0.1)}}
+              />
+              <ValueCard
+                reverse
+                title={t("details.stats.longitude")}
+                value={livePosition ? formatLongitude(livePosition.longitude, i18n.language, t) : "--"}
+                valueStyle={{color: app_colors.yellow.main}}
+                titleStyle={{color: app_colors.white}}
+                containerStyle={{backgroundColor: withOpacity(app_colors.white, 0.1)}}
+              />
             </View>
-            <View style={satelliteDetailsScreenStyles.statsGrid.tile}>
-              <Text style={satelliteDetailsScreenStyles.statsGrid.tile.value}>
-                {livePosition ? formatLongitude(livePosition.longitude, i18n.language, t) : "--"}
-              </Text>
-              <Text style={satelliteDetailsScreenStyles.statsGrid.tile.label}>{t("details.stats.longitude")}</Text>
-            </View>
-            <View style={satelliteDetailsScreenStyles.statsGrid.tile}>
-              <Text style={satelliteDetailsScreenStyles.statsGrid.tile.value}>
-                {livePosition ? formatDistanceKm(livePosition.altitude) : "--"}
-              </Text>
-              <Text style={satelliteDetailsScreenStyles.statsGrid.tile.label}>{t("details.stats.altitude")}</Text>
-            </View>
-            <View style={satelliteDetailsScreenStyles.statsGrid.tile}>
-              <Text style={satelliteDetailsScreenStyles.statsGrid.tile.value}>
-                {livePosition ? `${formatLocaleNumber(livePosition.speedKmh, i18n.language, 0)} km/h` : "--"}
-              </Text>
-              <Text style={satelliteDetailsScreenStyles.statsGrid.tile.label}>{t("details.stats.speed")}</Text>
+            <View style={satelliteDetailsScreenStyles.statsGrid.statsRow}>
+              <ValueCard
+                reverse
+                title={t("details.stats.altitude")}
+                value={livePosition ? formatDistanceKm(livePosition.altitude) : "--"}
+                containerStyle={{backgroundColor: withOpacity(app_colors.white, 0.1)}}
+                valueStyle={{color: app_colors.white}}
+                titleStyle={{color: app_colors.white}}
+              />
+              <ValueCard
+                reverse
+                title={t("details.stats.speed")}
+                value={livePosition ? `${formatLocaleNumber(livePosition.speedKmh, i18n.language, 0)} km/h` : "--"}
+                containerStyle={{backgroundColor: withOpacity(app_colors.white, 0.1)}}
+                valueStyle={{color: app_colors.white}}
+                titleStyle={{color: app_colors.white}}
+              />
             </View>
           </View>
         </View>
@@ -225,20 +240,16 @@ const SatelliteDetailsScreen = () => {
             <SectionHeader title={t("details.orbit.title")} />
 
             <View style={satelliteDetailsScreenStyles.orbitRow}>
-              <View style={satelliteDetailsScreenStyles.orbitTile}>
-                <Text style={satelliteDetailsScreenStyles.orbitTile.value}>
-                  {catalog.period != null ? t("details.orbit.periodValue", { value: formatLocaleNumber(catalog.period, i18n.language, 1) }) : "--"}
-                </Text>
-                <Text style={satelliteDetailsScreenStyles.orbitTile.label}>
-                  {revsPerDay != null ? t("details.orbit.revsPerDay", { value: formatLocaleNumber(revsPerDay, i18n.language, 1) }) : t("details.orbit.period")}
-                </Text>
-              </View>
-              <View style={satelliteDetailsScreenStyles.orbitTile}>
-                <Text style={satelliteDetailsScreenStyles.orbitTile.value}>
-                  {catalog.inclination != null ? `${formatLocaleNumber(catalog.inclination, i18n.language, 1)}°` : "--"}
-                </Text>
-                <Text style={satelliteDetailsScreenStyles.orbitTile.label}>{t("details.orbit.inclination")}</Text>
-              </View>
+              <ValueCard
+                reverse
+                value={catalog.period != null ? t("details.orbit.periodValue", { value: formatLocaleNumber(catalog.period, i18n.language, 1) }) : "--"}
+                title={revsPerDay != null ? t("details.orbit.revsPerDay", { value: formatLocaleNumber(revsPerDay, i18n.language, 1) }) : t("details.orbit.period")}
+              />
+              <ValueCard
+                reverse
+                value={catalog.inclination != null ? `${formatLocaleNumber(catalog.inclination, i18n.language, 1)}°` : "--"}
+                title={t("details.orbit.inclination")}
+              />
             </View>
 
             <ListCard
@@ -259,9 +270,7 @@ const SatelliteDetailsScreen = () => {
             />
 
             {orbitSpread != null && (
-              <Text style={satelliteDetailsScreenStyles.orbitNote}>
-                {t("details.orbit.spreadNote", { value: orbitSpread })}
-              </Text>
+              <InfoCard title={t("details.orbit.title")} description={t("details.orbit.spreadNote", { value: orbitSpread })} icon={Orbit} />
             )}
           </View>
 

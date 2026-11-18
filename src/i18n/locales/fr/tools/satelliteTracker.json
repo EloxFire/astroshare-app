@@ -74,7 +74,7 @@
       "title": "Orbite",
       "periodValue": "{{value}} min",
       "period": "période",
-      "revsPerDay": "période · {{value}} tours par jour",
+      "revsPerDay": "période · {{value}} rev/jour",
       "inclination": "inclinaison",
       "perigee": "Périgée",
       "apogee": "Apogée",

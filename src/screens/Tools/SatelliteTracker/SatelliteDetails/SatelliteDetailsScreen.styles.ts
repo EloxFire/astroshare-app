@@ -43,29 +43,13 @@ export const satelliteDetailsScreenStyles = {
 
   statsGrid: {
     display: "flex" as const,
-    flexDirection: "row" as const,
-    flexWrap: "wrap" as const,
+    flexDirection: "column" as const,
     gap: 10,
 
-    tile: {
-      flexBasis: "47%" as const,
-      flexGrow: 1,
-      backgroundColor: app_colors.accent.light,
-      borderRadius: radius.mediumCard,
-      padding: spacing.toolCard,
-
-      value: {
-        fontFamily: "ZTNatureBold",
-        fontSize: 18,
-        color: app_colors.primary.main,
-      },
-
-      label: {
-        fontFamily: "DMMonoRegular",
-        fontSize: 9.5,
-        color: app_colors.primary.medium,
-        marginTop: 2,
-      },
+    statsRow: {
+      display: "flex" as const,
+      flexDirection: "row" as const,
+      gap: 10,
     },
   },
 
