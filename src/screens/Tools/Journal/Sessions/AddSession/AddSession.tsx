@@ -1,4 +1,4 @@
-import { View, ScrollView, TouchableOpacity, Text, Platform, Modal, Pressable } from "react-native"
+import { View, ScrollView, TouchableOpacity, Text, Platform, Modal, Pressable, KeyboardAvoidingView } from "react-native"
 import { useTranslation } from "react-i18next"
 import { globalStyles } from "../../../../../helpers/globalStyles"
 import { ScreenHeader } from "../../../../../components/layout/ScreenHeader/ScreenHeader"
@@ -228,10 +228,15 @@ const AddSession = () => {
     <View style={globalStyles.screen}>
       <ScreenHeader title={t("title")} main={false} />
 
-      {/* "handled" : avec le clavier ouvert, un appui sur un bouton (ex: une suggestion de la
-          recherche d'objets) est traité tout de suite, au lieu de ne servir qu'à fermer le clavier. */}
-      <ScrollView keyboardShouldPersistTaps="handled">
-        <View style={globalStyles.content}>
+      {/* Un champ en bas de ce long formulaire (ex: les notes) reste sous le clavier sans ça : sur
+          Android, le redimensionnement automatique de l'activité (adjustResize) ne suffit pas à lui
+          seul à faire remonter le ScrollView jusqu'au champ actif ici — "height" le fait à la main.
+          Même principe que AddSatelliteModal. */}
+      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{ flex: 1 }}>
+        {/* "handled" : avec le clavier ouvert, un appui sur un bouton (ex: une suggestion de la
+            recherche d'objets) est traité tout de suite, au lieu de ne servir qu'à fermer le clavier. */}
+        <ScrollView keyboardShouldPersistTaps="handled">
+          <View style={globalStyles.content}>
           <View style={addSessionStyles.dateSection}>
             <SectionHeader title={t("date.title")} />
 
@@ -522,7 +527,8 @@ const AddSession = () => {
             {!canSaveSession && <Text style={addSessionStyles.saveSection.hint}>{t("missingVenue")}</Text>}
           </View>
         </View>
-      </ScrollView>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </View>
   )
 }

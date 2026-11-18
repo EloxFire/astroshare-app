@@ -85,6 +85,11 @@ météo, APOD, viseur polaire, météo spatiale), observatoires de l'utilisateur
 - **Dégradés :** ne fais jamais varier un dégradé vers `"transparent"`, qui est du noir à 0 % d'opacité et salit le milieu du dégradé. Garde une seule couleur et ne fais varier que l'opacité. Pour une transition douce, utilise `easedGradientStops` (`src/helpers/gradients.ts`, courbe smoothstep), avec `<LinearGradient>` de `react-native-svg`.
 - **Liste posée par-dessus la suite de l'écran (`position: "absolute"`) :** son `zIndex` ne joue qu'entre éléments voisins. Les éléments affichés après elle dans l'écran passent donc au-dessus et reçoivent les appuis à sa place. Mets la liste dans le flux, sous le champ (c'est le cas d'`InputWithIcon` et de `SelectInput`), ou dans une `Modal`.
 - **Bouton dans un `ScrollView` avec le clavier ouvert :** sans `keyboardShouldPersistTaps="handled"` sur le `ScrollView`, le premier appui ne fait que fermer le clavier et n'atteint pas le bouton. C'est indispensable pour les suggestions d'un champ.
+- **Clavier qui cache un champ :** `android:windowSoftInputMode="adjustResize"` est posé une fois pour toutes (`AndroidManifest.xml`, `app.config.ts` → `android.softwareKeyboardLayoutMode`), mais ne suffit pas partout :
+  - **Dans une `Modal` RN, jamais.** Une `Modal` s'ouvre dans sa propre fenêtre Android (un `Dialog`), qui n'hérite pas du réglage de l'activité. `KeyboardAvoidingView behavior="height"` (pas `"padding"`, qui ne fait rien sur Android) corrige ça en redimensionnant la vue à la main — voir `AddSatelliteModal` et `SelectInput`.
+  - **Sur un écran normal avec un long formulaire dans un `ScrollView`,** le redimensionnement de l'activité ne suffit pas toujours à faire remonter le `ScrollView` jusqu'au champ actif (observé sur `AddSession`, en new architecture). Même correctif : `KeyboardAvoidingView` autour du `ScrollView` (`"padding"` sur iOS, `"height"` sur Android).
+  - **Sur un écran sans aucun `ScrollView`** (ex : les écrans d'auth, mise en page fixe), `KeyboardAvoidingView` seul ne fait que comprimer la mise en page sans rien rendre défilable. Il faut aussi un `ScrollView` avec `contentContainerStyle={{ flexGrow: 1 }}` — `flexGrow: 1` garde la mise en page identique (un enfant en `flex:1` poussé en bas, par exemple) tant que le contenu tient à l'écran, et ne devient défilant que si le clavier réduit trop l'espace.
+  - Correctif posé écran par écran / modale par modale, pas un seul wrapper global : le `Tabs` racine (`app/_layout.tsx`) ne peut pas en porter un sans casser la barre d'onglets, qui doit rester fixe.
 
 ### Formatage (`src/helpers/format.ts`)
 
@@ -112,6 +117,15 @@ météo, APOD, viseur polaire, météo spatiale), observatoires de l'utilisateur
   insensible à la casse, lot par liste d'ids) et `/v3/satellite` (relais N2YO — TLE, position
   instantanée, passages visibles). Helpers : `src/helpers/api/satellites/norad.ts` et `tracking.ts`,
   même principe try/catch/`console.log`/`null` que `getLauncherById`.
+  - **`/v3/norad/:query` (recherche par id ou nom) pagine en opt-in** (`page`/`limit`, mêmes bornes
+    que la liste principale : défaut 100, max 500) : sans ces paramètres, la réponse garde sa forme
+    d'origine (`{ data: [...] }`) ; avec, elle devient `{ page, limit, total, data }`. Sans pagination,
+    une requête large comme "starlink" renvoie plus de 13 000 résultats d'un coup — vérifié en
+    direct. `findNoradSatellites` (sans pagination, compat ascendante) et `searchNoradSatellites`
+    (paginée, `norad.ts`) coexistent : la seconde sert à `useSatelliteNameSearch`
+    (`src/hooks/useSatelliteNameSearch.ts`), qui alimente le champ "Nom" d'`AddSatelliteModal` en ne
+    demandant que les ~30 résultats affichés, avec le total réel du serveur pour signaler qu'il y en
+    a davantage.
 - **Unions ouvertes :** `object_type.label`, `ops_status.label` (catalogue) et `quality` d'un passage
   (suivi) sont des identifiants à traduire, pas du texte à afficher tel quel — toujours un cas par
   défaut (`src/helpers/satellites/labels.ts`).
@@ -203,7 +217,7 @@ météo, APOD, viseur polaire, météo spatiale), observatoires de l'utilisateur
 
 ### `InputWithIcon` : suggestions (`src/components/inputs/InputWithIcon/`)
 
-- **Liste :** dans le flux, collée sous le champ. Elle pousse le contenu en dessous tant qu'elle est ouverte. Elle ne passe plus par-dessus, à cause du piège de la §2.
+- **Liste :** dans le flux, collée sous le champ, hauteur plafonnée (`maxHeight`) et rendue en `FlatList` (pas un `ScrollView`+`.map()`) : une recherche large peut renvoyer des milliers de résultats (ex: recherche par nom de satellite), et seule une liste virtualisée les supporte sans ralentir le rendu. Elle pousse le contenu en dessous tant qu'elle est ouverte, ne passe plus par-dessus, à cause du piège de la §2.
 - **Dans un `ScrollView` :** il faut `keyboardShouldPersistTaps="handled"` (§2), sinon le premier appui sur une suggestion est perdu.
 - **Après un choix :** la liste est masquée par un état à part (`suggestionsDismissed`), remis à zéro à la frappe suivante. Le champ garde le focus. Ne force jamais `isFocused` à `false` à la main : le champ resterait actif et les suggestions ne réapparaîtraient plus.
 - **`onFocus`, `onBlur` et `onChangeText` de l'appelant :** ils sont appelés en plus de ceux du composant, pas à leur place.
@@ -510,6 +524,14 @@ Le journal commence avec le commit `8527e2f`. Les changements antérieurs, comme
 i18n, `SelectInput` ou `ImageHeaderScrollView`, sont décrits dans les sections ci-dessus mais n'ont pas
 d'entrée datée.
 
+- **2026-11-18** — même commit — clavier qui cachait un champ, corrigé à plusieurs endroits
+  (`KeyboardAvoidingView`, cf. nouveau piège §2) : `SelectInput` (modale), `AddSession` et tous les
+  formulaires d'ajout de matériel (Gear, 8 écrans) + `AddNewObservatory`, et les 3 écrans d'auth
+  (Login/Register/ForgotPassword, qui gagnent aussi un `ScrollView` qu'ils n'avaient pas). Recherche
+  par nom paginée côté serveur pour `AddSatelliteModal` (`searchNoradSatellites`,
+  `useSatelliteNameSearch`) : seuls les résultats affichés sont téléchargés, plutôt que plus de
+  13 000 d'un coup. Liste de suggestions d'`InputWithIcon` passée en `FlatList` (virtualisée, hauteur plafonnée)
+  pour le même genre de recherche à beaucoup de résultats — §2, §4.
 - **2026-11-18** — même commit — fiche satellite (`SatelliteDetailsScreen`) retouchée après retour
   utilisateur sur les maquettes : header fusionné avec le bloc titre/carte (même fond `primary.main`,
   un seul arrondi en bas), valeurs lat/long/altitude/vitesse déplacées sous la carte, point de

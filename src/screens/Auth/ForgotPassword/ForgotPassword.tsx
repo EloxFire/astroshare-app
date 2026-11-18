@@ -1,4 +1,4 @@
-import { Text, TouchableOpacity, View } from "react-native"
+import { KeyboardAvoidingView, Platform, ScrollView, Text, TouchableOpacity, View } from "react-native"
 import { forgotPasswordScreenStyles } from "./ForgotPassword.styles"
 import { SafeAreaView } from "react-native-safe-area-context"
 import { useEffect, useState } from "react"
@@ -33,6 +33,10 @@ const ForgotPasswordScreen = () => {
 
   return (
     <SafeAreaView style={forgotPasswordScreenStyles.screen}>
+      {/* Aucun ScrollView à l'origine — par cohérence avec Login/Register, même si le formulaire
+          est court. */}
+      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{ flex: 1 }}>
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
       <View style={forgotPasswordScreenStyles.screen.logoContainer}>
         <View style={forgotPasswordScreenStyles.screen.logoContainer.iconContainer}>
           <KeyRoundIcon size={32} color={app_colors.primary.main} />
@@ -70,6 +74,8 @@ const ForgotPasswordScreen = () => {
           <Text style={forgotPasswordScreenStyles.screen.bottomContainer.backToLoginText.link}>{t("loginLink")}</Text>
         </TouchableOpacity>
       </View>
+      </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   )
 }

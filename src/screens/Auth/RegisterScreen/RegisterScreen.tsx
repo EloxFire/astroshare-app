@@ -1,4 +1,4 @@
-import { Image, Text, TouchableOpacity, View } from "react-native"
+import { Image, KeyboardAvoidingView, Platform, ScrollView, Text, TouchableOpacity, View } from "react-native"
 import { registerScreenStyles } from "./RegisterScreen.styles"
 import { SafeAreaView } from "react-native-safe-area-context"
 import { InputWithIcon } from "../../../components/inputs/InputWithIcon/InputWithIcon"
@@ -39,6 +39,11 @@ const RegisterScreen = () => {
 
   return (
     <SafeAreaView style={registerScreenStyles.screen}>
+      {/* Aucun ScrollView à l'origine : avec 3 champs + checklist + case à cocher, c'est le
+          formulaire le plus exposé des 3 écrans d'auth. flexGrow:1 garde la mise en page
+          (bottomContainer en flex:1 poussé en bas) identique tant que tout tient à l'écran. */}
+      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{ flex: 1 }}>
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
       <View style={registerScreenStyles.screen.logoContainer}>
         <Image
           source={require("../../../../assets/icons/icon_primary.png")}
@@ -108,6 +113,8 @@ const RegisterScreen = () => {
           <Text style={registerScreenStyles.screen.bottomContainer.noAccountText.link}>{t("loginLink")}</Text>
         </TouchableOpacity>
       </View>
+      </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   )
 }

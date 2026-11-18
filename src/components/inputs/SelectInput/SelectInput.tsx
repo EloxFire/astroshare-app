@@ -160,8 +160,12 @@ export const SelectInput = <T extends string | number>(props: SelectInputProps<T
           navigationBarTranslucent
           onRequestClose={close}
         >
-          {/* iOS : le clavier (recherche) ne redimensionne pas l'écran — le padding remonte le panneau. */}
-          <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} style={selectInputStyles.sheet.backdrop}>
+          {/* Une <Modal> RN s'ouvre dans sa propre fenêtre Android (un Dialog), qui n'hérite pas du
+              windowSoftInputMode="adjustResize" de l'activité : rien ne se redimensionne tout seul
+              ici, contrairement à un écran normal de l'app. "height" (et non "padding", qui ne fait
+              rien sur Android) redimensionne la vue à la main en écoutant la hauteur du clavier.
+              iOS : padding remonte le panneau. */}
+          <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={selectInputStyles.sheet.backdrop}>
             {/* Zone de fermeture derrière le panneau (et non autour de lui) : un Pressable parent
                 intercepterait les gestes et pourrait gêner le défilement de la liste. */}
             <Pressable style={selectInputStyles.sheet.dismissArea} onPress={close} />

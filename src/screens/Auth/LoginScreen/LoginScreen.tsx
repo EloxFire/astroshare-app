@@ -1,4 +1,4 @@
-import { Image, Text, TouchableOpacity, View } from "react-native"
+import { Image, KeyboardAvoidingView, Platform, ScrollView, Text, TouchableOpacity, View } from "react-native"
 import { loginScreenStyles } from "./LoginScreen.styles"
 import { SafeAreaView } from "react-native-safe-area-context"
 import { InputWithIcon } from "../../../components/inputs/InputWithIcon/InputWithIcon"
@@ -39,6 +39,12 @@ const LoginScreen = () => {
 
   return (
     <SafeAreaView style={loginScreenStyles.screen}>
+      {/* Aucun ScrollView à l'origine : rien ne remontait ni ne défilait pour garder les champs et
+          le bouton visibles une fois le clavier ouvert. flexGrow:1 sur le conteneur de contenu
+          garde la mise en page (bottomContainer en flex:1 poussé en bas) identique tant que tout
+          tient à l'écran, et autorise le défilement sinon. */}
+      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{ flex: 1 }}>
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
       <TouchableOpacity style={loginScreenStyles.screen.backButton} onPress={() => router.back()}>
         <ChevronLeft size={24} color={app_colors.white} />
       </TouchableOpacity>
@@ -90,6 +96,8 @@ const LoginScreen = () => {
           <Text style={loginScreenStyles.screen.bottomContainer.noAccountText.link}>{t("registerLink")}</Text>
         </TouchableOpacity>
       </View>
+      </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   )
 }

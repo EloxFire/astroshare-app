@@ -39,7 +39,10 @@ export const inputWithIconStyles = {
 
   // Liste dans le flux, collée sous le champ (qui perd alors ses coins et sa bordure du bas, voir
   // container.withSuggestions). Pas en position absolute par-dessus l'écran : voir le composant.
+  // Hauteur plafonnée (environ 4-5 lignes) et défilante : une recherche large (ex: un nom de
+  // constellation) peut renvoyer des dizaines de résultats.
   suggestionsContainer: {
+    maxHeight: 220,
     backgroundColor: app_colors.white,
     borderWidth: 1,
     borderColor: app_colors.accent.light,

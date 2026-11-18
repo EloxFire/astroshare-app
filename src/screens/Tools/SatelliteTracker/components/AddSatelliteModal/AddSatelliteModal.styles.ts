@@ -7,6 +7,16 @@ export const addSatelliteModalStyles = {
     justifyContent: "flex-end" as const,
   },
 
+  // Derrière le panneau (et non autour de lui, qui intercepterait les appuis destinés au panneau
+  // et à ses listes de suggestions) — même principe que SelectInput.
+  dismissArea: {
+    position: "absolute" as const,
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
+
   sheet: {
     backgroundColor: app_colors.white,
     borderTopLeftRadius: radius.modalSheetTop,
@@ -31,6 +41,19 @@ export const addSatelliteModalStyles = {
     fontSize: 10.5,
     color: app_colors.primary.medium,
     marginTop: -6,
+  },
+
+  nameLoader: {
+    alignSelf: "flex-start" as const,
+  },
+
+  orDivider: {
+    textAlign: "center" as const,
+    fontFamily: "DMMonoMedium",
+    fontSize: 10,
+    letterSpacing: 10 * 0.1,
+    textTransform: "uppercase" as const,
+    color: app_colors.primary.medium,
   },
 
   preview: {

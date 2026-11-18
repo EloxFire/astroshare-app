@@ -1,4 +1,4 @@
-import { Text, TextInput, TextInputProps, TextStyle, TouchableOpacity, View } from "react-native";
+import { FlatList, Text, TextInput, TextInputProps, TextStyle, TouchableOpacity, View } from "react-native";
 import { useState } from "react";
 import { Eye, EyeOff, LucideIcon } from "lucide-react-native";
 import { app_colors, flattenOpacity } from "../../../helpers/variables";
@@ -116,13 +116,23 @@ export const InputWithIcon = ({
             Si le champ est dans un ScrollView, celui-ci doit avoir keyboardShouldPersistTaps="handled" :
             sinon, clavier ouvert, le premier appui sur une suggestion ne fait que fermer le clavier. */}
         {showSuggestions && suggestions && (
-          <View style={inputWithIconStyles.suggestionsContainer}>
-            {suggestions.map((suggestion, index) => (
-              <TouchableOpacity onPress={() => handleSuggestionPress(suggestion)} key={`${index}-${suggestion}`} style={[inputWithIconStyles.suggestion, index < suggestions.length - 1 && inputWithIconStyles.suggestion.withBorder]}>
+          // FlatList plutôt qu'un ScrollView+map : une recherche large peut renvoyer des milliers
+          // de résultats (ex: "starlink" sur le catalogue NORAD), et un ScrollView monte toutes ses
+          // lignes d'un coup. FlatList ne rend que les lignes visibles (+ une marge), quelle que
+          // soit la taille de `suggestions` — même principe que §2 "Listes" (FlatList pour une
+          // liste longue ou de taille inconnue).
+          <FlatList
+            style={inputWithIconStyles.suggestionsContainer}
+            data={suggestions}
+            keyExtractor={(suggestion, index) => `${index}-${suggestion}`}
+            keyboardShouldPersistTaps="handled"
+            nestedScrollEnabled
+            renderItem={({ item: suggestion, index }) => (
+              <TouchableOpacity onPress={() => handleSuggestionPress(suggestion)} style={[inputWithIconStyles.suggestion, index < suggestions.length - 1 && inputWithIconStyles.suggestion.withBorder]}>
                 <Text style={inputWithIconStyles.suggestion.text}>{suggestion}</Text>
               </TouchableOpacity>
-            ))}
-          </View>
+            )}
+          />
         )}
       </View>
     </View>

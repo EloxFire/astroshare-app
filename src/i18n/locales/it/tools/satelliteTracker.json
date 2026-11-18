@@ -97,6 +97,10 @@
     "label": "ID NORAD",
     "placeholder": "Es: 25544",
     "helper": "Il numero di catalogo NORAD, visibile su CelesTrak o Heavens-Above.",
+    "or": "o",
+    "nameLabel": "Nome",
+    "namePlaceholder": "Es: ISS, Starlink...",
+    "tooManyResults": "{{count}} risultati, affina la ricerca per vederli tutti.",
     "notFound": "Nessun satellite corrisponde a questo ID.",
     "confirm": "Aggiungi ai miei satelliti",
     "alreadyTracked": "Già nei miei satelliti"

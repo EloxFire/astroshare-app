@@ -31,6 +31,44 @@ export const getNoradSatellite = async (query: string | number): Promise<NoradSa
   return results?.[0] ?? null;
 };
 
+export interface PaginatedNoradSatellites {
+  data: NoradSatellite[];
+  page: number;
+  limit: number;
+  total: number;
+}
+
+// Variante paginée de findNoradSatellites (page/limit opt-in côté API, mêmes bornes que la liste
+// principale : défaut 100, max 500) — à utiliser pour une recherche par nom affichée dans une liste
+// (ex: AddSatelliteModal), sans télécharger les milliers de résultats qu'une requête large comme
+// "starlink" peut renvoyer. `total` reste le nombre réel de correspondances, même si `data` n'en
+// contient qu'une page : sert à afficher "X résultats, affine ta recherche" sans sur-télécharger.
+export const searchNoradSatellites = async (
+  query: string | number,
+  { page, limit }: { page?: number; limit?: number } = {}
+): Promise<PaginatedNoradSatellites | null> => {
+  try {
+    console.log(`[searchNoradSatellites] Fetching norad query ${query} (page=${page}, limit=${limit})`);
+
+    const params = new URLSearchParams();
+    if (page !== undefined) params.set("page", String(page));
+    if (limit !== undefined) params.set("limit", String(limit));
+    const queryString = params.toString();
+
+    const response = await fetch(`${BASE_URL}/${encodeURIComponent(query)}${queryString ? `?${queryString}` : ""}`);
+    if (response.status === 404) return { data: [], page: page ?? 1, limit: limit ?? 100, total: 0 };
+    if (!response.ok) {
+      console.log(`[searchNoradSatellites] Error: ${response.status} ${response.statusText}`);
+      return null;
+    }
+
+    return await response.json() as PaginatedNoradSatellites;
+  } catch (error) {
+    console.log(`[searchNoradSatellites] Error: ${error}`);
+    return null;
+  }
+};
+
 // GET /v3/norad/group/<id1>/<id2>/... : plusieurs IDs NORAD en un seul appel (ex: la liste "mes
 // satellites" de l'utilisateur), plutôt qu'une requête par ID.
 export const getNoradSatellitesByIds = async (noradIds: number[]): Promise<NoradSatellite[] | null> => {

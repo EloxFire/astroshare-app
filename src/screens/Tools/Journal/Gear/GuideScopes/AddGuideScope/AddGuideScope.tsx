@@ -1,4 +1,4 @@
-import { ScrollView, View, Text, TouchableOpacity, TextInput } from "react-native"
+import { ScrollView, View, Text, TouchableOpacity, TextInput, KeyboardAvoidingView, Platform } from "react-native"
 import { useTranslation } from "react-i18next"
 import { useState } from "react"
 import { Trash2 } from "lucide-react-native"
@@ -68,6 +68,9 @@ const AddGuideScope = () => {
     <View style={globalStyles.screen}>
       <ScreenHeader title={editedGuideScope ? t("editTitle") : t("title")} main={false} />
 
+      {/* Formulaire long, dernier champ proche du bouton d'enregistrement : sans ça, Android ne
+          redimensionne rien tout seul une fois le clavier ouvert (voir AddSession). */}
+      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{ flex: 1 }}>
       <ScrollView>
         <View style={globalStyles.content}>
           <View style={addGuideScopeStyles.form}>
@@ -169,6 +172,7 @@ const AddGuideScope = () => {
           </View>
         </View>
       </ScrollView>
+      </KeyboardAvoidingView>
     </View>
   )
 }

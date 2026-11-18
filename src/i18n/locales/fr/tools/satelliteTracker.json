@@ -1,6 +1,6 @@
 {
   "screen": {
-    "title": "Satellites",
+    "title": "Suivi de satellites",
     "locationBanner": "Passages vus depuis {{location}}",
     "locationBannerUnknown": "Passages vus depuis ta position",
     "changeLocation": "Changer",
@@ -97,6 +97,10 @@
     "label": "ID NORAD",
     "placeholder": "Ex : 25544",
     "helper": "Le numéro du catalogue NORAD, visible sur CelesTrak ou Heavens-Above.",
+    "or": "ou",
+    "nameLabel": "Nom",
+    "namePlaceholder": "Ex : ISS, Starlink...",
+    "tooManyResults": "{{count}} résultats, affine ta recherche pour les voir tous.",
     "notFound": "Aucun satellite ne correspond à cet ID.",
     "confirm": "Ajouter à mes satellites",
     "alreadyTracked": "Déjà dans mes satellites"

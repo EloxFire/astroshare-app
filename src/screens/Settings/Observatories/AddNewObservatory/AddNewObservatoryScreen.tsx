@@ -1,6 +1,6 @@
 import { ScreenHeader } from "../../../../components/layout/ScreenHeader/ScreenHeader"
 import { globalStyles } from "../../../../helpers/globalStyles"
-import { View } from "react-native"
+import { KeyboardAvoidingView, Platform, View } from "react-native"
 import { useTranslation } from "react-i18next"
 import { useLocalSearchParams } from "expo-router"
 import { AddObservatoryFormProvider, useAddObservatoryForm } from "./AddObservatoryFormContext";
@@ -20,7 +20,11 @@ const AddNewObservatoryScreenContent = () => {
   return (
     <View style={globalStyles.screen}>
       <ScreenHeader title={editedObservatoryId ? t("stepOne.editScreenTitle") : t("stepOne.screenTitle")} main={false} />
-      <StepOne />
+      {/* StepOne a un champ de notes multiligne juste avant le bouton d'enregistrement : sans ça,
+          Android ne redimensionne rien tout seul une fois le clavier ouvert (voir AddSession). */}
+      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{ flex: 1 }}>
+        <StepOne />
+      </KeyboardAvoidingView>
       {/* {
         currentFormStep === 1 && (
           <>
