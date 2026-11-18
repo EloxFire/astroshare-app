@@ -1,0 +1,18 @@
+{
+  "search": {
+    "placeholder": "Cerca una città",
+    "notFound": "Impossibile trovare questa città."
+  },
+  "useCurrentLocation": "Usa la mia posizione",
+  "result": {
+    "loading": "Ricerca dei dati di inquinamento luminoso…",
+    "noData": "Nessun dato di inquinamento luminoso per questo luogo.",
+    "unknownLocation": "Posizione selezionata",
+    "sqm": "{{value}} mag/arcsec²"
+  },
+  "locked": {
+    "title": "Trova il cielo più buio",
+    "description": "Cerca qualsiasi città nel mondo e consulta il suo inquinamento luminoso (scala di Bortle, misura SQM) per preparare le tue sessioni.",
+    "cta": "Scopri Astroshare PRO"
+  }
+}

@@ -90,6 +90,11 @@ météo, APOD, viseur polaire, météo spatiale), observatoires de l'utilisateur
   - **Sur un écran normal avec un long formulaire dans un `ScrollView`,** le redimensionnement de l'activité ne suffit pas toujours à faire remonter le `ScrollView` jusqu'au champ actif (observé sur `AddSession`, en new architecture). Même correctif : `KeyboardAvoidingView` autour du `ScrollView` (`"padding"` sur iOS, `"height"` sur Android).
   - **Sur un écran sans aucun `ScrollView`** (ex : les écrans d'auth, mise en page fixe), `KeyboardAvoidingView` seul ne fait que comprimer la mise en page sans rien rendre défilable. Il faut aussi un `ScrollView` avec `contentContainerStyle={{ flexGrow: 1 }}` — `flexGrow: 1` garde la mise en page identique (un enfant en `flex:1` poussé en bas, par exemple) tant que le contenu tient à l'écran, et ne devient défilant que si le clavier réduit trop l'espace.
   - Correctif posé écran par écran / modale par modale, pas un seul wrapper global : le `Tabs` racine (`app/_layout.tsx`) ne peut pas en porter un sans casser la barre d'onglets, qui doit rester fixe.
+- **`UrlTile` (react-native-maps) avec des tuiles XYZ maison, décalées sans raison apparente :** la
+  pyramide est probablement en adressage **TMS** (origine Y en bas à gauche) plutôt que **XYZ**
+  (origine Y en haut à gauche, attendu par défaut) — cas typique d'un export `gdal2tiles.py` sans
+  `--xyz`. La prop `flipY` de `UrlTile` corrige ça sans toucher aux tuiles elles-mêmes. Rencontré sur
+  l'atlas de pollution lumineuse (`LightPollutionMapScreen`).
 
 ### Formatage (`src/helpers/format.ts`)
 
@@ -154,6 +159,29 @@ météo, APOD, viseur polaire, météo spatiale), observatoires de l'utilisateur
 - **« Mes satellites » :** liste purement locale (`trackedSatellites: number[]` dans
   `userData.store.ts`), l'API n'a pas de liste de suivi côté serveur — même principe que
   `observatories`/`pinnedTools`.
+
+### Carte de pollution lumineuse (`src/screens/Tools/LightPollutionMap/`)
+
+Outil entièrement PRO (`access: "premium"` dans `tools.ts`, contrairement au suivi de satellites qui
+n'a qu'une section PRO) : `isProUser` gate l'écran entier, `LockedFeatureCard` sinon (même pattern que
+« Mes satellites », §4).
+
+- **Réutilise `LocationContext.fetchLocation` plutôt que d'appeler l'API directement** : cette
+  fonction (déjà utilisée ailleurs dans l'app) géocode un nom de ville **et** interroge
+  `/v3/lightpollution` pour ses coordonnées en un seul appel. Elle accepte aussi des coordonnées
+  directes via une requête `"lat::lon"` (géocodage inverse + pollution lumineuse) — c'est ce qui sert
+  à la sélection par appui sur la carte, sans code API supplémentaire.
+- **Position de départ :** `location` du contexte (observatoire actif ou GPS), déjà enrichie de sa
+  pollution lumineuse au démarrage de l'app — pas de requête à l'ouverture de l'écran.
+- **Format repris de `WeatherRadarMap` en plein écran** (§4) : mêmes boutons ronds translucides, même
+  panneau du bas, mais pas de `ScreenHeader` classique — un chevron retour flottant à la place, pour
+  rester immersif (écran dédié, pas une modale par-dessus un autre écran).
+- **Tuiles de l'atlas (World Atlas 2015) en overlay (`UrlTile`) :** `flipY` nécessaire (pyramide TMS,
+  voir le piège §2). `maximumZ` plafonné (résolution d'origine ~1 km, pas de tuiles au-delà) — valeur
+  choisie par hypothèse, jamais vérifiée en direct (hôte des tuiles injoignable depuis un agent).
+- **`MapTargetMarker`** (`src/components/MapTargetMarker/`) a gagné une prop `color` optionnelle
+  (jaune par défaut, inchangé pour ses autres usages) : colore le marqueur selon le niveau Bortle du
+  point affiché (`app_colors.bortleScale`).
 
 ---
 
@@ -502,6 +530,7 @@ On ne peut pas lancer l'app depuis un agent. Méthodes utilisées jusqu'ici :
 | `src/i18n/locales/{en,it}/tools/journal/gear/setups/details.json` | `pieceCount_one`/`pieceCount_other` contiennent encore `{{count}}`, alors que `SetupDetails` les appelle sans `count` (le nombre est affiché à part, comme dans le fichier `fr`) : « {{count}} pieces of gear » s'affiche tel quel en anglais et en italien |
 | `src/components/cards/ObjectCardLite/ObjectCardLite.tsx` | Libellé d'accessibilité du bouton de suppression écrit en dur en français (« Retirer de la liste ») |
 | `src/types/auth/UserRoles.ts` | `UserRoles` est typé comme un objet (`{ADMIN: "ADMIN", ...}`), pas comme une union de chaînes : `User.role` ne se compare pas directement sous TypeScript strict. Contourné dans `isProUser` (`src/helpers/auth/subscription.ts`) en typant son paramètre `{role?: string} \| null \| undefined` plutôt qu'en important `User` |
+| `src/screens/Tools/SatelliteTracker/SatellitesScreen.tsx` | Condition PRO de la section « Mes satellites » inversée (`userIsPro ? <LockedFeatureCard /> : <liste réelle />`) : affiche la carte verrouillée aux comptes PRO et la liste réelle aux comptes non-PRO. Repéré en construisant `LightPollutionMapScreen` (qui, lui, utilise la bonne condition) |
 
 Quand l'un de ces problèmes est corrigé, retire sa ligne et note la correction au journal (§8).
 
@@ -524,6 +553,13 @@ Le journal commence avec le commit `8527e2f`. Les changements antérieurs, comme
 i18n, `SelectInput` ou `ImageHeaderScrollView`, sont décrits dans les sections ci-dessus mais n'ont pas
 d'entrée datée.
 
+- **2026-11-18** — même commit — nouvel outil Carte de pollution lumineuse (`/tools/light-pollution-map`,
+  déjà pré-enregistré dans `tools.ts`/`tools.json`, seule la route manquait) : carte plein écran façon
+  `WeatherRadarMap`, recherche d'une ville par nom ou sélection directe par appui sur la carte
+  (réutilise `LocationContext.fetchLocation`, aucun nouvel appel API), tuiles de l'atlas World Atlas
+  2015 en overlay (`UrlTile`, `flipY` pour une pyramide TMS — nouveau piège §2), marqueur coloré par
+  niveau Bortle (`MapTargetMarker` gagne une prop `color`), écran entier verrouillé PRO — §2, §4, §7
+  (bug d'accès PRO inversé repéré au passage dans `SatellitesScreen`, non corrigé).
 - **2026-11-18** — même commit — clavier qui cachait un champ, corrigé à plusieurs endroits
   (`KeyboardAvoidingView`, cf. nouveau piège §2) : `SelectInput` (modale), `AddSession` et tous les
   formulaires d'ajout de matériel (Gear, 8 écrans) + `AddNewObservatory`, et les 3 écrans d'auth

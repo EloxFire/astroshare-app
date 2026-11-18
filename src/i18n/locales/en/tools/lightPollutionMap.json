@@ -1,0 +1,18 @@
+{
+  "search": {
+    "placeholder": "Search for a city",
+    "notFound": "Couldn't find this city."
+  },
+  "useCurrentLocation": "Use my location",
+  "result": {
+    "loading": "Looking up light pollution data…",
+    "noData": "No light pollution data for this location.",
+    "unknownLocation": "Selected position",
+    "sqm": "{{value}} mag/arcsec²"
+  },
+  "locked": {
+    "title": "Find the darkest sky",
+    "description": "Search any city in the world and check its light pollution (Bortle scale, SQM reading) to plan your sessions.",
+    "cta": "Discover Astroshare PRO"
+  }
+}
