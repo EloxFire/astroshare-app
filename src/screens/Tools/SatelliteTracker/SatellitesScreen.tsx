@@ -28,6 +28,7 @@ import { isOperationalStatus, resolveObjectTypeKey, resolveOpsStatusKey } from "
 import { formatPassDayLabel } from "../../../helpers/satellites/passLabel";
 import type { NoradSatellite } from "../../../types/satellites/NoradSatellite";
 import { satellitesScreenStyles } from "./SatellitesScreen.styles";
+import Button from "../../../components/buttons/Button/Button";
 
 type StationEntry = {
   key: string;
@@ -127,10 +128,10 @@ const SatellitesScreen = () => {
                   <SatelliteStationCard
                     key={station.key}
                     title={station.catalog?.object_name ?? t(`featured.${station.key}`)}
-                    subtitle={station.catalog ? `${station.catalog.object_name} · NORAD ${station.catalog.norad_id}` : "--"}
+                    subtitle={station.catalog ? `NORAD ${station.catalog.norad_id}` : "--"}
                     altitudeLabel={station.altitudeLabel}
                     liveLabel={t("screen.live")}
-                    nextPassLabel={station.nextPassLabel}
+                    nextPassLabel={station.nextPassLabel ?? t("screen.noPass")}
                     onPress={station.catalog ? () => router.push(`/tools/satellite-tracker/${station.catalog!.norad_id}`) : undefined}
                   />
                 ))}
@@ -168,7 +169,7 @@ const SatellitesScreen = () => {
               <Badge text="PRO" backgroundColor={app_colors.yellow.main} foregroundColor={app_colors.primary.main} />
             </View>
 
-            {!userIsPro ? (
+            {userIsPro ? (
               <LockedFeatureCard
                 title={t("screen.locked.title")}
                 description={t("screen.locked.description")}
@@ -189,10 +190,11 @@ const SatellitesScreen = () => {
                   />
                 ))}
 
-                <TouchableOpacity style={satellitesScreenStyles.addButton} onPress={() => setIsAddModalOpen(true)}>
-                  <Plus size={16} color={app_colors.accent.main} />
-                  <Text style={satellitesScreenStyles.addButton.text}>{t("screen.addByNoradId")}</Text>
-                </TouchableOpacity>
+                <Button
+                  icon={Plus}
+                  label={t("screen.addByNoradId")}
+                  onPress={() => setIsAddModalOpen(true)}
+                />
               </View>
             )}
           </View>

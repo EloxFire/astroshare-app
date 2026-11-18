@@ -1,7 +1,8 @@
 import { Text, TouchableOpacity, View } from "react-native";
-import { Satellite } from "lucide-react-native";
+import { Radio, Satellite } from "lucide-react-native";
 import { satelliteStationCardStyles } from "./SatelliteStationCard.styles";
 import { app_colors } from "../../../helpers/variables";
+import Badge from "../../Badges/Badge/Badge";
 
 interface SatelliteStationCardProps {
   title: string;
@@ -23,7 +24,30 @@ interface SatelliteStationCardProps {
 const SatelliteStationCard = ({ title, subtitle, altitudeLabel, liveLabel, nextPassLabel, onPress }: SatelliteStationCardProps) => {
   return (
     <TouchableOpacity style={satelliteStationCardStyles.card} onPress={onPress} disabled={!onPress} activeOpacity={0.85}>
-      <View style={satelliteStationCardStyles.topRow}>
+      <View style={satelliteStationCardStyles.card.illustrationContainer}>
+        <Satellite size={40} color={app_colors.white} />
+      </View>
+
+      <View style={satelliteStationCardStyles.card.infos}>
+        <View style={{display: "flex", flexDirection: "row", gap: 10, alignItems: "center"}}>
+          <Badge
+            icon={Radio}
+            text={liveLabel}
+            backgroundColor={app_colors.red.main}
+            foregroundColor={app_colors.red.light}
+          />
+          <Text style={satelliteStationCardStyles.card.infos.label}>{altitudeLabel}</Text>
+        </View>
+        <View>
+          <Text style={satelliteStationCardStyles.card.infos.title}>{title}</Text>
+          <Text style={satelliteStationCardStyles.card.infos.subtitle}>{subtitle}</Text>
+        </View>
+
+        <View style={satelliteStationCardStyles.card.infos.nextPassBadge}>
+          <Text style={satelliteStationCardStyles.card.infos.nextPassBadge.text}>{nextPassLabel}</Text>
+        </View>
+      </View>
+      {/* <View style={satelliteStationCardStyles.topRow}>
         <View style={satelliteStationCardStyles.badge}>
           <Satellite size={20} color={app_colors.white} />
         </View>
@@ -45,7 +69,7 @@ const SatelliteStationCard = ({ title, subtitle, altitudeLabel, liveLabel, nextP
         <View style={satelliteStationCardStyles.nextPassBadge}>
           <Text style={satelliteStationCardStyles.nextPassBadge.text}>{nextPassLabel}</Text>
         </View>
-      )}
+      )} */}
     </TouchableOpacity>
   );
 };

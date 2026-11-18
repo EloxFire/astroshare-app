@@ -4,79 +4,55 @@ export const satelliteStationCardStyles = {
   card: {
     backgroundColor: app_colors.primary.main,
     borderRadius: radius.heroCard,
-    padding: spacing.toolCard + 4,
+    padding: 10,
     display: "flex" as const,
-    flexDirection: "column" as const,
+    flexDirection: "row" as const,
     gap: 10,
-  },
 
-  topRow: {
-    display: "flex" as const,
-    flexDirection: "row" as const,
-    alignItems: "flex-start" as const,
-    justifyContent: "space-between" as const,
-  },
-
-  badge: {
-    width: 44,
-    height: 44,
-    borderRadius: radius.badge44,
-    backgroundColor: withOpacity(app_colors.white, 0.12),
-    display: "flex" as const,
-    alignItems: "center" as const,
-    justifyContent: "center" as const,
-  },
-
-  liveBadge: {
-    display: "flex" as const,
-    flexDirection: "row" as const,
-    alignItems: "center" as const,
-    gap: 5,
-
-    dot: {
-      width: 6,
-      height: 6,
-      borderRadius: 3,
-      backgroundColor: app_colors.red.main,
+    illustrationContainer: {
+      display: "flex" as const,
+      alignItems: "center" as const,
+      justifyContent: "center" as const,
+      width: "25%" as const,
     },
 
-    text: {
-      fontFamily: "DMMonoMedium",
-      fontSize: 9,
-      letterSpacing: 9 * 0.08,
-      color: withOpacity(app_colors.white, 0.85),
-    },
-  },
+    infos: {
+      display: "flex" as const,
+      flexDirection: "column" as const,
+      flex: 1,
+      gap: 10,
 
-  texts: {
-    display: "flex" as const,
-    flexDirection: "column" as const,
-    gap: 2,
+      label: {
+        fontFamily: "DMMonoMedium",
+        fontSize: 12,
+        color: withOpacity(app_colors.white, 0.8)
+      },
 
-    title: {
-      fontFamily: "ZTNatureBold",
-      fontSize: 19,
-      color: app_colors.white,
-    },
+      title: {
+        fontFamily: "ZTNatureBold",
+        fontSize: 20,
+        color: app_colors.white
+      },
 
-    subtitle: {
-      fontFamily: "DMMonoRegular",
-      fontSize: 11,
-      color: withOpacity(app_colors.white, 0.65),
-    },
-  },
+      subtitle: {
+        fontFamily: "DMMonoMedium",
+        fontSize: 10,
+        color: withOpacity(app_colors.white, 0.8)
+      },
 
-  nextPassBadge: {
-    alignSelf: "flex-start" as const,
-    backgroundColor: withOpacity(app_colors.white, 0.12),
-    borderRadius: radius.pill,
-    paddingVertical: spacing.badge.vertical + 2,
-    paddingHorizontal: spacing.badge.horizontal + 4,
+      nextPassBadge: {
+        backgroundColor: withOpacity(app_colors.white, 0.1),
+        borderRadius: radius.heroCard,
+        paddingVertical: 2,
+        paddingHorizontal: 6,
+        alignSelf: "flex-start" as const,
 
-    text: {
-      fontFamily: "DMMonoMedium",
-      fontSize: 9.5,
-      color: app_colors.yellow.main,
-    },
-  },
+        text: {
+          fontFamily: "DMMonoMedium",
+          fontSize: 10,
+          color: app_colors.yellow.main
+        }
+      }
+    }
+  }
 };
