@@ -1,14 +1,24 @@
 {
   "search": {
-    "placeholder": "Cerca una città",
+    "placeholder": "Cerca un luogo",
     "notFound": "Impossibile trovare questa città."
   },
   "useCurrentLocation": "Usa la mia posizione",
+  "legend": {
+    "darkSky": "Cielo buio",
+    "city": "Città",
+    "opacity": "Opacità"
+  },
   "result": {
     "loading": "Ricerca dei dati di inquinamento luminoso…",
     "noData": "Nessun dato di inquinamento luminoso per questo luogo.",
     "unknownLocation": "Posizione selezionata",
-    "sqm": "{{value}} mag/arcsec²"
+    "sqm": "{{value}} mag/arcsec²",
+    "scaleLow": "1 · cielo buio",
+    "scaleHigh": "9 · centro città",
+    "milkyWayVisible": "Via Lattea: visibile",
+    "milkyWayInvisible": "Via Lattea: non visibile",
+    "limitingMagnitude": "Magnitudine limite ≈ {{value}}"
   },
   "locked": {
     "title": "Trova il cielo più buio",

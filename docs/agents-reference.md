@@ -3,7 +3,7 @@
 Point d'entrée pour un agent qui intervient sur ce dépôt : état du projet, conventions, pièges connus
 et, en détail, le rendu 3D de la Lune (`MoonPhase`) et les calculs astronomiques associés.
 
-- **État décrit** : 18 novembre 2026, branche `ASTROSHARE_V3`. Vérifie toujours le code
+- **État décrit** : 19 novembre 2026, branche `ASTROSHARE_V3`. Vérifie toujours le code
   avant de te fier à un détail d'ici : ce document peut avoir pris du retard.
 - **Langue** : le code est commenté en français, et l'utilisateur échange en français. Garde ces deux usages.
 - **Contenu versionné** : ce fichier est commité. N'y ajoute jamais de secret, de valeur du `.env`, d'URL
@@ -58,8 +58,9 @@ météo, APOD, viseur polaire, météo spatiale), observatoires de l'utilisateur
 - **Typecheck :** `npx tsc --noEmit -p .`, à 0 erreur à cette date. Garde-le à 0.
 - **Pas de tests ni de linter :** aucun script `test` ou `lint`. Vérifie par le typecheck et par des scripts ponctuels (voir §5.8).
 - **Metro** (`metro.config.js`) :
-  - `unstable_enablePackageExports = false` : les paquets sont résolus via leur champ `main`. Pour `three`, c'est `build/three.cjs`, et c'est ce fichier que le patch modifie.
+  - `unstable_enablePackageExports = false` : les paquets sont résolus via leur champ `main`. Pour `three`, c'est `build/three.cjs`, et c'est ce fichier que le patch modifie. Ce même réglage permet aussi d'importer un sous-module précis d'un paquet (`satellite.js/dist/io.js`…) même quand son `package.json` ne déclare que `"."` dans `exports` — utile pour éviter une branche cassée dans le point d'entrée (voir `satellite.js` ci-dessous). `tsc`, lui, respecte `exports` : un import profond qui marche très bien dans Metro peut quand même être refusé par TypeScript, d'où l'entrée `satellite.js/dist/*` dans `tsconfig.json` → `paths` (même technique que `@firebase/auth`, déjà là).
   - Les `.svg` sont importés comme composants (`react-native-svg-transformer`).
+  - **`satellite.js` casse le build Android** si on l'importe par `import * as satellite from "satellite.js"` : son point d'entrée réexporte aussi son module `wasm/`, qui fait un `import()` dynamique de `#wasm-single-thread` (un subpath import résolu vers un loader Emscripten pensé pour Node, qui fait lui-même `import("node:module")`). Metro trace cette branche même si elle n'est jamais appelée, et échoue sur `node:module`, introuvable en React Native. Fix : importer seulement les sous-modules réellement utilisés (`satellite.js/dist/io.js`, `propagation.js`, `transforms.js` dans `src/helpers/satellites/propagation.ts`), dont toute la chaîne de dépendances a été vérifiée sans aucune référence à `wasm/` ni à Node.
 
 ---
 
@@ -95,6 +96,21 @@ météo, APOD, viseur polaire, météo spatiale), observatoires de l'utilisateur
   (origine Y en haut à gauche, attendu par défaut) — cas typique d'un export `gdal2tiles.py` sans
   `--xyz`. La prop `flipY` de `UrlTile` corrige ça sans toucher aux tuiles elles-mêmes. Rencontré sur
   l'atlas de pollution lumineuse (`LightPollutionMapScreen`).
+- **`UrlTile.maximumZ` fait disparaître la couche en zoomant plus loin que la résolution d'origine**
+  (elle s'arrête net à ce niveau de zoom). `maximumNativeZ` fait l'inverse : il continue de demander
+  la dernière tuile disponible et l'agrandit (un peu floue, mais toujours visible) — c'est lui qu'il
+  faut pour une couche basse résolution (ex: un atlas ~1 km) sous une carte qu'on peut zoomer plus
+  loin.
+- **`Marker` à enfants personnalisés (react-native-maps) qui ne se met pas à jour :** la vue est
+  convertie en bitmap natif une seule fois (`tracksViewChanges` ne suit pas les re-renders en continu,
+  trop coûteux) — la position (`coordinate`, prop native à part) suit bien les changements, mais pas
+  le contenu du bitmap (ex: une couleur qui change). Poser un `key` sur la valeur qui doit faire
+  changer l'apparence (ex: `key={color}`) force un nouveau montage, donc une nouvelle capture — moins
+  coûteux que `tracksViewChanges` toujours actif pour un marqueur unique.
+- **Pas de librairie de slider dans le projet :** les pistes glissables (lecture du radar météo,
+  opacité d'une couche de carte) sont un `PanResponder` natif sur une zone mesurée au `onLayout` —
+  voir `WeatherRadarMap` (calée sur des frames discrètes) et `OpacitySlider` du dossier Pollution
+  lumineuse (continue, 0 à 1) pour le gabarit à reprendre plutôt que d'ajouter une dépendance.
 
 ### Formatage (`src/helpers/format.ts`)
 
@@ -164,24 +180,43 @@ météo, APOD, viseur polaire, météo spatiale), observatoires de l'utilisateur
 
 Outil entièrement PRO (`access: "premium"` dans `tools.ts`, contrairement au suivi de satellites qui
 n'a qu'une section PRO) : `isProUser` gate l'écran entier, `LockedFeatureCard` sinon (même pattern que
-« Mes satellites », §4).
+« Mes satellites », §4). Carte plein écran immersive : pas de `ScreenHeader` classique, un chevron
+retour flottant à la place (écran dédié, pas une modale par-dessus un autre écran) — format et langage
+visuel (boutons ronds translucides puis, après une retouche demandée par l'utilisateur, cartes
+blanches) inspirés de `WeatherRadarMap` en plein écran (§4).
 
 - **Réutilise `LocationContext.fetchLocation` plutôt que d'appeler l'API directement** : cette
   fonction (déjà utilisée ailleurs dans l'app) géocode un nom de ville **et** interroge
   `/v3/lightpollution` pour ses coordonnées en un seul appel. Elle accepte aussi des coordonnées
   directes via une requête `"lat::lon"` (géocodage inverse + pollution lumineuse) — c'est ce qui sert
   à la sélection par appui sur la carte, sans code API supplémentaire.
-- **Position de départ :** `location` du contexte (observatoire actif ou GPS), déjà enrichie de sa
-  pollution lumineuse au démarrage de l'app — pas de requête à l'ouverture de l'écran.
-- **Format repris de `WeatherRadarMap` en plein écran** (§4) : mêmes boutons ronds translucides, même
-  panneau du bas, mais pas de `ScreenHeader` classique — un chevron retour flottant à la place, pour
-  rester immersif (écran dédié, pas une modale par-dessus un autre écran).
+- **Pas de sélection au départ :** la carte s'ouvre neutre (pas de marqueur ni de carte de résultat),
+  seulement centrée sur la position « effective » de l'app (observatoire actif ou GPS) pour orienter
+  la vue. Une recherche, un appui sur la carte ou le bouton « ma position » choisissent un lieu ; le
+  bouton ✕ de la carte de résultat revient à « rien sélectionné ».
+- **Style de carte sombre** (`src/helpers/map/darkMapStyle.ts`) : tableau `customMapStyle` Google Maps
+  standard (routes/POI/transports masqués, libellés clairs), entièrement côté client.
 - **Tuiles de l'atlas (World Atlas 2015) en overlay (`UrlTile`) :** `flipY` nécessaire (pyramide TMS,
-  voir le piège §2). `maximumZ` plafonné (résolution d'origine ~1 km, pas de tuiles au-delà) — valeur
-  choisie par hypothèse, jamais vérifiée en direct (hôte des tuiles injoignable depuis un agent).
-- **`MapTargetMarker`** (`src/components/MapTargetMarker/`) a gagné une prop `color` optionnelle
-  (jaune par défaut, inchangé pour ses autres usages) : colore le marqueur selon le niveau Bortle du
-  point affiché (`app_colors.bortleScale`).
+  voir le piège §2). `maximumNativeZ` (pas `maximumZ`, voir le même piège) plafonné à la résolution
+  d'origine (~1 km) pour que la couche reste visible (agrandie) en zoomant plus loin plutôt que de
+  disparaître — valeur choisie par hypothèse, jamais vérifiée en direct (hôte des tuiles injoignable
+  depuis un agent). Opacité réglable par l'utilisateur (`OpacitySlider`, voir le piège §2 sur les
+  sliders maison), 75 % par défaut.
+- **`MapTargetMarker`** (`src/components/MapTargetMarker/`, partagé) a gagné une prop `color`
+  optionnelle (jaune par défaut, inchangé pour ses autres usages) : colore le marqueur selon le niveau
+  Bortle du point affiché (`app_colors.bortleScale`). `key={color}` sur l'usage ici — voir le piège §2
+  sur les `Marker` à enfants personnalisés qui ne suivent pas un changement de couleur seul. Un premier
+  essai avec un marqueur-étiquette maison (nom du lieu accolé) a été abandonné : l'utilisateur a
+  préféré un point seul, plus proche de ce que `MapTargetMarker` fait déjà ailleurs dans l'app.
+- **`BortleScaleBar`** (composant local à l'écran) : dégradé `app_colors.bortleScale` en SVG (même
+  technique que `StepTwo`, §4), en petit pour la légende statique et en grand avec le niveau courant
+  mis en évidence pour la carte de résultat.
+- **« Voie lactée visible/invisible » et « Magnitude limite » ne sont pas des données API**
+  (`/v3/lightpollution` ne renvoie que `bortle`/`mpsas`/`location`/`source`) : valeurs de référence
+  standard de l'échelle de Bortle, ajoutées dans `src/helpers/lightPollution/lightPollution.ts`
+  (`getLightPollutionLimitingMagnitude`, `isMilkyWayVisible`) et `common.json` →
+  `lightPollution.limitingMagnitude` (fr seulement, comme le reste du bloc `lightPollution` — jamais
+  traduit en/it, trou pré-existant non comblé ici, voir §7).
 
 ---
 
@@ -531,6 +566,7 @@ On ne peut pas lancer l'app depuis un agent. Méthodes utilisées jusqu'ici :
 | `src/components/cards/ObjectCardLite/ObjectCardLite.tsx` | Libellé d'accessibilité du bouton de suppression écrit en dur en français (« Retirer de la liste ») |
 | `src/types/auth/UserRoles.ts` | `UserRoles` est typé comme un objet (`{ADMIN: "ADMIN", ...}`), pas comme une union de chaînes : `User.role` ne se compare pas directement sous TypeScript strict. Contourné dans `isProUser` (`src/helpers/auth/subscription.ts`) en typant son paramètre `{role?: string} \| null \| undefined` plutôt qu'en important `User` |
 | `src/screens/Tools/SatelliteTracker/SatellitesScreen.tsx` | Condition PRO de la section « Mes satellites » inversée (`userIsPro ? <LockedFeatureCard /> : <liste réelle />`) : affiche la carte verrouillée aux comptes PRO et la liste réelle aux comptes non-PRO. Repéré en construisant `LightPollutionMapScreen` (qui, lui, utilise la bonne condition) |
+| `src/i18n/locales/{en,it}/common.json` | Le bloc `lightPollution` (`indicators`, `indicatorDescriptions`, `sqm.numeric`, `limitingMagnitude`) n'existe que dans `fr` : en/it retombent silencieusement sur le français pour tout texte lié à l'échelle de Bortle (`ObservatoryDetails`, `StepTwo`, `LightPollutionMapScreen`) |
 
 Quand l'un de ces problèmes est corrigé, retire sa ligne et note la correction au journal (§8).
 
@@ -553,6 +589,15 @@ Le journal commence avec le commit `8527e2f`. Les changements antérieurs, comme
 i18n, `SelectInput` ou `ImageHeaderScrollView`, sont décrits dans les sections ci-dessus mais n'ont pas
 d'entrée datée.
 
+- **2026-11-19** — même commit — Carte de pollution lumineuse retouchée après premiers tests sur
+  appareil : carte sombre (`customMapStyle`), carte de résultat refaite en blanc au plus proche d'une
+  maquette retravaillée (badge, échelle Bortle en dégradé, pastilles Voie lactée/magnitude limite),
+  sélection vide par défaut avec bouton de fermeture, tuiles corrigées (`maximumNativeZ` au lieu de
+  `maximumZ`, qui faisait disparaître la couche en zoomant), couleur du marqueur qui ne suivait pas
+  les changements (`key` sur `MapTargetMarker`), opacité des tuiles réglable (`OpacitySlider`, piste
+  maison comme `WeatherRadarMap`, pas de dépendance ajoutée) — §2, §4, §7. Corrige au passage un build
+  Android cassé par `satellite.js` (import profond au lieu du point d'entrée du paquet, qui traînait
+  une branche WASM pensée pour Node) — §1, §2.
 - **2026-11-18** — même commit — nouvel outil Carte de pollution lumineuse (`/tools/light-pollution-map`,
   déjà pré-enregistré dans `tools.ts`/`tools.json`, seule la route manquait) : carte plein écran façon
   `WeatherRadarMap`, recherche d'une ville par nom ou sélection directe par appui sur la carte

@@ -1,14 +1,24 @@
 {
   "search": {
-    "placeholder": "Search for a city",
+    "placeholder": "Search for a place",
     "notFound": "Couldn't find this city."
   },
   "useCurrentLocation": "Use my location",
+  "legend": {
+    "darkSky": "Dark sky",
+    "city": "City",
+    "opacity": "Opacity"
+  },
   "result": {
     "loading": "Looking up light pollution data…",
     "noData": "No light pollution data for this location.",
     "unknownLocation": "Selected position",
-    "sqm": "{{value}} mag/arcsec²"
+    "sqm": "{{value}} mag/arcsec²",
+    "scaleLow": "1 · dark sky",
+    "scaleHigh": "9 · inner city",
+    "milkyWayVisible": "Milky Way: visible",
+    "milkyWayInvisible": "Milky Way: not visible",
+    "limitingMagnitude": "Limiting magnitude ≈ {{value}}"
   },
   "locked": {
     "title": "Find the darkest sky",

@@ -1,14 +1,24 @@
 {
   "search": {
-    "placeholder": "Rechercher une ville",
+    "placeholder": "Rechercher un lieu",
     "notFound": "Impossible de trouver cette ville."
   },
   "useCurrentLocation": "Utiliser ma position",
+  "legend": {
+    "darkSky": "Ciel noir",
+    "city": "Ville",
+    "opacity": "Opacité"
+  },
   "result": {
     "loading": "Recherche des données de pollution lumineuse…",
     "noData": "Aucune donnée de pollution lumineuse pour ce lieu.",
     "unknownLocation": "Position sélectionnée",
-    "sqm": "{{value}} mag/arcsec²"
+    "sqm": "{{value}} mag/arcsec²",
+    "scaleLow": "1 · ciel noir",
+    "scaleHigh": "9 · centre-ville",
+    "milkyWayVisible": "Voie lactée : visible",
+    "milkyWayInvisible": "Voie lactée : invisible",
+    "limitingMagnitude": "Magnitude limite ≈ {{value}}"
   },
   "locked": {
     "title": "Trouvez le ciel le plus sombre",
