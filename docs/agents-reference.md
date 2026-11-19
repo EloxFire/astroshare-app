@@ -218,6 +218,40 @@ blanches) inspirés de `WeatherRadarMap` en plein écran (§4).
   `lightPollution.limitingMagnitude` (fr seulement, comme le reste du bloc `lightPollution` — jamais
   traduit en/it, trou pré-existant non comblé ici, voir §7).
 
+### Météo spatiale (`src/screens/Tools/SpaceWeather/`)
+
+- **Contrat API migré :** les routes `/kpi`, `/wind`, `/imf`, `/scales`, `/flares`, `/sun` et
+  `/outlook` renvoyaient auparavant des `label` déjà traduits en français ; elles exposent maintenant
+  des identifiants stables (`level`, nouveaux champs de type comme `NoaaSeverity`,
+  `SolarFlareActivity`, `SunWavelengthLabel`…) à traduire côté app. Chaque identifiant a son
+  dictionnaire dans `tools/spaceWeather.json` (`imagery.wavelengths.*`, `magneticField.level.*`,
+  `scales.severity.*`, `solarFlares.activity.*`), dupliqué à l'identique en fr/en/it (vérifié : même
+  jeu de clés dans les 3 fichiers). Plus aucun code ne doit lire un champ `label` comme texte
+  affichable directement sur ces routes.
+- **Deux nouvelles routes :** `/v3/solarweather/aurora` (prévision NOAA Ovation ; probabilité
+  "ici" seulement si `lat`/`lon` passés) et `/v3/solarweather/outlook` (tendance Kp sur 27 jours, pas
+  de `label` malgré un exemple de doc qui en montrait un — vérifié en direct, le champ n'existe pas).
+  Helpers : `src/helpers/api/spaceWeather/aurora.ts` et `outlook.ts`, même principe que les autres
+  fichiers du dossier.
+- **Écran scindé en une carte par section** (`src/screens/Tools/SpaceWeather/components/`),
+  l'ancien fichier faisant plus de 700 lignes : `SunImageryCard`, `SunSummaryCard`, `KpCard`,
+  `OutlookCard`, `NoaaScalesCard`, `MagneticFieldCard`, `AuroraForecastCard`, `SolarWindCard`,
+  `EventsCard`. Chaque carte récupère ses propres données au focus de l'écran (même philosophie que
+  le reste de l'app), avec deux exceptions volontaires :
+  - `imf`/`solarWind` restent récupérés dans l'écran parent et passés en prop à `MagneticFieldCard`/
+    `SolarWindCard` : ils partagent un seul minuteur de rafraîchissement de 5 min côté API, un par
+    endpoint aurait dédoublé ce minuteur ;
+  - `noaaScales` est volontairement dupliqué entre `KpCard` (pour son badge) et `NoaaScalesCard` :
+    appel léger, préféré au fil de props entre deux cartes sœurs sans lien direct.
+  `SpaceWeatherScreen.tsx` ne garde que `ScreenHeader`, l'effet `imf`/`solarWind` et la composition
+  des cartes ; `SpaceWeatherScreen.styles.ts` a été supprimé (plus aucun style au niveau de l'écran).
+- **Bloc « chez vous » d'`AuroraForecastCard` :** remplace un badge peu lisible par un encart coloré
+  (icône + titre + probabilité en grand) juste au-dessus de l'image sélectionnée. Le titre s'adapte à
+  la position réellement utilisée par l'app (`useLocation().isUsingObservatory` /
+  `activeObservatory`) : nom de l'observatoire actif s'il y en a un, « Chez vous » seulement en
+  position GPS — éviter d'afficher « Chez vous » pour la position d'un observatoire enregistré
+  ailleurs.
+
 ---
 
 ## 3. Internationalisation
@@ -589,6 +623,13 @@ Le journal commence avec le commit `8527e2f`. Les changements antérieurs, comme
 i18n, `SelectInput` ou `ImageHeaderScrollView`, sont décrits dans les sections ci-dessus mais n'ont pas
 d'entrée datée.
 
+- **2026-11-19** — même commit — Météo spatiale : migration du contrat API (`label` traduits côté
+  serveur remplacés par des identifiants stables sur `/kpi`, `/wind`, `/imf`, `/scales`, `/flares`,
+  `/sun`, `/outlook`, avec dictionnaire de traduction fr/en/it correspondant), deux nouvelles routes
+  (`/solarweather/aurora`, `/solarweather/outlook`), `SpaceWeatherScreen.tsx` scindé en 9 cartes
+  autonomes sous `components/`, et bloc « chez vous » d'`AuroraForecastCard` adapté à la position
+  effective (observatoire actif ou GPS) au lieu d'un badge fixe « Chez vous » — §2 (nouvelle
+  sous-section).
 - **2026-11-19** — même commit — Carte de pollution lumineuse retouchée après premiers tests sur
   appareil : carte sombre (`customMapStyle`), carte de résultat refaite en blanc au plus proche d'une
   maquette retravaillée (badge, échelle Bortle en dégradé, pastilles Voie lactée/magnitude limite),

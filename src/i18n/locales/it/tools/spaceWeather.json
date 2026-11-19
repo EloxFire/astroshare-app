@@ -5,7 +5,20 @@
   "imagery": {
     "title": "La nostra stella",
     "caption": "Caricamento dell'immagine...",
-    "otherWavelengths": "Altre lunghezze d'onda"
+    "otherWavelengths": "Altre lunghezze d'onda",
+    "wavelengths": {
+      "visible_light": "Luce visibile",
+      "magnetogram": "Magnetogramma",
+      "chromosphere": "Cromosfera",
+      "quiet_corona": "Corona calma",
+      "corona_active_regions": "Corona, regioni attive",
+      "active_regions": "Regioni attive",
+      "flares": "Eruzioni",
+      "active_regions_hot": "Regioni attive (calde)",
+      "transition_region": "Regione di transizione",
+      "photosphere": "Fotosfera",
+      "corona": "Corona"
+    }
   },
   "sumary": {
     "title": "Informazioni dettagliate",
@@ -67,6 +80,11 @@
     "auroraFavorable": {
       "favorable": "Favorevole alle aurore",
       "unfavorable": "Sfavorevole alle aurore"
+    },
+    "level": {
+      "strong_south": "Fortemente orientato a sud",
+      "south": "Orientato a sud",
+      "north": "Orientato a nord"
     }
   },
   "solarWind": {
@@ -94,6 +112,15 @@
   "scales": {
     "title": "Scale NOAA",
     "all": "Vedi tutto",
+    "severity": {
+      "none": "Nessuna",
+      "minor": "Minore",
+      "moderate": "Moderata",
+      "strong": "Forte",
+      "severe": "Severa",
+      "extreme": "Estrema",
+      "unknown": "Sconosciuta"
+    },
     "geomagnetic": {
       "title": "Tempeste geomagnetiche",
       "description": "La scala G descrive l'intensità delle tempeste geomagnetiche e i loro possibili effetti sui sistemi tecnologici.",
@@ -199,6 +226,37 @@
       "C": "Moderata",
       "M": "Forte",
       "X": "Estrema"
+    },
+    "activity": {
+      "very_low": "Molto debole",
+      "low": "Debole",
+      "moderate": "Moderata",
+      "significant_flare": "Eruzione significativa",
+      "major_flare": "Eruzione maggiore",
+      "unknown": "Sconosciuta"
     }
+  },
+  "auroraForecast": {
+    "title": "Previsione aurore",
+    "images": {
+      "ovation.north": "Modello · Emisfero nord",
+      "ovation.south": "Modello · Emisfero sud",
+      "dashboard.north": "Mappa · Emisfero nord",
+      "dashboard.south": "Mappa · Emisfero sud"
+    },
+    "observationTime": "Osservato alle {{time}}",
+    "forecastTime": "Previsione per {{time}}",
+    "here": {
+      "title": "Da te",
+      "probability": "{{value}} %",
+      "unlikely": "Improbabile",
+      "possible": "Possibile",
+      "likely": "Probabile",
+      "high": "Alta"
+    }
+  },
+  "outlook": {
+    "title": "Tendenza su 27 giorni",
+    "kp": "Kp {{value}}"
   }
 }

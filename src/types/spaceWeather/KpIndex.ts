@@ -13,8 +13,7 @@ export type KpLevel =
 export type KpPoint = {
   time_tag: string;
   kp: number;
-  level: KpLevel;
-  label: string; // déjà en FR, prêt à afficher
+  level: KpLevel; // identifiant à traduire (tools/spaceWeather:kpIndex.scale.<level>) — label a disparu
   scale: string | null; // "G1".."G5", ou null si pas de tempête géomagnétique
 }
 

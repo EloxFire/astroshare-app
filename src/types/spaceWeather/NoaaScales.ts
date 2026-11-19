@@ -1,6 +1,10 @@
+// Identifiant partagé entre les 3 catégories (pas de "label" par catégorie comme avant) — à traduire
+// via tools/spaceWeather:scales.severity.<label>.
+export type NoaaSeverity = "none" | "minor" | "moderate" | "strong" | "severe" | "extreme" | "unknown";
+
 export type NoaaScaleLevel = {
   scale: string; // "G0".."G5" | "R0".."R5" | "S0".."S5" selon la catégorie
-  label: string;
+  label: NoaaSeverity;
 }
 
 export type NoaaScalesEntry = {

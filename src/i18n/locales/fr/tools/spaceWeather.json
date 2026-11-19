@@ -5,7 +5,20 @@
   "imagery": {
     "title": "Notre étoile",
     "caption": "Chargement de l'image...",
-    "otherWavelengths": "Autres longueurs d'onde"
+    "otherWavelengths": "Autres longueurs d'onde",
+    "wavelengths": {
+      "visible_light": "Lumière visible",
+      "magnetogram": "Magnétogramme",
+      "chromosphere": "Chromosphère",
+      "quiet_corona": "Couronne calme",
+      "corona_active_regions": "Couronne, régions actives",
+      "active_regions": "Régions actives",
+      "flares": "Éruptions",
+      "active_regions_hot": "Régions actives (chaud)",
+      "transition_region": "Région de transition",
+      "photosphere": "Photosphère",
+      "corona": "Couronne"
+    }
   },
   "sumary": {
     "title": "Informations détaillées",
@@ -67,6 +80,11 @@
     "auroraFavorable": {
       "favorable": "Favorable aux aurores",
       "unfavorable": "Défavorable aux aurores"
+    },
+    "level": {
+      "strong_south": "Fortement orienté sud",
+      "south": "Orienté sud",
+      "north": "Orienté nord"
     }
   },
   "solarWind": {
@@ -94,6 +112,15 @@
   "scales": {
     "title": "Échelles NOAA",
     "all": "Voir tout",
+    "severity": {
+      "none": "Aucune",
+      "minor": "Mineure",
+      "moderate": "Modérée",
+      "strong": "Forte",
+      "severe": "Sévère",
+      "extreme": "Extrême",
+      "unknown": "Inconnue"
+    },
     "geomagnetic": {
       "title": "Tempêtes géomagnétiques",
       "description": "L'échelle G décrit l'intensité des tempêtes géomagnétiques et leurs effets potentiels sur les systèmes technologiques.",
@@ -199,6 +226,37 @@
       "C": "Modérée",
       "M": "Forte",
       "X": "Extrême"
+    },
+    "activity": {
+      "very_low": "Très faible",
+      "low": "Faible",
+      "moderate": "Modérée",
+      "significant_flare": "Éruption significative",
+      "major_flare": "Éruption majeure",
+      "unknown": "Inconnue"
     }
+  },
+  "auroraForecast": {
+    "title": "Prévision d'aurores",
+    "images": {
+      "ovation.north": "Modèle · Hémisphère nord",
+      "ovation.south": "Modèle · Hémisphère sud",
+      "dashboard.north": "Carte · Hémisphère nord",
+      "dashboard.south": "Carte · Hémisphère sud"
+    },
+    "observationTime": "Observé à {{time}}",
+    "forecastTime": "Prévision pour {{time}}",
+    "here": {
+      "title": "Chez vous",
+      "probability": "{{value}} %",
+      "unlikely": "Improbable",
+      "possible": "Possible",
+      "likely": "Probable",
+      "high": "Élevée"
+    }
+  },
+  "outlook": {
+    "title": "Tendance sur 27 jours",
+    "kp": "Kp {{value}}"
   }
 }

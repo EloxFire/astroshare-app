@@ -5,7 +5,20 @@
   "imagery": {
     "title": "Our star",
     "caption": "Loading image...",
-    "otherWavelengths": "Other wavelengths"
+    "otherWavelengths": "Other wavelengths",
+    "wavelengths": {
+      "visible_light": "Visible light",
+      "magnetogram": "Magnetogram",
+      "chromosphere": "Chromosphere",
+      "quiet_corona": "Quiet corona",
+      "corona_active_regions": "Corona, active regions",
+      "active_regions": "Active regions",
+      "flares": "Flares",
+      "active_regions_hot": "Active regions (hot)",
+      "transition_region": "Transition region",
+      "photosphere": "Photosphere",
+      "corona": "Corona"
+    }
   },
   "sumary": {
     "title": "Detailed information",
@@ -67,6 +80,11 @@
     "auroraFavorable": {
       "favorable": "Favorable for auroras",
       "unfavorable": "Unfavorable for auroras"
+    },
+    "level": {
+      "strong_south": "Strongly southward",
+      "south": "Southward",
+      "north": "Northward"
     }
   },
   "solarWind": {
@@ -94,6 +112,15 @@
   "scales": {
     "title": "NOAA scales",
     "all": "See all",
+    "severity": {
+      "none": "None",
+      "minor": "Minor",
+      "moderate": "Moderate",
+      "strong": "Strong",
+      "severe": "Severe",
+      "extreme": "Extreme",
+      "unknown": "Unknown"
+    },
     "geomagnetic": {
       "title": "Geomagnetic storms",
       "description": "The G scale describes the intensity of geomagnetic storms and their potential effects on technological systems.",
@@ -199,6 +226,37 @@
       "C": "Moderate",
       "M": "Strong",
       "X": "Extreme"
+    },
+    "activity": {
+      "very_low": "Very low",
+      "low": "Low",
+      "moderate": "Moderate",
+      "significant_flare": "Significant flare",
+      "major_flare": "Major flare",
+      "unknown": "Unknown"
     }
+  },
+  "auroraForecast": {
+    "title": "Aurora forecast",
+    "images": {
+      "ovation.north": "Model · Northern hemisphere",
+      "ovation.south": "Model · Southern hemisphere",
+      "dashboard.north": "Map · Northern hemisphere",
+      "dashboard.south": "Map · Southern hemisphere"
+    },
+    "observationTime": "Observed at {{time}}",
+    "forecastTime": "Forecast for {{time}}",
+    "here": {
+      "title": "At your location",
+      "probability": "{{value}}%",
+      "unlikely": "Unlikely",
+      "possible": "Possible",
+      "likely": "Likely",
+      "high": "High"
+    }
+  },
+  "outlook": {
+    "title": "27-day outlook",
+    "kp": "Kp {{value}}"
   }
 }

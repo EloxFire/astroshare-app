@@ -5,8 +5,7 @@ export type SolarWindPoint = {
   speed: number; // km/s
   density: number | null;
   temperature: number | null;
-  level: SolarWindLevel;
-  label: string; // déjà en FR, prêt à afficher
+  level: SolarWindLevel; // identifiant à traduire (tools/spaceWeather:solarWind.scale.<level>) — label a disparu
 }
 
 export type SolarWindData = {
