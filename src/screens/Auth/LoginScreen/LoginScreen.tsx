@@ -45,7 +45,7 @@ const LoginScreen = () => {
           tient à l'écran, et autorise le défilement sinon. */}
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{ flex: 1 }}>
       <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
-      <TouchableOpacity style={loginScreenStyles.screen.backButton} onPress={() => router.back()}>
+      <TouchableOpacity style={loginScreenStyles.screen.backButton} onPress={() => router.push('/')} disabled={authLoading}>
         <ChevronLeft size={24} color={app_colors.white} />
       </TouchableOpacity>
 
