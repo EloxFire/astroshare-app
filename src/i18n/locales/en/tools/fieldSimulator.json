@@ -1,0 +1,38 @@
+{
+  "screen": {
+    "title": "Field Simulator",
+    "subtitle": "What you'll actually see through the eyepiece or on the sensor."
+  },
+  "search": {
+    "placeholder": "Search for an object..."
+  },
+  "quickPicks": {
+    "SS-MOON": "Moon",
+    "Mel022": "Pleiades"
+  },
+  "mode": {
+    "single": "One setup",
+    "compare": "Compare"
+  },
+  "combos": {
+    "empty": "No setup saved yet. Add a setup (telescope + eyepiece or camera) to see the field it covers.",
+    "addSetup": "Add a setup",
+    "addAnother": "Another setup",
+    "singleTitle": "With which setup?",
+    "compareTitle": "Compared setups · {{count}}/{{max}}",
+    "noneSelected": "Pick a setup below to see the field.",
+    "noneCompared": "Pick up to 4 setups below to compare them.",
+    "unnamedScope": "Telescope",
+    "unnamedEyepiece": "Eyepiece",
+    "unnamedCamera": "Camera",
+    "eyepieceSubtitle": "Eyepiece {{afov}}° · {{magnification}}× magnification",
+    "cameraSubtitle": "Sensor {{width}} × {{height}} mm"
+  },
+  "preview": {
+    "noObjectSelected": "Search for an object or pick one above to see the field.",
+    "noAngularSize": "Angular size unavailable for this object: stars and small bodies can't be simulated yet.",
+    "occupancy": "{{name}} fills {{percent}}% of the field",
+    "fits": "Fits well",
+    "overflows": "Overflows the field"
+  }
+}

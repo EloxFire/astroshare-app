@@ -1,0 +1,38 @@
+{
+  "screen": {
+    "title": "Simulateur de champ",
+    "subtitle": "Ce que vous verrez vraiment dans l'oculaire ou sur le capteur."
+  },
+  "search": {
+    "placeholder": "Rechercher un objet..."
+  },
+  "quickPicks": {
+    "SS-MOON": "Lune",
+    "Mel022": "Pléiades"
+  },
+  "mode": {
+    "single": "Un setup",
+    "compare": "Comparer"
+  },
+  "combos": {
+    "empty": "Aucun setup enregistré pour l'instant. Ajoutez un setup (télescope + oculaire ou caméra) pour voir le champ qu'il couvre.",
+    "addSetup": "Ajouter un setup",
+    "addAnother": "Un autre setup",
+    "singleTitle": "Avec quel setup ?",
+    "compareTitle": "Setups comparés · {{count}}/{{max}}",
+    "noneSelected": "Choisissez un setup ci-dessous pour voir le champ.",
+    "noneCompared": "Choisissez jusqu'à 4 setups ci-dessous pour les comparer.",
+    "unnamedScope": "Télescope",
+    "unnamedEyepiece": "Oculaire",
+    "unnamedCamera": "Caméra",
+    "eyepieceSubtitle": "Oculaire {{afov}}° · grossit {{magnification}}×",
+    "cameraSubtitle": "Capteur {{width}} × {{height}} mm"
+  },
+  "preview": {
+    "noObjectSelected": "Recherchez un objet ou choisissez-en un ci-dessus pour voir le champ.",
+    "noAngularSize": "Taille angulaire indisponible pour cet objet : étoiles et petits corps ne peuvent pas encore être simulés.",
+    "occupancy": "{{name}} occupe {{percent}} % du champ",
+    "fits": "Bien cadré",
+    "overflows": "Déborde du champ"
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "screen": {
+    "title": "Simulatore di campo",
+    "subtitle": "Quello che vedrai davvero nell'oculare o sul sensore."
+  },
+  "search": {
+    "placeholder": "Cerca un oggetto..."
+  },
+  "quickPicks": {
+    "SS-MOON": "Luna",
+    "Mel022": "Pleiadi"
+  },
+  "mode": {
+    "single": "Un setup",
+    "compare": "Confronta"
+  },
+  "combos": {
+    "empty": "Nessun setup salvato per ora. Aggiungi un setup (telescopio + oculare o fotocamera) per vedere il campo che copre.",
+    "addSetup": "Aggiungi un setup",
+    "addAnother": "Un altro setup",
+    "singleTitle": "Con quale setup?",
+    "compareTitle": "Setup confrontati · {{count}}/{{max}}",
+    "noneSelected": "Scegli un setup qui sotto per vedere il campo.",
+    "noneCompared": "Scegli fino a 4 setup qui sotto per confrontarli.",
+    "unnamedScope": "Telescopio",
+    "unnamedEyepiece": "Oculare",
+    "unnamedCamera": "Fotocamera",
+    "eyepieceSubtitle": "Oculare {{afov}}° · ingrandimento {{magnification}}×",
+    "cameraSubtitle": "Sensore {{width}} × {{height}} mm"
+  },
+  "preview": {
+    "noObjectSelected": "Cerca un oggetto o scegline uno qui sopra per vedere il campo.",
+    "noAngularSize": "Dimensione angolare non disponibile per questo oggetto: stelle e piccoli corpi non possono ancora essere simulati.",
+    "occupancy": "{{name}} occupa il {{percent}} % del campo",
+    "fits": "Ben inquadrato",
+    "overflows": "Sborda dal campo"
+  }
+}

@@ -122,6 +122,7 @@ export type CatalogObjectCustom = {
 // Présent uniquement si kind === "dso". Champs internes pas encore consommés côté app
 // (kinematics/central_star/notes) : laissés en `unknown`, à affiner le jour où on les affiche.
 export type CatalogObjectDsoDetails = {
+  // Arcminutes, pas précisé par la doc API — vérifié en direct (M 42 → major:90, minor:60).
   size: { major: number | null; minor: number | null; pa: number | null };
   morphology: string | null;
   kinematics: unknown;

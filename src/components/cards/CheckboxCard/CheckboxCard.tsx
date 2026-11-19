@@ -1,3 +1,4 @@
+import { ReactNode } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import Checkbox from "../../inputs/Checkbox/Checkbox";
 import { checkboxCardStyles } from "./CheckboxCard.styles";
@@ -8,6 +9,9 @@ interface CheckboxCardProps {
   subtitle?: string;
   checked: boolean;
   onChange: (checked: boolean) => void;
+  // Contenu libre aligné à droite (ex: une valeur chiffrée) — absent par défaut, `texts` garde
+  // alors toute la largeur restante comme avant cette prop.
+  trailing?: ReactNode;
 }
 
 /**
@@ -17,7 +21,7 @@ interface CheckboxCardProps {
  * et elle passe en violet clair bordé de violet quand elle est cochée. Composant contrôlé, comme
  * Checkbox : l'état vit chez le parent (`checked` / `onChange`).
  */
-const CheckboxCard = ({ title, subtitle, checked, onChange }: CheckboxCardProps) => {
+const CheckboxCard = ({ title, subtitle, checked, onChange, trailing }: CheckboxCardProps) => {
   return (
     <TouchableOpacity
       style={[checkboxCardStyles.card, checked && checkboxCardStyles.card.checked]}
@@ -37,6 +41,8 @@ const CheckboxCard = ({ title, subtitle, checked, onChange }: CheckboxCardProps)
         <Text style={checkboxCardStyles.card.texts.title}>{title}</Text>
         {subtitle && <Text style={checkboxCardStyles.card.texts.subtitle}>{subtitle}</Text>}
       </View>
+
+      {trailing}
     </TouchableOpacity>
   );
 };

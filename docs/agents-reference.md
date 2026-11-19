@@ -252,6 +252,40 @@ blanches) inspirés de `WeatherRadarMap` en plein écran (§4).
   position GPS — éviter d'afficher « Chez vous » pour la position d'un observatoire enregistré
   ailleurs.
 
+### Simulateur de champ (`src/screens/Tools/FieldSimulator/`, `src/helpers/fieldSimulator/`)
+
+Montre ce qu'un objet du ciel profond occupe réellement dans le champ d'un oculaire (cercle) ou
+d'un capteur (rectangle), pour un ou plusieurs « setups » enregistrés, en mode simple ou comparaison
+(4 max).
+
+- **Un Setup n'est pas un télescope + un oculaire OU une caméra :** il peut porter plusieurs
+  oculaires et plusieurs caméras à la fois (`Setup.ts`). `getFieldSimulatorCombos` (`setupCombos.ts`)
+  met donc chaque Setup à plat en une combinaison par oculaire et par caméra (un Setup à 3 oculaires
+  donne 3 lignes) ; les Setup sans télescope renseigné sont ignorés, aucun calcul de champ n'est
+  possible sans sa focale.
+- **Formules reprises du registre de Calculs astronomiques** (`src/helpers/calculations/calculations.ts`,
+  `trueField`/`cameraField`) mais dupliquées dans `fieldOfView.ts` plutôt qu'importées : ce registre
+  est couplé à la saisie manuelle de l'écran Calculs, pas à un Setup. Champ circulaire = champ apparent
+  de l'oculaire ÷ grossissement ; champ rectangulaire = `2 × arctan(capteur ÷ (2 × focale))` par axe.
+- **Taille angulaire de l'objet** (`objectAngularSize.ts`) fiable seulement pour : le ciel profond
+  (`dso.size`, en **arcminutes** — vérifié en direct sur `/v3/objects/:id`, non précisé par la doc
+  API) et la Lune (`getLunarAngularDiameter` en direct). Les autres planètes retombent sur
+  `solarSystemAngularSizes.ts`, une table de diamètres apparents moyens approximatifs
+  (volontairement incomplète, à corriger/enrichir au fil du temps) : `@observerly/astrometry` n'expose
+  pas de distance géocentrique toute faite pour une planète quelconque (seulement Soleil et Lune), un
+  vrai calcul en direct serait un chantier à part. Les puces rapides de l'écran restent limitées au
+  ciel profond + Lune (seules tailles fiables), mais une planète reste simulable via la recherche.
+- **Rien de présélectionné par défaut** (ni objet, ni setup) : contrairement à une première version,
+  l'utilisateur choisit explicitement les deux avant de voir un résultat. Le champ de recherche garde
+  le libellé choisi comme texte réel et éditable (pas une valeur de repli recalculée depuis l'objet
+  sélectionné) : un `value` qui retombe sur `searchQuery || <titre de l'objet>` semble à l'usage « se
+  réafficher tout seul » dès qu'on vide le champ, impossible à effacer pour de bon.
+- **Aperçu du champ** (`FieldOfViewPreview`, SVG maison) : cercle ou rectangle pointillé, silhouette
+  de l'objet en ellipse à halo dégradé (`RadialGradient`) découpée au bord du champ (`ClipPath`) — pas
+  d'imagerie réelle par objet (`content.images` toujours vide côté API). Étoiles de fond fixes,
+  purement décoratives.
+- **`CheckboxCard` + `trailing`** (§4) pour les lignes de sélection (valeur de champ alignée à droite).
+
 ---
 
 ## 3. Internationalisation
@@ -326,7 +360,7 @@ blanches) inspirés de `WeatherRadarMap` en plein écran (§4).
   - Autres props : `badgeBackgroundColor`/`badgeContentColor`, `fill` pour partager une ligne, et `selected` pour un choix unique (fond violet clair, bordure violette).
 - **`ObservationCard` :** une observation, avec une illustration ronde (disque sombre sans `image`), la désignation, le nom et les détails. Le chevron est toujours affiché.
 - **`SessionCard` :** une session, sur carte sombre. Elle montre une pastille de date, le lieu, les horaires, et une colonne par note (`grades: { label, value }[]`, note sur `MAX_GRADE` = 5).
-- **`CheckboxCard` :** carte cochable qui contient la `Checkbox`. Toute la carte coche ou décoche. La `Checkbox` n'y est qu'un indicateur (`pointerEvents="none"`, masquée pour l'accessibilité), pour éviter un double déclenchement et une case annoncée deux fois.
+- **`CheckboxCard` :** carte cochable qui contient la `Checkbox`. Toute la carte coche ou décoche. La `Checkbox` n'y est qu'un indicateur (`pointerEvents="none"`, masquée pour l'accessibilité), pour éviter un double déclenchement et une case annoncée deux fois. Prop `trailing` (facultative, `ReactNode`) : contenu libre aligné à droite, ex. une valeur chiffrée (voir Simulateur de champ) — `texts` garde toute la largeur restante quand elle est absente, rétrocompatible avec les usages existants.
 - **`ObjectCardLite` :** ligne d'objet observé, avec trois pastilles (oculaire, photo, dessin) et un bouton de suppression. `onPress`, `onRemove` et l'action de chaque pastille sont facultatifs : sans eux, la ligne est en lecture seule, avec des pastilles qui ne servent que d'indicateurs et sans bouton de suppression (exemple : `SessionDetails`).
 - **Toutes ces cartes :** sans `onPress`, elles ne réagissent pas au toucher. Les textes arrivent déjà formatés et traduits par l'appelant.
 
@@ -623,6 +657,18 @@ Le journal commence avec le commit `8527e2f`. Les changements antérieurs, comme
 i18n, `SelectInput` ou `ImageHeaderScrollView`, sont décrits dans les sections ci-dessus mais n'ont pas
 d'entrée datée.
 
+- **2026-11-20** — même commit — nouvel outil Simulateur de champ (`/tools/field-simulator`, déjà
+  pré-enregistré dans `tools.ts`/`tools.json`, seule la route manquait) : champ réel d'un oculaire ou
+  d'un capteur dessiné à l'échelle autour d'un objet choisi, un setup à la fois ou jusqu'à 4 en
+  comparaison. Setups enregistrés mis à plat en combinaisons instrument+oculaire/caméra
+  (`getFieldSimulatorCombos`), formules de champ dupliquées du registre Calculs astronomiques,
+  nouvelle table de secours pour les tailles angulaires du système solaire hors Lune
+  (`solarSystemAngularSizes.ts`, volontairement approximative). `CheckboxCard` gagne une prop
+  `trailing` optionnelle. Deux corrections après premiers tests : recherche figée faute de
+  `keyboardShouldPersistTaps="handled"` sur le `ScrollView` de l'écran (piège déjà documenté en §4,
+  oublié ici), et champ de recherche qui réaffichait tout seul le dernier objet choisi (retiré le
+  repli `searchQuery || <titre>`, plus rien n'est présélectionné par défaut) — §2 (nouvelle
+  sous-section), §4.
 - **2026-11-19** — même commit — Météo spatiale : migration du contrat API (`label` traduits côté
   serveur remplacés par des identifiants stables sur `/kpi`, `/wind`, `/imf`, `/scales`, `/flares`,
   `/sun`, `/outlook`, avec dictionnaire de traduction fr/en/it correspondant), deux nouvelles routes
