@@ -144,7 +144,7 @@ const ChecklistDetailsScreen = () => {
             </TouchableOpacity>
           </View>
 
-          <View>
+          <View style={{marginTop: 20}}>
             <SectionHeader title={t("toCheckSection")} subtitle={String(uncheckedItems.length)} />
             {
               uncheckedItems.length === 0 ? (
