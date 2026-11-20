@@ -1,0 +1,12 @@
+{
+  "title": "Checklists",
+  "subtitle": "{{listsCount}} listes · {{itemsCount}} éléments à cocher",
+  "addNew": "Nouvelle liste",
+  "overview": {
+    "title": "Progression",
+    "noLists": "Créez votre première checklist pour commencer",
+    "noItems": "Ajoutez des éléments à vos listes",
+    "allDone": "Tout est coché, bravo !",
+    "remaining": "{{count}} éléments à cocher au total"
+  }
+}

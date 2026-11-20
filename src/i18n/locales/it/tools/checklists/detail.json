@@ -1,0 +1,16 @@
+{
+  "empty": "Aggiungi il tuo primo elemento",
+  "allChecked": "Tutto spuntato!",
+  "subtitle": "{{count}} elementi da spuntare",
+  "uncheckAll": "Deseleziona tutto",
+  "addItemPlaceholder": "Aggiungi un elemento...",
+  "addItemAccessibilityLabel": "Aggiungi l'elemento",
+  "toCheckSection": "Da spuntare",
+  "toCheckEmpty": "Tutto spuntato!",
+  "checkedSection": "Spuntati",
+  "deleteButtonAccessibilityLabel": "Elimina la lista",
+  "deleteConfirmTitle": "Eliminare « {{name}} » ?",
+  "deleteConfirmMessage": "Questa lista e i suoi {{count}} elementi saranno eliminati definitivamente.",
+  "deleteConfirmCancel": "Annulla",
+  "deleteConfirmConfirm": "Elimina"
+}

@@ -1,0 +1,12 @@
+{
+  "title": "Checklist",
+  "subtitle": "{{listsCount}} liste · {{itemsCount}} elementi da spuntare",
+  "addNew": "Nuova lista",
+  "overview": {
+    "title": "Progresso",
+    "noLists": "Crea la tua prima checklist per iniziare",
+    "noItems": "Aggiungi elementi alle tue liste",
+    "allDone": "Tutto spuntato, complimenti!",
+    "remaining": "{{count}} elementi da spuntare in totale"
+  }
+}

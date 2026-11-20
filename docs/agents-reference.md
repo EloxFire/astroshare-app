@@ -286,6 +286,38 @@ d'un capteur (rectangle), pour un ou plusieurs « setups » enregistrés, en mod
   purement décoratives.
 - **`CheckboxCard` + `trailing`** (§4) pour les lignes de sélection (valeur de champ alignée à droite).
 
+### Checklists (`src/screens/Tools/Checklists/`, `src/types/checklists/`)
+
+Listes à cocher libres (nom + description facultative + éléments), gérées entièrement en local
+(store, pas de route API) — grille de listes, création (panneau type `AddSatelliteModal`), fiche
+d'une liste (header fusionné coloré + sections « à cocher »/« cochés »).
+
+- **Store :** `checklists: Checklist[]` dans `userData.store.ts`, avec `addChecklist`/
+  `updateChecklist` (remplacement complet, `updatedAt` au choix de l'appelant, comme `updateSetup`)
+  et des actions granulées (`addChecklistItem`, `removeChecklistItem`, `toggleChecklistItem`,
+  `uncheckAllChecklistItems`) qui posent elles-mêmes `updatedAt` : elles touchent un élément imbriqué
+  directement dans le store, sans objet complet fourni par l'appelant contrairement aux deux premières.
+- **Une checklist par défaut est pré-remplie à l'installation** (« Soirée d'astronomie », 9 éléments),
+  même esprit que les fiches de matériel de `defaultUserData`. Comme pour elles, cette valeur par
+  défaut ne touche jamais un store déjà persisté sur un appareil (le `persist` de zustand fusionne par
+  clé top-level, `checklists` n'est réinitialisé que via `resetUserData`, déjà câblé dans Réglages).
+- **Carte de la grille volontairement compacte** (ligne : jauge `CircularGauge` 44px + textes + bouton
+  reset, pas une grande tuile) à la demande de l'utilisateur — complétée par une carte de vue
+  d'ensemble en haut de l'écran (même jauge, agrégée sur toutes les listes) pour que l'écran ne
+  paraisse pas vide une fois les cartes réduites.
+- **Suppression d'une liste entière :** icône dans l'en-tête de la fiche (pas un bouton rouge en bas
+  comme les autres suppressions de l'app, voir `TelescopeDetails` et consorts) avec une confirmation
+  via le nouveau `ConfirmModal` (§4) — jugé plus facile à toucher par mégarde qu'un bouton en bas
+  d'écran, d'où ce filet de sécurité qui déroge à la convention « suppression immédiate » du reste de
+  l'app.
+- **i18n éclatée par composant, pas par écran :** contrairement au reste de l'app (un namespace par
+  écran, sections imbriquées en clés — voir §3), chaque composant de cet outil a son propre fichier
+  physique (`tools/checklists/screen.json`, `card.json`, `createModal.json`, `detail.json`,
+  `itemRow.json`), à la demande explicite de l'utilisateur. `ChecklistItemRow` traduit donc ses propres
+  libellés en interne plutôt que de les recevoir en props déjà traduits du parent.
+- **Pas de `line-through` ailleurs dans l'app** avant `ChecklistItemRow` (élément coché barré) : nouveau
+  style local, aucun autre composant ne l'utilisait.
+
 ---
 
 ## 3. Internationalisation
@@ -299,6 +331,7 @@ d'un capteur (rectangle), pour un ou plusieurs « setups » enregistrés, en mod
 - **Clé d'un autre namespace :** une fonction partagée par des écrans de namespaces différents peut viser une clé précise avec `ns:clé`, quel que soit le namespace du `t` reçu. Exemple : `getCatalogObjectSubtitle` lit `tools/journal/sessions/add:observedObjects.categories.…`, depuis `AddSession` comme depuis `SessionDetails`.
 - **Composants partagés :** un composant réutilisable traduit lui-même ses libellés fixes dans `common`, sous une clé à son nom (`locationMapCard`, `usefulNightCard`, `downloadButton`). Les textes qui dépendent de l'écran restent passés en props, déjà traduits.
 - **Namespaces imbriqués :** un écran peut avoir son propre fichier sous celui de sa section. Par exemple, `tools/journal/sessions/add` (formulaire d'ajout de session) se trouve dans `locales/<langue>/tools/journal/sessions/add.json`, à côté de `tools/journal.json`. Le fichier `journal.json` et le dossier `journal/` coexistent sans problème.
+- **Un namespace par composant plutôt que par écran :** exception à la convention habituelle (un namespace par écran, ses sections en clés imbriquées), utilisée pour Checklists à la demande explicite de l'utilisateur — chaque composant (`screen`, `card`, `createModal`, `detail`, `itemRow`) a son propre fichier sous `tools/checklists/`, et traduit lui-même ses textes plutôt que de les recevoir en props déjà traduits. Mêmes 3 étapes d'enregistrement que d'habitude, juste un namespace de plus par composant.
 
 ---
 
@@ -329,6 +362,21 @@ d'un capteur (rectangle), pour un ou plusieurs « setups » enregistrés, en mod
 - **Différence avec `DayDetailModal`** (`MoonCalendar`) : celle-ci est un panneau du bas (`animationType="slide"`, radius en haut seulement). `InfoTooltip` est centrée (`animationType="fade"`, radius sur les quatre coins), pour un contenu court.
 - **Props :** `title`, `description` (déjà traduits par l'appelant), `iconSize`/`iconColor` facultatifs.
 - **Fermeture :** tap sur le fond, ou sur la croix dans l'en-tête de la carte.
+
+### `ConfirmModal` (`src/components/overlays/ConfirmModal/`)
+
+- **Rôle :** modale de confirmation centrée générique (titre, message, libellés confirmer/annuler,
+  `destructive?` pour un bouton de confirmation rouge) — remplace `Alert.alert` natif par une carte
+  habillée aux couleurs de l'app. Même langage visuel que `InfoTooltip` (fond assombri, carte blanche
+  centrée, `animationType="fade"`), réutilisé plutôt que dupliqué.
+- **Premier et seul usage pour l'instant :** suppression d'une checklist entière (`ChecklistDetailsScreen`) —
+  aucun autre écran de l'app n'avait de confirmation avant une suppression (voir `TelescopeDetails` et
+  consorts, qui suppriment immédiatement derrière un bouton rouge en bas d'écran) ; composant générique,
+  pas lié au domaine Checklists, réutilisable pour une prochaine action destructive qui en a besoin.
+- **Props :** `visible`, `title`, `message`, `confirmLabel`, `cancelLabel` (tous déjà traduits par
+  l'appelant), `destructive?`, `onConfirm`, `onCancel` — contrôlé, comme `InfoTooltip` gère son propre
+  `visible` en interne (différence : ici l'état vit chez l'appelant, pour pouvoir le déclencher depuis
+  un autre bouton que celui qui ouvre la modale).
 
 ### `ImageHeaderScrollView` (`src/components/layout/ImageHeaderScrollView/`)
 
@@ -657,6 +705,13 @@ Le journal commence avec le commit `8527e2f`. Les changements antérieurs, comme
 i18n, `SelectInput` ou `ImageHeaderScrollView`, sont décrits dans les sections ci-dessus mais n'ont pas
 d'entrée datée.
 
+- **2026-11-20** — même commit — nouvel outil Checklists (`/tools/checklists`, déjà pré-enregistré
+  dans `tools.ts`/`tools.json`) : grille de listes à cocher (cartes compactes + carte de vue
+  d'ensemble agrégée), création (nom + description facultative), fiche d'une liste (header fusionné
+  coloré, sections « à cocher »/« cochés », suppression via le nouveau `ConfirmModal`). Store
+  `checklists: Checklist[]` dans `userData.store.ts` avec une liste pré-remplie à l'installation.
+  i18n éclatée par composant (`tools/checklists/{screen,card,createModal,detail,itemRow}`), pas par
+  écran, à la demande explicite de l'utilisateur — §2 (nouvelle sous-section), §3, §4.
 - **2026-11-20** — même commit — nouvel outil Simulateur de champ (`/tools/field-simulator`, déjà
   pré-enregistré dans `tools.ts`/`tools.json`, seule la route manquait) : champ réel d'un oculaire ou
   d'un capteur dessiné à l'échelle autour d'un objet choisi, un setup à la fois ou jusqu'à 4 en

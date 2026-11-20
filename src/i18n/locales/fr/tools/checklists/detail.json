@@ -1,0 +1,16 @@
+{
+  "empty": "Ajoutez votre premier élément",
+  "allChecked": "Tout est coché !",
+  "subtitle": "{{count}} éléments à cocher",
+  "uncheckAll": "Tout décocher",
+  "addItemPlaceholder": "Ajouter un élément...",
+  "addItemAccessibilityLabel": "Ajouter l'élément",
+  "toCheckSection": "À cocher",
+  "toCheckEmpty": "Tout est coché !",
+  "checkedSection": "Cochés",
+  "deleteButtonAccessibilityLabel": "Supprimer la liste",
+  "deleteConfirmTitle": "Supprimer « {{name}} » ?",
+  "deleteConfirmMessage": "Cette liste et ses {{count}} éléments seront définitivement supprimés.",
+  "deleteConfirmCancel": "Annuler",
+  "deleteConfirmConfirm": "Supprimer"
+}

@@ -91,7 +91,32 @@ const defaultUserData: UserSettingsState = {
     guideScopes: [],
     focusers: [],
     setups: []
-  }
+  },
+  // Checklist pré-remplie à l'installation, comme les fiches de matériel ci-dessus : un modèle de
+  // départ générique pour une soirée d'observation, pas lié à une session réelle. Items réordonnés
+  // (planification puis préparation puis affaires à emporter) et complétés par deux ajouts
+  // (batteries de rechange, confort assis) par rapport à la liste donnée, volontairement au même
+  // niveau de détail (catégories larges, pas une itemisation pièce par pièce).
+  checklists: [
+    {
+      id: "checklist-1",
+      name: "Soirée d'astronomie",
+      description: "Un modèle de liste par défaut pour vos sessions d'observation.",
+      items: [
+        { id: "item-1", label: "Planifier mes observations", checked: false },
+        { id: "item-2", label: "Vérifier la météo", checked: false },
+        { id: "item-3", label: "Cartes du ciel", checked: false },
+        { id: "item-4", label: "Matériel d'observation", checked: false },
+        { id: "item-5", label: "Batteries de rechange", checked: false },
+        { id: "item-6", label: "Lampe rouge", checked: false },
+        { id: "item-7", label: "Vêtements chauds", checked: false },
+        { id: "item-8", label: "Chaise pliante ou tapis de sol", checked: false },
+        { id: "item-9", label: "Snacks et boissons", checked: false },
+      ],
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    },
+  ]
 }
 
 export const useUserDataStore = create<UserSettingsData>()(
@@ -149,6 +174,39 @@ export const useUserDataStore = create<UserSettingsData>()(
       removeGuideScope: (guideScopeIdToRemove) => set((state) => ({gear: {...state.gear, guideScopes: state.gear.guideScopes.filter(g => g.id !== guideScopeIdToRemove)}})),
       removeFocuser: (focuserIdToRemove) => set((state) => ({gear: {...state.gear, focusers: state.gear.focusers.filter(f => f.id !== focuserIdToRemove)}})),
       removeSetup: (setupIdToRemove) => set((state) => ({gear: {...state.gear, setups: state.gear.setups.filter(s => s.id !== setupIdToRemove)}})),
+      // Checklists : addChecklist/updateChecklist (remplacement complet, comme updateSetup) laissent
+      // updatedAt au choix de l'appelant ; les actions granulées ci-dessous touchent un élément
+      // imbriqué directement dans le store (pas d'objet complet fourni par l'appelant), donc elles
+      // posent elles-mêmes updatedAt sur la checklist concernée.
+      addChecklist: (newChecklist) => set((state) => ({checklists: [...state.checklists, newChecklist]})),
+      updateChecklist: (checklistId, updatedChecklist) => set((state) => ({
+        checklists: state.checklists.map(c => c.id === checklistId ? updatedChecklist : c),
+      })),
+      removeChecklist: (checklistIdToRemove) => set((state) => ({checklists: state.checklists.filter(c => c.id !== checklistIdToRemove)})),
+      addChecklistItem: (checklistId, newItem) => set((state) => ({
+        checklists: state.checklists.map(c => c.id === checklistId
+          ? { ...c, items: [...c.items, newItem], updatedAt: new Date().toISOString() }
+          : c
+        ),
+      })),
+      removeChecklistItem: (checklistId, itemIdToRemove) => set((state) => ({
+        checklists: state.checklists.map(c => c.id === checklistId
+          ? { ...c, items: c.items.filter(item => item.id !== itemIdToRemove), updatedAt: new Date().toISOString() }
+          : c
+        ),
+      })),
+      toggleChecklistItem: (checklistId, itemId) => set((state) => ({
+        checklists: state.checklists.map(c => c.id === checklistId
+          ? { ...c, items: c.items.map(item => item.id === itemId ? { ...item, checked: !item.checked } : item), updatedAt: new Date().toISOString() }
+          : c
+        ),
+      })),
+      uncheckAllChecklistItems: (checklistId) => set((state) => ({
+        checklists: state.checklists.map(c => c.id === checklistId
+          ? { ...c, items: c.items.map(item => ({ ...item, checked: false })), updatedAt: new Date().toISOString() }
+          : c
+        ),
+      })),
     }),
     {
       name: "astroshare_userData", // clé async storage,

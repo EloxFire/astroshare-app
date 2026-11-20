@@ -1,0 +1,6 @@
+{
+  "empty": "No items",
+  "ready": "Ready · {{checked}} / {{total}}",
+  "toCheck": "{{count}} to check",
+  "uncheckAllAccessibilityLabel": "Uncheck all"
+}

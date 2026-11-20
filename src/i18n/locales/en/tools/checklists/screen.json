@@ -1,0 +1,12 @@
+{
+  "title": "Checklists",
+  "subtitle": "{{listsCount}} lists · {{itemsCount}} items to check",
+  "addNew": "New list",
+  "overview": {
+    "title": "Progress",
+    "noLists": "Create your first checklist to get started",
+    "noItems": "Add items to your lists",
+    "allDone": "Everything is checked, well done!",
+    "remaining": "{{count}} items to check in total"
+  }
+}

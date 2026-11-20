@@ -17,6 +17,11 @@ import spaceLaunches_fr from "./locales/fr/tools/spaceLaunches.json";
 import satelliteTracker_fr from "./locales/fr/tools/satelliteTracker.json";
 import lightPollutionMap_fr from "./locales/fr/tools/lightPollutionMap.json";
 import fieldSimulator_fr from "./locales/fr/tools/fieldSimulator.json";
+import checklistsScreen_fr from "./locales/fr/tools/checklists/screen.json";
+import checklistsCard_fr from "./locales/fr/tools/checklists/card.json";
+import checklistsCreateModal_fr from "./locales/fr/tools/checklists/createModal.json";
+import checklistsDetail_fr from "./locales/fr/tools/checklists/detail.json";
+import checklistsItemRow_fr from "./locales/fr/tools/checklists/itemRow.json";
 import spaceWeather_fr from "./locales/fr/tools/spaceWeather.json";
 import weather_fr from "./locales/fr/tools/weather.json";
 import threeDViewer_fr from "./locales/fr/tools/3dviewer.json";
@@ -59,6 +64,11 @@ import spaceLaunches_en from "./locales/en/tools/spaceLaunches.json";
 import satelliteTracker_en from "./locales/en/tools/satelliteTracker.json";
 import lightPollutionMap_en from "./locales/en/tools/lightPollutionMap.json";
 import fieldSimulator_en from "./locales/en/tools/fieldSimulator.json";
+import checklistsScreen_en from "./locales/en/tools/checklists/screen.json";
+import checklistsCard_en from "./locales/en/tools/checklists/card.json";
+import checklistsCreateModal_en from "./locales/en/tools/checklists/createModal.json";
+import checklistsDetail_en from "./locales/en/tools/checklists/detail.json";
+import checklistsItemRow_en from "./locales/en/tools/checklists/itemRow.json";
 import spaceWeather_en from "./locales/en/tools/spaceWeather.json";
 import weather_en from "./locales/en/tools/weather.json";
 import threeDViewer_en from "./locales/en/tools/3dviewer.json";
@@ -101,6 +111,11 @@ import spaceLaunches_it from "./locales/it/tools/spaceLaunches.json";
 import satelliteTracker_it from "./locales/it/tools/satelliteTracker.json";
 import lightPollutionMap_it from "./locales/it/tools/lightPollutionMap.json";
 import fieldSimulator_it from "./locales/it/tools/fieldSimulator.json";
+import checklistsScreen_it from "./locales/it/tools/checklists/screen.json";
+import checklistsCard_it from "./locales/it/tools/checklists/card.json";
+import checklistsCreateModal_it from "./locales/it/tools/checklists/createModal.json";
+import checklistsDetail_it from "./locales/it/tools/checklists/detail.json";
+import checklistsItemRow_it from "./locales/it/tools/checklists/itemRow.json";
 import spaceWeather_it from "./locales/it/tools/spaceWeather.json";
 import weather_it from "./locales/it/tools/weather.json";
 import threeDViewer_it from "./locales/it/tools/3dviewer.json";
@@ -151,6 +166,11 @@ export const resources = {
     "tools/satelliteTracker": satelliteTracker_fr,
     "tools/lightPollutionMap": lightPollutionMap_fr,
     "tools/fieldSimulator": fieldSimulator_fr,
+    "tools/checklists/screen": checklistsScreen_fr,
+    "tools/checklists/card": checklistsCard_fr,
+    "tools/checklists/createModal": checklistsCreateModal_fr,
+    "tools/checklists/detail": checklistsDetail_fr,
+    "tools/checklists/itemRow": checklistsItemRow_fr,
     "tools/spaceWeather": spaceWeather_fr,
     "tools/weather": weather_fr,
     "tools/3dviewer": threeDViewer_fr,
@@ -194,6 +214,11 @@ export const resources = {
     "tools/satelliteTracker": satelliteTracker_en,
     "tools/lightPollutionMap": lightPollutionMap_en,
     "tools/fieldSimulator": fieldSimulator_en,
+    "tools/checklists/screen": checklistsScreen_en,
+    "tools/checklists/card": checklistsCard_en,
+    "tools/checklists/createModal": checklistsCreateModal_en,
+    "tools/checklists/detail": checklistsDetail_en,
+    "tools/checklists/itemRow": checklistsItemRow_en,
     "tools/spaceWeather": spaceWeather_en,
     "tools/weather": weather_en,
     "tools/3dviewer": threeDViewer_en,
@@ -237,6 +262,11 @@ export const resources = {
     "tools/satelliteTracker": satelliteTracker_it,
     "tools/lightPollutionMap": lightPollutionMap_it,
     "tools/fieldSimulator": fieldSimulator_it,
+    "tools/checklists/screen": checklistsScreen_it,
+    "tools/checklists/card": checklistsCard_it,
+    "tools/checklists/createModal": checklistsCreateModal_it,
+    "tools/checklists/detail": checklistsDetail_it,
+    "tools/checklists/itemRow": checklistsItemRow_it,
     "tools/spaceWeather": spaceWeather_it,
     "tools/weather": weather_it,
     "tools/3dviewer": threeDViewer_it,

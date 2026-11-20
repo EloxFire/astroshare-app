@@ -1,0 +1,8 @@
+{
+  "title": "New list",
+  "nameLabel": "Name",
+  "namePlaceholder": "e.g. Observation night",
+  "descriptionLabel": "Description",
+  "descriptionPlaceholder": "Optional",
+  "confirm": "Create list"
+}

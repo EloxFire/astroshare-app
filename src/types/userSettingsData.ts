@@ -9,6 +9,7 @@ import { Filter } from "./gear/Filter";
 import { GuideScope } from "./gear/GuideScope";
 import { Focuser } from "./gear/Focuser";
 import { Setup } from "./gear/Setup";
+import { Checklist, ChecklistItem } from "./checklists/Checklist";
 
 export type UserSettingsState = {
   nightMode: false | true;
@@ -44,6 +45,7 @@ export type UserSettingsState = {
     focusers: Focuser[];
     setups: Setup[];
   }
+  checklists: Checklist[];
 }
 
 export type UserSettingsActions = {
@@ -90,6 +92,14 @@ export type UserSettingsActions = {
   addSetup: (newSetup: Setup) => void;
   updateSetup: (setupId: string, updatedSetup: Setup) => void;
   removeSetup: (setupIdToRemove: string) => void;
+  // Checklists actions
+  addChecklist: (newChecklist: Checklist) => void;
+  updateChecklist: (checklistId: string, updatedChecklist: Checklist) => void;
+  removeChecklist: (checklistIdToRemove: string) => void;
+  addChecklistItem: (checklistId: string, newItem: ChecklistItem) => void;
+  removeChecklistItem: (checklistId: string, itemIdToRemove: string) => void;
+  toggleChecklistItem: (checklistId: string, itemId: string) => void;
+  uncheckAllChecklistItems: (checklistId: string) => void;
 }
 
 export type UserSettingsData = UserSettingsState & UserSettingsActions;

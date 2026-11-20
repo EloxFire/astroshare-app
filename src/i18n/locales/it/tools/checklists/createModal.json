@@ -1,0 +1,8 @@
+{
+  "title": "Nuova lista",
+  "nameLabel": "Nome",
+  "namePlaceholder": "Es. Serata di osservazione",
+  "descriptionLabel": "Descrizione",
+  "descriptionPlaceholder": "Facoltativa",
+  "confirm": "Crea la lista"
+}

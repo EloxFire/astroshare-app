@@ -1,0 +1,6 @@
+{
+  "empty": "Aucun élément",
+  "ready": "Prête · {{checked}} / {{total}}",
+  "toCheck": "{{count}} à cocher",
+  "uncheckAllAccessibilityLabel": "Tout décocher"
+}

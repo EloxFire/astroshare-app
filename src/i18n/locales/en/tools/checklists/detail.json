@@ -1,0 +1,16 @@
+{
+  "empty": "Add your first item",
+  "allChecked": "Everything is checked!",
+  "subtitle": "{{count}} items to check",
+  "uncheckAll": "Uncheck all",
+  "addItemPlaceholder": "Add an item...",
+  "addItemAccessibilityLabel": "Add the item",
+  "toCheckSection": "To check",
+  "toCheckEmpty": "Everything is checked!",
+  "checkedSection": "Checked",
+  "deleteButtonAccessibilityLabel": "Delete the list",
+  "deleteConfirmTitle": "Delete \"{{name}}\"?",
+  "deleteConfirmMessage": "This list and its {{count}} items will be permanently deleted.",
+  "deleteConfirmCancel": "Cancel",
+  "deleteConfirmConfirm": "Delete"
+}

@@ -1,0 +1,6 @@
+{
+  "empty": "Nessun elemento",
+  "ready": "Pronta · {{checked}} / {{total}}",
+  "toCheck": "{{count}} da spuntare",
+  "uncheckAllAccessibilityLabel": "Deseleziona tutto"
+}
