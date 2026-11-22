@@ -161,6 +161,13 @@ export default function RootLayout() {
             // ça couvre toutes les sous-routes (login, index, etc.) sans avoir à le répéter.
             tabBarStyle: { display: "none" },
           }} />
+          <Tabs.Screen name="objects" options={{
+            href: null, // hide from tab bar
+            // Masque aussi la tabbar elle-même tant qu'on est dans ce groupe : comme tout
+            // auth/* est un seul écran Tabs (grâce au Stack imbriqué dans app/auth/_layout.tsx),
+            // ça couvre toutes les sous-routes (login, index, etc.) sans avoir à le répéter.
+            tabBarStyle: { display: "none" },
+          }} />
         </Tabs>
       </WeatherDataProvider>
       </LocationProvider>
