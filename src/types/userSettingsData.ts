@@ -46,6 +46,11 @@ export type UserSettingsState = {
     setups: Setup[];
   }
   checklists: Checklist[];
+  // Requêtes textuelles (pas des objets résolus) de la recherche globale, la plus récente en tête,
+  // plafonné à 10 (voir addRecentSearch) — rejouer une recherche récente relance search(query)
+  // plutôt que de naviguer directement vers un id, plus robuste si le même texte renvoie un
+  // résultat différent plus tard (catalogue mis à jour).
+  recentSearches: string[];
 }
 
 export type UserSettingsActions = {
@@ -100,6 +105,9 @@ export type UserSettingsActions = {
   removeChecklistItem: (checklistId: string, itemIdToRemove: string) => void;
   toggleChecklistItem: (checklistId: string, itemId: string) => void;
   uncheckAllChecklistItems: (checklistId: string) => void;
+  // Recherche globale
+  addRecentSearch: (query: string) => void;
+  clearRecentSearches: () => void;
 }
 
 export type UserSettingsData = UserSettingsState & UserSettingsActions;

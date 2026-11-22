@@ -47,13 +47,16 @@ export type CatalogObjectNames = {
   en: string[];
 };
 
+// Toutes les clés optionnelles : vérifié en direct, un objet du système solaire (ex. SS-MOON,
+// SS-SATURN) ne renvoie que `other`/`aliases` — messier/caldwell/ngc/ic sont absents (pas juste
+// `null`), pas la peine de catalogue alternatif pour ces objets-là.
 export type CatalogObjectDesignations = {
-  messier: number | null;
-  caldwell: number | null;
-  ngc: string[];
-  ic: string[];
-  other: string[];
-  aliases: string[];
+  messier?: number | null;
+  caldwell?: number | null;
+  ngc?: string[];
+  ic?: string[];
+  other?: string[];
+  aliases?: string[];
 };
 
 export type CatalogObjectPhotometry = {
@@ -115,7 +118,12 @@ export type CatalogObjectContent = {
 
 export type CatalogObjectCustom = {
   difficulty: string | null;
-  best_months: number[];
+  // Mois calendaires 1-12 (vérifié en direct, ex. Galaxie d'Andromède → [9,10,11]) — nullable (voire
+  // absente de la réponse, ex. objets du système solaire) en pratique malgré le typage
+  // non-optionnel de la doc API : vérifié en direct `null` sur plusieurs objets du ciel profond
+  // avec par ailleurs une fiche complète (ex. M 42, Pléiades), et totalement absente (pas même
+  // `null`) sur un objet du système solaire (ex. SS-MOON, SS-SATURN).
+  best_months?: number[] | null;
   naked_eye: boolean | null;
 };
 

@@ -1,0 +1,30 @@
+{
+  "screen": {
+    "title": "Ricerca"
+  },
+  "search": {
+    "placeholder": "M42, Betelgeuse, Giove..."
+  },
+  "results": {
+    "empty": "Nessun risultato per questa ricerca.",
+    "magnitude": "mag"
+  },
+  "tonight": {
+    "title": "Ben posizionati stasera",
+    "nearZenith": "Quasi allo zenit"
+  },
+  "recent": {
+    "title": "Recenti"
+  },
+  "moon": {
+    "tonightAt": "Stasera a {{city}}",
+    "rise": "sorge",
+    "culmination": "più alta · {{altitude}}°",
+    "set": "tramonta",
+    "fullMoon": "Luna piena",
+    "daysUntil": "tra {{count}}g",
+    "openCalendar": "Calendario lunare",
+    "open3D": "Vedi in 3D",
+    "fullDetails": "Scheda completa della Luna"
+  }
+}

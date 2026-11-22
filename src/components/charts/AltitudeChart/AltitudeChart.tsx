@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import { altitudeChartStyles } from "./AltitudeChart.styles";
 import { useAppUnits, type FormatDate } from "../../../hooks/useAppUnits";
 import { app_colors, withOpacity } from "../../../helpers/variables";
-import type { AltitudePoint } from "../../../helpers/astrometry/altitude/altitudeCurve";
+import { getCulmination, type AltitudePoint } from "../../../helpers/astrometry/altitude/altitudeCurve";
 
 interface AltitudeChartProps {
   points: AltitudePoint[];
@@ -18,7 +18,35 @@ interface AltitudeChartProps {
   // sur sa propre interpolation à partir de `points`.
   riseDate?: Date;
   setDate?: Date;
+  // "light" (défaut) : pensé pour un fond clair (globalStyles.defaultCard blanc), comportement
+  // inchangé. "dark" : pensé pour un fond app_colors.primary.main (ex. header fusionné d'une fiche
+  // objet) — textes/grille en blanc (à pleine ou faible opacité selon leur poids visuel actuel),
+  // anneau des points lever/coucher/culmination basculé vers primary.main (sinon invisible sur un
+  // fond déjà sombre). `color` (l'accent de la courbe elle-même) reste piloté par l'appelant dans
+  // les deux cas.
+  variant?: "light" | "dark";
 }
+
+const PALETTES = {
+  light: {
+    axisText: app_colors.primary.medium,
+    gridLine: app_colors.grey,
+    horizonLine: app_colors.grey,
+    nowMarker: withOpacity(app_colors.primary.main, 0.3),
+    dotOutline: app_colors.white,
+    mutedText: app_colors.primary.medium,
+    strongText: app_colors.primary.main,
+  },
+  dark: {
+    axisText: withOpacity(app_colors.white, 0.7),
+    gridLine: withOpacity(app_colors.white, 0.15),
+    horizonLine: withOpacity(app_colors.white, 0.2),
+    nowMarker: withOpacity(app_colors.white, 0.3),
+    dotOutline: app_colors.primary.main,
+    mutedText: withOpacity(app_colors.white, 0.7),
+    strongText: app_colors.white,
+  },
+};
 
 const CHART_HEIGHT = 150;
 const Y_AXIS_WIDTH = 26; // gouttière réservée à gauche pour les libellés d'altitude
@@ -101,10 +129,11 @@ const buildHourTicks = (start: Date, end: Date, formatDate: FormatDate): Date[] 
   return ticks;
 };
 
-const AltitudeChart = ({ points, color = app_colors.accent.main, riseDate: riseDateProp, setDate: setDateProp }: AltitudeChartProps) => {
+const AltitudeChart = ({ points, color = app_colors.accent.main, riseDate: riseDateProp, setDate: setDateProp, variant = "light" }: AltitudeChartProps) => {
   const { t } = useTranslation("common");
   const { formatDate } = useAppUnits();
   const [chartWidth, setChartWidth] = useState(0);
+  const palette = PALETTES[variant];
 
   const data = useMemo(() => {
     if (points.length < 2 || chartWidth === 0) return null;
@@ -119,33 +148,11 @@ const AltitudeChart = ({ points, color = app_colors.accent.main, riseDate: riseD
     const windowStart = points[0].date.getTime();
     const windowEnd = points[points.length - 1].date.getTime();
 
-    let culminationIndex = 0;
-    for (let i = 1; i < points.length; i++) {
-      if (points[i].altitude > points[culminationIndex].altitude) culminationIndex = i;
-    }
-
-    // Affinage parabolique autour de l'échantillon le plus haut, plutôt que de prendre sa date/
-    // altitude brutes : getAltitudeCurve échantillonne toutes les 15 min à partir de "maintenant"
-    // (fenêtre glissante, pas une grille fixe), donc la grille d'échantillons se décale d'un refresh
-    // à l'autre — sans affinage, la culmination "saute" d'un échantillon à l'autre (jusqu'à ±7-8 min)
-    // selon la phase de la grille au moment du calcul, pas une vraie variation de la position du ciel.
-    // Formule standard du sommet d'une parabole passant par 3 points également espacés.
-    let culminationDate = points[culminationIndex].date;
-    let culminationAltitude = points[culminationIndex].altitude;
-    const prevPoint = points[culminationIndex - 1];
-    const nextPoint = points[culminationIndex + 1];
-    if (prevPoint && nextPoint) {
-      const y0 = prevPoint.altitude;
-      const y1 = culminationAltitude;
-      const y2 = nextPoint.altitude;
-      const curvature = y0 - 2 * y1 + y2;
-      if (Math.abs(curvature) > 1e-6) {
-        const offset = (0.5 * (y0 - y2)) / curvature; // en unités d'indices d'échantillon, ~[-0.5, 0.5]
-        const stepMs = nextPoint.date.getTime() - culminationDate.getTime();
-        culminationDate = new Date(culminationDate.getTime() + offset * stepMs);
-        culminationAltitude = y1 - 0.25 * (y0 - y2) * offset;
-      }
-    }
+    // getCulmination gère déjà l'affinage parabolique (voir son commentaire) — extrait de ce
+    // composant pour être réutilisable ailleurs (ex. carte Lune de la recherche globale).
+    const culmination = getCulmination(points)!; // points.length >= 2 garanti par le guard ci-dessus
+    const culminationDate = culmination.date;
+    const culminationAltitude = culmination.altitude;
 
     const maxValue = ALTITUDE_DOMAIN_MAX;
     const minValue = ALTITUDE_DOMAIN_MIN;
@@ -248,7 +255,7 @@ const AltitudeChart = ({ points, color = app_colors.accent.main, riseDate: riseD
                 y={tick.y + 3}
                 fontSize={8.5}
                 fontFamily="DMMonoRegular"
-                fill={app_colors.primary.medium}
+                fill={palette.axisText}
                 textAnchor="end"
               >
                 {tick.value}°
@@ -262,7 +269,7 @@ const AltitudeChart = ({ points, color = app_colors.accent.main, riseDate: riseD
                 y1={plotTop}
                 x2={tick.x}
                 y2={plotBottom}
-                stroke={app_colors.grey}
+                stroke={palette.gridLine}
                 strokeWidth={1}
                 opacity={0.5}
               />
@@ -275,7 +282,7 @@ const AltitudeChart = ({ points, color = app_colors.accent.main, riseDate: riseD
                 y={CHART_HEIGHT - 4}
                 fontSize={8.5}
                 fontFamily="DMMonoRegular"
-                fill={app_colors.primary.medium}
+                fill={palette.axisText}
                 textAnchor="middle"
               >
                 {formatDate(tick.date).format("HH:mm")}
@@ -283,7 +290,7 @@ const AltitudeChart = ({ points, color = app_colors.accent.main, riseDate: riseD
             ))}
 
             {nowX !== undefined && (
-              <Line x1={nowX} y1={plotTop} x2={nowX} y2={plotBottom} stroke={withOpacity(app_colors.primary.main, 0.3)} strokeWidth={1} />
+              <Line x1={nowX} y1={plotTop} x2={nowX} y2={plotBottom} stroke={palette.nowMarker} strokeWidth={1} />
             )}
 
             <Line
@@ -291,7 +298,7 @@ const AltitudeChart = ({ points, color = app_colors.accent.main, riseDate: riseD
               y1={horizonY}
               x2={chartWidth - PLOT_PADDING_RIGHT}
               y2={horizonY}
-              stroke={app_colors.grey}
+              stroke={palette.horizonLine}
               strokeWidth={1}
               strokeDasharray="2,4"
             />
@@ -306,10 +313,10 @@ const AltitudeChart = ({ points, color = app_colors.accent.main, riseDate: riseD
                 strokeLinecap="round"
               />
             ))}
-            {riseDot && <Circle cx={riseDot.x} cy={riseDot.y} r={4} fill={color} stroke={app_colors.white} strokeWidth={1.5} />}
-            {setDot && <Circle cx={setDot.x} cy={setDot.y} r={4} fill={color} stroke={app_colors.white} strokeWidth={1.5} />}
+            {riseDot && <Circle cx={riseDot.x} cy={riseDot.y} r={4} fill={color} stroke={palette.dotOutline} strokeWidth={1.5} />}
+            {setDot && <Circle cx={setDot.x} cy={setDot.y} r={4} fill={color} stroke={palette.dotOutline} strokeWidth={1.5} />}
             {culminationDot && (
-              <Circle cx={culminationDot.x} cy={culminationDot.y} r={5} fill={color} stroke={app_colors.white} strokeWidth={1.5} />
+              <Circle cx={culminationDot.x} cy={culminationDot.y} r={5} fill={color} stroke={palette.dotOutline} strokeWidth={1.5} />
             )}
           </Svg>
         )}
@@ -318,7 +325,7 @@ const AltitudeChart = ({ points, color = app_colors.accent.main, riseDate: riseD
       <View style={altitudeChartStyles.legend}>
         <View style={altitudeChartStyles.legend.item}>
           <View style={[altitudeChartStyles.legend.item.swatch, { backgroundColor: color }]} />
-          <Text style={altitudeChartStyles.legend.item.label}>{t("altitudeChart.visible")}</Text>
+          <Text style={[altitudeChartStyles.legend.item.label, { color: palette.mutedText }]}>{t("altitudeChart.visible")}</Text>
         </View>
         <View style={altitudeChartStyles.legend.item}>
           <View
@@ -328,34 +335,34 @@ const AltitudeChart = ({ points, color = app_colors.accent.main, riseDate: riseD
               { borderColor: withOpacity(color, 0.45) },
             ]}
           />
-          <Text style={altitudeChartStyles.legend.item.label}>{t("altitudeChart.belowHorizon")}</Text>
+          <Text style={[altitudeChartStyles.legend.item.label, { color: palette.mutedText }]}>{t("altitudeChart.belowHorizon")}</Text>
         </View>
       </View>
 
       <View style={altitudeChartStyles.labelsRow}>
         <View style={altitudeChartStyles.labelsRow.edgeBloc}>
-          <Sunrise style={altitudeChartStyles.labelsRow.edgeBloc.icon} />
-          <Text style={altitudeChartStyles.labelsRow.edgeBloc.time}>
+          <Sunrise style={altitudeChartStyles.labelsRow.edgeBloc.icon} color={palette.mutedText} />
+          <Text style={[altitudeChartStyles.labelsRow.edgeBloc.time, { color: palette.strongText }]}>
             {riseDate ? formatDate(riseDate).format("HH:mm") : "--:--"}
           </Text>
-          <Text style={altitudeChartStyles.labelsRow.edgeBloc.caption}>{t("altitudeChart.rise")}</Text>
+          <Text style={[altitudeChartStyles.labelsRow.edgeBloc.caption, { color: palette.mutedText }]}>{t("altitudeChart.rise")}</Text>
         </View>
 
         <View style={altitudeChartStyles.labelsRow.centerBloc}>
-          <Text style={altitudeChartStyles.labelsRow.centerBloc.time}>
+          <Text style={[altitudeChartStyles.labelsRow.centerBloc.time, { color: palette.strongText }]}>
             {culminationDate ? formatDate(culminationDate).format("HH:mm") : "--:--"}
           </Text>
-          <Text style={altitudeChartStyles.labelsRow.centerBloc.caption}>
+          <Text style={[altitudeChartStyles.labelsRow.centerBloc.caption, { color: palette.mutedText }]}>
             {t("altitudeChart.culmination", { altitude: culminationAltitude.toFixed(1) })}
           </Text>
         </View>
 
         <View style={altitudeChartStyles.labelsRow.edgeBloc}>
-          <Sunset style={altitudeChartStyles.labelsRow.edgeBloc.icon} />
-          <Text style={altitudeChartStyles.labelsRow.edgeBloc.time}>
+          <Sunset style={altitudeChartStyles.labelsRow.edgeBloc.icon} color={palette.mutedText} />
+          <Text style={[altitudeChartStyles.labelsRow.edgeBloc.time, { color: palette.strongText }]}>
             {setDate ? formatDate(setDate).format("HH:mm") : "--:--"}
           </Text>
-          <Text style={altitudeChartStyles.labelsRow.edgeBloc.caption}>{t("altitudeChart.set")}</Text>
+          <Text style={[altitudeChartStyles.labelsRow.edgeBloc.caption, { color: palette.mutedText }]}>{t("altitudeChart.set")}</Text>
         </View>
       </View>
     </View>

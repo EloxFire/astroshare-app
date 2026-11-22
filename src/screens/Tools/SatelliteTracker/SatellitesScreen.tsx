@@ -121,7 +121,7 @@ const SatellitesScreen = () => {
           )}
 
           {stations && (
-            <View>
+            <View style={{marginTop: 20}}>
               <SectionHeader title={t("screen.stations")} />
               <View style={satellitesScreenStyles.stationsList}>
                 {stations.map((station) => (
@@ -162,13 +162,14 @@ const SatellitesScreen = () => {
             </View>
           )}
 
-          <View>
+          <View style={{marginTop: 20}}>
             <View style={sectionHeaderStyles.header}>
               <Text style={sectionHeaderStyles.header.title}>{t("screen.mine")}</Text>
               <View style={sectionHeaderStyles.header.separator} />
               <Badge text="PRO" backgroundColor={app_colors.yellow.main} foregroundColor={app_colors.primary.main} />
             </View>
 
+            {/* TODO : Handle pro feature display and management */}
             {userIsPro ? (
               <LockedFeatureCard
                 title={t("screen.locked.title")}

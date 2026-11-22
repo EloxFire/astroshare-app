@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { Search } from "lucide-react-native";
 import { globalStyles } from "../../../helpers/globalStyles";
@@ -45,8 +45,11 @@ const FieldSimulatorScreen = () => {
   const { results: objectSearchResults, search: searchObjects } = useObjectSearch();
 
   // Rien de présélectionné par défaut (ni objet, ni setup) : l'utilisateur choisit explicitement
-  // les deux avant de voir un résultat, plutôt qu'un M 42 + premier setup posés d'office.
-  const [selectedObjectId, setSelectedObjectId] = useState<string | null>(null);
+  // les deux avant de voir un résultat, plutôt qu'un M 42 + premier setup posés d'office — sauf
+  // arrivée directe depuis la fiche objet ("Voir dans mon champ", ?objectId=<id>), seule exception
+  // volontaire à cette règle.
+  const { objectId: initialObjectId } = useLocalSearchParams<{ objectId?: string }>();
+  const [selectedObjectId, setSelectedObjectId] = useState<string | null>(initialObjectId ?? null);
   const [objectDetail, setObjectDetail] = useState<CatalogObjectDetail | null>(null);
   // Distingue "pas encore chargé" de "chargé, sans taille angulaire exploitable" (étoile, petit
   // corps...) : sans ce flag, l'état vide "taille indisponible" apparaîtrait brièvement à chaque
@@ -67,6 +70,10 @@ const FieldSimulatorScreen = () => {
       if (cancelled) return;
       setObjectDetail(detail);
       setObjectLoading(false);
+      // Backfill du champ de recherche une fois le libellé connu, seulement s'il est encore vide :
+      // cas de l'arrivée via ?objectId= (fiche objet), où aucune puce/suggestion n'a pu le remplir
+      // à la sélection comme pour les autres chemins.
+      if (detail) setSearchQuery((current) => current || getCatalogObjectTitle(detail));
     })();
     return () => { cancelled = true; };
   }, [selectedObjectId]);

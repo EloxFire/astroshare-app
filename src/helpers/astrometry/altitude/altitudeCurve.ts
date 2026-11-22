@@ -37,6 +37,42 @@ export const getAltitudeCurve = (
   return points;
 };
 
+// Point le plus haut d'une courbe d'altitude (ex. getAltitudeCurve), affiné par interpolation
+// parabolique autour de l'échantillon maximal plutôt que de prendre sa date/altitude brutes :
+// getAltitudeCurve échantillonne toutes les 15 min à partir de "maintenant" (fenêtre glissante, pas
+// une grille fixe), donc la grille d'échantillons se décale d'un refresh à l'autre — sans affinage,
+// la culmination "saute" d'un échantillon à l'autre (jusqu'à ±7-8 min) selon la phase de la grille
+// au moment du calcul, pas une vraie variation de la position du ciel. Formule standard du sommet
+// d'une parabole passant par 3 points également espacés. Extrait d'AltitudeChart (comportement
+// inchangé) pour être réutilisé hors de ce composant (ex. carte Lune de la recherche globale).
+export const getCulmination = (points: AltitudePoint[]): { date: Date; altitude: number } | null => {
+  if (points.length === 0) return null;
+
+  let culminationIndex = 0;
+  for (let i = 1; i < points.length; i++) {
+    if (points[i].altitude > points[culminationIndex].altitude) culminationIndex = i;
+  }
+
+  let date = points[culminationIndex].date;
+  let altitude = points[culminationIndex].altitude;
+  const prevPoint = points[culminationIndex - 1];
+  const nextPoint = points[culminationIndex + 1];
+  if (prevPoint && nextPoint) {
+    const y0 = prevPoint.altitude;
+    const y1 = altitude;
+    const y2 = nextPoint.altitude;
+    const curvature = y0 - 2 * y1 + y2;
+    if (Math.abs(curvature) > 1e-6) {
+      const offset = (0.5 * (y0 - y2)) / curvature; // en unités d'indices d'échantillon, ~[-0.5, 0.5]
+      const stepMs = nextPoint.date.getTime() - date.getTime();
+      date = new Date(date.getTime() + offset * stepMs);
+      altitude = y1 - 0.25 * (y0 - y2) * offset;
+    }
+  }
+
+  return { date, altitude };
+};
+
 // getBodyNextRise/getBodyNextSet d'Observerly ne renvoient jamais que le PROCHAIN évènement après
 // `date`, jamais le précédent. Pour une "trajectoire du jour", c'est insuffisant : si l'objet est
 // déjà levé, on veut afficher l'heure à laquelle il s'est levé (déjà passée), pas son prochain

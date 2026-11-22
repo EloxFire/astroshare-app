@@ -1,0 +1,30 @@
+{
+  "screen": {
+    "title": "Recherche"
+  },
+  "search": {
+    "placeholder": "M42, Bételgeuse, Jupiter..."
+  },
+  "results": {
+    "empty": "Aucun résultat pour cette recherche.",
+    "magnitude": "mag"
+  },
+  "tonight": {
+    "title": "Bien placés ce soir",
+    "nearZenith": "Presque au zénith"
+  },
+  "recent": {
+    "title": "Récentes"
+  },
+  "moon": {
+    "tonightAt": "Ce soir à {{city}}",
+    "rise": "lever",
+    "culmination": "au plus haut · {{altitude}}°",
+    "set": "coucher",
+    "fullMoon": "Pleine Lune",
+    "daysUntil": "J-{{count}}",
+    "openCalendar": "Calendrier lunaire",
+    "open3D": "Voir en 3D",
+    "fullDetails": "Fiche complète de la Lune"
+  }
+}

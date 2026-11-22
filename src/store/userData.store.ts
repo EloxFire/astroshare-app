@@ -116,7 +116,8 @@ const defaultUserData: UserSettingsState = {
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     },
-  ]
+  ],
+  recentSearches: []
 }
 
 export const useUserDataStore = create<UserSettingsData>()(
@@ -207,6 +208,19 @@ export const useUserDataStore = create<UserSettingsData>()(
           : c
         ),
       })),
+      // Recherche globale : liste de requêtes textuelles, la plus récente en tête. Dédupliquée
+      // (insensible à la casse/aux espaces superflus, pour ne pas garder "Lune" et "lune " comme
+      // deux entrées) et plafonnée à 10 — même esprit que pinnedTools, pas la peine d'un historique
+      // plus long pour un simple raccourci de ressaisie.
+      addRecentSearch: (query) => set((state) => {
+        const trimmedQuery = query.trim();
+        if (!trimmedQuery) return state;
+        const withoutDuplicate = state.recentSearches.filter(
+          (existingQuery) => existingQuery.toLowerCase() !== trimmedQuery.toLowerCase()
+        );
+        return { recentSearches: [trimmedQuery, ...withoutDuplicate].slice(0, 10) };
+      }),
+      clearRecentSearches: () => set({ recentSearches: [] }),
     }),
     {
       name: "astroshare_userData", // clé async storage,

@@ -1,0 +1,22 @@
+{
+  "nakedEye": "A occhio nudo",
+  "viewInFieldSimulator": "Vedi nel mio campo",
+  "lightYearsAbbr": "al",
+  "tonightAt": "Stasera a {{city}}",
+  "discoveredBy": "Scoperta",
+  "technicalSheet": "Scheda tecnica",
+  "stats": {
+    "magnitude": "Magnitudine",
+    "apparentSize": "Dimensione apparente",
+    "distance": "Distanza",
+    "bestMonths": "Mesi migliori"
+  },
+  "technical": {
+    "designations": "Designazioni",
+    "rightAscension": "Ascensione retta",
+    "declination": "Declinazione",
+    "positionAngle": "Angolo di posizione",
+    "morphology": "Morfologia",
+    "unknown": "Sconosciuta"
+  }
+}

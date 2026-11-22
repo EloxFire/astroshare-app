@@ -1,0 +1,30 @@
+{
+  "screen": {
+    "title": "Search"
+  },
+  "search": {
+    "placeholder": "M42, Betelgeuse, Jupiter..."
+  },
+  "results": {
+    "empty": "No results for this search.",
+    "magnitude": "mag"
+  },
+  "tonight": {
+    "title": "Well placed tonight",
+    "nearZenith": "Near zenith"
+  },
+  "recent": {
+    "title": "Recent"
+  },
+  "moon": {
+    "tonightAt": "Tonight in {{city}}",
+    "rise": "rise",
+    "culmination": "highest · {{altitude}}°",
+    "set": "set",
+    "fullMoon": "Full Moon",
+    "daysUntil": "in {{count}}d",
+    "openCalendar": "Moon calendar",
+    "open3D": "View in 3D",
+    "fullDetails": "Full Moon details"
+  }
+}

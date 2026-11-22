@@ -1,0 +1,22 @@
+{
+  "nakedEye": "Naked eye",
+  "viewInFieldSimulator": "View in my field",
+  "lightYearsAbbr": "ly",
+  "tonightAt": "Tonight in {{city}}",
+  "discoveredBy": "Discovery",
+  "technicalSheet": "Technical sheet",
+  "stats": {
+    "magnitude": "Magnitude",
+    "apparentSize": "Apparent size",
+    "distance": "Distance",
+    "bestMonths": "Best months"
+  },
+  "technical": {
+    "designations": "Designations",
+    "rightAscension": "Right ascension",
+    "declination": "Declination",
+    "positionAngle": "Position angle",
+    "morphology": "Morphology",
+    "unknown": "Unknown"
+  }
+}

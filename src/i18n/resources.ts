@@ -2,6 +2,8 @@
 import common_fr from "./locales/fr/common.json";
 import tools_fr from "./locales/fr/tools.json";
 import moon_fr from "./locales/fr/moon.json";
+import search_fr from "./locales/fr/search.json";
+import objectsDetails_fr from "./locales/fr/objects/details.json";
 import settings_fr from "./locales/fr/settings.json";
 import settingsAddObservatory_fr from "./locales/fr/settings/addObservatory.json";
 import settingsObservatoryDetails_fr from "./locales/fr/settings/observatoryDetails.json";
@@ -49,6 +51,8 @@ import journalGearSetupsDetails_fr from "./locales/fr/tools/journal/gear/setups/
 import common_en from "./locales/en/common.json";
 import tools_en from "./locales/en/tools.json";
 import moon_en from "./locales/en/moon.json";
+import search_en from "./locales/en/search.json";
+import objectsDetails_en from "./locales/en/objects/details.json";
 import settings_en from "./locales/en/settings.json";
 import settingsAddObservatory_en from "./locales/en/settings/addObservatory.json";
 import settingsObservatoryDetails_en from "./locales/en/settings/observatoryDetails.json";
@@ -96,6 +100,8 @@ import journalGearSetupsDetails_en from "./locales/en/tools/journal/gear/setups/
 import common_it from "./locales/it/common.json";
 import tools_it from "./locales/it/tools.json";
 import moon_it from "./locales/it/moon.json";
+import search_it from "./locales/it/search.json";
+import objectsDetails_it from "./locales/it/objects/details.json";
 import settings_it from "./locales/it/settings.json";
 import settingsAddObservatory_it from "./locales/it/settings/addObservatory.json";
 import settingsObservatoryDetails_it from "./locales/it/settings/observatoryDetails.json";
@@ -151,6 +157,8 @@ export const resources = {
     common: common_fr,
     tools: tools_fr,
     moon: moon_fr,
+    search: search_fr,
+    "objects/details": objectsDetails_fr,
     settings: settings_fr,
     "settings/addObservatory": settingsAddObservatory_fr,
     "settings/observatoryDetails": settingsObservatoryDetails_fr,
@@ -199,6 +207,8 @@ export const resources = {
     common: common_en,
     tools: tools_en,
     moon: moon_en,
+    search: search_en,
+    "objects/details": objectsDetails_en,
     settings: settings_en,
     "settings/addObservatory": settingsAddObservatory_en,
     "settings/observatoryDetails": settingsObservatoryDetails_en,
@@ -247,6 +257,8 @@ export const resources = {
     common: common_it,
     tools: tools_it,
     moon: moon_it,
+    search: search_it,
+    "objects/details": objectsDetails_it,
     settings: settings_it,
     "settings/addObservatory": settingsAddObservatory_it,
     "settings/observatoryDetails": settingsObservatoryDetails_it,

@@ -214,6 +214,7 @@ const SatelliteDetailsScreen = () => {
               <Text style={satelliteDetailsScreenStyles.noPasses}>{t("details.passes.none")}</Text>
             )}
 
+            {/* TODO : Better graph for next pass */}
             {nextPass && (
               <View style={satelliteDetailsScreenStyles.nextPassCard}>
                 <View style={satelliteDetailsScreenStyles.nextPassCard.topRow}>
@@ -231,6 +232,7 @@ const SatelliteDetailsScreen = () => {
               </View>
             )}
 
+            {/* TODO : Next passes foldable card (next 5 passes) + see all button */}
             {otherPasses.map((pass, index) => (
               <SatellitePassRow key={`${pass.startUTC}-${index}`} pass={pass} />
             ))}
