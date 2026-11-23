@@ -77,7 +77,14 @@ const InfoCard = ({ title, description, icon: Icon, link, internalLink, addition
   const variantStyles = variantStylesConstructor(variant);
 
   return (
-    <TouchableOpacity onPress={handlePress} disabled={!(link || internalLink)} style={[variantStyles?.container]}>
+    <TouchableOpacity
+      onPress={handlePress}
+      disabled={!(link || internalLink)}
+      // Les 3 variantes ont alignItems: "center" en dur (icône centrée verticalement sur
+      // titre+description) — "top" l'aligne sur la première ligne à la place, pour une description
+      // longue où l'icône centrée looks orpheline au milieu du bloc de texte.
+      style={[variantStyles?.container, alignment === "top" && { alignItems: "flex-start" as const }]}
+    >
       <Icon size={24} color={variantStyles?.icon.color} />
       <View style={variantStyles?.container.infos}>
         <Text style={[variantStyles?.title, additionnalDescriptionStyle]}>{title}</Text>

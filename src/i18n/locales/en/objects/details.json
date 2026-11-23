@@ -30,6 +30,6 @@
     "inclination": "Orbital inclination",
     "orbitalPeriod": "Orbital period",
     "relativeMass": "Mass (Earth = 1)",
-    "relativeRadius": "Radius (Earth = 1)"
+    "diameter": "Diameter"
   }
 }

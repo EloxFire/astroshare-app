@@ -30,6 +30,6 @@
     "inclination": "Inclinazione orbitale",
     "orbitalPeriod": "Periodo orbitale",
     "relativeMass": "Massa (Terra = 1)",
-    "relativeRadius": "Raggio (Terra = 1)"
+    "diameter": "Diametro"
   }
 }

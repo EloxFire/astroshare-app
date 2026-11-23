@@ -3,7 +3,7 @@ import { InteractionManager, ScrollView, Text, TouchableOpacity, View } from "re
 import { useTranslation } from "react-i18next";
 import { router, useLocalSearchParams } from "expo-router";
 import { Eye, InfoIcon, Telescope } from "lucide-react-native";
-import { convertEquatorialToHorizontal, getBodyNextRise, getBodyNextSet, getConstellation, getLunarEquatorialCoordinate, getPlanetaryHeliocentricDistance, getPlanetaryPositions, getSolarEquatorialCoordinate } from "@observerly/astrometry";
+import { convertEquatorialToHorizontal, earth, getBodyNextRise, getBodyNextSet, getConstellation, getLunarEquatorialCoordinate, getPlanetaryHeliocentricDistance, getPlanetaryPositions, getSolarEquatorialCoordinate } from "@observerly/astrometry";
 import type { Constellation, EquatorialCoordinate } from "@observerly/astrometry";
 import { globalStyles } from "../../../helpers/globalStyles";
 import { app_colors, withOpacity } from "../../../helpers/variables";
@@ -81,7 +81,8 @@ const ObjectDetailsScreen = () => {
     inclinationDeg: number;
     orbitalPeriodYears: number;
     relativeMass: number;
-    relativeRadius: number;
+    diameterKm: number;
+    relativeDiameter: number;
   } | null>(null);
 
   useEffect(() => {
@@ -195,7 +196,14 @@ const ObjectDetailsScreen = () => {
         inclinationDeg: planet.i,
         orbitalPeriodYears: planet.T,
         relativeMass: planet.m,
-        relativeRadius: planet.r,
+        // planet.r est le rayon brut EN MÈTRES (vérifié en direct : mars.r === 3389500, soit bien
+        // 3389,5 km, le vrai rayon de Mars) malgré son nom et le commentaire de la lib qui laissent
+        // penser à un ratio par rapport à la Terre, comme planet.m (masse) — ce n'est pas le cas
+        // pour le rayon : diamètre en km (×2 puis conversion), et ratio recalculé nous-mêmes via
+        // earth.r (même unité, mètres) pour garder la comparaison "× Terre" en plus, comme pour la
+        // masse.
+        diameterKm: (planet.r * 2) / 1000,
+        relativeDiameter: planet.r / earth.r,
       });
     });
 
@@ -243,7 +251,10 @@ const ObjectDetailsScreen = () => {
     technicalItems.push({ title: t("technical.inclination"), value: `${formatLocaleNumber(planetEphemeris.inclinationDeg, i18n.language, 2)}°` });
     technicalItems.push({ title: t("technical.orbitalPeriod"), value: `${formatLocaleNumber(planetEphemeris.orbitalPeriodYears, i18n.language, 2)} ${t("yearsAbbr")}` });
     technicalItems.push({ title: t("technical.relativeMass"), value: `${formatLocaleNumber(planetEphemeris.relativeMass, i18n.language, 3)} ${t("earthUnit")}` });
-    technicalItems.push({ title: t("technical.relativeRadius"), value: `${formatLocaleNumber(planetEphemeris.relativeRadius, i18n.language, 3)} ${t("earthUnit")}` });
+    technicalItems.push({
+      title: t("technical.diameter"),
+      value: `${formatLocaleNumber(planetEphemeris.diameterKm, i18n.language, 0)} km (${formatLocaleNumber(planetEphemeris.relativeDiameter, i18n.language, 2)} ${t("earthUnit")})`,
+    });
   }
   if (object.dso?.size.pa != null) technicalItems.push({ title: t("technical.positionAngle"), value: `${object.dso.size.pa}°` });
   if (object.dso) technicalItems.push({ title: t("technical.morphology"), value: object.dso.morphology ?? t("technical.unknown") });
@@ -275,17 +286,6 @@ const ObjectDetailsScreen = () => {
           </View>
 
           {designationsLabel && <Text style={objectDetailsScreenStyles.heroHeader.designations}>{designationsLabel}</Text>}
-        </View>
-
-        <View style={globalStyles.content}>
-          <View style={objectDetailsScreenStyles.actionsRow}>
-            <Button
-              label={t("viewInFieldSimulator")}
-              icon={Telescope}
-              onPress={() => router.push(`/tools/field-simulator?objectId=${object.id}`)}
-              style={{ flex: 1 }}
-            />
-          </View>
 
           <View style={objectDetailsScreenStyles.statsGrid}>
             {magnitude != null && (
@@ -293,6 +293,8 @@ const ObjectDetailsScreen = () => {
                 containerStyle={objectDetailsScreenStyles.statsGrid.tile}
                 title={t("stats.magnitude")}
                 value={formatLocaleNumber(magnitude, i18n.language, 1)}
+                valueStyle={{color: app_colors.white}}
+                titleStyle={{color: app_colors.white}}
               />
             )}
             {angularSize && (
@@ -300,6 +302,8 @@ const ObjectDetailsScreen = () => {
                 containerStyle={objectDetailsScreenStyles.statsGrid.tile}
                 title={t("stats.apparentSize")}
                 value={formatAngularSizeLabel(angularSize, i18n.language, formatLocaleNumber)}
+                valueStyle={{color: app_colors.white}}
+                titleStyle={{color: app_colors.white}}
               />
             )}
             {object.physical.distance && (
@@ -307,6 +311,8 @@ const ObjectDetailsScreen = () => {
                 containerStyle={objectDetailsScreenStyles.statsGrid.tile}
                 title={t("stats.distance")}
                 value={`${formatLocaleNumber(object.physical.distance.value, i18n.language, 0)} ${object.physical.distance.unit === "ly" ? t("lightYearsAbbr") : object.physical.distance.unit}`}
+                valueStyle={{color: app_colors.white}}
+                titleStyle={{color: app_colors.white}}
               />
             )}
             {((object.custom.best_months?.length ?? 0) > 0 || object.custom.difficulty) && (
@@ -315,9 +321,15 @@ const ObjectDetailsScreen = () => {
                 title={t("stats.bestMonths")}
                 value={object.custom.best_months?.length ? object.custom.best_months.map((month) => formatDate(new Date(2000, month - 1, 1)).format("MMM")).join(" · ") : "--"}
                 small
+                valueStyle={{color: app_colors.white}}
+                titleStyle={{color: app_colors.white}}
               />
             )}
           </View>
+        </View>
+
+        <View style={globalStyles.content}>
+                  
 
           {altitudeData && location && (
             <View style={globalStyles.defaultCard}>
@@ -347,6 +359,15 @@ const ObjectDetailsScreen = () => {
               </View>
             </View>
           )}
+
+          <View style={objectDetailsScreenStyles.actionsRow}>
+            <Button
+              label={t("viewInFieldSimulator")}
+              icon={Telescope}
+              onPress={() => router.push(`/tools/field-simulator?objectId=${object.id}`)}
+              style={{ flex: 1 }}
+            />
+          </View>
 
           <View>
             <SectionHeader title={t("technicalSheet")} />

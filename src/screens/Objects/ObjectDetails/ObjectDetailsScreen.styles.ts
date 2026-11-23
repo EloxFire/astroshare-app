@@ -53,6 +53,7 @@ export const objectDetailsScreenStyles = {
     tile: {
       flexBasis: "48%" as const,
       flexGrow: 1,
+      backgroundColor: withOpacity(app_colors.white, 0.1),
     },
   },
 

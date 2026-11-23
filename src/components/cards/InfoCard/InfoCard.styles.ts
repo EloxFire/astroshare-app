@@ -22,13 +22,13 @@ export const infoCardStyles = {
       title: {
         color: app_colors.primary.main,
         fontFamily: "ZTNatureBold",
-        fontSize: 14,
+        fontSize: 16,
 
         // Style simple pour mettre en valeur un segment du titre via <Trans> (ex: la valeur
         // SQM dans settings/addObservatory:stepOne.lightPollution.title) — mêmes police/taille
         // que le titre, seule la couleur change.
         highlight: {
-          fontSize: 10,
+          fontSize: 12,
         },
 
         bortle: {
@@ -39,7 +39,8 @@ export const infoCardStyles = {
       description: {
         color: app_colors.primary.medium,
         fontFamily: "ZTNatureRegular",
-        fontSize: 12,
+        fontSize: 14,
+        lineHeight: 14 * 1.5,
 
         // Même principe que title.highlight : met en valeur un segment via <Trans> (ex: l'indicateur
         // de pollution lumineuse dans settings/addObservatory:stepOne.lightPollution.description).
@@ -67,7 +68,7 @@ export const infoCardStyles = {
       title: {
         color: app_colors.yellow.main,
         fontFamily: "ZTNatureBold",
-        fontSize: 14,
+        fontSize: 16,
 
         highlight: {
           fontSize: 10,
@@ -81,7 +82,8 @@ export const infoCardStyles = {
       description: {
         color: app_colors.white,
         fontFamily: "ZTNatureRegular",
-        fontSize: 12,
+        fontSize: 14,
+        lineHeight: 14 * 1.5,
 
         highlight: {
           color: app_colors.yellow.main,
@@ -107,10 +109,10 @@ export const infoCardStyles = {
       title: {
         color: app_colors.primary.main,
         fontFamily: "ZTNatureBold",
-        fontSize: 14,
+        fontSize: 16,
 
         highlight: {
-          fontSize: 10,
+          fontSize: 12,
         },
 
         bortle: {
@@ -121,7 +123,8 @@ export const infoCardStyles = {
       description: {
         color: app_colors.primary.medium,
         fontFamily: "ZTNatureRegular",
-        fontSize: 12,
+        fontSize: 14,
+        lineHeight: 14 * 1.5,
 
         highlight: {
           color: app_colors.accent.main,
