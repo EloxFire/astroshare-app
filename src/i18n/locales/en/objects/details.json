@@ -2,6 +2,9 @@
   "nakedEye": "Naked eye",
   "viewInFieldSimulator": "View in my field",
   "lightYearsAbbr": "ly",
+  "astronomicalUnitAbbr": "AU",
+  "yearsAbbr": "yr",
+  "earthUnit": "× Earth",
   "tonightAt": "Tonight in {{city}}",
   "discoveredBy": "Discovery",
   "technicalSheet": "Technical sheet",
@@ -17,6 +20,16 @@
     "declination": "Declination",
     "positionAngle": "Position angle",
     "morphology": "Morphology",
-    "unknown": "Unknown"
+    "unknown": "Unknown",
+    "constellation": "Constellation",
+    "altitude": "Altitude",
+    "azimuth": "Azimuth",
+    "distanceFromSun": "Distance from the Sun",
+    "semiMajorAxis": "Semi-major axis",
+    "eccentricity": "Orbital eccentricity",
+    "inclination": "Orbital inclination",
+    "orbitalPeriod": "Orbital period",
+    "relativeMass": "Mass (Earth = 1)",
+    "relativeRadius": "Radius (Earth = 1)"
   }
 }

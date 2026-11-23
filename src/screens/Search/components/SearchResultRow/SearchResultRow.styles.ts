@@ -5,7 +5,7 @@ export const searchResultRowStyles = {
     display: "flex" as const,
     flexDirection: "row" as const,
     alignItems: "center" as const,
-    gap: 12,
+    gap: 10,
     paddingVertical: 10,
 
     withBorder: {
@@ -47,6 +47,7 @@ export const searchResultRowStyles = {
       flexDirection: "column" as const,
       alignItems: "flex-end" as const,
       gap: 1,
+      marginLeft: 30,
 
       value: {
         fontFamily: "ZTNatureBold",

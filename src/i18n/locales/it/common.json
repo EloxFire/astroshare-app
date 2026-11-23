@@ -67,5 +67,10 @@
     "culmination": "Culminazione {{altitude}}°",
     "visible": "Visibile",
     "belowHorizon": "Sotto l'orizzonte"
+  },
+  "skyPreview": {
+    "title": "Posizione",
+    "center": "Centro",
+    "field": "Campo"
   }
 }

@@ -1,10 +1,17 @@
 {
   "nakedEye": "À l'œil nu",
-  "viewInFieldSimulator": "Voir dans mon champ",
+  "viewInFieldSimulator": "Voir dans le simulateur de champ",
   "lightYearsAbbr": "al",
+  "astronomicalUnitAbbr": "UA",
+  "yearsAbbr": "ans",
+  "earthUnit": "× Terre",
   "tonightAt": "Ce soir à {{city}}",
   "discoveredBy": "Découverte",
   "technicalSheet": "Fiche technique",
+  "infoCard": {
+    "title": "Informations",
+    "noDescription": "Aucune description disponible pour cet objet."
+  },
   "stats": {
     "magnitude": "Magnitude",
     "apparentSize": "Taille apparente",
@@ -17,6 +24,16 @@
     "declination": "Déclinaison",
     "positionAngle": "Angle de position",
     "morphology": "Morphologie",
-    "unknown": "Inconnue"
+    "unknown": "Inconnue",
+    "constellation": "Constellation",
+    "altitude": "Altitude",
+    "azimuth": "Azimut",
+    "distanceFromSun": "Distance au Soleil",
+    "semiMajorAxis": "Demi-grand axe",
+    "eccentricity": "Excentricité orbitale",
+    "inclination": "Inclinaison orbitale",
+    "orbitalPeriod": "Période orbitale",
+    "relativeMass": "Masse (Terre = 1)",
+    "relativeRadius": "Rayon (Terre = 1)"
   }
 }

@@ -16,37 +16,7 @@ export const objectDetailsScreenStyles = {
     flexDirection: "column" as const,
     gap: 14,
     overflow: "hidden" as const,
-
-    glow: {
-      position: "absolute" as const,
-      top: -40,
-      right: -40,
-      width: 180,
-      height: 180,
-      borderRadius: 90,
-      backgroundColor: withOpacity(app_colors.accent.main, 0.35),
-    },
-
-    glowInner: {
-      position: "absolute" as const,
-      top: -10,
-      right: -10,
-      width: 100,
-      height: 100,
-      borderRadius: 50,
-      backgroundColor: withOpacity(app_colors.accent.main, 0.3),
-    },
-
-    iconBadge: {
-      alignSelf: "flex-start" as const,
-      width: 56,
-      height: 56,
-      borderRadius: 28,
-      backgroundColor: withOpacity(app_colors.white, 0.1),
-      display: "flex" as const,
-      alignItems: "center" as const,
-      justifyContent: "center" as const,
-    },
+    paddingTop: 20,
 
     badgesRow: {
       display: "flex" as const,

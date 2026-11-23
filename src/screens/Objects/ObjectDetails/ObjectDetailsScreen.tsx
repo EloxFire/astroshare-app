@@ -2,8 +2,9 @@ import { useEffect, useState } from "react";
 import { InteractionManager, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useTranslation } from "react-i18next";
 import { router, useLocalSearchParams } from "expo-router";
-import { Eye, Telescope } from "lucide-react-native";
-import { convertEquatorialToHorizontal, getBodyNextRise, getBodyNextSet } from "@observerly/astrometry";
+import { Eye, InfoIcon, Telescope } from "lucide-react-native";
+import { convertEquatorialToHorizontal, getBodyNextRise, getBodyNextSet, getConstellation, getLunarEquatorialCoordinate, getPlanetaryHeliocentricDistance, getPlanetaryPositions, getSolarEquatorialCoordinate } from "@observerly/astrometry";
+import type { Constellation, EquatorialCoordinate } from "@observerly/astrometry";
 import { globalStyles } from "../../../helpers/globalStyles";
 import { app_colors, withOpacity } from "../../../helpers/variables";
 import { formatLocaleNumber } from "../../../helpers/format";
@@ -21,8 +22,12 @@ import Button from "../../../components/buttons/Button/Button";
 import ValueCard from "../../../components/cards/ValueCard/ValueCard";
 import ListCard from "../../../components/cards/ListCard/ListCard";
 import AltitudeChart from "../../../components/charts/AltitudeChart/AltitudeChart";
+import SkyPreview from "../../../components/charts/SkyPreview/SkyPreview";
 import type { CatalogObjectDetail } from "../../../types/catalog/CatalogObject";
 import { objectDetailsScreenStyles } from "./ObjectDetailsScreen.styles";
+import InfoCard from "../../../components/cards/InfoCard/InfoCard";
+import { getConstellationName } from "../../../helpers/astrometry/constellations/constellationName";
+import { getConstellationByAbbreviation } from "../../../helpers/astrometry/constellations/getConstellationByAbbreviation";
 
 // RA en degrés (convention du catalogue, vérifiée en direct) → h/min/s (÷15, 360° = 24h).
 const formatRightAscension = (raDegrees: number): string => {
@@ -64,6 +69,20 @@ const ObjectDetailsScreen = () => {
   const [object, setObject] = useState<CatalogObjectDetail | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [altitudeData, setAltitudeData] = useState<{ points: ReturnType<typeof getAltitudeCurve>; riseDate?: Date; setDate?: Date } | null>(null);
+  const [planetEphemeris, setPlanetEphemeris] = useState<{
+    ra: number;
+    dec: number;
+    alt: number;
+    az: number;
+    constellation: Constellation | null;
+    distanceFromSunAu: number;
+    semiMajorAxisAu: number;
+    eccentricity: number;
+    inclinationDeg: number;
+    orbitalPeriodYears: number;
+    relativeMass: number;
+    relativeRadius: number;
+  } | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -83,38 +102,101 @@ const ObjectDetailsScreen = () => {
     if (!isLoading && !object) router.back();
   }, [isLoading, object]);
 
-  // Courbe d'altitude "ce soir à <ville>" : seulement pour un objet à position fixe (étoile, DSO).
-  // Les objets du système solaire bougent (position toujours null côté catalogue pour ce kind,
-  // voir le commentaire sur CatalogObjectKind) — cette section est alors simplement omise, pas de
-  // quoi la calculer sans éphéméride dédiée (hors périmètre de cette fiche générique).
+  // Courbe d'altitude "ce soir à <ville>" : pour un objet à position fixe (étoile, DSO) comme pour
+  // un objet du système solaire (Soleil, Lune, planète — position toujours null côté catalogue pour
+  // ce kind, voir CatalogObjectKind, recalculée localement à chaque échantillon). getAltitudeCurve/
+  // findPreviousHorizonCrossing attendent déjà une fonction (atDate: Date) => coordonnée plutôt
+  // qu'une coordonnée fixe pour cette raison (voir leur commentaire dans altitudeCurve.ts) : il
+  // suffit de leur fournir la bonne source selon le type d'objet.
   useEffect(() => {
-    if (!object?.position || !location) { setAltitudeData(null); return; }
-    const position = object.position;
-    // Signature (atDate: Date) => ... attendue par getAltitudeCurve/findPreviousHorizonCrossing
-    // (pensées pour un corps mobile) même si la position d'un objet catalogue fixe ne varie pas —
-    // voir le commentaire de getAltitudeCurve.
-    const getEquatorialCoordinate = (_atDate: Date) => ({ ra: position.ra, dec: position.dec });
+    if (!location) { setAltitudeData(null); return; }
+
+    let getEquatorialCoordinate: ((atDate: Date) => EquatorialCoordinate) | null = null;
+    if (object?.position) {
+      const position = object.position;
+      getEquatorialCoordinate = () => ({ ra: position.ra, dec: position.dec });
+    } else {
+      const ephemeris = object?.solar_system?.ephemeris;
+      if (ephemeris?.body === "sun") {
+        getEquatorialCoordinate = getSolarEquatorialCoordinate;
+      } else if (ephemeris?.body === "moon") {
+        getEquatorialCoordinate = getLunarEquatorialCoordinate;
+      } else if (ephemeris?.body === "planet") {
+        const observer = { latitude: location.latitude, longitude: location.longitude, elevation: location.elevation ?? 0 };
+        // getPlanetaryPositions calcule les 7 planètes autres que la Terre d'un coup : on ne garde
+        // que celle qui correspond à cet objet (voir le commentaire de l'effet ephemeris.name/uid
+        // ci-dessous), recalculée à chaque échantillon de la courbe puisqu'elle prend `atDate`.
+        getEquatorialCoordinate = (atDate) => {
+          const planet = getPlanetaryPositions(atDate, observer).find(
+            (p) => (ephemeris.name && p.name.toLowerCase() === ephemeris.name.toLowerCase()) || (ephemeris.uid && p.uid === ephemeris.uid)
+          );
+          return planet ? { ra: planet.ra, dec: planet.dec } : { ra: 0, dec: 0 };
+        };
+      }
+    }
+
+    if (!getEquatorialCoordinate) { setAltitudeData(null); return; }
+    const resolvedGetEquatorialCoordinate = getEquatorialCoordinate;
 
     const task = InteractionManager.runAfterInteractions(() => {
       const user = { latitude: location.latitude, longitude: location.longitude, elevation: location.elevation ?? 0 };
       const now = new Date();
-      const points = getAltitudeCurve(now, user, getEquatorialCoordinate);
-      const nextRise = getBodyNextRise(now, user, getEquatorialCoordinate(now));
-      const nextSet = getBodyNextSet(now, user, getEquatorialCoordinate(now));
+      const points = getAltitudeCurve(now, user, resolvedGetEquatorialCoordinate);
+      const nextRise = getBodyNextRise(now, user, resolvedGetEquatorialCoordinate(now));
+      const nextSet = getBodyNextSet(now, user, resolvedGetEquatorialCoordinate(now));
 
       // Même raisonnement que SunSummaryCard/TonightView : getBodyNextRise/getBodyNextSet ne
       // renvoient jamais que le PROCHAIN évènement, pas celui déjà passé si l'objet est déjà levé —
       // on bascule alors sur l'évènement passé (recherché en arrière) côté opposé à celui à venir.
-      const { alt: currentAltitude } = convertEquatorialToHorizontal(now, user, getEquatorialCoordinate(now));
+      const { alt: currentAltitude } = convertEquatorialToHorizontal(now, user, resolvedGetEquatorialCoordinate(now));
       const currentlyAboveHorizon = currentAltitude >= 0;
       const riseDate = currentlyAboveHorizon
-        ? findPreviousHorizonCrossing(now, user, getEquatorialCoordinate, "rise")
+        ? findPreviousHorizonCrossing(now, user, resolvedGetEquatorialCoordinate, "rise")
         : (nextRise ? nextRise.datetime : undefined);
       const setDate = currentlyAboveHorizon
         ? (nextSet ? nextSet.datetime : undefined)
-        : findPreviousHorizonCrossing(now, user, getEquatorialCoordinate, "set");
+        : findPreviousHorizonCrossing(now, user, resolvedGetEquatorialCoordinate, "set");
 
       setAltitudeData({ points, riseDate, setDate });
+    });
+
+    return () => task.cancel();
+  }, [object, location]);
+
+  // Fiche technique d'une planète (kind "solar_system", ephemeris.body "planet") : l'API ne donne
+  // ni position ni magnitude pour ces objets (ils bougent, voir CatalogObjectKind) — on recalcule
+  // localement avec @observerly/astrometry, seul fournisseur géré pour l'instant
+  // (ephemeris.provider === "observerly", voir CatalogObjectEphemeris). getPlanetaryPositions calcule
+  // d'un coup les 7 planètes autres que la Terre ; on ne garde que celle qui correspond à cet objet,
+  // identifiée par ephemeris.name/uid (les seuls identifiants stables renvoyés par le catalogue pour
+  // ce body, le nom affiché `object.name` peut être traduit et ne matche pas forcément celui
+  // d'observerly).
+  useEffect(() => {
+    const ephemeris = object?.solar_system?.ephemeris;
+    if (ephemeris?.body !== "planet" || !location) { setPlanetEphemeris(null); return; }
+
+    const task = InteractionManager.runAfterInteractions(() => {
+      const observer = { latitude: location.latitude, longitude: location.longitude, elevation: location.elevation ?? 0 };
+      const now = new Date();
+      const planet = getPlanetaryPositions(now, observer).find(
+        (p) => (ephemeris.name && p.name.toLowerCase() === ephemeris.name.toLowerCase()) || (ephemeris.uid && p.uid === ephemeris.uid)
+      );
+      if (!planet) { setPlanetEphemeris(null); return; }
+
+      setPlanetEphemeris({
+        ra: planet.ra,
+        dec: planet.dec,
+        alt: planet.alt,
+        az: planet.az,
+        constellation: getConstellation({ ra: planet.ra, dec: planet.dec }) ?? null,
+        distanceFromSunAu: getPlanetaryHeliocentricDistance(now, planet),
+        semiMajorAxisAu: planet.a,
+        eccentricity: planet.e,
+        inclinationDeg: planet.i,
+        orbitalPeriodYears: planet.T,
+        relativeMass: planet.m,
+        relativeRadius: planet.r,
+      });
     });
 
     return () => task.cancel();
@@ -124,30 +206,54 @@ const ObjectDetailsScreen = () => {
 
   const Icon = getCatalogObjectIcon(object.category);
   const angularSize = getObjectAngularSize(object);
+  // object.magnitude (catalogue) est parfois absent alors que la magnitude visuelle existe bien
+  // côté photométrie (object.photometry.v, bande V de Johnson) : on s'y replie plutôt que de rater
+  // l'affichage de la carte stat.
+  const magnitude = object.magnitude ?? object.photometry.v;
   const designationsLabel = formatDesignations(object.designations);
   const description = i18n.language === "en" ? (object.content.description?.en ?? object.content.description?.fr) : object.content.description?.fr;
+
+  // Carte "Position" (constellation tracée + repère de l'objet dedans) : seulement quand on a à la
+  // fois une position (fixe pour une étoile/DSO, en direct pour une planète — voir planetEphemeris
+  // ci-dessus) ET sa constellation. Le Soleil et la Lune n'ont pas d'éphéméride de constellation
+  // calculée ici (hors périmètre de la fiche technique actuelle), donc pas de carte pour eux.
+  const mapConstellation = object.position?.const
+    ? getConstellationByAbbreviation(object.position.const)
+    : planetEphemeris?.constellation ?? null;
+  const mapTarget = object.position
+    ? { ra: object.position.ra, dec: object.position.dec, label: object.name }
+    : planetEphemeris
+      ? { ra: planetEphemeris.ra, dec: planetEphemeris.dec, label: object.name }
+      : null;
 
   const technicalItems: { title: string; value: string }[] = [];
   if (designationsLabel) technicalItems.push({ title: t("technical.designations"), value: designationsLabel });
   if (object.position) {
     technicalItems.push({ title: t("technical.rightAscension"), value: formatRightAscension(object.position.ra) });
     technicalItems.push({ title: t("technical.declination"), value: formatDeclination(object.position.dec) });
+  } else if (planetEphemeris) {
+    technicalItems.push({ title: t("technical.rightAscension"), value: formatRightAscension(planetEphemeris.ra) });
+    technicalItems.push({ title: t("technical.declination"), value: formatDeclination(planetEphemeris.dec) });
+    if (planetEphemeris.constellation) technicalItems.push({ title: t("technical.constellation"), value: planetEphemeris.constellation.name });
+    technicalItems.push({ title: t("technical.altitude"), value: `${formatLocaleNumber(planetEphemeris.alt, i18n.language, 1)}°` });
+    technicalItems.push({ title: t("technical.azimuth"), value: `${formatLocaleNumber(planetEphemeris.az, i18n.language, 1)}°` });
+    technicalItems.push({ title: t("technical.distanceFromSun"), value: `${formatLocaleNumber(planetEphemeris.distanceFromSunAu, i18n.language, 2)} ${t("astronomicalUnitAbbr")}` });
+    technicalItems.push({ title: t("technical.semiMajorAxis"), value: `${formatLocaleNumber(planetEphemeris.semiMajorAxisAu, i18n.language, 2)} ${t("astronomicalUnitAbbr")}` });
+    technicalItems.push({ title: t("technical.eccentricity"), value: formatLocaleNumber(planetEphemeris.eccentricity, i18n.language, 3) });
+    technicalItems.push({ title: t("technical.inclination"), value: `${formatLocaleNumber(planetEphemeris.inclinationDeg, i18n.language, 2)}°` });
+    technicalItems.push({ title: t("technical.orbitalPeriod"), value: `${formatLocaleNumber(planetEphemeris.orbitalPeriodYears, i18n.language, 2)} ${t("yearsAbbr")}` });
+    technicalItems.push({ title: t("technical.relativeMass"), value: `${formatLocaleNumber(planetEphemeris.relativeMass, i18n.language, 3)} ${t("earthUnit")}` });
+    technicalItems.push({ title: t("technical.relativeRadius"), value: `${formatLocaleNumber(planetEphemeris.relativeRadius, i18n.language, 3)} ${t("earthUnit")}` });
   }
   if (object.dso?.size.pa != null) technicalItems.push({ title: t("technical.positionAngle"), value: `${object.dso.size.pa}°` });
-  technicalItems.push({ title: t("technical.morphology"), value: object.dso?.morphology ?? t("technical.unknown") });
+  if (object.dso) technicalItems.push({ title: t("technical.morphology"), value: object.dso.morphology ?? t("technical.unknown") });
 
   return (
     <View style={globalStyles.screen}>
-      <ScreenHeader backgroundColor={app_colors.primary.main} />
+      <ScreenHeader backgroundColor={app_colors.primary.main} title={object.name} />
 
       <ScrollView>
         <View style={objectDetailsScreenStyles.heroHeader}>
-          <View style={objectDetailsScreenStyles.heroHeader.glow} />
-          <View style={objectDetailsScreenStyles.heroHeader.glowInner} />
-
-          <View style={objectDetailsScreenStyles.heroHeader.iconBadge}>
-            <Icon size={26} color={app_colors.white} />
-          </View>
 
           <View style={objectDetailsScreenStyles.heroHeader.badgesRow}>
             <Badge
@@ -156,7 +262,7 @@ const ObjectDetailsScreen = () => {
               foregroundColor={app_colors.primary.main}
             />
             {object.position?.const && (
-              <Badge text={object.position.const} backgroundColor={withOpacity(app_colors.white, 0.15)} foregroundColor={app_colors.white} />
+              <Badge text={getConstellationName(object.position.const) || ""} backgroundColor={withOpacity(app_colors.white, 0.15)} foregroundColor={app_colors.white} />
             )}
             {object.custom.naked_eye && (
               <Badge
@@ -168,7 +274,6 @@ const ObjectDetailsScreen = () => {
             )}
           </View>
 
-          <Text style={objectDetailsScreenStyles.heroHeader.name}>{object.name}</Text>
           {designationsLabel && <Text style={objectDetailsScreenStyles.heroHeader.designations}>{designationsLabel}</Text>}
         </View>
 
@@ -183,11 +288,11 @@ const ObjectDetailsScreen = () => {
           </View>
 
           <View style={objectDetailsScreenStyles.statsGrid}>
-            {object.magnitude != null && (
+            {magnitude != null && (
               <ValueCard
                 containerStyle={objectDetailsScreenStyles.statsGrid.tile}
                 title={t("stats.magnitude")}
-                value={formatLocaleNumber(object.magnitude, i18n.language, 1)}
+                value={formatLocaleNumber(magnitude, i18n.language, 1)}
               />
             )}
             {angularSize && (
@@ -221,7 +326,15 @@ const ObjectDetailsScreen = () => {
             </View>
           )}
 
-          {description && <Text style={objectDetailsScreenStyles.description}>{description}</Text>}
+          {mapConstellation && mapTarget && <SkyPreview constellation={mapConstellation} target={mapTarget} />}
+
+          <InfoCard
+            title={t("infoCard.title")}
+            description={description ? description : t("infoCard.noDescription")}
+            icon={InfoIcon}
+
+          />
+
 
           {(object.discovery?.by || object.discovery?.year) && (
             <View style={objectDetailsScreenStyles.discoveryCard}>
@@ -237,7 +350,7 @@ const ObjectDetailsScreen = () => {
 
           <View>
             <SectionHeader title={t("technicalSheet")} />
-            <ListCard items={technicalItems} additionalContainerStyles={{ borderWidth: 0, padding: 0 }} />
+            <ListCard items={technicalItems}/>
           </View>
         </View>
       </ScrollView>

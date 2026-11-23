@@ -57,7 +57,12 @@ export default function RootLayout() {
             headerShown: false,
             tabBarStyle: isTabRootScreen ? { height: 60 } : { display: 'none' },
           }}
-          backBehavior='order'
+          // "history" (pas "order", son défaut précédent) : un onglet masqué sans Stack interne à
+          // dépiler (ex: objects/[id], profile) revient alors au dernier onglet réellement visité
+          // au back, pas à celui juste avant lui dans la liste ci-dessous — "order" renvoyait tout
+          // retour depuis la fiche d'un objet vers Connexion (onglet "auth", juste avant "objects"
+          // dans la liste), quel que soit l'onglet de départ réel.
+          backBehavior='history'
         >
           <Tabs.Screen name="(home)" options={{
             // Remove android ripple effect on tab press
@@ -164,7 +169,7 @@ export default function RootLayout() {
           <Tabs.Screen name="objects" options={{
             href: null, // hide from tab bar
             // Masque aussi la tabbar elle-même tant qu'on est dans ce groupe : comme tout
-            // auth/* est un seul écran Tabs (grâce au Stack imbriqué dans app/auth/_layout.tsx),
+            // objects/* est un seul écran Tabs (grâce au Stack imbriqué dans app/auth/_layout.tsx),
             // ça couvre toutes les sous-routes (login, index, etc.) sans avoir à le répéter.
             tabBarStyle: { display: "none" },
           }} />

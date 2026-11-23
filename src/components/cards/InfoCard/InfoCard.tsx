@@ -17,9 +17,10 @@ interface InfoCardProps {
   internalLink?: string; // Optional internal link prop
   additionnalDescriptionStyle?: object; // Optional style for the description text
   variant?: "light" | "dark" | 'dark-light'; // Optional variant prop
+  alignment?: "top" | "center" // Optional icon alignment prop
 }
 
-const InfoCard = ({ title, description, icon: Icon, link, internalLink, additionnalDescriptionStyle, variant = "dark" }: InfoCardProps) => {
+const InfoCard = ({ title, description, icon: Icon, link, internalLink, additionnalDescriptionStyle, variant = "dark", alignment = "center" }: InfoCardProps) => {
 
   const handlePress = () => {
     if (link) {

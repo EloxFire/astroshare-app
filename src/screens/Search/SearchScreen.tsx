@@ -116,25 +116,25 @@ export const SearchScreen = () => {
               <>
                 <TryChipsRow chips={TRY_SUGGESTIONS} onPress={handleRunSearch} />
 
-                {
-                  tonightPicks && tonightPicks.length > 0 && (
-                    <View>
-                      <SectionHeader title={t("tonight.title")} />
-                      <View style={searchScreenStyles.tonightGrid}>
-                        {
-                          tonightPicks.map((pick, index) => (
-                            <TonightPickCard
-                              key={pick.object.id}
-                              pick={pick}
-                              index={index}
-                              onPress={() => router.push(`/objects/${pick.object.id}`)}
-                            />
-                          ))
-                        }
-                      </View>
-                    </View>
-                  )
-                }
+                <View>
+                  <SectionHeader title={t("tonight.title")} />
+                  {
+                    tonightPicks && tonightPicks.length > 0 && (
+                        <View style={searchScreenStyles.tonightGrid}>
+                          {
+                            tonightPicks.map((pick, index) => (
+                              <TonightPickCard
+                                key={pick.object.id}
+                                pick={pick}
+                                index={index}
+                                onPress={() => router.push(`/objects/${pick.object.id}`)}
+                              />
+                            ))
+                          }
+                        </View>
+                    )
+                  }
+                </View>
 
                 {
                   recentSearches.length > 0 && (

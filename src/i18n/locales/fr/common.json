@@ -77,6 +77,11 @@
     "visible": "Visible",
     "belowHorizon": "Sous l'horizon"
   },
+  "skyPreview": {
+    "title": "Position dans le ciel",
+    "center": "Centre",
+    "field": "Champ"
+  },
   "lightPollution": {
     "indicators": {
       "1": "Excellent ciel noir",
