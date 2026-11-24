@@ -172,8 +172,8 @@ export const ProfileScreen = () => {
             onPress={() => router.push('/tools/observations')}
           />
 
+          {/* TODO : Link to new form screen to update account infos */}
           <Button label={t('edit')} icon={UserCog} />
-
           <Button label={t('logout')} icon={LogOut} variant="danger" onPress={() => handleLogout()} />
         </View>
       </ScrollView>
