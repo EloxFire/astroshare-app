@@ -130,7 +130,15 @@ météo, APOD, viseur polaire, météo spatiale), observatoires de l'utilisateur
   - `ephemeris.provider` vaut aujourd'hui `"observerly"` (calcul local avec `@observerly/astrometry`). Les comètes et astéroïdes arriveront avec `"orbit"` et des éléments orbitaux dans `solar_system.orbit`, pas encore typés.
   - `solar_system.facts` est un dictionnaire libre (masse, diamètre, période orbitale…) : vérifie le type de chaque valeur à l'usage.
   - À confirmer côté API : sa doc annonce `"ly" | "yr"` pour l'unité de distance, et `"yr"` ressemble à une coquille. Les blocs `photometry`, `physical`, `discovery`, `content` et `custom` de la fiche complète sont typés non nuls ; à vérifier sur une vraie réponse d'objet du système solaire.
-- **Affichage dans une liste :** `getCatalogObjectTitle` et `getCatalogObjectSubtitle` (`src/helpers/journal/sessions.ts`). Le sous-titre traduit la catégorie via `tools/journal/sessions/add` (`observedObjects.categories`) : toute nouvelle catégorie de l'API doit y être ajoutée dans les trois langues, sinon sa valeur brute s'affiche. Le libellé de catalogue (Messier, NGC, IC) n'est déduit que d'un préfixe suivi d'un numéro, pour ne pas étiqueter « IC » un nom comme « Icarus ».
+- **Affichage dans une liste :** `getCatalogObjectTitle` et `getCatalogObjectSubtitle` (`src/helpers/journal/sessions.ts`). Le sous-titre traduit la catégorie via `tools/journal/sessions/add` (`observedObjects.categories`) : toute nouvelle catégorie de l'API doit y être ajoutée dans les trois langues, sinon sa valeur brute s'affiche. Le libellé de catalogue (Messier, NGC, IC) n'est déduit que d'un préfixe suivi d'un numéro, pour ne pas étiqueter « IC » un nom comme « Icarus ». `getCatalogObjectTitle` n'affiche que `name` quand l'objet a un nom propre différent de sa désignation (plus de « Primary · Name »), utilisé par le Journal, l'outil Conjonctions et `ObjectPicker`.
+- **Position d'un objet à une date donnée, résolue une fois pour toutes** (`getObjectEquatorialCoordinateResolver`,
+  `src/helpers/catalog/objectEphemeris.ts`, extrait de la courbe d'altitude d'`ObjectDetailsScreen`) :
+  renvoie une fonction `(atDate: Date) => EquatorialCoordinate` — position fixe (`object.position`) si
+  présente, sinon l'éphéméride du système solaire (`ephemeris.body` : `sun`/`moon`/`planet`, seul
+  `provider === "observerly"` géré, `null` sinon). Réutilisée par `ObjectDetailsScreen` (sa courbe
+  d'altitude) et par l'outil Conjonctions (recherche de rapprochements dans le temps) — tout nouveau
+  besoin de suivre un objet du catalogue dans le temps doit repartir de cette fonction plutôt que de
+  réimplémenter le `switch` sur `ephemeris.body`.
 
 ### Suivi de satellites (`src/types/satellites/`, `src/helpers/api/satellites/`, `src/helpers/satellites/`)
 
@@ -231,15 +239,69 @@ nouvel appel API.
   observatoire créé), transmis à la fiche détail en query params (`lat`/`lon`/`elev` de la route
   `/tools/iss-transits/[id]`) pour réaffiner le même transit avec le même observateur — sans ces
   query params (lien direct), repli sur la position effective de l'app.
-- **Période personnalisée** (dates de début/fin plutôt que des puces fixes 3/7/14 jours) : même
-  découpage Android/iOS que les dates d'`AddSession` (Journal), simplifié en mode date seule (pas
-  d'heure).
+- **Période personnalisée** (dates de début/fin plutôt que des puces fixes 3/7/14 jours) : via
+  `DateRangeField` (§4, partagé avec l'outil Conjonctions), même découpage Android/iOS que les dates
+  d'`AddSession` (Journal), simplifié en mode date seule (pas d'heure).
 - **`LocationBanner` généralisé et relocalisé** de `SatelliteTracker/components/` vers
   `src/components/layout/LocationBanner/` (partagé) : gagne une prop `message` optionnelle
   (texte déjà traduit, passé par l'appelant) qui remplace le texte par défaut spécifique aux passages
   visibles (« Passages vus depuis... »), sans changer son comportement pour `SatellitesScreen`.
 - **Carte explicative avant tout calcul** (`InfoCard` + bloc technique) : affichée tant qu'aucune
   recherche n'a encore été lancée (ni « Rechercher », ni « Trouver le prochain transit »).
+
+### Conjonctions entre deux astres (`src/screens/Tools/Conjunctions/`, `src/helpers/catalog/conjunctions.ts`)
+
+Calcule les rapprochements angulaires entre deux objets quelconques du catalogue (planète, Lune,
+Soleil, étoile, DSO) — pas seulement les planètes entre elles. Même esprit que les transits ISS
+(lieu + altitude minimale réglés sur la carte, période personnalisée ou bouton « prochaine
+conjonction », résultats filtrés par visibilité locale) mais **pas réutilisable tel quel** : les deux
+corps bougent bien plus lentement (heures/jours, pas secondes), ce qui change complètement
+l'algorithme de recherche.
+
+- **Sélection des deux objets : une recherche catalogue normale suffit** (`ObjectPicker`,
+  `useObjectSearch`, même pattern que la recherche d'objets observés d'`AddSession`) — vérifié en
+  direct que `/v3/objects/search` renvoie déjà le Soleil/la Lune/les planètes au même titre que les
+  étoiles/DSO (`q=mars` → `SS-MARS`), pas de picker spécial à construire. Chaque résultat choisi est
+  reconverti en fiche complète (`getObjectById`) pour disposer de son éphéméride ou de sa position
+  fixe, absentes du format liste.
+- **Position de chaque objet : `getObjectEquatorialCoordinateResolver`** (voir plus haut), partagé
+  avec `ObjectDetailsScreen`.
+- **`findConjunction`/`isConjunction`/`isPlanetaryConjunction` d'Observerly ne sont pas
+  réutilisables** : vérifié en lisant leur implémentation transpilée (`index.cjs`) — `isConjunction`/
+  `findConjunction` ne recalculent jamais de position à partir de `datetime` (testent un `Target` à
+  alt/az/ra/dec déjà figés, passés une fois) ; `isPlanetaryConjunction`/`findPlanetaryConjunction`
+  recalculent bien via `getPlanetaryGeocentricEclipticCoordinate`, mais seulement pour deux `Planet`
+  (jamais Lune/Soleil/catalogue). D'où une recherche écrite pour l'app, comme pour les transits ISS.
+- **Recherche en deux temps, pas celle des transits ISS** (vérifié en direct, deux bugs corrigés
+  avant intégration) :
+  1. Un pas grossier d'1h (pas 6h, testé puis abandonné : beaucoup de passages de visibilité
+     nocturne, pour un objet proche du Soleil comme Vénus, ne duraient que 6-12h — un pas de 6h n'y
+     laissait qu'1-2 échantillons, insuffisant pour repérer quoi que ce soit) construit des segments
+     contigus « les deux objets visibles » (`buildVisibleRuns`), puis ne garde que le point le plus
+     bas de chaque segment — une série « une valeur par nuit » environ.
+  2. Les minima locaux de **cette série** (pas des échantillons bruts) donnent les candidats, affinés
+     ensuite avec une fenêtre resserrée (±3h puis ±30min). Nécessaire : chercher les minima
+     directement sur les échantillons bruts (comme les transits ISS) donnait ~114 quasi-doublons pour
+     un seul rapprochement Vénus-Saturne (une entrée par nuit pendant tout le rapprochement, visible
+     sur plusieurs semaines) plutôt qu'un seul résultat par évènement réel.
+  Validé contre un scan indépendant plus fin : Lune-Mars retrouve les mêmes rapprochements qu'un scan
+  brut à 15 min ; Vénus-Saturne retrouve le vrai minimum global (0,73°) ; Jupiter-Saturne ne trouve
+  rien sur 3 ans, cohérent avec leur cycle réel (~20 ans, séparation géocentrique jamais sous 113°
+  vérifiée sur la période).
+- **Séparation calculée directement en équatorial** (`getAngularSeparation` sur ra/dec, pas sur
+  azimut/altitude) : une rotation équatorial→horizontal conserve les angles, inutile de convertir
+  pour la séparation — seule la visibilité (filtre d'altitude) a besoin de la conversion.
+- **Couple à position fixe (deux étoiles/DSO)** : détecté en amont (`isStaticConjunctionPair`,
+  compare la position à deux instants très éloignés) — leur séparation ne variant jamais, affiche
+  directement cette valeur plutôt que de scanner la période pour rien.
+- **`findNextConjunction`** : fenêtre ouverte à partir de maintenant, bon marché même sur plusieurs
+  années (~3,5 s pour 3 ans, vérifié en direct) contrairement aux transits ISS — mais une conjonction
+  plus rare que la fenêtre choisie (ex. grande conjonction Jupiter-Saturne, ~20 ans) ressort comme
+  « aucune trouvée », assumé et annoncé par le disclaimer.
+- **Fiche détail :** `SkyPreview` à deux repères (voir §4), centrée explicitement sur le point milieu
+  de la conjonction (`getMidpointEquatorialCoordinate` d'Observerly) avec un `fieldDegrees` dérivé de
+  la séparation plutôt que le cadrage automatique par défaut — sinon le cadrage se cale sur la figure
+  de la constellation, pas sur les deux objets eux-mêmes.
 
 ### Carte de pollution lumineuse (`src/screens/Tools/LightPollutionMap/`)
 
@@ -465,6 +527,29 @@ d'une liste (header fusionné coloré + sections « à cocher »/« cochés »).
 - **Dans un `ScrollView` :** il faut `keyboardShouldPersistTaps="handled"` (§2), sinon le premier appui sur une suggestion est perdu.
 - **Après un choix :** la liste est masquée par un état à part (`suggestionsDismissed`), remis à zéro à la frappe suivante. Le champ garde le focus. Ne force jamais `isFocused` à `false` à la main : le champ resterait actif et les suggestions ne réapparaîtraient plus.
 - **`onFocus`, `onBlur` et `onChangeText` de l'appelant :** ils sont appelés en plus de ceux du composant, pas à leur place.
+
+### `DateRangeField` (`src/components/inputs/DateRangeField/`)
+
+Sélecteur de période (dates de début/fin, pas d'heure) : extrait des transits ISS (1er usage) lors
+de la construction de l'outil Conjonctions (2e usage), même découpage Android (boîte native)/iOS
+(panneau maison, pas de mode `"datetime"` en boîte système) que les dates d'`AddSession` — voir
+le piège de `KeyboardAvoidingView`/`Modal` en §2. Pas de dépendance i18n propre : les libellés
+viennent de l'appelant (`startLabel`/`endLabel`/`pickerStartTitle`/...), comme `InputWithIcon`/
+`SelectInput`. L'invariant « la fin ne précède jamais le début » est géré à l'intérieur du
+composant, pas laissé à chaque appelant.
+
+### `SkyPreview` (`src/components/charts/SkyPreview/`)
+
+Aperçu du ciel : tracé de la constellation (segments + étoiles réelles de fond via `/v3/objects`,
+`kind: "star"`, limité à la magnitude ~7) avec un ou plusieurs repères dedans. `target` accepte un
+objet unique (comportement d'origine, `ObjectDetailsScreen`) ou un tableau — ajouté pour l'outil
+Conjonctions, qui a besoin d'afficher les deux objets en même temps : avec plusieurs cibles, le
+libellé de chacune alterne au-dessus/en-dessous de son point pour limiter le chevauchement (les
+cibles d'une conjonction sont par définition proches l'une de l'autre). `center`/`fieldDegrees`
+pilotent respectivement le point visé et le niveau de zoom ; absents, ils retombent sur un centrage
+automatique calé sur la figure de la constellation — l'outil Conjonctions les fournit explicitement
+(centré sur le point milieu des deux objets, champ dérivé de leur séparation), sinon le cadrage se
+cale sur la constellation plutôt que sur les deux cibles elles-mêmes.
 
 ### Cartes du Journal (`src/components/cards/`)
 
@@ -736,6 +821,8 @@ On ne peut pas lancer l'app depuis un agent. Méthodes utilisées jusqu'ici :
   principe (`scanSolarTransits` généralisé à un autre corps cible et/ou un autre TLE). Recherche par
   lieu différent de la position courante déjà possible (sélection sur la carte), mais pas de requête
   « transits visibles depuis une zone » façon transit-finder.com (une seule position à la fois).
+- **Conjonctions : altitude minimale fixe (10°), pas réglable** — seul le seuil de séparation
+  angulaire l'est, comme demandé. À revoir si besoin d'un réglage plus fin.
 
 ---
 
@@ -775,6 +862,18 @@ Le journal commence avec le commit `8527e2f`. Les changements antérieurs, comme
 i18n, `SelectInput` ou `ImageHeaderScrollView`, sont décrits dans les sections ci-dessus mais n'ont pas
 d'entrée datée.
 
+- **2026-11-25** — même commit — nouvel outil Conjonctions (`/tools/conjunctions-calculator`, déjà
+  pré-enregistré dans `tools.ts`) : conjonctions entre deux objets quelconques du catalogue
+  (planète, Lune, Soleil, étoile, DSO — sélection par simple recherche catalogue, le Soleil/la
+  Lune/les planètes y apparaissant déjà naturellement), période personnalisée ou « prochaine
+  conjonction », seuil de séparation angulaire réglable, lieu + altitude minimale (10°, fixe) comme
+  les transits ISS. Recherche écrite spécifiquement pour l'app (les fonctions de conjonction
+  d'Observerly ne conviennent pas, voir §2) : deux bugs réels corrigés avant intégration (pas grossier
+  trop large qui ratait des rapprochements, puis quasi-doublons sur un même évènement), validés
+  contre un scan indépendant. Fiche détail avec `SkyPreview` à deux repères. Extraction au passage de
+  `getObjectEquatorialCoordinateResolver` (depuis `ObjectDetailsScreen`) et de `DateRangeField`
+  (depuis les transits ISS), et ajout du support multi-cibles à `SkyPreview` — §2 (nouvelle
+  sous-section, note sur le catalogue), §4 (`DateRangeField`, `SkyPreview`), §6.
 - **2026-11-24** — même commit — nouvel outil Transits de l'ISS (`/tools/iss-transits`, déjà
   pré-enregistré dans `tools.ts`) :
   - recherche de transits ISS × Soleil (4 étapes, du scan grossier à l'affinage fin) avec seuil

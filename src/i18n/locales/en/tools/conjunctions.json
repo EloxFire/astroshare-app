@@ -1,0 +1,71 @@
+{
+  "screen": {
+    "title": "Conjunctions",
+    "subtitle": "Between two bodies",
+    "objects": {
+      "title": "Objects to compare",
+      "labelA": "First object",
+      "labelB": "Second object",
+      "placeholder": "E.g. Mars, Moon, M45...",
+      "change": "Tap to change"
+    },
+    "location": {
+      "title": "Observing location",
+      "unknown": "Unknown position",
+      "chooseOnMap": "Choose a location on the map",
+      "hideMap": "Hide the map",
+      "useCurrent": "Back to my current position",
+      "altitudeLabel": "Altitude (optional)",
+      "altitudePlaceholder": "E.g. 350"
+    },
+    "dateRange": {
+      "title": "Period",
+      "start": "Start",
+      "end": "End",
+      "picker": {
+        "startTitle": "Start date",
+        "endTitle": "End date",
+        "done": "Done"
+      }
+    },
+    "maxSeparationLabel": "Maximum angular separation (°)",
+    "maxSeparationPlaceholder": "E.g. 5",
+    "search": "Search conjunctions",
+    "findNext": {
+      "button": "Find the next conjunction",
+      "disclaimer": "This search looks several years ahead and can take a few seconds."
+    },
+    "empty": "No conjunction found in this period, try a longer one or a wider threshold.",
+    "emptyNext": "No conjunction found in the next {{days}} days from this location.",
+    "staticPair": {
+      "title": "Fixed separation",
+      "description": "Both objects have a fixed position in the sky: their angular separation never changes, it is {{value}}°."
+    },
+    "explanation": {
+      "whatTitle": "What is a conjunction?",
+      "whatDescription": "A conjunction happens when two celestial bodies appear very close to each other in the sky, as seen from Earth — they aren't actually close in space, it's just an apparent alignment.",
+      "paramsTitle": "The information shown",
+      "params": {
+        "separation": "The angular distance between the two objects at the moment of closest approach.",
+        "position": "Azimuth / altitude: the direction to look at during the conjunction.",
+        "time": "The precise time of closest approach."
+      }
+    }
+  },
+  "list": {
+    "cardSubtitle": "{{separation}}° separation · {{altitude}}° altitude",
+    "separationLabel": "separation"
+  },
+  "details": {
+    "screenTitle": "Conjunction",
+    "notFound": "Couldn't recompute this conjunction.",
+    "stats": {
+      "position": "azimuth / altitude",
+      "time": "time"
+    },
+    "technical": {
+      "title": "Technical details",
+      "constellation": "Constellation"
+    }
+  }
+}

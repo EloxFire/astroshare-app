@@ -3,8 +3,9 @@ import { InteractionManager, ScrollView, Text, TouchableOpacity, View } from "re
 import { useTranslation } from "react-i18next";
 import { router, useLocalSearchParams } from "expo-router";
 import { Eye, InfoIcon, Telescope } from "lucide-react-native";
-import { convertEquatorialToHorizontal, earth, getBodyNextRise, getBodyNextSet, getConstellation, getLunarEquatorialCoordinate, getPlanetaryHeliocentricDistance, getPlanetaryPositions, getSolarEquatorialCoordinate } from "@observerly/astrometry";
-import type { Constellation, EquatorialCoordinate } from "@observerly/astrometry";
+import { convertEquatorialToHorizontal, earth, getBodyNextRise, getBodyNextSet, getConstellation, getPlanetaryHeliocentricDistance, getPlanetaryPositions } from "@observerly/astrometry";
+import type { Constellation } from "@observerly/astrometry";
+import { getObjectEquatorialCoordinateResolver } from "../../../helpers/catalog/objectEphemeris";
 import { globalStyles } from "../../../helpers/globalStyles";
 import { app_colors, withOpacity } from "../../../helpers/variables";
 import { formatLocaleNumber } from "../../../helpers/format";
@@ -105,58 +106,35 @@ const ObjectDetailsScreen = () => {
 
   // Courbe d'altitude "ce soir à <ville>" : pour un objet à position fixe (étoile, DSO) comme pour
   // un objet du système solaire (Soleil, Lune, planète — position toujours null côté catalogue pour
-  // ce kind, voir CatalogObjectKind, recalculée localement à chaque échantillon). getAltitudeCurve/
-  // findPreviousHorizonCrossing attendent déjà une fonction (atDate: Date) => coordonnée plutôt
-  // qu'une coordonnée fixe pour cette raison (voir leur commentaire dans altitudeCurve.ts) : il
-  // suffit de leur fournir la bonne source selon le type d'objet.
+  // ce kind, voir CatalogObjectKind, recalculée localement à chaque échantillon) — voir
+  // getObjectEquatorialCoordinateResolver (helpers/catalog/objectEphemeris.ts, partagé avec l'outil
+  // Conjonctions). getAltitudeCurve/findPreviousHorizonCrossing attendent déjà une fonction
+  // (atDate: Date) => coordonnée plutôt qu'une coordonnée fixe pour cette raison (voir leur
+  // commentaire dans altitudeCurve.ts).
   useEffect(() => {
     if (!location) { setAltitudeData(null); return; }
 
-    let getEquatorialCoordinate: ((atDate: Date) => EquatorialCoordinate) | null = null;
-    if (object?.position) {
-      const position = object.position;
-      getEquatorialCoordinate = () => ({ ra: position.ra, dec: position.dec });
-    } else {
-      const ephemeris = object?.solar_system?.ephemeris;
-      if (ephemeris?.body === "sun") {
-        getEquatorialCoordinate = getSolarEquatorialCoordinate;
-      } else if (ephemeris?.body === "moon") {
-        getEquatorialCoordinate = getLunarEquatorialCoordinate;
-      } else if (ephemeris?.body === "planet") {
-        const observer = { latitude: location.latitude, longitude: location.longitude, elevation: location.elevation ?? 0 };
-        // getPlanetaryPositions calcule les 7 planètes autres que la Terre d'un coup : on ne garde
-        // que celle qui correspond à cet objet (voir le commentaire de l'effet ephemeris.name/uid
-        // ci-dessous), recalculée à chaque échantillon de la courbe puisqu'elle prend `atDate`.
-        getEquatorialCoordinate = (atDate) => {
-          const planet = getPlanetaryPositions(atDate, observer).find(
-            (p) => (ephemeris.name && p.name.toLowerCase() === ephemeris.name.toLowerCase()) || (ephemeris.uid && p.uid === ephemeris.uid)
-          );
-          return planet ? { ra: planet.ra, dec: planet.dec } : { ra: 0, dec: 0 };
-        };
-      }
-    }
-
+    const user = { latitude: location.latitude, longitude: location.longitude, elevation: location.elevation ?? 0 };
+    const getEquatorialCoordinate = getObjectEquatorialCoordinateResolver(object, user);
     if (!getEquatorialCoordinate) { setAltitudeData(null); return; }
-    const resolvedGetEquatorialCoordinate = getEquatorialCoordinate;
 
     const task = InteractionManager.runAfterInteractions(() => {
-      const user = { latitude: location.latitude, longitude: location.longitude, elevation: location.elevation ?? 0 };
       const now = new Date();
-      const points = getAltitudeCurve(now, user, resolvedGetEquatorialCoordinate);
-      const nextRise = getBodyNextRise(now, user, resolvedGetEquatorialCoordinate(now));
-      const nextSet = getBodyNextSet(now, user, resolvedGetEquatorialCoordinate(now));
+      const points = getAltitudeCurve(now, user, getEquatorialCoordinate);
+      const nextRise = getBodyNextRise(now, user, getEquatorialCoordinate(now));
+      const nextSet = getBodyNextSet(now, user, getEquatorialCoordinate(now));
 
       // Même raisonnement que SunSummaryCard/TonightView : getBodyNextRise/getBodyNextSet ne
       // renvoient jamais que le PROCHAIN évènement, pas celui déjà passé si l'objet est déjà levé —
       // on bascule alors sur l'évènement passé (recherché en arrière) côté opposé à celui à venir.
-      const { alt: currentAltitude } = convertEquatorialToHorizontal(now, user, resolvedGetEquatorialCoordinate(now));
+      const { alt: currentAltitude } = convertEquatorialToHorizontal(now, user, getEquatorialCoordinate(now));
       const currentlyAboveHorizon = currentAltitude >= 0;
       const riseDate = currentlyAboveHorizon
-        ? findPreviousHorizonCrossing(now, user, resolvedGetEquatorialCoordinate, "rise")
+        ? findPreviousHorizonCrossing(now, user, getEquatorialCoordinate, "rise")
         : (nextRise ? nextRise.datetime : undefined);
       const setDate = currentlyAboveHorizon
         ? (nextSet ? nextSet.datetime : undefined)
-        : findPreviousHorizonCrossing(now, user, resolvedGetEquatorialCoordinate, "set");
+        : findPreviousHorizonCrossing(now, user, getEquatorialCoordinate, "set");
 
       setAltitudeData({ points, riseDate, setDate });
     });

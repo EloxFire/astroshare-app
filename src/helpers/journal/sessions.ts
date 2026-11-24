@@ -20,7 +20,10 @@ export const getTotalObservedObjects = (sessions: AstronomySession[]): number =>
 // Titre d'un objet du catalogue dans une liste d'objets observés : "M31 · Galaxie d'Andromède", ou
 // la seule désignation quand l'objet n'a pas d'autre nom.
 export const getCatalogObjectTitle = (catalogObject: CatalogObjectSummary): string =>
-  catalogObject.name === catalogObject.primary ? catalogObject.primary : `${catalogObject.primary} · ${catalogObject.name}`
+  catalogObject.name === catalogObject.primary ? catalogObject.primary : `${catalogObject.name}`
+
+// export const getCatalogObjectTitle = (catalogObject: CatalogObjectSummary): string =>
+//   catalogObject.name === catalogObject.primary ? catalogObject.primary : `${catalogObject.primary} · ${catalogObject.name}`
 
 // "Galaxie · Messier" (catégorie + catalogue, déduit du préfixe de la désignation principale) —
 // pas de catalogue déduit pour une désignation qui ne vient d'aucun des trois (ex: une étoile nommée).

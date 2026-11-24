@@ -1,0 +1,71 @@
+{
+  "screen": {
+    "title": "Congiunzioni",
+    "subtitle": "Tra due astri",
+    "objects": {
+      "title": "Oggetti da confrontare",
+      "labelA": "Primo oggetto",
+      "labelB": "Secondo oggetto",
+      "placeholder": "Es: Marte, Luna, M45...",
+      "change": "Tocca per cambiare"
+    },
+    "location": {
+      "title": "Luogo di osservazione",
+      "unknown": "Posizione sconosciuta",
+      "chooseOnMap": "Scegli un luogo sulla mappa",
+      "hideMap": "Nascondi la mappa",
+      "useCurrent": "Torna alla mia posizione attuale",
+      "altitudeLabel": "Altitudine (opzionale)",
+      "altitudePlaceholder": "Es: 350"
+    },
+    "dateRange": {
+      "title": "Periodo",
+      "start": "Inizio",
+      "end": "Fine",
+      "picker": {
+        "startTitle": "Data di inizio",
+        "endTitle": "Data di fine",
+        "done": "Conferma"
+      }
+    },
+    "maxSeparationLabel": "Separazione angolare massima (°)",
+    "maxSeparationPlaceholder": "Es: 5",
+    "search": "Cerca le congiunzioni",
+    "findNext": {
+      "button": "Trova la prossima congiunzione",
+      "disclaimer": "Questa ricerca esplora diversi anni in avanti e può richiedere qualche secondo."
+    },
+    "empty": "Nessuna congiunzione trovata in questo periodo, prova un periodo più lungo o una soglia più ampia.",
+    "emptyNext": "Nessuna congiunzione trovata nei prossimi {{days}} giorni da questo luogo.",
+    "staticPair": {
+      "title": "Separazione fissa",
+      "description": "Questi due oggetti hanno una posizione fissa nel cielo: la loro separazione angolare non cambia mai, è di {{value}}°."
+    },
+    "explanation": {
+      "whatTitle": "Cos'è una congiunzione?",
+      "whatDescription": "Una congiunzione avviene quando due astri appaiono molto vicini tra loro nel cielo, visti dalla Terra — non sono realmente vicini nello spazio, è solo un effetto di allineamento apparente.",
+      "paramsTitle": "Le informazioni mostrate",
+      "params": {
+        "separation": "La distanza angolare tra i due oggetti al momento dell'avvicinamento massimo.",
+        "position": "Azimut / altitudine: la direzione verso cui guardare durante la congiunzione.",
+        "time": "L'orario preciso dell'avvicinamento massimo."
+      }
+    }
+  },
+  "list": {
+    "cardSubtitle": "{{separation}}° di separazione · {{altitude}}° di altitudine",
+    "separationLabel": "separazione"
+  },
+  "details": {
+    "screenTitle": "Congiunzione",
+    "notFound": "Impossibile ricalcolare questa congiunzione.",
+    "stats": {
+      "position": "azimut / altitudine",
+      "time": "orario"
+    },
+    "technical": {
+      "title": "Dettagli tecnici",
+      "constellation": "Costellazione"
+    }
+  }
+}

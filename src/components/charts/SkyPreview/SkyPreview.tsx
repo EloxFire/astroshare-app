@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import { Text, View } from "react-native";
 import { useTranslation } from "react-i18next";
 import Svg, { Circle, Line, Polyline, Rect, Text as SvgText, TSpan } from "react-native-svg";
@@ -9,10 +9,15 @@ import { listObjects } from "../../../helpers/api/catalog/objects";
 import type { CatalogObjectSummary } from "../../../types/catalog/CatalogObject";
 import { BACKGROUND_STAR_POSITIONS, skyPreviewStyles } from "./SkyPreview.styles";
 
+type SkyPreviewTarget = { ra: number; dec: number; label: string; color?: string };
+
 interface SkyPreviewProps {
   constellation: Constellation;
-  // Position à repérer dans la figure (ex: object.position, ou la position en direct d'une planète).
-  target: { ra: number; dec: number; label: string };
+  // Position(s) à repérer dans la figure (ex: object.position, ou la position en direct d'une
+  // planète). Un tableau (ex: les deux objets d'une conjonction) affiche un repère par entrée, avec
+  // son label décalé alternativement au-dessus/en-dessous du point pour limiter le chevauchement —
+  // utile justement quand les cibles sont proches l'une de l'autre (cas d'une conjonction).
+  target: SkyPreviewTarget | SkyPreviewTarget[];
   // Centre de la carte (ra/dec, degrés). Absent par défaut : centre alors automatiquement sur la
   // constellation (centre "circulaire" de son tracé + de la cible, voir circularMeanRa) — variante
   // d'origine conservée. Un centre explicite permet d'ancrer la carte ailleurs (ex: un simple aperçu
@@ -139,6 +144,14 @@ const SkyPreview = ({ constellation, target, center: centerProp, fieldDegrees, s
   const { t, i18n } = useTranslation("common");
   const [measuredSize, setMeasuredSize] = useState(0);
   const size = sizeProp ?? measuredSize;
+  const targets = Array.isArray(target) ? target : [target];
+  // Clé stable pour la dépendance du useMemo ci-dessous : `targets` est un nouveau tableau à chaque
+  // rendu (normalisation ci-dessus), une dépendance directe dessus recalculerait la projection à
+  // chaque rendu même sans changement réel de position.
+  // label/color inclus dans la clé (pas seulement ra/dec) : sinon un changement de libellé seul
+  // (ex: changement de langue, le même objet affiché dans une autre langue) ne redéclencherait pas
+  // le recalcul puisque le useMemo ci-dessous ne dépend que de cette clé.
+  const targetsKey = targets.map((item) => `${item.ra.toFixed(4)},${item.dec.toFixed(4)},${item.label},${item.color ?? ""}`).join("|");
 
   const data = useMemo(() => {
     if (size === 0) return null;
@@ -157,7 +170,7 @@ const SkyPreview = ({ constellation, target, center: centerProp, fieldDegrees, s
     }
     const vertices = Array.from(vertexByKey.values());
 
-    const allPoints = [...vertices, { ra: target.ra, dec: target.dec }];
+    const allPoints = [...vertices, ...targets];
     // Centre de projection : celui fourni en prop si explicite, sinon le centre "circulaire" du
     // tracé + de la cible (variante d'origine).
     const centerRa = centerProp ? centerProp.ra : circularMeanRa(allPoints.map((p) => p.ra));
@@ -235,7 +248,7 @@ const SkyPreview = ({ constellation, target, center: centerProp, fieldDegrees, s
     return {
       lines: segments.map((line) => line.map(([ra, dec]) => toPixel(ra, dec))),
       stars: vertices.map((v) => toPixel(v.ra, v.dec)),
-      targetPoint: toPixel(target.ra, target.dec),
+      targetPoints: targets.map((item) => ({ ...item, point: toPixel(item.ra, item.dec) })),
       toPixel,
       centerRa,
       centerDec,
@@ -244,7 +257,7 @@ const SkyPreview = ({ constellation, target, center: centerProp, fieldDegrees, s
       decGridLines,
       bbox: { raMin, raMax, decMin, decMax },
     };
-  }, [constellation, target.ra, target.dec, size, centerProp?.ra, centerProp?.dec, fieldDegrees]);
+  }, [constellation, targetsKey, size, centerProp?.ra, centerProp?.dec, fieldDegrees]);
 
   const [backgroundStars, setBackgroundStars] = useState<CatalogObjectSummary[]>([]);
 
@@ -268,7 +281,6 @@ const SkyPreview = ({ constellation, target, center: centerProp, fieldDegrees, s
   const spacedName = constellation.name.toUpperCase().split("").join(" ");
   const hasRealBackgroundStars = backgroundStars.length > 0;
   const targetLabelMaxChars = Math.max(6, Math.floor((size * 0.84) / (TARGET_LABEL_FONT_SIZE * TARGET_LABEL_CHAR_WIDTH_RATIO)));
-  const targetLabelLines = wrapLabel(target.label, targetLabelMaxChars, TARGET_LABEL_MAX_LINES);
 
   return (
     <View style={skyPreviewStyles.card}>
@@ -335,26 +347,38 @@ const SkyPreview = ({ constellation, target, center: centerProp, fieldDegrees, s
               <Circle key={index} cx={star.x} cy={star.y} r={2.4} fill={app_colors.white} />
             ))}
 
-            {data?.targetPoint && (
-              <>
-                <Circle cx={data.targetPoint.x} cy={data.targetPoint.y} r={9} fill={app_colors.red.main} opacity={0.25} />
-                <Circle cx={data.targetPoint.x} cy={data.targetPoint.y} r={4.5} fill={app_colors.red.main} stroke={app_colors.white} strokeWidth={1.5} />
-                <SvgText
-                  x={data.targetPoint.x}
-                  y={data.targetPoint.y - 12 - (targetLabelLines.length - 1) * TARGET_LABEL_LINE_HEIGHT}
-                  fontSize={TARGET_LABEL_FONT_SIZE}
-                  fontFamily="DMMonoMedium"
-                  fill={app_colors.white}
-                  textAnchor="middle"
-                >
-                  {targetLabelLines.map((line, index) => (
-                    <TSpan key={index} x={data.targetPoint.x} dy={index === 0 ? 0 : TARGET_LABEL_LINE_HEIGHT}>
-                      {line}
-                    </TSpan>
-                  ))}
-                </SvgText>
-              </>
-            )}
+            {data?.targetPoints.map((target, index) => {
+              const color = target.color ?? app_colors.red.main;
+              const labelLines = wrapLabel(target.label, targetLabelMaxChars, TARGET_LABEL_MAX_LINES);
+              // Une seule cible : label au-dessus (comportement d'origine). Plusieurs cibles (ex:
+              // une conjonction) : alterne au-dessus/en-dessous pour limiter le chevauchement, les
+              // deux points étant par définition proches l'un de l'autre.
+              const labelAbove = index % 2 === 0;
+              const firstLineY = labelAbove
+                ? target.point.y - 12 - (labelLines.length - 1) * TARGET_LABEL_LINE_HEIGHT
+                : target.point.y + 12 + TARGET_LABEL_LINE_HEIGHT;
+
+              return (
+                <Fragment key={index}>
+                  <Circle cx={target.point.x} cy={target.point.y} r={9} fill={color} opacity={0.25} />
+                  <Circle cx={target.point.x} cy={target.point.y} r={4.5} fill={color} stroke={app_colors.white} strokeWidth={1.5} />
+                  <SvgText
+                    x={target.point.x}
+                    y={firstLineY}
+                    fontSize={TARGET_LABEL_FONT_SIZE}
+                    fontFamily="DMMonoMedium"
+                    fill={app_colors.white}
+                    textAnchor="middle"
+                  >
+                    {labelLines.map((line, lineIndex) => (
+                      <TSpan key={lineIndex} x={target.point.x} dy={lineIndex === 0 ? 0 : TARGET_LABEL_LINE_HEIGHT}>
+                        {line}
+                      </TSpan>
+                    ))}
+                  </SvgText>
+                </Fragment>
+              );
+            })}
           </Svg>
         )}
       </View>

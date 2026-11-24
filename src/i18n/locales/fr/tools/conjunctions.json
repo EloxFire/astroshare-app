@@ -1,0 +1,71 @@
+{
+  "screen": {
+    "title": "Conjonctions",
+    "subtitle": "Entre deux astres",
+    "objects": {
+      "title": "Objets à comparer",
+      "labelA": "Premier objet",
+      "labelB": "Second objet",
+      "placeholder": "Ex : Mars, Lune, M45...",
+      "change": "Toucher pour changer"
+    },
+    "location": {
+      "title": "Lieu d'observation",
+      "unknown": "Position inconnue",
+      "chooseOnMap": "Choisir un lieu sur la carte",
+      "hideMap": "Masquer la carte",
+      "useCurrent": "Revenir à ma position actuelle",
+      "altitudeLabel": "Altitude (optionnel)",
+      "altitudePlaceholder": "Ex : 350"
+    },
+    "dateRange": {
+      "title": "Période",
+      "start": "Début",
+      "end": "Fin",
+      "picker": {
+        "startTitle": "Date de début",
+        "endTitle": "Date de fin",
+        "done": "Valider"
+      }
+    },
+    "maxSeparationLabel": "Séparation angulaire maximale (°)",
+    "maxSeparationPlaceholder": "Ex : 5",
+    "search": "Rechercher les conjonctions",
+    "findNext": {
+      "button": "Trouver la prochaine conjonction",
+      "disclaimer": "Cette recherche explore plusieurs années à l'avance et peut prendre quelques secondes."
+    },
+    "empty": "Aucune conjonction trouvée sur cette période, essayez une période plus longue ou un seuil plus large.",
+    "emptyNext": "Aucune conjonction trouvée dans les {{days}} prochains jours depuis ce lieu.",
+    "staticPair": {
+      "title": "Séparation fixe",
+      "description": "Ces deux objets ont une position fixe dans le ciel : leur séparation angulaire ne change jamais, elle vaut {{value}}°."
+    },
+    "explanation": {
+      "whatTitle": "Qu'est-ce qu'une conjonction ?",
+      "whatDescription": "Une conjonction a lieu quand deux astres se retrouvent très proches l'un de l'autre dans le ciel, vus depuis la Terre — ils ne sont pas réellement proches dans l'espace, c'est un simple effet d'alignement apparent.",
+      "paramsTitle": "Les informations affichées",
+      "params": {
+        "separation": "La distance angulaire entre les deux objets au moment du rapprochement maximal.",
+        "position": "Azimut / altitude : la direction où regarder au moment de la conjonction.",
+        "time": "L'heure précise du rapprochement maximal."
+      }
+    }
+  },
+  "list": {
+    "cardSubtitle": "{{separation}}° de séparation · {{altitude}}° d'altitude",
+    "separationLabel": "séparation"
+  },
+  "details": {
+    "screenTitle": "Conjonction",
+    "notFound": "Impossible de recalculer cette conjonction.",
+    "stats": {
+      "position": "azimut / altitude",
+      "time": "heure"
+    },
+    "technical": {
+      "title": "Détails techniques",
+      "constellation": "Constellation"
+    }
+  }
+}

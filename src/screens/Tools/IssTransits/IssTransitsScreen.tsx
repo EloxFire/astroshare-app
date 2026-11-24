@@ -1,20 +1,19 @@
 import { useMemo, useState } from "react";
-import { ActivityIndicator, InteractionManager, KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, InteractionManager, KeyboardAvoidingView, Platform, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useTranslation } from "react-i18next";
 import { router } from "expo-router";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
-import DateTimePicker, { DateTimePickerChangeEvent } from "@react-native-community/datetimepicker";
 import dayjs from "dayjs";
-import { Info, MapPin, X } from "lucide-react-native";
+import { Info, MapPin } from "lucide-react-native";
 import { globalStyles } from "../../../helpers/globalStyles";
-import { app_colors, spacing } from "../../../helpers/variables";
+import { app_colors } from "../../../helpers/variables";
 import { useLocation } from "../../../context/LocationContext";
 import { ScreenHeader } from "../../../components/layout/ScreenHeader/ScreenHeader";
 import SectionHeader from "../../../components/layout/SectionHeader/SectionHeader";
 import InfoCard from "../../../components/cards/InfoCard/InfoCard";
 import Button from "../../../components/buttons/Button/Button";
 import { InputWithIcon } from "../../../components/inputs/InputWithIcon/InputWithIcon";
+import DateRangeField from "../../../components/inputs/DateRangeField/DateRangeField";
 import MapTargetMarker from "../../../components/MapTargetMarker/MapTargetMarker";
 import { getSatelliteTle } from "../../../helpers/api/satellites/tracking";
 import { parseTle } from "../../../helpers/satellites/propagation";
@@ -23,7 +22,6 @@ import type { GpsLocation } from "../../../types/gpsLocation";
 import TransitCard from "./components/TransitCard/TransitCard";
 import { issTransitsScreenStyles } from "./IssTransitsScreen.styles";
 
-type DateRangeTarget = "start" | "end";
 type SearchMode = "range" | "next";
 
 // Fenêtre maximale explorée par "trouver le prochain transit" : assez large pour presque toujours
@@ -34,7 +32,6 @@ const NEXT_TRANSIT_MAX_DAYS = 180;
 const IssTransitsScreen = () => {
   const { t, i18n } = useTranslation("tools/issTransits");
   const { location, fetchLocation } = useLocation();
-  const insets = useSafeAreaInsets();
 
   // Lieu choisi sur la carte pour cette recherche uniquement : jamais persisté (pas de nouvel
   // observatoire créé), prime simplement sur la position effective de l'app (`location`) tant qu'il
@@ -46,7 +43,6 @@ const IssTransitsScreen = () => {
 
   const [startDate, setStartDate] = useState<Date>(() => new Date());
   const [endDate, setEndDate] = useState<Date>(() => dayjs().add(7, "day").toDate());
-  const [activeDatePicker, setActiveDatePicker] = useState<DateRangeTarget | null>(null);
 
   const [transits, setTransits] = useState<SolarTransit[] | null>(null);
   const [searchMode, setSearchMode] = useState<SearchMode | null>(null);
@@ -102,25 +98,6 @@ const IssTransitsScreen = () => {
         setTransits(next ? [next] : []);
       }
     });
-  };
-
-  const openDatePicker = (target: DateRangeTarget) => setActiveDatePicker(target);
-  const closeIosDatePicker = () => setActiveDatePicker(null);
-
-  const handleDatePickerChange = (_event: DateTimePickerChangeEvent, selectedDate: Date) => {
-    if (!activeDatePicker) return;
-
-    if (activeDatePicker === "start") {
-      setStartDate(selectedDate);
-      // La fin ne peut jamais précéder le début.
-      if (selectedDate >= endDate) setEndDate(dayjs(selectedDate).add(1, "day").toDate());
-    } else {
-      setEndDate(selectedDate < startDate ? startDate : selectedDate);
-    }
-
-    // Android : la boîte de dialogue se ferme déjà seule après sélection, contrairement au panneau
-    // iOS (fermé explicitement via son bouton "Valider").
-    if (Platform.OS === "android") setActiveDatePicker(null);
   };
 
   // Le lieu utilisé pour trouver ce transit n'est pas forcément `location` (contexte) — il peut
@@ -201,67 +178,17 @@ const IssTransitsScreen = () => {
             <View style={issTransitsScreenStyles.section}>
               <SectionHeader title={t("screen.dateRange.title")} />
 
-              <View style={issTransitsScreenStyles.dateRow}>
-                <TouchableOpacity style={issTransitsScreenStyles.dateRow.field} onPress={() => openDatePicker("start")}>
-                  <Text style={issTransitsScreenStyles.dateRow.field.label}>{t("screen.dateRange.start")}</Text>
-                  <Text style={issTransitsScreenStyles.dateRow.field.value}>{dayjs(startDate).format("DD/MM/YYYY")}</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={issTransitsScreenStyles.dateRow.field} onPress={() => openDatePicker("end")}>
-                  <Text style={issTransitsScreenStyles.dateRow.field.label}>{t("screen.dateRange.end")}</Text>
-                  <Text style={issTransitsScreenStyles.dateRow.field.value}>{dayjs(endDate).format("DD/MM/YYYY")}</Text>
-                </TouchableOpacity>
-              </View>
-
-              {Platform.OS === "android" && activeDatePicker && (
-                <DateTimePicker
-                  value={activeDatePicker === "start" ? startDate : endDate}
-                  mode="date"
-                  display="default"
-                  minimumDate={activeDatePicker === "end" ? startDate : undefined}
-                  onValueChange={handleDatePickerChange}
-                  onDismiss={() => setActiveDatePicker(null)}
-                />
-              )}
-
-              {Platform.OS === "ios" && (
-                <Modal
-                  visible={activeDatePicker !== null}
-                  animationType="slide"
-                  transparent
-                  statusBarTranslucent
-                  navigationBarTranslucent
-                  onRequestClose={closeIosDatePicker}
-                >
-                  <View style={issTransitsScreenStyles.pickerSheet.backdrop}>
-                    <Pressable style={issTransitsScreenStyles.pickerSheet.dismissArea} onPress={closeIosDatePicker} />
-
-                    <View style={[issTransitsScreenStyles.pickerSheet.container, { paddingBottom: spacing.modalSheet.bottom + insets.bottom }]}>
-                      <View style={issTransitsScreenStyles.pickerSheet.container.header}>
-                        <Text style={issTransitsScreenStyles.pickerSheet.container.header.title}>
-                          {activeDatePicker === "start" ? t("screen.dateRange.picker.startTitle") : t("screen.dateRange.picker.endTitle")}
-                        </Text>
-                        <TouchableOpacity onPress={closeIosDatePicker} accessibilityRole="button" hitSlop={10}>
-                          <X color={app_colors.primary.main} size={20} />
-                        </TouchableOpacity>
-                      </View>
-
-                      {activeDatePicker && (
-                        <DateTimePicker
-                          value={activeDatePicker === "start" ? startDate : endDate}
-                          mode="date"
-                          display="spinner"
-                          minimumDate={activeDatePicker === "end" ? startDate : undefined}
-                          onValueChange={handleDatePickerChange}
-                        />
-                      )}
-
-                      <TouchableOpacity style={issTransitsScreenStyles.pickerSheet.container.doneButton} onPress={closeIosDatePicker}>
-                        <Text style={issTransitsScreenStyles.pickerSheet.container.doneButton.text}>{t("screen.dateRange.picker.done")}</Text>
-                      </TouchableOpacity>
-                    </View>
-                  </View>
-                </Modal>
-              )}
+              <DateRangeField
+                startDate={startDate}
+                endDate={endDate}
+                onChangeStart={setStartDate}
+                onChangeEnd={setEndDate}
+                startLabel={t("screen.dateRange.start")}
+                endLabel={t("screen.dateRange.end")}
+                pickerStartTitle={t("screen.dateRange.picker.startTitle")}
+                pickerEndTitle={t("screen.dateRange.picker.endTitle")}
+                doneLabel={t("screen.dateRange.picker.done")}
+              />
 
               <Button
                 label={t("screen.search")}
