@@ -1,0 +1,68 @@
+{
+  "screen": {
+    "title": "ISS Transits",
+    "subtitle": "Across the Sun",
+    "location": {
+      "title": "Observing location",
+      "unknown": "Unknown position",
+      "chooseOnMap": "Choose a location on the map",
+      "hideMap": "Hide the map",
+      "useCurrent": "Back to my current position",
+      "altitudeLabel": "Altitude (optional)",
+      "altitudePlaceholder": "E.g. 350"
+    },
+    "dateRange": {
+      "title": "Period",
+      "start": "Start",
+      "end": "End",
+      "picker": {
+        "startTitle": "Start date",
+        "endTitle": "End date",
+        "done": "Done"
+      }
+    },
+    "search": "Search transits",
+    "findNext": {
+      "button": "Find the next transit",
+      "disclaimer": "This search looks several months ahead and can take a few seconds."
+    },
+    "empty": "No transit found in this period, try a longer one.",
+    "emptyNext": "No transit found in the next {{days}} days from this location.",
+    "explanation": {
+      "whatTitle": "What is a transit?",
+      "whatDescription": "A transit happens when the ISS passes exactly between you and the Sun: it then appears as a dark silhouette on the solar disk, usually for less than a second.",
+      "paramsTitle": "The information shown",
+      "params": {
+        "angularSize": "The ISS's apparent size in the sky, in arcseconds.",
+        "position": "The direction (azimuth) and height (altitude) to look at during the transit.",
+        "duration": "The time the ISS takes to cross the solar disk.",
+        "missDistance": "How close the ISS passes to the Sun's center."
+      }
+    }
+  },
+  "list": {
+    "cardSubtitle": "{{altitude}}° altitude · {{duration}} s"
+  },
+  "details": {
+    "screenTitle": "ISS Transit",
+    "notFound": "Couldn't recompute this transit.",
+    "stats": {
+      "angularSize": "angular size",
+      "position": "azimuth / altitude",
+      "duration": "duration",
+      "durationValue": "{{value}} s",
+      "missDistance": "miss distance"
+    },
+    "eyeSafety": "Never look at the Sun without a certified solar filter (ND5), even during the transit: the ISS doesn't reduce the radiation at all.",
+    "groundPath": {
+      "title": "Visibility line",
+      "hint": "Each point on the line corresponds to a different moment of the pass: moving along the band shifts the transit time slightly rather than showing it everywhere at once. Indicative position (accurate to within a few kilometers)."
+    },
+    "technical": {
+      "title": "Technical details",
+      "chord": "Chord length",
+      "sunRadius": "Sun's apparent radius",
+      "midTime": "Transit time"
+    }
+  }
+}

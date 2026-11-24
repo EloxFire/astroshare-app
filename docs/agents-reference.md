@@ -176,6 +176,71 @@ météo, APOD, viseur polaire, météo spatiale), observatoires de l'utilisateur
   `userData.store.ts`), l'API n'a pas de liste de suivi côté serveur — même principe que
   `observatories`/`pinnedTools`.
 
+### Transits de l'ISS devant le Soleil (`src/screens/Tools/IssTransits/`, `src/helpers/satellites/solarTransits.ts`, `transitGroundPath.ts`)
+
+Première version limitée à l'ISS × Soleil (ni Lune, ni autres satellites — voir §6). Réutilise le
+même TLE que le suivi de satellites (`getSatelliteTle({ name: "ISS (ZARYA)" })` + `parseTle`), pas de
+nouvel appel API.
+
+- **Recherche en 4 étapes, du moins cher au plus cher** (`findSolarTransits`/`findNextSolarTransit`,
+  cœur commun `scanSolarTransits`) : (1) scan grossier (pas 60 s) sur la fenêtre choisie pour repérer
+  les rares passages où l'ISS **et** le Soleil sont au-dessus d'un seuil d'altitude (~10°, décision
+  utilisateur, Soleil testé seulement si l'ISS l'est déjà — court-circuit) ; (2) scan moyen (pas
+  500 ms) dans chaque fenêtre survivante pour repérer le minimum local de séparation angulaire
+  (`getAngularSeparation` d'Observerly — **attention**, ses clés sont les lettres grecques `θ`/`φ`,
+  pas `theta`/`phi`, sinon `NaN` silencieux) ; (3) une marge large (`CANDIDATE_MARGIN_FACTOR`) écarte
+  les fenêtres clairement hors sujet avant (4) l'affinage fin (pas 20 ms, ±4 s) qui précise l'instant
+  de rapprochement minimal et les instants d'entrée/sortie (franchissement du seuil
+  rayon-Soleil+rayon-ISS, même technique de recherche de franchissement que
+  `findPreviousHorizonCrossing`/`findNextHorizonCrossing` d'`altitudeCurve.ts`).
+- **`findNextSolarTransit`** (bouton « trouver le prochain transit ») réutilise le même cœur avec
+  arrêt au premier transit confirmé (`stopAtFirst`), sur une fenêtre ouverte de `NEXT_TRANSIT_MAX_DAYS`
+  (180 j) à partir de maintenant — peut prendre plusieurs secondes, disclaimer affiché à l'écran.
+- **Position topocentrique de l'ISS** (`getTopocentricPosition`, nouveau dans `propagation.ts`) :
+  `eciToEcf` + `ecfToLookAngles` de `satellite.js/dist/transforms.js` attendent la position de
+  l'observateur en **radians** et une élévation en **km**, et renvoient azimut/élévation en
+  **radians** — conversions faites dans ce wrapper, le reste de l'app (Observerly) reste en degrés.
+- **Taille de l'ISS :** aucune donnée réelle dans le catalogue satellite — approximation à 109 m (sa
+  plus grande longueur), même simplification que les calculateurs grand public (transit-finder.com).
+- **Schéma à l'échelle** (`TransitDiagram`) orienté d'après la vraie géométrie calculée : direction de
+  déplacement de l'ISS par rapport au Soleil et sa position signée au rapprochement minimal
+  (`pathAngleDeg`/`offsetXArcmin`/`offsetYArcmin` sur `SolarTransit`, calculés dans
+  `refineSolarTransitAround` à partir des échantillons déjà affinés). Convention assumée : axe X =
+  azimut croissant, axe Y = altitude croissante — ignore l'angle parallactique réel par rapport au
+  zénith (simplification, pas une vraie carte de recherche). Prop `lineColor` (défaut
+  `primary.main`) à adapter au fond : `accent.light` dans la fiche détail (fond héros `primary.main`).
+  Extension du trait et taille de la flèche en **ratio** du rayon affiché, pas en pixels fixes :
+  une valeur fixe plaçait la flèche hors du canevas SVG aux petites tailles (64 px dans
+  `TransitCard`) — vérifié en direct.
+- **Ligne de visibilité au sol** (`transitGroundPath.ts`, fiche détail uniquement) : pour chaque
+  instant autour du transit (±40 s, pas 2 s), point où un observateur verrait l'ISS exactement
+  centrée sur le Soleil = intersection de la droite Soleil→ISS (prolongée) avec la Terre, même
+  principe géométrique qu'un trajet d'ombre d'éclipse. **Intersection avec l'ellipsoïde WGS84, pas
+  une sphère** : vérifié en direct contre un vrai transit calculé par l'app, une sphère (rayon
+  équatorial ou moyen) plaçait le point à 30-40 km de l'observateur réel selon la latitude
+  (aplatissement terrestre ignoré) ; l'ellipsoïde ramène l'écart à l'ordre de la distance de
+  traversée elle-même (quelques km). Largeur de bande approximée par parallaxe (déplacement au sol ≈
+  angle du seuil × distance oblique de l'ISS, le Soleil ne bougeant quasiment pas sur une si petite
+  distance) — précision annoncée à l'écran (« quelques kilomètres »), pas une frontière exacte.
+  Nouveaux exports `getEciPosition`/`eciPositionToGeodetic` dans `propagation.ts` (position ECI brute,
+  nécessaire pour combiner position satellite + direction solaire dans le même repère).
+- **Sélection de lieu sur la carte** (écran liste) : `MapView`/`MapTargetMarker` + appui pour placer
+  le repère (même pattern que `StepOne` d'ajout d'observatoire), altitude saisie à part
+  (`InputWithIcon`) — la géocodification inverse d'un point tapé au hasard ne la fournit pas
+  (`fetchLocation` d'un `"lat::lon"` renvoie `elevation: null`). Lieu jamais persisté (pas de nouvel
+  observatoire créé), transmis à la fiche détail en query params (`lat`/`lon`/`elev` de la route
+  `/tools/iss-transits/[id]`) pour réaffiner le même transit avec le même observateur — sans ces
+  query params (lien direct), repli sur la position effective de l'app.
+- **Période personnalisée** (dates de début/fin plutôt que des puces fixes 3/7/14 jours) : même
+  découpage Android/iOS que les dates d'`AddSession` (Journal), simplifié en mode date seule (pas
+  d'heure).
+- **`LocationBanner` généralisé et relocalisé** de `SatelliteTracker/components/` vers
+  `src/components/layout/LocationBanner/` (partagé) : gagne une prop `message` optionnelle
+  (texte déjà traduit, passé par l'appelant) qui remplace le texte par défaut spécifique aux passages
+  visibles (« Passages vus depuis... »), sans changer son comportement pour `SatellitesScreen`.
+- **Carte explicative avant tout calcul** (`InfoCard` + bloc technique) : affichée tant qu'aucune
+  recherche n'a encore été lancée (ni « Rechercher », ni « Trouver le prochain transit »).
+
 ### Carte de pollution lumineuse (`src/screens/Tools/LightPollutionMap/`)
 
 Outil entièrement PRO (`access: "premium"` dans `tools.ts`, contrairement au suivi de satellites qui
@@ -666,6 +731,11 @@ On ne peut pas lancer l'app depuis un agent. Méthodes utilisées jusqu'ici :
 - **États d'éclipse d'un passage** (« entre dans l'ombre », etc., visibles sur la maquette) : pas dans
   la réponse documentée de `/v3/satellite/passes`, remplacés par le champ réel `quality`
   (excellent/visible/faible) plutôt que fabriqués.
+- **Transits ISS : autres corps et autres satellites.** Volontairement limité à l'ISS × Soleil pour
+  cette première version (décision utilisateur) — Lune, Hubble, Tiangong, etc. suivraient le même
+  principe (`scanSolarTransits` généralisé à un autre corps cible et/ou un autre TLE). Recherche par
+  lieu différent de la position courante déjà possible (sélection sur la carte), mais pas de requête
+  « transits visibles depuis une zone » façon transit-finder.com (une seule position à la fois).
 
 ---
 
@@ -705,6 +775,22 @@ Le journal commence avec le commit `8527e2f`. Les changements antérieurs, comme
 i18n, `SelectInput` ou `ImageHeaderScrollView`, sont décrits dans les sections ci-dessus mais n'ont pas
 d'entrée datée.
 
+- **2026-11-24** — même commit — nouvel outil Transits de l'ISS (`/tools/iss-transits`, déjà
+  pré-enregistré dans `tools.ts`) :
+  - recherche de transits ISS × Soleil (4 étapes, du scan grossier à l'affinage fin) avec seuil
+    d'altitude minimal, période personnalisée (dates début/fin) et bouton « trouver le prochain
+    transit » (arrêt au premier trouvé, jusqu'à 180 jours) ;
+  - sélection du lieu d'observation sur la carte (altitude saisie à part), sinon position effective
+    de l'app, transmise à la fiche détail en query params pour réaffiner le même transit ;
+  - fiche détail : schéma à l'échelle orienté selon la vraie géométrie du passage (direction de
+    déplacement + position signée au rapprochement minimal), ligne de visibilité au sol (intersection
+    avec l'ellipsoïde WGS84, pas une sphère — écart constaté de 30-40 km à 1 km selon le bon choix),
+    avertissement de sécurité oculaire ;
+  - carte explicative tant qu'aucune recherche n'a été lancée ;
+  - `LocationBanner` généralisé (prop `message`) et relocalisé depuis `SatelliteTracker/components/`
+    vers `src/components/layout/` (partagé) ;
+  - nouveaux exports `getTopocentricPosition`/`getEciPosition`/`eciPositionToGeodetic` dans
+    `propagation.ts` — §2 (nouvelle sous-section « Transits de l'ISS »), §6.
 - **2026-11-20** — même commit — nouvel outil Checklists (`/tools/checklists`, déjà pré-enregistré
   dans `tools.ts`/`tools.json`) : grille de listes à cocher (cartes compactes + carte de vue
   d'ensemble agrégée), création (nom + description facultative), fiche d'une liste (header fusionné

@@ -1,4 +1,4 @@
-import { app_colors, radius, spacing } from "../../../../../helpers/variables";
+import { app_colors, radius, spacing } from "../../../helpers/variables";
 
 export const locationBannerStyles = {
   banner: {

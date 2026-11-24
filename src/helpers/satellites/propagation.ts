@@ -15,7 +15,7 @@
 // du package.json de satellite.js (qui ne déclare que `"."`).
 import { twoline2satrec } from "satellite.js/dist/io.js";
 import { propagate, gstime } from "satellite.js/dist/propagation.js";
-import { eciToGeodetic, degreesLat, degreesLong } from "satellite.js/dist/transforms.js";
+import { eciToGeodetic, degreesLat, degreesLong, eciToEcf, ecfToLookAngles, degreesToRadians, radiansToDegrees } from "satellite.js/dist/transforms.js";
 
 export type SatrecHandle = ReturnType<typeof twoline2satrec>;
 
@@ -58,6 +58,65 @@ export const getSubPoint = (satrec: SatrecHandle, date: Date): SubPoint | null =
     altitude: geodetic.height,
     speedKmh: speedKms * 3600,
   };
+};
+
+export type TopocentricPosition = {
+  azimuth: number; // degrés, 0° = nord, sens horaire
+  elevation: number; // degrés au-dessus de l'horizon
+  rangeKm: number; // distance oblique observateur → satellite
+};
+
+// Position topocentrique (azimut/altitude/distance depuis un observateur) — satellite.js a déjà
+// tout ce qu'il faut en interne (eciToEcf + ecfToLookAngles, le même calcul qu'utilise tout logiciel
+// de suivi de satellites), mais ces fonctions bas niveau attendent la position de l'observateur en
+// RADIANS (latitude/longitude) et une élévation en KM, et renvoient azimut/élévation en RADIANS —
+// contrairement au reste de l'app (GeographicCoordinate d'Observerly : degrés, élévation en
+// mètres). Ce wrapper fait les conversions dans les deux sens pour rester cohérent avec getSubPoint
+// et le reste du code (vérifié en lisant node_modules/satellite.js/dist/transforms.js : geodeticToEcf
+// utilise le rayon équatorial en km directement dans ses formules, donc `height` doit l'être aussi).
+export const getTopocentricPosition = (
+  satrec: SatrecHandle,
+  date: Date,
+  observer: { latitude: number; longitude: number; elevation?: number | null } // degrés, élévation en mètres
+): TopocentricPosition | null => {
+  const propagated = propagate(satrec, date);
+  if (!propagated) return null;
+
+  const gmst = gstime(date);
+  const satelliteEcf = eciToEcf(propagated.position, gmst);
+  const observerGeodetic = {
+    latitude: degreesToRadians(observer.latitude),
+    longitude: degreesToRadians(observer.longitude),
+    height: (observer.elevation ?? 0) / 1000,
+  };
+  const lookAngles = ecfToLookAngles(observerGeodetic, satelliteEcf);
+
+  return {
+    azimuth: radiansToDegrees(lookAngles.azimuth),
+    elevation: radiansToDegrees(lookAngles.elevation),
+    rangeKm: lookAngles.rangeSat,
+  };
+};
+
+export type EciVector = { x: number; y: number; z: number };
+
+// Position ECI brute (sans conversion géodésique) — nécessaire pour combiner la position du
+// satellite avec une autre direction dans le même repère (ex: ligne de visibilité au sol d'un
+// transit solaire, voir transitGroundPath.ts), contrairement à getSubPoint qui renvoie déjà une
+// projection convertie en latitude/longitude.
+export const getEciPosition = (satrec: SatrecHandle, date: Date): EciVector | null => {
+  const propagated = propagate(satrec, date);
+  if (!propagated) return null;
+  return propagated.position as EciVector;
+};
+
+// Convertit un point ECI quelconque (pas nécessairement une position de satellite réelle — voir
+// transitGroundPath.ts) en latitude/longitude géodésiques, à l'instant donné (nécessaire à la
+// rotation ECI→ECF via gstime, qui dépend du temps).
+export const eciPositionToGeodetic = (position: EciVector, date: Date): { latitude: number; longitude: number } => {
+  const gmst = gstime(date);
+  const geodetic = eciToGeodetic(position, gmst);
+  return { latitude: degreesLat(geodetic.latitude), longitude: degreesLong(geodetic.longitude) };
 };
 
 export type GroundTrackPoint = {

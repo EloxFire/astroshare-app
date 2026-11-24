@@ -18,7 +18,7 @@ import IconButtonCard from "../../../components/cards/IconButtonCard/IconButtonC
 import LockedFeatureCard from "../../../components/cards/LockedFeatureCard/LockedFeatureCard";
 import SatelliteStationCard from "../../../components/Satellites/SatelliteStationCard/SatelliteStationCard";
 import FeaturedSatelliteCard from "../../../components/Satellites/FeaturedSatelliteCard/FeaturedSatelliteCard";
-import LocationBanner from "./components/LocationBanner/LocationBanner";
+import LocationBanner from "../../../components/layout/LocationBanner/LocationBanner";
 import AddSatelliteModal from "./components/AddSatelliteModal/AddSatelliteModal";
 import { FEATURED_SATELLITES, FEATURED_STATIONS } from "../../../helpers/satellites/featured";
 import { getNoradSatellite, getNoradSatellitesByIds } from "../../../helpers/api/satellites/norad";

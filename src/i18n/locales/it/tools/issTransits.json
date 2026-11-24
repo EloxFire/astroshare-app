@@ -1,0 +1,68 @@
+{
+  "screen": {
+    "title": "Transiti ISS",
+    "subtitle": "Davanti al Sole",
+    "location": {
+      "title": "Luogo di osservazione",
+      "unknown": "Posizione sconosciuta",
+      "chooseOnMap": "Scegli un luogo sulla mappa",
+      "hideMap": "Nascondi la mappa",
+      "useCurrent": "Torna alla mia posizione attuale",
+      "altitudeLabel": "Altitudine (opzionale)",
+      "altitudePlaceholder": "Es: 350"
+    },
+    "dateRange": {
+      "title": "Periodo",
+      "start": "Inizio",
+      "end": "Fine",
+      "picker": {
+        "startTitle": "Data di inizio",
+        "endTitle": "Data di fine",
+        "done": "Conferma"
+      }
+    },
+    "search": "Cerca i transiti",
+    "findNext": {
+      "button": "Trova il prossimo transito",
+      "disclaimer": "Questa ricerca esplora diversi mesi in avanti e può richiedere qualche secondo."
+    },
+    "empty": "Nessun transito trovato in questo periodo, prova un periodo più lungo.",
+    "emptyNext": "Nessun transito trovato nei prossimi {{days}} giorni da questo luogo.",
+    "explanation": {
+      "whatTitle": "Cos'è un transito?",
+      "whatDescription": "Un transito avviene quando la ISS passa esattamente tra voi e il Sole: appare allora come una silhouette scura sul disco solare, di solito per meno di un secondo.",
+      "paramsTitle": "Le informazioni mostrate",
+      "params": {
+        "angularSize": "La dimensione apparente della ISS nel cielo, in secondi d'arco.",
+        "position": "La direzione (azimut) e l'altezza (altitudine) verso cui guardare durante il transito.",
+        "duration": "Il tempo che la ISS impiega ad attraversare il disco solare.",
+        "missDistance": "Quanto la ISS passa vicino al centro del Sole."
+      }
+    }
+  },
+  "list": {
+    "cardSubtitle": "{{altitude}}° di altitudine · {{duration}} s"
+  },
+  "details": {
+    "screenTitle": "Transito ISS",
+    "notFound": "Impossibile ricalcolare questo transito.",
+    "stats": {
+      "angularSize": "dimensione angolare",
+      "position": "azimut / altitudine",
+      "duration": "durata",
+      "durationValue": "{{value}} s",
+      "missDistance": "distanza di passaggio"
+    },
+    "eyeSafety": "Non guardare mai il Sole senza un filtro solare certificato (ND5), anche durante il transito: la ISS non attenua in alcun modo la radiazione.",
+    "groundPath": {
+      "title": "Linea di visibilità",
+      "hint": "Ogni punto della linea corrisponde a un momento diverso del passaggio: spostarsi lungo la banda sposta leggermente l'orario del transito, non lo mostra ovunque nello stesso istante. Posizione indicativa (precisione di alcuni chilometri)."
+    },
+    "technical": {
+      "title": "Dettagli tecnici",
+      "chord": "Corda percorsa",
+      "sunRadius": "Raggio apparente del Sole",
+      "midTime": "Orario del transito"
+    }
+  }
+}

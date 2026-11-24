@@ -17,6 +17,7 @@ import astroCalculations_fr from "./locales/fr/tools/astroCalculations.json";
 import polarScope_fr from "./locales/fr/tools/polarScope.json";
 import spaceLaunches_fr from "./locales/fr/tools/spaceLaunches.json";
 import satelliteTracker_fr from "./locales/fr/tools/satelliteTracker.json";
+import issTransits_fr from "./locales/fr/tools/issTransits.json";
 import lightPollutionMap_fr from "./locales/fr/tools/lightPollutionMap.json";
 import fieldSimulator_fr from "./locales/fr/tools/fieldSimulator.json";
 import checklistsScreen_fr from "./locales/fr/tools/checklists/screen.json";
@@ -66,6 +67,7 @@ import astroCalculations_en from "./locales/en/tools/astroCalculations.json";
 import polarScope_en from "./locales/en/tools/polarScope.json";
 import spaceLaunches_en from "./locales/en/tools/spaceLaunches.json";
 import satelliteTracker_en from "./locales/en/tools/satelliteTracker.json";
+import issTransits_en from "./locales/en/tools/issTransits.json";
 import lightPollutionMap_en from "./locales/en/tools/lightPollutionMap.json";
 import fieldSimulator_en from "./locales/en/tools/fieldSimulator.json";
 import checklistsScreen_en from "./locales/en/tools/checklists/screen.json";
@@ -115,6 +117,7 @@ import astroCalculations_it from "./locales/it/tools/astroCalculations.json";
 import polarScope_it from "./locales/it/tools/polarScope.json";
 import spaceLaunches_it from "./locales/it/tools/spaceLaunches.json";
 import satelliteTracker_it from "./locales/it/tools/satelliteTracker.json";
+import issTransits_it from "./locales/it/tools/issTransits.json";
 import lightPollutionMap_it from "./locales/it/tools/lightPollutionMap.json";
 import fieldSimulator_it from "./locales/it/tools/fieldSimulator.json";
 import checklistsScreen_it from "./locales/it/tools/checklists/screen.json";
@@ -172,6 +175,7 @@ export const resources = {
     "tools/polarScope": polarScope_fr,
     "tools/spaceLaunches": spaceLaunches_fr,
     "tools/satelliteTracker": satelliteTracker_fr,
+    "tools/issTransits": issTransits_fr,
     "tools/lightPollutionMap": lightPollutionMap_fr,
     "tools/fieldSimulator": fieldSimulator_fr,
     "tools/checklists/screen": checklistsScreen_fr,
@@ -222,6 +226,7 @@ export const resources = {
     "tools/polarScope": polarScope_en,
     "tools/spaceLaunches": spaceLaunches_en,
     "tools/satelliteTracker": satelliteTracker_en,
+    "tools/issTransits": issTransits_en,
     "tools/lightPollutionMap": lightPollutionMap_en,
     "tools/fieldSimulator": fieldSimulator_en,
     "tools/checklists/screen": checklistsScreen_en,
@@ -272,6 +277,7 @@ export const resources = {
     "tools/polarScope": polarScope_it,
     "tools/spaceLaunches": spaceLaunches_it,
     "tools/satelliteTracker": satelliteTracker_it,
+    "tools/issTransits": issTransits_it,
     "tools/lightPollutionMap": lightPollutionMap_it,
     "tools/fieldSimulator": fieldSimulator_it,
     "tools/checklists/screen": checklistsScreen_it,
