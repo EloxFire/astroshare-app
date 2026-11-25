@@ -886,6 +886,9 @@ Le journal commence avec le commit `8527e2f`. Les changements antérieurs, comme
 i18n, `SelectInput` ou `ImageHeaderScrollView`, sont décrits dans les sections ci-dessus mais n'ont pas
 d'entrée datée.
 
+- **2026-11-26** — même commit — `SearchScreen`/`ToolsScreen` passés en en-tête secondaire sans
+  bouton retour (`ScreenHeader` : `disableBackButton`/`main={false}`) — ce sont des écrans racine
+  d'onglet, pas de retour possible.
 - **2026-11-26** — même commit — `UserRoles` (`src/types/auth/UserRoles.ts`) converti d'un type
   objet en véritable constante runtime (`export const UserRoles = {...} as const` + type dérivé) :
   `isProUser` (`src/helpers/auth/subscription.ts`) compare désormais contre ces constantes et prend un

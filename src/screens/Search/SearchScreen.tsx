@@ -78,7 +78,7 @@ export const SearchScreen = () => {
 
   return (
     <View style={searchScreenStyles.screen}>
-      <ScreenHeader title={t("screen.title")} main={false} />
+      <ScreenHeader title={t("screen.title")} main={false} disableBackButton />
 
       {/* keyboardShouldPersistTaps="handled" : sinon, clavier ouvert, le premier appui sur un
           résultat ne fait que le fermer au lieu de naviguer (même piège que dans FieldSimulator). */}
