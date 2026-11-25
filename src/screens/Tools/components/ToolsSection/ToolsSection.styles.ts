@@ -19,6 +19,8 @@ export const toolsSectionStyles = {
 
     category: {
       marginBottom: 20,
+      display: "flex" as const,
+      gap: 10,
 
       tools: {
         display: "flex" as const,

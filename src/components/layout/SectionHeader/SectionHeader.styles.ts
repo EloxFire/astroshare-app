@@ -6,7 +6,6 @@ export const sectionHeaderStyles = {
     flexDirection: "row" as const,
     alignItems: "center" as const,
     gap: 10,
-    marginBottom: 10,
 
     title: {
       textTransform: "uppercase" as const,

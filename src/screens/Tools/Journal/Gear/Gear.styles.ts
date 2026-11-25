@@ -6,6 +6,7 @@ export const gearScreenStyles = {
     display: "flex" as const,
     flexDirection: "column" as const,
     marginBottom: 20,
+    gap: 10,
 
     noSetups: {
       display: "flex" as const,
@@ -64,15 +65,16 @@ export const gearScreenStyles = {
     display: "flex" as const,
     flexDirection: "column" as const,
     marginBottom: 20,
+    gap: 10,
 
     section: {
       display: "flex" as const,
       flexDirection: "column" as const,
       gap: 10,
-      marginBottom: 30,
+      marginBottom: 10,
       borderBottomWidth: 1,
       borderBottomColor: app_colors.primary.light,
-      paddingBottom: 20,
+      paddingBottom: 10,
 
       header: {
         display: "flex" as const,

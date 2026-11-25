@@ -121,7 +121,7 @@ const SatellitesScreen = () => {
           )}
 
           {stations && (
-            <View style={{marginTop: 20}}>
+            <View style={{display: "flex", flexDirection: "column", gap: 10, marginTop: 20}}>
               <SectionHeader title={t("screen.stations")} />
               <View style={satellitesScreenStyles.stationsList}>
                 {stations.map((station) => (
@@ -140,7 +140,7 @@ const SatellitesScreen = () => {
           )}
 
           {featured && featured.length > 0 && (
-            <View>
+            <View style={{display: "flex", flexDirection: "column", gap: 10, marginTop: 20}}>
               <SectionHeader title={t("screen.others")} />
               <View style={satellitesScreenStyles.featuredGrid}>
                 {featured.map((satellite) => (
@@ -162,7 +162,7 @@ const SatellitesScreen = () => {
             </View>
           )}
 
-          <View style={{marginTop: 20}}>
+          <View style={{display: "flex", flexDirection: "column", gap: 10, marginTop: 20}}>
             <View style={sectionHeaderStyles.header}>
               <Text style={sectionHeaderStyles.header.title}>{t("screen.mine")}</Text>
               <View style={sectionHeaderStyles.header.separator} />

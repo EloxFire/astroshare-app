@@ -4,6 +4,7 @@ export const journalScreenStyles = {
   sessionsContainer: {
     display: "flex" as const,
     flexDirection: "column" as const,
+    gap: 10,
     
     stats: {
       display: "flex" as const,
@@ -11,7 +12,6 @@ export const journalScreenStyles = {
       justifyContent: "space-between" as const,
       alignItems: "center" as const,
       gap: 10,
-      marginTop: 10,
     },
 
   },
@@ -19,6 +19,7 @@ export const journalScreenStyles = {
   observationsContainer: {
     display: "flex" as const,
     flexDirection: "column" as const,
+    gap: 10,
     marginTop: 20,
 
     seeAll: {

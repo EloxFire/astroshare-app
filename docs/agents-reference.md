@@ -886,6 +886,9 @@ Le journal commence avec le commit `8527e2f`. Les changements antérieurs, comme
 i18n, `SelectInput` ou `ImageHeaderScrollView`, sont décrits dans les sections ci-dessus mais n'ont pas
 d'entrée datée.
 
+- **2026-11-26** — même commit — espacement entre titre de section et contenu harmonisé via `gap`
+  plutôt que des `marginTop`/`marginBottom` ponctuels : `SectionHeader`, `ToolsSection`, Journal
+  (`Gear`, `Journal`, `AddSession`) et la section « Mes satellites » de `SatellitesScreen`.
 - **2026-11-26** — même commit — `SearchScreen`/`ToolsScreen` passés en en-tête secondaire sans
   bouton retour (`ScreenHeader` : `disableBackButton`/`main={false}`) — ce sont des écrans racine
   d'onglet, pas de retour possible.

@@ -6,6 +6,7 @@ export const addSessionStyles = {
     display: "flex" as const,
     flexDirection: "column" as const,
     marginBottom: 20,
+    gap: 10,
 
     datePickerCard: {
       backgroundColor: app_colors.primary.main,
@@ -128,6 +129,7 @@ export const addSessionStyles = {
     display: "flex" as const,
     flexDirection: "column" as const,
     marginBottom: 20,
+    gap: 10,
 
     noObservatories: {
       display: "flex" as const,
@@ -164,7 +166,6 @@ export const addSessionStyles = {
       display: "flex" as const,
       flexDirection: "column" as const,
       gap: 10,
-      marginTop: 10,
     }
   },
 
@@ -172,6 +173,7 @@ export const addSessionStyles = {
     display: "flex" as const,
     flexDirection: "column" as const,
     marginBottom: 20,
+    gap: 10,
 
     form: {
       backgroundColor: app_colors.yellow.light,
@@ -228,6 +230,7 @@ export const addSessionStyles = {
     display: "flex" as const,
     flexDirection: "column" as const,
     marginBottom: 20,
+    gap: 10,
 
     // Coquille carte-liste identique à globalStyles.defaultCard (bordée, blanche, coins arrondis) :
     // les lignes (ObjectCardLite) gèrent elles-mêmes leur séparateur interne (prop withBorder).
