@@ -28,6 +28,27 @@
       "title": "Account",
       "createdAt": "Account created on",
       "updatedAt": "Last updated on"
+    },
+    "subscription": {
+      "title": "Your subscription",
+      "type": "Subscription type",
+      "status": "Subscription status",
+      "nextPayment": "Next payment",
+      "cancelSubscription": "Cancel subscription",
+      "noSubscription": "No active subscription",
+      "subscribed": "Astroshare PRO",
+      "statusValues": {
+        "active": "Active",
+        "canceled": "Canceled",
+        "expired": "Expired",
+        "past_due": "Payment overdue",
+        "unknown": "Unknown status"
+      },
+      "locked": {
+        "title": "Upgrade to Astroshare PRO",
+        "description": "Unlock the features reserved for subscribers.",
+        "cta": "Discover Astroshare PRO"
+      }
     }
   },
   "edit": "Edit my profile",

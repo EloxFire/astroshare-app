@@ -35,6 +35,27 @@
       "title": "Compte",
       "createdAt": "Compte créé le",
       "updatedAt": "Dernière mise à jour le"
+    },
+    "subscription": {
+      "title": "Votre abonnement",
+      "type": "Type d'abonnement",
+      "status": "Statut de l'abonnement",
+      "nextPayment": "Prochain paiement",
+      "cancelSubscription": "Annuler l'abonnement",
+      "noSubscription": "Aucun abonnement actif",
+      "subscribed": "Astroshare PRO",
+      "statusValues": {
+        "active": "Actif",
+        "canceled": "Annulé",
+        "expired": "Expiré",
+        "past_due": "Paiement en retard",
+        "unknown": "Statut inconnu"
+      },
+      "locked": {
+        "title": "Passez à Astroshare PRO",
+        "description": "Débloquez les fonctionnalités réservées aux abonnés.",
+        "cta": "Découvrir Astroshare PRO"
+      }
     }
   },
   "edit": "Modifier mon profil",

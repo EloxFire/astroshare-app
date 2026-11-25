@@ -16,12 +16,14 @@ import { formatCompactDuration } from "../../helpers/format";
 import { getTotalObservationDuration, getTotalObservedObjects } from "../../helpers/journal/sessions";
 import { useUserDataStore } from "../../store/userData.store";
 import IconButtonCard from "../../components/cards/IconButtonCard/IconButtonCard";
+import LockedFeatureCard from "../../components/cards/LockedFeatureCard/LockedFeatureCard";
 import Button from "../../components/buttons/Button/Button";
+import { isProUser } from "../../helpers/auth/subscription";
 
 
 const ChangePasswordButton = ({ t }: { t: any }) => {
   return (
-    <TouchableOpacity style={profileScreenStyles.content.changePasswordButton}>
+    <TouchableOpacity style={profileScreenStyles.content.changePasswordButton} onPress={() => router.push('/auth/forgot-password')}>
       <Text style={profileScreenStyles.content.changePasswordButton.text}>{t('infos.changePassword')}</Text>
     </TouchableOpacity>
   )
@@ -32,6 +34,7 @@ export const ProfileScreen = () => {
 
   const { authUser, logoutUser }: { authUser: User | null, logoutUser: () => void } = useAuth();
   const userSessions = useUserDataStore(state => state.statistics.astronomySessions);
+  const subscribedUser = authUser ? isProUser(authUser) : false;
 
   const getNameToDisplay = () => {
     if(authUser){
@@ -156,7 +159,46 @@ export const ProfileScreen = () => {
             />
           </View>
 
-          {/* <Text>{JSON.stringify(authUser, null, 2)}</Text> */}
+          <View style={{display: "flex", flexDirection: "column", gap: 5}}>
+            <Text style={globalStyles.categoryTitle}>{t('infos.subscription.title')}</Text>
+
+            {subscribedUser && authUser.subscription ? (
+              <ListCard
+                items={[
+                  {
+                    title: t('infos.subscription.type'),
+                    value: t('infos.subscription.subscribed'),
+                  },
+                  {
+                    title: t('infos.subscription.status'),
+                    // Clé dynamique par statut réel (voir Subscription.ts : active/canceled/expired/
+                    // past_due/unknown) plutôt qu'un simple booléen abonné/pas abonné — repli sur
+                    // "unknown" si l'API renvoie une valeur pas encore traduite ici.
+                    value: t(`infos.subscription.statusValues.${authUser.subscription.status}`, { defaultValue: t('infos.subscription.statusValues.unknown') }),
+                  },
+                  ...(authUser.subscription.current_period_end ? [{
+                    title: t('infos.subscription.nextPayment'),
+                    value: new Date(authUser.subscription.current_period_end).toLocaleDateString(),
+                  }] : []),
+                  // Annuler n'a de sens que pour un abonnement encore actif.
+                  ...(authUser.subscription.status === 'active' ? [{
+                    title: t('infos.subscription.cancelSubscription'),
+                    value: <Button label={t('infos.subscription.cancelSubscription')} variant="danger" onPress={() => { /* TODO : Annuler l'abonnement */ }} />,
+                  }] : []),
+                ]}
+              />
+            ) : (
+              <LockedFeatureCard
+                title={t('infos.subscription.locked.title')}
+                description={t('infos.subscription.locked.description')}
+                ctaLabel={t('infos.subscription.locked.cta')}
+                // Pas encore d'écran PRO/abonnement dans l'app (voir le TODO équivalent dans
+                // SatellitesScreen/SpaceWeatherScreen) : le bouton n'a pas encore de destination.
+                onPressCta={() => {}}
+              />
+            )}
+          </View>
+
 
           <IconButtonCard
             icon={Notebook}

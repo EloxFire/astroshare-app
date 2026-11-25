@@ -1,5 +1,28 @@
 {
   "recap": {
     "sessions": "Sessioni"
+  },
+  "infos": {
+    "subscription": {
+      "title": "Il tuo abbonamento",
+      "type": "Tipo di abbonamento",
+      "status": "Stato dell'abbonamento",
+      "nextPayment": "Prossimo pagamento",
+      "cancelSubscription": "Annulla abbonamento",
+      "noSubscription": "Nessun abbonamento attivo",
+      "subscribed": "Astroshare PRO",
+      "statusValues": {
+        "active": "Attivo",
+        "canceled": "Annullato",
+        "expired": "Scaduto",
+        "past_due": "Pagamento in ritardo",
+        "unknown": "Stato sconosciuto"
+      },
+      "locked": {
+        "title": "Passa ad Astroshare PRO",
+        "description": "Sblocca le funzionalità riservate agli abbonati.",
+        "cta": "Scopri Astroshare PRO"
+      }
+    }
   }
 }

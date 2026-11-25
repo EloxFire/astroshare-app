@@ -864,6 +864,7 @@ On ne peut pas lancer l'app depuis un agent. Méthodes utilisées jusqu'ici :
 | `src/components/cards/ObjectCardLite/ObjectCardLite.tsx` | Libellé d'accessibilité du bouton de suppression écrit en dur en français (« Retirer de la liste ») |
 | `src/screens/Tools/SatelliteTracker/SatellitesScreen.tsx` | Condition PRO de la section « Mes satellites » inversée (`userIsPro ? <LockedFeatureCard /> : <liste réelle />`) : affiche la carte verrouillée aux comptes PRO et la liste réelle aux comptes non-PRO. Repéré en construisant `LightPollutionMapScreen` (qui, lui, utilise la bonne condition) |
 | `src/i18n/locales/{en,it}/common.json` | Le bloc `lightPollution` (`indicators`, `indicatorDescriptions`, `sqm.numeric`, `limitingMagnitude`) n'existe que dans `fr` : en/it retombent silencieusement sur le français pour tout texte lié à l'échelle de Bortle (`ObservatoryDetails`, `StepTwo`, `LightPollutionMapScreen`) |
+| `src/i18n/locales/{en,it}/auth/profile.json` | Lacunes importantes au-delà du bloc `infos.subscription` (complété) : `it` n'a quasiment que `recap.sessions`, `en` n'a ni `screen.title` ni `observations.*` — ProfileScreen retombe silencieusement sur le français pour tout le reste en `en`/`it` |
 
 Quand l'un de ces problèmes est corrigé, retire sa ligne et note la correction au journal (§8).
 
@@ -886,6 +887,15 @@ Le journal commence avec le commit `8527e2f`. Les changements antérieurs, comme
 i18n, `SelectInput` ou `ImageHeaderScrollView`, sont décrits dans les sections ci-dessus mais n'ont pas
 d'entrée datée.
 
+- **2026-11-26** — même commit — `ProfileScreen` : le bloc « Votre abonnement » affiche maintenant le
+  vrai statut (`authUser.subscription.status` : `active`/`canceled`/`expired`/`past_due`, nouvelles
+  clés `infos.subscription.statusValues.*`, repli sur `unknown`) et la vraie date du prochain paiement
+  (`subscription.current_period_end`) au lieu d'un texte générique abonné/pas abonné et d'une date en
+  dur. Bouton « Annuler » affiché seulement si le statut est `active`. Utilisateur non abonné :
+  `LockedFeatureCard` (même composant que « Mes satellites », §4) plutôt qu'une ligne de texte —
+  §3 (complété les clés `en`/`it` de ce bloc, qui n'existaient pas encore dans ces deux langues ;
+  `auth/profile.json` a par ailleurs de grosses lacunes en-dehors de ce bloc en `en`/`it`, non
+  comblées ici, voir §7).
 - **2026-11-26** — même commit — espacement entre titre de section et contenu harmonisé via `gap`
   plutôt que des `marginTop`/`marginBottom` ponctuels : `SectionHeader`, `ToolsSection`, Journal
   (`Gear`, `Journal`, `AddSession`) et la section « Mes satellites » de `SatellitesScreen`.
