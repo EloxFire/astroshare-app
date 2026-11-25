@@ -36,7 +36,7 @@ const NEXT_IMAGE_ICON_CONTAINER_BACKGROUND = flattenOpacity(app_colors.accent.li
 // lecteur est effectivement monté (cas "fichier vidéo direct"), pas à chaque rendu d'ApodScreen.
 const ApodVideoPlayer = ({ uri }: { uri: string }) => {
   const player = useVideoPlayer(uri, (player) => {
-    player.loop = false;
+    player.loop = true;
   });
 
   return (
@@ -144,8 +144,8 @@ const ApodScreen = () => {
                 }
                 {
                   asset.media_type === "video" && (
-                    isDirectVideoFile(asset.url) ? (
-                      <ApodVideoPlayer uri={asset.url} />
+                    isDirectVideoFile(asset.media_url) ? (
+                      <ApodVideoPlayer uri={asset.media_url} />
                     ) : (
                       <WebView
                         source={{ uri: asset.url }}

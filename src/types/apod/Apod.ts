@@ -6,6 +6,7 @@ export type Apod = {
   title: string;
   permalink: string; // URL de l'article science.nasa.gov
   media_type: ApodMediaType;
+  media_url: string; // URL de l'image ou de la vidéo
   explanation: string; // HTML (contient des balises <a>, <strong>, <br>...)
   credit?: string; // HTML - pas toujours présent
   copyright?: string; // HTML - absent pour la plupart des images (domaine public)
