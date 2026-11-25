@@ -1,6 +1,6 @@
 import { app_colors, radius, spacing } from "../../../../helpers/variables";
 
-export const issTransitDetailsScreenStyles = {
+export const transitDetailsScreenStyles = {
   loader: {
     marginTop: 40,
   },
@@ -71,7 +71,7 @@ export const issTransitDetailsScreenStyles = {
     color: app_colors.primary.medium,
   },
 
-  // Même rayon/hauteur que les autres cartes de l'app (StepOne, IssTransitsScreen).
+  // Même rayon/hauteur que les autres cartes de l'app (StepOne, SatelliteTransitsScreen).
   mapContainer: {
     borderRadius: radius.heroCard,
     overflow: "hidden" as const,

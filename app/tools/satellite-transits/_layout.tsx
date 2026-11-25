@@ -1,5 +1,5 @@
 import { Stack } from "expo-router";
 
-export default function IssTransitsStackLayout() {
+export default function SatelliteTransitsStackLayout() {
   return <Stack screenOptions={{ headerShown: false }} />;
 }

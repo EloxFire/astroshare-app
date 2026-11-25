@@ -3,7 +3,7 @@
 Point d'entrée pour un agent qui intervient sur ce dépôt : état du projet, conventions, pièges connus
 et, en détail, le rendu 3D de la Lune (`MoonPhase`) et les calculs astronomiques associés.
 
-- **État décrit** : 19 novembre 2026, branche `ASTROSHARE_V3`. Vérifie toujours le code
+- **État décrit** : 25 novembre 2026, branche `ASTROSHARE_V3`. Vérifie toujours le code
   avant de te fier à un détail d'ici : ce document peut avoir pris du retard.
 - **Langue** : le code est commenté en français, et l'utilisateur échange en français. Garde ces deux usages.
 - **Contenu versionné** : ce fichier est commité. N'y ajoute jamais de secret, de valeur du `.env`, d'URL
@@ -184,36 +184,53 @@ météo, APOD, viseur polaire, météo spatiale), observatoires de l'utilisateur
   `userData.store.ts`), l'API n'a pas de liste de suivi côté serveur — même principe que
   `observatories`/`pinnedTools`.
 
-### Transits de l'ISS devant le Soleil (`src/screens/Tools/IssTransits/`, `src/helpers/satellites/solarTransits.ts`, `transitGroundPath.ts`)
+### Transits de satellites devant le Soleil ou la Lune (`src/screens/Tools/SatelliteTransits/`, `src/helpers/satellites/transits.ts`, `transitGroundPath.ts`)
 
-Première version limitée à l'ISS × Soleil (ni Lune, ni autres satellites — voir §6). Réutilise le
-même TLE que le suivi de satellites (`getSatelliteTle({ name: "ISS (ZARYA)" })` + `parseTle`), pas de
-nouvel appel API.
+Généralisé depuis une première version limitée à l'ISS × Soleil (route et dossier renommés au passage,
+`/tools/iss-transits` → `/tools/satellite-transits`, i18n `tools/issTransits` → `tools/satelliteTransits`) :
+corps visé réglable (Soleil, Lune, ou les deux — `TargetBody`, `TARGET_BODIES`) et satellite réglable
+(ISS ou Tiangong — `TransitSatellite`, `TRANSIT_SATELLITES`, mêmes chaînes de recherche que
+`FEATURED_STATIONS`, `src/helpers/satellites/featured.ts` : `"ISS (ZARYA)"`/`"CSS (TIANHE)"`). Réutilise
+le même TLE que le suivi de satellites (`getSatelliteTle({ name })` + `parseTle`), pas de nouvel appel
+API. Le type de résultat (`BodyTransit`, ex-`SolarTransit`) porte un champ `body` (`"sun" | "moon"`) qui
+suit le transit jusqu'à la fiche détail (query param `body`, avec `satellite`).
 
-- **Recherche en 4 étapes, du moins cher au plus cher** (`findSolarTransits`/`findNextSolarTransit`,
-  cœur commun `scanSolarTransits`) : (1) scan grossier (pas 60 s) sur la fenêtre choisie pour repérer
-  les rares passages où l'ISS **et** le Soleil sont au-dessus d'un seuil d'altitude (~10°, décision
-  utilisateur, Soleil testé seulement si l'ISS l'est déjà — court-circuit) ; (2) scan moyen (pas
-  500 ms) dans chaque fenêtre survivante pour repérer le minimum local de séparation angulaire
+- **Recherche en 4 étapes, du moins cher au plus cher** (`findBodyTransits`/`findNextBodyTransit`,
+  cœur commun `scanBodyTransits`, ex-`findSolarTransits`/`scanSolarTransits`, désormais paramétrées par
+  `TargetBody` — coordonnée équatoriale + diamètre angulaire apparent — et par la taille physique du
+  satellite) : (1) scan grossier (pas 60 s) sur la fenêtre choisie pour repérer les rares passages où
+  le satellite **et** le corps visé sont au-dessus d'un seuil d'altitude (~10°, décision utilisateur,
+  corps testé seulement si le satellite l'est déjà — court-circuit) ; (2) scan moyen (pas 500 ms) dans
+  chaque fenêtre survivante pour repérer le minimum local de séparation angulaire
   (`getAngularSeparation` d'Observerly — **attention**, ses clés sont les lettres grecques `θ`/`φ`,
   pas `theta`/`phi`, sinon `NaN` silencieux) ; (3) une marge large (`CANDIDATE_MARGIN_FACTOR`) écarte
   les fenêtres clairement hors sujet avant (4) l'affinage fin (pas 20 ms, ±4 s) qui précise l'instant
   de rapprochement minimal et les instants d'entrée/sortie (franchissement du seuil
-  rayon-Soleil+rayon-ISS, même technique de recherche de franchissement que
+  rayon-corps+rayon-satellite, même technique de recherche de franchissement que
   `findPreviousHorizonCrossing`/`findNextHorizonCrossing` d'`altitudeCurve.ts`).
-- **`findNextSolarTransit`** (bouton « trouver le prochain transit ») réutilise le même cœur avec
+- **« Les deux » (Soleil et Lune) : une recherche par corps, pas une recherche unique** — les deux
+  corps n'ayant ni la même position ni le même diamètre apparent, `SatelliteTransitsScreen` lance
+  `findBodyTransits`/`findNextBodyTransit` une fois par corps sélectionné et fusionne les résultats
+  triés par date (`BodyTransit.body` distingue chaque carte, icône Soleil/Lune sur `TransitCard` via
+  `BODY_ICONS`). Pour « trouver le prochain transit » en mode « les deux », les deux recherches
+  tournent (chacune jusqu'à `NEXT_TRANSIT_MAX_DAYS`) et seul le transit le plus proche dans le temps
+  est gardé.
+- **`findNextBodyTransit`** (bouton « trouver le prochain transit ») réutilise le même cœur avec
   arrêt au premier transit confirmé (`stopAtFirst`), sur une fenêtre ouverte de `NEXT_TRANSIT_MAX_DAYS`
   (180 j) à partir de maintenant — peut prendre plusieurs secondes, disclaimer affiché à l'écran.
-- **Position topocentrique de l'ISS** (`getTopocentricPosition`, nouveau dans `propagation.ts`) :
+- **Position topocentrique du satellite** (`getTopocentricPosition`, dans `propagation.ts`) :
   `eciToEcf` + `ecfToLookAngles` de `satellite.js/dist/transforms.js` attendent la position de
   l'observateur en **radians** et une élévation en **km**, et renvoient azimut/élévation en
   **radians** — conversions faites dans ce wrapper, le reste de l'app (Observerly) reste en degrés.
-- **Taille de l'ISS :** aucune donnée réelle dans le catalogue satellite — approximation à 109 m (sa
-  plus grande longueur), même simplification que les calculateurs grand public (transit-finder.com).
+- **Taille physique du satellite :** aucune donnée réelle dans le catalogue satellite — approximation
+  par satellite dans `TRANSIT_SATELLITES` (109 m pour l'ISS, sa plus grande longueur ; 55 m pour
+  Tiangong, structure en T une fois les 3 modules amarrés), même simplification que les calculateurs
+  grand public (transit-finder.com).
 - **Schéma à l'échelle** (`TransitDiagram`) orienté d'après la vraie géométrie calculée : direction de
-  déplacement de l'ISS par rapport au Soleil et sa position signée au rapprochement minimal
-  (`pathAngleDeg`/`offsetXArcmin`/`offsetYArcmin` sur `SolarTransit`, calculés dans
-  `refineSolarTransitAround` à partir des échantillons déjà affinés). Convention assumée : axe X =
+  déplacement du satellite par rapport au corps visé et sa position signée au rapprochement minimal
+  (`pathAngleDeg`/`offsetXArcmin`/`offsetYArcmin` sur `BodyTransit`, calculés dans
+  `refineTransitAround` à partir des échantillons déjà affinés). Couleur du disque selon `transit.body`
+  (`BODY_DISC_COLORS` : jaune pour le Soleil, gris pour la Lune). Convention assumée : axe X =
   azimut croissant, axe Y = altitude croissante — ignore l'angle parallactique réel par rapport au
   zénith (simplification, pas une vraie carte de recherche). Prop `lineColor` (défaut
   `primary.main`) à adapter au fond : `accent.light` dans la fiche détail (fond héros `primary.main`).
@@ -221,24 +238,31 @@ nouvel appel API.
   une valeur fixe plaçait la flèche hors du canevas SVG aux petites tailles (64 px dans
   `TransitCard`) — vérifié en direct.
 - **Ligne de visibilité au sol** (`transitGroundPath.ts`, fiche détail uniquement) : pour chaque
-  instant autour du transit (±40 s, pas 2 s), point où un observateur verrait l'ISS exactement
-  centrée sur le Soleil = intersection de la droite Soleil→ISS (prolongée) avec la Terre, même
+  instant autour du transit (±40 s, pas 2 s), point où un observateur verrait le satellite exactement
+  centré sur le corps visé = intersection de la droite corps→satellite (prolongée) avec la Terre, même
   principe géométrique qu'un trajet d'ombre d'éclipse. **Intersection avec l'ellipsoïde WGS84, pas
-  une sphère** : vérifié en direct contre un vrai transit calculé par l'app, une sphère (rayon
+  une sphère** : vérifié en direct contre un vrai transit solaire calculé par l'app, une sphère (rayon
   équatorial ou moyen) plaçait le point à 30-40 km de l'observateur réel selon la latitude
   (aplatissement terrestre ignoré) ; l'ellipsoïde ramène l'écart à l'ordre de la distance de
-  traversée elle-même (quelques km). Largeur de bande approximée par parallaxe (déplacement au sol ≈
-  angle du seuil × distance oblique de l'ISS, le Soleil ne bougeant quasiment pas sur une si petite
-  distance) — précision annoncée à l'écran (« quelques kilomètres »), pas une frontière exacte.
-  Nouveaux exports `getEciPosition`/`eciPositionToGeodetic` dans `propagation.ts` (position ECI brute,
-  nécessaire pour combiner position satellite + direction solaire dans le même repère).
+  traversée elle-même (quelques km). **Pour un transit lunaire, cette ligne est plus approximative,
+  non vérifiée en direct** : la Lune (~384 000 km) est bien trop proche pour traiter sa direction
+  comme fixe depuis le centre de la Terre (contrairement au Soleil), la parallaxe lunaire n'est pas
+  corrigée. Largeur de bande approximée par parallaxe (déplacement au sol ≈ angle du seuil × distance
+  oblique du satellite, le corps visé ne bougeant quasiment pas sur une si petite distance, Lune
+  comprise) — précision annoncée à l'écran, pas une frontière exacte. Exports
+  `getEciPosition`/`eciPositionToGeodetic` dans `propagation.ts` (position ECI brute, nécessaire pour
+  combiner position satellite + direction du corps visé dans le même repère).
+- **Avertissement de sécurité oculaire affiché seulement pour un transit solaire**
+  (`transit.body === "sun"`, fiche détail) : regarder la Lune, même pendant un transit, ne présente
+  aucun danger.
 - **Sélection de lieu sur la carte** (écran liste) : `MapView`/`MapTargetMarker` + appui pour placer
   le repère (même pattern que `StepOne` d'ajout d'observatoire), altitude saisie à part
   (`InputWithIcon`) — la géocodification inverse d'un point tapé au hasard ne la fournit pas
   (`fetchLocation` d'un `"lat::lon"` renvoie `elevation: null`). Lieu jamais persisté (pas de nouvel
-  observatoire créé), transmis à la fiche détail en query params (`lat`/`lon`/`elev` de la route
-  `/tools/iss-transits/[id]`) pour réaffiner le même transit avec le même observateur — sans ces
-  query params (lien direct), repli sur la position effective de l'app.
+  observatoire créé), transmis à la fiche détail en query params (`lat`/`lon`/`elev`, avec `body`/
+  `satellite` de la route `/tools/satellite-transits/[id]`) pour réaffiner le même transit avec le
+  même observateur/corps/satellite — sans ces query params (lien direct), repli sur la position
+  effective de l'app et sur Soleil/ISS (comportement d'origine).
 - **Période personnalisée** (dates de début/fin plutôt que des puces fixes 3/7/14 jours) : via
   `DateRangeField` (§4, partagé avec l'outil Conjonctions), même découpage Android/iOS que les dates
   d'`AddSession` (Journal), simplifié en mode date seule (pas d'heure).
@@ -247,7 +271,8 @@ nouvel appel API.
   (texte déjà traduit, passé par l'appelant) qui remplace le texte par défaut spécifique aux passages
   visibles (« Passages vus depuis... »), sans changer son comportement pour `SatellitesScreen`.
 - **Carte explicative avant tout calcul** (`InfoCard` + bloc technique) : affichée tant qu'aucune
-  recherche n'a encore été lancée (ni « Rechercher », ni « Trouver le prochain transit »).
+  recherche n'a encore été lancée (ni « Rechercher », ni « Trouver le prochain transit »), texte
+  générique (ne nomme plus l'ISS/le Soleil spécifiquement).
 
 ### Conjonctions entre deux astres (`src/screens/Tools/Conjunctions/`, `src/helpers/catalog/conjunctions.ts`)
 
@@ -816,9 +841,9 @@ On ne peut pas lancer l'app depuis un agent. Méthodes utilisées jusqu'ici :
 - **États d'éclipse d'un passage** (« entre dans l'ombre », etc., visibles sur la maquette) : pas dans
   la réponse documentée de `/v3/satellite/passes`, remplacés par le champ réel `quality`
   (excellent/visible/faible) plutôt que fabriqués.
-- **Transits ISS : autres corps et autres satellites.** Volontairement limité à l'ISS × Soleil pour
-  cette première version (décision utilisateur) — Lune, Hubble, Tiangong, etc. suivraient le même
-  principe (`scanSolarTransits` généralisé à un autre corps cible et/ou un autre TLE). Recherche par
+- **Transits de satellites : recherche « zone » et autres satellites.** Soleil/Lune/les deux et
+  ISS/Tiangong couverts (voir §2) — un autre satellite quelconque (Hubble, Starlink...) suivrait le
+  même principe (`TRANSIT_SATELLITES` à compléter, `scanBodyTransits` déjà générique). Recherche par
   lieu différent de la position courante déjà possible (sélection sur la carte), mais pas de requête
   « transits visibles depuis une zone » façon transit-finder.com (une seule position à la fois).
 - **Conjonctions : altitude minimale fixe (10°), pas réglable** — seul le seuil de séparation
@@ -862,6 +887,13 @@ Le journal commence avec le commit `8527e2f`. Les changements antérieurs, comme
 i18n, `SelectInput` ou `ImageHeaderScrollView`, sont décrits dans les sections ci-dessus mais n'ont pas
 d'entrée datée.
 
+- **2026-11-25** — même commit — généralisation de l'outil Transits (ex-ISS) : corps visé réglable
+  (Soleil/Lune/les deux) et satellite réglable (ISS/Tiangong), route et i18n renommés
+  `/tools/iss-transits` → `/tools/satellite-transits`. Cœur de recherche (`solarTransits.ts` →
+  `transits.ts`) et ligne de visibilité au sol (`transitGroundPath.ts`) paramétrés par corps/satellite
+  plutôt qu'écrits en dur pour l'ISS × Soleil ; mode « les deux » = une recherche par corps fusionnée
+  et triée par date, pas une recherche unique. Avertissement de sécurité oculaire masqué pour un
+  transit lunaire — §2 (section renommée), §6 (limitation résolue).
 - **2026-11-25** — même commit — nouvel outil Conjonctions (`/tools/conjunctions-calculator`, déjà
   pré-enregistré dans `tools.ts`) : conjonctions entre deux objets quelconques du catalogue
   (planète, Lune, Soleil, étoile, DSO — sélection par simple recherche catalogue, le Soleil/la

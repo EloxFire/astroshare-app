@@ -16,10 +16,17 @@ import ListCard from "../../../../components/cards/ListCard/ListCard";
 import MapTargetMarker from "../../../../components/MapTargetMarker/MapTargetMarker";
 import { getSatelliteTle } from "../../../../helpers/api/satellites/tracking";
 import { parseTle } from "../../../../helpers/satellites/propagation";
-import { refineSolarTransitAround, type SolarTransit } from "../../../../helpers/satellites/solarTransits";
+import {
+  refineTransitAround,
+  TARGET_BODIES,
+  TRANSIT_SATELLITES,
+  type BodyTransit,
+  type SatelliteKey,
+  type TargetBodyKey,
+} from "../../../../helpers/satellites/transits";
 import { getTransitGroundPath, type TransitGroundPath } from "../../../../helpers/satellites/transitGroundPath";
 import TransitDiagram from "../components/TransitDiagram/TransitDiagram";
-import { issTransitDetailsScreenStyles } from "./IssTransitDetailsScreen.styles";
+import { transitDetailsScreenStyles } from "./TransitDetailsScreen.styles";
 
 // Calcule une région englobant la ligne de visibilité + l'observateur, avec une marge — pas de
 // fitToCoordinates (qui demande une ref + un appel après montage) : plus simple à dériver
@@ -43,21 +50,30 @@ const getGroundPathRegion = (groundPath: TransitGroundPath, observer: { latitude
   };
 };
 
-const IssTransitDetailsScreen = () => {
-  const { id, lat, lon, elev } = useLocalSearchParams<{ id: string; lat?: string; lon?: string; elev?: string }>();
+const isTargetBodyKey = (value: string | undefined): value is TargetBodyKey => value === "sun" || value === "moon";
+const isSatelliteKey = (value: string | undefined): value is SatelliteKey => value === "iss" || value === "tiangong";
+
+const TransitDetailsScreen = () => {
+  const { id, lat, lon, elev, body, satellite } = useLocalSearchParams<{
+    id: string; lat?: string; lon?: string; elev?: string; body?: string; satellite?: string;
+  }>();
   const midDateMs = Number(id);
-  const { t, i18n } = useTranslation("tools/issTransits");
+  // Repli sur Soleil/ISS (comportement d'origine, avant l'ajout du choix corps/satellite) : un lien
+  // existant (historique de navigation, favori...) n'a pas ces query params.
+  const targetBody = TARGET_BODIES[isTargetBodyKey(body) ? body : "sun"];
+  const transitSatellite = TRANSIT_SATELLITES[isSatelliteKey(satellite) ? satellite : "iss"];
+  const { t, i18n } = useTranslation("tools/satelliteTransits");
   const { location } = useLocation();
   const { formatDate } = useAppUnits();
 
-  const [transit, setTransit] = useState<SolarTransit | null>(null);
+  const [transit, setTransit] = useState<BodyTransit | null>(null);
   const [groundPath, setGroundPath] = useState<TransitGroundPath | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   // Le lieu utilisé pour trouver ce transit depuis l'écran liste n'est pas forcément `location`
   // (contexte) : il peut s'agir d'un lieu choisi sur la carte pour cette recherche, transmis en
-  // query params — voir handleTransitPress dans IssTransitsScreen.tsx. Sans ces params (lien direct,
-  // ancien historique de navigation), on retombe sur le lieu courant de l'app.
+  // query params — voir handleTransitPress dans SatelliteTransitsScreen.tsx. Sans ces params (lien
+  // direct, ancien historique de navigation), on retombe sur le lieu courant de l'app.
   const observer = lat && lon
     ? { latitude: Number(lat), longitude: Number(lon), elevation: elev ? Number(elev) : 0 }
     : location
@@ -65,7 +81,7 @@ const IssTransitDetailsScreen = () => {
       : null;
 
   // Ne refait que l'affinage (étapes 3-4, quelques secondes autour de l'instant déjà connu), pas la
-  // recherche complète sur plusieurs jours — voir refineSolarTransitAround dans solarTransits.ts.
+  // recherche complète sur plusieurs jours — voir refineTransitAround dans transits.ts.
   useFocusEffect(
     useCallback(() => {
       if (!observer || !Number.isFinite(midDateMs)) return;
@@ -73,7 +89,7 @@ const IssTransitDetailsScreen = () => {
       setIsLoading(true);
 
       const task = InteractionManager.runAfterInteractions(async () => {
-        const tle = await getSatelliteTle({ name: "ISS (ZARYA)" });
+        const tle = await getSatelliteTle({ name: transitSatellite.nameQuery });
         if (cancelled) return;
         const satrec = tle ? parseTle(tle.tle) : null;
         if (!satrec) {
@@ -83,7 +99,7 @@ const IssTransitDetailsScreen = () => {
           return;
         }
 
-        const refined = refineSolarTransitAround(satrec, observer, new Date(midDateMs));
+        const refined = refineTransitAround(satrec, observer, new Date(midDateMs), targetBody, transitSatellite.physicalSizeMeters);
         setTransit(refined);
         setGroundPath(refined ? getTransitGroundPath(satrec, refined) : null);
         setIsLoading(false);
@@ -93,14 +109,14 @@ const IssTransitDetailsScreen = () => {
         cancelled = true;
         task.cancel();
       };
-    }, [observer?.latitude, observer?.longitude, observer?.elevation, midDateMs])
+    }, [observer?.latitude, observer?.longitude, observer?.elevation, midDateMs, targetBody, transitSatellite])
   );
 
   if (isLoading) {
     return (
       <View style={globalStyles.screen}>
         <ScreenHeader title={t("details.screenTitle")} main={false} />
-        <ActivityIndicator size="large" color={app_colors.accent.main} style={issTransitDetailsScreenStyles.loader} />
+        <ActivityIndicator size="large" color={app_colors.accent.main} style={transitDetailsScreenStyles.loader} />
       </View>
     );
   }
@@ -109,7 +125,7 @@ const IssTransitDetailsScreen = () => {
     return (
       <View style={globalStyles.screen}>
         <ScreenHeader title={t("details.screenTitle")} main={false} />
-        <Text style={issTransitDetailsScreenStyles.notFound}>{t("details.notFound")}</Text>
+        <Text style={transitDetailsScreenStyles.notFound}>{t("details.notFound")}</Text>
       </View>
     );
   }
@@ -123,17 +139,17 @@ const IssTransitDetailsScreen = () => {
       />
 
       <ScrollView>
-        <View style={issTransitDetailsScreenStyles.heroHeader}>
+        <View style={transitDetailsScreenStyles.heroHeader}>
           {/* accent.light (et non la couleur primary.main par défaut) : le fond de ce bloc héros est
               déjà primary.main, le trait doit donc contraster dessus plutôt que s'y fondre sur sa
-              portion prolongée hors du disque solaire. */}
+              portion prolongée hors du disque. */}
           <TransitDiagram transit={transit} size={220} lineColor={app_colors.accent.light} />
         </View>
 
         <View style={globalStyles.content}>
-          <View style={issTransitDetailsScreenStyles.section}>
-            <View style={issTransitDetailsScreenStyles.statsGrid}>
-              <View style={issTransitDetailsScreenStyles.statsGrid.statsRow}>
+          <View style={transitDetailsScreenStyles.section}>
+            <View style={transitDetailsScreenStyles.statsGrid}>
+              <View style={transitDetailsScreenStyles.statsGrid.statsRow}>
                 <ValueCard
                   reverse
                   title={t("details.stats.angularSize")}
@@ -145,7 +161,7 @@ const IssTransitDetailsScreen = () => {
                   value={`${transit.azimuth.toFixed(0)}° / ${transit.altitude.toFixed(0)}°`}
                 />
               </View>
-              <View style={issTransitDetailsScreenStyles.statsGrid.statsRow}>
+              <View style={transitDetailsScreenStyles.statsGrid.statsRow}>
                 <ValueCard
                   reverse
                   title={t("details.stats.duration")}
@@ -160,19 +176,22 @@ const IssTransitDetailsScreen = () => {
             </View>
           </View>
 
-          <View style={issTransitDetailsScreenStyles.warningCard}>
-            <TriangleAlert size={18} color={app_colors.red.main} />
-            <Text style={issTransitDetailsScreenStyles.warningCard.text}>{t("details.eyeSafety")}</Text>
-          </View>
+          {/* Seul le Soleil impose un filtre : regarder la Lune (même pendant un transit) est sans danger. */}
+          {transit.body === "sun" && (
+            <View style={transitDetailsScreenStyles.warningCard}>
+              <TriangleAlert size={18} color={app_colors.red.main} />
+              <Text style={transitDetailsScreenStyles.warningCard.text}>{t("details.eyeSafety")}</Text>
+            </View>
+          )}
 
           {groundPath && observer && (
-            <View style={issTransitDetailsScreenStyles.section}>
+            <View style={transitDetailsScreenStyles.section}>
               <SectionHeader title={t("details.groundPath.title")} />
-              <Text style={issTransitDetailsScreenStyles.groundPathHint}>{t("details.groundPath.hint")}</Text>
+              <Text style={transitDetailsScreenStyles.groundPathHint}>{t("details.groundPath.hint")}</Text>
 
-              <View style={issTransitDetailsScreenStyles.mapContainer}>
+              <View style={transitDetailsScreenStyles.mapContainer}>
                 <MapView
-                  style={issTransitDetailsScreenStyles.mapContainer.map}
+                  style={transitDetailsScreenStyles.mapContainer.map}
                   provider={PROVIDER_GOOGLE}
                   initialRegion={getGroundPathRegion(groundPath, observer)}
                   mapType="satellite"
@@ -190,12 +209,12 @@ const IssTransitDetailsScreen = () => {
             </View>
           )}
 
-          <View style={issTransitDetailsScreenStyles.section}>
+          <View style={transitDetailsScreenStyles.section}>
             <SectionHeader title={t("details.technical.title")} />
             <ListCard
               items={[
                 { title: t("details.technical.chord"), value: `${formatLocaleNumber(transit.chordArcmin, i18n.language, 1)}′` },
-                { title: t("details.technical.sunRadius"), value: `${formatLocaleNumber(transit.sunAngularRadiusArcmin, i18n.language, 1)}′` },
+                { title: t("details.technical.bodyRadius"), value: `${formatLocaleNumber(transit.bodyAngularRadiusArcmin, i18n.language, 1)}′` },
                 { title: t("details.technical.midTime"), value: formatDate(transit.midDate).format("HH:mm:ss") },
               ]}
             />
@@ -206,4 +225,4 @@ const IssTransitDetailsScreen = () => {
   );
 };
 
-export default IssTransitDetailsScreen;
+export default TransitDetailsScreen;

@@ -1,7 +1,7 @@
 {
   "screen": {
-    "title": "ISS Transits",
-    "subtitle": "Across the Sun",
+    "title": "Satellite Transits",
+    "subtitle": "Across the Sun or Moon",
     "location": {
       "title": "Observing location",
       "unknown": "Unknown position",
@@ -10,6 +10,20 @@
       "useCurrent": "Back to my current position",
       "altitudeLabel": "Altitude (optional)",
       "altitudePlaceholder": "E.g. 350"
+    },
+    "options": {
+      "title": "Search settings",
+      "targetBodyLabel": "Target body",
+      "satelliteLabel": "Satellite"
+    },
+    "targetBody": {
+      "sun": "Sun",
+      "moon": "Moon",
+      "both": "Both"
+    },
+    "satellite": {
+      "iss": "ISS",
+      "tiangong": "Tiangong"
     },
     "dateRange": {
       "title": "Period",
@@ -30,13 +44,13 @@
     "emptyNext": "No transit found in the next {{days}} days from this location.",
     "explanation": {
       "whatTitle": "What is a transit?",
-      "whatDescription": "A transit happens when the ISS passes exactly between you and the Sun: it then appears as a dark silhouette on the solar disk, usually for less than a second.",
+      "whatDescription": "A transit happens when a satellite (ISS or Tiangong) passes exactly between you and the Sun or Moon: it then appears as a dark silhouette on the disk, usually for less than a second in front of the Sun (a bit longer in front of the closer Moon).",
       "paramsTitle": "The information shown",
       "params": {
-        "angularSize": "The ISS's apparent size in the sky, in arcseconds.",
+        "angularSize": "The satellite's apparent size in the sky, in arcseconds.",
         "position": "The direction (azimuth) and height (altitude) to look at during the transit.",
-        "duration": "The time the ISS takes to cross the solar disk.",
-        "missDistance": "How close the ISS passes to the Sun's center."
+        "duration": "The time the satellite takes to cross the disk.",
+        "missDistance": "How close the satellite passes to the disk's center."
       }
     }
   },
@@ -44,7 +58,7 @@
     "cardSubtitle": "{{altitude}}° altitude · {{duration}} s"
   },
   "details": {
-    "screenTitle": "ISS Transit",
+    "screenTitle": "Transit",
     "notFound": "Couldn't recompute this transit.",
     "stats": {
       "angularSize": "angular size",
@@ -53,15 +67,15 @@
       "durationValue": "{{value}} s",
       "missDistance": "miss distance"
     },
-    "eyeSafety": "Never look at the Sun without a certified solar filter (ND5), even during the transit: the ISS doesn't reduce the radiation at all.",
+    "eyeSafety": "Never look at the Sun without a certified solar filter (ND5), even during the transit: the satellite doesn't reduce the radiation at all.",
     "groundPath": {
       "title": "Visibility line",
-      "hint": "Each point on the line corresponds to a different moment of the pass: moving along the band shifts the transit time slightly rather than showing it everywhere at once. Indicative position (accurate to within a few kilometers)."
+      "hint": "Each point on the line corresponds to a different moment of the pass: moving along the band shifts the transit time slightly rather than showing it everywhere at once. Indicative position (accurate to within a few kilometers, cruder for a lunar transit)."
     },
     "technical": {
       "title": "Technical details",
       "chord": "Chord length",
-      "sunRadius": "Sun's apparent radius",
+      "bodyRadius": "Target body's apparent radius",
       "midTime": "Transit time"
     }
   }

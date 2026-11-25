@@ -113,7 +113,7 @@ const buildVisibleRuns = (
 };
 
 // Affine un rapprochement déjà approximativement repéré (minimum de la série nuit-par-nuit) en deux
-// passes successives (moyenne puis fine), même principe que refineSolarTransitAround. `null` si,
+// passes successives (moyenne puis fine), même principe que refineTransitAround (transits.ts). `null` si,
 // une fois affiné, la séparation réelle dépasse le seuil choisi (le minimum grossier n'est qu'une
 // approximation, pas garanti sous le seuil). Exporté : réutilisé tel quel par la fiche détail pour
 // retrouver la même conjonction à partir de son horodatage de route, sans rescanner toute la
@@ -164,7 +164,7 @@ export const refineConjunctionAround = (
 };
 
 // Cœur commun, partagé par findConjunctions (fenêtre fermée) et findNextConjunction (arrêt au
-// premier trouvé) — même principe général que scanSolarTransits, en deux temps :
+// premier trouvé) — même principe général que scanBodyTransits (transits.ts), en deux temps :
 //
 // 1. Un passage de visibilité (run, voir buildVisibleRuns) donne UN point représentatif (son
 //    échantillon de plus faible séparation) — une série "une valeur par nuit", même si un

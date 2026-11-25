@@ -15,6 +15,13 @@ export const transitCardStyles = {
       flexDirection: "column" as const,
       gap: 2,
 
+      dateRow: {
+        display: "flex" as const,
+        flexDirection: "row" as const,
+        alignItems: "center" as const,
+        gap: 5,
+      },
+
       date: {
         fontFamily: "ZTNatureBold",
         fontSize: 15,

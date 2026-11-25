@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { router } from "expo-router";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import dayjs from "dayjs";
-import { Info, MapPin } from "lucide-react-native";
+import { Info, MapPin, Moon, Sun } from "lucide-react-native";
 import { globalStyles } from "../../../helpers/globalStyles";
 import { app_colors } from "../../../helpers/variables";
 import { useLocation } from "../../../context/LocationContext";
@@ -12,25 +12,45 @@ import { ScreenHeader } from "../../../components/layout/ScreenHeader/ScreenHead
 import SectionHeader from "../../../components/layout/SectionHeader/SectionHeader";
 import InfoCard from "../../../components/cards/InfoCard/InfoCard";
 import Button from "../../../components/buttons/Button/Button";
+import TabSwitch from "../../../components/inputs/TabSwitch/TabSwitch";
 import { InputWithIcon } from "../../../components/inputs/InputWithIcon/InputWithIcon";
 import DateRangeField from "../../../components/inputs/DateRangeField/DateRangeField";
 import MapTargetMarker from "../../../components/MapTargetMarker/MapTargetMarker";
 import { getSatelliteTle } from "../../../helpers/api/satellites/tracking";
 import { parseTle } from "../../../helpers/satellites/propagation";
-import { findNextSolarTransit, findSolarTransits, type SolarTransit } from "../../../helpers/satellites/solarTransits";
+import {
+  findNextBodyTransit,
+  findBodyTransits,
+  TARGET_BODIES,
+  TRANSIT_SATELLITES,
+  type BodyTransit,
+  type SatelliteKey,
+  type TargetBodyKey,
+} from "../../../helpers/satellites/transits";
 import type { GpsLocation } from "../../../types/gpsLocation";
 import TransitCard from "./components/TransitCard/TransitCard";
-import { issTransitsScreenStyles } from "./IssTransitsScreen.styles";
+import { satelliteTransitsScreenStyles } from "./SatelliteTransitsScreen.styles";
 
 type SearchMode = "range" | "next";
+type TargetBodySelection = TargetBodyKey | "both";
 
 // Fenêtre maximale explorée par "trouver le prochain transit" : assez large pour presque toujours
 // aboutir (un transit exact depuis un point fixe reste rare mais pas exceptionnel sur plusieurs
 // mois), sans laisser le calcul s'étendre indéfiniment — voir le disclaimer affiché à l'écran.
 const NEXT_TRANSIT_MAX_DAYS = 180;
 
-const IssTransitsScreen = () => {
-  const { t, i18n } = useTranslation("tools/issTransits");
+// Ordre d'affichage des deux switches (corps visé, satellite) — un simple tableau plutôt qu'un enum :
+// TabSwitch est piloté par index, ces tableaux font à la fois office de source de vérité pour les
+// libellés (clé de traduction) et de table index ↔ valeur.
+const TARGET_BODY_OPTIONS: { value: TargetBodySelection; icon?: typeof Sun }[] = [
+  { value: "sun", icon: Sun },
+  { value: "moon", icon: Moon },
+  { value: "both" },
+];
+const SATELLITE_OPTIONS: SatelliteKey[] = ["iss", "tiangong"];
+
+const SatelliteTransitsScreen = () => {
+  const { t, i18n } = useTranslation("tools/satelliteTransits");
   const { location, fetchLocation } = useLocation();
 
   // Lieu choisi sur la carte pour cette recherche uniquement : jamais persisté (pas de nouvel
@@ -41,10 +61,13 @@ const IssTransitsScreen = () => {
   const [customAltitudeInput, setCustomAltitudeInput] = useState<string>("");
   const [showMapPicker, setShowMapPicker] = useState(false);
 
+  const [targetBodySelection, setTargetBodySelection] = useState<TargetBodySelection>("sun");
+  const [satelliteKey, setSatelliteKey] = useState<SatelliteKey>("iss");
+
   const [startDate, setStartDate] = useState<Date>(() => new Date());
   const [endDate, setEndDate] = useState<Date>(() => dayjs().add(7, "day").toDate());
 
-  const [transits, setTransits] = useState<SolarTransit[] | null>(null);
+  const [transits, setTransits] = useState<BodyTransit[] | null>(null);
   const [searchMode, setSearchMode] = useState<SearchMode | null>(null);
 
   const effectiveLocation: GpsLocation | null = useMemo(() => {
@@ -79,12 +102,17 @@ const IssTransitsScreen = () => {
       longitude: effectiveLocation.longitude,
       elevation: effectiveLocation.elevation ?? 0,
     };
+    // "both" lance une recherche par corps (Soleil puis Lune) et fusionne les résultats triés par
+    // date — pas une recherche unique qui testerait les deux en même temps, les deux corps n'ayant
+    // ni la même position ni le même diamètre apparent.
+    const bodies: TargetBodyKey[] = targetBodySelection === "both" ? ["sun", "moon"] : [targetBodySelection];
+    const satellite = TRANSIT_SATELLITES[satelliteKey];
 
     // Recherche différée (voir le pattern déjà utilisé partout dans l'app pour un calcul astro
     // lourd) : "trouver le prochain transit" peut explorer jusqu'à NEXT_TRANSIT_MAX_DAYS jours et
     // prendre plusieurs secondes (voir le disclaimer), pas la peine de bloquer l'interaction en cours.
     InteractionManager.runAfterInteractions(async () => {
-      const tle = await getSatelliteTle({ name: "ISS (ZARYA)" });
+      const tle = await getSatelliteTle({ name: satellite.nameQuery });
       const satrec = tle ? parseTle(tle.tle) : null;
       if (!satrec) {
         setTransits([]);
@@ -92,26 +120,37 @@ const IssTransitsScreen = () => {
       }
 
       if (mode === "range") {
-        setTransits(findSolarTransits(satrec, observer, { startDate, endDate }));
+        const results = bodies
+          .flatMap((bodyKey) => findBodyTransits(satrec, observer, { startDate, endDate }, TARGET_BODIES[bodyKey], satellite.physicalSizeMeters))
+          .sort((a, b) => a.midDate.getTime() - b.midDate.getTime());
+        setTransits(results);
       } else {
-        const next = findNextSolarTransit(satrec, observer, { maxDays: NEXT_TRANSIT_MAX_DAYS });
-        setTransits(next ? [next] : []);
+        // "both" : une recherche "prochain transit" par corps (chacune peut prendre plusieurs
+        // secondes), on garde le plus proche des deux dans le temps plutôt que le premier trouvé.
+        const candidates = bodies
+          .map((bodyKey) => findNextBodyTransit(satrec, observer, { maxDays: NEXT_TRANSIT_MAX_DAYS }, TARGET_BODIES[bodyKey], satellite.physicalSizeMeters))
+          .filter((transit): transit is BodyTransit => transit !== null)
+          .sort((a, b) => a.midDate.getTime() - b.midDate.getTime());
+        setTransits(candidates.length > 0 ? [candidates[0]] : []);
       }
     });
   };
 
   // Le lieu utilisé pour trouver ce transit n'est pas forcément `location` (contexte) — il peut
   // s'agir d'un lieu choisi sur la carte pour cette recherche. Transmis en query params (et non
-  // juste l'id/horodatage) pour que la fiche détail réaffine le même transit avec le même
-  // observateur, plutôt que de retomber sur le lieu courant de l'app.
-  const handleTransitPress = (transit: SolarTransit) => {
+  // juste l'id/horodatage), de même que le corps visé et le satellite, pour que la fiche détail
+  // réaffine le même transit avec le même observateur/corps/satellite plutôt que de retomber sur
+  // des valeurs par défaut.
+  const handleTransitPress = (transit: BodyTransit) => {
     if (!effectiveLocation) return;
     const params = new URLSearchParams({
       lat: effectiveLocation.latitude.toString(),
       lon: effectiveLocation.longitude.toString(),
       elev: (effectiveLocation.elevation ?? 0).toString(),
+      body: transit.body,
+      satellite: satelliteKey,
     });
-    router.push(`/tools/iss-transits/${transit.midDate.getTime()}?${params.toString()}`);
+    router.push(`/tools/satellite-transits/${transit.midDate.getTime()}?${params.toString()}`);
   };
 
   const isSearching = searchMode !== null && transits === null;
@@ -124,28 +163,28 @@ const IssTransitsScreen = () => {
         <ScrollView keyboardShouldPersistTaps="handled">
           <View style={globalStyles.content}>
 
-            <View style={issTransitsScreenStyles.section}>
+            <View style={satelliteTransitsScreenStyles.section}>
               <SectionHeader title={t("screen.location.title")} />
 
-              <View style={issTransitsScreenStyles.locationSummary}>
+              <View style={satelliteTransitsScreenStyles.locationSummary}>
                 <MapPin size={16} color={app_colors.accent.main} />
-                <Text style={issTransitsScreenStyles.locationSummary.text}>{locationLabel}</Text>
+                <Text style={satelliteTransitsScreenStyles.locationSummary.text}>{locationLabel}</Text>
               </View>
 
-              <View style={issTransitsScreenStyles.locationActions}>
+              <View style={satelliteTransitsScreenStyles.locationActions}>
                 <TouchableOpacity onPress={() => setShowMapPicker((visible) => !visible)}>
                 </TouchableOpacity>
                 {customLocation && (
                   <TouchableOpacity onPress={handleUseCurrentLocation}>
-                    <Text style={issTransitsScreenStyles.locationActions.link}>{t("screen.location.useCurrent")}</Text>
+                    <Text style={satelliteTransitsScreenStyles.locationActions.link}>{t("screen.location.useCurrent")}</Text>
                   </TouchableOpacity>
                 )}
               </View>
 
               <>
-                <View style={issTransitsScreenStyles.mapContainer}>
+                <View style={satelliteTransitsScreenStyles.mapContainer}>
                   <MapView
-                    style={issTransitsScreenStyles.mapContainer.map}
+                    style={satelliteTransitsScreenStyles.mapContainer.map}
                     provider={PROVIDER_GOOGLE}
                     initialRegion={{
                       latitude: effectiveLocation?.latitude ?? 48.856724859667835,
@@ -175,7 +214,25 @@ const IssTransitsScreen = () => {
               </>
             </View>
 
-            <View style={issTransitsScreenStyles.section}>
+            <View style={satelliteTransitsScreenStyles.section}>
+              <SectionHeader title={t("screen.options.title")} />
+
+              <Text style={satelliteTransitsScreenStyles.optionLabel}>{t("screen.options.targetBodyLabel")}</Text>
+              <TabSwitch
+                tabs={TARGET_BODY_OPTIONS.map((option) => ({ text: t(`screen.targetBody.${option.value}`), icon: option.icon }))}
+                activeTab={TARGET_BODY_OPTIONS.findIndex((option) => option.value === targetBodySelection)}
+                onTabPress={(index) => setTargetBodySelection(TARGET_BODY_OPTIONS[index].value)}
+              />
+
+              <Text style={satelliteTransitsScreenStyles.optionLabel}>{t("screen.options.satelliteLabel")}</Text>
+              <TabSwitch
+                tabs={SATELLITE_OPTIONS.map((key) => ({ text: t(`screen.satellite.${key}`) }))}
+                activeTab={SATELLITE_OPTIONS.indexOf(satelliteKey)}
+                onTabPress={(index) => setSatelliteKey(SATELLITE_OPTIONS[index])}
+              />
+            </View>
+
+            <View style={satelliteTransitsScreenStyles.section}>
               <SectionHeader title={t("screen.dateRange.title")} />
 
               <DateRangeField
@@ -198,7 +255,7 @@ const IssTransitsScreen = () => {
               />
             </View>
 
-            <View style={issTransitsScreenStyles.section}>
+            <View style={satelliteTransitsScreenStyles.section}>
               <Button
                 label={t("screen.findNext.button")}
                 variant="info"
@@ -206,34 +263,34 @@ const IssTransitsScreen = () => {
                 disabled={!effectiveLocation || isSearching}
                 loading={searchMode === "next" && isSearching}
               />
-              <Text style={issTransitsScreenStyles.disclaimer}>{t("screen.findNext.disclaimer")}</Text>
+              <Text style={satelliteTransitsScreenStyles.disclaimer}>{t("screen.findNext.disclaimer")}</Text>
             </View>
 
             {
               isSearching ? (
-                <ActivityIndicator size="large" color={app_colors.accent.main} style={issTransitsScreenStyles.loader} />
+                <ActivityIndicator size="large" color={app_colors.accent.main} style={satelliteTransitsScreenStyles.loader} />
               ) : transits === null ? (
-                <Text style={issTransitsScreenStyles.emptyState}>
+                <Text style={satelliteTransitsScreenStyles.emptyState}>
                   {searchMode === "next" ? t("screen.emptyNext", { days: NEXT_TRANSIT_MAX_DAYS }) : t("screen.empty")}
                 </Text>
               ) : transits.length > 0 ? (
-                <View style={issTransitsScreenStyles.list}>
+                <View style={satelliteTransitsScreenStyles.list}>
                   {transits.map((transit) => (
-                    <TransitCard key={transit.midDate.getTime()} transit={transit} onPress={() => handleTransitPress(transit)} />
+                    <TransitCard key={`${transit.body}-${transit.midDate.getTime()}`} transit={transit} onPress={() => handleTransitPress(transit)} />
                   ))}
                 </View>
               ) : (
-                <Text style={issTransitsScreenStyles.emptyState}>
+                <Text style={satelliteTransitsScreenStyles.emptyState}>
                   {searchMode === "next" ? t("screen.emptyNext", { days: NEXT_TRANSIT_MAX_DAYS }) : t("screen.empty")}
                 </Text>
               )
             }
 
-            <View style={issTransitsScreenStyles.section}>
+            <View style={satelliteTransitsScreenStyles.section}>
                   <InfoCard icon={Info} title={t("screen.explanation.whatTitle")} description={t("screen.explanation.whatDescription")} />
 
                   <SectionHeader title={t("screen.explanation.paramsTitle")} />
-                  <View style={issTransitsScreenStyles.explanationCard}>
+                  <View style={satelliteTransitsScreenStyles.explanationCard}>
                     {([
                       ["angularSize", "details.stats.angularSize"],
                       ["position", "details.stats.position"],
@@ -242,10 +299,10 @@ const IssTransitsScreen = () => {
                     ] as const).map(([paramKey, titleKey], index) => (
                       <View
                         key={paramKey}
-                        style={[issTransitsScreenStyles.explanationCard.item, index < 3 && issTransitsScreenStyles.explanationCard.item.withBorder]}
+                        style={[satelliteTransitsScreenStyles.explanationCard.item, index < 3 && satelliteTransitsScreenStyles.explanationCard.item.withBorder]}
                       >
-                        <Text style={issTransitsScreenStyles.explanationCard.item.title}>{t(titleKey)}</Text>
-                        <Text style={issTransitsScreenStyles.explanationCard.item.description}>{t(`screen.explanation.params.${paramKey}`)}</Text>
+                        <Text style={satelliteTransitsScreenStyles.explanationCard.item.title}>{t(titleKey)}</Text>
+                        <Text style={satelliteTransitsScreenStyles.explanationCard.item.description}>{t(`screen.explanation.params.${paramKey}`)}</Text>
                       </View>
                     ))}
                   </View>
@@ -257,4 +314,4 @@ const IssTransitsScreen = () => {
   );
 };
 
-export default IssTransitsScreen;
+export default SatelliteTransitsScreen;

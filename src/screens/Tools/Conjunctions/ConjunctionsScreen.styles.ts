@@ -39,7 +39,7 @@ export const conjunctionsScreenStyles = {
     },
   },
 
-  // Même rayon/hauteur que la carte de StepOne / IssTransitsScreen.
+  // Même rayon/hauteur que la carte de StepOne / SatelliteTransitsScreen.
   mapContainer: {
     borderRadius: radius.heroCard,
     overflow: "hidden" as const,

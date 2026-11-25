@@ -47,7 +47,7 @@ const ConjunctionsScreen = () => {
   const [objectB, setObjectB] = useState<CatalogObjectDetail | null>(null);
 
   // Lieu choisi sur la carte pour cette recherche uniquement : jamais persisté, prime simplement sur
-  // la position effective de l'app tant qu'il est défini — même bloc que IssTransitsScreen.
+  // la position effective de l'app tant qu'il est défini — même bloc que SatelliteTransitsScreen.
   const [customLocation, setCustomLocation] = useState<GpsLocation | null>(null);
   const [customAltitudeInput, setCustomAltitudeInput] = useState<string>("");
   const [showMapPicker, setShowMapPicker] = useState(false);

@@ -1,7 +1,7 @@
 {
   "screen": {
-    "title": "Transits ISS",
-    "subtitle": "Devant le Soleil",
+    "title": "Transits satellites",
+    "subtitle": "Devant le Soleil ou la Lune",
     "location": {
       "title": "Lieu d'observation",
       "unknown": "Position inconnue",
@@ -10,6 +10,20 @@
       "useCurrent": "Revenir à ma position actuelle",
       "altitudeLabel": "Altitude (optionnel)",
       "altitudePlaceholder": "Ex : 350"
+    },
+    "options": {
+      "title": "Paramètres de recherche",
+      "targetBodyLabel": "Corps visé",
+      "satelliteLabel": "Satellite"
+    },
+    "targetBody": {
+      "sun": "Soleil",
+      "moon": "Lune",
+      "both": "Les deux"
+    },
+    "satellite": {
+      "iss": "ISS",
+      "tiangong": "Tiangong"
     },
     "dateRange": {
       "title": "Période",
@@ -30,13 +44,13 @@
     "emptyNext": "Aucun transit trouvé dans les {{days}} prochains jours depuis ce lieu.",
     "explanation": {
       "whatTitle": "Qu'est-ce qu'un transit ?",
-      "whatDescription": "Un transit a lieu quand l'ISS passe exactement entre vous et le Soleil : elle apparaît alors en silhouette sombre sur le disque solaire, pendant moins d'une seconde en général.",
+      "whatDescription": "Un transit a lieu quand un satellite (ISS ou Tiangong) passe exactement entre vous et le Soleil ou la Lune : il apparaît alors en silhouette sombre sur le disque, pendant moins d'une seconde en général devant le Soleil (un peu plus devant la Lune, plus proche).",
       "paramsTitle": "Les informations affichées",
       "params": {
-        "angularSize": "La taille apparente de l'ISS dans le ciel, en secondes d'arc.",
+        "angularSize": "La taille apparente du satellite dans le ciel, en secondes d'arc.",
         "position": "La direction (azimut) et la hauteur (altitude) où regarder au moment du transit.",
-        "duration": "Le temps que met l'ISS à traverser le disque solaire.",
-        "missDistance": "À quel point l'ISS passe près du centre du Soleil."
+        "duration": "Le temps que met le satellite à traverser le disque.",
+        "missDistance": "À quel point le satellite passe près du centre du disque."
       }
     }
   },
@@ -44,7 +58,7 @@
     "cardSubtitle": "{{altitude}}° d'altitude · {{duration}} s"
   },
   "details": {
-    "screenTitle": "Transit ISS",
+    "screenTitle": "Transit",
     "notFound": "Impossible de recalculer ce transit.",
     "stats": {
       "angularSize": "taille angulaire",
@@ -53,15 +67,15 @@
       "durationValue": "{{value}} s",
       "missDistance": "distance de traversée"
     },
-    "eyeSafety": "Ne regardez jamais le Soleil sans filtre solaire certifié (ND5), même pendant le transit : l'ISS n'atténue en rien le rayonnement.",
+    "eyeSafety": "Ne regardez jamais le Soleil sans filtre solaire certifié (ND5), même pendant le transit : le satellite n'atténue en rien le rayonnement.",
     "groundPath": {
       "title": "Ligne de visibilité",
-      "hint": "Chaque point de la ligne correspond à un instant différent du passage : se déplacer le long de la bande revient à décaler légèrement l'heure du transit, pas à le voir en même temps partout. Position indicative (précision de quelques kilomètres)."
+      "hint": "Chaque point de la ligne correspond à un instant différent du passage : se déplacer le long de la bande revient à décaler légèrement l'heure du transit, pas à le voir en même temps partout. Position indicative (précision de quelques kilomètres, plus approximative pour un transit lunaire)."
     },
     "technical": {
       "title": "Détails techniques",
       "chord": "Corde parcourue",
-      "sunRadius": "Rayon apparent du Soleil",
+      "bodyRadius": "Rayon apparent du corps visé",
       "midTime": "Instant du transit"
     }
   }

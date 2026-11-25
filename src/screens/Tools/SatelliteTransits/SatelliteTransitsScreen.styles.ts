@@ -1,10 +1,16 @@
 import { app_colors, radius } from "../../../helpers/variables";
 
-export const issTransitsScreenStyles = {
+export const satelliteTransitsScreenStyles = {
   section: {
     display: "flex" as const,
     flexDirection: "column" as const,
     gap: 8,
+  },
+
+  optionLabel: {
+    fontFamily: "DMMonoMedium",
+    fontSize: 12,
+    color: app_colors.primary.medium,
   },
 
   locationSummary: {

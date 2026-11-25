@@ -129,13 +129,13 @@ export const toolsList: AstroshareTool[] = [
     access: "freemium",
     route: "/tools/conjunctions-calculator",
   },
-  // Transits ISS
+  // Transits de satellites (ISS, Tiangong) devant le Soleil ou la Lune
   {
-    id: "iss-transits",
-    icon: BringToFront, 
+    id: "satellite-transits",
+    icon: BringToFront,
     category: "observe",
     access: "premium",
-    route: "/tools/iss-transits",
+    route: "/tools/satellite-transits",
   },
   // Modèles 3D du système solaire / Lunes / Vaisseaux spatiaux / Astéroïdes / Comètes
   {
