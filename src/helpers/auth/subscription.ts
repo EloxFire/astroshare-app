@@ -6,8 +6,12 @@
 //
 // Le paramètre n'est volontairement pas typé `User` : `useAuth()` (AuthContext) renvoie `any`
 // (contexte typé `any` dans tout le reste de l'app), et `User["role"]` est lui-même mal typé
+
+import { User } from "../../types/auth/User";
+import { UserRoles } from "../../types/auth/UserRoles";
+
 // (`UserRoles` est un objet, pas une union de chaînes) — hors scope de cette fonction à corriger.
-export const isProUser = (authUser: { role?: string } | null | undefined): boolean => {
+export const isProUser = (authUser: User | null | undefined): boolean => {
   if (!authUser) return false;
-  return authUser.role === "SUBSCRIBER" || authUser.role === "PARTNER" || authUser.role === "ADMIN";
+  return authUser.role === UserRoles.SUBSCRIBER || authUser.role === UserRoles.PARTNER || authUser.role === UserRoles.ADMIN;
 };

@@ -862,7 +862,6 @@ On ne peut pas lancer l'app depuis un agent. Méthodes utilisées jusqu'ici :
 | Formulaires d'ajout de matériel (`src/screens/Tools/Journal/Gear/**/Add*`), sauf `AddMount` et `AddSetup` | Le bouton `Button` d'enregistrement est `disabled` quand un champ requis manque, sans aucun message : rien ne se passe au clic, sans explication. `AddSetup` affiche une erreur sur le champ nom à la place de `disabled` (voir §4 `Button`) ; les autres formulaires de matériel ne le sont pas encore |
 | `src/i18n/locales/{en,it}/tools/journal/gear/setups/details.json` | `pieceCount_one`/`pieceCount_other` contiennent encore `{{count}}`, alors que `SetupDetails` les appelle sans `count` (le nombre est affiché à part, comme dans le fichier `fr`) : « {{count}} pieces of gear » s'affiche tel quel en anglais et en italien |
 | `src/components/cards/ObjectCardLite/ObjectCardLite.tsx` | Libellé d'accessibilité du bouton de suppression écrit en dur en français (« Retirer de la liste ») |
-| `src/types/auth/UserRoles.ts` | `UserRoles` est typé comme un objet (`{ADMIN: "ADMIN", ...}`), pas comme une union de chaînes : `User.role` ne se compare pas directement sous TypeScript strict. Contourné dans `isProUser` (`src/helpers/auth/subscription.ts`) en typant son paramètre `{role?: string} \| null \| undefined` plutôt qu'en important `User` |
 | `src/screens/Tools/SatelliteTracker/SatellitesScreen.tsx` | Condition PRO de la section « Mes satellites » inversée (`userIsPro ? <LockedFeatureCard /> : <liste réelle />`) : affiche la carte verrouillée aux comptes PRO et la liste réelle aux comptes non-PRO. Repéré en construisant `LightPollutionMapScreen` (qui, lui, utilise la bonne condition) |
 | `src/i18n/locales/{en,it}/common.json` | Le bloc `lightPollution` (`indicators`, `indicatorDescriptions`, `sqm.numeric`, `limitingMagnitude`) n'existe que dans `fr` : en/it retombent silencieusement sur le français pour tout texte lié à l'échelle de Bortle (`ObservatoryDetails`, `StepTwo`, `LightPollutionMapScreen`) |
 
@@ -887,6 +886,10 @@ Le journal commence avec le commit `8527e2f`. Les changements antérieurs, comme
 i18n, `SelectInput` ou `ImageHeaderScrollView`, sont décrits dans les sections ci-dessus mais n'ont pas
 d'entrée datée.
 
+- **2026-11-26** — même commit — `UserRoles` (`src/types/auth/UserRoles.ts`) converti d'un type
+  objet en véritable constante runtime (`export const UserRoles = {...} as const` + type dérivé) :
+  `isProUser` (`src/helpers/auth/subscription.ts`) compare désormais contre ces constantes et prend un
+  vrai `User` en paramètre, plus un `{role?: string}` de contournement — §7 (ligne retirée).
 - **2026-11-25** — même commit — généralisation de l'outil Transits (ex-ISS) : corps visé réglable
   (Soleil/Lune/les deux) et satellite réglable (ISS/Tiangong), route et i18n renommés
   `/tools/iss-transits` → `/tools/satellite-transits`. Cœur de recherche (`solarTransits.ts` →
