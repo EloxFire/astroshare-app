@@ -18,6 +18,19 @@ export const formatShortMonth = (date: Dayjs): string => date.format("MMM").repl
 export const formatLocationLabel = (location: { display_name?: string; name?: string }, fallback: string): string =>
   location.display_name || location.name || fallback;
 
+// "UTC+2" / "UTC-5" / "UTC+5:30" / "UTC" — décalage du réglage d'affichage COURANT (voir
+// useAppUnits), PAS un vrai fuseau géographique du lieu regardé (l'app ne fait pas de lookup
+// géo→fuseau) : le même référentiel que toutes les heures déjà affichées à l'écran avec `formatDate`.
+export const formatUtcOffsetLabel = (formatDate: FormatDate, date: Date | string): string => {
+  const offsetMinutes = formatDate(date).utcOffset();
+  if (offsetMinutes === 0) return "UTC";
+  const sign = offsetMinutes > 0 ? "+" : "-";
+  const absMinutes = Math.abs(offsetMinutes);
+  const hours = Math.floor(absMinutes / 60);
+  const minutes = absMinutes % 60;
+  return `UTC${sign}${hours}${minutes ? `:${minutes.toString().padStart(2, "0")}` : ""}`;
+};
+
 // Insère une espace tous les 3 chiffres (ex: 384 400 → "384 400") — utilisé pour l'affichage
 // de grandes distances (ex: distance Terre-Lune en km).
 export const formatWithSpaces = (value: number): string => value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
@@ -42,6 +55,17 @@ export const formatLocaleNumber = (value: number, language: string, decimals = 0
   const [integerPart, decimalPart] = value.toFixed(decimals).split(".");
   const groupedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, thousands);
   return decimalPart ? `${groupedInteger}${decimal}${decimalPart}` : groupedInteger;
+};
+
+// Lettre d'hémisphère ouest par langue ("O" pour Ouest/Ovest, pas "W") — seule la longitude en a
+// besoin, le nord/sud ("N"/"S") est identique dans les 3 langues de l'app.
+const WEST_LETTER_BY_LANGUAGE: Record<string, string> = { fr: "O", it: "O" };
+
+// "43,53° N · 5,45° E" (fr), décimal localisé (formatLocaleNumber) + lettres d'hémisphère.
+export const formatLatLon = (latitude: number, longitude: number, language: string): string => {
+  const latLetter = latitude >= 0 ? "N" : "S";
+  const lonLetter = longitude >= 0 ? "E" : WEST_LETTER_BY_LANGUAGE[language] ?? "W";
+  return `${formatLocaleNumber(Math.abs(latitude), language, 2)}° ${latLetter} · ${formatLocaleNumber(Math.abs(longitude), language, 2)}° ${lonLetter}`;
 };
 
 // Convertit une distance en mètres vers un affichage en km, localisé selon `language` (ex:

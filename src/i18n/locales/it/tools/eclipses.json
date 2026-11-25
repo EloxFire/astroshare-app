@@ -1,0 +1,151 @@
+{
+  "screen": {
+    "title": "Eclissi",
+    "subtitle": "Circostanze locali",
+    "year": "Anno",
+    "type": "Tipo",
+    "filters": {
+      "all": "Tutte",
+      "solar": "Sole",
+      "lunar": "Luna"
+    },
+    "visibleOnly": {
+      "title": "Solo visibili da me",
+      "description": "Mostra solo le eclissi visibili dalla tua posizione attuale."
+    },
+    "nextEclipse": {
+      "title": "Da non perdere",
+      "eyebrow": "Prossima eclisse",
+      "today": "Oggi",
+      "countdown_one": "G-{{count}}",
+      "countdown_other": "G-{{count}}"
+    },
+    "empty": "Nessuna eclisse trovata per questo periodo."
+  },
+  "list": {
+    "notVisible": "Non visibile",
+    "visibleHere": "{{value}}% da te"
+  },
+  "types": {
+    "solar": {
+      "partial": "Eclisse parziale",
+      "annular": "Eclisse anulare",
+      "total": "Eclisse totale"
+    },
+    "lunar": {
+      "penumbral": "Eclisse penombrale",
+      "partial": "Eclisse parziale",
+      "total": "Eclisse totale"
+    }
+  },
+  "details": {
+    "notFound": "Impossibile caricare questa eclisse.",
+    "searchPlaceholder": "Cerca una città...",
+    "tapHint": "Tocca la mappa o cerca una città per vedere le circostanze locali.",
+    "notVisibleHere": "L'eclisse non è visibile da questo luogo.",
+    "moonNotVisible": "La Luna resta sotto l'orizzonte per tutta la durata dell'eclisse — invisibile da qui.",
+    "belowHorizon": "sotto l'orizzonte",
+    "unnamedLocation": "Luogo senza nome",
+    "notifyMe": "Avvisami il giorno stesso",
+    "notifyMoonrise": "Avvisami al sorgere della Luna",
+    "eyeSafety": "Non guardare mai il Sole senza un filtro solare certificato ISO 12312-2, anche durante un'eclisse parziale.",
+    "distanceCompass": "{{distance}} km {{compass}}",
+    "header": {
+      "type": {
+        "solar": { "partial": "Parziale", "annular": "Anulare", "total": "Totale" },
+        "lunar": { "penumbral": "Penombrale", "partial": "Parziale", "total": "Totale" }
+      },
+      "distanceToTotality": "A {{distance}} km dalla totalità",
+      "tile": { "start": "Inizio", "maximum": "Massimo", "end": "Fine" },
+      "localTime": "ora locale",
+      "sunAltitudeAtMax": "Sole a {{altitude}}° al massimo",
+      "moonAltitudeAtMax": "Luna a {{altitude}}° al massimo",
+      "moonAltitude": "Luna a {{altitude}}°",
+      "totalityWindow": "Totalità dalle {{start}} alle {{end}}",
+      "risesEclipsed": "La Luna sorge già eclissata",
+      "setsEclipsed": "La Luna tramonta prima della fine dell'eclisse",
+      "risesAndSetsEclipsed": "La Luna è sopra l'orizzonte solo per una parte dell'eclisse"
+    },
+    "nearestVisible": {
+      "search": "Vedi il punto visibile più vicino",
+      "loading": "Ricerca di un punto visibile e sgombro…",
+      "empty": "Nessun punto visibile trovato nelle vicinanze."
+    },
+    "diagram": {
+      "frame": {
+        "celestial": "Riferimento celeste",
+        "local": "Riferimento locale"
+      },
+      "solar": {
+        "title": "Traiettoria della Luna",
+        "note": "Diagramma schematico (dimensioni e posizioni approssimative)"
+      },
+      "lunar": {
+        "title": "Traiettoria nell'ombra terrestre",
+        "note": "Cerchio esterno = penombra, cerchio interno = ombra (scala reale)"
+      }
+    },
+    "weather": {
+      "title": "Previsioni meteo",
+      "error": "Previsioni meteo non disponibili al momento.",
+      "tooFar_zero": "Previsioni meteo non ancora disponibili per questa eclisse: il meteo proviene da un servizio in tempo reale, senza previsioni a lungo termine. Il dettaglio giorno per giorno è disponibile da G-8, quello ora per ora da H-48.",
+      "tooFar_one": "Previsioni meteo non ancora disponibili per questa eclisse (circa {{count}} giorno da aspettare): il meteo proviene da un servizio in tempo reale, senza previsioni a lungo termine. Il dettaglio giorno per giorno è disponibile da G-8, quello ora per ora da H-48.",
+      "tooFar_other": "Previsioni meteo non ancora disponibili per questa eclisse (circa {{count}} giorni da aspettare): il meteo proviene da un servizio in tempo reale, senza previsioni a lungo termine. Il dettaglio giorno per giorno è disponibile da G-8, quello ora per ora da H-48.",
+      "dayOfEclipse": "Previsione del giorno dell'eclisse",
+      "hourlyTitle": "Ora per ora",
+      "rating": {
+        "ideal": "Ideale per l'osservazione",
+        "possible": "Osservazione possibile",
+        "difficult": "Condizioni difficili"
+      },
+      "stats": {
+        "clouds": "Nuvole",
+        "temperature": "Temperatura",
+        "precipitation": "Precipitazioni",
+        "wind": "Vento"
+      }
+    },
+    "stats": {
+      "magnitude": "magnitudine",
+      "obscuration": "oscuramento",
+      "duration": "durata",
+      "totalDuration": "durata totalità"
+    },
+    "phases": {
+      "solar": {
+        "P1": "Primo contatto",
+        "U1": "Inizio totalità/anularità",
+        "greatest": "Massimo",
+        "U4": "Fine totalità/anularità",
+        "P4": "Ultimo contatto"
+      },
+      "lunar": {
+        "P1": "Inizio penombrale",
+        "U1": "Inizio parziale",
+        "U2": "Inizio totalità",
+        "greatest": "Massimo",
+        "U3": "Fine totalità",
+        "U4": "Fine parziale",
+        "P2": "Fine penombrale"
+      }
+    },
+    "visibilitySolar": {
+      "excellent": "Il Sole sarà molto alto nel cielo ({{altitude}}°): il rilievo circostante non dovrebbe ostacolare affatto l'osservazione.",
+      "veryGood": "Il Sole sarà alto nel cielo ({{altitude}}°): il rilievo circostante non dovrebbe ostacolare l'osservazione.",
+      "good": "Il Sole resterà abbastanza alto ({{altitude}}°): un orizzonte sgombro non è indispensabile, ma resta preferibile.",
+      "medium": "Il Sole sarà a un'altezza moderata ({{altitude}}°): privilegia un punto di osservazione senza colline, edifici o alberi nei dintorni.",
+      "poor": "Il Sole sarà basso sull'orizzonte ({{altitude}}°): è necessario un orizzonte ben sgombro.",
+      "veryPoor": "Il Sole sarà molto basso sull'orizzonte ({{altitude}}°): è indispensabile un orizzonte perfettamente sgombro.",
+      "blocked": "Il rilievo rischia di mascherare l'eclisse da questo punto preciso."
+    },
+    "visibilityLunar": {
+      "excellent": "La Luna sarà molto alta nel cielo ({{altitude}}°): il rilievo circostante non dovrebbe ostacolare affatto l'osservazione.",
+      "veryGood": "La Luna sarà alta nel cielo ({{altitude}}°): il rilievo circostante non dovrebbe ostacolare l'osservazione.",
+      "good": "La Luna resterà abbastanza alta ({{altitude}}°): un orizzonte sgombro non è indispensabile, ma resta preferibile.",
+      "medium": "La Luna sarà a un'altezza moderata ({{altitude}}°): privilegia un punto di osservazione senza colline, edifici o alberi nei dintorni.",
+      "poor": "La Luna sarà bassa sull'orizzonte ({{altitude}}°): è necessario un orizzonte ben sgombro.",
+      "veryPoor": "La Luna sarà molto bassa sull'orizzonte ({{altitude}}°): è indispensabile un orizzonte perfettamente sgombro.",
+      "blocked": "Il rilievo rischia di mascherare l'eclisse da questo punto preciso."
+    }
+  }
+}

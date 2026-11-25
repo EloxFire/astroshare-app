@@ -1,0 +1,151 @@
+{
+  "screen": {
+    "title": "Eclipses",
+    "subtitle": "Local circumstances",
+    "year": "Year",
+    "type": "Type",
+    "filters": {
+      "all": "All",
+      "solar": "Sun",
+      "lunar": "Moon"
+    },
+    "visibleOnly": {
+      "title": "Visible from me only",
+      "description": "Only show eclipses visible from your current position."
+    },
+    "nextEclipse": {
+      "title": "Don't miss it",
+      "eyebrow": "Next eclipse",
+      "today": "Today",
+      "countdown_one": "T-{{count}}",
+      "countdown_other": "T-{{count}}"
+    },
+    "empty": "No eclipse found for this period."
+  },
+  "list": {
+    "notVisible": "Not visible",
+    "visibleHere": "{{value}}% where you are"
+  },
+  "types": {
+    "solar": {
+      "partial": "Partial eclipse",
+      "annular": "Annular eclipse",
+      "total": "Total eclipse"
+    },
+    "lunar": {
+      "penumbral": "Penumbral eclipse",
+      "partial": "Partial eclipse",
+      "total": "Total eclipse"
+    }
+  },
+  "details": {
+    "notFound": "Couldn't load this eclipse.",
+    "searchPlaceholder": "Search for a city...",
+    "tapHint": "Tap the map or search for a city to see local circumstances.",
+    "notVisibleHere": "The eclipse isn't visible from this location.",
+    "moonNotVisible": "The Moon stays below the horizon the entire time at this location — invisible from here.",
+    "belowHorizon": "below horizon",
+    "unnamedLocation": "Unnamed location",
+    "notifyMe": "Remind me on the day",
+    "notifyMoonrise": "Remind me at moonrise",
+    "eyeSafety": "Never look at the Sun without a certified ISO 12312-2 solar filter, even during a partial eclipse.",
+    "distanceCompass": "{{distance}} km {{compass}}",
+    "header": {
+      "type": {
+        "solar": { "partial": "Partial", "annular": "Annular", "total": "Total" },
+        "lunar": { "penumbral": "Penumbral", "partial": "Partial", "total": "Total" }
+      },
+      "distanceToTotality": "{{distance}} km from totality",
+      "tile": { "start": "Start", "maximum": "Maximum", "end": "End" },
+      "localTime": "local time",
+      "sunAltitudeAtMax": "Sun at {{altitude}}° at maximum",
+      "moonAltitudeAtMax": "Moon at {{altitude}}° at maximum",
+      "moonAltitude": "Moon at {{altitude}}°",
+      "totalityWindow": "Totality from {{start}} to {{end}}",
+      "risesEclipsed": "The Moon rises already eclipsed",
+      "setsEclipsed": "The Moon sets before the eclipse ends",
+      "risesAndSetsEclipsed": "The Moon is above the horizon for only part of the eclipse"
+    },
+    "nearestVisible": {
+      "search": "Find the nearest visible point",
+      "loading": "Searching for a visible, clear point…",
+      "empty": "No visible point found nearby."
+    },
+    "diagram": {
+      "frame": {
+        "celestial": "Celestial frame",
+        "local": "Local frame"
+      },
+      "solar": {
+        "title": "Moon's path",
+        "note": "Schematic diagram (approximate sizes and positions)"
+      },
+      "lunar": {
+        "title": "Path through Earth's shadow",
+        "note": "Outer circle = penumbra, inner circle = umbra (true scale)"
+      }
+    },
+    "weather": {
+      "title": "Weather forecast",
+      "error": "Weather forecast unavailable right now.",
+      "tooFar_zero": "No weather forecast yet for this eclipse: the weather comes from a live service, with no very long-range forecasting. Day-by-day detail becomes available from T-8 days, hour-by-hour from T-48h.",
+      "tooFar_one": "No weather forecast yet for this eclipse (about {{count}} day left to wait): the weather comes from a live service, with no very long-range forecasting. Day-by-day detail becomes available from T-8 days, hour-by-hour from T-48h.",
+      "tooFar_other": "No weather forecast yet for this eclipse (about {{count}} days left to wait): the weather comes from a live service, with no very long-range forecasting. Day-by-day detail becomes available from T-8 days, hour-by-hour from T-48h.",
+      "dayOfEclipse": "Forecast for the day of the eclipse",
+      "hourlyTitle": "Hour by hour",
+      "rating": {
+        "ideal": "Ideal for observation",
+        "possible": "Observation possible",
+        "difficult": "Difficult conditions"
+      },
+      "stats": {
+        "clouds": "Clouds",
+        "temperature": "Temperature",
+        "precipitation": "Precipitation",
+        "wind": "Wind"
+      }
+    },
+    "stats": {
+      "magnitude": "magnitude",
+      "obscuration": "obscuration",
+      "duration": "duration",
+      "totalDuration": "totality duration"
+    },
+    "phases": {
+      "solar": {
+        "P1": "First contact",
+        "U1": "Totality/annularity begins",
+        "greatest": "Maximum",
+        "U4": "Totality/annularity ends",
+        "P4": "Last contact"
+      },
+      "lunar": {
+        "P1": "Penumbral begins",
+        "U1": "Partial begins",
+        "U2": "Totality begins",
+        "greatest": "Maximum",
+        "U3": "Totality ends",
+        "U4": "Partial ends",
+        "P2": "Penumbral ends"
+      }
+    },
+    "visibilitySolar": {
+      "excellent": "The Sun will be very high in the sky ({{altitude}}°): surrounding terrain shouldn't block the view at all.",
+      "veryGood": "The Sun will be high in the sky ({{altitude}}°): surrounding terrain shouldn't block the view.",
+      "good": "The Sun will stay fairly high ({{altitude}}°): a clear horizon isn't essential, but is still preferable.",
+      "medium": "The Sun will be at a moderate height ({{altitude}}°): favor a spot without hills, buildings or trees nearby.",
+      "poor": "The Sun will be low on the horizon ({{altitude}}°): a well-cleared horizon is needed.",
+      "veryPoor": "The Sun will be very low on the horizon ({{altitude}}°): a perfectly clear horizon is essential.",
+      "blocked": "Terrain may block the eclipse from this exact spot."
+    },
+    "visibilityLunar": {
+      "excellent": "The Moon will be very high in the sky ({{altitude}}°): surrounding terrain shouldn't block the view at all.",
+      "veryGood": "The Moon will be high in the sky ({{altitude}}°): surrounding terrain shouldn't block the view.",
+      "good": "The Moon will stay fairly high ({{altitude}}°): a clear horizon isn't essential, but is still preferable.",
+      "medium": "The Moon will be at a moderate height ({{altitude}}°): favor a spot without hills, buildings or trees nearby.",
+      "poor": "The Moon will be low on the horizon ({{altitude}}°): a well-cleared horizon is needed.",
+      "veryPoor": "The Moon will be very low on the horizon ({{altitude}}°): a perfectly clear horizon is essential.",
+      "blocked": "Terrain may block the eclipse from this exact spot."
+    }
+  }
+}

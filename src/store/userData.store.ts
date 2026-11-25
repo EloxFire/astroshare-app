@@ -117,7 +117,7 @@ const defaultUserData: UserSettingsState = {
       updatedAt: new Date().toISOString(),
     },
   ],
-  recentSearches: []
+  recentSearches: [],
 }
 
 export const useUserDataStore = create<UserSettingsData>()(

@@ -12,7 +12,7 @@ export const withOpacity = (hexColor: string, opacity: number): string => {
   return `${hexColor}${alpha}`;
 };
 
-const hexToRgb = (hexColor: string): [number, number, number] => {
+export const hexToRgb = (hexColor: string): [number, number, number] => {
   const sanitized = hexColor.replace("#", "");
   return [
     parseInt(sanitized.slice(0, 2), 16),
@@ -58,6 +58,12 @@ export const app_colors = {
   },
   ambre: {
     main: "#FFC851"
+  },
+  // Soleil dans les schémas d'éclipses (EclipseTypeIcon, MoonPathDiagram) : plus orangé que
+  // yellow.main (#FFD700), qui tranche mal sur les fonds clairs (contraste insuffisant dans la liste
+  // EclipseRow/NextEclipseCard) — demande utilisateur.
+  sun: {
+    main: "#FF9736",
   },
   // Rouge "danger" (erreurs, suppression) — pas un rouge pur (#FF0000), qui tranche trop avec
   // le reste de la palette (violets/jaunes) ; une teinte un peu moins saturée s'y fond mieux.

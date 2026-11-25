@@ -1,0 +1,151 @@
+{
+  "screen": {
+    "title": "Éclipses",
+    "subtitle": "Circonstances locales",
+    "year": "Année",
+    "type": "Type",
+    "filters": {
+      "all": "Toutes",
+      "solar": "Soleil",
+      "lunar": "Lune"
+    },
+    "visibleOnly": {
+      "title": "Visibles chez moi uniquement",
+      "description": "N'afficher que les éclipses visibles depuis ta position actuelle."
+    },
+    "nextEclipse": {
+      "title": "À ne pas manquer",
+      "eyebrow": "Prochaine éclipse",
+      "today": "Aujourd'hui",
+      "countdown_one": "J-{{count}}",
+      "countdown_other": "J-{{count}}"
+    },
+    "empty": "Aucune éclipse trouvée pour cette période."
+  },
+  "list": {
+    "notVisible": "Non visible",
+    "visibleHere": "{{value}}% chez vous"
+  },
+  "types": {
+    "solar": {
+      "partial": "Éclipse partielle",
+      "annular": "Éclipse annulaire",
+      "total": "Éclipse totale"
+    },
+    "lunar": {
+      "penumbral": "Éclipse pénombrale",
+      "partial": "Éclipse partielle",
+      "total": "Éclipse totale"
+    }
+  },
+  "details": {
+    "notFound": "Impossible de charger cette éclipse.",
+    "searchPlaceholder": "Rechercher une ville...",
+    "tapHint": "Touche la carte ou recherche une ville pour voir les circonstances locales.",
+    "notVisibleHere": "L'éclipse n'est pas visible depuis ce lieu.",
+    "moonNotVisible": "La Lune est sous l'horizon à cet endroit pendant toute la durée de l'éclipse — invisible depuis ce lieu.",
+    "belowHorizon": "sous l'horizon",
+    "unnamedLocation": "Lieu sans nom",
+    "notifyMe": "M'alerter le jour J",
+    "notifyMoonrise": "M'alerter au lever de la Lune",
+    "eyeSafety": "Ne regarde jamais le Soleil sans filtre solaire certifié ISO 12312-2, même pendant une éclipse partielle.",
+    "distanceCompass": "{{distance}} km {{compass}}",
+    "header": {
+      "type": {
+        "solar": { "partial": "Partielle", "annular": "Annulaire", "total": "Totale" },
+        "lunar": { "penumbral": "Pénombrale", "partial": "Partielle", "total": "Totale" }
+      },
+      "distanceToTotality": "À {{distance}} km de la totalité",
+      "tile": { "start": "Début", "maximum": "Maximum", "end": "Fin" },
+      "localTime": "heure locale",
+      "sunAltitudeAtMax": "Soleil à {{altitude}}° au maximum",
+      "moonAltitudeAtMax": "Lune à {{altitude}}° au maximum",
+      "moonAltitude": "Lune à {{altitude}}°",
+      "totalityWindow": "Totalité de {{start}} à {{end}}",
+      "risesEclipsed": "La Lune se lève déjà éclipsée",
+      "setsEclipsed": "La Lune se couche avant la fin de l'éclipse",
+      "risesAndSetsEclipsed": "La Lune n'est au-dessus de l'horizon qu'une partie de l'éclipse"
+    },
+    "nearestVisible": {
+      "search": "Voir le point visible le plus proche",
+      "loading": "Recherche d'un point visible et dégagé…",
+      "empty": "Aucun point visible trouvé à proximité."
+    },
+    "diagram": {
+      "frame": {
+        "celestial": "Repère céleste",
+        "local": "Repère local"
+      },
+      "solar": {
+        "title": "Trajectoire de la Lune",
+        "note": "Diagramme schématique (tailles et positions approximatives)"
+      },
+      "lunar": {
+        "title": "Trajectoire dans l'ombre de la Terre",
+        "note": "Cercle extérieur = pénombre, cercle intérieur = ombre (échelle réelle)"
+      }
+    },
+    "weather": {
+      "title": "Prévisions météo",
+      "error": "Prévisions météo indisponibles pour le moment.",
+      "tooFar_zero": "Prévisions météo pas encore disponibles pour cette éclipse : la météo provient d'un service en direct, sans prévision à très long terme. Le détail jour par jour arrive à partir de J-8, heure par heure à partir de H-48.",
+      "tooFar_one": "Prévisions météo pas encore disponibles pour cette éclipse (encore environ {{count}} jour à attendre) : la météo provient d'un service en direct, sans prévision à très long terme. Le détail jour par jour arrive à partir de J-8, heure par heure à partir de H-48.",
+      "tooFar_other": "Prévisions météo pas encore disponibles pour cette éclipse (encore environ {{count}} jours à attendre) : la météo provient d'un service en direct, sans prévision à très long terme. Le détail jour par jour arrive à partir de J-8, heure par heure à partir de H-48.",
+      "dayOfEclipse": "Prévision du jour J",
+      "hourlyTitle": "Heure par heure",
+      "rating": {
+        "ideal": "Idéal pour l'observation",
+        "possible": "Observation possible",
+        "difficult": "Conditions difficiles"
+      },
+      "stats": {
+        "clouds": "Nuages",
+        "temperature": "Température",
+        "precipitation": "Précipitations",
+        "wind": "Vent"
+      }
+    },
+    "stats": {
+      "magnitude": "magnitude",
+      "obscuration": "obscuration",
+      "duration": "durée",
+      "totalDuration": "durée totalité"
+    },
+    "phases": {
+      "solar": {
+        "P1": "Premier contact",
+        "U1": "Début totalité/annularité",
+        "greatest": "Maximum",
+        "U4": "Fin totalité/annularité",
+        "P4": "Dernier contact"
+      },
+      "lunar": {
+        "P1": "Début de la pénombrale",
+        "U1": "Début de la partielle",
+        "U2": "Début de la totalité",
+        "greatest": "Maximum",
+        "U3": "Fin de la totalité",
+        "U4": "Fin de la partielle",
+        "P2": "Fin de la pénombrale"
+      }
+    },
+    "visibilitySolar": {
+      "excellent": "Le Soleil sera très haut dans le ciel ({{altitude}}°) : le relief environnant ne devrait absolument pas gêner l'observation.",
+      "veryGood": "Le Soleil sera haut dans le ciel ({{altitude}}°) : le relief environnant ne devrait pas gêner l'observation.",
+      "good": "Le Soleil restera assez haut ({{altitude}}°) : un horizon dégagé n'est pas indispensable, mais reste préférable.",
+      "medium": "Le Soleil sera d'une hauteur modérée ({{altitude}}°) : privilégie un point de vue sans collines, bâtiments ou arbres alentour.",
+      "poor": "Le Soleil sera bas sur l'horizon ({{altitude}}°) : un horizon bien dégagé est nécessaire.",
+      "veryPoor": "Le Soleil sera très bas sur l'horizon ({{altitude}}°) : un horizon parfaitement dégagé est indispensable.",
+      "blocked": "Le relief risque de masquer l'éclipse depuis ce point précis."
+    },
+    "visibilityLunar": {
+      "excellent": "La Lune sera très haute dans le ciel ({{altitude}}°) : le relief environnant ne devrait absolument pas gêner l'observation.",
+      "veryGood": "La Lune sera haute dans le ciel ({{altitude}}°) : le relief environnant ne devrait pas gêner l'observation.",
+      "good": "La Lune restera assez haute ({{altitude}}°) : un horizon dégagé n'est pas indispensable, mais reste préférable.",
+      "medium": "La Lune sera d'une hauteur modérée ({{altitude}}°) : privilégie un point de vue sans collines, bâtiments ou arbres alentour.",
+      "poor": "La Lune sera basse sur l'horizon ({{altitude}}°) : un horizon bien dégagé est nécessaire.",
+      "veryPoor": "La Lune sera très basse sur l'horizon ({{altitude}}°) : un horizon parfaitement dégagé est indispensable.",
+      "blocked": "Le relief risque de masquer l'éclipse depuis ce point précis."
+    }
+  }
+}

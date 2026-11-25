@@ -438,6 +438,97 @@ d'un capteur (rectangle), pour un ou plusieurs « setups » enregistrés, en mod
   purement décoratives.
 - **`CheckboxCard` + `trailing`** (§4) pour les lignes de sélection (valeur de champ alignée à droite).
 
+### Éclipses (`src/screens/Tools/Eclipses/`, `src/helpers/eclipses/`, `app/tools/eclipses/`)
+
+Port vers l'app, avec le nouveau design, de l'outil web dédié à l'éclipse de l'été
+(`astroshare-public-tools`, eclipses.astroshare.fr) — repris fonctionnalité par fonctionnalité, pas
+réécrit from scratch, sauf décisions explicites listées ci-dessous. Liste (`EclipsesScreen`, année +
+filtre Toutes/Soleil/Lune + « visible chez moi uniquement » + carte « à ne pas manquer » via
+`useNextEclipse` + `EclipseRow`) → fiche détail (`EclipseDetailsScreen`, aiguilleur sur le préfixe de
+l'`id` de route `"solar-2027-08-02"`/`"lunar-2028-12-31"` vers l'un des deux écrans ci-dessous).
+
+- **Circonstances locales : l'API fait le calcul, pas l'app — mais seulement pour le solaire.**
+  `GET /v3/eclipses/{solar,lunar}?year=<calendarDate>&observer=<lat>,<lon>` (`year` prend ici une DATE
+  complète, pas une année) renvoie un tableau à un seul élément avec de vraies circonstances par
+  observateur (`type` devient `Observer{Partial,Total,Annular}Eclipse`, magnitude/obscuration/angles
+  recalculés), vide si pas visible de ce point — c'est `getLocalSolarEclipse`
+  (`src/helpers/api/eclipses/eclipses.ts`). **Vérifié en direct que ça ne marche PAS pour le lunaire**
+  (mêmes magnitude/horaires quel que soit `observer`, y compris un point antipodal où la Lune est
+  sous l'horizon) : pas de `getLocalLunarEclipse`, la visibilité lunaire par lieu est calculée côté
+  app (`src/helpers/eclipses/celestialPosition.ts`, transformation équatoriale→horizontale RA/DEC
+  d'après la position de la Lune à chaque contact, formule GMST/Meeus) via
+  `getLunarContactsVisibility`/`isLunarEclipseVisibleFrom` (`lunarVisibility.ts`).
+- **Formes d'évènement différentes entre solaire et lunaire malgré des noms de champ identiques**
+  (`src/types/eclipses/Eclipse.ts`) : `SolarEclipseEvent.zenith` est un ANGLE, `LunarEclipseEvent.zenith`
+  un POINT géographique ; ne pas confondre en portant du code de l'un vers l'autre.
+  `SolarEclipseEventKey` n'a jamais que P1/P4 (jamais P2/P3, malgré le type qui les déclare côté API).
+- **Carte (`EclipseVisibilityMap`, partagée solaire/lunaire) :** react-native-maps uniquement (pas
+  Leaflet comme le site web), GeoJSON de l'API converti en `Polyline`/`Polygon` par
+  `src/helpers/eclipses/geojson.ts` (coordonnées `[lon, lat]` GeoJSON → `{latitude, longitude}`
+  attendu par react-native-maps). Masque "assombrir tout sauf..." par addition de polygones plutôt que
+  découpe (même technique que le site) ; `<Polygon>` react-native-maps n'a PAS de prop `fillOpacity`
+  séparée (seulement `fillColor`) — `fillColor`/`fillOpacity` du style sont donc combinés en une
+  chaîne `rgba(...)` explicite (`hexToRgb`, exporté depuis `variables.ts`) avant d'être passés,
+  sinon les bandes de pénombre/ombre s'affichent en pleine opacité et masquent la carte. Latitude du
+  centre initial de la carte bornée à ±85° (`src/helpers/map/mapRegion.ts`,
+  `clampMapRegionLatitude`) : un `latitudeDelta` fixe de 60 avec une éclipse dont le point "greatest"
+  est à une latitude extrême fait sortir la région des ±90° et plante Google Maps côté natif
+  (`IllegalStateException`), pas juste un rendu dégradé.
+- **Feuille des circonstances locales (`components/EclipseCircumstancesSheet/`) :** pas une vraie
+  `<Modal>` RN (la carte en dessous doit rester visible et tactile), une feuille accrochée au bas de
+  l'écran, plein-bord (coins du haut arrondis seulement), avec un en-tête (icône + lieu + titre)
+  fourni par l'écran appelant et TOUJOURS visible, repliée ou non ; seul ce qu'il y a dessous se
+  replie. Bascule uniquement au swipe vertical sur l'en-tête (`Gesture.Pan`,
+  react-native-gesture-handler), pas un tap sur un bouton (demande explicite) ; fermeture complète
+  séparée (✕). **Piège résolu :** un `<View style={{flex:1}}><ScrollView></ScrollView></View>` ne
+  transmet PAS sa hauteur bornée à la ScrollView elle-même (`flex:1` doit être sur la ScrollView,
+  pas seulement sur son parent) — sinon le contenu déplié grandit sans jamais déclencher son
+  défilement interne. Utilise `Animated.ScrollView` (reanimated) pour garder `entering`/`exiting` en
+  prime.
+- **`EclipseTypeIcon` :** pictogramme Soleil/Lune par type (partielle/annulaire/totale,
+  pénombrale/partielle/totale lunaire), en SVG avec une respiration animée légère par variante
+  (`Animated` RN core piloté en JS, même technique que le halo de `SatelliteGroundTrackMap`, §4).
+  Couleur du Soleil : `app_colors.sun.main` (`#FF9736`, plus orangé que `yellow.main`, qui tranche mal
+  sur fond clair) dédiée à ces pictogrammes/diagrammes, pas une recoloration globale de `yellow.main`.
+  **Essai de flou gaussien (`<FeGaussianBlur>`) pour adoucir la jonction nette entre les deux disques
+  des variantes "partielle" — retiré, jugé pire par l'utilisateur** : la jonction reste un arc net,
+  ne pas retenter sans redemander. Même chose pour `LunarContactGlyph` (pictogramme des lignes de
+  contact lunaire, même technique à deux cercles).
+- **Diagrammes de trajectoire (`MoonPathDiagram` solaire, `MoonShadowDiagram` lunaire) :** schémas SVG
+  statiques (tailles/positions approximatives, pas à l'échelle sauf les deux cercles pénombre/ombre
+  du lunaire) avec halo du Soleil et marqueur du maximum qui respirent doucement (même technique
+  Animated que `EclipseTypeIcon`). Correction d'angle `ANGLE_OFFSET_DEG` ({U2, greatest, U3}: 180°)
+  pour le lunaire : l'angle de position renvoyé par l'API est mesuré à l'opposé exact de la
+  convention des autres contacts pour ces 3-là (vérifié en reconstruisant la géométrie depuis des
+  données réelles), sans quoi la trajectoire tracée zigzague.
+- **Distance à la totalité / fuseau affiché :** `distanceToTotalityKm`
+  (`src/helpers/eclipses/distanceToTotality.ts`) = distance géodésique (haversine) au sommet le plus
+  proche de la ligne centrale GeoJSON — approximation par sommet, pas une vraie distance
+  point-segment, jugée suffisante vu la résolution fine de la ligne. `formatUtcOffsetLabel`/
+  `formatLatLon` (`src/helpers/format.ts`) : le décalage affiché ("heure locale · UTC+2") est celui du
+  réglage d'affichage COURANT de l'app (voir `useAppUnits`), pas un vrai lookup géographique
+  fuseau↔coordonnées (l'app n'en fait pas).
+- **Fonctionnalités explicitement abandonnées, à ne pas réintroduire sans redemander :**
+  - **Relief/horizon (vérification d'obstruction par le relief via tuiles Mapbox Terrain-RGB) :**
+    entièrement retiré (`terrain.ts`, `useTerrainProfile.ts`, `HorizonProfilePanel`,
+    `ViewpointSuggestions` supprimés) après avoir buté sur `fast-png` : son module `text.js` crée un
+    `TextDecoder('latin1')` au chargement, or Hermes ne supporte que `'latin1'`→crash immédiat, même
+    si cet encodage n'est utilisé que pour des métadonnées PNG absentes des tuiles Mapbox. Décision
+    utilisateur explicite plutôt qu'un contournement (polyfill/décodeur maison) — le jeton
+    `EXPO_PUBLIC_MAPBOX_TOKEN` reste dans `.env` local mais n'est plus consommé par rien.
+  - **Export PDF** (présent sur le site web) : abandonné dès le départ, pas de portage prévu.
+  - **Villes suivies** (liste de lieux suivis par éclipse, marqueurs dédiés sur la carte) :
+    construite puis entièrement retirée sur demande (`TrackedEclipseCitiesPanel`,
+    `TrackedEclipseCity`, et les 4 actions/l'état `trackedEclipseCities` du store) — l'écran de détail
+    n'a plus qu'une sélection courante (tap carte ou recherche), pas de liste persistée.
+- **Boutons « M'alerter » (jour J / lever de Lune) et le bouton secondaire (bookmark solaire,
+  calendrier+ lunaire) :** façade seulement (`onPress={() => {}}`), demande explicite de
+  l'utilisateur indépendante du reste du portage — pas de notification programmée branchée.
+- **Dépendance ajoutée : `astronomia`** (MIT) — réservée au calcul topocentrique continu d'un futur
+  diagramme animé/comparatif (voir §6), pas utilisée par les diagrammes statiques actuels ni par les
+  circonstances locales (qui viennent de l'API pour le solaire, de `celestialPosition.ts` pour le
+  lunaire).
+
 ### Checklists (`src/screens/Tools/Checklists/`, `src/types/checklists/`)
 
 Listes à cocher libres (nom + description facultative + éléments), gérées entièrement en local
@@ -848,6 +939,12 @@ On ne peut pas lancer l'app depuis un agent. Méthodes utilisées jusqu'ici :
   « transits visibles depuis une zone » façon transit-finder.com (une seule position à la fois).
 - **Conjonctions : altitude minimale fixe (10°), pas réglable** — seul le seuil de séparation
   angulaire l'est, comme demandé. À revoir si besoin d'un réglage plus fin.
+- **Éclipses : diagramme de trajectoire animé/comparatif** (`astronomia`, déjà ajoutée en dépendance
+  mais pas encore utilisée, voir §2) — simulation continue de la position topocentrique Soleil/Lune
+  (ou comparaison entre plusieurs villes), distincte des diagrammes statiques actuels
+  (`MoonPathDiagram`/`MoonShadowDiagram`, qui n'en ont pas besoin). Relief/horizon et export PDF :
+  explicitement abandonnés (voir §2), ne pas les remettre sur la liste sans que l'utilisateur le
+  redemande.
 
 ---
 
@@ -896,6 +993,16 @@ d'entrée datée.
   §3 (complété les clés `en`/`it` de ce bloc, qui n'existaient pas encore dans ces deux langues ;
   `auth/profile.json` a par ailleurs de grosses lacunes en-dehors de ce bloc en `en`/`it`, non
   comblées ici, voir §7).
+- **2026-11-26** — même commit — nouvel outil Éclipses (`/tools/eclipses`, déjà pré-enregistré dans
+  `tools.ts`), port de l'outil web `astroshare-public-tools` (eclipses.astroshare.fr) : liste par
+  année + filtre + carte « à ne pas manquer », fiche détail solaire/lunaire avec carte de visibilité
+  (react-native-maps), circonstances locales (API pour le solaire, calcul RA/DEC→altitude maison pour
+  le lunaire, l'API renvoyant les mêmes circonstances partout), diagrammes de trajectoire animés,
+  météo au moment de l'éclipse, recherche du point visible le plus proche. Relief/horizon (bloqué par
+  une incompatibilité `fast-png`/Hermes) et export PDF abandonnés ; fonctionnalité « villes suivies »
+  construite puis retirée sur demande. Nouvelle dépendance `astronomia`, pas encore utilisée (réservée
+  à un futur diagramme animé, voir §6). Détail complet, pièges et décisions explicites — §2 (nouvelle
+  sous-section), §6.
 - **2026-11-26** — même commit — espacement entre titre de section et contenu harmonisé via `gap`
   plutôt que des `marginTop`/`marginBottom` ponctuels : `SectionHeader`, `ToolsSection`, Journal
   (`Gear`, `Journal`, `AddSession`) et la section « Mes satellites » de `SatellitesScreen`.
