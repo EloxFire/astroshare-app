@@ -561,6 +561,52 @@ d'une liste (header fusionné coloré + sections « à cocher »/« cochés »).
 - **Pas de `line-through` ailleurs dans l'app** avant `ChecklistItemRow` (élément coché barré) : nouveau
   style local, aucun autre composant ne l'utilisait.
 
+### Glossaire (`src/screens/Tools/Glossary/`, `src/data/glossary/`, `src/helpers/glossary/`)
+
+Lexique astro, entièrement local (pas de route API) : recherche, mot du jour, filtre par catégorie,
+liste alphabétique avec index A-Z collant, fiches dépliables. Route `/tools/astro-glossary`, déjà
+pré-enregistrée dans `tools.ts` (`id: "astro-glossary"`).
+
+- **Un seul fichier de config pour ajouter un terme** (`src/data/glossary/entries.ts`, exporte
+  `GLOSSARY_ENTRIES`) — ne porte AUCUN texte affiché, volontairement : terme/définition courte/
+  définition complète vivent dans les 3 fichiers `tools/astroGlossary.json` sous
+  `entries.<id>.{term,short,full}` (voir CLAUDE.md, jamais de texte traduit dans un fichier de
+  données). Ajouter un terme = un objet dans `entries.ts` + les clés correspondantes dans les 3
+  langues (même partiellement traduites, `fr` fait référence).
+- **Catégories** (`src/data/glossary/categories.ts`) : `GlossaryCategoryId` (types/glossary/
+  GlossaryEntry.ts), `GLOSSARY_CATEGORY_ORDER` et `GLOSSARY_CATEGORY_COLORS` doivent rester
+  synchronisés avec ce type à la main — ajouter une catégorie sans mettre à jour ces deux tableaux
+  fait échouer `tsc` (`Record<GlossaryCategoryId, string>` incomplet), déjà arrivé une fois en
+  ajoutant "spaceflight".
+- **Illustration polymorphe** (`GlossaryIllustration`, types/glossary/GlossaryEntry.ts) : une entrée
+  peut fournir `{kind:"component", Component}` (le cas le plus riche, voir
+  `screens/Tools/Glossary/illustrations/` — `TerminatorIllustration`, `MagnitudeScaleIllustration`),
+  `{kind:"image", source}` ou `{kind:"gif", source}` — ces deux derniers se rendent à l'identique
+  (`<Image>` de React Native anime nativement un GIF, `"gif"` n'existe que pour le distinguer
+  intentionnellement dans la config).
+- **Mot du jour DÉTERMINISTE, pas aléatoire** (`src/helpers/glossary/wordOfDay.ts`, demande
+  explicite) : jours écoulés depuis l'epoch modulo le nombre d'entrées — même terme pour tout le
+  monde un jour donné, change chaque jour, boucle sur toute la liste plutôt qu'un vrai tirage
+  aléatoire qui pourrait répéter un terme proche dans le temps.
+- **Index A-Z sticky** (`GlossaryAlphabetIndex`, overlay positionné par `GlossaryScreen`) : UNE SEULE
+  mesure (`entriesColumnOffsetY`, la position Y de la colonne d'entrées dans la ScrollView) sert à
+  la fois à positionner/animer l'overlay (`translateY` interpolé sur le scroll, piloté nativement) et
+  à corriger les sauts de lettre (`scrollTo`) — les garder séparées avait provoqué un chevauchement
+  avec les pilules de catégorie (deux mesures qui pouvaient dériver l'une de l'autre). La lettre de
+  la section actuellement en haut de la liste (calculée dans le listener JS d'`Animated.event`,
+  compatible avec le pilotage natif) est surlignée en `app_colors.yellow.main`, distincte du violet
+  "disponible"/gris "aucune entrée".
+- **Une seule fiche dépliée à la fois** (`expandedId: string | null`, pas un `Set`) : en déplier une
+  referme automatiquement la précédente.
+- **Perf avec ~90+ entrées :** `GlossaryEntryRow` enveloppé dans `React.memo`, `relatedTerms` de
+  chaque entrée résolu une seule fois (mémoïsé) plutôt que recalculé par ligne à chaque rendu de
+  l'écran, callbacks (`onToggle`, `onPressRelated`) stables (`useCallback`, l'id est passé en
+  paramètre plutôt que capturé dans une closure par ligne) — sans ça, (dé)plier une carte
+  re-rendait les ~90 lignes à chaque fois, perçu comme lent par l'utilisateur.
+- **`fr` très en avance sur `en`/`it`** pour ce namespace (contenu ajouté en continu par
+  l'utilisateur) : `en`/`it` retombent silencieusement sur le français pour les clés manquantes,
+  trou connu et non comblé pour l'instant (pas une erreur à corriger sans demande explicite).
+
 ---
 
 ## 3. Internationalisation
@@ -984,6 +1030,13 @@ Le journal commence avec le commit `8527e2f`. Les changements antérieurs, comme
 i18n, `SelectInput` ou `ImageHeaderScrollView`, sont décrits dans les sections ci-dessus mais n'ont pas
 d'entrée datée.
 
+- **2026-11-26** — même commit — nouvel outil Glossaire (`/tools/astro-glossary`, déjà pré-enregistré
+  dans `tools.ts`) : recherche, mot du jour déterministe (pas aléatoire), filtre par catégorie, liste
+  alphabétique avec index A-Z sticky (lettre courante surlignée), fiches dépliables (une seule à la
+  fois) avec illustration polymorphe (composant React/image/gif) et termes liés. Fichier de config
+  unique pour les entrées (`src/data/glossary/entries.ts`, aucun texte dedans — i18n à part).
+  Optimisé pour ~90+ entrées (`React.memo` + callbacks stables + `relatedTerms` précalculé, la liste
+  entière se re-rendait sinon à chaque dépli) — §2 (nouvelle sous-section).
 - **2026-11-26** — même commit — `ProfileScreen` : le bloc « Votre abonnement » affiche maintenant le
   vrai statut (`authUser.subscription.status` : `active`/`canceled`/`expired`/`past_due`, nouvelles
   clés `infos.subscription.statusValues.*`, repli sur `unknown`) et la vraie date du prochain paiement

@@ -1,0 +1,105 @@
+{
+  "screen": {
+    "title": "Glossario",
+    "searchPlaceholder": "Una parola: magnitudine, seeing, zenit…",
+    "termCount_one": "{{count}} termine",
+    "termCount_other": "{{count}} termini",
+    "empty": "Nessun termine corrisponde alla ricerca."
+  },
+  "categories": {
+    "all": "Tutti",
+    "observing": "Osservare",
+    "spotting": "Individuare",
+    "astrophysics": "Astrofisica",
+    "equipment": "Attrezzatura"
+  },
+  "wordOfTheDay": {
+    "eyebrow": "La parola del giorno"
+  },
+  "entryRow": {
+    "related": "Vedi anche"
+  },
+  "cta": {
+    "terminator": "Guardalo sulla mappa della Luna"
+  },
+  "illustrations": {
+    "magnitudeScale": {
+      "venus": "Venere",
+      "vega": "Vega",
+      "polaris": "Polare",
+      "nakedEyeLimit": "occhio nudo"
+    }
+  },
+  "entries": {
+    "albedo": {
+      "term": "Albedo",
+      "short": "La parte di luce che un astro rinvia.",
+      "full": "Frazione della luce ricevuta che un astro rinvia senza assorbirla, tra 0 (assorbe tutto, perfettamente nero) e 1 (rinvia tutto). La Luna ha un albedo molto basso (circa 0,12), simile all'asfalto."
+    },
+    "ascensionDroite": {
+      "term": "Ascensione retta",
+      "short": "La \"longitudine\" del cielo, in ore.",
+      "full": "Coordinata celeste equivalente alla longitudine terrestre, misurata in ore/minuti/secondi (da 0 a 24h) lungo l'equatore celeste, a partire dal punto vernale. Insieme alla declinazione, fissa la posizione di un astro sulla sfera celeste."
+    },
+    "azimut": {
+      "term": "Azimut",
+      "short": "La direzione sull'orizzonte, da 0 a 360°.",
+      "full": "Angolo misurato a partire dal nord (0°), verso est (90°), sud (180°) e ovest (270°), che indica in quale direzione guardare l'orizzonte per trovare un astro. Insieme all'altezza (altezza sopra l'orizzonte), fissa la sua posizione da un luogo e in un istante dati."
+    },
+    "bortle": {
+      "term": "Scala di Bortle",
+      "short": "Valuta l'oscurità del cielo, da 1 a 9.",
+      "full": "Scala da 1 (sito eccezionalmente buio) a 9 (centro città molto inquinato) che descrive la qualità del cielo notturno di un luogo. Più basso è il numero, più stelle deboli e la Via Lattea si distinguono a occhio nudo."
+    },
+    "collimation": {
+      "term": "Collimazione",
+      "short": "Allineamento degli specchi di un telescopio.",
+      "full": "Regolazione dell'allineamento ottico degli specchi (o lenti) di un telescopio, affinché la luce converga correttamente. Un telescopio mal collimato dà immagini sfocate o deformate, soprattutto ad alto ingrandimento — da controllare regolarmente su un Newton o uno Schmidt-Cassegrain."
+    },
+    "declinaison": {
+      "term": "Declinazione",
+      "short": "La \"latitudine\" del cielo, in gradi.",
+      "full": "Coordinata celeste equivalente alla latitudine terrestre, misurata in gradi da -90° (polo celeste sud) a +90° (polo celeste nord), a partire dall'equatore celeste (0°). Insieme all'ascensione retta, fissa la posizione di un astro sulla sfera celeste."
+    },
+    "ecliptique": {
+      "term": "Eclittica",
+      "short": "Il percorso del Sole nel cielo.",
+      "full": "Traiettoria apparente del Sole sulla sfera celeste nel corso dell'anno, corrispondente al piano dell'orbita terrestre. La Luna e i pianeti restano vicini a questa linea, poiché orbitano grosso modo sullo stesso piano."
+    },
+    "magnitude": {
+      "term": "Magnitudine",
+      "short": "La luminosità di un astro: più il numero è piccolo, più brilla.",
+      "full": "Scala invertita e logaritmica: 5 magnitudini di differenza = 100 volte più luce. A occhio nudo, sotto un buon cielo, si arriva fino alla magnitudine 6."
+    },
+    "meridien": {
+      "term": "Meridiano",
+      "short": "La linea nord-sud che passa per lo zenit.",
+      "full": "Cerchio massimo immaginario che collega nord, zenit, sud e nadir. Un astro culmina (raggiunge la sua altezza massima nel cielo) nel momento in cui attraversa il meridiano locale."
+    },
+    "oculaire": {
+      "term": "Oculare",
+      "short": "La parte in cui si guarda, in fondo al telescopio.",
+      "full": "Piccola lente (o gruppo di lenti) che ingrandisce l'immagine formata dall'obiettivo o dallo specchio principale di uno strumento. L'ingrandimento ottenuto dipende dal rapporto tra la focale del telescopio e quella dell'oculare: più corta è la focale dell'oculare, più alto è l'ingrandimento."
+    },
+    "parallaxe": {
+      "term": "Parallasse",
+      "short": "Lo spostamento apparente di una stella vicina.",
+      "full": "Leggero spostamento apparente di una stella vicina sullo sfondo del cielo, osservato a sei mesi di distanza da due punti opposti dell'orbita terrestre. Più grande è lo spostamento, più la stella è vicina — è il metodo più diretto per misurare le distanze stellari."
+    },
+    "seeing": {
+      "term": "Seeing",
+      "short": "La stabilità dell'aria, non il meteo in sé.",
+      "full": "Qualità della turbolenza atmosferica: un buon seeing dà immagini nitide e stabili ad alto ingrandimento, un cattivo seeing fa \"ribollire\" l'immagine anche con un cielo perfettamente sereno. Indipendente dalla trasparenza (presenza o meno di nuvole/foschia)."
+    },
+    "terminateur": {
+      "term": "Terminatore",
+      "short": "Il confine tra il giorno e la notte sulla Luna.",
+      "full": "Il confine tra il giorno e la notte sulla Luna. È lì che i rilievi sono più spettacolari."
+    },
+    "zenith": {
+      "term": "Zenit",
+      "short": "Il punto del cielo esattamente sopra la testa.",
+      "full": "Punto della sfera celeste situato esattamente in verticale sopra un osservatore, a 90° di altezza. Il suo opposto, in verticale sotto i piedi, è il nadir."
+    }
+  }
+}

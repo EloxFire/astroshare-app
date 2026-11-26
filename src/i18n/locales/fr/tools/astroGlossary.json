@@ -1,0 +1,911 @@
+{
+  "screen": {
+    "title": "Glossaire",
+    "searchPlaceholder": "Un mot : magnitude, seeing, zénith…",
+    "termCount_one": "{{count}} terme expliqué",
+    "termCount_other": "{{count}} termes expliqués",
+    "empty": "Aucun terme ne correspond à ta recherche."
+  },
+  "categories": {
+    "all": "Tous",
+    "observing": "Observer",
+    "spotting": "Repérage",
+    "astrophysics": "Astrophysique",
+    "equipment": "Matériel"
+  },
+  "wordOfTheDay": {
+    "eyebrow": "Le mot du jour"
+  },
+  "entryRow": {
+    "related": "Voir aussi"
+  },
+  "cta": {
+    "terminator": "Le voir sur la carte de la Lune"
+  },
+  "illustrations": {
+    "magnitudeScale": {
+      "venus": "Vénus",
+      "vega": "Véga",
+      "polaris": "Polaire",
+      "nakedEyeLimit": "œil nu"
+    }
+  },
+  "entries": {
+    "albedo": {
+      "term": "Albédo",
+      "short": "Part de lumière qu'un astre renvoie.",
+      "full": "Fraction de la lumière reçue qu'un astre renvoie sans l'absorber, entre 0 (tout absorbe, parfaitement noir) et 1 (tout renvoie). La Lune a un albédo très faible (environ 0,12), presque comme de l'asphalte."
+    },
+    "ascensionDroite": {
+      "term": "Ascension droite",
+      "short": "La « longitude » du ciel, en heures.",
+      "full": "Coordonnée céleste équivalente à la longitude terrestre, mesurée en heures/minutes/secondes (0 à 24h) le long de l'équateur céleste, depuis le point vernal. Associée à la déclinaison, elle fixe la position d'un astre sur la sphère céleste."
+    },
+    "azimut": {
+      "term": "Azimut",
+      "short": "La direction sur l'horizon, de 0 à 360°.",
+      "full": "Angle mesuré depuis le nord (0°), vers l'est (90°), le sud (180°) et l'ouest (270°), qui indique dans quelle direction regarder à l'horizon pour trouver un astre. Associé à l'altitude (hauteur au-dessus de l'horizon), il fixe sa position depuis un lieu donné, à un instant donné."
+    },
+    "bortle": {
+      "term": "Bortle (échelle de)",
+      "short": "Note la noirceur du ciel, de 1 à 9.",
+      "full": "Échelle de 1 (site exceptionnellement noir) à 9 (centre-ville très pollué) qui décrit la qualité du ciel nocturne d'un lieu. Plus le chiffre est bas, plus on distingue d'étoiles faibles et la Voie lactée à l'œil nu."
+    },
+    "collimation": {
+      "term": "Collimation",
+      "short": "Alignement des miroirs d'un télescope.",
+      "full": "Réglage de l'alignement optique des miroirs (ou lentilles) d'un télescope, pour que la lumière converge correctement. Un télescope mal collimaté donne des images floues ou déformées, surtout à fort grossissement — à vérifier régulièrement sur un Newton ou un Schmidt-Cassegrain."
+    },
+    "declinaison": {
+      "term": "Déclinaison",
+      "short": "La « latitude » du ciel, en degrés.",
+      "full": "Coordonnée céleste équivalente à la latitude terrestre, mesurée en degrés de -90° (pôle céleste sud) à +90° (pôle céleste nord), depuis l'équateur céleste (0°). Associée à l'ascension droite, elle fixe la position d'un astre sur la sphère céleste."
+    },
+    "ecliptique": {
+      "term": "Écliptique",
+      "short": "Le chemin du Soleil dans le ciel.",
+      "full": "Trajectoire apparente du Soleil sur la sphère céleste au fil de l'année, qui correspond au plan de l'orbite terrestre. La Lune et les planètes restent proches de cette ligne, puisqu'elles orbitent globalement dans le même plan."
+    },
+    "magnitude": {
+      "term": "Magnitude",
+      "short": "L'éclat d'un astre : plus c'est petit, plus ça brille.",
+      "full": "Échelle inversée et logarithmique : 5 magnitudes d'écart = 100 fois plus de lumière. À l'œil nu, sous un bon ciel, on descend vers la magnitude 6."
+    },
+    "meridien": {
+      "term": "Méridien",
+      "short": "La ligne nord-sud qui passe par le zénith.",
+      "full": "Grand cercle imaginaire qui relie le nord, le zénith, le sud et le nadir. Un astre culmine (atteint sa hauteur maximale dans le ciel) au moment où il traverse le méridien local."
+    },
+    "oculaire": {
+      "term": "Oculaire",
+      "short": "La pièce qu'on regarde, au bout du télescope.",
+      "full": "Petite lentille (ou groupe de lentilles) qui agrandit l'image formée par l'objectif ou le miroir principal d'un instrument. Le grossissement obtenu dépend du rapport entre la focale du télescope et celle de l'oculaire : plus la focale de l'oculaire est courte, plus le grossissement est élevé."
+    },
+    "parallaxe": {
+      "term": "Parallaxe",
+      "short": "Le déplacement apparent d'une étoile proche.",
+      "full": "Léger déplacement apparent d'une étoile proche sur le fond du ciel, observé à six mois d'intervalle depuis deux points opposés de l'orbite terrestre. Plus ce déplacement est grand, plus l'étoile est proche — c'est la méthode la plus directe pour mesurer les distances stellaires."
+    },
+    "seeing": {
+      "term": "Seeing",
+      "short": "La stabilité de l'air, pas la météo elle-même.",
+      "full": "Qualité de la turbulence atmosphérique : un bon seeing donne des images fines et stables à fort grossissement, un mauvais seeing fait « bouillonner » l'image même par ciel parfaitement clair. Indépendant de la transparence (la présence ou non de nuages/brume)."
+    },
+    "terminateur": {
+      "term": "Terminateur",
+      "short": "La frontière entre le jour et la nuit sur la Lune.",
+      "full": "La frontière entre le jour et la nuit sur la Lune. C'est là que les reliefs sont les plus spectaculaires."
+    },
+    "zenith": {
+      "term": "Zénith",
+      "short": "Le point du ciel juste au-dessus de la tête.",
+      "full": "Point de la sphère céleste situé exactement à la verticale d'un observateur, à 90° d'altitude. Son opposé, à la verticale sous les pieds, est le nadir."
+    },
+    "equateurCeleste": {
+      "term": "Équateur céleste",
+      "short": "Projection de l'équateur terrestre sur le ciel.",
+      "full": "Grand cercle imaginaire qui partage le ciel en deux hémisphères, nord et sud, dans le prolongement de l'équateur terrestre. C'est la référence de la déclinaison : une étoile située dessus a une déclinaison de 0°."
+    },
+    "poleCeleste": {
+      "term": "Pôle céleste",
+      "short": "Point du ciel autour duquel tout semble tourner.",
+      "full": "Prolongement de l'axe de rotation de la Terre sur le ciel. Il y en a deux, nord et sud. Au fil de la nuit, les étoiles décrivent des cercles autour de lui. Sa hauteur au-dessus de l'horizon est égale à la latitude du lieu d'observation."
+    },
+    "etoilePolaire": {
+      "term": "Étoile polaire",
+      "short": "Étoile proche du pôle céleste nord.",
+      "full": "Étoile la plus brillante de la Petite Ourse, située à moins d'un degré du pôle céleste nord. Elle semble presque immobile pendant la nuit et indique le nord. Elle sert de repère pour la mise en station des montures équatoriales. Il n'existe pas d'équivalent aussi pratique dans l'hémisphère sud."
+    },
+    "coordonneesEquatoriales": {
+      "term": "Coordonnées équatoriales",
+      "short": "Adresse fixe d'un astre sur la sphère céleste.",
+      "full": "Système de coordonnées lié aux étoiles, composé de l'ascension droite et de la déclinaison. Il ne dépend ni du lieu ni de l'heure : c'est celui des catalogues et des cartes du ciel, comme une latitude et une longitude reportées sur le ciel."
+    },
+    "coordonneesHorizontales": {
+      "term": "Coordonnées horizontales",
+      "short": "Position d'un astre vue depuis votre lieu.",
+      "full": "Système de coordonnées lié à l'observateur, composé de l'azimut (la direction) et de la hauteur au-dessus de l'horizon. Il dit où regarder, mais change en permanence avec la rotation de la Terre et d'un lieu à l'autre. On parle aussi de coordonnées altazimutales."
+    },
+    "hauteur": {
+      "term": "Hauteur",
+      "short": "Angle entre un astre et l'horizon.",
+      "full": "Angle qui sépare un astre de l'horizon, de 0° (sur l'horizon) à 90° (au zénith). On parle aussi d'élévation. Plus un astre est haut, moins sa lumière traverse d'atmosphère, et meilleure est l'image."
+    },
+    "horizon": {
+      "term": "Horizon",
+      "short": "Limite entre le ciel et le sol.",
+      "full": "L'horizon astronomique est le cercle situé à 90° du zénith, la référence des hauteurs. L'horizon réel, lui, est souvent plus haut à cause du relief, des arbres ou des bâtiments, et peut cacher un astre pourtant « levé »."
+    },
+    "nadir": {
+      "term": "Nadir",
+      "short": "Point situé juste sous vos pieds.",
+      "full": "Point de la sphère céleste opposé au zénith, à la verticale sous l'observateur. Il est toujours caché par la Terre."
+    },
+    "culmination": {
+      "term": "Culmination",
+      "short": "Moment où un astre est au plus haut.",
+      "full": "Instant où un astre passe au méridien et atteint sa plus grande hauteur dans le ciel. C'est souvent le meilleur moment pour l'observer, car sa lumière traverse alors le moins d'atmosphère possible."
+    },
+    "leverCoucher": {
+      "term": "Lever et coucher",
+      "short": "Passage d'un astre au-dessus ou sous l'horizon.",
+      "full": "Moments où un astre franchit l'horizon. Les heures calculées tiennent compte de la réfraction atmosphérique, qui fait apparaître un astre un peu avant qu'il soit réellement levé. Les étoiles proches du pôle, dites circumpolaires, ne se couchent jamais."
+    },
+    "angleHoraire": {
+      "term": "Angle horaire",
+      "short": "Temps écoulé depuis le passage au méridien.",
+      "full": "Angle, mesuré en heures, entre le méridien du lieu et un astre. Il vaut 0 h quand l'astre culmine, puis augmente d'une heure toutes les heures sidérales. Le viseur polaire l'utilise pour placer l'étoile polaire au bon endroit du réticule."
+    },
+    "tempsSideral": {
+      "term": "Temps sidéral",
+      "short": "Heure mesurée par rapport aux étoiles.",
+      "full": "Heure qui suit la rotation de la Terre par rapport aux étoiles et non par rapport au Soleil. Un jour sidéral dure 23 h 56 min 4 s : les étoiles se lèvent donc environ 4 minutes plus tôt chaque jour. Le temps sidéral local est égal à l'ascension droite des astres qui passent au méridien."
+    },
+    "constellation": {
+      "term": "Constellation",
+      "short": "Région du ciel aux limites officielles.",
+      "full": "L'Union astronomique internationale découpe le ciel en 88 constellations aux frontières précises, comme des pays sur une carte. Les étoiles d'une constellation semblent proches, mais elles sont souvent à des distances très différentes de nous."
+    },
+    "asterisme": {
+      "term": "Astérisme",
+      "short": "Dessin d'étoiles connu, sans être une constellation.",
+      "full": "Groupe d'étoiles facile à reconnaître qui n'est pas une constellation officielle. La Grande Casserole fait partie de la Grande Ourse ; le Triangle d'été relie trois étoiles de trois constellations différentes."
+    },
+    "epoque": {
+      "term": "Époque (J2000)",
+      "short": "Date de référence des coordonnées d'un catalogue.",
+      "full": "Les coordonnées des astres changent lentement à cause de la précession. Un catalogue les donne donc pour une date de référence, appelée époque. La plus utilisée est J2000, le 1er janvier 2000 à midi. Les logiciels les recalculent ensuite pour la date d'observation."
+    },
+    "precession": {
+      "term": "Précession",
+      "short": "Lent changement de direction de l'axe terrestre.",
+      "full": "L'axe de rotation de la Terre décrit un cône, comme une toupie, en environ 26 000 ans. Le pôle céleste se déplace donc parmi les étoiles : l'étoile polaire n'a pas toujours été la Polaire, et Véga le sera dans environ 12 000 ans."
+    },
+    "minuteArc": {
+      "term": "Minute et seconde d'arc",
+      "short": "Unités pour mesurer de petits angles.",
+      "full": "Un degré se divise en 60 minutes d'arc (′), et une minute en 60 secondes d'arc (″). La Pleine Lune mesure environ 30′ ; Jupiter, entre 30″ et 50″ selon sa distance. La turbulence limite souvent les détails visibles à 1″ ou 2″."
+    },
+    "phaseLunaire": {
+      "term": "Phase lunaire",
+      "short": "Partie éclairée de la Lune vue depuis la Terre.",
+      "full": "La Lune est toujours à moitié éclairée par le Soleil, mais nous voyons cette moitié sous un angle qui change au fil du mois : nouvelle lune, premier croissant, premier quartier, gibbeuse, pleine lune, puis l'inverse. Les quartiers sont souvent plus intéressants au télescope que la pleine lune, grâce aux ombres le long du terminateur."
+    },
+    "lunaison": {
+      "term": "Lunaison",
+      "short": "Durée d'un cycle complet de phases.",
+      "full": "Temps qui sépare deux nouvelles lunes, soit environ 29,5 jours. Il est plus long que le tour complet de la Lune autour de la Terre (27,3 jours), car la Terre avance elle aussi autour du Soleil pendant ce temps."
+    },
+    "lumiereCendree": {
+      "term": "Lumière cendrée",
+      "short": "Faible lueur sur la partie sombre de la Lune.",
+      "full": "Lumière du Soleil renvoyée par la Terre, qui éclaire faiblement la partie nocturne de la Lune. Elle se voit bien quand la Lune est un fin croissant, le soir après la nouvelle lune ou le matin avant."
+    },
+    "libration": {
+      "term": "Libration",
+      "short": "Léger balancement apparent de la Lune.",
+      "full": "La Lune nous montre toujours la même face, mais elle semble osciller légèrement au fil du mois à cause de son orbite elliptique et inclinée. Grâce à ce balancement, on peut voir environ 59 % de sa surface depuis la Terre, et non 50 %."
+    },
+    "crepuscule": {
+      "term": "Crépuscule",
+      "short": "Transition entre le jour et la nuit.",
+      "full": "Période où le Soleil est couché mais éclaire encore le ciel. On distingue le crépuscule civil (Soleil jusqu'à 6° sous l'horizon), nautique (jusqu'à 12°) et astronomique (jusqu'à 18°). Les mêmes étapes existent le matin, dans l'autre sens."
+    },
+    "nuitAstronomique": {
+      "term": "Nuit astronomique",
+      "short": "Période où le ciel est vraiment noir.",
+      "full": "Période où le Soleil est à plus de 18° sous l'horizon et n'éclaire plus du tout le ciel. C'est le meilleur moment pour les objets faibles du ciel profond. En France, autour du solstice d'été, elle est très courte, voire absente dans le nord."
+    },
+    "pollutionLumineuse": {
+      "term": "Pollution lumineuse",
+      "short": "Éclairage artificiel qui éclaircit le ciel.",
+      "full": "Lumière des villes diffusée par l'atmosphère, qui fait disparaître les étoiles faibles et la Voie lactée. Elle se mesure avec l'échelle de Bortle. S'éloigner de quelques dizaines de kilomètres des grandes villes change déjà beaucoup le ciel."
+    },
+    "transparence": {
+      "term": "Transparence",
+      "short": "Clarté de l'atmosphère.",
+      "full": "Capacité de l'atmosphère à laisser passer la lumière, réduite par l'humidité, les poussières ou les voiles nuageux. Elle compte surtout pour les objets faibles. À ne pas confondre avec le seeing : un ciel peut être très transparent et très turbulent à la fois."
+    },
+    "adaptationObscurite": {
+      "term": "Adaptation à l'obscurité",
+      "short": "Temps pour que l'œil voie dans le noir.",
+      "full": "Il faut 20 à 30 minutes dans le noir pour que l'œil atteigne sa pleine sensibilité. Une seule lumière blanche suffit à tout recommencer. C'est pourquoi on utilise une lampe rouge et le mode nuit des applications."
+    },
+    "visionDecalee": {
+      "term": "Vision décalée",
+      "short": "Regarder à côté d'un objet pour mieux le voir.",
+      "full": "Le centre de l'œil est peu sensible aux faibles lumières. En regardant légèrement à côté d'une galaxie ou d'une nébuleuse, on utilise la périphérie de la rétine, plus sensible, et l'objet apparaît mieux."
+    },
+    "opposition": {
+      "term": "Opposition",
+      "short": "Planète à l'opposé du Soleil dans le ciel.",
+      "full": "Une planète plus éloignée du Soleil que la Terre (Mars, Jupiter, Saturne…) est en opposition quand la Terre passe entre elle et le Soleil. Elle se lève au coucher du Soleil, reste visible toute la nuit, et elle est au plus près et au plus brillant : c'est la meilleure période pour l'observer."
+    },
+    "conjonction": {
+      "term": "Conjonction",
+      "short": "Rapprochement apparent de deux astres.",
+      "full": "Deux astres sont en conjonction quand ils semblent proches dans le ciel, par exemple la Lune et une planète. C'est un effet de perspective : ils restent séparés par des millions de kilomètres. Ces rapprochements sont faciles à voir à l'œil nu."
+    },
+    "elongation": {
+      "term": "Élongation",
+      "short": "Écart apparent entre une planète et le Soleil.",
+      "full": "Angle qui sépare une planète du Soleil vu depuis la Terre. Mercure et Vénus restent toujours proches du Soleil : leur plus grande élongation (environ 28° pour Mercure, 47° pour Vénus) est le meilleur moment pour les observer, le soir ou le matin."
+    },
+    "occultation": {
+      "term": "Occultation",
+      "short": "Un astre en cache un autre.",
+      "full": "Passage d'un astre devant un autre, qui le masque complètement. La Lune occulte régulièrement des étoiles et parfois des planètes : l'étoile disparaît d'un coup derrière son bord."
+    },
+    "transit": {
+      "term": "Transit",
+      "short": "Passage d'un petit astre devant un plus grand.",
+      "full": "Passage d'un astre devant un autre, plus grand, sans le cacher entièrement. Par exemple, Mercure devant le Soleil, ou l'ISS devant la Lune pendant quelques fractions de seconde. Pour un transit devant le Soleil, un filtre solaire adapté est indispensable."
+    },
+    "eclipseSolaire": {
+      "term": "Éclipse solaire",
+      "short": "La Lune passe devant le Soleil.",
+      "full": "La Lune s'intercale entre le Soleil et la Terre et cache tout ou partie du Soleil. Elle peut être partielle, annulaire (un anneau de Soleil reste visible) ou totale. Elle ne s'observe jamais sans protection adaptée, sauf pendant la courte phase de totalité."
+    },
+    "eclipseLunaire": {
+      "term": "Éclipse lunaire",
+      "short": "La Lune passe dans l'ombre de la Terre.",
+      "full": "La Terre s'intercale entre le Soleil et la Lune. Pendant une éclipse totale, la Lune prend une teinte rouge cuivrée, due à la lumière du Soleil déviée par l'atmosphère terrestre. Elle s'observe sans aucun danger, depuis toute la moitié de la Terre où il fait nuit."
+    },
+    "totalite": {
+      "term": "Totalité",
+      "short": "Phase où l'éclipse est complète.",
+      "full": "Pendant une éclipse solaire totale, c'est le court moment, de quelques secondes à quelques minutes, où la Lune cache entièrement le Soleil. Le ciel s'assombrit, la couronne solaire apparaît, et c'est le seul moment où l'on peut regarder sans filtre. Elle n'est visible que depuis une étroite bande sur Terre."
+    },
+    "penombre": {
+      "term": "Ombre et pénombre",
+      "short": "Zones d'ombre totale et partielle.",
+      "full": "L'ombre est la zone où la source de lumière est entièrement cachée ; la pénombre, celle où elle ne l'est qu'en partie. Lors d'une éclipse de Lune par la pénombre seule, l'assombrissement est si léger qu'on le remarque à peine."
+    },
+    "saros": {
+      "term": "Saros",
+      "short": "Cycle de répétition des éclipses.",
+      "full": "Période d'environ 18 ans et 11 jours au bout de laquelle le Soleil, la Terre et la Lune reviennent presque dans la même configuration. Une éclipse est alors suivie d'une éclipse très semblable, décalée d'un tiers de tour de Terre vers l'ouest."
+    },
+    "essaimMeteores": {
+      "term": "Pluie d'étoiles filantes",
+      "short": "Période où les étoiles filantes sont nombreuses.",
+      "full": "Chaque année aux mêmes dates, la Terre traverse les poussières laissées par une comète. Elles brûlent dans l'atmosphère et donnent des étoiles filantes. Les plus connues sont les Perséides en août et les Géminides en décembre. Elles s'observent à l'œil nu, allongé, loin des lumières."
+    },
+    "radiant": {
+      "term": "Radiant",
+      "short": "Point d'où semblent venir les étoiles filantes.",
+      "full": "Point du ciel d'où semblent partir les étoiles filantes d'un même essaim, par effet de perspective. Il donne son nom à l'essaim : les Perséides semblent venir de Persée. Plus le radiant est haut dans le ciel, plus on voit d'étoiles filantes."
+    },
+    "thz": {
+      "term": "Taux horaire zénithal (THZ)",
+      "short": "Nombre d'étoiles filantes par heure, en conditions idéales.",
+      "full": "Nombre d'étoiles filantes qu'un observateur verrait en une heure avec le radiant au zénith et un ciel parfaitement noir. En pratique, on en voit presque toujours moins. Les Perséides atteignent environ 100 par heure, les Géminides un peu plus."
+    },
+    "flare": {
+      "term": "Flare",
+      "short": "Bref éclat d'un satellite.",
+      "full": "Reflet du Soleil sur les panneaux ou les antennes d'un satellite, qui le rend brièvement très lumineux pendant quelques secondes. On ne voit les satellites qu'après le coucher ou avant le lever du Soleil, quand ils sont encore éclairés alors que le sol est dans la nuit."
+    },
+    "anneeLumiere": {
+      "term": "Année-lumière",
+      "short": "Distance parcourue par la lumière en un an.",
+      "full": "Environ 9 460 milliards de kilomètres. C'est une distance, pas une durée. Quand on regarde une étoile à 500 années-lumière, on la voit telle qu'elle était il y a 500 ans."
+    },
+    "uniteAstronomique": {
+      "term": "Unité astronomique (UA)",
+      "short": "Distance moyenne entre la Terre et le Soleil.",
+      "full": "Environ 150 millions de kilomètres. Elle sert à mesurer les distances dans le Système solaire : Jupiter est à environ 5,2 UA du Soleil, Neptune à 30 UA."
+    },
+    "parsec": {
+      "term": "Parsec",
+      "short": "Unité de distance des astronomes, environ 3,26 années-lumière.",
+      "full": "Distance à laquelle une étoile aurait une parallaxe d'une seconde d'arc. Un parsec vaut environ 3,26 années-lumière. Les astronomes l'utilisent beaucoup, avec ses multiples : kiloparsec (kpc) et mégaparsec (Mpc)."
+    },
+    "magnitudeAbsolue": {
+      "term": "Magnitude absolue",
+      "short": "Éclat réel d'un astre, indépendamment de sa distance.",
+      "full": "Magnitude qu'aurait une étoile si elle était placée à 10 parsecs de nous. Elle permet de comparer la puissance réelle des astres. Le Soleil, aveuglant dans notre ciel, aurait une magnitude absolue d'environ 4,8 : une étoile tout juste visible depuis la campagne."
+    },
+    "typeSpectral": {
+      "term": "Type spectral",
+      "short": "Classement des étoiles selon leur température.",
+      "full": "Les étoiles sont classées par lettres, des plus chaudes aux plus froides : O, B, A, F, G, K, M. Les étoiles O et B sont bleues, les M rouges. Le Soleil est de type G2."
+    },
+    "indiceCouleur": {
+      "term": "Indice de couleur",
+      "short": "Mesure de la couleur d'une étoile.",
+      "full": "Différence entre la magnitude d'une étoile mesurée dans le bleu et dans le jaune-vert (indice B−V). Une valeur négative indique une étoile bleue et chaude ; une valeur élevée, une étoile orange ou rouge, plus froide. Le Soleil a un indice d'environ 0,65."
+    },
+    "luminosite": {
+      "term": "Luminosité",
+      "short": "Énergie totale émise par une étoile.",
+      "full": "Puissance totale rayonnée par un astre, souvent exprimée en nombre de fois celle du Soleil. À ne pas confondre avec l'éclat apparent : une étoile très lumineuse mais lointaine peut paraître faible dans notre ciel."
+    },
+    "redshift": {
+      "term": "Décalage vers le rouge",
+      "short": "Étirement de la lumière des objets qui s'éloignent.",
+      "full": "La lumière d'un objet qui s'éloigne est décalée vers le rouge. Pour les galaxies lointaines, ce décalage vient de l'expansion de l'Univers et augmente avec la distance. Il sert donc à estimer leur éloignement. On le note z, et on parle aussi de redshift."
+    },
+    "nebuleuse": {
+      "term": "Nébuleuse",
+      "short": "Nuage de gaz et de poussières.",
+      "full": "Nuage interstellaire de différents types : nébuleuse en émission (le gaz brille, comme M42 dans Orion), en réflexion (la poussière renvoie la lumière d'étoiles proches), obscure (elle masque l'arrière-plan) ou planétaire (enveloppe éjectée par une étoile en fin de vie)."
+    },
+    "galaxie": {
+      "term": "Galaxie",
+      "short": "Immense ensemble d'étoiles, de gaz et de poussières.",
+      "full": "Système de milliards d'étoiles liées par la gravité. Notre galaxie est la Voie lactée. La galaxie d'Andromède (M31), à environ 2,5 millions d'années-lumière, est le plus lointain objet visible à l'œil nu sous un ciel noir."
+    },
+    "amasOuvert": {
+      "term": "Amas ouvert",
+      "short": "Groupe d'étoiles jeunes nées ensemble.",
+      "full": "Groupe de quelques dizaines à quelques milliers d'étoiles nées du même nuage, peu liées entre elles, qui se dispersent avec le temps. Les Pléiades (M45) en sont l'exemple le plus connu. Ils se trouvent dans le disque de la Voie lactée."
+    },
+    "amasGlobulaire": {
+      "term": "Amas globulaire",
+      "short": "Boule très dense de vieilles étoiles.",
+      "full": "Amas sphérique de centaines de milliers d'étoiles très anciennes, souvent âgées de plus de 10 milliards d'années. Ils tournent autour de la Voie lactée, dans son halo. Au télescope, M13 dans Hercule se résout en une multitude de points."
+    },
+    "etoileDouble": {
+      "term": "Étoile double",
+      "short": "Deux étoiles qui paraissent très proches.",
+      "full": "Paire d'étoiles proches dans le ciel. Certaines sont liées par la gravité et tournent l'une autour de l'autre (étoiles binaires) ; d'autres sont simplement alignées par hasard. Leurs couleurs contrastées, comme Albireo dans le Cygne, en font des cibles appréciées."
+    },
+    "etoileVariable": {
+      "term": "Étoile variable",
+      "short": "Étoile dont l'éclat change.",
+      "full": "Étoile dont la magnitude varie, de façon régulière ou non. Certaines pulsent (les céphéides, qui servent à mesurer les distances), d'autres sont éclipsées par une compagne, comme Algol dans Persée."
+    },
+    "supernova": {
+      "term": "Supernova",
+      "short": "Explosion d'une étoile en fin de vie.",
+      "full": "Explosion qui peut briller autant qu'une galaxie entière pendant quelques semaines. Elle disperse les éléments chimiques qui formeront de nouvelles étoiles et planètes. La nébuleuse du Crabe (M1) est le reste d'une supernova observée en 1054."
+    },
+    "exoplanete": {
+      "term": "Exoplanète",
+      "short": "Planète en orbite autour d'une autre étoile.",
+      "full": "Planète située hors du Système solaire. On en a confirmé plus de 6 000. La plupart sont détectées indirectement, par la petite baisse d'éclat de leur étoile quand elles passent devant (méthode des transits)."
+    },
+    "catalogueMessier": {
+      "term": "Catalogue Messier",
+      "short": "Liste de 110 objets brillants du ciel profond.",
+      "full": "Liste établie au XVIIIe siècle par Charles Messier, chasseur de comètes, pour ne pas confondre ces objets flous avec des comètes. Elle contient 110 objets numérotés de M1 à M110, parmi les plus beaux à observer depuis l'hémisphère nord."
+    },
+    "ngcIc": {
+      "term": "NGC et IC",
+      "short": "Grands catalogues d'objets du ciel profond.",
+      "full": "Le New General Catalogue (NGC), publié en 1888, recense près de 7 840 objets. Il a été complété par l'Index Catalogue (IC), qui en ajoute plus de 5 000. Beaucoup d'objets Messier ont aussi un numéro NGC : M31 est NGC 224."
+    },
+    "cielProfond": {
+      "term": "Ciel profond",
+      "short": "Objets situés au-delà du Système solaire, hors étoiles isolées.",
+      "full": "Désigne les nébuleuses, galaxies et amas d'étoiles, par opposition aux planètes, à la Lune et au Soleil. Ces objets sont souvent faibles et étendus : ils demandent un ciel noir et une bonne adaptation à l'obscurité."
+    },
+    "ventSolaire": {
+      "term": "Vent solaire",
+      "short": "Flux de particules émis en permanence par le Soleil.",
+      "full": "Flot continu de particules chargées qui s'échappe du Soleil à une vitesse de 300 à 800 km/s environ. En interagissant avec le champ magnétique terrestre, il peut provoquer des aurores et des perturbations géomagnétiques."
+    },
+    "eruptionSolaire": {
+      "term": "Éruption solaire",
+      "short": "Brusque libération d'énergie à la surface du Soleil.",
+      "full": "Flash de rayonnement qui dure de quelques minutes à quelques heures, souvent près des taches solaires. Les éruptions sont classées par puissance croissante : A, B, C, M et X. Les plus fortes peuvent perturber les communications radio sur la face éclairée de la Terre."
+    },
+    "cme": {
+      "term": "Éjection de masse coronale (CME)",
+      "short": "Nuage de matière expulsé par le Soleil.",
+      "full": "Énorme bulle de plasma éjectée dans l'espace par le Soleil. Quand elle se dirige vers la Terre, elle l'atteint en 1 à 3 jours environ et peut déclencher une tempête géomagnétique, avec des aurores visibles plus au sud que d'habitude."
+    },
+    "tacheSolaire": {
+      "term": "Tache solaire",
+      "short": "Zone plus sombre à la surface du Soleil.",
+      "full": "Région où un champ magnétique intense freine la remontée de chaleur : elle est plus froide, donc plus sombre que son entourage. Une tache peut être plus grande que la Terre. Leur nombre suit le cycle solaire. Elles ne s'observent qu'avec un filtre solaire adapté."
+    },
+    "cycleSolaire": {
+      "term": "Cycle solaire",
+      "short": "Variation de l'activité du Soleil sur environ 11 ans.",
+      "full": "L'activité du Soleil (taches, éruptions, éjections) monte et descend selon un cycle d'environ 11 ans. Les périodes de maximum sont les plus favorables aux aurores. Les cycles sont numérotés depuis le milieu du XVIIIe siècle."
+    },
+    "indiceKp": {
+      "term": "Indice Kp",
+      "short": "Mesure de l'agitation du champ magnétique terrestre.",
+      "full": "Indice de 0 (calme) à 9 (tempête extrême) qui résume les perturbations géomagnétiques sur trois heures. Plus il est élevé, plus les aurores descendent vers le sud. En France, il faut en général un Kp d'au moins 7 pour espérer en voir."
+    },
+    "aurore": {
+      "term": "Aurore polaire",
+      "short": "Lumières colorées dans le ciel des régions polaires.",
+      "full": "Lueurs vertes, rouges ou violettes produites quand les particules du vent solaire excitent les gaz de la haute atmosphère. Elles sont fréquentes près des pôles. Lors des fortes tempêtes géomagnétiques, elles peuvent être visibles jusqu'en France, surtout en photo."
+    },
+    "orbite": {
+      "term": "Orbite",
+      "short": "Trajectoire d'un astre autour d'un autre.",
+      "full": "Chemin suivi par un objet autour d'un autre sous l'effet de la gravité : une planète autour du Soleil, la Lune ou un satellite autour de la Terre. Les orbites sont des ellipses, plus ou moins proches d'un cercle."
+    },
+    "perigeeApogee": {
+      "term": "Périgée et apogée",
+      "short": "Points le plus proche et le plus éloigné de la Terre.",
+      "full": "Sur une orbite autour de la Terre, le périgée est le point le plus proche et l'apogée le plus lointain. La distance de la Lune varie ainsi d'environ 356 000 à 407 000 km : une pleine lune proche du périgée est parfois appelée « super lune »."
+    },
+    "perihelieAphelie": {
+      "term": "Périhélie et aphélie",
+      "short": "Points le plus proche et le plus éloigné du Soleil.",
+      "full": "Sur une orbite autour du Soleil, le périhélie est le point le plus proche et l'aphélie le plus lointain. La Terre passe au périhélie début janvier et à l'aphélie début juillet : les saisons ne viennent pas de la distance, mais de l'inclinaison de l'axe terrestre."
+    },
+    "orbiteBasse": {
+      "term": "Orbite basse",
+      "short": "Orbite proche de la Terre, sous 2 000 km.",
+      "full": "Zone où évoluent l'ISS et les satellites Starlink. À environ 400 km d'altitude, l'ISS fait le tour de la Terre en à peu près 90 minutes. Ces satellites traversent le ciel en quelques minutes et se voient surtout peu après le coucher ou avant le lever du Soleil."
+    },
+    "inclinaison": {
+      "term": "Inclinaison orbitale",
+      "short": "Angle entre une orbite et un plan de référence.",
+      "full": "Angle entre le plan d'une orbite et l'équateur (pour un satellite) ou l'écliptique (pour une planète). L'orbite de l'ISS est inclinée de 51,6° : elle survole donc des régions jusqu'à cette latitude, ce qui inclut toute la France."
+    },
+    "tle": {
+      "term": "TLE",
+      "short": "Données qui décrivent l'orbite d'un satellite.",
+      "full": "Les « Two-Line Elements » sont deux lignes de chiffres qui décrivent l'orbite d'un satellite à un instant donné. Ils permettent de calculer ses passages. Ils se dégradent en quelques jours à cause du freinage atmosphérique et doivent être mis à jour régulièrement."
+    },
+    "revolutionRotation": {
+      "term": "Révolution et rotation",
+      "short": "Tourner autour d'un astre ou sur soi-même.",
+      "full": "La révolution est le tour d'un astre autour d'un autre ; la rotation, le tour d'un astre sur lui-même. La Lune met le même temps pour les deux (rotation synchrone) : c'est pour cela qu'elle nous montre toujours la même face."
+    },
+    "lunette": {
+      "term": "Lunette astronomique",
+      "short": "Instrument qui utilise des lentilles.",
+      "full": "Instrument dont l'objectif est une lentille, appelé aussi réfracteur. Il demande peu d'entretien, pas de collimation, et donne des images contrastées. Les lunettes apochromatiques corrigent les franges colorées autour des objets brillants."
+    },
+    "telescope": {
+      "term": "Télescope",
+      "short": "Instrument qui utilise des miroirs.",
+      "full": "Instrument dont l'objectif est un miroir, appelé aussi réflecteur. À diamètre égal, il est bien moins cher qu'une lunette, ce qui permet de collecter plus de lumière pour le ciel profond. Il demande une collimation de temps en temps."
+    },
+    "newton": {
+      "term": "Newton",
+      "short": "Télescope à miroir principal et petit miroir plan.",
+      "full": "Formule de télescope la plus répandue : un miroir concave au fond du tube renvoie la lumière vers un petit miroir plan incliné, qui la dirige sur le côté du tube, vers l'oculaire. Monté sur une monture Dobson, c'est l'instrument qui offre le plus grand diamètre pour un budget donné."
+    },
+    "schmidtCassegrain": {
+      "term": "Schmidt-Cassegrain",
+      "short": "Télescope compact à longue focale.",
+      "full": "Télescope dont la lumière fait un aller-retour dans le tube grâce à deux miroirs, et qui est fermé à l'avant par une lame correctrice. On obtient une longue focale dans un tube court, idéale pour la Lune, les planètes et les petits objets."
+    },
+    "focale": {
+      "term": "Focale",
+      "short": "Distance à laquelle l'instrument forme l'image.",
+      "full": "Distance entre l'objectif et le point où se forme l'image. Avec l'oculaire, elle fixe le grossissement ; en photo, elle fixe le champ couvert. Une longue focale convient aux planètes, une courte aux grands champs."
+    },
+    "rapportFD": {
+      "term": "Rapport F/D",
+      "short": "Focale divisée par le diamètre.",
+      "full": "Rapport entre la focale et le diamètre de l'instrument, comme l'ouverture d'un objectif photo. Un F/D faible (F/4, F/5) est « rapide » : il donne un grand champ et des poses plus courtes. Un F/D élevé (F/10 et plus) convient aux planètes."
+    },
+    "diametre": {
+      "term": "Diamètre",
+      "short": "Taille de l'objectif, la caractéristique principale.",
+      "full": "Diamètre de la lentille ou du miroir principal, aussi appelé ouverture. Plus il est grand, plus l'instrument collecte de lumière (pour voir des objets faibles) et plus il peut montrer de détails fins, si la turbulence le permet."
+    },
+    "grossissement": {
+      "term": "Grossissement",
+      "short": "Focale de l'instrument divisée par celle de l'oculaire.",
+      "full": "Un télescope de 1 000 mm de focale avec un oculaire de 10 mm grossit 100 fois. Grossir davantage n'est pas toujours mieux : au-delà d'environ deux fois le diamètre en millimètres, ou quand la turbulence est forte, l'image devient floue et sombre."
+    },
+    "champ": {
+      "term": "Champ apparent et champ réel",
+      "short": "Largeur du ciel visible dans l'oculaire.",
+      "full": "Le champ apparent est l'angle que l'on voit en regardant dans l'oculaire (souvent 50° à 82°). Le champ réel est la portion de ciel réellement couverte : il vaut à peu près le champ apparent divisé par le grossissement. La Pleine Lune mesure environ 0,5° de champ réel."
+    },
+    "pupilleSortie": {
+      "term": "Pupille de sortie",
+      "short": "Diamètre du faisceau de lumière qui sort de l'oculaire.",
+      "full": "Elle se calcule en divisant le diamètre de l'instrument par le grossissement. Si elle dépasse la pupille de l'œil (5 à 7 mm dans le noir, moins avec l'âge), une partie de la lumière est perdue. Une pupille de sortie autour de 2 à 4 mm convient bien au ciel profond."
+    },
+    "barlow": {
+      "term": "Lentille de Barlow",
+      "short": "Accessoire qui multiplie la focale.",
+      "full": "Lentille placée avant l'oculaire, qui multiplie la focale de l'instrument, souvent par 2 ou 3. Elle double ainsi le nombre de grossissements possibles avec la même série d'oculaires."
+    },
+    "chercheur": {
+      "term": "Chercheur",
+      "short": "Petit viseur pour pointer l'instrument.",
+      "full": "Petite lunette à faible grossissement, ou viseur à point rouge, fixé sur l'instrument principal. Son grand champ aide à trouver un objet avant de l'observer à fort grossissement. Il doit être aligné avec l'instrument, de préférence de jour sur un objet lointain."
+    },
+    "montureAzimutale": {
+      "term": "Monture azimutale",
+      "short": "Monture qui bouge de haut en bas et de gauche à droite.",
+      "full": "Monture qui tourne autour d'un axe vertical et d'un axe horizontal, comme un appareil photo sur un trépied. Elle est simple et intuitive. En contrepartie, il faut corriger sur les deux axes pour suivre un astre, et le champ tourne en photo longue pose. La monture Dobson en est une version."
+    },
+    "montureEquatoriale": {
+      "term": "Monture équatoriale",
+      "short": "Monture dont un axe est parallèle à l'axe de la Terre.",
+      "full": "Monture dont l'axe principal pointe vers le pôle céleste. Une fois mise en station, il suffit de tourner cet axe pour suivre un astre, ce qui la rend indispensable pour l'astrophotographie en longue pose."
+    },
+    "miseEnStation": {
+      "term": "Mise en station",
+      "short": "Alignement d'une monture équatoriale sur le pôle.",
+      "full": "Réglage qui oriente l'axe d'une monture équatoriale vers le pôle céleste. Plus il est précis, mieux la monture suit les astres. Pour l'astrophotographie, une erreur de quelques minutes d'arc suffit à déformer les étoiles lors des longues poses."
+    },
+    "viseurPolaire": {
+      "term": "Viseur polaire",
+      "short": "Petite lunette pour aligner la monture sur le pôle.",
+      "full": "Petite lunette intégrée à l'axe d'une monture équatoriale, avec un réticule. On y place l'étoile polaire à la position du moment, qui dépend de l'heure et du lieu. L'outil viseur polaire d'Astroshare calcule cette position pour vous."
+    },
+    "goto": {
+      "term": "GoTo",
+      "short": "Monture qui pointe les objets automatiquement.",
+      "full": "Monture motorisée et informatisée qui, après une courte procédure d'alignement sur quelques étoiles, pointe d'elle-même l'objet choisi dans sa base de données, puis le suit."
+    },
+    "filtreSolaire": {
+      "term": "Filtre solaire",
+      "short": "Protection indispensable pour regarder le Soleil.",
+      "full": "Filtre placé devant l'instrument, jamais à l'oculaire, qui bloque presque toute la lumière et la chaleur du Soleil. À l'œil nu, on utilise des lunettes certifiées ISO 12312-2. Sans protection adaptée, regarder le Soleil, même brièvement, peut causer des lésions définitives aux yeux."
+    },
+    "filtreInterferentiel": {
+      "term": "Filtre interférentiel",
+      "short": "Filtre qui ne laisse passer que certaines couleurs.",
+      "full": "Filtre qui laisse passer seulement la lumière émise par certains gaz : UHC, OIII ou H-alpha. Il renforce le contraste des nébuleuses en émission et atténue la pollution lumineuse, mais n'aide pas pour les galaxies ou les amas. Ces filtres ne protègent pas du Soleil."
+    },
+    "renvoiCoude": {
+      "term": "Renvoi coudé",
+      "short": "Accessoire qui dévie la lumière à 90°.",
+      "full": "Miroir ou prisme placé avant l'oculaire sur une lunette ou un Schmidt-Cassegrain, pour observer dans une position confortable quand l'objet est haut. On l'appelle aussi diagonale. L'image est alors inversée de gauche à droite."
+    },
+    "astrophotographie": {
+      "term": "Astrophotographie",
+      "short": "Photographie des astres.",
+      "full": "Va de la photo de la Voie lactée avec un simple appareil sur trépied aux longues poses du ciel profond derrière un télescope motorisé. Le capteur accumule la lumière pendant des minutes ou des heures et révèle des détails et des couleurs invisibles à l'œil."
+    },
+    "empilement": {
+      "term": "Empilement",
+      "short": "Combinaison de nombreuses photos en une seule.",
+      "full": "Technique qui aligne et additionne des dizaines ou des centaines de photos du même objet. Le signal se renforce tandis que le bruit se moyenne, ce qui donne une image plus propre et plus détaillée qu'une seule pose. On parle aussi de stacking."
+    },
+    "plateSolving": {
+      "term": "Plate solving",
+      "short": "Retrouver la position exacte d'une photo dans le ciel.",
+      "full": "Analyse automatique qui compare les étoiles d'une photo à un catalogue pour déterminer précisément quelle zone du ciel elle montre, son échelle et son orientation. Astroshare l'utilise pour placer les images de la communauté au bon endroit dans le planétarium."
+    },
+    "tempsPose": {
+      "term": "Temps de pose",
+      "short": "Durée pendant laquelle le capteur reçoit la lumière.",
+      "full": "Plus la pose est longue, plus le capteur accumule de lumière et révèle d'objets faibles. Sans suivi motorisé, la rotation de la Terre transforme vite les étoiles en traits : avec un objectif grand angle, on dépasse rarement une vingtaine de secondes."
+    },
+    "lanceur": {
+        "term": "Lanceur",
+        "short": "Fusée conçue pour envoyer une charge dans l'espace.",
+        "full": "Véhicule propulsé par des moteurs-fusées, capable d'emporter un satellite, une sonde ou un équipage jusqu'en orbite ou au-delà. On parle aussi de fusée. Ariane 6, Falcon 9 ou Longue Marche sont des lanceurs."
+      },
+      "etage": {
+        "term": "Étage",
+        "short": "Partie d'un lanceur avec ses propres moteurs et réservoirs.",
+        "full": "Un lanceur est formé de plusieurs étages empilés. Chacun fonctionne à son tour, puis se détache une fois vide : la fusée s'allège au fur et à mesure, ce qui lui permet d'atteindre la vitesse nécessaire pour rester en orbite."
+      },
+      "booster": {
+        "term": "Booster",
+        "short": "Propulseur qui donne de la poussée au décollage.",
+        "full": "Propulseur d'appoint fixé sur les côtés d'un lanceur, souvent à poudre, qui ajoute de la poussée pendant les premières minutes avant d'être largué. Ariane 6 en utilise deux ou quatre. Le mot désigne aussi le premier étage de certains lanceurs, comme celui de Falcon 9 ou de Starship."
+      },
+      "lanceurReutilisable": {
+        "term": "Lanceur réutilisable",
+        "short": "Lanceur dont une partie est récupérée et revole.",
+        "full": "Lanceur dont certains éléments reviennent sur Terre en bon état pour être réutilisés, au lieu de tomber dans l'océan. Le premier étage de Falcon 9 revient se poser après chaque vol et peut voler des dizaines de fois. La réutilisation fait baisser le coût d'un lancement."
+      },
+      "atterrissagePropulsif": {
+        "term": "Atterrissage propulsif",
+        "short": "Retour au sol en freinant avec les moteurs.",
+        "full": "Technique où un étage de fusée rallume ses moteurs pour freiner sa chute et se poser à la verticale, sur une aire terrestre ou une barge en mer. C'est elle qui rend possibles les lanceurs réutilisables actuels."
+      },
+      "coiffe": {
+        "term": "Coiffe",
+        "short": "Protection placée au sommet du lanceur.",
+        "full": "Enveloppe profilée qui protège la charge utile de l'air et de la chaleur pendant la traversée de l'atmosphère. Elle s'ouvre en deux et se détache une fois l'air assez rare, en général quelques minutes après le décollage."
+      },
+      "chargeUtile": {
+        "term": "Charge utile",
+        "short": "Ce que le lanceur emporte dans l'espace.",
+        "full": "Satellite, sonde, capsule ou cargo transporté par le lanceur : c'est la raison du lancement. La masse de charge utile qu'un lanceur peut emporter dépend fortement de l'orbite visée : bien plus en orbite basse qu'en orbite géostationnaire."
+      },
+      "moteurFusee": {
+        "term": "Moteur-fusée",
+        "short": "Moteur qui fonctionne aussi dans le vide.",
+        "full": "Moteur qui éjecte des gaz à grande vitesse pour avancer. Contrairement à un moteur d'avion, il emporte son propre comburant et n'a pas besoin de l'oxygène de l'air : il fonctionne donc dans l'espace. Vulcain, Merlin ou Raptor sont des moteurs-fusées."
+      },
+      "ergols": {
+        "term": "Ergols",
+        "short": "Carburant et comburant d'une fusée.",
+        "full": "Substances qui brûlent ensemble dans le moteur : un carburant (kérosène, hydrogène, méthane) et un comburant, le plus souvent de l'oxygène liquide. Les ergols peuvent aussi être solides, mélangés dans un bloc de « poudre », comme dans les boosters."
+      },
+      "poussee": {
+        "term": "Poussée",
+        "short": "Force produite par les moteurs.",
+        "full": "Force qui propulse le lanceur, exprimée en newtons ou en tonnes-force. Au décollage, elle doit dépasser le poids de la fusée pour que celle-ci s'élève : plus l'écart est grand, plus le départ est rapide."
+      },
+      "lanceurLourd": {
+        "term": "Lanceur lourd",
+        "short": "Lanceur capable d'emporter de très grosses charges.",
+        "full": "Lanceur capable de placer plusieurs dizaines de tonnes en orbite basse. Au-delà d'environ 50 tonnes, on parle de lanceur super-lourd, comme Saturn V, SLS ou Starship : ce sont eux qui permettent les missions habitées vers la Lune."
+      },
+      "microlanceur": {
+        "term": "Petit lanceur",
+        "short": "Lanceur dédié aux petits satellites.",
+        "full": "Lanceur de petite taille, conçu pour placer en orbite des satellites de quelques centaines de kilos au plus. On parle aussi de microlanceur. Il permet à un petit satellite de partir quand et où il le souhaite, au lieu de partager un gros lanceur."
+      },
+      "fenetreTir": {
+        "term": "Fenêtre de tir",
+        "short": "Période pendant laquelle le lancement est possible.",
+        "full": "Plage horaire, parfois réduite à un instant précis, pendant laquelle le lanceur peut partir pour atteindre la bonne orbite ou rejoindre sa cible. Pour rejoindre l'ISS, elle dure souvent quelques secondes. Si elle est manquée, le lancement est reporté."
+      },
+      "compteRebours": {
+        "term": "Compte à rebours",
+        "short": "Décompte jusqu'à l'instant du décollage.",
+        "full": "Séquence de vérifications et d'opérations menée jusqu'au décollage, noté T-0. Les heures avant T-0 s'écrivent T-moins (par exemple T-10 min), celles d'après T-plus. Le compte à rebours peut être suspendu pour régler un problème."
+      },
+      "decollage": {
+        "term": "Décollage",
+        "short": "Instant où le lanceur quitte le pas de tir.",
+        "full": "Moment où la poussée des moteurs dépasse le poids du lanceur et où il quitte le sol. Les heures affichées dans un calendrier de lancement correspondent à cet instant, appelé T-0."
+      },
+      "maxQ": {
+        "term": "Max Q",
+        "short": "Moment où le lanceur subit le plus de contraintes.",
+        "full": "Instant de la montée où la pression de l'air sur le lanceur est la plus forte, généralement un peu plus d'une minute après le décollage. Les moteurs sont souvent réduits juste avant pour ménager la structure. Les commentateurs l'annoncent comme une étape franchie."
+      },
+      "separationEtages": {
+        "term": "Séparation des étages",
+        "short": "Moment où un étage vide se détache.",
+        "full": "Étape où un étage qui a épuisé ses ergols se détache, avant que l'étage suivant n'allume son moteur. Sur un lanceur réutilisable, c'est le moment où le premier étage commence son retour vers la Terre."
+      },
+      "miseEnOrbite": {
+        "term": "Mise en orbite",
+        "short": "Placement de la charge utile sur son orbite.",
+        "full": "Étape finale où la charge utile atteint son orbite et se sépare du dernier étage. En orbite basse, il faut atteindre environ 28 000 km/h : la difficulté d'un lancement tient bien plus à cette vitesse qu'à l'altitude. On parle aussi d'injection."
+      },
+      "report": {
+        "term": "Report de lancement",
+        "short": "Lancement annulé et reprogrammé.",
+        "full": "Décision d'interrompre le compte à rebours et de reporter le décollage, à cause de la météo, d'un problème technique ou d'un bateau dans la zone de sécurité. C'est très courant : la date d'un lancement reste incertaine jusqu'au dernier moment. On parle aussi de « scrub »."
+      },
+      "pasTir": {
+        "term": "Pas de tir",
+        "short": "Plateforme d'où décolle le lanceur.",
+        "full": "Installation qui accueille le lanceur avant le décollage : la table de lancement, la tour d'accès, les arrivées d'ergols et les dispositifs qui encaissent le souffle des moteurs. Une base de lancement peut compter plusieurs pas de tir."
+      },
+      "baseLancement": {
+        "term": "Base de lancement",
+        "short": "Site d'où partent les fusées.",
+        "full": "Site équipé de pas de tir et d'installations de préparation. Les principales sont Kourou en Guyane (Europe), Cap Canaveral et le centre Kennedy en Floride (États-Unis), Baïkonour au Kazakhstan (Russie) et Jiuquan ou Wenchang (Chine). Les bases proches de l'équateur profitent davantage de la rotation de la Terre."
+      },
+      "rentreeAtmospherique": {
+        "term": "Rentrée atmosphérique",
+        "short": "Retour d'un engin dans l'atmosphère.",
+        "full": "Phase où un engin revenant de l'espace traverse l'atmosphère à très grande vitesse. Le frottement de l'air le freine mais le chauffe à plusieurs milliers de degrés : un bouclier thermique protège les capsules habitées."
+      },
+      "amerrissage": {
+        "term": "Amerrissage",
+        "short": "Retour d'une capsule dans la mer.",
+        "full": "Fin de mission où une capsule, freinée par ses parachutes, se pose dans l'océan avant d'être récupérée par un navire. C'est le cas des capsules Crew Dragon et Orion. Les capsules Soyouz, elles, se posent sur la terre ferme au Kazakhstan."
+      },
+      "astronaute": {
+        "term": "Astronaute",
+        "short": "Personne formée pour voyager dans l'espace.",
+        "full": "Membre d'équipage d'un vol spatial. Le terme est utilisé par les États-Unis, l'Europe et la plupart des pays. Les Russes parlent de cosmonautes, les Chinois de taïkonautes. Plusieurs astronautes français ont séjourné dans l'ISS, dont Thomas Pesquet."
+      },
+      "cosmonaute": {
+        "term": "Cosmonaute",
+        "short": "Astronaute russe ou soviétique.",
+        "full": "Nom donné aux astronautes de l'Union soviétique puis de la Russie. Iouri Gagarine, premier humain dans l'espace en 1961, était cosmonaute."
+      },
+      "taikonaute": {
+        "term": "Taïkonaute",
+        "short": "Astronaute chinois.",
+        "full": "Nom courant des astronautes chinois, formé à partir du mot chinois « taikong », l'espace. La Chine a envoyé son premier taïkonaute en 2003 et occupe aujourd'hui sa propre station spatiale."
+      },
+      "volHabite": {
+        "term": "Vol habité",
+        "short": "Mission spatiale avec un équipage à bord.",
+        "full": "Mission qui emporte des humains, ce qui demande un système de survie, une capsule capable de revenir sur Terre et des systèmes de sauvetage en cas de problème au décollage. Seuls quelques pays et entreprises en sont capables."
+      },
+      "capsule": {
+        "term": "Capsule",
+        "short": "Véhicule qui transporte l'équipage.",
+        "full": "Petit vaisseau dans lequel voyage l'équipage, posé au sommet du lanceur et capable de revenir sur Terre grâce à un bouclier thermique et des parachutes. Soyouz, Crew Dragon, Shenzhou et Orion sont des capsules."
+      },
+      "equipage": {
+        "term": "Équipage",
+        "short": "Personnes à bord d'un vol habité.",
+        "full": "Ensemble des astronautes d'une mission, avec un commandant et des spécialistes. À bord de l'ISS, les équipages se relaient, en général pour des séjours d'environ six mois."
+      },
+      "eva": {
+        "term": "Sortie extravéhiculaire (EVA)",
+        "short": "Sortie d'un astronaute dans le vide spatial.",
+        "full": "Activité menée à l'extérieur d'un vaisseau ou d'une station, en scaphandre, pour réparer, installer du matériel ou mener des expériences. On parle aussi de sortie dans l'espace. Une sortie dure souvent six à sept heures."
+      },
+      "amarrage": {
+        "term": "Amarrage",
+        "short": "Jonction d'un vaisseau à une station.",
+        "full": "Manœuvre par laquelle un vaisseau se fixe à une station spatiale. Il s'approche lentement et s'arrime de lui-même, ou bien il est saisi par le bras robotique de la station, puis fixé : on parle alors d'accostage."
+      },
+      "tourismeSpatial": {
+        "term": "Tourisme spatial",
+        "short": "Vols spatiaux pour des particuliers.",
+        "full": "Vols proposés à des passagers privés, souvent à des prix très élevés. Certains sont suborbitaux : quelques minutes d'apesanteur au-dessus de 80 à 100 km, sans faire le tour de la Terre. D'autres emmènent des passagers en orbite pour plusieurs jours."
+      },
+      "iss": {
+        "term": "ISS",
+        "short": "Station spatiale internationale.",
+        "full": "Laboratoire en orbite à environ 400 km d'altitude, occupé en permanence depuis novembre 2000. Elle est exploitée par les États-Unis, la Russie, l'Europe, le Japon et le Canada. C'est souvent l'objet le plus brillant du ciel après la Lune et Vénus : on la voit passer à l'œil nu en quelques minutes."
+      },
+      "css": {
+        "term": "CSS (Tiangong)",
+        "short": "Station spatiale chinoise.",
+        "full": "Station spatiale de la Chine, appelée Tiangong (« palais céleste »), achevée en 2022. Plus petite que l'ISS, elle accueille en général trois taïkonautes et orbite à environ 400 km d'altitude. On peut aussi la voir passer à l'œil nu."
+      },
+      "stationSpatiale": {
+        "term": "Station spatiale",
+        "short": "Habitat en orbite où vivent des équipages.",
+        "full": "Structure placée durablement en orbite, où des astronautes vivent et travaillent pendant des mois. Elle sert à mener des expériences en apesanteur et à préparer les missions plus lointaines. Plusieurs stations commerciales sont en projet pour succéder à l'ISS."
+      },
+      "module": {
+        "term": "Module",
+        "short": "Élément assemblé pour former une station.",
+        "full": "Partie d'une station spatiale lancée séparément puis assemblée en orbite : laboratoire, habitat, sas, nœud de jonction. L'ISS compte plusieurs dizaines d'éléments, dont le laboratoire européen Columbus."
+      },
+      "cargo": {
+        "term": "Cargo de ravitaillement",
+        "short": "Vaisseau sans équipage qui livre une station.",
+        "full": "Vaisseau automatique qui apporte vivres, eau, carburant et expériences à une station spatiale. Progress, Cargo Dragon, Cygnus et Tianzhou en sont des exemples. Certains brûlent dans l'atmosphère à la fin de leur mission, chargés des déchets de la station."
+      },
+      "sonde": {
+        "term": "Sonde spatiale",
+        "short": "Engin robotique envoyé explorer le Système solaire.",
+        "full": "Engin sans équipage qui quitte l'orbite terrestre pour étudier d'autres astres : survol, mise en orbite ou atterrissage. Voyager 1, lancée en 1977, est l'objet humain le plus lointain."
+      },
+      "rover": {
+        "term": "Rover",
+        "short": "Robot qui se déplace à la surface d'un astre.",
+        "full": "Véhicule robotisé qui roule sur une planète ou la Lune pour l'explorer. Sur Mars, Curiosity et Perseverance parcourent la surface depuis des années. On parle aussi d'astromobile."
+      },
+      "artemis": {
+        "term": "Programme Artemis",
+        "short": "Programme de retour des humains sur la Lune.",
+        "full": "Programme mené par la NASA avec ses partenaires, dont l'ESA, pour ramener des astronautes sur la Lune, puis y installer une présence durable. Il s'appuie sur le lanceur SLS et la capsule Orion, dont le module de service est fourni par l'Europe."
+      },
+      "survol": {
+        "term": "Survol",
+        "short": "Passage d'une sonde près d'un astre sans s'y arrêter.",
+        "full": "Manœuvre où une sonde passe à proximité d'un astre pour l'étudier pendant quelques heures, puis poursuit sa route. On parle aussi de « flyby ». C'est la mission la plus simple pour découvrir un astre lointain."
+      },
+      "assistanceGravitationnelle": {
+        "term": "Assistance gravitationnelle",
+        "short": "Utiliser une planète pour changer de vitesse.",
+        "full": "Manœuvre où une sonde frôle une planète et utilise sa gravité pour accélérer, ralentir ou changer de direction, sans dépenser de carburant. Les sondes vers les planètes lointaines enchaînent souvent plusieurs de ces passages."
+      },
+      "satellite": {
+        "term": "Satellite",
+        "short": "Objet en orbite autour d'un astre.",
+        "full": "Un satellite naturel, comme la Lune, tourne autour d'une planète. Un satellite artificiel est un engin placé en orbite pour observer la Terre, communiquer, naviguer ou faire de la science. Ceux en orbite basse se voient à l'œil nu après le coucher du Soleil."
+      },
+      "constellationSatellites": {
+        "term": "Constellation de satellites",
+        "short": "Ensemble de satellites qui travaillent ensemble.",
+        "full": "Groupe de satellites répartis sur plusieurs orbites pour couvrir toute la Terre. Les constellations Galileo et GPS servent à la navigation ; Starlink, qui compte plusieurs milliers de satellites, fournit Internet. Rien à voir avec les constellations d'étoiles."
+      },
+      "orbiteGeostationnaire": {
+        "term": "Orbite géostationnaire",
+        "short": "Orbite où un satellite paraît immobile.",
+        "full": "Orbite circulaire située à environ 35 800 km au-dessus de l'équateur. Un satellite y fait le tour de la Terre en un jour, au même rythme qu'elle tourne : il semble fixe dans le ciel. C'est l'orbite des satellites de télévision, vers lesquels pointent les paraboles."
+      },
+      "orbiteHeliosynchrone": {
+        "term": "Orbite héliosynchrone",
+        "short": "Orbite qui survole chaque lieu à la même heure.",
+        "full": "Orbite passant près des pôles, réglée pour que le satellite survole chaque région à la même heure solaire locale. L'éclairage est donc toujours le même, ce qui est idéal pour les satellites d'observation de la Terre."
+      },
+      "orbiteTransfert": {
+        "term": "Orbite de transfert",
+        "short": "Orbite intermédiaire avant l'orbite finale.",
+        "full": "Orbite elliptique sur laquelle un lanceur dépose un satellite, qui rejoint ensuite son orbite définitive par ses propres moyens. L'orbite de transfert géostationnaire (GTO) mène ainsi les satellites de télécommunications vers les 35 800 km."
+      },
+      "pointLagrange": {
+        "term": "Point de Lagrange",
+        "short": "Position d'équilibre entre deux astres.",
+        "full": "Il existe cinq points où un engin peut rester en position par rapport au Soleil et à la Terre, en équilibre entre leurs attractions. Le télescope spatial James Webb est placé près du point L2, à environ 1,5 million de km de la Terre, à l'opposé du Soleil."
+      },
+      "debrisSpatiaux": {
+        "term": "Débris spatiaux",
+        "short": "Objets hors d'usage qui restent en orbite.",
+        "full": "Satellites morts, étages de fusée, fragments issus de collisions : des dizaines de milliers d'objets sont suivis, et bien plus sont trop petits pour l'être. À ces vitesses, même un petit éclat est dangereux. Les stations doivent parfois manœuvrer pour les éviter."
+      },
+      "desorbitation": {
+        "term": "Désorbitation",
+        "short": "Faire quitter son orbite à un engin en fin de vie.",
+        "full": "Manœuvre qui fait redescendre un satellite ou un étage pour qu'il brûle dans l'atmosphère ou retombe dans une zone inhabitée de l'océan. Elle évite d'ajouter des débris en orbite."
+      },
+      "satelliteObservation": {
+        "term": "Satellite d'observation de la Terre",
+        "short": "Satellite qui photographie et mesure la Terre.",
+        "full": "Satellite qui observe la surface, les océans et l'atmosphère : météo, climat, agriculture, cartographie, catastrophes naturelles. Les satellites européens Sentinel du programme Copernicus en sont un exemple."
+      },
+      "satelliteTelecom": {
+        "term": "Satellite de télécommunications",
+        "short": "Satellite qui relaie des communications.",
+        "full": "Satellite qui transmet télévision, téléphone ou Internet entre des points éloignés. Longtemps placés en orbite géostationnaire, ils sont de plus en plus souvent regroupés en constellations en orbite basse, plus proches et plus rapides à joindre."
+      },
+      "satelliteNavigation": {
+        "term": "Satellite de navigation",
+        "short": "Satellite qui permet de se localiser.",
+        "full": "Satellite qui émet des signaux horaires très précis. En comparant les signaux de plusieurs satellites, un récepteur calcule sa position. Les principaux systèmes sont GPS (États-Unis), Galileo (Europe), GLONASS (Russie) et BeiDou (Chine)."
+      },
+      "agenceSpatiale": {
+        "term": "Agence spatiale",
+        "short": "Organisme public qui mène un programme spatial.",
+        "full": "Organisme chargé de la politique spatiale d'un pays ou d'un groupe de pays : il finance et conduit les missions, souvent en confiant la construction des lanceurs et des satellites à des industriels."
+      },
+      "nasa": {
+        "term": "NASA",
+        "short": "Agence spatiale des États-Unis.",
+        "full": "Agence créée en 1958, connue pour les missions Apollo, la navette spatiale, les rovers martiens et les télescopes Hubble et James Webb. Elle achète aujourd'hui une partie de ses lancements et de ses vols habités à des entreprises privées."
+      },
+      "esa": {
+        "term": "ESA",
+        "short": "Agence spatiale européenne.",
+        "full": "Agence créée en 1975, qui regroupe plus de vingt pays européens, dont la France, et a son siège à Paris. Elle mène des missions scientifiques, participe à l'ISS et développe avec l'industrie les lanceurs Ariane et Vega, lancés depuis Kourou."
+      },
+      "cnes": {
+        "term": "CNES",
+        "short": "Agence spatiale française.",
+        "full": "Centre national d'études spatiales, créé en 1961. Il conduit la politique spatiale de la France, gère le Centre spatial guyanais à Kourou et contribue à de nombreuses missions, comme les instruments français des rovers martiens."
+      },
+      "roscosmos": {
+        "term": "Roscosmos",
+        "short": "Agence spatiale russe.",
+        "full": "Agence qui a hérité du programme spatial soviétique : premier satellite (Spoutnik, 1957), premier humain dans l'espace (1961). Elle exploite les lanceurs et capsules Soyouz et le segment russe de l'ISS."
+      },
+      "cnsa": {
+        "term": "CNSA",
+        "short": "Agence spatiale chinoise.",
+        "full": "Administration spatiale nationale chinoise. Le programme chinois a réalisé des alunissages, dont le premier sur la face cachée de la Lune, ramené des échantillons lunaires et posé un rover sur Mars. Les vols habités et la station Tiangong sont menés par un programme dédié."
+      },
+      "jaxa": {
+        "term": "JAXA",
+        "short": "Agence spatiale japonaise.",
+        "full": "Agence d'exploration aérospatiale du Japon. Elle est connue pour ses missions Hayabusa, qui ont rapporté des échantillons d'astéroïdes, et fournit à l'ISS le module laboratoire Kibo."
+      },
+      "isro": {
+        "term": "ISRO",
+        "short": "Agence spatiale indienne.",
+        "full": "Organisation indienne de recherche spatiale. En 2023, sa mission Chandrayaan-3 a fait de l'Inde le premier pays à se poser près du pôle Sud de la Lune. Elle développe aussi son propre programme de vols habités."
+      },
+      "newSpace": {
+        "term": "New Space",
+        "short": "Nouvelle génération d'entreprises spatiales privées.",
+        "full": "Désigne l'arrivée d'entreprises privées qui développent leurs propres lanceurs, satellites ou vaisseaux, avec des méthodes plus rapides et des coûts réduits. SpaceX, Blue Origin ou Rocket Lab en sont des exemples. Elles travaillent souvent pour les agences, qui achètent leurs services."
+      },
+      "operateurLancement": {
+        "term": "Opérateur de lancement",
+        "short": "Entreprise qui vend et réalise des lancements.",
+        "full": "Société qui commercialise les lancements et les mène pour ses clients, agences ou entreprises. Arianespace exploite ainsi Ariane 6 pour l'Europe. Chez SpaceX ou Rocket Lab, c'est la même entreprise qui construit et exploite le lanceur."
+      }
+    }
+  }
+

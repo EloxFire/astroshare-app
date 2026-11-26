@@ -20,6 +20,7 @@ import satelliteTracker_fr from "./locales/fr/tools/satelliteTracker.json";
 import satelliteTransits_fr from "./locales/fr/tools/satelliteTransits.json";
 import conjunctions_fr from "./locales/fr/tools/conjunctions.json";
 import eclipses_fr from "./locales/fr/tools/eclipses.json";
+import astroGlossary_fr from "./locales/fr/tools/astroGlossary.json";
 import lightPollutionMap_fr from "./locales/fr/tools/lightPollutionMap.json";
 import fieldSimulator_fr from "./locales/fr/tools/fieldSimulator.json";
 import checklistsScreen_fr from "./locales/fr/tools/checklists/screen.json";
@@ -72,6 +73,7 @@ import satelliteTracker_en from "./locales/en/tools/satelliteTracker.json";
 import satelliteTransits_en from "./locales/en/tools/satelliteTransits.json";
 import conjunctions_en from "./locales/en/tools/conjunctions.json";
 import eclipses_en from "./locales/en/tools/eclipses.json";
+import astroGlossary_en from "./locales/en/tools/astroGlossary.json";
 import lightPollutionMap_en from "./locales/en/tools/lightPollutionMap.json";
 import fieldSimulator_en from "./locales/en/tools/fieldSimulator.json";
 import checklistsScreen_en from "./locales/en/tools/checklists/screen.json";
@@ -124,6 +126,7 @@ import satelliteTracker_it from "./locales/it/tools/satelliteTracker.json";
 import satelliteTransits_it from "./locales/it/tools/satelliteTransits.json";
 import conjunctions_it from "./locales/it/tools/conjunctions.json";
 import eclipses_it from "./locales/it/tools/eclipses.json";
+import astroGlossary_it from "./locales/it/tools/astroGlossary.json";
 import lightPollutionMap_it from "./locales/it/tools/lightPollutionMap.json";
 import fieldSimulator_it from "./locales/it/tools/fieldSimulator.json";
 import checklistsScreen_it from "./locales/it/tools/checklists/screen.json";
@@ -184,6 +187,7 @@ export const resources = {
     "tools/satelliteTransits": satelliteTransits_fr,
     "tools/conjunctions": conjunctions_fr,
     "tools/eclipses": eclipses_fr,
+    "tools/astroGlossary": astroGlossary_fr,
     "tools/lightPollutionMap": lightPollutionMap_fr,
     "tools/fieldSimulator": fieldSimulator_fr,
     "tools/checklists/screen": checklistsScreen_fr,
@@ -237,6 +241,7 @@ export const resources = {
     "tools/satelliteTransits": satelliteTransits_en,
     "tools/conjunctions": conjunctions_en,
     "tools/eclipses": eclipses_en,
+    "tools/astroGlossary": astroGlossary_en,
     "tools/lightPollutionMap": lightPollutionMap_en,
     "tools/fieldSimulator": fieldSimulator_en,
     "tools/checklists/screen": checklistsScreen_en,
@@ -290,6 +295,7 @@ export const resources = {
     "tools/satelliteTransits": satelliteTransits_it,
     "tools/conjunctions": conjunctions_it,
     "tools/eclipses": eclipses_it,
+    "tools/astroGlossary": astroGlossary_it,
     "tools/lightPollutionMap": lightPollutionMap_it,
     "tools/fieldSimulator": fieldSimulator_it,
     "tools/checklists/screen": checklistsScreen_it,

@@ -1,0 +1,105 @@
+{
+  "screen": {
+    "title": "Glossary",
+    "searchPlaceholder": "A word: magnitude, seeing, zenith…",
+    "termCount_one": "{{count}} term",
+    "termCount_other": "{{count}} terms",
+    "empty": "No term matches your search."
+  },
+  "categories": {
+    "all": "All",
+    "observing": "Observing",
+    "spotting": "Finding",
+    "astrophysics": "Astrophysics",
+    "equipment": "Equipment"
+  },
+  "wordOfTheDay": {
+    "eyebrow": "Word of the day"
+  },
+  "entryRow": {
+    "related": "See also"
+  },
+  "cta": {
+    "terminator": "See it on the Moon map"
+  },
+  "illustrations": {
+    "magnitudeScale": {
+      "venus": "Venus",
+      "vega": "Vega",
+      "polaris": "Polaris",
+      "nakedEyeLimit": "naked eye"
+    }
+  },
+  "entries": {
+    "albedo": {
+      "term": "Albedo",
+      "short": "The share of light a body reflects back.",
+      "full": "Fraction of the light a body receives that it reflects without absorbing, between 0 (absorbs everything, perfectly black) and 1 (reflects everything). The Moon has a very low albedo (about 0.12), close to asphalt."
+    },
+    "ascensionDroite": {
+      "term": "Right ascension",
+      "short": "The sky's \"longitude\", in hours.",
+      "full": "Celestial coordinate equivalent to terrestrial longitude, measured in hours/minutes/seconds (0 to 24h) along the celestial equator, from the vernal point. Combined with declination, it pins down a body's position on the celestial sphere."
+    },
+    "azimut": {
+      "term": "Azimuth",
+      "short": "The direction on the horizon, from 0 to 360°.",
+      "full": "Angle measured from north (0°), through east (90°), south (180°) and west (270°), showing which direction to look at the horizon to find a body. Combined with altitude (height above the horizon), it pins down its position from a given place, at a given time."
+    },
+    "bortle": {
+      "term": "Bortle scale",
+      "short": "Rates sky darkness, from 1 to 9.",
+      "full": "Scale from 1 (exceptionally dark site) to 9 (heavily light-polluted downtown) describing a location's night sky quality. The lower the number, the more faint stars and the Milky Way you can see with the naked eye."
+    },
+    "collimation": {
+      "term": "Collimation",
+      "short": "Aligning a telescope's mirrors.",
+      "full": "Adjusting the optical alignment of a telescope's mirrors (or lenses) so light converges correctly. A miscollimated telescope gives blurry or distorted images, especially at high magnification — worth checking regularly on a Newtonian or Schmidt-Cassegrain."
+    },
+    "declinaison": {
+      "term": "Declination",
+      "short": "The sky's \"latitude\", in degrees.",
+      "full": "Celestial coordinate equivalent to terrestrial latitude, measured in degrees from -90° (south celestial pole) to +90° (north celestial pole), from the celestial equator (0°). Combined with right ascension, it pins down a body's position on the celestial sphere."
+    },
+    "ecliptique": {
+      "term": "Ecliptic",
+      "short": "The Sun's path across the sky.",
+      "full": "The Sun's apparent path across the celestial sphere over the year, matching the plane of Earth's orbit. The Moon and planets stay close to this line, since they orbit roughly in the same plane."
+    },
+    "magnitude": {
+      "term": "Magnitude",
+      "short": "A body's brightness: the smaller the number, the brighter it is.",
+      "full": "A reversed, logarithmic scale: 5 magnitudes of difference = 100 times more light. With the naked eye, under a good sky, you can reach down to about magnitude 6."
+    },
+    "meridien": {
+      "term": "Meridian",
+      "short": "The north-south line through the zenith.",
+      "full": "Imaginary great circle linking north, zenith, south and nadir. A body culminates (reaches its highest point in the sky) the moment it crosses the local meridian."
+    },
+    "oculaire": {
+      "term": "Eyepiece",
+      "short": "The part you look through, at the end of the telescope.",
+      "full": "A small lens (or group of lenses) that magnifies the image formed by an instrument's objective or primary mirror. The resulting magnification depends on the ratio between the telescope's focal length and the eyepiece's: the shorter the eyepiece's focal length, the higher the magnification."
+    },
+    "parallaxe": {
+      "term": "Parallax",
+      "short": "The apparent shift of a nearby star.",
+      "full": "Slight apparent shift of a nearby star against the background sky, observed six months apart from two opposite points of Earth's orbit. The larger the shift, the closer the star — the most direct method to measure stellar distances."
+    },
+    "seeing": {
+      "term": "Seeing",
+      "short": "Air steadiness, not the weather itself.",
+      "full": "Quality of atmospheric turbulence: good seeing gives sharp, steady images at high magnification, poor seeing makes the image \"boil\" even under a perfectly clear sky. Independent from transparency (whether clouds or haze are present)."
+    },
+    "terminateur": {
+      "term": "Terminator",
+      "short": "The boundary between day and night on the Moon.",
+      "full": "The boundary between day and night on the Moon. That's where the terrain looks the most dramatic."
+    },
+    "zenith": {
+      "term": "Zenith",
+      "short": "The point in the sky directly overhead.",
+      "full": "Point on the celestial sphere located exactly above an observer, at 90° altitude. Its opposite, straight down, is the nadir."
+    }
+  }
+}
