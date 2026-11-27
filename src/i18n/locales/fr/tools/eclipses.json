@@ -48,7 +48,7 @@
     "unnamedLocation": "Lieu sans nom",
     "notifyMe": "M'alerter le jour J",
     "notifyMoonrise": "M'alerter au lever de la Lune",
-    "eyeSafety": "Ne regarde jamais le Soleil sans filtre solaire certifié ISO 12312-2, même pendant une éclipse partielle.",
+    "eyeSafety": "Ne regardez jamais le Soleil sans filtre solaire ou lunettes d'éclipse certifiées ISO 12312-2, même pendant une éclipse partielle. Des conséquences graves et irréversibles peuvent survenir en quelques secondes seulement !",
     "distanceCompass": "{{distance}} km {{compass}}",
     "header": {
       "type": {

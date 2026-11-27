@@ -25,6 +25,7 @@ import EclipseCircumstancesSheet from "../components/EclipseCircumstancesSheet/E
 import MoonPathDiagram from "../components/MoonPathDiagram/MoonPathDiagram";
 import NearestVisiblePoint from "../components/NearestVisiblePoint/NearestVisiblePoint";
 import { solarEclipseDetailsScreenStyles as styles } from "./SolarEclipseDetailsScreen.styles";
+import InfoCard from "../../../../components/cards/InfoCard/InfoCard";
 
 const SOLAR_LINE_STYLES: Record<string, EclipseLineStyle> = {
   beginSunRise: { color: app_colors.green.main },
@@ -216,10 +217,7 @@ const SolarEclipseDetailsScreen = () => {
             <Search size={18} color={app_colors.primary.main} />
           </TouchableOpacity>
         )}
-      </View>
-
-      {showSearch && (
-        <View style={[styles.searchInputRow, { top: 10 + insets.top + 54 }]}>
+        {showSearch && (
           <InputWithIcon
             fill
             icon={Search}
@@ -228,9 +226,9 @@ const SolarEclipseDetailsScreen = () => {
             onChangeText={setSearchQuery}
             action={handleSearch}
           />
-          {isSearching && <ActivityIndicator style={{ marginTop: 6 }} color={app_colors.accent.main} />}
-        </View>
-      )}
+        )}
+      </View>
+
 
       {showOverlayPanel ? (
         <EclipseCircumstancesSheet
@@ -331,7 +329,7 @@ const SolarEclipseDetailsScreen = () => {
               </View>
 
               <View style={styles.safetyBanner}>
-                <Eye size={18} color={app_colors.primary.main} />
+                <Eye size={18} color={app_colors.white} />
                 <Text style={styles.safetyBanner.text}>{t("details.eyeSafety")}</Text>
               </View>
             </>

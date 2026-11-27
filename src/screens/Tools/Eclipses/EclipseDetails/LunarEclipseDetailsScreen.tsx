@@ -221,10 +221,7 @@ const LunarEclipseDetailsScreen = () => {
             <Search size={18} color={app_colors.primary.main} />
           </TouchableOpacity>
         )}
-      </View>
-
-      {showSearch && (
-        <View style={[styles.searchInputRow, { top: 10 + insets.top + 54 }]}>
+        {showSearch && (
           <InputWithIcon
             fill
             icon={Search}
@@ -233,9 +230,9 @@ const LunarEclipseDetailsScreen = () => {
             onChangeText={setSearchQuery}
             action={handleSearch}
           />
-          {isSearching && <ActivityIndicator style={{ marginTop: 6 }} color={app_colors.accent.main} />}
-        </View>
-      )}
+        )}
+      </View>
+
 
       {showOverlayPanel ? (
         <EclipseCircumstancesSheet

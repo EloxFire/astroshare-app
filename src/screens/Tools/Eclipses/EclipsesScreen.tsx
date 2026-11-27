@@ -127,19 +127,21 @@ const EclipsesScreen = () => {
               onTabPress={setTypeFilterIndex}
             />
             
-            <SwitchInfoCard
-              icon={EclipseIcon}
-              title={t("screen.visibleOnly.title")}
-              description={t("screen.visibleOnly.description")}
-              isEnabled={onlyVisible}
-              onToggle={() => setOnlyVisible((value) => !value)}
-              variant="light"
-            />
+            
 
             {isLoading ? (
               <ActivityIndicator size="large" color={app_colors.accent.main} style={eclipsesScreenStyles.loader} />
             ) : filteredItems.length > 0 ? (
               <View style={eclipsesScreenStyles.list}>
+                <SwitchInfoCard
+                  icon={EclipseIcon}
+                  title={t("screen.visibleOnly.title")}
+                  description={t("screen.visibleOnly.description")}
+                  isEnabled={onlyVisible}
+                  onToggle={() => setOnlyVisible((value) => !value)}
+                  variant="light"
+                />
+
                 {filteredItems.map((item) => (
                   <EclipseRow
                     key={item.key}

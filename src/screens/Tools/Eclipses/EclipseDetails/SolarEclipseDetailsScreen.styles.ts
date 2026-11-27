@@ -239,7 +239,7 @@ export const solarEclipseDetailsScreenStyles = {
   },
 
   safetyBanner: {
-    backgroundColor: app_colors.yellow.light,
+    backgroundColor: app_colors.red.main,
     borderRadius: radius.mediumCard,
     padding: spacing.toolCard,
     display: "flex" as const,
@@ -252,7 +252,7 @@ export const solarEclipseDetailsScreenStyles = {
       fontFamily: "DMMonoRegular",
       fontSize: 11.5,
       lineHeight: 11.5 * 1.4,
-      color: app_colors.primary.main,
+      color: app_colors.white,
     },
   },
 };
