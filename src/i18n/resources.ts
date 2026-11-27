@@ -3,6 +3,7 @@ import common_fr from "./locales/fr/common.json";
 import tools_fr from "./locales/fr/tools.json";
 import moon_fr from "./locales/fr/moon.json";
 import search_fr from "./locales/fr/search.json";
+import explore_fr from "./locales/fr/explore.json";
 import objectsDetails_fr from "./locales/fr/objects/details.json";
 import settings_fr from "./locales/fr/settings.json";
 import settingsAddObservatory_fr from "./locales/fr/settings/addObservatory.json";
@@ -56,6 +57,7 @@ import common_en from "./locales/en/common.json";
 import tools_en from "./locales/en/tools.json";
 import moon_en from "./locales/en/moon.json";
 import search_en from "./locales/en/search.json";
+import explore_en from "./locales/en/explore.json";
 import objectsDetails_en from "./locales/en/objects/details.json";
 import settings_en from "./locales/en/settings.json";
 import settingsAddObservatory_en from "./locales/en/settings/addObservatory.json";
@@ -109,6 +111,7 @@ import common_it from "./locales/it/common.json";
 import tools_it from "./locales/it/tools.json";
 import moon_it from "./locales/it/moon.json";
 import search_it from "./locales/it/search.json";
+import explore_it from "./locales/it/explore.json";
 import objectsDetails_it from "./locales/it/objects/details.json";
 import settings_it from "./locales/it/settings.json";
 import settingsAddObservatory_it from "./locales/it/settings/addObservatory.json";
@@ -170,6 +173,7 @@ export const resources = {
     tools: tools_fr,
     moon: moon_fr,
     search: search_fr,
+    explore: explore_fr,
     "objects/details": objectsDetails_fr,
     settings: settings_fr,
     "settings/addObservatory": settingsAddObservatory_fr,
@@ -224,6 +228,7 @@ export const resources = {
     tools: tools_en,
     moon: moon_en,
     search: search_en,
+    explore: explore_en,
     "objects/details": objectsDetails_en,
     settings: settings_en,
     "settings/addObservatory": settingsAddObservatory_en,
@@ -278,6 +283,7 @@ export const resources = {
     tools: tools_it,
     moon: moon_it,
     search: search_it,
+    explore: explore_it,
     "objects/details": objectsDetails_it,
     settings: settings_it,
     "settings/addObservatory": settingsAddObservatory_it,

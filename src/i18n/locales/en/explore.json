@@ -1,0 +1,32 @@
+{
+  "bodies": {
+    "sun": "Sun",
+    "moon": "Moon",
+    "mercury": "Mercury",
+    "venus": "Venus",
+    "mars": "Mars",
+    "jupiter": "Jupiter",
+    "saturn": "Saturn",
+    "uranus": "Uranus",
+    "neptune": "Neptune"
+  },
+  "selection": {
+    "loading": "Loading…",
+    "viewFullSheet": "View full sheet"
+  },
+  "search": {
+    "placeholder": "Search for an object…",
+    "empty": "No results"
+  },
+  "layers": {
+    "constellations": "Constellations",
+    "eqGrid": "Equatorial grid",
+    "azGrid": "Azimuthal grid",
+    "ground": "Ground",
+    "atmosphere": "Atmosphere"
+  },
+  "fieldSimulator": {
+    "empty": "No saved gear — add a setup in your logbook to display its field of view.",
+    "clear": "Turn off frame"
+  }
+}

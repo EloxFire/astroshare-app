@@ -24,7 +24,7 @@ export const toolsList: AstroshareTool[] = [
     icon: Orbit, 
     category: "observe",
     access: "free",
-    route: "/tools/planetarium",
+    route: "/explore",
   },
   // Météo générale
   {

@@ -86,6 +86,9 @@ export default function RootLayout() {
               <Telescope color={color} size={size} />
             ),
             popToTopOnBlur: true,
+            // Planétarium plein écran immersif : la navbar masquerait une partie du ciel et de ses
+            // contrôles tactiles (pan/pinch jusqu'au bord de l'écran).
+            tabBarStyle: { display: "none" },
             tabBarButton: (props) => ( // this is what i added
               <PlatformPressable
                 {...props}

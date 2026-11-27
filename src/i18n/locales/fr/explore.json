@@ -1,0 +1,32 @@
+{
+  "bodies": {
+    "sun": "Soleil",
+    "moon": "Lune",
+    "mercury": "Mercure",
+    "venus": "Vénus",
+    "mars": "Mars",
+    "jupiter": "Jupiter",
+    "saturn": "Saturne",
+    "uranus": "Uranus",
+    "neptune": "Neptune"
+  },
+  "selection": {
+    "loading": "Chargement…",
+    "viewFullSheet": "Voir la fiche complète"
+  },
+  "search": {
+    "placeholder": "Rechercher un objet…",
+    "empty": "Aucun résultat"
+  },
+  "layers": {
+    "constellations": "Constellations",
+    "eqGrid": "Grille équatoriale",
+    "azGrid": "Grille azimutale",
+    "ground": "Sol",
+    "atmosphere": "Atmosphère"
+  },
+  "fieldSimulator": {
+    "empty": "Aucun équipement enregistré — ajoutez une configuration dans le carnet pour afficher son champ.",
+    "clear": "Désactiver le cadre"
+  }
+}

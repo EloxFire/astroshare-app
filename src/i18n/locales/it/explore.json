@@ -1,0 +1,32 @@
+{
+  "bodies": {
+    "sun": "Sole",
+    "moon": "Luna",
+    "mercury": "Mercurio",
+    "venus": "Venere",
+    "mars": "Marte",
+    "jupiter": "Giove",
+    "saturn": "Saturno",
+    "uranus": "Urano",
+    "neptune": "Nettuno"
+  },
+  "selection": {
+    "loading": "Caricamento…",
+    "viewFullSheet": "Vedi scheda completa"
+  },
+  "search": {
+    "placeholder": "Cerca un oggetto…",
+    "empty": "Nessun risultato"
+  },
+  "layers": {
+    "constellations": "Costellazioni",
+    "eqGrid": "Griglia equatoriale",
+    "azGrid": "Griglia azimutale",
+    "ground": "Terreno",
+    "atmosphere": "Atmosfera"
+  },
+  "fieldSimulator": {
+    "empty": "Nessuna attrezzatura salvata — aggiungi una configurazione nel diario per mostrarne il campo.",
+    "clear": "Disattiva il riquadro"
+  }
+}

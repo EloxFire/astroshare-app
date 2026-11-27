@@ -3,7 +3,7 @@
 Point d'entrée pour un agent qui intervient sur ce dépôt : état du projet, conventions, pièges connus
 et, en détail, le rendu 3D de la Lune (`MoonPhase`) et les calculs astronomiques associés.
 
-- **État décrit** : 27 novembre 2026, branche `ASTROSHARE_V3`. Vérifie toujours le code
+- **État décrit** : 28 novembre 2026, branche `ASTROSHARE_V3`. Vérifie toujours le code
   avant de te fier à un détail d'ici : ce document peut avoir pris du retard.
 - **Langue** : le code est commenté en français, et l'utilisateur échange en français. Garde ces deux usages.
 - **Contenu versionné** : ce fichier est commité. N'y ajoute jamais de secret, de valeur du `.env`, d'URL
@@ -610,6 +610,106 @@ pré-enregistrée dans `tools.ts` (`id: "astro-glossary"`).
   l'utilisateur) : `en`/`it` retombent silencieusement sur le français pour les clés manquantes,
   trou connu et non comblé pour l'instant (pas une erreur à corriger sans demande explicite).
 
+### Planétarium 3D (`src/screens/Explore/`, `src/helpers/planetarium/`)
+
+Écran plein écran immersif (onglet "Explorer", route `app/explore/index.tsx`), accessible aussi depuis
+l'outil "Planétarium" de `ToolsScreen` (`src/helpers/tools/tools.ts`, `route: "/explore"` — corrigé
+depuis `/tools/planetarium`, qui n'existe plus). Reconstruit de zéro par rapport à la version sur
+`main` (`src/screens/skymap/Planetarium.tsx`) : données du catalogue API (`/v3/objects`) au lieu des
+anciennes routes `/stars`/`/dso`, pas d'images DSO bundlées (`content.images` toujours vide côté API)
+ni de textures planètes (voir §6) — points colorés par catégorie/taille à la place. Architecture et
+maths de `main` lues comme référence (`git show main:<chemin>`, jamais portées telles quelles) ; son UI
+a servi de modèle après qu'un premier essai personnel (dock flottant animé) a été jugé « moche » par
+l'utilisateur, qui a explicitement refusé ce genre d'animation ajoutée.
+
+- **Un seul contexte GL pour tout l'écran** (`SceneBuilder.ts`/`SceneShutdown.ts`) : étoiles, DSO,
+  système solaire, grilles, constellations, sol, atmosphère sont tous des objets de la MÊME scène
+  three.js — sans rapport avec le plafond « 5 instances » de `MoonPhase` (§5.1), qui ne concerne que
+  le cas d'un contexte GL PAR INSTANCE.
+- **Le `GLView` ne monte qu'après un `onLayout` confirmé, avec une taille EXPLICITE** (pas `flex:1`) :
+  même piège que `MoonPhase` (§5.2), redécouvert ici en conditions réelles (écran resté totalement noir
+  tant que non corrigé) — montée trop tôt, sa surface GL native capte une taille transitoire
+  (potentiellement 0×0) et `gl.drawingBufferWidth/Height` y restent figés pour toute la durée de vie du
+  contexte.
+- **Contexte GL perdu quand l'onglet est masqué** (ex : tap sur un objet → fiche complète → retour) :
+  la `GLView` reste montée côté React mais son rendu reste noir pour toujours si rien ne force sa
+  recréation. Fix : `useFocusEffect` détecte un blur suivi d'un refocus, libère l'ancienne scène
+  (`shutdownScene`) et force un remontage (une `key` incrémentée sur la `GLView`).
+- **`camera.updateMatrixWorld()` à appeler à la main, chaque frame, après avoir orienté la caméra** :
+  `CameraController.applyToCamera` (`lookAt` + `updateProjectionMatrix`) ne touche pas
+  `matrixWorld`/`matrixWorldInverse` — seul `renderer.render()` les recalcule, mais trop tard pour les
+  projections 2D manuelles (`Vector3.project(camera)`, utilisées par les étiquettes et le marqueur de
+  sélection), qui se retrouvaient systématiquement projetées avec la matrice de la frame PRÉCÉDENTE.
+  Très visible comme un effet « élastique » pendant l'inertie du pan (retour utilisateur). Même chose
+  pour `azGrid`/`eqGrid` (réorientées à chaque tick d'éphéméride) dès qu'on projette un de leurs points.
+- **Sélection d'un objet tapé : pas un raycast three.js, une recherche du point projeté à l'écran le
+  plus proche** (`selection/ObjectPicker.ts`) — plus simple et robuste qu'un seuil de raycast en unités
+  monde à recalibrer sans arrêt, vu que la taille affichée des points varie avec le FOV (`uFovScale`).
+  Priorité planète/Soleil/Lune > étoile > DSO, un rayon de tolérance par catégorie.
+- **Étiquettes 2D (constellations, boussole, noms du système solaire, coordonnées de grille) en
+  recouvrement `<Text>` React Native**, pas un système de police bitmap en mesh 3D (contrairement à
+  `main`) : plus simple, plus net, réutilise les polices déjà chargées. Reprojetées à CHAQUE frame (une
+  simple multiplication de matrice, peu coûteuse), mais seul leur CONTENU (pas leur position) est
+  recalculé au rythme throttlé de l'éphéméride, via un détecteur `cameraMoved` qui évite de redéclencher
+  un rendu React à 60 fps quand la caméra est immobile. **Piège résolu :** le sentinel « pas encore
+  calculé » de ce détecteur doit être `Infinity`, pas `NaN` — `Math.abs(x − NaN)` vaut `NaN`, et
+  `NaN > seuil` est TOUJOURS faux, donc la condition « la caméra a bougé » ne devenait jamais vraie et
+  aucune étiquette ne s'affichait jamais, même à la première frame.
+- **Marqueur de sélection animé via une `SharedValue` Reanimated, pas un `useState`**
+  (`SelectionMarker.tsx`) : à 60 fps tant qu'un objet est sélectionné (pour suivre un corps du système
+  solaire qui bouge), un `setState` React fait repasser par le pont JS↔UI à chaque frame, perçu comme un
+  repositionnement saccadé. Écrire `.value` depuis la boucle RAF (thread JS, simple affectation, pas un
+  worklet) anime directement sur le thread UI.
+- **Gestes (`react-native-gesture-handler`) : `.runOnJS(true)` indispensable sur pan/pinch/tap.** Par
+  défaut (Reanimated 4 + `react-native-worklets`), leurs callbacks tournent sur le UI runtime comme des
+  worklets et plantent (« Tried to synchronously call a Remote Function ») dès qu'ils touchent un objet
+  JS classique non-worklet (`CameraController`) — contrairement à `ZoomableImage`/`Model3DViewer`, qui
+  n'ont que des shared values Reanimated. `Gesture.Race` (pas `Simultaneous`) entre le tap et pan/pinch :
+  un tap s'active vite sur un appui bref et quasi immobile, un pan a besoin d'un minimum de déplacement —
+  le premier à s'activer « gagne » et annule l'autre.
+- **Perf pendant qu'une fiche de sélection est affichée :** `observer` (objet `GeographicCoordinate`)
+  doit être mémoïsé (`useMemo`, pas recréé à chaque rendu de l'écran) et les callbacks passés en
+  `useCallback`, sinon `React.memo(ObjectSelectionSheet)` ne sert à rien — tout l'intérieur de la feuille
+  (dont le SVG d'`AltitudeChart`, nettement plus lourd) se re-rendait au rythme de l'horloge affichée
+  (~20 Hz), perçu comme un ralentissement du pan/pinch.
+- **Sélection (tap) :** fiche affichée immédiatement avec ce qu'on a déjà en main (résumé catalogue pour
+  une étoile/un DSO, rien pour un corps du système solaire tant que `getObjectById` n'a pas répondu),
+  vol de caméra (`CameraController.animateTo`), fiche complétée en tâche de fond. Volontairement un
+  RÉSUMÉ + un bouton vers la fiche complète existante (`app/objects/[id]`), pas une reconstruction
+  d'`ObjectDetailsScreen` dans le planétarium.
+- **Recherche (`ExploreSearchModal`) :** réutilise `useObjectSearch`/`SearchResultRow` tels quels (mêmes
+  composants que l'écran Recherche). `kind: "small_body"` (comètes/astéroïdes) n'est pas affiché dans la
+  scène 3D (ni récupéré, ni sa position calculée) : ouvre directement sa fiche complète plutôt que de
+  simuler une sélection impossible à positionner sur le ciel.
+- **Simulateur de champ intégré :** réutilise directement les types/formules de l'outil Simulateur de
+  champ existant (`getFieldSimulatorCombos`, `getComboFieldOfView`, voir plus haut) — aucune nouvelle
+  logique de calcul de champ. Le cadre affiché (cercle oculaire/rectangle capteur, `FieldOfViewOverlay`)
+  est toujours centré à l'écran (la direction de visée sert de « viseur »), mis à l'échelle en direct
+  avec le zoom via un `transform: scale` piloté par une `SharedValue` — pas un recalcul de
+  `width`/`height` à chaque frame, plus coûteux (propriétés de mise en page, pas seulement de rendu).
+- **Coordonnées de grille en bordure d'écran** (`utils/gridEdgeLabels.ts`) : pour chaque ligne de grille
+  équatoriale/azimutale, un seul point d'ancrage (le plus proche d'un bord parmi un sous-échantillon de
+  ses points), étiqueté avec sa vraie valeur. Astuce : les points de géométrie d'une ligne sont dans le
+  repère LOCAL du groupe (avant toute rotation) — `vec3ToRaDec` s'y applique directement pour retrouver
+  RA/Dec (grille équatoriale, repère local = repère monde) ou Az/Alt (grille azimutale, construite avec
+  la même convention), sans avoir besoin d'inverser la matrice de rotation du groupe.
+- **UI des menus : style « verre sombre » repris de `main`** (fond noir translucide, bordure blanche
+  fine, icônes blanches à opacité réduite — `src/helpers/planetarium/utils/darkGlass.ts`), pas le style
+  clair/accent du reste de l'app : ces menus flottent au-dessus du ciel nocturne. Boutons carrés
+  STATIQUES empilés (retour, calques, recherche, champ, horloge), **pas de dock/éventail animé** — voir
+  l'intro de cette section.
+- **Bascules de couches** (`LayerSettingsPanel`) : constellations, grille équatoriale, grille azimutale,
+  sol, atmosphère. Les deux grilles étaient déjà construites dans le code mais jamais rendues visibles
+  nulle part avant cette fonctionnalité (`visible: false` par défaut, jamais basculé). Bascule d'une
+  couche qui affecte aussi des étiquettes (constellations, coordonnées de grille) : force un recalcul
+  immédiat (réinitialise le détecteur `cameraMoved` à son sentinel), sinon une couche désactivée à
+  l'arrêt laisserait ses étiquettes affichées jusqu'au prochain geste.
+- **Horloge de simulation :** ancre horloge murale/temps simulé (`{wallMs, simDate}`), lecture/pause
+  sans dérive ni saccade, pas +/- heure/jour, retour à « maintenant » — voir §6 pour ce qui manque par
+  rapport à `main`.
+- **i18n :** namespace `explore` (fr/en/it), noms des corps du système solaire inclus (plus de
+  dur-codage en français comme au tout début de la fonctionnalité).
+
 ---
 
 ## 3. Internationalisation
@@ -973,7 +1073,15 @@ On ne peut pas lancer l'app depuis un agent. Méthodes utilisées jusqu'ici :
 - **Fond de modale :** le fond assombri de `SelectInput` et de `DayDetailModal` monte avec le panneau (`animationType="slide"`). Un fondu séparé serait plus soigné.
 - **Modifier une session :** `AddSession` en mode modification (`?id=`, comme les formulaires de matériel), puis un bouton Modifier dans `SessionDetails`.
 - **Confirmation avant suppression** d'une session ou d'un matériel : aujourd'hui, la suppression est immédiate.
-- **Objets du système solaire** (types prêts, §2) : icônes par `kind`, positions et levers/couchers des planètes. `@observerly/astrometry` 0.67 fournit déjà `getPlanetaryPositions`, `getBodyNextRise` et `getBodyNextSet`, encore inutilisés : l'app ne calcule aujourd'hui que le Soleil et la Lune, donc le rendu des planètes reste à construire.
+- **Planétarium — rendu 3D texturé des planètes** (phase 8 du plan, voir §2 "Planétarium 3D") :
+  sphère + texture + inclinaison axiale + rotation réelle, conditionné à la fourniture des textures des
+  7 planètes par l'utilisateur (en attente). Les éléments de rotation (inclinaison axiale, période
+  sidérale, méridien central à une époque de référence) n'existent pas dans `@observerly/astrometry`
+  (seulement les éléments orbitaux) : à coder en dur (valeurs IAU standard).
+- **Planétarium — mode "suivre" un objet en continu** (la caméra reste centrée sur l'objet sélectionné
+  pendant que l'horloge avance) : seul un vol de caméra ponctuel (`animateTo`) existe pour l'instant.
+- **Planétarium — horloge de simulation simplifiée** : pas +/- heure/jour, retour à "maintenant" ; pas
+  de curseur de défilement secondes→années ni de recherche "zone" (comparer à `main`, qui a les deux).
 - **Écran Astroshare PRO :** le CTA de `LockedFeatureCard` (section « Mes satellites ») ne mène nulle
   part encore, faute d'écran d'abonnement dans l'app.
 - **Diagramme périgée/apogée illustré :** la fiche satellite affiche aujourd'hui ces deux valeurs en
@@ -1033,6 +1141,20 @@ Le journal commence avec le commit `8527e2f`. Les changements antérieurs, comme
 i18n, `SelectInput` ou `ImageHeaderScrollView`, sont décrits dans les sections ci-dessus mais n'ont pas
 d'entrée datée.
 
+- **2026-11-28** — même commit — nouvelle fonctionnalité majeure : Planétarium 3D (onglet « Explorer »,
+  `/explore`, aussi accessible depuis l'outil éponyme de `ToolsScreen`). Reconstruit de zéro (pas porté)
+  par rapport à la version sur `main`, contre l'API catalogue `/v3/objects` : moteur de scène
+  expo-gl/expo-three/three (un seul contexte GL), sol/horizon/atmosphère, étoiles et DSO en points
+  colorés par magnitude/catégorie, constellations + grilles équatoriale/azimutale avec étiquettes de
+  coordonnées en bordure, Soleil/Lune/7 planètes + horloge de simulation, sélection par tap (vol de
+  caméra + fiche résumée), recherche d'objet, bascules de couches, simulateur de champ intégré (réutilise
+  l'outil existant). Plusieurs bugs réels corrigés en cours de route (détaillés en §2 « Planétarium 3D ») :
+  écran noir (montage du `GLView` avant mise en page, puis perte du contexte GL au retour de focus),
+  étiquettes jamais affichées (sentinel `NaN` au lieu de `Infinity`), effet « élastique » pendant
+  l'inertie (`matrixWorld` pas rafraîchi avant projection), saccades pendant une sélection (props non
+  mémoïsées). UI des menus reconstruite une seconde fois après un premier essai (dock flottant animé)
+  jugé « moche » par l'utilisateur, sur le modèle du style « verre sombre » de `main` — §2 (nouvelle
+  sous-section), §6 (mis à jour).
 - **2026-11-27** — même commit — Transits de satellites : recherche d'un lieu par nom de ville
   (`InputWithIcon`, `fetchLocation`), en plus du choix sur la carte — carte recentrée (`animateToRegion`)
   après une recherche réussie ou un retour à la position courante — §2.
