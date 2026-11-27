@@ -5,6 +5,9 @@
     "location": {
       "title": "Observing location",
       "unknown": "Unknown position",
+      "searching": "Searching...",
+      "searchLabel": "Search for a city",
+      "searchPlaceholder": "E.g. London",
       "chooseOnMap": "Choose a location on the map",
       "hideMap": "Hide the map",
       "useCurrent": "Back to my current position",

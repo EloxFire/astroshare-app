@@ -5,6 +5,8 @@
     "location": {
       "title": "Lieu d'observation",
       "unknown": "Position inconnue",
+      "searching": "Recherche en cours...",
+      "searchPlaceholder": "Chercher une ville ou cliquez sur la carte",
       "chooseOnMap": "Choisir un lieu sur la carte",
       "hideMap": "Masquer la carte",
       "useCurrent": "Revenir à ma position actuelle",
@@ -61,11 +63,11 @@
     "screenTitle": "Transit",
     "notFound": "Impossible de recalculer ce transit.",
     "stats": {
-      "angularSize": "taille angulaire",
-      "position": "azimut / altitude",
-      "duration": "durée",
+      "angularSize": "Taille angulaire",
+      "position": "Azimut / altitude",
+      "duration": "Durée",
       "durationValue": "{{value}} s",
-      "missDistance": "distance de traversée"
+      "missDistance": "Distance de traversée"
     },
     "eyeSafety": "Ne regardez jamais le Soleil sans filtre solaire certifié (ND5), même pendant le transit : le satellite n'atténue en rien le rayonnement.",
     "groundPath": {

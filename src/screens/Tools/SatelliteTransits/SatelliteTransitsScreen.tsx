@@ -1,10 +1,10 @@
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { ActivityIndicator, InteractionManager, KeyboardAvoidingView, Platform, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useTranslation } from "react-i18next";
 import { router } from "expo-router";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import dayjs from "dayjs";
-import { Info, MapPin, Moon, Sun } from "lucide-react-native";
+import { Info, LocateFixed, MapPin, Moon, Search, Sun } from "lucide-react-native";
 import { globalStyles } from "../../../helpers/globalStyles";
 import { app_colors } from "../../../helpers/variables";
 import { useLocation } from "../../../context/LocationContext";
@@ -30,6 +30,7 @@ import {
 import type { GpsLocation } from "../../../types/gpsLocation";
 import TransitCard from "./components/TransitCard/TransitCard";
 import { satelliteTransitsScreenStyles } from "./SatelliteTransitsScreen.styles";
+import ValueCard from "../../../components/cards/ValueCard/ValueCard";
 
 type SearchMode = "range" | "next";
 type TargetBodySelection = TargetBodyKey | "both";
@@ -51,15 +52,21 @@ const SATELLITE_OPTIONS: SatelliteKey[] = ["iss", "tiangong"];
 
 const SatelliteTransitsScreen = () => {
   const { t, i18n } = useTranslation("tools/satelliteTransits");
-  const { location, fetchLocation } = useLocation();
+  const { location, fetchLocation, searchLoading } = useLocation();
 
-  // Lieu choisi sur la carte pour cette recherche uniquement : jamais persisté (pas de nouvel
-  // observatoire créé), prime simplement sur la position effective de l'app (`location`) tant qu'il
-  // est défini. L'altitude est saisie à part : la géocodification inverse d'un point tapé au hasard
-  // ne la fournit pas (voir fetchLocation dans LocationContext, cas "::" → elevation: null).
+  // Lieu choisi sur la carte (ou par recherche de ville) pour cette recherche uniquement : jamais
+  // persisté (pas de nouvel observatoire créé), prime simplement sur la position effective de l'app
+  // (`location`) tant qu'il est défini. L'altitude est saisie à part : la géocodification inverse
+  // d'un point tapé au hasard (carte) ou trouvé par nom (recherche) ne la fournit pas (voir
+  // fetchLocation dans LocationContext, qui renvoie toujours elevation: null dans ces deux cas).
   const [customLocation, setCustomLocation] = useState<GpsLocation | null>(null);
   const [customAltitudeInput, setCustomAltitudeInput] = useState<string>("");
   const [showMapPicker, setShowMapPicker] = useState(false);
+  const [citySearchQuery, setCitySearchQuery] = useState("");
+  // Recentre la carte après une recherche de ville ou un retour à la position courante : initialRegion
+  // de MapView n'agit qu'au tout premier rendu (même piège que StepOne, ajout d'observatoire), sinon
+  // le marqueur resterait posé au bon endroit mais potentiellement hors du cadre visible.
+  const mapRef = useRef<MapView>(null);
 
   const [targetBodySelection, setTargetBodySelection] = useState<TargetBodySelection>("sun");
   const [satelliteKey, setSatelliteKey] = useState<SatelliteKey>("iss");
@@ -76,9 +83,11 @@ const SatelliteTransitsScreen = () => {
     return { ...customLocation, elevation: parsedAltitude != null && Number.isFinite(parsedAltitude) ? parsedAltitude : null };
   }, [customLocation, customAltitudeInput, location]);
 
-  const locationLabel = effectiveLocation
-    ? effectiveLocation.local_names?.[i18n.language] || effectiveLocation.name || `${effectiveLocation.latitude.toFixed(3)}, ${effectiveLocation.longitude.toFixed(3)}`
-    : t("screen.location.unknown");
+  const locationLabel = searchLoading
+    ? t("screen.location.searching")
+    : effectiveLocation
+      ? effectiveLocation.local_names?.[i18n.language] || effectiveLocation.name || `${effectiveLocation.latitude.toFixed(3)}, ${effectiveLocation.longitude.toFixed(3)}`
+      : t("screen.location.unknown");
 
   const handleMapPress = async (event: { nativeEvent: { coordinate: { latitude: number; longitude: number } } }) => {
     const { latitude, longitude } = event.nativeEvent.coordinate;
@@ -87,9 +96,37 @@ const SatelliteTransitsScreen = () => {
     setCustomAltitudeInput("");
   };
 
+  // Recherche par nom de ville (fetchLocation distingue déjà "lat::lon" d'un nom libre, voir
+  // handleMapPress ci-dessus) : ne touche rien si la ville est introuvable, pour ne pas effacer un
+  // lieu déjà choisi sur une faute de frappe.
+  const handleSearchCity = async () => {
+    const query = citySearchQuery.trim();
+    if (!query) return;
+    const locationData = await fetchLocation(query);
+    if (locationData) {
+      setCustomLocation(locationData);
+      setCustomAltitudeInput("");
+      mapRef.current?.animateToRegion({
+        latitude: locationData.latitude,
+        longitude: locationData.longitude,
+        latitudeDelta: 0.5,
+        longitudeDelta: 0.5,
+      }, 1000);
+    }
+  };
+
   const handleUseCurrentLocation = () => {
     setCustomLocation(null);
     setCustomAltitudeInput("");
+    setCitySearchQuery("");
+    if (location) {
+      mapRef.current?.animateToRegion({
+        latitude: location.latitude,
+        longitude: location.longitude,
+        latitudeDelta: 0.5,
+        longitudeDelta: 0.5,
+      }, 1000);
+    }
   };
 
   const runSearch = (mode: SearchMode) => {
@@ -164,26 +201,21 @@ const SatelliteTransitsScreen = () => {
           <View style={globalStyles.content}>
 
             <View style={satelliteTransitsScreenStyles.section}>
-              <SectionHeader title={t("screen.location.title")} />
+              <SectionHeader title={t("screen.location.title")} subtitle={locationLabel} />
 
-              <View style={satelliteTransitsScreenStyles.locationSummary}>
-                <MapPin size={16} color={app_colors.accent.main} />
-                <Text style={satelliteTransitsScreenStyles.locationSummary.text}>{locationLabel}</Text>
-              </View>
-
-              <View style={satelliteTransitsScreenStyles.locationActions}>
-                <TouchableOpacity onPress={() => setShowMapPicker((visible) => !visible)}>
-                </TouchableOpacity>
-                {customLocation && (
-                  <TouchableOpacity onPress={handleUseCurrentLocation}>
-                    <Text style={satelliteTransitsScreenStyles.locationActions.link}>{t("screen.location.useCurrent")}</Text>
-                  </TouchableOpacity>
-                )}
-              </View>
+              <InputWithIcon
+                fill
+                icon={Search}
+                placeholder={t("screen.location.searchPlaceholder")}
+                value={citySearchQuery}
+                onChangeText={setCitySearchQuery}
+                action={handleSearchCity}
+              />
 
               <>
                 <View style={satelliteTransitsScreenStyles.mapContainer}>
                   <MapView
+                    ref={mapRef}
                     style={satelliteTransitsScreenStyles.mapContainer.map}
                     provider={PROVIDER_GOOGLE}
                     initialRegion={{
@@ -212,6 +244,17 @@ const SatelliteTransitsScreen = () => {
                   keyboardType="numeric"
                 />
               </>
+              
+              {
+                customLocation && (
+                  <Button
+                    disabled={!effectiveLocation}
+                    icon={LocateFixed}
+                    label={t("screen.location.useCurrent")}
+                    onPress={handleUseCurrentLocation}
+                  />
+                )
+              }
             </View>
 
             <View style={satelliteTransitsScreenStyles.section}>
@@ -287,26 +330,26 @@ const SatelliteTransitsScreen = () => {
             }
 
             <View style={satelliteTransitsScreenStyles.section}>
-                  <InfoCard icon={Info} title={t("screen.explanation.whatTitle")} description={t("screen.explanation.whatDescription")} />
+                <InfoCard icon={Info} title={t("screen.explanation.whatTitle")} description={t("screen.explanation.whatDescription")} />
 
-                  <SectionHeader title={t("screen.explanation.paramsTitle")} />
-                  <View style={satelliteTransitsScreenStyles.explanationCard}>
-                    {([
-                      ["angularSize", "details.stats.angularSize"],
-                      ["position", "details.stats.position"],
-                      ["duration", "details.stats.duration"],
-                      ["missDistance", "details.stats.missDistance"],
-                    ] as const).map(([paramKey, titleKey], index) => (
-                      <View
-                        key={paramKey}
-                        style={[satelliteTransitsScreenStyles.explanationCard.item, index < 3 && satelliteTransitsScreenStyles.explanationCard.item.withBorder]}
-                      >
-                        <Text style={satelliteTransitsScreenStyles.explanationCard.item.title}>{t(titleKey)}</Text>
-                        <Text style={satelliteTransitsScreenStyles.explanationCard.item.description}>{t(`screen.explanation.params.${paramKey}`)}</Text>
-                      </View>
-                    ))}
-                  </View>
+                <SectionHeader title={t("screen.explanation.paramsTitle")} />
+                <View style={satelliteTransitsScreenStyles.explanationCard}>
+                  {([
+                    ["angularSize", "details.stats.angularSize"],
+                    ["position", "details.stats.position"],
+                    ["duration", "details.stats.duration"],
+                    ["missDistance", "details.stats.missDistance"],
+                  ] as const).map(([paramKey, titleKey], index) => (
+                    <View
+                      key={paramKey}
+                      style={[satelliteTransitsScreenStyles.explanationCard.item, index < 3 && satelliteTransitsScreenStyles.explanationCard.item.withBorder]}
+                    >
+                      <Text style={satelliteTransitsScreenStyles.explanationCard.item.title}>{t(titleKey)}</Text>
+                      <Text style={satelliteTransitsScreenStyles.explanationCard.item.description}>{t(`screen.explanation.params.${paramKey}`)}</Text>
+                    </View>
+                  ))}
                 </View>
+              </View>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>

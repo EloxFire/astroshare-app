@@ -5,6 +5,9 @@
     "location": {
       "title": "Luogo di osservazione",
       "unknown": "Posizione sconosciuta",
+      "searching": "Ricerca in corso...",
+      "searchLabel": "Cerca una città",
+      "searchPlaceholder": "Es: Roma",
       "chooseOnMap": "Scegli un luogo sulla mappa",
       "hideMap": "Nascondi la mappa",
       "useCurrent": "Torna alla mia posizione attuale",

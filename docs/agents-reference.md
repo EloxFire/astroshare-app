@@ -3,7 +3,7 @@
 Point d'entrée pour un agent qui intervient sur ce dépôt : état du projet, conventions, pièges connus
 et, en détail, le rendu 3D de la Lune (`MoonPhase`) et les calculs astronomiques associés.
 
-- **État décrit** : 25 novembre 2026, branche `ASTROSHARE_V3`. Vérifie toujours le code
+- **État décrit** : 27 novembre 2026, branche `ASTROSHARE_V3`. Vérifie toujours le code
   avant de te fier à un détail d'ici : ce document peut avoir pris du retard.
 - **Langue** : le code est commenté en français, et l'utilisateur échange en français. Garde ces deux usages.
 - **Contenu versionné** : ce fichier est commité. N'y ajoute jamais de secret, de valeur du `.env`, d'URL
@@ -255,14 +255,17 @@ suit le transit jusqu'à la fiche détail (query param `body`, avec `satellite`)
 - **Avertissement de sécurité oculaire affiché seulement pour un transit solaire**
   (`transit.body === "sun"`, fiche détail) : regarder la Lune, même pendant un transit, ne présente
   aucun danger.
-- **Sélection de lieu sur la carte** (écran liste) : `MapView`/`MapTargetMarker` + appui pour placer
-  le repère (même pattern que `StepOne` d'ajout d'observatoire), altitude saisie à part
-  (`InputWithIcon`) — la géocodification inverse d'un point tapé au hasard ne la fournit pas
-  (`fetchLocation` d'un `"lat::lon"` renvoie `elevation: null`). Lieu jamais persisté (pas de nouvel
+- **Sélection de lieu sur la carte, ou par recherche de ville** (écran liste) :
+  `MapView`/`MapTargetMarker` + appui pour placer le repère (même pattern que `StepOne` d'ajout
+  d'observatoire), altitude saisie à part (`InputWithIcon`) — la géocodification inverse d'un point
+  tapé au hasard (carte) ou trouvé par nom (`InputWithIcon` recherche, `fetchLocation(query)` sans
+  `"::"`) ne la fournit pas (`elevation: null` dans les deux cas). Lieu jamais persisté (pas de nouvel
   observatoire créé), transmis à la fiche détail en query params (`lat`/`lon`/`elev`, avec `body`/
   `satellite` de la route `/tools/satellite-transits/[id]`) pour réaffiner le même transit avec le
   même observateur/corps/satellite — sans ces query params (lien direct), repli sur la position
-  effective de l'app et sur Soleil/ISS (comportement d'origine).
+  effective de l'app et sur Soleil/ISS (comportement d'origine). Carte recentrée par `animateToRegion`
+  après une recherche réussie ou un retour à la position courante (`initialRegion` de `MapView`
+  n'agit qu'au tout premier rendu, même piège que `StepOne`).
 - **Période personnalisée** (dates de début/fin plutôt que des puces fixes 3/7/14 jours) : via
   `DateRangeField` (§4, partagé avec l'outil Conjonctions), même découpage Android/iOS que les dates
   d'`AddSession` (Journal), simplifié en mode date seule (pas d'heure).
@@ -1030,6 +1033,9 @@ Le journal commence avec le commit `8527e2f`. Les changements antérieurs, comme
 i18n, `SelectInput` ou `ImageHeaderScrollView`, sont décrits dans les sections ci-dessus mais n'ont pas
 d'entrée datée.
 
+- **2026-11-27** — même commit — Transits de satellites : recherche d'un lieu par nom de ville
+  (`InputWithIcon`, `fetchLocation`), en plus du choix sur la carte — carte recentrée (`animateToRegion`)
+  après une recherche réussie ou un retour à la position courante — §2.
 - **2026-11-26** — même commit — nouvel outil Glossaire (`/tools/astro-glossary`, déjà pré-enregistré
   dans `tools.ts`) : recherche, mot du jour déterministe (pas aléatoire), filtre par catégorie, liste
   alphabétique avec index A-Z sticky (lettre courante surlignée), fiches dépliables (une seule à la
